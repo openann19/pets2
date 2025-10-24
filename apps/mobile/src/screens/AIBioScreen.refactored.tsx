@@ -72,7 +72,11 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           onPress={handleBack}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={Theme.colors.text.primary} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={Theme.colors.text.primary}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />
@@ -175,7 +179,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               <Ionicons
                 name="add-circle"
                 size={20}
-                color={Theme.colors.primary}
+                color={Theme.colors.primary[500]}
               />
               <Text style={styles.newBioText}>Create New Bio</Text>
             </TouchableOpacity>
@@ -249,12 +253,12 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.sm,
   },
   generateButton: {
-    backgroundColor: Theme.colors.primary,
+    backgroundColor: Theme.colors.primary[500],
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     margin: Theme.spacing.lg,
     alignItems: "center",
-    shadowColor: Theme.colors.primary,
+    shadowColor: Theme.colors.primary[500],
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -295,14 +299,14 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.md,
     margin: Theme.spacing.lg,
     borderWidth: 1,
-    borderColor: Theme.colors.primary,
+    borderColor: Theme.colors.primary[500],
     borderRadius: Theme.borderRadius.lg,
     backgroundColor: Theme.colors.background.primary,
   },
   newBioText: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.primary,
+    color: Theme.colors.primary[500],
     marginLeft: Theme.spacing.sm,
   },
 });

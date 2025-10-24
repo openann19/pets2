@@ -691,6 +691,20 @@ export const aiAPI = {
       body: data,
     });
   },
+
+  // Auth methods
+  auth: {
+    logout: async (): Promise<void> => {
+      await apiClient.post("/auth/logout");
+    },
+  },
+
+  // User methods
+  user: {
+    deleteAccount: async (): Promise<void> => {
+      await apiClient.delete("/users/me");
+    },
+  },
 };
 
 export const api = {

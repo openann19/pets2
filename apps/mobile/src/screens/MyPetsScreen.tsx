@@ -41,7 +41,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
   const loadPets = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await matchesAPI.getMyPets();
+      const response = await matchesAPI.getPets();
       setPets(response.data || []);
     } catch (error) {
       logger.error("Error loading pets:", { error });

@@ -400,6 +400,7 @@ class WebRTCService extends EventEmitter {
         const videoTrack = videoTracks[0];
         // React Native WebRTC specific method
         if (
+          videoTrack &&
           "_switchCamera" in videoTrack &&
           typeof (videoTrack as any)._switchCamera === "function"
         ) {
@@ -421,29 +422,26 @@ class WebRTCService extends EventEmitter {
   private setupPeerConnectionListeners() {
     if (this.peerConnection === null) return;
 
-    this.peerConnection.addEventListener(
-      "icecandidate",
-      (event: RTCPeerConnectionIceEvent) => {
-        if (event.candidate !== null) {
-          if (this.socket !== null) {
-            this.socket.emit("webrtc-ice-candidate", {
-              callId: this.currentCallId,
-              candidate: event.candidate,
-            });
-          }
+    this.peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
+      if (event.candidate !== null) {
+        if (this.socket !== null) {
+          this.socket.emit("webrtc-ice-candidate", {
+            callId: this.currentCallId,
+            candidate: event.candidate,
+          });
         }
-      },
-    );
+      }
+    };
 
-    this.peerConnection.addEventListener("track", (event: RTCTrackEvent) => {
+    this.peerConnection.ontrack = (event: RTCTrackEvent) => {
       if (event.streams.length > 0) {
-        this.remoteStream = event.streams[0] as any;
+        this.remoteStream = event.streams[0] || undefined;
         this.callState.remoteStream = this.remoteStream;
         this.emit("callStateChanged", this.callState);
       }
-    });
+    };
 
-    this.peerConnection.addEventListener("connectionstatechange", () => {
+    this.peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
       if (state === "connected") {
         this.callState.isConnected = true;
@@ -452,7 +450,7 @@ class WebRTCService extends EventEmitter {
       } else if (state === "disconnected" || state === "failed") {
         this.endCall();
       }
-    });
+    };
   }
 
   private handleIncomingCall(callData: CallData) {

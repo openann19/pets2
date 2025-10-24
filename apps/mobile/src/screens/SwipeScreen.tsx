@@ -1,24 +1,27 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import {
   Animated,
   Dimensions,
-  PanResponder,
   StyleSheet,
   View,
+  Alert,
+  StatusBar,
 } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { EliteContainer } from "../components/EliteContainer";
-import { EliteLoading } from "../components/EliteLoading";
 import { SwipeHeader } from "../components/swipe/SwipeHeader";
 import { SwipeFilters } from "../components/swipe/SwipeFilters";
 import { SwipeCard } from "../components/swipe/SwipeCard";
 import { SwipeActions } from "../components/swipe/SwipeActions";
 import { MatchModal } from "../components/swipe/MatchModal";
 import { EmptyState } from "../components/swipe/EmptyState";
-import { GlassContainer } from "../components/GlassContainer";
+import { EliteContainer, EliteLoading } from "../components/EliteComponents";
 import { useSwipeData } from "../hooks/useSwipeData";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { useAuthStore } from "@pawfectmatch/core";
+import { logger } from "@pawfectmatch/core";
+import type { Pet } from "@pawfectmatch/core";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -26,12 +29,14 @@ type RootStackParamList = {
   Swipe: undefined;
   Chat: { matchId: string; petName: string };
   Matches: undefined;
+  Premium: undefined;
 };
 
 type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
 
 export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   const { data, actions } = useSwipeData();
+  const { user } = useAuthStore();
 
   // Animation values
   const position = useRef(new Animated.ValueXY()).current;
@@ -53,47 +58,80 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
     extrapolate: "clamp",
   });
 
-  // Pan responder for swipe gestures
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: Animated.event(
-      [null, { dx: position.x, dy: position.y }],
-      {
-        useNativeDriver: false,
-      },
-    ),
-    onPanResponderRelease: (_evt, gestureState) => {
-      const { dx, dy } = gestureState;
-      const swipeThreshold = screenWidth * 0.3;
+  // State for premium features
+  const [lastSwipedPet, setLastSwipedPet] = useState<Pet | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
+  const [isPremium] = useState(
+    user?.subscriptionStatus === "premium" ||
+      user?.subscriptionStatus === "premium_plus",
+  );
 
-      if (dx > swipeThreshold) {
+  // Gesture handling with react-native-gesture-handler
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      position.setValue({ x: event.translationX, y: event.translationY });
+    })
+    .onEnd((event) => {
+      const { translationX, translationY, velocityX, velocityY } = event;
+      const swipeThreshold = screenWidth * 0.3;
+      const velocityThreshold = 500;
+
+      // Determine swipe direction based on translation and velocity
+      if (translationX > swipeThreshold || velocityX > velocityThreshold) {
         // Swipe right - like
-        actions.handleButtonSwipe("like");
-      } else if (dx < -swipeThreshold) {
+        handleSwipeWithAnimation("like");
+      } else if (
+        translationX < -swipeThreshold ||
+        velocityX < -velocityThreshold
+      ) {
         // Swipe left - pass
-        actions.handleButtonSwipe("pass");
-      } else if (dy < -swipeThreshold) {
+        handleSwipeWithAnimation("pass");
+      } else if (
+        translationY < -swipeThreshold ||
+        velocityY < -velocityThreshold
+      ) {
         // Swipe up - super like
-        actions.handleButtonSwipe("superlike");
+        handleSwipeWithAnimation("superlike");
       } else {
         // Snap back
         Animated.spring(position, {
           toValue: { x: 0, y: 0 },
           useNativeDriver: false,
+          tension: 100,
+          friction: 8,
         }).start();
       }
-    },
-  });
+    });
 
-  // Handle swipe with animation
+  // Handle swipe with animation and haptic feedback
   const handleSwipeWithAnimation = useCallback(
     async (action: "like" | "pass" | "superlike") => {
+      const currentPet = data.pets[0];
+      if (!currentPet) return;
+
+      // Store for undo functionality
+      setLastSwipedPet(currentPet);
+      setCanUndo(true);
+
+      // Haptic feedback based on action
+      switch (action) {
+        case "like":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        case "pass":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          break;
+        case "superlike":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          break;
+      }
+
       const toValue =
         action === "like" ? screenWidth : action === "pass" ? -screenWidth : 0;
+      const yValue = action === "superlike" ? -screenHeight : 0;
 
       Animated.timing(position, {
-        toValue: { x: toValue, y: action === "superlike" ? -screenHeight : 0 },
+        toValue: { x: toValue, y: yValue },
         duration: 300,
         useNativeDriver: false,
       }).start(() => {
@@ -102,10 +140,47 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
         // Execute swipe action
         actions.handleSwipe(action);
+
+        // Check for match
+        if (
+          action === "like" &&
+          currentPet.compatibilityScore &&
+          currentPet.compatibilityScore > 80
+        ) {
+          // High compatibility - show match modal
+          actions.setMatchedPet(currentPet);
+          actions.setShowMatchModal(true);
+        }
       });
     },
-    [position, actions],
+    [position, actions, data.pets],
   );
+
+  // Handle undo functionality
+  const handleUndo = useCallback(() => {
+    if (!isPremium) {
+      Alert.alert(
+        "Premium Feature",
+        "Undo swipe is a premium feature. Upgrade to PawfectMatch Premium to unlock this feature.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Upgrade", onPress: () => navigation.navigate("Premium") },
+        ],
+      );
+      return;
+    }
+
+    if (lastSwipedPet && canUndo) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+
+      // Add the pet back to the front of the queue
+      actions.undoSwipe(lastSwipedPet);
+      setCanUndo(false);
+      setLastSwipedPet(null);
+
+      logger.info("Undo swipe successful", { petId: lastSwipedPet.id });
+    }
+  }, [isPremium, lastSwipedPet, canUndo, actions, navigation]);
 
   // Handle button swipe
   const handleButtonSwipe = useCallback(
@@ -148,125 +223,132 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   // Handle filter application
   const handleApplyFilters = useCallback(() => {
     actions.loadPets();
+    actions.setShowFilters(false);
   }, [actions]);
 
-  // Loading state
-  if (data.isLoading && data.pets.length === 0) {
+  // Load pets on mount
+  useEffect(() => {
+    actions.loadPets();
+  }, [actions]);
+
+  // Auto-hide undo after 5 seconds
+  useEffect(() => {
+    if (canUndo) {
+      const timer = setTimeout(() => {
+        setCanUndo(false);
+        setLastSwipedPet(null);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [canUndo]);
+
+  // Show loading state
+  if (data.isLoading) {
     return (
       <EliteContainer gradient="primary">
-        <EliteLoading
-          title="Loading pets..."
-          subtitle="Finding your perfect matches"
-          variant="paws"
-        />
+        <StatusBar barStyle="light-content" />
+        <EliteLoading message="Finding perfect matches..." />
       </EliteContainer>
     );
   }
 
-  // Error state
-  if (data.error) {
+  // Show empty state
+  if (data.pets.length === 0) {
     return (
       <EliteContainer gradient="primary">
-        <EmptyState
-          type="error"
-          title="Error loading pets"
-          subtitle={data.error}
-          buttonTitle="Try Again"
-          onButtonPress={actions.refreshPets}
+        <StatusBar barStyle="light-content" />
+        <SwipeHeader
+          onBack={handleBack}
+          onMatches={handleMatchesPress}
+          onFilter={handleFilterToggle}
+          showFilters={data.showFilters}
         />
+        <EmptyState onRefresh={() => actions.loadPets()} />
       </EliteContainer>
     );
   }
 
-  // Empty state
-  if (!data.pets[data.currentIndex]) {
-    return (
-      <EliteContainer gradient="primary">
-        <EmptyState
-          type="empty"
-          title="No more pets!"
-          subtitle="Check back later for more matches"
-          buttonTitle="Refresh"
-          onButtonPress={actions.loadPets}
-        />
-      </EliteContainer>
-    );
-  }
-
-  const currentPet = data.pets[data.currentIndex];
+  const currentPet = data.pets[0];
+  const nextPet = data.pets[1];
 
   return (
     <EliteContainer gradient="primary">
+      <StatusBar barStyle="light-content" />
+
       {/* Header */}
       <SwipeHeader
         onBack={handleBack}
-        onFilterPress={handleFilterToggle}
-        onMatchesPress={handleMatchesPress}
+        onMatches={handleMatchesPress}
+        onFilter={handleFilterToggle}
+        showFilters={data.showFilters}
+        canUndo={canUndo && isPremium}
+        onUndo={handleUndo}
       />
 
-      {/* Filter Panel */}
+      {/* Filters */}
       {data.showFilters && (
         <SwipeFilters
           filters={data.filters}
-          onFiltersChange={actions.setFilters}
           onApplyFilters={handleApplyFilters}
+          onClose={() => actions.setShowFilters(false)}
         />
       )}
 
-      {/* Card Stack */}
+      {/* Swipe Cards */}
       <View style={styles.cardContainer}>
-        <SwipeCard
-          pet={currentPet}
-          position={position}
-          rotate={rotate}
-          likeOpacity={likeOpacity}
-          nopeOpacity={nopeOpacity}
-          panHandlers={panResponder.panHandlers}
-        />
-
-        {/* Next card preview */}
-        {data.pets[data.currentIndex + 1] && (
-          <GlassContainer
-            intensity="light"
-            transparency="light"
-            border="light"
-            shadow="light"
-          >
-            <View style={[styles.card, styles.nextCard]}>
+        <GestureDetector gesture={panGesture}>
+          <View style={styles.cardWrapper}>
+            {/* Next card (background) */}
+            {nextPet && (
               <SwipeCard
-                pet={data.pets[data.currentIndex + 1]}
+                pet={nextPet}
                 position={new Animated.ValueXY()}
                 rotate={new Animated.Value(0)}
                 likeOpacity={new Animated.Value(0)}
                 nopeOpacity={new Animated.Value(0)}
                 panHandlers={{}}
+                isPremium={isPremium}
+                showCompatibility={true}
               />
-            </View>
-          </GlassContainer>
-        )}
+            )}
+
+            {/* Current card (foreground) */}
+            <SwipeCard
+              pet={currentPet}
+              position={position}
+              rotate={rotate}
+              likeOpacity={likeOpacity}
+              nopeOpacity={nopeOpacity}
+              panHandlers={{}}
+              onLike={() => handleButtonSwipe("like")}
+              onPass={() => handleButtonSwipe("pass")}
+              onSuperLike={() => handleButtonSwipe("superlike")}
+              onUndo={handleUndo}
+              isPremium={isPremium}
+              showCompatibility={true}
+            />
+          </View>
+        </GestureDetector>
       </View>
 
       {/* Action Buttons */}
       <SwipeActions
-        onPass={() => {
-          handleButtonSwipe("pass");
-        }}
-        onSuperLike={() => {
-          handleButtonSwipe("superlike");
-        }}
-        onLike={() => {
-          handleButtonSwipe("like");
-        }}
+        onLike={() => handleButtonSwipe("like")}
+        onPass={() => handleButtonSwipe("pass")}
+        onSuperLike={() => handleButtonSwipe("superlike")}
+        onUndo={handleUndo}
+        canUndo={canUndo && isPremium}
+        isPremium={isPremium}
       />
 
       {/* Match Modal */}
-      {data.showMatchModal && data.matchedPet && (
-        <MatchModal
-          matchedPet={data.matchedPet}
-          onKeepSwiping={handleKeepSwiping}
-          onSendMessage={handleSendMessage}
-        />
-      )}
+      <MatchModal
+        visible={data.showMatchModal}
+        pet={data.matchedPet}
+        onKeepSwiping={handleKeepSwiping}
+        onSendMessage={handleSendMessage}
+      />
     </EliteContainer>
   );
 }
@@ -278,21 +360,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
   },
-  card: {
-    width: screenWidth - 40,
-    height: screenHeight * 0.65,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-    position: "absolute",
-  },
-  nextCard: {
-    transform: [{ scale: 0.95 }],
-    opacity: 0.8,
-    zIndex: -1,
+  cardWrapper: {
+    width: "100%",
+    height: screenHeight * 0.7,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

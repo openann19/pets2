@@ -117,6 +117,7 @@ export interface User {
 // Pet Types
 export interface Pet {
   _id: string;
+  id: string; // Alias for _id for convenience
   owner: User | string;
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';

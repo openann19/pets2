@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import { useState } from "react";
+import { logger, useAuthStore } from "@pawfectmatch/core";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { authService } from "../services/AuthService";
+import { biometricService } from "../services/BiometricService";
 
 // Define the navigation props type
 type RootStackParamList = {
@@ -44,6 +49,35 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     dateOfBirth?: string;
   }>({});
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+
+  const {
+    setUser,
+    setTokens,
+    setError,
+    setIsLoading: setAuthLoading,
+  } = useAuthStore();
+
+  // Check biometric availability on mount
+  useEffect(() => {
+    const checkBiometricAvailability = async () => {
+      try {
+        const capabilities = await biometricService.checkBiometricSupport();
+        setBiometricAvailable(
+          capabilities.hasHardware && capabilities.isEnrolled,
+        );
+      } catch (error) {
+        logger.error("Failed to check biometric availability", { error });
+      }
+    };
+
+    void checkBiometricAvailability();
+  }, []);
+
   const validateForm = () => {
     const newErrors: {
       email?: string;
@@ -61,15 +95,20 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       newErrors.email = "Email format is invalid";
     }
 
-    // Password validation
+    // Password validation with strength check
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password =
+        "Password must contain uppercase, lowercase, and number";
     }
 
     // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
@@ -88,20 +127,90 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       newErrors.dateOfBirth = "Date of birth is required";
     } else if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.dateOfBirth)) {
       newErrors.dateOfBirth = "Date format should be YYYY-MM-DD";
+    } else {
+      const birthDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (age < 13) {
+        newErrors.dateOfBirth = "You must be at least 13 years old";
+      }
+    }
+
+    // Terms acceptance validation
+    if (!acceptTerms) {
+      Alert.alert(
+        "Terms Required",
+        "You must accept the Terms of Service and Privacy Policy to continue.",
+      );
+      return false;
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleRegister = () => {
-    if (validateForm()) {
-      // Handle registration logic here
-      logger.info("Register with:", { formData });
+  const handleRegister = async () => {
+    if (!validateForm()) return;
 
-      // For demo purposes, navigate to Login
-      // In a real app, you would register first
-      navigation.navigate("Login");
+    setIsLoading(true);
+    setAuthLoading(true);
+    setError(null);
+
+    try {
+      const registerData = {
+        email: formData.email,
+        password: formData.password,
+        name: `${formData.firstName} ${formData.lastName}`,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+      };
+
+      const response = await authService.register(registerData);
+
+      // Store authentication data
+      setUser(response.user);
+      setTokens(response.accessToken, response.refreshToken);
+
+      // Offer biometric setup if available
+      if (biometricAvailable) {
+        Alert.alert(
+          "Enable Biometric Login",
+          "Would you like to enable biometric authentication for faster login?",
+          [
+            { text: "Not Now", style: "cancel" },
+            {
+              text: "Enable",
+              onPress: async () => {
+                try {
+                  await authService.enableBiometricAuthentication();
+                  logger.info(
+                    "Biometric authentication enabled during registration",
+                  );
+                } catch (error) {
+                  logger.error("Failed to enable biometric authentication", {
+                    error,
+                  });
+                }
+              },
+            },
+          ],
+        );
+      }
+
+      logger.info("Registration successful", { userId: response.user.id });
+      navigation.navigate("Home");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again.";
+      setError(errorMessage);
+      Alert.alert("Registration Failed", errorMessage);
+      logger.error("Registration failed", { error, email: formData.email });
+    } finally {
+      setIsLoading(false);
+      setAuthLoading(false);
     }
   };
 
@@ -200,46 +309,113 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.password}
-                onChangeText={(text) => {
-                  updateFormField("password", text);
-                }}
-                placeholder="********"
-                secureTextEntry
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  value={formData.password}
+                  onChangeText={(text) => {
+                    updateFormField("password", text);
+                  }}
+                  placeholder="********"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  style={styles.passwordToggle}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={20}
+                    color="#666"
+                  />
+                </TouchableOpacity>
+              </View>
               {errors.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
+              )}
+              {formData.password && (
+                <View style={styles.passwordStrength}>
+                  <Text style={styles.passwordStrengthText}>
+                    Password strength:
+                  </Text>
+                  <View style={styles.strengthBar}>
+                    <View
+                      style={[
+                        styles.strengthFill,
+                        {
+                          width: `${Math.min(100, (formData.password.length / 12) * 100)}%`,
+                          backgroundColor:
+                            formData.password.length >= 8
+                              ? "#10b981"
+                              : "#f59e0b",
+                        },
+                      ]}
+                    />
+                  </View>
+                </View>
               )}
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Confirm Password</Text>
-              <TextInput
-                style={styles.input}
-                value={formData.confirmPassword}
-                onChangeText={(text) => {
-                  updateFormField("confirmPassword", text);
-                }}
-                placeholder="********"
-                secureTextEntry
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  value={formData.confirmPassword}
+                  onChangeText={(text) => {
+                    updateFormField("confirmPassword", text);
+                  }}
+                  placeholder="********"
+                  secureTextEntry={!showConfirmPassword}
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  style={styles.passwordToggle}
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <Ionicons
+                    name={showConfirmPassword ? "eye-off" : "eye"}
+                    size={20}
+                    color="#666"
+                  />
+                </TouchableOpacity>
+              </View>
               {errors.confirmPassword && (
                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
               )}
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.buttonText}>Create Account</Text>
-            </TouchableOpacity>
-
+            {/* Terms and Conditions */}
             <View style={styles.termsContainer}>
-              <Text style={styles.termsText}>
-                By signing up, you agree to our Terms of Service and Privacy
-                Policy
-              </Text>
+              <TouchableOpacity
+                style={styles.termsCheckboxContainer}
+                onPress={() => setAcceptTerms(!acceptTerms)}
+              >
+                <View style={styles.checkbox}>
+                  {acceptTerms && (
+                    <Ionicons name="checkmark" size={16} color="#ec4899" />
+                  )}
+                </View>
+                <Text style={styles.termsText}>
+                  I agree to the{" "}
+                  <Text style={styles.termsLink}>Terms of Service</Text> and{" "}
+                  <Text style={styles.termsLink}>Privacy Policy</Text>
+                </Text>
+              </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+              style={[styles.button, isLoading && styles.buttonDisabled]}
+              onPress={handleRegister}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Create Account</Text>
+              )}
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -298,6 +474,40 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
   },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f9fafb",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    fontSize: 16,
+  },
+  passwordToggle: {
+    padding: 12,
+  },
+  passwordStrength: {
+    marginTop: 8,
+  },
+  passwordStrengthText: {
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 4,
+  },
+  strengthBar: {
+    height: 4,
+    backgroundColor: "#e5e7eb",
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  strengthFill: {
+    height: "100%",
+    borderRadius: 2,
+  },
   errorText: {
     color: "#ef4444",
     fontSize: 12,
@@ -310,6 +520,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 16,
   },
+  buttonDisabled: {
+    backgroundColor: "#d1d5db",
+  },
   buttonText: {
     color: "#fff",
     fontSize: 16,
@@ -317,12 +530,32 @@ const styles = StyleSheet.create({
   },
   termsContainer: {
     marginTop: 16,
-    marginBottom: 32,
+    marginBottom: 16,
+  },
+  termsCheckboxContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: "#ec4899",
+    borderRadius: 4,
+    marginRight: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 2,
   },
   termsText: {
     color: "#666",
     fontSize: 12,
-    textAlign: "center",
+    flex: 1,
+    lineHeight: 18,
+  },
+  termsLink: {
+    color: "#ec4899",
+    textDecorationLine: "underline",
   },
 });
 

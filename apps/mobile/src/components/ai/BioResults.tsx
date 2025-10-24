@@ -17,7 +17,7 @@ import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Theme } from "../../theme/unified-theme";
-import { GeneratedBio } from "../../hooks/useAIBio";
+import type { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {
   generatedBio: GeneratedBio;
@@ -34,7 +34,7 @@ export function BioResults({
 
   const handleCopy = async () => {
     try {
-      await Clipboard.setStringAsync(generatedBio.bio);
+      await Clipboard.setString(generatedBio.bio);
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
@@ -86,7 +86,9 @@ export function BioResults({
             <Ionicons
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
-              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
+              color={
+                copied ? Theme.colors.status.success : Theme.colors.text.primary
+              }
             />
             <Text
               style={[
@@ -310,7 +312,7 @@ const styles = StyleSheet.create({
     gap: Theme.spacing.sm,
   },
   keywordChip: {
-    backgroundColor: Theme.colors.primary,
+    backgroundColor: Theme.colors.primary[500],
     borderRadius: Theme.borderRadius.full,
     paddingHorizontal: Theme.spacing.sm,
     paddingVertical: Theme.spacing.xs,

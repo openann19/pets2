@@ -20,11 +20,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
-import {
-  AdvancedHeader,
-  HeaderConfigs,
-} from "../components/Advanced/AdvancedHeader";
-// import { AdvancedButton } from '../components/Advanced/AdvancedInteractionSystem';
 import { matchesAPI } from "../services/api";
 
 type RootStackParamList = {
@@ -137,34 +132,18 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Advanced Header */}
-      <AdvancedHeader
-        {...HeaderConfigs.glass({
-          title: "Profile",
-          rightButtons: [
-            {
-              type: "edit",
-              onPress: () => {
-                logger.info("Edit profile");
-              },
-              variant: "glass",
-              haptic: "light",
-            },
-            {
-              type: "settings",
-              onPress: () => navigation.navigate("Settings"),
-              variant: "minimal",
-              haptic: "light",
-            },
-          ],
-          apiActions: {
-            edit: async () => {
-              const userProfile = await matchesAPI.getUserProfile();
-              logger.info("Loaded user profile for editing:", { userProfile });
-            },
-          },
-        })}
-      />
+      {/* Simple Header */}
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={() => navigation.navigate("Settings")}
+          >
+            <Ionicons name="settings" size={24} color="#666" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -263,7 +242,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                   style={styles.menuIcon}
                 >
                   <Ionicons
-                    name={item.icon as keyof typeof Ionicons.glyphMap}
+                    name={item.icon as any}
                     size={24}
                     color={item.color}
                   />
@@ -350,6 +329,19 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1f2937",
+  },
+  headerButton: {
+    padding: 8,
   },
   headerBlur: {
     borderRadius: 20,

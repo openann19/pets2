@@ -433,7 +433,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
         >
           <EliteButton
             title="Start Matching! 🚀"
-            size="large"
+            size="lg"
             icon="rocket"
             onPress={handleGetStarted}
             gradient={[colors.success, `${colors.success}DD`]}

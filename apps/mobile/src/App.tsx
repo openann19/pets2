@@ -5,14 +5,25 @@ import { ThemeProvider } from "./theme/ThemeProvider";
 import HomeScreen from "./screens/HomeScreen";
 
 import { queryClient } from "./config/queryClient";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 export default function App(): React.ReactElement {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <StatusBar style="dark" />
-        <HomeScreen />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <StatusBar style="dark" />
+          <ErrorBoundary
+            fallback={
+              <ErrorBoundary>
+                <HomeScreen />
+              </ErrorBoundary>
+            }
+          >
+            <HomeScreen />
+          </ErrorBoundary>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

@@ -22,7 +22,7 @@ interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
   containerStyle?: ViewStyle;
   showLoadingIndicator?: boolean;
   showErrorState?: boolean;
-  fallbackIcon?: keyof typeof Ionicons.glyphMap;
+  fallbackIcon?: string;
   priority?: Priority;
   resizeMode?: ResizeMode;
   cache?: "immutable" | "web" | "cacheOnly";

@@ -135,7 +135,10 @@ function ResetPasswordScreen({
             <View style={styles.inputGroup}>
               <Text style={styles.label}>New Password</Text>
               <TextInput
-                style={[styles.input, errors.password && styles.inputError]}
+                style={[
+                  styles.input,
+                  errors.password ? styles.inputError : null,
+                ]}
                 value={formData.password}
                 onChangeText={(value) => {
                   updateField("password", value);
@@ -155,7 +158,7 @@ function ResetPasswordScreen({
               <TextInput
                 style={[
                   styles.input,
-                  errors.confirmPassword && styles.inputError,
+                  errors.confirmPassword ? styles.inputError : null,
                 ]}
                 value={formData.confirmPassword}
                 onChangeText={(value) => {

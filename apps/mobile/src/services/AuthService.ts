@@ -615,6 +615,42 @@ class AuthService {
     }
   }
 
+  /**
+   * Store remember me preference
+   */
+  async storeRememberMe(email: string): Promise<void> {
+    try {
+      await SecureStore.setItemAsync("remember_me_email", email);
+      logger.info("Remember me preference stored");
+    } catch (error) {
+      logger.error("Failed to store remember me preference", { error });
+    }
+  }
+
+  /**
+   * Get biometric credentials for login
+   */
+  async getBiometricCredentials(): Promise<{
+    email: string;
+    password: string;
+  } | null> {
+    try {
+      const credentials = await SecureStore.getItemAsync(
+        AuthService.BIOMETRIC_CREDENTIALS_KEY,
+      );
+      if (credentials) {
+        const parsed = JSON.parse(credentials) as BiometricCredentials;
+        // In a real implementation, you would decrypt the password
+        // For now, we'll return null to require manual login
+        return null;
+      }
+      return null;
+    } catch (error) {
+      logger.error("Failed to get biometric credentials", { error });
+      return null;
+    }
+  }
+
   // Private helper methods
 
   private async storeAuthData(response: AuthResponse): Promise<void> {

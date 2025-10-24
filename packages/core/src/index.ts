@@ -11,6 +11,7 @@ export * from './types/haptics';
 
 // Export constants
 export { HAPTICS, HAPTIC_SETTINGS, SETTINGS } from './constants';
+export * from './constants';
 
 // Export animation configuration
 export { animationConfig, useAnimationConfig } from './services/animationConfig';

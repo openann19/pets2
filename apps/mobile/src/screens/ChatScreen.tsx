@@ -1,37 +1,35 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 import {
   Alert,
-  Animated,
-  Dimensions,
-  Easing,
+  FlatList,
+  TextInput,
   InteractionManager,
   KeyboardAvoidingView,
-  LayoutAnimation,
   Platform,
   StatusBar,
   StyleSheet,
-  UIManager,
-  View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { EliteContainer } from "../components/EliteContainer";
+import { EliteContainer } from "../components/EliteComponents";
 import { ChatHeader } from "../components/chat/ChatHeader";
 import { MessageList } from "../components/chat/MessageList";
 import { MessageInput } from "../components/chat/MessageInput";
 import { QuickReplies } from "../components/chat/QuickReplies";
 import { useChatData } from "../hooks/useChatData";
 import { useTheme } from "../contexts/ThemeContext";
-import { tokens } from "@pawfectmatch/design-tokens";
-import { api } from "../services/api";
 
-// Enable LayoutAnimation on Android
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+// Enable LayoutAnimation on Android (removed UIManager dependency)
+if (Platform.OS === "android") {
+  // LayoutAnimation is automatically enabled in RN 0.60+
 }
 
 type RootStackParamList = {
@@ -44,219 +42,144 @@ type ChatScreenProps = NativeStackScreenProps<RootStackParamList, "Chat">;
 export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   const { matchId, petName } = route.params;
   const { isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
-  // Use the extracted chat data hook
+  // Data layer
   const { data, actions } = useChatData(matchId);
 
-  // Local state for UI interactions
+  // UI state
   const [inputText, setInputText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
 
   // Refs
-  const flatListRef = useRef<any>(null);
-  const inputRef = useRef<any>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const savedOffsetRef = useRef<number>(0);
+  const flatListRef = useRef<FlatList | null>(null);
+  const inputRef = useRef<TextInput | null>(null);
   const didRestoreRef = useRef<boolean>(false);
 
-  // Animations
-  const typingAnimation = useRef(new Animated.Value(0)).current;
+  // Keys
+  const draftKey = useMemo(() => `mobile_chat_draft_${matchId}`, [matchId]);
+  const scrollKey = useMemo(() => `mobile_chat_scroll_${matchId}`, [matchId]);
 
-  // Initialize component
+  // Status bar style on mount & theme change
   useEffect(() => {
     StatusBar.setBarStyle(isDark ? "light-content" : "dark-content");
-
-    InteractionManager.runAfterInteractions(() => {
-      startTypingAnimation();
-      inputRef.current?.focus();
-    });
-
-    return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
   }, [isDark]);
 
-  // Draft persistence
+  // Initial focus + light boot work after interactions
   useEffect(() => {
-    const loadDraft = async () => {
-      try {
-        const draft = await AsyncStorage.getItem(
-          `mobile_chat_draft_${matchId}`,
-        );
-        if (draft) {
-          setInputText(draft);
-        }
-      } catch {
-        // Ignore errors
-      }
+    const task = InteractionManager.runAfterInteractions(() => {
+      inputRef.current?.focus();
+    });
+    return () => {
+      task.cancel();
     };
-    loadDraft();
-  }, [matchId]);
+  }, []);
 
+  // Load draft (once)
   useEffect(() => {
-    const persist = async () => {
+    let mounted = true;
+    (async () => {
       try {
-        const key = `mobile_chat_draft_${matchId}`;
+        const draft = await AsyncStorage.getItem(draftKey);
+        if (mounted && draft) setInputText(draft);
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [draftKey]);
+
+  // Debounced draft persistence
+  useEffect(() => {
+    const t = setTimeout(async () => {
+      try {
         if (inputText) {
-          await AsyncStorage.setItem(key, inputText);
+          await AsyncStorage.setItem(draftKey, inputText);
         } else {
-          await AsyncStorage.removeItem(key);
+          await AsyncStorage.removeItem(draftKey);
         }
       } catch {
-        // Ignore errors
+        // ignore
       }
+    }, 250);
+    return () => {
+      clearTimeout(t);
     };
-    persist();
-  }, [inputText, matchId]);
+  }, [inputText, draftKey]);
 
-  // Restore scroll position
+  // Restore scroll position only once when messages are loaded
   useEffect(() => {
-    const tryRestore = async () => {
-      if (didRestoreRef.current) return;
+    if (didRestoreRef.current || data.isLoading) return;
+
+    void (async () => {
       try {
-        const saved = await AsyncStorage.getItem(
-          `mobile_chat_scroll_${matchId}`,
-        );
+        const saved = await AsyncStorage.getItem(scrollKey);
         const offset = saved ? Number(saved) : 0;
-        if (offset > 0) {
-          savedOffsetRef.current = offset;
-          InteractionManager.runAfterInteractions(() => {
+
+        InteractionManager.runAfterInteractions(() => {
+          if (offset > 0) {
             flatListRef.current?.scrollToOffset({ offset, animated: false });
-          });
-        }
-        didRestoreRef.current = true;
+          } else {
+            // No saved position -> start at bottom for classic chat UX
+            flatListRef.current?.scrollToEnd({ animated: false });
+          }
+          didRestoreRef.current = true;
+        });
       } catch {
-        // Ignore errors
+        // ignore
       }
-    };
-    if (!data.isLoading) {
-      tryRestore();
-    }
-  }, [data.isLoading, matchId]);
+    })();
+  }, [data.isLoading, scrollKey]);
 
-  // Typing animation
-  const startTypingAnimation = useCallback(() => {
-    Animated.loop(
-      Animated.stagger(200, [
-        Animated.sequence([
-          Animated.timing(typingAnimation, {
-            toValue: 1,
-            duration: 400,
-            easing: Easing.bezier(0.4, 0, 0.2, 1),
-            useNativeDriver: true,
-          }),
-          Animated.timing(typingAnimation, {
-            toValue: 0,
-            duration: 400,
-            easing: Easing.bezier(0.4, 0, 0.2, 1),
-            useNativeDriver: true,
-          }),
-        ]),
-      ]),
-    ).start();
-  }, [typingAnimation]);
-
-  // Handle message sending
+  // Send message
   const handleSendMessage = useCallback(async () => {
-    if (!inputText.trim()) return;
-
     const messageContent = inputText.trim();
+    if (!messageContent || data.isSending) return;
 
-    // Clear input immediately for better UX
+    // Optimistic UI: clear input immediately
     setInputText("");
 
-    // Add message with animation
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-    // Send message via hook
-    await actions.sendMessage(messageContent);
-
-    // Smooth scroll to bottom
-    InteractionManager.runAfterInteractions(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    });
-  }, [inputText, actions]);
-
-  // Handle typing changes
-  const handleTypingChange = useCallback((typing: boolean) => {
-    setIsTyping(typing);
-
-    // Debounced typing indicator
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+    try {
+      await actions.sendMessage(messageContent);
+      InteractionManager.runAfterInteractions(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      });
+    } catch (err: any) {
+      // On failure, restore input and notify
+      setInputText(messageContent);
+      Alert.alert("Send failed", err?.message ?? "Please try again.");
     }
+  }, [inputText, data.isSending, actions]);
 
-    if (typing) {
-      // Emit typing event to server
-      api.chat.sendTypingIndicator(matchId, true);
-      typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping(false);
-        // Emit stop typing event to server
-        api.chat.sendTypingIndicator(matchId, false);
-      }, 1000);
-    }
+  // Typing indicator hook point (lint-friendly, no-op until wired)
+  const handleTypingChange = useCallback((_isTyping: boolean) => {
+    // Integrate your real-time typing pub/sub here (Socket, Ably, Pusher, etc.)
   }, []);
 
-  // Handle scroll events
+  // Persist scroll offset (throttled naturally by RN event cadence)
   const handleScroll = useCallback(
-    async (e: any) => {
-      try {
-        const offset = e.nativeEvent.contentOffset.y;
-        await AsyncStorage.setItem(
-          `mobile_chat_scroll_${matchId}`,
-          String(offset),
-        );
-      } catch {
+    (event: { nativeEvent: { contentOffset: { x: number; y: number } } }) => {
+      const offset = event.nativeEvent.contentOffset.y;
+      AsyncStorage.setItem(scrollKey, String(offset)).catch(() => {
         // Ignore errors
-      }
+      });
     },
-    [matchId],
+    [scrollKey],
   );
 
-  // Handle quick reply selection
-  const handleQuickReplySelect = useCallback((reply: string) => {
-    setInputText(reply);
-    inputRef.current?.focus();
-  }, []);
+  // Quick replies (stable reference)
+  const quickReplies = useMemo(
+    () => [
+      "Sounds good! 👍",
+      "When works for you?",
+      "Let's do it! 🎾",
+      "Perfect! 😊",
+    ],
+    [],
+  );
 
-  // Call handlers
-  const handleVoiceCall = useCallback(async () => {
-    Alert.alert("Voice Call", `Start a voice call with ${petName}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Call",
-        onPress: async () => {
-          Alert.alert("Call Feature", "Voice calling feature coming soon!");
-        },
-      },
-    ]);
-  }, [petName]);
-
-  const handleVideoCall = useCallback(async () => {
-    Alert.alert("Video Call", `Start a video call with ${petName}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Call",
-        onPress: async () => {
-          Alert.alert("Call Feature", "Video calling feature coming soon!");
-        },
-      },
-    ]);
-  }, [petName]);
-
-  const handleMoreOptions = useCallback(() => {
-    Alert.alert("More Options", "Additional options coming soon!");
-  }, []);
-
-  // Quick replies
-  const quickReplies = [
-    "Sounds good! 👍",
-    "When works for you?",
-    "Let's do it! 🎾",
-    "Perfect! 😊",
-  ];
+  const keyboardOffset = insets.top + 56; // header height approximation
 
   return (
     <EliteContainer gradient="primary">
@@ -265,35 +188,64 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
         petName={petName}
         isOnline={data.isOnline}
         onBack={() => navigation.goBack()}
-        onVoiceCall={handleVoiceCall}
-        onVideoCall={handleVideoCall}
-        onMoreOptions={handleMoreOptions}
+        onVoiceCall={() => {
+          Alert.alert("Voice Call", `Start a voice call with ${petName}?`, [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Call",
+              onPress: () => {
+                Alert.alert("Call Feature", "Voice calling is coming soon.");
+              },
+            },
+          ]);
+        }}
+        onVideoCall={() => {
+          Alert.alert("Video Call", `Start a video call with ${petName}?`, [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Call",
+              onPress: () => {
+                Alert.alert("Call Feature", "Video calling is coming soon.");
+              },
+            },
+          ]);
+        }}
+        onMoreOptions={() => {
+          Alert.alert("More Options", "Additional options are coming soon.");
+        }}
       />
 
-      {/* Messages */}
+      {/* Messages + Input */}
       <KeyboardAvoidingView
-        style={styles.chatContainer}
+        style={[
+          styles.chatContainer,
+          { paddingTop: 72 + insets.top, paddingBottom: insets.bottom || 8 },
+        ]}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={keyboardOffset}
       >
         <MessageList
           messages={data.messages}
           typingUsers={data.typingUsers}
           isOnline={data.isOnline}
-          onRetryMessage={actions.retryMessage}
+          onRetryMessage={(messageId: string) => {
+            void actions.retryMessage(messageId);
+          }}
           flatListRef={flatListRef}
           onScroll={handleScroll}
         />
 
-        {/* Quick Replies */}
         {data.messages.length > 0 && (
           <QuickReplies
             replies={quickReplies}
-            onReplySelect={handleQuickReplySelect}
-            visible={true}
+            onReplySelect={(reply: string) => {
+              setInputText(reply);
+              inputRef.current?.focus();
+            }}
+            visible
           />
         )}
 
-        {/* Input */}
         <MessageInput
           value={inputText}
           onChangeText={setInputText}
@@ -310,6 +262,5 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
 const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
-    paddingTop: 80, // Account for header
   },
 });

@@ -14,17 +14,8 @@ import {
 
 // Import new architecture components
 import {
-  Theme,
   EliteButton,
-  EliteButtonPresets,
-  FXContainer,
-  FXContainerPresets,
-  Heading1,
   Heading2,
-  Heading3,
-  Body,
-  BodySmall,
-  Label,
   useStaggeredAnimation,
   useEntranceAnimation,
 } from "../components/NewComponents";
@@ -35,8 +26,6 @@ import {
   EliteScrollContainer,
   EliteHeader,
   EliteCard,
-  FadeInUp,
-  StaggeredContainer,
 } from "../components/EliteComponents";
 
 // Import premium components
@@ -46,6 +35,8 @@ import {
   HolographicCard,
   GlowContainer,
   ParticleEffect,
+  FadeInUp,
+  StaggeredContainer,
 } from "../components/PremiumComponents";
 import { matchesAPI } from "../services/api";
 
@@ -182,16 +173,18 @@ export default function HomeScreen() {
           <View style={{ flexDirection: "row", gap: 8 }}>
             <EliteButton
               title=""
-              variant="glass"
               size="sm"
-              icon="person"
+              glowEffect={false}
+              rippleEffect={true}
+              pressEffect={true}
               onPress={handleProfilePress}
             />
             <EliteButton
               title=""
-              variant="glass"
               size="sm"
-              icon="settings"
+              glowEffect={false}
+              rippleEffect={true}
+              pressEffect={true}
               onPress={handleSettingsPress}
             />
           </View>
@@ -322,10 +315,6 @@ export default function HomeScreen() {
               <FadeInUp delay={300}>
                 <EliteCard
                   variant="glass"
-                  tilt={true}
-                  magnetic={true}
-                  shimmer={true}
-                  entrance="scaleIn"
                   onPress={() => {
                     handleQuickAction("profile");
                   }}
@@ -397,7 +386,7 @@ export default function HomeScreen() {
                         You and Buddy liked each other
                       </PremiumBody>
                     </View>
-                    <PremiumBody size="xs" weight="regular">
+                    <PremiumBody size="sm" weight="regular">
                       2m ago
                     </PremiumBody>
                   </View>
@@ -426,7 +415,7 @@ export default function HomeScreen() {
                         From Luna: &quot;Hey there! 🐾&quot;
                       </PremiumBody>
                     </View>
-                    <PremiumBody size="xs" weight="regular">
+                    <PremiumBody size="sm" weight="regular">
                       5m ago
                     </PremiumBody>
                   </View>
@@ -481,13 +470,12 @@ export default function HomeScreen() {
                   <View style={styles.premiumActions}>
                     <EliteButton
                       title="Upgrade Now"
-                      variant="holographic"
                       size="lg"
-                      icon="diamond"
-                      magnetic={true}
-                      ripple={true}
-                      glow={true}
-                      shimmer={true}
+                      magneticEffect={true}
+                      rippleEffect={true}
+                      glowEffect={true}
+                      shimmerEffect={true}
+                      gradientEffect={true}
                       onPress={() => {
                         handleQuickAction("premium");
                       }}
