@@ -1,25 +1,21 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState, forwardRef } from "react";
 import type { ViewStyle, TouchableOpacityProps } from "react-native";
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  Animated,
-  PanGestureHandler,
-  State,
-} from "react-native";
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { View, TouchableOpacity, Text, Animated,  } from 'react-native';
 
 import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-import {
-  DynamicColors,
-  EnhancedShadows,
-  SemanticColors,
-  EnhancedTypography,
-} from "../styles/EnhancedDesignTokens";
+// FIXME: EnhancedDesignTokens exports missing
+// FIXME: EnhancedDesignTokens exports missing
+// import {
+// //   DynamicColors,
+// //   EnhancedShadows,
+// //   SemanticColors,
+// //   EnhancedTypography,
+// // } from "../styles/EnhancedDesignTokens";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 

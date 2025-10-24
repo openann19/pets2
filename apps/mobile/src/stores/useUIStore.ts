@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { TokensType } from "@pawfectmatch/design-tokens";
+import { Tokens } from "@pawfectmatch/design-tokens";
 
 interface UIState {
-  theme: keyof TokensType;
-  setTheme: (theme: keyof TokensType) => void;
+  theme: keyof Tokens;
+  setTheme: (theme: keyof Tokens) => void;
   isLoading: boolean;
   setLoading: (loading: boolean) => void;
   error: string | null;

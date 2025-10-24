@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Dimensions, Platform } from "react-native";
 
-import { MotionSystem, Accessibility } from "../styles/EnhancedDesignTokens";
+// import { MotionSystem, Accessibility } from "../styles/EnhancedDesignTokens"; // FIXME: EnhancedDesignTokens exports missing
 
 // === PROJECT HYPERION: MOTION & ANIMATION HOOKS ===
 

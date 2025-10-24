@@ -28,13 +28,14 @@ import {
   useStaggeredFadeIn,
   useGlowEffect,
 } from "../hooks/useMotionSystem";
-import {
-  DynamicColors,
-  EnhancedShadows,
-  SemanticColors,
-  EnhancedTypography,
-  MotionSystem,
-} from "../styles/EnhancedDesignTokens";
+// FIXME: EnhancedDesignTokens exports missing
+// import {
+//   DynamicColors,
+//   EnhancedShadows,
+//   SemanticColors,
+//   EnhancedTypography,
+//   MotionSystem,
+// } from "../styles/EnhancedDesignTokens"; // FIXME: EnhancedDesignTokens exports missing
 
 // Hooks
 
