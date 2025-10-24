@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   },
   toggleDescription: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   toggleButtons: {
     flexDirection: "row",
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   },
   legacyBodySmall: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.sm,
   },
   legacyGradient: {
@@ -530,6 +530,6 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xs,
   },
   benefitDescription: {
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
 });

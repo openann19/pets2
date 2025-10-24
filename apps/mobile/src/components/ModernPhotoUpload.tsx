@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
     textAlign: "center",
     lineHeight:
       Theme.typography.fontSize.base * Theme.typography.lineHeight.relaxed,

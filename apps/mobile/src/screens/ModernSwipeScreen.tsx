@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   emptyContainer: {
     flex: 1,
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   errorMessage: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   emptyCard: {
     padding: Theme.spacing["4xl"],
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   headerActions: {
     flexDirection: "row",
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   matchText: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   matchButtons: {
     flexDirection: "row",

@@ -342,7 +342,7 @@ export default function ModernCreatePetScreen({
                   value={formData.name}
                   onChangeText={handleNameChange}
                   placeholder="Enter your pet's name"
-                  placeholderTextColor={Theme.colors.text.primary.tertiary}
+                  placeholderTextColor={Theme.colors.text.tertiary}
                 />
               </View>
 
@@ -372,7 +372,7 @@ export default function ModernCreatePetScreen({
                   value={formData.breed}
                   onChangeText={handleBreedChange}
                   placeholder="Enter breed"
-                  placeholderTextColor={Theme.colors.text.primary.tertiary}
+                  placeholderTextColor={Theme.colors.text.tertiary}
                 />
               </View>
 
@@ -383,7 +383,7 @@ export default function ModernCreatePetScreen({
                   value={formData.age}
                   onChangeText={handleAgeChange}
                   placeholder="e.g., 2 years, 6 months"
-                  placeholderTextColor={Theme.colors.text.primary.tertiary}
+                  placeholderTextColor={Theme.colors.text.tertiary}
                 />
               </View>
 
@@ -436,7 +436,7 @@ export default function ModernCreatePetScreen({
                   value={formData.description}
                   onChangeText={handleDescriptionChange}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
-                  placeholderTextColor={Theme.colors.text.primary.tertiary}
+                  placeholderTextColor={Theme.colors.text.tertiary}
                   multiline
                   numberOfLines={4}
                 />
@@ -512,7 +512,7 @@ export default function ModernCreatePetScreen({
                   value={formData.contactInfo.email}
                   onChangeText={handleEmailChange}
                   placeholder="your@email.com"
-                  placeholderTextColor={Theme.colors.text.primary.tertiary}
+                  placeholderTextColor={Theme.colors.text.tertiary}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -525,7 +525,7 @@ export default function ModernCreatePetScreen({
                   value={formData.contactInfo.phone}
                   onChangeText={handlePhoneChange}
                   placeholder="(555) 123-4567"
-                  placeholderTextColor={Theme.colors.text.primary.tertiary}
+                  placeholderTextColor={Theme.colors.text.tertiary}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   formGroup: {
     marginBottom: Theme.spacing.lg,

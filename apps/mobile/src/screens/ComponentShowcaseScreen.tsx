@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   section: {
     padding: Theme.spacing.xl,
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   buttonGrid: {
     gap: Theme.spacing.lg,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: {
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {

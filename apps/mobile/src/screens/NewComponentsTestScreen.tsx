@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   section: {
     padding: Theme.spacing.xl,
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   buttonGrid: {
     flexDirection: "row",

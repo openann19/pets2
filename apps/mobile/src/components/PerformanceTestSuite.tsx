@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   metricsContainer: {
     flexDirection: "row",
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: {
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     textAlign: "center",
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   testVisualization: {
     height: 100,
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.sm,
   },
   resultLabel: {
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
   resultValue: {
     fontWeight: Theme.typography.fontWeight.bold,
@@ -505,6 +505,6 @@ const styles = StyleSheet.create({
   },
   recommendation: {
     marginBottom: Theme.spacing.xs,
-    color: Theme.colors.text.primary.secondary,
+    color: Theme.colors.text.secondary,
   },
 });
