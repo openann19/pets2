@@ -2,9 +2,7 @@ import React, { useEffect, useRef } from "react";
 import type { ViewStyle, FlatListProps } from "react-native";
 import { View, Animated, ScrollView, FlatList } from "react-native";
 
-// import { MotionSystem } from "../styles/EnhancedDesignTokens"; // FIXME: EnhancedDesignTokens exports missing
-
-// === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
+// import { MotionSystem } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
 
 // Staggered FadeInUp List Component
 interface StaggeredFadeInUpListProps {

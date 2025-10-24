@@ -15,15 +15,12 @@ import {
   useRippleEffect,
   useGlowEffect,
 } from "../hooks/useMotionSystem";
-// FIXME: EnhancedDesignTokens exports missing
 // import {
 //   DynamicColors,
 //   EnhancedShadows,
 //   SemanticColors,
 //   MotionSystem,
-// } from "../styles/EnhancedDesignTokens"; // FIXME: EnhancedDesignTokens exports missing
-
-// === PROJECT HYPERION: INTERACTIVE BUTTON COMPONENT ===
+// } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: INTERACTIVE BUTTON COMPONENT ===
 
 export type InteractiveButtonVariant =
   | "primary"

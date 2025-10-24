@@ -28,16 +28,13 @@ import {
   useStaggeredFadeIn,
   useGlowEffect,
 } from "../hooks/useMotionSystem";
-// FIXME: EnhancedDesignTokens exports missing
 // import {
 //   DynamicColors,
 //   EnhancedShadows,
 //   SemanticColors,
 //   EnhancedTypography,
 //   MotionSystem,
-// } from "../styles/EnhancedDesignTokens"; // FIXME: EnhancedDesignTokens exports missing
-
-// Hooks
+// } from '../styles/EnhancedDesignTokens'; // Hooks
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 

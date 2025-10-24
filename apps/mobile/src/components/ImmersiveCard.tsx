@@ -8,14 +8,12 @@ import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-// FIXME: EnhancedDesignTokens exports missing
-// FIXME: EnhancedDesignTokens exports missing
-// import {
-// //   DynamicColors,
-// //   EnhancedShadows,
-// //   SemanticColors,
-// //   EnhancedTypography,
-// // } from "../styles/EnhancedDesignTokens";
+import {
+  DynamicColors,
+  EnhancedShadows,
+  SemanticColors,
+  EnhancedTypography,
+} from '../styles/EnhancedDesignTokens';
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
