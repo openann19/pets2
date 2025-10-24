@@ -52,15 +52,15 @@ export function BioResults({
   };
 
   const getSentimentColor = (score: number) => {
-    if (score >= 0.7) return Theme.colors.success;
-    if (score >= 0.4) return Theme.colors.warning;
-    return Theme.colors.error;
+    if (score >= 0.7) return Theme.colors.status.success;
+    if (score >= 0.4) return Theme.colors.status.warning;
+    return Theme.colors.status.error;
   };
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return Theme.colors.success;
-    if (score >= 60) return Theme.colors.warning;
-    return Theme.colors.error;
+    if (score >= 80) return Theme.colors.status.success;
+    if (score >= 60) return Theme.colors.status.warning;
+    return Theme.colors.status.error;
   };
 
   return (
@@ -86,12 +86,12 @@ export function BioResults({
             <Ionicons
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
-              color={copied ? Theme.colors.success : Theme.colors.text}
+              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
             />
             <Text
               style={[
                 styles.actionText,
-                copied && { color: Theme.colors.success },
+                copied && { color: Theme.colors.status.success },
               ]}
             >
               {copied ? "Copied!" : "Copy"}
@@ -107,7 +107,7 @@ export function BioResults({
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={Theme.colors.text}
+                color={Theme.colors.text.primary}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -122,7 +122,7 @@ export function BioResults({
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={Theme.colors.text}
+                color={Theme.colors.text.primary}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes["2xl"],
-    fontWeight: Theme.typography.weights.bold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize["2xl"],
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
-    backgroundColor: Theme.colors.surface,
+    backgroundColor: Theme.colors.background.primary,
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
@@ -221,9 +221,9 @@ const styles = StyleSheet.create({
     maxHeight: 200,
   },
   bioText: {
-    fontSize: Theme.typography.sizes.base,
-    color: Theme.colors.text,
-    lineHeight: Theme.typography.lineHeights.relaxed,
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.text.primary,
+    lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
     flexDirection: "row",
@@ -240,20 +240,20 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.md,
   },
   actionText: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.text.primary,
     marginLeft: Theme.spacing.xs,
-    fontWeight: Theme.typography.weights.medium,
+    fontWeight: Theme.typography.fontWeight.medium,
   },
   analysisContainer: {
-    backgroundColor: Theme.colors.surface,
+    backgroundColor: Theme.colors.background.primary,
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
   },
   analysisTitle: {
-    fontSize: Theme.typography.sizes.xl,
-    fontWeight: Theme.typography.weights.semibold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.xl,
+    fontWeight: Theme.typography.fontWeight.semibold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -269,18 +269,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
-    fontSize: Theme.typography.sizes["2xl"],
-    fontWeight: Theme.typography.weights.bold,
+    fontSize: Theme.typography.fontSize["2xl"],
+    fontWeight: Theme.typography.fontWeight.bold,
     marginBottom: Theme.spacing.xs,
   },
   metricSubtext: {
-    fontSize: Theme.typography.sizes.xs,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.xs,
+    color: Theme.colors.text.secondary,
   },
   progressBar: {
     width: "100%",
@@ -299,9 +299,9 @@ const styles = StyleSheet.create({
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {
-    fontSize: Theme.typography.sizes.base,
-    fontWeight: Theme.typography.weights.semibold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.base,
+    fontWeight: Theme.typography.fontWeight.semibold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
@@ -316,8 +316,8 @@ const styles = StyleSheet.create({
     paddingVertical: Theme.spacing.xs,
   },
   keywordText: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Theme.colors.surface,
-    fontWeight: Theme.typography.weights.medium,
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.background.primary,
+    fontWeight: Theme.typography.fontWeight.medium,
   },
 });

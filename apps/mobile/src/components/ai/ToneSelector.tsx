@@ -105,14 +105,14 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes["2xl"],
-    fontWeight: Theme.typography.weights.bold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize["2xl"],
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
-    fontSize: Theme.typography.sizes.base,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: Theme.colors.surface,
+    backgroundColor: Theme.colors.background.primary,
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
@@ -149,20 +149,20 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.sm,
   },
   icon: {
-    fontSize: Theme.typography.sizes.xl,
+    fontSize: Theme.typography.fontSize.xl,
   },
   toneLabel: {
-    fontSize: Theme.typography.sizes.base,
-    fontWeight: Theme.typography.weights.semibold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.base,
+    fontWeight: Theme.typography.fontWeight.semibold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.xs,
     textAlign: "center",
   },
   toneDescription: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.text.secondary,
     textAlign: "center",
-    lineHeight: Theme.typography.lineHeights.normal,
+    lineHeight: Theme.typography.lineHeight.normal,
   },
   selectedIndicator: {
     position: "absolute",
@@ -175,8 +175,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkmark: {
-    color: Theme.colors.surface,
-    fontSize: Theme.typography.sizes.sm,
-    fontWeight: Theme.typography.weights.bold,
+    color: Theme.colors.background.primary,
+    fontSize: Theme.typography.fontSize.sm,
+    fontWeight: Theme.typography.fontWeight.bold,
   },
 });

@@ -48,7 +48,7 @@ export function PetInfoForm({
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
-          placeholderTextColor={Theme.colors.textMuted}
+          placeholderTextColor={Theme.colors.text.secondary}
           maxLength={50}
         />
         {validationErrors.petName && (
@@ -64,7 +64,7 @@ export function PetInfoForm({
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
-          placeholderTextColor={Theme.colors.textMuted}
+          placeholderTextColor={Theme.colors.text.secondary}
           maxLength={100}
         />
         {validationErrors.petBreed && (
@@ -80,7 +80,7 @@ export function PetInfoForm({
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
-          placeholderTextColor={Theme.colors.textMuted}
+          placeholderTextColor={Theme.colors.text.secondary}
           maxLength={50}
         />
         {validationErrors.petAge && (
@@ -99,7 +99,7 @@ export function PetInfoForm({
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
-          placeholderTextColor={Theme.colors.textMuted}
+          placeholderTextColor={Theme.colors.text.secondary}
           multiline
           numberOfLines={4}
           maxLength={500}
@@ -123,23 +123,23 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes["2xl"],
-    fontWeight: Theme.typography.weights.bold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize["2xl"],
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
-    fontSize: Theme.typography.sizes.base,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.text.secondary,
     marginBottom: Theme.spacing.xl,
   },
   inputGroup: {
     marginBottom: Theme.spacing.lg,
   },
   label: {
-    fontSize: Theme.typography.sizes.sm,
-    fontWeight: Theme.typography.weights.medium,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.sm,
+    fontWeight: Theme.typography.fontWeight.medium,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.xs,
   },
   input: {
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.md,
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
-    fontSize: Theme.typography.sizes.base,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.text.primary,
     backgroundColor: Theme.colors.background,
   },
   textarea: {
@@ -158,22 +158,22 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.md,
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
-    fontSize: Theme.typography.sizes.base,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.text.primary,
     backgroundColor: Theme.colors.background,
     minHeight: 100,
   },
   inputError: {
-    borderColor: Theme.colors.error,
+    borderColor: Theme.colors.status.error,
   },
   errorText: {
-    fontSize: Theme.typography.sizes.xs,
-    color: Theme.colors.error,
+    fontSize: Theme.typography.fontSize.xs,
+    color: Theme.colors.status.error,
     marginTop: Theme.spacing.xs,
   },
   characterCount: {
-    fontSize: Theme.typography.sizes.xs,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.xs,
+    color: Theme.colors.text.secondary,
     textAlign: "right",
     marginTop: Theme.spacing.xs,
   },

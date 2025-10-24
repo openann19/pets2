@@ -72,7 +72,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           onPress={handleBack}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={Theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={Theme.colors.text.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />
@@ -117,7 +117,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                     <Ionicons
                       name="camera"
                       size={32}
-                      color={Theme.colors.textMuted}
+                      color={Theme.colors.text.secondary}
                     />
                     <Text style={styles.photoText}>Add Photo</Text>
                   </View>
@@ -198,16 +198,16 @@ const styles = StyleSheet.create({
     paddingVertical: Theme.spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Theme.colors.border,
-    backgroundColor: Theme.colors.surface,
+    backgroundColor: Theme.colors.background.primary,
   },
   backButton: {
     padding: Theme.spacing.sm,
     marginRight: Theme.spacing.md,
   },
   headerTitle: {
-    fontSize: Theme.typography.sizes.xl,
-    fontWeight: Theme.typography.weights.bold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.xl,
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.text.primary,
   },
   headerSpacer: {
     flex: 1,
@@ -222,9 +222,9 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes.lg,
-    fontWeight: Theme.typography.weights.semibold,
-    color: Theme.colors.text,
+    fontSize: Theme.typography.fontSize.lg,
+    fontWeight: Theme.typography.fontWeight.semibold,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.md,
   },
   photoPicker: {
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.surface,
+    backgroundColor: Theme.colors.background.primary,
   },
   photoPlaceholder: {
     alignItems: "center",
@@ -244,8 +244,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   photoText: {
-    fontSize: Theme.typography.sizes.base,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.text.secondary,
     marginTop: Theme.spacing.sm,
   },
   generateButton: {
@@ -261,18 +261,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   disabledButton: {
-    backgroundColor: Theme.colors.textMuted,
+    backgroundColor: Theme.colors.text.secondary,
     shadowOpacity: 0,
     elevation: 0,
   },
   generateButtonText: {
-    fontSize: Theme.typography.sizes.lg,
-    fontWeight: Theme.typography.weights.bold,
-    color: Theme.colors.surface,
+    fontSize: Theme.typography.fontSize.lg,
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.background.primary,
   },
   submitError: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Theme.colors.error,
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.status.error,
     textAlign: "center",
     marginHorizontal: Theme.spacing.lg,
     marginBottom: Theme.spacing.lg,
@@ -285,8 +285,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   historyText: {
-    fontSize: Theme.typography.sizes.sm,
-    color: Theme.colors.textMuted,
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.text.secondary,
   },
   newBioButton: {
     flexDirection: "row",
@@ -297,11 +297,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Theme.colors.primary,
     borderRadius: Theme.borderRadius.lg,
-    backgroundColor: Theme.colors.surface,
+    backgroundColor: Theme.colors.background.primary,
   },
   newBioText: {
-    fontSize: Theme.typography.sizes.base,
-    fontWeight: Theme.typography.weights.medium,
+    fontSize: Theme.typography.fontSize.base,
+    fontWeight: Theme.typography.fontWeight.medium,
     color: Theme.colors.primary,
     marginLeft: Theme.spacing.sm,
   },

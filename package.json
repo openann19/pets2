@@ -47,7 +47,9 @@
     "deploy:check": "pnpm run deploy:validate",
     "god-phase:complete": "echo '🎉 God-Phase Production Hardening Complete! All quality gates passed.'",
     "ea:mobile": "tsx scripts/ea.ts",
-    "ea:mobile:write": "tsx scripts/ea.ts --write"
+    "ea:mobile:write": "tsx scripts/ea.ts --write",
+    "fix:theme": "tsx scripts/fix-theme-errors.ts",
+    "fix:theme:write": "tsx scripts/fix-theme-errors.ts --write"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
