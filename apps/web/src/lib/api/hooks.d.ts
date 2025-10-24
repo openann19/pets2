@@ -1,0 +1,23 @@
+import { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
+import { ApiClientResponse } from './client';
+export declare function useApiQuery<TData = unknown, TError = Error>(queryKey: string[], endpoint: string, options?: Omit<UseQueryOptions<ApiClientResponse<TData>, TError>, 'queryKey' | 'queryFn'>): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<TData>, TError>;
+export declare function useApiMutation<TData = unknown, TVariables = void, TError = Error>(endpoint: string, options?: Omit<UseMutationOptions<ApiClientResponse<TData>, TError, TVariables>, 'mutationFn'>): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<TData>, TError, TVariables, unknown>;
+export declare function useLogin(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useRegister(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useLogout(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useUser(userId?: string): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<unknown>, Error>;
+export declare function useUpdateUser(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function usePets(filters?: Record<string, any>): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<unknown>, Error>;
+export declare function usePet(petId: string): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<unknown>, Error>;
+export declare function useCreatePet(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useUpdatePet(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useMatches(): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<unknown>, Error>;
+export declare function useMatch(matchId: string): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<unknown>, Error>;
+export declare function useCreateMatch(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useChat(matchId: string): import("@tanstack/react-query").UseQueryResult<ApiClientResponse<unknown>, Error>;
+export declare function useSendMessage(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useGenerateBio(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useAnalyzePhotos(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useCompatibilityAnalysis(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+export declare function useApplicationAssistance(): import("@tanstack/react-query").UseMutationResult<ApiClientResponse<unknown>, Error, void, unknown>;
+//# sourceMappingURL=hooks.d.ts.map

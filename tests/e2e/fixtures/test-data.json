@@ -1,0 +1,682 @@
+{
+  "users": [
+    {
+      "id": "user-1",
+      "email": "testuser1@pawfectmatch.com",
+      "password": "TestPassword123!",
+      "firstName": "Test",
+      "lastName": "User",
+      "dateOfBirth": "1990-01-01",
+      "isEmailVerified": true,
+      "profile": {
+        "bio": "Love animals and outdoor activities",
+        "location": {
+          "city": "San Francisco",
+          "state": "CA",
+          "coordinates": {
+            "latitude": 37.7749,
+            "longitude": -122.4194
+          }
+        },
+        "preferences": {
+          "species": ["dog", "cat"],
+          "ageRange": { "min": 1, "max": 10 },
+          "gender": ["male", "female"],
+          "size": ["small", "medium", "large"]
+        }
+      }
+    },
+    {
+      "id": "user-2",
+      "email": "testuser2@pawfectmatch.com",
+      "password": "TestPassword123!",
+      "firstName": "Match",
+      "lastName": "User",
+      "dateOfBirth": "1985-05-15",
+      "isEmailVerified": true,
+      "profile": {
+        "bio": "Dog lover and fitness enthusiast",
+        "location": {
+          "city": "San Francisco",
+          "state": "CA",
+          "coordinates": {
+            "latitude": 37.7849,
+            "longitude": -122.4094
+          }
+        },
+        "preferences": {
+          "species": ["dog"],
+          "ageRange": { "min": 2, "max": 8 },
+          "gender": ["male"],
+          "size": ["medium", "large"]
+        }
+      }
+    },
+    {
+      "id": "user-premium",
+      "email": "premiumuser@pawfectmatch.com",
+      "password": "PremiumPassword123!",
+      "firstName": "Premium",
+      "lastName": "User",
+      "dateOfBirth": "1988-03-20",
+      "isEmailVerified": true,
+      "isPremium": true,
+      "profile": {
+        "bio": "Premium member with advanced features",
+        "location": {
+          "city": "San Francisco",
+          "state": "CA",
+          "coordinates": {
+            "latitude": 37.7649,
+            "longitude": -122.4294
+          }
+        },
+        "preferences": {
+          "species": ["dog", "cat", "bird"],
+          "ageRange": { "min": 1, "max": 15 },
+          "gender": ["male", "female"],
+          "size": ["small", "medium", "large"]
+        }
+      }
+    },
+    {
+      "id": "user-chat",
+      "email": "chatuser@pawfectmatch.com",
+      "password": "ChatPassword123!",
+      "firstName": "Chat",
+      "lastName": "User",
+      "dateOfBirth": "1992-07-10",
+      "isEmailVerified": true,
+      "profile": {
+        "bio": "Active in pet community",
+        "location": {
+          "city": "San Francisco",
+          "state": "CA",
+          "coordinates": {
+            "latitude": 37.7549,
+            "longitude": -122.4394
+          }
+        },
+        "preferences": {
+          "species": ["cat"],
+          "ageRange": { "min": 1, "max": 5 },
+          "gender": ["female"],
+          "size": ["small", "medium"]
+        }
+      }
+    },
+    {
+      "id": "user-video",
+      "email": "videouser@pawfectmatch.com",
+      "password": "VideoPassword123!",
+      "firstName": "Video",
+      "lastName": "User",
+      "dateOfBirth": "1995-11-25",
+      "isEmailVerified": true,
+      "isPremium": true,
+      "profile": {
+        "bio": "Pet photographer and video enthusiast",
+        "location": {
+          "city": "San Francisco",
+          "state": "CA",
+          "coordinates": {
+            "latitude": 37.7449,
+            "longitude": -122.4494
+          }
+        },
+        "preferences": {
+          "species": ["dog", "cat"],
+          "ageRange": { "min": 1, "max": 12 },
+          "gender": ["male", "female"],
+          "size": ["small", "medium", "large"]
+        }
+      }
+    }
+  ],
+  "pets": [
+    {
+      "id": "pet-1",
+      "name": "Buddy",
+      "species": "dog",
+      "breed": "Golden Retriever",
+      "age": 3,
+      "gender": "male",
+      "size": "large",
+      "description": "Friendly and energetic dog who loves playing fetch",
+      "temperament": ["friendly", "energetic", "playful"],
+      "vaccinated": true,
+      "neutered": true,
+      "ownerId": "user-1",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "coordinates": {
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        }
+      },
+      "photos": [
+        { "url": "https://example.com/buddy1.jpg", "isPrimary": true },
+        { "url": "https://example.com/buddy2.jpg", "isPrimary": false }
+      ],
+      "preferences": {
+        "species": ["dog", "cat"],
+        "ageRange": { "min": 1, "max": 8 },
+        "gender": ["male", "female"],
+        "size": ["medium", "large"]
+      }
+    },
+    {
+      "id": "pet-2",
+      "name": "Max",
+      "species": "dog",
+      "breed": "Labrador",
+      "age": 2,
+      "gender": "male",
+      "size": "medium",
+      "description": "Playful and loyal companion",
+      "temperament": ["playful", "loyal", "intelligent"],
+      "vaccinated": true,
+      "neutered": false,
+      "ownerId": "user-2",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "coordinates": {
+          "latitude": 37.7849,
+          "longitude": -122.4094
+        }
+      },
+      "photos": [
+        { "url": "https://example.com/max1.jpg", "isPrimary": true },
+        { "url": "https://example.com/max2.jpg", "isPrimary": false }
+      ],
+      "preferences": {
+        "species": ["dog"],
+        "ageRange": { "min": 2, "max": 6 },
+        "gender": ["male"],
+        "size": ["medium", "large"]
+      }
+    },
+    {
+      "id": "pet-3",
+      "name": "Luna",
+      "species": "cat",
+      "breed": "Persian",
+      "age": 1,
+      "gender": "female",
+      "size": "small",
+      "description": "Calm and cuddly cat who loves attention",
+      "temperament": ["calm", "affectionate", "gentle"],
+      "vaccinated": true,
+      "neutered": true,
+      "ownerId": "user-1",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "coordinates": {
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        }
+      },
+      "photos": [
+        { "url": "https://example.com/luna1.jpg", "isPrimary": true },
+        { "url": "https://example.com/luna2.jpg", "isPrimary": false }
+      ],
+      "preferences": {
+        "species": ["cat"],
+        "ageRange": { "min": 1, "max": 4 },
+        "gender": ["male", "female"],
+        "size": ["small", "medium"]
+      }
+    },
+    {
+      "id": "pet-4",
+      "name": "Rocky",
+      "species": "dog",
+      "breed": "German Shepherd",
+      "age": 4,
+      "gender": "male",
+      "size": "large",
+      "description": "Protective and intelligent working dog",
+      "temperament": ["protective", "intelligent", "loyal"],
+      "vaccinated": true,
+      "neutered": true,
+      "ownerId": "user-premium",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "coordinates": {
+          "latitude": 37.7649,
+          "longitude": -122.4294
+        }
+      },
+      "photos": [
+        { "url": "https://example.com/rocky1.jpg", "isPrimary": true },
+        { "url": "https://example.com/rocky2.jpg", "isPrimary": false }
+      ],
+      "preferences": {
+        "species": ["dog"],
+        "ageRange": { "min": 2, "max": 8 },
+        "gender": ["male", "female"],
+        "size": ["large"]
+      }
+    },
+    {
+      "id": "pet-5",
+      "name": "Whiskers",
+      "species": "cat",
+      "breed": "Siamese",
+      "age": 2,
+      "gender": "female",
+      "size": "small",
+      "description": "Vocal and social cat who loves company",
+      "temperament": ["vocal", "social", "curious"],
+      "vaccinated": true,
+      "neutered": true,
+      "ownerId": "user-chat",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "coordinates": {
+          "latitude": 37.7549,
+          "longitude": -122.4394
+        }
+      },
+      "photos": [
+        { "url": "https://example.com/whiskers1.jpg", "isPrimary": true },
+        { "url": "https://example.com/whiskers2.jpg", "isPrimary": false }
+      ],
+      "preferences": {
+        "species": ["cat"],
+        "ageRange": { "min": 1, "max": 5 },
+        "gender": ["male", "female"],
+        "size": ["small", "medium"]
+      }
+    },
+    {
+      "id": "pet-6",
+      "name": "Charlie",
+      "species": "dog",
+      "breed": "Beagle",
+      "age": 5,
+      "gender": "male",
+      "size": "medium",
+      "description": "Curious and friendly scent hound",
+      "temperament": ["curious", "friendly", "energetic"],
+      "vaccinated": true,
+      "neutered": true,
+      "ownerId": "user-video",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "coordinates": {
+          "latitude": 37.7449,
+          "longitude": -122.4494
+        }
+      },
+      "photos": [
+        { "url": "https://example.com/charlie1.jpg", "isPrimary": true },
+        { "url": "https://example.com/charlie2.jpg", "isPrimary": false }
+      ],
+      "preferences": {
+        "species": ["dog"],
+        "ageRange": { "min": 2, "max": 10 },
+        "gender": ["male", "female"],
+        "size": ["medium", "large"]
+      }
+    }
+  ],
+  "matches": [
+    {
+      "id": "match-1",
+      "users": ["user-1", "user-2"],
+      "pets": ["pet-1", "pet-2"],
+      "createdAt": "2024-01-01T12:00:00Z",
+      "status": "active",
+      "lastMessageAt": "2024-01-01T12:30:00Z"
+    },
+    {
+      "id": "match-2",
+      "users": ["user-premium", "user-chat"],
+      "pets": ["pet-4", "pet-5"],
+      "createdAt": "2024-01-02T14:00:00Z",
+      "status": "active",
+      "lastMessageAt": "2024-01-02T15:00:00Z"
+    },
+    {
+      "id": "match-3",
+      "users": ["user-1", "user-chat"],
+      "pets": ["pet-3", "pet-5"],
+      "createdAt": "2024-01-03T10:00:00Z",
+      "status": "active",
+      "lastMessageAt": "2024-01-03T11:00:00Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1",
+      "matchId": "match-1",
+      "senderId": "user-2",
+      "content": "Hi there! Your dog Buddy looks amazing!",
+      "timestamp": "2024-01-01T12:30:00Z",
+      "type": "text",
+      "status": "delivered"
+    },
+    {
+      "id": "msg-2",
+      "matchId": "match-1",
+      "senderId": "user-1",
+      "content": "Thank you! Max looks wonderful too!",
+      "timestamp": "2024-01-01T12:35:00Z",
+      "type": "text",
+      "status": "delivered"
+    },
+    {
+      "id": "msg-3",
+      "matchId": "match-1",
+      "senderId": "user-2",
+      "content": "Would you like to arrange a playdate?",
+      "timestamp": "2024-01-01T12:40:00Z",
+      "type": "text",
+      "status": "delivered"
+    },
+    {
+      "id": "msg-4",
+      "matchId": "match-2",
+      "senderId": "user-premium",
+      "content": "Hello! Rocky is such a handsome dog!",
+      "timestamp": "2024-01-02T15:00:00Z",
+      "type": "text",
+      "status": "delivered"
+    },
+    {
+      "id": "msg-5",
+      "matchId": "match-2",
+      "senderId": "user-chat",
+      "content": "Thanks! Whiskers is quite the character!",
+      "timestamp": "2024-01-02T15:05:00Z",
+      "type": "text",
+      "status": "delivered"
+    },
+    {
+      "id": "msg-6",
+      "matchId": "match-3",
+      "senderId": "user-1",
+      "content": "Luna is adorable!",
+      "timestamp": "2024-01-03T11:00:00Z",
+      "type": "text",
+      "status": "delivered"
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-1",
+      "userId": "user-premium",
+      "stripeSubscriptionId": "sub_test_premium",
+      "status": "active",
+      "plan": "premium",
+      "currentPeriodStart": "2024-01-01T00:00:00Z",
+      "currentPeriodEnd": "2024-02-01T00:00:00Z",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "sub-2",
+      "userId": "user-video",
+      "stripeSubscriptionId": "sub_test_video",
+      "status": "active",
+      "plan": "elite",
+      "currentPeriodStart": "2024-01-01T00:00:00Z",
+      "currentPeriodEnd": "2024-02-01T00:00:00Z",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "premiumUsage": [
+    {
+      "id": "usage-1",
+      "userId": "user-premium",
+      "superLikesUsed": 2,
+      "superLikesRemaining": 3,
+      "boostsUsed": 1,
+      "boostsRemaining": 4,
+      "lastReset": "2024-01-01T00:00:00Z",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "usage-2",
+      "userId": "user-video",
+      "superLikesUsed": 0,
+      "superLikesRemaining": 5,
+      "boostsUsed": 0,
+      "boostsRemaining": 5,
+      "lastReset": "2024-01-01T00:00:00Z",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "swipes": [
+    {
+      "id": "swipe-1",
+      "userId": "user-1",
+      "petId": "pet-2",
+      "action": "like",
+      "timestamp": "2024-01-01T12:00:00Z"
+    },
+    {
+      "id": "swipe-2",
+      "userId": "user-2",
+      "petId": "pet-1",
+      "action": "like",
+      "timestamp": "2024-01-01T12:05:00Z"
+    },
+    {
+      "id": "swipe-3",
+      "userId": "user-premium",
+      "petId": "pet-5",
+      "action": "superlike",
+      "timestamp": "2024-01-02T14:00:00Z"
+    },
+    {
+      "id": "swipe-4",
+      "userId": "user-chat",
+      "petId": "pet-4",
+      "action": "like",
+      "timestamp": "2024-01-02T14:05:00Z"
+    }
+  ],
+  "plans": [
+    {
+      "id": "monthly",
+      "name": "Monthly",
+      "price": 999,
+      "interval": "month",
+      "features": [
+        "Unlimited likes",
+        "5 super likes per day",
+        "1 profile boost per week",
+        "Advanced filters",
+        "See who liked you"
+      ]
+    },
+    {
+      "id": "yearly",
+      "name": "Yearly",
+      "price": 9999,
+      "interval": "year",
+      "features": [
+        "Unlimited likes",
+        "5 super likes per day",
+        "2 profile boosts per week",
+        "Advanced filters",
+        "See who liked you",
+        "Priority support"
+      ]
+    },
+    {
+      "id": "lifetime",
+      "name": "Lifetime",
+      "price": 29999,
+      "interval": "one_time",
+      "features": [
+        "Unlimited likes",
+        "10 super likes per day",
+        "5 profile boosts per week",
+        "Advanced filters",
+        "See who liked you",
+        "Priority support",
+        "Exclusive features",
+        "Lifetime updates"
+      ]
+    }
+  ],
+  "apiResponses": {
+    "auth": {
+      "loginSuccess": {
+        "success": true,
+        "data": {
+          "user": {
+            "id": "user-1",
+            "email": "testuser1@pawfectmatch.com",
+            "firstName": "Test",
+            "lastName": "User"
+          },
+          "accessToken": "mock-access-token",
+          "refreshToken": "mock-refresh-token"
+        }
+      },
+      "registerSuccess": {
+        "success": true,
+        "data": {
+          "user": {
+            "id": "new-user-id",
+            "email": "newuser@pawfectmatch.com",
+            "firstName": "New",
+            "lastName": "User"
+          },
+          "accessToken": "mock-access-token",
+          "refreshToken": "mock-refresh-token"
+        }
+      },
+      "loginError": {
+        "success": false,
+        "message": "Invalid credentials"
+      },
+      "registerError": {
+        "success": false,
+        "message": "Email already exists"
+      }
+    },
+    "pets": {
+      "discoverSuccess": {
+        "success": true,
+        "data": [
+          {
+            "id": "pet-1",
+            "name": "Buddy",
+            "species": "dog",
+            "breed": "Golden Retriever",
+            "age": 3,
+            "gender": "male",
+            "size": "large",
+            "description": "Friendly and energetic dog who loves playing fetch",
+            "photos": [
+              { "url": "https://example.com/buddy1.jpg", "isPrimary": true }
+            ]
+          }
+        ]
+      },
+      "swipeSuccess": {
+        "success": true,
+        "data": {
+          "action": "like",
+          "isMatch": false,
+          "timestamp": "2024-01-01T12:00:00Z"
+        }
+      },
+      "matchSuccess": {
+        "success": true,
+        "data": {
+          "action": "like",
+          "isMatch": true,
+          "matchId": "match-1",
+          "timestamp": "2024-01-01T12:00:00Z"
+        }
+      }
+    },
+    "matches": {
+      "listSuccess": {
+        "success": true,
+        "data": [
+          {
+            "id": "match-1",
+            "users": ["user-1", "user-2"],
+            "pets": ["pet-1", "pet-2"],
+            "lastMessage": {
+              "content": "Would you like to arrange a playdate?",
+              "timestamp": "2024-01-01T12:40:00Z"
+            }
+          }
+        ]
+      }
+    },
+    "messages": {
+      "listSuccess": {
+        "success": true,
+        "data": [
+          {
+            "id": "msg-1",
+            "senderId": "user-2",
+            "content": "Hi there! Your dog Buddy looks amazing!",
+            "timestamp": "2024-01-01T12:30:00Z",
+            "type": "text",
+            "status": "delivered"
+          }
+        ]
+      },
+      "sendSuccess": {
+        "success": true,
+        "data": {
+          "id": "new-msg",
+          "senderId": "user-1",
+          "content": "Test message",
+          "timestamp": "2024-01-01T12:45:00Z",
+          "type": "text",
+          "status": "sent"
+        }
+      }
+    },
+    "premium": {
+      "plansSuccess": {
+        "success": true,
+        "data": [
+          {
+            "id": "monthly",
+            "name": "Monthly",
+            "price": 999,
+            "interval": "month"
+          }
+        ]
+      },
+      "checkoutSuccess": {
+        "success": true,
+        "data": {
+          "sessionId": "cs_test_session",
+          "url": "https://checkout.stripe.com/test",
+          "planId": "monthly"
+        }
+      },
+      "subscriptionSuccess": {
+        "success": true,
+        "data": {
+          "status": "active",
+          "plan": "premium",
+          "currentPeriodStart": "2024-01-01T00:00:00Z",
+          "currentPeriodEnd": "2024-02-01T00:00:00Z"
+        }
+      }
+    }
+  }
+}

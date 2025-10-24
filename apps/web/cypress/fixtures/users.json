@@ -1,0 +1,66 @@
+{
+  "testUser": {
+    "id": "test-user-id",
+    "email": "test@pawfectmatch.com",
+    "password": "TestPassword123!",
+    "firstName": "Test",
+    "lastName": "User",
+    "dateOfBirth": "1990-01-01",
+    "location": {
+      "city": "New York",
+      "state": "NY",
+      "coordinates": {
+        "latitude": 40.7128,
+        "longitude": -74.006
+      }
+    },
+    "preferences": {
+      "ageRange": [1, 10],
+      "species": ["dog", "cat"],
+      "size": ["small", "medium", "large"],
+      "gender": ["male", "female"],
+      "distance": 50
+    },
+    "isPremium": false,
+    "subscription": null
+  },
+  "premiumUser": {
+    "id": "premium-user-id",
+    "email": "premium@pawfectmatch.com",
+    "password": "PremiumPassword123!",
+    "firstName": "Premium",
+    "lastName": "User",
+    "dateOfBirth": "1985-05-15",
+    "location": {
+      "city": "San Francisco",
+      "state": "CA",
+      "coordinates": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      }
+    },
+    "preferences": {
+      "ageRange": [1, 8],
+      "species": ["dog"],
+      "size": ["medium", "large"],
+      "gender": ["male"],
+      "distance": 100
+    },
+    "isPremium": true,
+    "subscription": {
+      "id": "sub_premium_123",
+      "status": "active",
+      "plan": "premium",
+      "currentPeriodEnd": "2024-12-31T23:59:59Z"
+    }
+  },
+  "adminUser": {
+    "id": "admin-user-id",
+    "email": "admin@pawfectmatch.com",
+    "password": "AdminPassword123!",
+    "firstName": "Admin",
+    "lastName": "User",
+    "role": "admin",
+    "permissions": ["read", "write", "delete", "admin"]
+  }
+}

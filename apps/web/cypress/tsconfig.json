@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["cypress", "node"],
+    "esModuleInterop": true
+  },
+  "include": ["**/*.cy.ts", "**/*.cy.tsx", "support/**/*.ts", "fixtures/**/*.ts"],
+  "exclude": ["node_modules", ".next", "out", "dist", "build", "coverage"]
+}

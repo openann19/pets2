@@ -1,0 +1,33 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow list for secrets scanning"
+paths = [
+  '''^apps/mobile/android/''',
+  '''^apps/mobile/ios/''',
+  '''logs/''',
+  '''reports/''',
+  '''coverage/''',
+  '''node_modules/''',
+  '''.expo/''',
+  '''.next/''',
+  '''dist/''',
+  '''build/''',
+]
+
+# Allow example files and test files
+filepaths = [
+  '''\.example$''',
+  '''\.test\.''',
+  '''\.spec\.''',
+  '''\.config\.''',
+  '''\.env\.example$''',
+]
+
+# Allow placeholder secrets in documentation
+regexes = [
+  '''API_KEY.*example''',
+  '''SECRET.*placeholder''',
+  '''TOKEN.*demo''',
+]

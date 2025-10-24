@@ -1,0 +1,950 @@
+Phase 1: Comprehensive Baseline Assessment & Documentation
+Rationale: Establishes metrics for tracking progress; identifies hotspots (e.g., god components per ). Prevents scope creep.
+1.1 Inventory Execution:
+
+Commands: pnpm lint --report-unused-disable-directives; pnpm type-check; pnpm test --reporters=default --coverage (add coverage for ≥80% threshold).
+Capture: Errors by workspace (mobile/web/core/ui/ai/design-tokens) and rule family (e.g., @typescript-eslint/no-explicit-any, no-unsafe-*, strict-boolean-expressions, require-await, no-floating-promises, no-console).
+Flag: All eslint-disable, @ts-ignore (ban via eslint-comments/no-use per [web:4,6]).
+Document: docs/lint-remediation.md with categorized tables.
+
+Error Categories Table:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CategoryRulesWorkspaces AffectedCountUnsafe Typesno-explicit-any, no-unsafe-*Mobile, CoreTBDStrict Booleansstrict-boolean-expressionsAllTBDAsync Issuesrequire-await, no-floating-promisesServices, UtilsTBDConsole Logsno-consoleEverywhereTBDOthersTemplate literals, undef globalsTypes, StylesTBD
+
+Update docs/production-readiness.md: Baseline metrics (failures, coverage %), blockers (e.g., high-risk god components), risks (e.g., untyped APIs).
+
+1.2 Deep Codebase Analysis:
+
+Audit god components (>200 lines, per [web:20,27,28]): Mobile (apps/mobile/src/screens/*, src/components/*); Web (apps/web/app/*, dashboards). Criteria: Single responsibility violation, mixed concerns.
+Map dependencies: Use pnpm why or Turborepo graph (enhance modularity ).
+Additional: Scan for security (e.g., OWASP deps via pnpm audit); performance bottlenecks (e.g., un-memoized renders).
+Pitfalls: Ignoring cross-deps leads to regressions; use TypeScript project references (PREFs) .
+Enhancement: Add custom ESLint plugin for monorepo (TypeScript-based, no build step ).
+
+Success Checklist:
+
+ Metrics documented.
+ All disables flagged.
+ Dependency map created.
+
+Phase 2: Mobile Services & Infrastructure Hardening
+Rationale: Eliminates tech debt (e.g., any types per TypeScript best practices ); aligns with production readiness (error handling, logging ).
+2.1 Services Refactoring:
+
+Targets: apps/mobile/src/services/* (pushNotificationService.ts, notifications.ts, offlineService.ts, logger.ts, API wrappers).
+Fixes: Remove any/unsafe calls/magic booleans/console (replace with structured logger, e.g., Sentry ); add strict booleans, typed params/promises/errors, async consistency.
+Examples: In logger.ts, use enum for log levels; in API wrappers, add rate limiting/CORS .
+Batch validate: pnpm exec eslint apps/mobile/src/services/**/*.ts; pnpm --filter @pawfectmatch/mobile test --runInBand.
+Pitfalls: Inconsistent async leads to floating promises; enforce require-await.
+
+2.2 Utilities & State Management:
+
+Utils (apps/mobile/src/utils/*): Explicit null/undefined checks (no truthy); typed returns; async/await enforcement.
+Store/Stores: Typed actions/selectors; strict booleans; no void arrows; persist via secure storage (Zustand best practices [original]).
+Validate: pnpm exec eslint apps/mobile/src/utils/**/*.ts apps/mobile/src/store/**/*.ts apps/mobile/src/stores/**/*.ts.
+Enhancement: Standardize on Zustand + TanStack Query; remove ad-hoc contexts [Phase 4].
+
+2.3 Types & Styling:
+
+Types: Replace {} with Record<string, unknown>; deduplicate; import React.
+Styles: Token alignment; purge unused; no magic numbers/unsafe chains.
+Validate: pnpm exec eslint apps/mobile/src/types/**/*.ts apps/mobile/src/styles/**/*.ts; pnpm --filter @pawfectmatch/mobile type-check.
+Pitfalls: Duplicate types cause conflicts; use monorepo PREFs [web:7,13].
+
+2.4 Testing Infrastructure:
+
+Validate setupTests.ts; add global.d.ts for Jest.
+Update eslint.config.js parser.
+Validate: pnpm --filter @pawfectmatch/mobile test --runInBand.
+Enhancement: Add integration/e2e tests; coverage thresholds [web:18,19].
+
+Documentation: Log all fixes in docs/lint-remediation.md with before/after snippets.
+Pitfalls Overall: Over-refactoring breaks features; test after each cluster.
+Success Checklist:
+
+ Zero violations in mobile.
+ Tests ≥80% coverage.
+
+Phase 3: Web App & Shared Packages Hardening
+Rationale: Ensures typed, secure shared code (per monorepo examples [web:12,14]); explicit errors prevent runtime issues.
+Steps:
+
+Apply rules: No any/console/unsafe; typed APIs/errors; strict booleans.
+Web (apps/web/*): Typed props, error boundaries (Next.js best [web:3,4]).
+Shared (packages/core/src/*, ui, ai, design-tokens): Typed exports; comprehensive safety.
+Validate per package: pnpm --filter <pkg> lint/type-check/test.
+Mirror configs; single eslint file recommended .
+Enhancement: Add health checks, Sentry ; custom rules .
+Pitfalls: Next.js eslint setup fails without proper config ; use Turborepo for builds .
+Document findings in docs/lint-remediation.md.
+
+Success Checklist:
+
+ All packages pass with 0 warnings.
+ Coverage ≥80%.
+
+Phase 4: UI System Unification, Decomposition & Performance Optimization
+Rationale: Prevents god components (mixed logic/UI [web:20,27]); unification scales design (patterns like compound components [web:25,26]).
+4.1 UI Unification:
+
+Central theme.ts in design-tokens; primitives (Button, Text, Card, Input, Stack/Grid/Spacer) in ui.
+Replace legacy: Themed variants/spacing in all screens/components (mobile/web).
+Enforce: Custom ESLint rule/codemod [original]; Storybook for regressions .
+Principles: Reusability, consistency [web:22,29].
+Document: Before/after in docs/ui-unification.md with screenshots.
+Pitfalls: Inconsistent themes cause visual debt; test variants.
+
+4.2 Decomposition & Performance:
+
+Target >200-line screens: Extract hooks (e.g., useDashboardMetrics); presentational comps; service wrappers.
+Data: Typed Zustand + TanStack Query (caching, retries, refresh [original]).
+Optimizations: Memoization (React.memo); virtualization (e.g., react-virtualized); offline (offlineService).
+Profile: React Profiler/Hermes; metrics in docs/performance-playbook.md (Lighthouse ≥90 ).
+Decomposition Strategies : By feature, data domain, atomicity; e.g., split by SRP.
+Enhancement: Compound patterns ; accessibility ≥95 .
+Pitfalls: Over-decomposition fragments code; balance <200 lines.
+
+4.3 Telemetry & Observability:
+
+Event schema; structured logs/metrics; guardrails (limits/batching/compression).
+Integrate backend tracing [original]; add Sentry .
+
+Success Checklist:
+
+ All components <200 lines.
+ Performance thresholds met.
+ Storybook catalog built.
+
+Phase 5: Immutable Configuration Lock & Governance
+Rationale: Locks standards to prevent drifts (per [web:11,16]); hooks/CI enforce quality [web:30-39].
+5.1 Central Config Package:
+
+packages/config/: Frozen ESLint/TS exports (Object.freeze); base configs.
+Wire: All workspaces import; pin versions.
+Document: README.md.
+Enhancement: Use ts-node for custom rules ; monorepo setup .
+
+5.2 Git Hooks:
+
+Install: pnpm add -D husky && pnpm exec husky init.
+Pre-commit: pnpm lint-staged (--fix --max-warnings 0; staged files only [web:30,31,35]).
+Pre-push: pnpm lint && pnpm type-check.
+Config in package.json; nested support .
+Pitfalls: Monorepo triggers all; use lint-staged for efficiency [web:33,36].
+
+5.3 CI/CD Pipeline:
+
+.github/workflows/quality-gate.yml: On PR/push; jobs: lint (--max-warnings 0), type-check, test (coverage), build, audit.
+Upload artifacts; fail violations [web:32,37,38].
+Branch protections: Require checks/reviews; no force-push [original].
+Enhancement: Turborepo caching ; parallel deploys .
+
+5.4 Immutability Enforcement:
+
+Ban disables (eslint-comments/no-use).
+CI checksums; config-update label [original].
+Document in CONTRIBUTING.md.
+
+Success Checklist:
+
+ Hooks/CI enforce zero violations.
+ Protections active.
+
+Phase 6: Exhaustive Documentation & ADRs
+Rationale: Codifies decisions for maintainability (per [web:17,18]).
+
+CONTRIBUTING.md: Rules (no any/disable), hooks/PR process, reviews [original].
+Updates: README.md (setup/gates); ARCHITECTURE.md (patterns).
+Creates: docs/state-architecture.md (Zustand/Query, no contexts); docs/testing-strategy.md (unit/integration/e2e ≥80%); docs/quality-dashboard.md (metrics table).
+ADRs: 001-strict-ts.md, 002-immutable-lint.md, 003-state-std.md, 004-ui-arch.md [original].
+
+Metrics Table in quality-dashboard.md:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MetricThresholdCurrentLint Violations0TBDType Errors0TBDTest Coverage≥80%TBDBundle Size< ThresholdTBDLighthouse≥90TBDAccessibility≥95TBDSecurity Issues0 Critical/HighTBD
+Success Checklist:
+
+ All docs complete.
+
+Phase 7: Final Verification, Metrics & Release Readiness
+Rationale: Ensures production-ready (checklist ); zero risks.
+7.1 Validation:
+
+Run: pnpm lint (0 warns); type-check (0 errs); test (100% pass, ≥80% cov); build; audit --recursive (fix critical/high).
+Proof: Screenshots/logs in docs.
+
+7.2 Quality Dashboard:
+
+Update with table; add stress/security tests .
+
+7.3 Release:
+
+Tag: v1.0.1-rc.1.
+Changelog: All fixes.
+Close issues; rollout checklist (e.g., monitoring post-deploy ).
+
+Success Criteria Table:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CriterionStatusZero Violations✅Coverage ≥80%✅No any/disable/ignore✅Components <200 lines✅Baselines Met✅Docs/Governance Complete✅
+Overall Scope: 500+ files; 600+ tool calls; timeline: Methodical, zero shortcuts. End-State: Scalable, secure, performant monorepo.
+
+
+# PawfectMatch UI Modernization & Consistency Roadmap (2025 Standards)
+
+> Goal: Ensure fully modern, sleek, consistent, and performant UI/UX across web and mobile with 2025-level design patterns, typography, micro-interactions, animations, and responsiveness.
+
+---
+
+## 1. Typography & Font System
+
+* Standardize on modern, variable fonts with high legibility and accessibility:
+
+  * Primary: Inter Variable / SF Pro / Roboto Flex
+  * Secondary / Decorative: Montserrat / Poppins (sparingly)
+* Establish scale and weights:
+
+  * H1–H6, Body, Caption, Overline, Buttons
+  * Maintain consistent font sizes in `design-tokens.ts` (mobile + web scale)
+* Dynamic type & accessibility:
+
+  * Respect system font scaling and OS-level accessibility preferences
+  * Use relative units (`rem`, `%`) instead of px
+
+---
+
+## 2. Design Tokens & Spacing System
+
+* Centralized `design-tokens` package:
+
+  * Colors (primary, secondary, status, gradients, shadows)
+  * Typography (scale, weights, line-height)
+  * Spacing (4–64px scale or 1–16 units)
+  * Radius / elevation / shadow tokens
+* Ensure tokens are mirrored between mobile and web
+* Enforce usage via ESLint codemod
+
+---
+
+## 3. Animations & Micro-Interactions
+
+* Define global animation standards:
+
+  * Easing curves: `ease-in-out-quad`, `cubic-bezier(0.4, 0, 0.2, 1)`
+  * Duration scales: fast (150ms), medium (300ms), slow (500ms)
+  * Keyframe conventions: fade, slide, scale, bounce, rotation
+* Micro-interactions:
+
+  * Button hover/focus: scale + subtle shadow
+  * Toggle switches: smooth thumb translation
+  * Notifications / toasts: slide/fade with timing consistency
+  * Loading states: skeleton loaders, shimmer animations
+* Use shared hook-based animation API (`useSpring`, `useAnimation`, `Framer Motion`) across web + mobile
+
+---
+
+## 4. Components & UI System
+
+* Build base primitives:
+
+  * `Button`, `Text`, `Input`, `Card`, `Avatar`, `Stack`, `Grid`, `Spacer`
+* Ensure theme props (color, radius, typography) are required and enforced
+* All components to accept accessibility props: `aria-label`, `role`, `tabIndex`
+* Strict types and prop validation via TypeScript interfaces
+* Storybook for component documentation and visual regression
+
+---
+
+## 5. Mobile & Web Responsive Layouts
+
+* Use unified layout primitives: `Stack`, `Grid`, `Flex`, `Spacer`
+* Breakpoints:
+
+  * Mobile: 320–480px
+  * Tablet: 481–1024px
+  * Desktop: 1025–1920px
+* Ensure spacing and component size scales according to breakpoint
+* Implement responsive typography and padding with fluid units (clamp())
+
+---
+
+## 6. Performance & Smoothness
+
+* Mobile:
+
+  * Use native animations where possible (Reanimated 3, LayoutAnimation)
+  * Lazy-load heavy components/screens
+  * Virtualize large lists (`FlatList` / `SectionList`) with memoization
+* Web:
+
+  * Reduce repaint/reflow with CSS transforms and composited layers
+  * Use `React.lazy` and Suspense for route-based code splitting
+  * Minimize bundle size with tree-shaking and esbuild / Vite optimizations
+* Both platforms:
+
+  * Memoize expensive calculations
+  * Profile and optimize critical paths
+
+---
+
+## 7. Cross-Platform Consistency Enforcement
+
+* Shared `design-tokens` and `ui` packages to enforce consistent colors, typography, and spacing
+* ESLint / TS rules to enforce theme token usage instead of hard-coded values
+* Codemod scripts for migration: detect and replace magic numbers, colors, fonts
+* Continuous visual regression testing using Storybook snapshots or Chromatic
+
+---
+
+## 8. Accessibility & UX
+
+* WCAG 2.1 AA compliance
+* Semantic roles and proper labeling for all interactive elements
+* Ensure color contrast ratios ≥ 4.5:1 for normal text, 3:1 for large text
+* Keyboard navigation support on web; focus order verified
+* Screen reader tested flows for both mobile and web
+
+---
+
+## 9. Micro-UX Guidelines
+
+* Feedback loops for every interaction:
+
+  * Tap / click: instant response with subtle animation
+  * Loading: skeleton + shimmer animations
+  * Success / error: transient toast + iconography
+* Haptic feedback (mobile) for critical actions
+* Animation reduces for users with prefers-reduced-motion enabled
+
+---
+
+## 10. Validation & CI/CD
+
+* Lint rules to ensure all components consume design tokens
+* Pre-commit: check storybook stories, accessibility violations, animation hook usage
+* CI: visual regression checks via Chromatic or Percy
+* Automated audits for font usage, color tokens, spacing, and animation timings
+
+---
+
+## 11. Deliverables & Documentation
+
+* `packages/design-tokens/`: colors, typography, spacing, radius, elevation
+* `packages/ui/`: primitive components with animations & micro-interactions
+* `docs/ui-unification.md`: before/after screenshots, patterns, animation guides
+* Storybook catalog with mobile + web previews
+* Accessibility report and WCAG verification
+
+---
+
+**Success Criteria:**
+
+* Fully responsive, 2025 modern typography, spacing, and layout
+* Smooth, consistent animations and micro-interactions
+* Unified UI system across web + mobile
+* Performance optimized: low-latency interactions and memory-efficient rendering
+* Accessibility compliant, visually polished, and ready for production release
+
+---
+
+*This document should be maintained as a living guide for UI/UX modernization, enforcing consistency across the monorepo and every release.*
+# PawfectMatch Ultra-Hardened Strict Ruleset (2025 God-Phase)
+
+> Goal: Enforce a zero-compromise, fully strict, production-ready ruleset across all monorepo packages, apps, and components. This is the ultimate "God Phase" configuration: no `any`, no `eslint-disable`, full TS strictness, UI consistency, security, and performance enforced.
+
+---
+
+## 1. TypeScript Config (`tsconfig.json` / `tsconfig.base.json`)
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": false,
+    "incremental": true
+  },
+  "include": ["apps/**/src", "packages/**/src", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}
+```
+
+**Enforcement:** CI fails on any TypeScript error.
+
+---
+
+## 2. ESLint Config (`eslint.config.js`)
+
+```js
+module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.base.json',
+    tsconfigRootDir: __dirname,
+    ecmaVersion: 2022,
+    sourceType: 'module'
+  },
+  plugins: ['@typescript-eslint', 'import', 'eslint-comments', 'jest', 'react', 'react-hooks', 'security'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:security/recommended',
+    'plugin:eslint-comments/recommended'
+  ],
+  rules: {
+    // Strict TS rules
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/strict-boolean-expressions': 'error',
+    '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/no-unsafe-assignment': 'error',
+    '@typescript-eslint/no-unsafe-call': 'error',
+    '@typescript-eslint/no-unsafe-member-access': 'error',
+    '@typescript-eslint/no-unsafe-return': 'error',
+
+    // ESLint
+    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-debugger': 'error',
+    'no-duplicate-imports': 'error',
+    'no-var': 'error',
+    'prefer-const': 'error',
+    'eqeqeq': ['error', 'always'],
+    'curly': 'error',
+
+    // React & Hooks
+    'react/prop-types': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'error',
+
+    // Security
+    'security/detect-object-injection': 'error',
+
+    // ESLint comments
+    'eslint-comments/no-use': 'error',
+    'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: false }],
+
+    // Imports
+    'import/order': ['error', { 'newlines-between': 'always' }]
+  },
+  settings: {
+    react: {
+      version: 'detect'
+    }
+  }
+};
+```
+
+**Enforcement:** CI fails on any ESLint violation; `lint-staged` pre-commit ensures zero warnings.
+
+---
+
+## 3. Pre-Commit / Pre-Push Hooks
+
+* **Husky setup:**
+
+```bash
+pnpm add -D husky lint-staged
+pnpm exec husky install
+```
+
+* **.husky/pre-commit:**
+
+```bash
+pnpm lint-staged
+```
+
+* **.husky/pre-push:**
+
+```bash
+pnpm lint && pnpm type-check && pnpm test --coverage
+```
+
+* **lint-staged** config (package.json):
+
+```json
+"lint-staged": {
+  "**/*.{ts,tsx,js,jsx}": [
+    "eslint --fix",
+    "git add"
+  ]
+}
+```
+
+---
+
+## 4. UI / Component Hardening
+
+* All components must consume **theme tokens** for colors, typography, spacing.
+* Prohibit magic numbers; enforce usage via codemod/ESLint rule.
+* All interactive elements must be **accessible** (`aria-*`, `tabIndex`, `role`).
+* All mobile & web animations must use shared `useAnimation` / `Framer Motion` hooks.
+* All god-components (>200 LOC) must be decomposed into hooks + presentational components.
+* Unit tests must cover >80% per component; visual regression via Storybook snapshots.
+
+---
+
+## 5. Testing & Coverage
+
+* Unit tests: Jest + React Testing Library / @testing-library/react-native
+* Integration tests: Playwright / Detox
+* Coverage thresholds:
+
+  * Minimum 80% per workspace
+  * CI fails on unmet threshold
+* Snapshot tests for UI consistency
+* Run SAST + security scans in CI
+
+---
+
+## 6. CI/CD Pipeline Enforcement
+
+* Lint → Type-check → Unit Tests → Build → Security Scan → Audit → Publish
+* Fail fast on any rule violation
+* Upload artifacts only if all gates passed
+* Audit & dependency scan (pnpm audit / Snyk / OSSF Scorecard)
+* Visual regression tests via Storybook snapshots or Chromatic
+
+---
+
+## 7. Security & Hardening Rules
+
+* No secrets in code; only vault-managed runtime secrets
+* Certificate pinning & encrypted storage on mobile
+* Prevent any `console.log` in production builds
+* Enable mobile root/jailbreak detection
+* Enforce HTTPS & strong TLS cipher suites on web and mobile
+* Supply-chain: frozen pnpm-lock.yaml, pinned dependencies
+
+---
+
+## 8. Documentation & ADR
+
+* Document all config rules in `docs/adr/ultra-hardened-config.md`
+* Document UI token usage and layout patterns in `docs/ui-unification.md`
+* Maintain `docs/security/*` folder with incident-playbook, risk-register, secrets-policy
+* Contribute ADRs for any config changes
+
+---
+
+## 9. Success Criteria (God-Phase)
+
+* Zero TypeScript errors
+* Zero ESLint violations
+* No `any`, `eslint-disable`, or `@ts-ignore` in production code
+* UI system fully tokenized and consistent across web/mobile
+* Unit & integration tests >80% coverage
+* CI/CD gates enforce lint/type/test/security
+* Dependencies pinned, supply-chain secure, secrets never in code
+* God-components decomposed and optimized
+* Animations & micro-interactions consistent, modern, polished
+* Accessibility fully compliant (WCAG 2.1 AA)
+
+---
+
+*This ruleset represents the ultimate enforcement for production readiness, UI/UX consistency, security, and maintainability in 2025 standards. All developers and CI/CD pipelines must adhere strictly.*
+
+
+
+# PawfectMatch Production Security & App Store Readiness
+
+> Goal: make the monorepo production-ready for iOS App Store and Google Play with zero-tolerance for leaks, exploits, or supply-chain attacks. This document augments the existing production-hardening roadmap with comprehensive security, app-store compliance, privacy, and runtime-hardening controls.
+
+---
+
+## Table of Contents
+
+1. Threat model & security objectives
+2. Secure development lifecycle (SDLC)
+3. Secrets management & CI/CD hardening
+4. Dependency and supply-chain security
+5. Static & dynamic analysis (SAST/DAST)
+6. Runtime protections (mobile & web)
+7. Network security
+8. Data protection & privacy (PII, GDPR, CCPA)
+9. App Store & Google Play readiness checklist
+10. Incident response & monitoring
+11. Pen tests, bug bounty & verification
+12. Ongoing maintenance & governance
+13. Appendices: commands, tools, sample config snippets
+
+---
+
+## 1. Threat Model & Security Objectives
+
+* **Primary threats:** remote code execution, unauthorized data exfiltration, man-in-the-middle (MITM) attacks, broken auth, insecure storage, supply-chain compromise, malicious third-party libs, reverse engineering, tampering.
+* **Security objectives:**
+
+  * Confidentiality: protect PII, secrets, and tokens at rest & in transit.
+  * Integrity: ensure code and builds are untampered and verifiable.
+  * Availability: resilient against DoS/abuse.
+  * Non-repudiation & auditability: traceable deploys, signed artifacts.
+* **Risk acceptance:** document acceptable residual risks in `docs/security/risk-register.md`.
+
+---
+
+## 2. Secure Development Lifecycle (SDLC)
+
+1. **Security-by-design**: include threat modeling for major features; create ADRs for security decisions.
+2. **Secure coding standards**: add `SECURE_CODING.md` with platform-specific rules (e.g., Android: avoid insecure Intents; iOS: secure Keychain usage).
+3. **Pre-commit hooks**: run linters, SAST quick scans, license checks.
+4. **Branch protection & PR review**: require at least 2 reviewers, one security reviewer for sensitive changes.
+5. **Merge gating**: CI gates for lint, type-check, unit tests, SAST, dependency-scan.
+6. **Developer onboarding**: security checklist, threat model briefings, secrets handling training.
+
+---
+
+## 3. Secrets Management & CI/CD Hardening
+
+### Principles
+
+* Never store secrets in source. Use ephemeral tokens, short TTL, and rotate frequently.
+* Audit all access to secrets; enforce least privilege.
+
+### Implementation
+
+* **Secret stores**: use HashiCorp Vault, AWS Secrets Manager, Google Secret Manager, or Azure Key Vault for CI and runtime secrets.
+* **Local dev**: use `.env.local` templates and `dotenv` loaders that do not commit secrets.
+* **CI secrets**: configure GitHub Actions secrets / GitLab CI variables / CircleCI masked env vars; restrict access via environment protection rules.
+* **Fetch at runtime**: apps should fetch ephemeral tokens from an auth-backed endpoint if possible.
+
+### CI Hardening
+
+* Limit which repos and branches can access production secrets.
+* Use ephemeral CI runners or self-hosted runners locked down in VPC.
+* Sign CI artifacts and validate signatures in later pipeline stages.
+* Require token-scoped permissions for publishing (no personal tokens).
+
+### Example: verifying no secrets in git history
+
+```bash
+# scan for common secret patterns
+pnpm add -D gitleaks
+gitleaks detect --source . --report-path=reports/gitleaks.json
+```
+
+---
+
+## 4. Dependency & Supply-Chain Security
+
+* Enforce pinned versions; disallow floating `^` or `~` in production lockfiles (use pnpm lockfile). Commit `pnpm-lock.yaml`.
+* Regularly run dependency scanners:
+
+  * `pnpm audit --recursive` in CI
+  * `npm audit` / `snyk test` / `ossf-scorecard` / `renovate` or `dependabot` PRs with auto-fixes for non-breaking patches
+* Generate an SBOM (Software Bill of Materials) for releases (CycloneDX or SPDX).
+* Verify package integrity using lockfile checks and package-manager verification.
+* Block high-risk transitive dependencies and obsolete packages.
+
+**Commands**
+
+```bash
+pnpm install --frozen-lockfile
+pnpm audit --recursive --json > reports/audit.json
+```
+
+---
+
+## 5. Static & Dynamic Analysis (SAST / DAST)
+
+### SAST
+
+* Integrate tools into CI: ESLint security plugins, TypeScript strict mode, semgrep, CodeQL.
+* Mandatory run on PRs and main branch merges. Fail build on critical findings.
+
+### DAST
+
+* Automate DAST runs against staging: OWASP ZAP, Burp, or cloud DAST offerings.
+* Test web endpoints, authentication flows, and exposed APIs.
+
+### Secrets & License Scans
+
+* Use `gitleaks` for git history secrets
+* Use `license-checker` or `oss-license-checker` to enforce allowed licenses
+
+---
+
+## 6. Runtime Protections (Mobile & Web)
+
+### Mobile (iOS & Android)
+
+* **Code signing & notarization**: enforce signing for iOS and Android builds; store keys in secure vault and use ephemeral build agents.
+* **App hardening**: enable Bitcode (if applicable), enable ProGuard/R8 with aggressive rules for Android; enable iOS Swift symbol stripping and enable Link-Time Optimization.
+* **Obfuscation**: use ProGuard/R8 for Android, and consider symbol obfuscation/stripping for iOS; avoid shipping debug symbols to public stores.
+* **Jailbreak/root detection**: implement runtime checks and degrade functionality when device integrity compromised.
+* **Secure storage**: use Keychain (iOS) and EncryptedSharedPreferences / Android Keystore; do not store secrets in plaintext or AsyncStorage.
+* **Certificate pinning**: pin TLS certificates using a robust library and pin rotation strategy.
+* **In-App Purchase (IAP) validation**: do server-side receipt validation; do not rely solely on client verification.
+* **Background updates & OTA**: for code push (if used), ensure updates are signed and validated. Consider disabling CodePush for sensitive flows.
+* **Permissions**: request minimal permissions; provide purpose strings for App Store review and privacy clarity.
+
+### Web
+
+* Enforce HTTPS with HSTS; set strong CSP headers.
+* Use SameSite=strict for cookies and `Secure` flag.
+* Enable `Referrer-Policy`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`.
+* Sanitize user content and escape outputs to prevent XSS.
+* Implement Content Security Policy (CSP) with nonce-based inline script strategy for minimal risk.
+
+---
+
+## 7. Network & Transport Security
+
+* Enforce TLS 1.2+ (TLS 1.3 preferred) on all endpoints.
+* Use strong cipher suites and disable weak ciphers.
+* Implement mutual TLS (mTLS) for backend-to-backend sensitive connections.
+* Rate limit public APIs and implement bot detection.
+* Use Web Application Firewall (WAF) in front of public APIs.
+
+---
+
+## 8. Data Protection & Privacy
+
+* Classify data types (PII, PHI, non-sensitive). Store in `docs/privacy/data-classification.md`.
+* Encrypt sensitive data at rest (disk-level + field-level for sensitive fields).
+* Minimize PII collection; implement data retention policies and deletion workflows.
+* Anonymize telemetry; do not log raw PII. Apply hashing/salting where needed.
+* Implement GDPR/CCPA compliance: consent flows, data export, deletion, DPIA for high-risk processing.
+* Privacy Policy and Terms must be up-to-date and included in App Store metadata.
+
+---
+
+## 9. App Store & Google Play Readiness Checklist
+
+### iOS App Store
+
+* App Store Guidelines compliance (content, payments, privacy)
+* NSCameraUsageDescription, NSPhotoLibraryUsageDescription, NSLocationWhenInUseUsageDescription strings populated
+* Bitcode/symbol stripping & correct architectures
+* Encrypted networking and ATS (App Transport Security) compliant
+* App privacy details filled in App Store Connect
+* App Store screenshots, metadata, and support URL
+* Server-side receipt validation and secure IAP flows
+
+### Google Play
+
+* Target latest Android API as required by Play policy
+* Proper Play Console app content rating and target audience
+* Use Google Play App Signing or configure play signing correctly
+* Prevent debug-builds to be uploaded; ensure release build type and signing configs
+* Meet Google Play Data safety form and privacy requirements
+
+### Common
+
+* Remove debugging flags, logs, and backdoors
+* Ensure crash reporting scrubs PII (Sentry config)
+* Ensure Analytics/Tracking complies with user consent
+* Submit test builds to TestFlight/Play Internal for security testing
+
+---
+
+## 10. Incident Response, Monitoring & Observability
+
+* Logging: structured logs, correlate request IDs across services, central logging (e.g., Datadog, ELK)
+* Monitoring: uptime, error budgets, SLOs, alerting with on-call rotations
+* Secrets leak detection & immediate rotation policy
+* Incident playbooks: `docs/security/incident-playbook.md` (containment, eradication, communication, post-mortem)
+* For critical incidents, notify regulatory bodies within required timeframes (e.g., GDPR 72-hour rule)
+
+---
+
+## 11. Penetration Testing & Bug Bounty
+
+* Schedule regular pentests: yearly full pentest + incremental for major releases
+* Use external vendor for mobile pentest and web API pentest
+* Launch responsible disclosure & bug-bounty program (HackerOne, Bugcrowd) after baseline remediation
+* Triage SLA: critical/urgent 24-72h; high 7 days; medium 30 days
+
+---
+
+## 12. Ongoing Maintenance & Governance
+
+* Quarterly dependency review and SBOM refresh
+* Monthly SAST incremental scans and triage
+* Annual security review and privacy assessment
+* Security ownership: designate security lead and maintain `security@` contact
+* Maintain `docs/security/security-roadmap.md` as living doc
+
+---
+
+## 13. Appendices: Commands, Tools & Snippets
+
+### Useful Tools
+
+* Dependency & SCA: `pnpm audit`, Snyk, Dependabot, Renovate
+* Secrets & Scans: Gitleaks, TruffleHog
+* SAST: CodeQL, Semgrep, ESLint security plugins
+* DAST: OWASP ZAP, Burp
+* Mobile hardening: ProGuard/R8, iOS symbol stripping
+* Monitoring: Sentry, Datadog, Prometheus
+
+### CI Snippet: Fail on vulnerable deps
+
+```yaml
+# GitHub Actions job (snippet)
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Audit
+        run: pnpm audit --recursive --json > reports/audit.json
+      - name: Fail on high vulnerabilities
+        run: |
+          cat reports/audit.json | jq '.advisories | keys | length' > vuln_count.txt
+          if [ "$(cat vuln_count.txt)" -gt 0 ]; then exit 1; fi
+```
+
+### Gitleaks example
+
+```bash
+gitleaks detect --source . --report-path=reports/gitleaks.json
+```
+
+---
+
+## Final Notes & Deliverables
+
+1. Add: `docs/security/*` folder with: `incident-playbook.md`, `risk-register.md`, `data-classification.md`, `secure-coding.md`, `secrets-policy.md`.
+2. Integrate SAST/SCA/DAST into CI with fail-fast behavior for critical findings.
+3. Provision a secrets vault for build & runtime and enforce rotation.
+4. Perform full pentest and fix findings prior to public launch.
+5. Launch bug bounty after passing pentest and major remediation.
+
+**Success Criteria (extended):** production build signed and reproducible; no hard-coded secrets; dependency risk ≤ acceptable; pentest findings remediated; App Store & Play compliance checks passed; live monitoring & incident response in place.
+
+---
+
+*This document is a security augmentation to the main production-hardening roadmap. Add it to the repository at `docs/security/production_security_hardening.md` and keep it updated as part of release checklists.*

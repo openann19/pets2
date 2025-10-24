@@ -1,0 +1,274 @@
+/**
+ * Web AI Bio Generation Hook
+ * Production-hardened hook for AI-powered pet bio generation on web
+ * Features: Form state management, web API integration, error handling, history tracking
+ */
+
+import { useState, useCallback } from 'react';
+import { webApiClient } from '../lib/api-client';
+import { logger } from '@pawfectmatch/core';
+
+export interface GeneratedBio {
+  bio: string;
+  keywords: string[];
+  sentiment: {
+    score: number;
+    label: string;
+  };
+  matchScore: number;
+  createdAt: string;
+}
+
+export interface BioGenerationParams {
+  petName: string;
+  petBreed: string;
+  petAge: string;
+  petPersonality: string;
+  tone: string;
+  photoUri?: string;
+}
+
+export interface UseWebAIBioReturn {
+  // Form state
+  petName: string;
+  setPetName: (name: string) => void;
+  petBreed: string;
+  setPetBreed: (breed: string) => void;
+  petAge: string;
+  setPetAge: (age: string) => void;
+  petPersonality: string;
+  setPetPersonality: (personality: string) => void;
+  selectedTone: string;
+  setSelectedTone: (tone: string) => void;
+  selectedPhoto: string | null;
+  setSelectedPhoto: (photo: string | null) => void;
+
+  // Generation state
+  isGenerating: boolean;
+  generatedBio: GeneratedBio | null;
+  bioHistory: GeneratedBio[];
+
+  // Actions
+  generateBio: () => Promise<void>;
+  pickImage: () => Promise<void>;
+  saveBio: (bio: GeneratedBio) => void;
+  clearForm: () => void;
+  resetGeneration: () => void;
+
+  // Validation
+  isFormValid: boolean;
+  validationErrors: Record<string, string>;
+}
+
+const TONE_OPTIONS = [
+  { id: 'playful', label: 'Playful', icon: '🎾', color: '#ff6b6b' },
+  { id: 'professional', label: 'Professional', icon: '💼', color: '#4dabf7' },
+  { id: 'casual', label: 'Casual', icon: '😊', color: '#69db7c' },
+  { id: 'romantic', label: 'Romantic', icon: '💕', color: '#f783ac' },
+  { id: 'mysterious', label: 'Mysterious', icon: '🕵️', color: '#a78bfa' },
+];
+
+export function useWebAIBio(): UseWebAIBioReturn {
+  // Form state
+  const [petName, setPetName] = useState('');
+  const [petBreed, setPetBreed] = useState('');
+  const [petAge, setPetAge] = useState('');
+  const [petPersonality, setPetPersonality] = useState('');
+  const [selectedTone, setSelectedTone] = useState('playful');
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  // Generation state
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedBio, setGeneratedBio] = useState<GeneratedBio | null>(null);
+  const [bioHistory, setBioHistory] = useState<GeneratedBio[]>([]);
+
+  // Validation state
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Validation function
+  const validateForm = useCallback((): boolean => {
+    const errors: Record<string, string> = {};
+
+    if (petName.trim() === '') errors['petName'] = 'Pet name is required';
+    if (petBreed.trim() === '') errors['petBreed'] = 'Pet breed is required';
+    if (petAge.trim() === '') errors['petAge'] = 'Pet age is required';
+    if (petPersonality.trim() === '') errors['petPersonality'] = 'Pet personality is required';
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  }, [petName, petBreed, petAge, petPersonality]);
+
+  // Generate bio function
+  const generateBio = useCallback(async (): Promise<void> => {
+    if (!validateForm()) {
+      logger.warn('Bio generation validation failed');
+      return;
+    }
+
+    setIsGenerating(true);
+    setValidationErrors({});
+
+    try {
+      const params: BioGenerationParams = {
+        petName: petName.trim(),
+        petBreed: petBreed.trim(),
+        petAge: petAge.trim(),
+        petPersonality: petPersonality.trim(),
+        tone: selectedTone,
+        ...(selectedPhoto !== null && { photoUri: selectedPhoto }),
+      };
+
+      logger.info('Generating AI bio via web API', { petName: params.petName, tone: params.tone });
+
+      const response = await webApiClient.post<{
+        bio: string;
+        keywords: string[];
+        sentiment: { score: number; label: string };
+        matchScore: number;
+      }>('/api/ai/generate-bio', params);
+
+      if (response.success && response.data !== undefined) {
+        const newBio: GeneratedBio = {
+          ...response.data,
+          createdAt: new Date().toISOString(),
+        };
+
+        setGeneratedBio(newBio);
+        setBioHistory(prev => [newBio, ...prev.slice(0, 9)]); // Keep last 10
+
+        logger.info('AI bio generated successfully via web API', {
+          bioLength: newBio.bio.length,
+          keywordsCount: newBio.keywords.length,
+          matchScore: newBio.matchScore,
+        });
+      } else {
+        const errorMessage = (response.error !== undefined && typeof response.error === 'string') ? response.error : 'Failed to generate bio';
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      logger.error('AI bio generation failed via web API', { error: errorMessage });
+      setValidationErrors({ submit: errorMessage });
+      throw error;
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [petName, petBreed, petAge, petPersonality, selectedTone, selectedPhoto, validateForm]);
+
+  // Pick image function for web
+  const pickImage = useCallback(async (): Promise<void> => {
+    try {
+      // Create a hidden file input
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.multiple = false;
+
+      await new Promise<void>((resolve, reject) => {
+        input.onchange = (event) => {
+          const files = (event.target as HTMLInputElement).files;
+          if (files === null || files.length === 0) {
+            resolve();
+            return;
+          }
+
+          const file = files.item(0);
+          if (file === null) {
+            resolve();
+            return;
+          }
+
+          if (!file.type.startsWith('image/')) {
+            reject(new Error('Please select an image file'));
+            return;
+          }
+
+          // Convert file to base64 for API
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64 = reader.result as string;
+            setSelectedPhoto(base64);
+            logger.info('Photo selected for AI bio via web', { fileName: file.name, size: file.size });
+            resolve();
+          };
+          reader.onerror = () => {
+            reject(new Error('Failed to read image file'));
+          };
+          reader.readAsDataURL(file);
+        };
+
+        input.click();
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to pick image';
+      logger.error('Image picker failed via web', { error: errorMessage });
+      setValidationErrors({ photo: errorMessage });
+    }
+  }, []);
+
+  // Save bio function
+  const saveBio = useCallback((bio: GeneratedBio): void => {
+    setBioHistory(prev => {
+      const filtered = prev.filter(b => b.createdAt !== bio.createdAt);
+      return [bio, ...filtered.slice(0, 9)];
+    });
+    logger.info('Bio saved to history via web', { bioLength: bio.bio.length });
+  }, []);
+
+  // Clear form function
+  const clearForm = useCallback((): void => {
+    setPetName('');
+    setPetBreed('');
+    setPetAge('');
+    setPetPersonality('');
+    setSelectedTone('playful');
+    setSelectedPhoto(null);
+    setValidationErrors({});
+    logger.debug('AI bio form cleared via web');
+  }, []);
+
+  // Reset generation function
+  const resetGeneration = useCallback((): void => {
+    setGeneratedBio(null);
+    setValidationErrors({});
+    logger.debug('AI bio generation reset via web');
+  }, []);
+
+  // Computed values
+  const isFormValid = validateForm();
+
+  return {
+    // Form state
+    petName,
+    setPetName,
+    petBreed,
+    setPetBreed,
+    petAge,
+    setPetAge,
+    petPersonality,
+    setPetPersonality,
+    selectedTone,
+    setSelectedTone,
+    selectedPhoto,
+    setSelectedPhoto,
+
+    // Generation state
+    isGenerating,
+    generatedBio,
+    bioHistory,
+
+    // Actions
+    generateBio,
+    pickImage,
+    saveBio,
+    clearForm,
+    resetGeneration,
+
+    // Validation
+    isFormValid,
+    validationErrors,
+  };
+}
+
+// Export tone options for reuse
+export { TONE_OPTIONS };

@@ -1,0 +1,568 @@
+/**
+ * Admin Upload Management Screen
+ * Production-ready implementation for managing user uploads
+ */
+
+import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../contexts/ThemeContext';
+import { _adminAPI } from '../../services/api';
+import { errorHandler } from '../../services/errorHandler';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 2;
+
+interface Upload {
+  id: string;
+  userId: string;
+  userName: string;
+  petId?: string;
+  petName?: string;
+  type: 'profile' | 'pet' | 'verification';
+  url: string;
+  thumbnailUrl?: string;
+  uploadedAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+  flagged: boolean;
+  flagReason?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
+  metadata?: {
+    fileSize: number;
+    dimensions?: { width: number; height: number };
+    contentType: string;
+  };
+}
+
+interface AdminUploadsScreenProps {
+  navigation: {
+    goBack: () => void;
+  };
+}
+
+function AdminUploadsScreen({ navigation }: AdminUploadsScreenProps): JSX.Element {
+  const { colors } = useTheme();
+  const [uploads, setUploads] = useState<Upload[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<'pending' | 'flagged' | 'all'>('pending');
+  const [selectedUpload, setSelectedUpload] = useState<Upload | null>(null);
+
+  const loadUploads = useCallback(async (refresh = false) => {
+    try {
+      if (refresh) setRefreshing(true);
+      else setLoading(true);
+
+      const response = await _adminAPI.getUploads({
+        filter,
+        search: searchQuery,
+        limit: 50,
+      });
+
+      if (response?.success && response.data) {
+        setUploads(response.data);
+      }
+    } catch (error) {
+      errorHandler.handleError(
+        error instanceof Error ? error : new Error('Failed to load uploads'),
+        {
+          component: 'AdminUploadsScreen',
+          action: 'loadUploads',
+        }
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [filter, searchQuery]);
+
+  useEffect(() => {
+    void loadUploads();
+  }, [loadUploads]);
+
+  const handleUploadAction = useCallback(async (
+    uploadId: string,
+    action: 'approve' | 'reject',
+    reason?: string
+  ) => {
+    try {
+      const response = await _adminAPI.moderateUpload({
+        uploadId,
+        action,
+        ...(reason && { reason }),
+      });
+
+      if (response?.success) {
+        setUploads(prev =>
+          prev.map(upload => {
+            if (upload.id !== uploadId) return upload;
+
+            const updated: Upload = {
+              ...upload,
+              status: action === 'approve' ? 'approved' : 'rejected',
+              reviewedAt: new Date().toISOString(),
+            };
+
+            if (action === 'reject' && reason) {
+              updated.rejectionReason = reason;
+            }
+
+            return updated;
+          })
+        );
+
+        Alert.alert('Success', `Upload ${action}d successfully`);
+        setSelectedUpload(null);
+      }
+    } catch (error) {
+      errorHandler.handleError(
+        error instanceof Error ? error : new Error(`Failed to ${action} upload`),
+        {
+          component: 'AdminUploadsScreen',
+          action: 'handleUploadAction',
+          metadata: { uploadId, action },
+        }
+      );
+    }
+  }, []);
+
+  const handleRejectWithReason = useCallback((upload: Upload) => {
+    Alert.prompt(
+      'Reject Upload',
+      'Please provide a reason for rejection:',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reject',
+          style: 'destructive',
+          onPress: (reason) => {
+            if (reason?.trim()) {
+              void handleUploadAction(upload.id, 'reject', reason.trim());
+            }
+          },
+        },
+      ],
+      'plain-text',
+      '',
+      'default'
+    );
+  }, [handleUploadAction]);
+
+  const renderUpload = useCallback(({ item }: { item: Upload }) => (
+    <TouchableOpacity
+      style={[styles.uploadCard, { backgroundColor: colors.card }]}
+      onPress={() => { setSelectedUpload(item); }}
+    >
+      <Image
+        source={{ uri: item.thumbnailUrl || item.url }}
+        style={styles.uploadImage}
+        resizeMode="cover"
+      />
+
+      <View style={styles.uploadOverlay}>
+        {item.flagged ? <View style={[styles.flagBadge, { backgroundColor: colors.error }]}>
+          <Ionicons name="flag" size={12} color="white" />
+        </View> : null}
+
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+          <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
+        </View>
+      </View>
+
+      <View style={styles.uploadInfo}>
+        <Text style={[styles.userName, { color: colors.text }]} numberOfLines={1}>
+          {item.userName}
+        </Text>
+        <Text style={[styles.uploadType, { color: colors.textSecondary }]}>
+          {item.type} • {new Date(item.uploadedAt).toLocaleDateString()}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  ), [colors]);
+
+  const getStatusColor = (status: Upload['status']) => {
+    switch (status) {
+      case 'approved': return '#10B981';
+      case 'rejected': return '#EF4444';
+      case 'pending': return '#F59E0B';
+      default: return '#6B7280';
+    }
+  };
+
+  const renderFilterButton = (filterType: typeof filter, label: string) => (
+    <TouchableOpacity
+      style={[
+        styles.filterButton,
+        { backgroundColor: filter === filterType ? colors.primary : colors.card },
+      ]}
+      onPress={() => { setFilter(filterType); }}
+    >
+      <Text
+        style={[
+          styles.filterButtonText,
+          { color: filter === filterType ? 'white' : colors.text },
+        ]}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const renderUploadModal = () => {
+    if (!selectedUpload) return null;
+
+    return (
+      <View style={styles.modalOverlay}>
+        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Upload Details</Text>
+            <TouchableOpacity onPress={() => { setSelectedUpload(null); }}>
+              <Ionicons name="close" size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
+
+          <Image
+            source={{ uri: selectedUpload.url }}
+            style={styles.modalImage}
+            resizeMode="contain"
+          />
+
+          <View style={styles.uploadDetails}>
+            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>User:</Text>
+            <Text style={[styles.detailValue, { color: colors.text }]}>{selectedUpload.userName}</Text>
+
+            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Type:</Text>
+            <Text style={[styles.detailValue, { color: colors.text }]}>{selectedUpload.type}</Text>
+
+            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Uploaded:</Text>
+            <Text style={[styles.detailValue, { color: colors.text }]}>
+              {new Date(selectedUpload.uploadedAt).toLocaleString()}
+            </Text>
+
+            {selectedUpload.petName ? <>
+              <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Pet:</Text>
+              <Text style={[styles.detailValue, { color: colors.text }]}>{selectedUpload.petName}</Text>
+            </> : null}
+
+            {selectedUpload.flagReason ? <>
+              <Text style={[styles.detailLabel, { color: colors.error }]}>Flag Reason:</Text>
+              <Text style={[styles.detailValue, { color: colors.error }]}>{selectedUpload.flagReason}</Text>
+            </> : null}
+
+            {selectedUpload.metadata ? <>
+              <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>File Size:</Text>
+              <Text style={[styles.detailValue, { color: colors.text }]}>
+                {(selectedUpload.metadata.fileSize / 1024 / 1024).toFixed(2)} MB
+              </Text>
+            </> : null}
+          </View>
+
+          {selectedUpload.status === 'pending' && (
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.approveButton]}
+                onPress={() => handleUploadAction(selectedUpload.id, 'approve')}
+              >
+                <Ionicons name="checkmark" size={20} color="white" />
+                <Text style={styles.actionButtonText}>Approve</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.actionButton, styles.rejectButton]}
+                onPress={() => { handleRejectWithReason(selectedUpload); }}
+              >
+                <Ionicons name="close" size={20} color="white" />
+                <Text style={styles.actionButtonText}>Reject</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Header */}
+      <View style={[styles.header, { backgroundColor: colors.card }]}>
+        <TouchableOpacity onPress={() => { navigation.goBack(); }} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={colors.text} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Upload Management</Text>
+      </View>
+
+      {/* Search and Filters */}
+      <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+        <View style={[styles.searchInputContainer, { backgroundColor: colors.background }]}>
+          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <TextInput
+            style={[styles.searchInput, { color: colors.text }]}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search uploads..."
+            placeholderTextColor={colors.textSecondary}
+          />
+        </View>
+
+        <View style={styles.filterContainer}>
+          {renderFilterButton('pending', 'Pending')}
+          {renderFilterButton('flagged', 'Flagged')}
+          {renderFilterButton('all', 'All')}
+        </View>
+      </View>
+
+      {/* Uploads Grid */}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+            Loading uploads...
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={uploads}
+          keyExtractor={(item) => item.id}
+          renderItem={renderUpload}
+          numColumns={2}
+          contentContainerStyle={styles.listContainer}
+          columnWrapperStyle={styles.row}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => loadUploads(true)}
+              colors={[colors.primary]}
+            />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="images-outline" size={64} color={colors.textSecondary} />
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                No uploads found
+              </Text>
+            </View>
+          }
+        />
+      )}
+
+      {/* Upload Detail Modal */}
+      {renderUploadModal()}
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  backButton: {
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  searchContainer: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  filterButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+  },
+  listContainer: {
+    padding: 16,
+  },
+  row: {
+    justifyContent: 'space-between',
+  },
+  uploadCard: {
+    width: IMAGE_SIZE,
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  uploadImage: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+  },
+  uploadOverlay: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    right: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  flagBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 10,
+    color: 'white',
+    fontWeight: '600',
+  },
+  uploadInfo: {
+    padding: 12,
+  },
+  userName: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  uploadType: {
+    fontSize: 12,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 64,
+  },
+  emptyText: {
+    fontSize: 16,
+    marginTop: 16,
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    width: SCREEN_WIDTH - 32,
+    maxHeight: '80%',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  modalImage: {
+    width: '100%',
+    height: 300,
+  },
+  uploadDetails: {
+    padding: 16,
+  },
+  detailLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  detailValue: {
+    fontSize: 14,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    padding: 16,
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 8,
+    gap: 8,
+  },
+  approveButton: {
+    backgroundColor: '#10B981',
+  },
+  rejectButton: {
+    backgroundColor: '#EF4444',
+  },
+  actionButtonText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: '600',
+  },
+});
+
+export default AdminUploadsScreen;

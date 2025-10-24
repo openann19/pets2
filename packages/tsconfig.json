@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "files": [],
+  "references": [
+    { "path": "./ai" },
+    { "path": "./core" },
+    { "path": "./design-tokens" },
+    { "path": "./ui" }
+  ]
+}

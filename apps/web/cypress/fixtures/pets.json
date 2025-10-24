@@ -1,0 +1,141 @@
+{
+  "dogs": [
+    {
+      "id": "pet-dog-1",
+      "name": "Buddy",
+      "species": "dog",
+      "breed": "Golden Retriever",
+      "age": 3,
+      "gender": "male",
+      "size": "large",
+      "description": "Friendly and energetic dog who loves to play fetch",
+      "temperament": ["friendly", "energetic", "playful"],
+      "vaccinated": true,
+      "neutered": true,
+      "photos": ["https://example.com/buddy1.jpg", "https://example.com/buddy2.jpg"],
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "coordinates": {
+          "latitude": 40.7128,
+          "longitude": -74.006
+        }
+      },
+      "owner": {
+        "id": "owner-1",
+        "name": "John Doe",
+        "age": 28
+      }
+    },
+    {
+      "id": "pet-dog-2",
+      "name": "Luna",
+      "species": "dog",
+      "breed": "Labrador",
+      "age": 2,
+      "gender": "female",
+      "size": "large",
+      "description": "Sweet and gentle lab who loves children",
+      "temperament": ["gentle", "sweet", "calm"],
+      "vaccinated": true,
+      "neutered": true,
+      "photos": ["https://example.com/luna1.jpg", "https://example.com/luna2.jpg"],
+      "location": {
+        "city": "Brooklyn",
+        "state": "NY",
+        "coordinates": {
+          "latitude": 40.6782,
+          "longitude": -73.9442
+        }
+      },
+      "owner": {
+        "id": "owner-2",
+        "name": "Jane Smith",
+        "age": 32
+      }
+    },
+    {
+      "id": "pet-dog-3",
+      "name": "Max",
+      "species": "dog",
+      "breed": "German Shepherd",
+      "age": 4,
+      "gender": "male",
+      "size": "large",
+      "description": "Loyal and protective shepherd",
+      "temperament": ["loyal", "protective", "intelligent"],
+      "vaccinated": true,
+      "neutered": false,
+      "photos": ["https://example.com/max1.jpg"],
+      "location": {
+        "city": "Queens",
+        "state": "NY",
+        "coordinates": {
+          "latitude": 40.7282,
+          "longitude": -73.7949
+        }
+      },
+      "owner": {
+        "id": "owner-3",
+        "name": "Mike Johnson",
+        "age": 35
+      }
+    }
+  ],
+  "cats": [
+    {
+      "id": "pet-cat-1",
+      "name": "Whiskers",
+      "species": "cat",
+      "breed": "Persian",
+      "age": 1,
+      "gender": "female",
+      "size": "small",
+      "description": "Fluffy and affectionate Persian cat",
+      "temperament": ["affectionate", "calm", "independent"],
+      "vaccinated": true,
+      "neutered": true,
+      "photos": ["https://example.com/whiskers1.jpg", "https://example.com/whiskers2.jpg"],
+      "location": {
+        "city": "Manhattan",
+        "state": "NY",
+        "coordinates": {
+          "latitude": 40.7589,
+          "longitude": -73.9851
+        }
+      },
+      "owner": {
+        "id": "owner-4",
+        "name": "Sarah Wilson",
+        "age": 26
+      }
+    },
+    {
+      "id": "pet-cat-2",
+      "name": "Shadow",
+      "species": "cat",
+      "breed": "Maine Coon",
+      "age": 3,
+      "gender": "male",
+      "size": "large",
+      "description": "Large and majestic Maine Coon",
+      "temperament": ["majestic", "independent", "gentle"],
+      "vaccinated": true,
+      "neutered": true,
+      "photos": ["https://example.com/shadow1.jpg"],
+      "location": {
+        "city": "Bronx",
+        "state": "NY",
+        "coordinates": {
+          "latitude": 40.8448,
+          "longitude": -73.8648
+        }
+      },
+      "owner": {
+        "id": "owner-5",
+        "name": "David Brown",
+        "age": 29
+      }
+    }
+  ]
+}

@@ -1,0 +1,634 @@
+import { SPECIES_OPTIONS, SIZE_OPTIONS, INTENT_OPTIONS, PERSONALITY_TAGS } from '@pawfectmatch/core'
+import { logger } from '@pawfectmatch/core';
+;
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+type OnboardingStackParamList = {
+  UserIntent: undefined;
+  PetProfileSetup: { userIntent: string };
+  PreferencesSetup: { userIntent: string };
+  Welcome: undefined;
+};
+
+type PetProfileSetupScreenProps = NativeStackScreenProps<OnboardingStackParamList, 'PetProfileSetup'>;
+
+interface PetFormData {
+  name: string;
+  species: string;
+  breed: string;
+  age: string;
+  gender: string;
+  size: string;
+  description: string;
+  intent: string;
+  personalityTags: string[];
+  healthInfo: {
+    vaccinated: boolean;
+    spayedNeutered: boolean;
+    microchipped: boolean;
+  };
+}
+
+const SPRING_CONFIG = {
+  damping: 15,
+  stiffness: 300,
+  mass: 1,
+};
+
+const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps) => {
+  const { userIntent } = route.params;
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState<PetFormData>({
+    name: '',
+    species: '',
+    breed: '',
+    age: '',
+    gender: '',
+    size: '',
+    description: '',
+    intent: userIntent === 'list' ? 'adoption' : 'all',
+    personalityTags: [],
+    healthInfo: {
+      vaccinated: false,
+      spayedNeutered: false,
+      microchipped: false,
+    },
+  });
+
+  const progressValue = useSharedValue(0);
+  const slideValue = useSharedValue(0);
+
+  React.useEffect(() => {
+    progressValue.value = withTiming((currentStep + 1) / 4, { duration: 300 });
+  }, [currentStep]);
+
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${progressValue.value * 100}%`,
+  }));
+
+  const updateFormData = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const updateHealthInfo = (field: string, value: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      healthInfo: {
+        ...prev.healthInfo,
+        [field]: value,
+      },
+    }));
+  };
+
+  const togglePersonalityTag = (tag: string) => {
+    setFormData(prev => ({
+      ...prev,
+      personalityTags: prev.personalityTags.includes(tag)
+        ? prev.personalityTags.filter(t => t !== tag)
+        : [...prev.personalityTags, tag],
+    }));
+  };
+
+  const validateStep = () => {
+    switch (currentStep) {
+      case 0:
+        return formData.name.trim() && formData.species && formData.breed.trim();
+      case 1:
+        return formData.age && formData.gender && formData.size;
+      case 2:
+        return formData.intent && formData.personalityTags.length > 0;
+      case 3:
+        return true; // Health info is optional
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (!validateStep()) {
+      Alert.alert('Missing Information', 'Please fill in all required fields to continue.');
+      return;
+    }
+
+    if (currentStep < 3) {
+      setCurrentStep(prev => prev + 1);
+    } else {
+      handleComplete();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(prev => prev - 1);
+    } else {
+      navigation.goBack();
+    }
+  };
+
+  const handleComplete = async () => {
+    try {
+      // Here you would save the pet profile to your backend
+      logger.info('Creating pet profile:', { formData });
+      
+      // Navigate to preferences setup or welcome screen
+      navigation.navigate('PreferencesSetup', { userIntent });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to create pet profile. Please try again.');
+    }
+  };
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 0:
+        return renderBasicInfoStep();
+      case 1:
+        return renderPhysicalInfoStep();
+      case 2:
+        return renderPersonalityStep();
+      case 3:
+        return renderHealthInfoStep();
+      default:
+        return null;
+    }
+  };
+
+  const renderBasicInfoStep = () => (
+    <View style={styles.stepContainer}>
+      <Text style={styles.stepTitle}>Basic Information</Text>
+      <Text style={styles.stepSubtitle}>Tell us about your pet</Text>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Pet Name *</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.name}
+          onChangeText={(text) => { updateFormData('name', text); }}
+          placeholder="e.g., Buddy, Luna, Max"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Species *</Text>
+        <View style={styles.optionsGrid}>
+          {SPECIES_OPTIONS.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.optionButton,
+                formData.species === option.value && styles.selectedOption,
+              ]}
+              onPress={() => { updateFormData('species', option.value); }}
+            >
+              <Text style={[
+                styles.optionText,
+                formData.species === option.value && styles.selectedOptionText,
+              ]}>
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Breed *</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.breed}
+          onChangeText={(text) => { updateFormData('breed', text); }}
+          placeholder="e.g., Golden Retriever, Persian Cat"
+        />
+      </View>
+    </View>
+  );
+
+  const renderPhysicalInfoStep = () => (
+    <View style={styles.stepContainer}>
+      <Text style={styles.stepTitle}>Physical Details</Text>
+      <Text style={styles.stepSubtitle}>Help others find the perfect match</Text>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Age (years) *</Text>
+        <TextInput
+          style={styles.input}
+          value={formData.age}
+          onChangeText={(text) => { updateFormData('age', text); }}
+          placeholder="e.g., 2"
+          keyboardType="numeric"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Gender *</Text>
+        <View style={styles.optionsRow}>
+          {['male', 'female'].map((gender) => (
+            <TouchableOpacity
+              key={gender}
+              style={[
+                styles.optionButton,
+                formData.gender === gender && styles.selectedOption,
+              ]}
+              onPress={() => { updateFormData('gender', gender); }}
+            >
+              <Text style={[
+                styles.optionText,
+                formData.gender === gender && styles.selectedOptionText,
+              ]}>
+                {gender.charAt(0).toUpperCase() + gender.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Size *</Text>
+        <View style={styles.optionsGrid}>
+          {SIZE_OPTIONS.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.optionButton,
+                formData.size === option.value && styles.selectedOption,
+              ]}
+              onPress={() => { updateFormData('size', option.value); }}
+            >
+              <Text style={[
+                styles.optionText,
+                formData.size === option.value && styles.selectedOptionText,
+              ]}>
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+
+  const renderPersonalityStep = () => (
+    <View style={styles.stepContainer}>
+      <Text style={styles.stepTitle}>Personality & Intent</Text>
+      <Text style={styles.stepSubtitle}>What makes your pet special?</Text>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>What are you looking for? *</Text>
+        <View style={styles.optionsGrid}>
+          {INTENT_OPTIONS.map((option) => (
+            <TouchableOpacity
+              key={option.value}
+              style={[
+                styles.optionButton,
+                formData.intent === option.value && styles.selectedOption,
+              ]}
+              onPress={() => { updateFormData('intent', option.value); }}
+            >
+              <Text style={[
+                styles.optionText,
+                formData.intent === option.value && styles.selectedOptionText,
+              ]}>
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Personality Tags * (Select at least one)</Text>
+        <View style={styles.tagsContainer}>
+          {PERSONALITY_TAGS.slice(0, 12).map((tag) => (
+            <TouchableOpacity
+              key={tag}
+              style={[
+                styles.tagButton,
+                formData.personalityTags.includes(tag) && styles.selectedTag,
+              ]}
+              onPress={() => { togglePersonalityTag(tag); }}
+            >
+              <Text style={[
+                styles.tagText,
+                formData.personalityTags.includes(tag) && styles.selectedTagText,
+              ]}>
+                {tag}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>Description (Optional)</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={formData.description}
+          onChangeText={(text) => { updateFormData('description', text); }}
+          placeholder="Tell us more about your pet's personality, habits, or special needs..."
+          multiline
+          numberOfLines={4}
+        />
+      </View>
+    </View>
+  );
+
+  const renderHealthInfoStep = () => (
+    <View style={styles.stepContainer}>
+      <Text style={styles.stepTitle}>Health Information</Text>
+      <Text style={styles.stepSubtitle}>Help potential matches know your pet's health status</Text>
+
+      <View style={styles.healthOptions}>
+        {[
+          { key: 'vaccinated', label: 'Vaccinated', icon: '💉' },
+          { key: 'spayedNeutered', label: 'Spayed/Neutered', icon: '🏥' },
+          { key: 'microchipped', label: 'Microchipped', icon: '🔍' },
+        ].map((option) => (
+          <TouchableOpacity
+            key={option.key}
+            style={[
+              styles.healthOption,
+              formData.healthInfo[option.key as keyof typeof formData.healthInfo] && styles.selectedHealthOption,
+            ]}
+            onPress={() => { updateHealthInfo(option.key, !formData.healthInfo[option.key as keyof typeof formData.healthInfo]); }}
+          >
+            <Text style={styles.healthIcon}>{option.icon}</Text>
+            <Text style={[
+              styles.healthLabel,
+              formData.healthInfo[option.key as keyof typeof formData.healthInfo] && styles.selectedHealthLabel,
+            ]}>
+              {option.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.healthNote}>
+        💡 Providing health information helps build trust with potential adopters and ensures better matches.
+      </Text>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <Animated.View style={[styles.progressFill, progressStyle]} />
+            </View>
+            <Text style={styles.progressText}>Step {currentStep + 1} of 4</Text>
+          </View>
+        </View>
+
+        {/* Content */}
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {renderStep()}
+        </ScrollView>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.nextButton, !validateStep() && styles.disabledButton]} 
+            onPress={handleNext}
+            disabled={!validateStep()}
+          >
+            <Text style={styles.nextButtonText}>
+              {currentStep === 3 ? 'Complete' : 'Next'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  header: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  progressContainer: {
+    alignItems: 'center',
+  },
+  progressBar: {
+    width: '100%',
+    height: 4,
+    backgroundColor: '#e5e7eb',
+    borderRadius: 2,
+    marginBottom: 8,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#ec4899',
+    borderRadius: 2,
+  },
+  progressText: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  stepContainer: {
+    flex: 1,
+  },
+  stepTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 8,
+  },
+  stepSubtitle: {
+    fontSize: 16,
+    color: '#6b7280',
+    marginBottom: 32,
+  },
+  inputGroup: {
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#f9fafb',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    color: '#1f2937',
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  optionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  optionsRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  optionButton: {
+    backgroundColor: '#f9fafb',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  selectedOption: {
+    backgroundColor: '#fdf2f8',
+    borderColor: '#ec4899',
+  },
+  optionText: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  selectedOptionText: {
+    color: '#ec4899',
+    fontWeight: '600',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tagButton: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  selectedTag: {
+    backgroundColor: '#ec4899',
+  },
+  tagText: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  selectedTagText: {
+    color: '#fff',
+  },
+  healthOptions: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  healthOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9fafb',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 12,
+    padding: 16,
+  },
+  selectedHealthOption: {
+    backgroundColor: '#f0fdf4',
+    borderColor: '#10b981',
+  },
+  healthIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  healthLabel: {
+    fontSize: 16,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  selectedHealthLabel: {
+    color: '#10b981',
+    fontWeight: '600',
+  },
+  healthNote: {
+    fontSize: 14,
+    color: '#6b7280',
+    lineHeight: 20,
+    fontStyle: 'italic',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#f3f4f6',
+  },
+  backButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#6b7280',
+    fontWeight: '600',
+  },
+  nextButton: {
+    backgroundColor: '#ec4899',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#d1d5db',
+  },
+  nextButtonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
+  },
+});
+
+export default PetProfileSetupScreen;

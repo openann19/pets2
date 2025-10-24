@@ -1,0 +1,1338 @@
+openapi: 3.0.3
+info:
+  title: PawfectMatch API
+  description: |
+    Comprehensive API for PawfectMatch pet adoption platform.
+    
+    ## Features
+    - Pet discovery and matching
+    - User authentication and profiles
+    - AI-powered pet analysis
+    - Subscription management
+    - Payment processing
+    - Real-time messaging
+    - Admin analytics
+    
+    ## Authentication
+    Most endpoints require authentication using JWT tokens. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+    
+    ## Rate Limiting
+    API requests are rate limited to 1000 requests per hour per user.
+    
+    ## Error Handling
+    All errors follow a consistent format:
+    ```json
+    {
+      "success": false,
+      "message": "Error description",
+      "code": "ERROR_CODE",
+      "details": {}
+    }
+    ```
+  version: 1.0.0
+  contact:
+    name: PawfectMatch API Support
+    email: api-support@pawfectmatch.com
+    url: https://pawfectmatch.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.pawfectmatch.com/v1
+    description: Production server
+  - url: https://staging-api.pawfectmatch.com/v1
+    description: Staging server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Pets
+    description: Pet discovery and management
+  - name: Users
+    description: User profiles and preferences
+  - name: Matches
+    description: Pet matching and compatibility
+  - name: Messages
+    description: Real-time messaging between users
+  - name: Subscriptions
+    description: Premium subscription management
+  - name: Payments
+    description: Payment processing and billing
+  - name: AI
+    description: AI-powered pet analysis and matching
+  - name: Admin
+    description: Administrative functions and analytics
+  - name: Webhooks
+    description: Webhook endpoints for external integrations
+
+paths:
+  # Authentication endpoints
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: securepassword123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: User registration
+      description: Register a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: securepassword123
+                preferences:
+                  $ref: '#/components/schemas/UserPreferences'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Logout user and invalidate token
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Logged out successfully
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      description: Get current authenticated user information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    $ref: '#/components/schemas/User'
+
+  # Pet endpoints
+  /pets:
+    get:
+      tags:
+        - Pets
+      summary: Get pets
+      description: Retrieve paginated list of pets with filtering options
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of pets per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+        - name: species
+          in: query
+          description: Filter by species
+          schema:
+            type: string
+            enum: [dog, cat, bird, rabbit, hamster, fish, other]
+        - name: breed
+          in: query
+          description: Filter by breed
+          schema:
+            type: string
+        - name: ageMin
+          in: query
+          description: Minimum age in years
+          schema:
+            type: integer
+            minimum: 0
+        - name: ageMax
+          in: query
+          description: Maximum age in years
+          schema:
+            type: integer
+            minimum: 0
+        - name: gender
+          in: query
+          description: Filter by gender
+          schema:
+            type: string
+            enum: [male, female]
+        - name: size
+          in: query
+          description: Filter by size
+          schema:
+            type: string
+            enum: [small, medium, large]
+        - name: location
+          in: query
+          description: Filter by location (city, state, or zip code)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pets retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  pets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /pets/{id}:
+    get:
+      tags:
+        - Pets
+      summary: Get pet by ID
+      description: Retrieve detailed information about a specific pet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Pet ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pet information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  pet:
+                    $ref: '#/components/schemas/Pet'
+        '404':
+          description: Pet not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Swipe endpoints
+  /swipes:
+    post:
+      tags:
+        - Matches
+      summary: Swipe on pet
+      description: Record a swipe action (like, pass, or super like)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - petId
+                - direction
+              properties:
+                petId:
+                  type: string
+                  example: pet_123
+                direction:
+                  type: string
+                  enum: [like, pass, superlike]
+                  example: like
+      responses:
+        '201':
+          description: Swipe recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Swipe recorded
+                  isMatch:
+                    type: boolean
+                    example: true
+                  match:
+                    $ref: '#/components/schemas/Match'
+
+  # Match endpoints
+  /matches:
+    get:
+      tags:
+        - Matches
+      summary: Get user matches
+      description: Retrieve all matches for the current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by match status
+          schema:
+            type: string
+            enum: [active, archived, blocked]
+            default: active
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of matches per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Matches retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Match'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /matches/{id}:
+    get:
+      tags:
+        - Matches
+      summary: Get match by ID
+      description: Retrieve detailed information about a specific match
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Match ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Match information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  match:
+                    $ref: '#/components/schemas/Match'
+
+  # Message endpoints
+  /matches/{id}/messages:
+    get:
+      tags:
+        - Messages
+      summary: Get match messages
+      description: Retrieve messages for a specific match
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Match ID
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of messages per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+      responses:
+        '200':
+          description: Messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags:
+        - Messages
+      summary: Send message
+      description: Send a message in a match conversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Match ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  maxLength: 1000
+                  example: Hi! I'm interested in adopting this pet.
+                type:
+                  type: string
+                  enum: [text, image, file]
+                  default: text
+      responses:
+        '201':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    $ref: '#/components/schemas/Message'
+
+  # AI endpoints
+  /ai/analyze-photo:
+    post:
+      tags:
+        - AI
+      summary: Analyze pet photo
+      description: Use AI to analyze a pet photo and extract information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - photo
+              properties:
+                photo:
+                  type: string
+                  format: binary
+                  description: Pet photo to analyze
+      responses:
+        '200':
+          description: Photo analysis completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  analysis:
+                    $ref: '#/components/schemas/PetAnalysis'
+        '400':
+          description: Invalid photo format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ai/match:
+    post:
+      tags:
+        - AI
+      summary: Find AI-powered matches
+      description: Use AI to find compatible pets based on user preferences
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                preferences:
+                  $ref: '#/components/schemas/UserPreferences'
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 50
+                  default: 10
+      responses:
+        '200':
+          description: AI matches found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  matches:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AIMatch'
+
+  # Subscription endpoints
+  /subscriptions:
+    get:
+      tags:
+        - Subscriptions
+      summary: Get user subscription
+      description: Retrieve current user's subscription information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Subscription information retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  subscription:
+                    $ref: '#/components/schemas/Subscription'
+
+    post:
+      tags:
+        - Subscriptions
+      summary: Create subscription
+      description: Create a new subscription for the user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - plan
+                - paymentMethodId
+              properties:
+                plan:
+                  type: string
+                  enum: [basic, premium, pro]
+                  example: premium
+                paymentMethodId:
+                  type: string
+                  example: pm_1234567890
+      responses:
+        '201':
+          description: Subscription created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  subscription:
+                    $ref: '#/components/schemas/Subscription'
+
+  /subscriptions/{id}:
+    delete:
+      tags:
+        - Subscriptions
+      summary: Cancel subscription
+      description: Cancel the user's subscription
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Subscription ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscription cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Subscription cancelled
+
+  # Payment endpoints
+  /payments/create-intent:
+    post:
+      tags:
+        - Payments
+      summary: Create payment intent
+      description: Create a Stripe payment intent for subscription
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - currency
+              properties:
+                amount:
+                  type: integer
+                  description: Amount in cents
+                  example: 999
+                currency:
+                  type: string
+                  default: usd
+                  example: usd
+      responses:
+        '200':
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  clientSecret:
+                    type: string
+                    example: pi_1234567890_secret_abcdef
+
+  /payments/confirm:
+    post:
+      tags:
+        - Payments
+      summary: Confirm payment
+      description: Confirm a payment intent
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paymentIntentId
+              properties:
+                paymentIntentId:
+                  type: string
+                  example: pi_1234567890
+      responses:
+        '200':
+          description: Payment confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  payment:
+                    $ref: '#/components/schemas/Payment'
+
+  # Admin endpoints
+  /admin/analytics/subscription:
+    get:
+      tags:
+        - Admin
+      summary: Get subscription analytics
+      description: Retrieve subscription analytics for admin dashboard
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: timeframe
+          in: query
+          description: Time period for analytics
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: 30d
+      responses:
+        '200':
+          description: Analytics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  analytics:
+                    $ref: '#/components/schemas/SubscriptionAnalytics'
+
+  /admin/payments/retry-stats:
+    get:
+      tags:
+        - Admin
+      summary: Get payment retry statistics
+      description: Retrieve payment retry statistics for admin dashboard
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Retry statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  stats:
+                    $ref: '#/components/schemas/RetryStats'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: user_123
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        avatar:
+          type: string
+          format: uri
+          example: https://example.com/avatar.jpg
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        premium:
+          $ref: '#/components/schemas/PremiumInfo'
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-01-01T00:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2024-01-01T00:00:00Z
+
+    UserPreferences:
+      type: object
+      properties:
+        species:
+          type: array
+          items:
+            type: string
+            enum: [dog, cat, bird, rabbit, hamster, fish, other]
+          example: [dog, cat]
+        breedPreferences:
+          type: array
+          items:
+            type: string
+          example: [Golden Retriever, Labrador]
+        ageRange:
+          type: array
+          items:
+            type: integer
+          minItems: 2
+          maxItems: 2
+          example: [1, 5]
+        temperamentPreferences:
+          type: array
+          items:
+            type: string
+          example: [friendly, energetic, good-with-kids]
+        activityLevelRange:
+          type: array
+          items:
+            type: integer
+          minItems: 2
+          maxItems: 2
+          example: [3, 7]
+        canHandleSpecialNeeds:
+          type: boolean
+          example: true
+
+    PremiumInfo:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+          example: true
+        plan:
+          type: string
+          enum: [free, basic, premium, pro]
+          example: premium
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-12-31T23:59:59Z
+        features:
+          type: array
+          items:
+            type: string
+          example: [unlimited_swipes, super_likes, boosts]
+
+    Pet:
+      type: object
+      properties:
+        id:
+          type: string
+          example: pet_123
+        name:
+          type: string
+          example: Buddy
+        species:
+          type: string
+          enum: [dog, cat, bird, rabbit, hamster, fish, other]
+          example: dog
+        breed:
+          type: string
+          example: Golden Retriever
+        age:
+          type: integer
+          minimum: 0
+          example: 3
+        gender:
+          type: string
+          enum: [male, female]
+          example: male
+        size:
+          type: string
+          enum: [small, medium, large]
+          example: large
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+          example: [https://example.com/photo1.jpg]
+        description:
+          type: string
+          example: Friendly and energetic dog looking for a loving home.
+        temperament:
+          type: array
+          items:
+            type: string
+          example: [friendly, energetic, good-with-kids]
+        health:
+          $ref: '#/components/schemas/PetHealth'
+        location:
+          $ref: '#/components/schemas/Location'
+        shelter:
+          $ref: '#/components/schemas/Shelter'
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-01-01T00:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2024-01-01T00:00:00Z
+
+    PetHealth:
+      type: object
+      properties:
+        vaccinated:
+          type: boolean
+          example: true
+        spayed:
+          type: boolean
+          example: false
+        medicalIssues:
+          type: array
+          items:
+            type: string
+          example: []
+        lastVetVisit:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-01-01T00:00:00Z
+
+    Location:
+      type: object
+      properties:
+        city:
+          type: string
+          example: San Francisco
+        state:
+          type: string
+          example: CA
+        zipCode:
+          type: string
+          example: 94102
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 37.7749
+            longitude:
+              type: number
+              example: -122.4194
+
+    Shelter:
+      type: object
+      properties:
+        id:
+          type: string
+          example: shelter_123
+        name:
+          type: string
+          example: SF Animal Care & Control
+        contact:
+          type: string
+          example: 415-554-6364
+        website:
+          type: string
+          format: uri
+          example: https://sfanimalcare.org
+        address:
+          $ref: '#/components/schemas/Location'
+
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+          example: match_123
+        pet:
+          $ref: '#/components/schemas/Pet'
+        user:
+          $ref: '#/components/schemas/User'
+        compatibilityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 85
+        matchedAt:
+          type: string
+          format: date-time
+          example: 2024-01-15T10:30:00Z
+        status:
+          type: string
+          enum: [active, archived, blocked]
+          example: active
+        lastMessageAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-01-15T10:35:00Z
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          example: msg_123
+        senderId:
+          type: string
+          example: user_123
+        content:
+          type: string
+          example: Hi! I'm interested in adopting this pet.
+        type:
+          type: string
+          enum: [text, image, file]
+          example: text
+        timestamp:
+          type: string
+          format: date-time
+          example: 2024-01-15T10:30:00Z
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-01-15T10:31:00Z
+
+    PetAnalysis:
+      type: object
+      properties:
+        species:
+          type: string
+          example: dog
+        breed:
+          type: string
+          example: Golden Retriever
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          example: 0.95
+        age:
+          type: integer
+          example: 3
+        health:
+          type: object
+          properties:
+            overall:
+              type: string
+              enum: [excellent, good, fair, poor]
+              example: good
+            issues:
+              type: array
+              items:
+                type: string
+              example: []
+        characteristics:
+          type: object
+          properties:
+            size:
+              type: string
+              enum: [small, medium, large]
+              example: large
+            color:
+              type: string
+              example: golden
+            temperament:
+              type: array
+              items:
+                type: string
+              example: [friendly, energetic]
+
+    AIMatch:
+      type: object
+      properties:
+        pet:
+          $ref: '#/components/schemas/Pet'
+        compatibilityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 85
+        reasons:
+          type: array
+          items:
+            type: string
+          example: [Similar activity level preferences, Compatible temperament]
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          example: sub_123
+        status:
+          type: string
+          enum: [active, cancelled, past_due, unpaid]
+          example: active
+        plan:
+          type: string
+          enum: [basic, premium, pro]
+          example: premium
+        currentPeriodStart:
+          type: string
+          format: date-time
+          example: 2024-01-01T00:00:00Z
+        currentPeriodEnd:
+          type: string
+          format: date-time
+          example: 2024-02-01T00:00:00Z
+        cancelAtPeriodEnd:
+          type: boolean
+          example: false
+        trialEnd:
+          type: string
+          format: date-time
+          nullable: true
+          example: 2024-01-07T00:00:00Z
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          example: pi_123
+        status:
+          type: string
+          enum: [succeeded, pending, failed, cancelled]
+          example: succeeded
+        amount:
+          type: integer
+          example: 999
+        currency:
+          type: string
+          example: usd
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-01-01T00:00:00Z
+
+    SubscriptionAnalytics:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+          example: 1000
+        totalPremiumUsers:
+          type: integer
+          example: 250
+        mrr:
+          type: number
+          example: 12500
+        arr:
+          type: number
+          example: 150000
+        churnRate:
+          type: number
+          example: 5.2
+        conversionRate:
+          type: number
+          example: 25.0
+        userGrowth:
+          type: number
+          example: 15.5
+        usage:
+          type: object
+          properties:
+            totalSwipesUsed:
+              type: integer
+              example: 50000
+            totalSuperLikesUsed:
+              type: integer
+              example: 5000
+            totalBoostsUsed:
+              type: integer
+              example: 1000
+            totalMessagesSent:
+              type: integer
+              example: 25000
+            totalProfileViews:
+              type: integer
+              example: 100000
+
+    RetryStats:
+      type: object
+      properties:
+        totalRetries:
+          type: integer
+          example: 150
+        successfulRetries:
+          type: integer
+          example: 120
+        failedRetries:
+          type: integer
+          example: 30
+        averageRetryAttempts:
+          type: number
+          example: 2.1
+        retrySuccessRate:
+          type: number
+          example: 80.0
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 100
+        totalPages:
+          type: integer
+          example: 10
+        hasNext:
+          type: boolean
+          example: true
+        hasPrev:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Error description
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        details:
+          type: object
+          additionalProperties: true

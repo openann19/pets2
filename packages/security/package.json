@@ -1,0 +1,31 @@
+{
+  "name": "@pawfectmatch/security",
+  "version": "1.0.0",
+  "description": "Security middleware and utilities for PawfectMatch",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@types/express": "^4.17.21",
+    "busboy": "^1.6.0",
+    "@types/busboy": "^1.5.0",
+    "content-type": "^1.0.5",
+    "@types/content-type": "^1.1.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.30",
+    "typescript": "^5.3.3",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
+  },
+  "peerDependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"useVideoCall.d.ts","sourceRoot":"","sources":["useVideoCall.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAiBH,eAAO,MAAM,YAAY,GAAI,QAAQ,MAAM,EAAE,QAAQ,MAAM;;;;;;;iBAX1C,OAAO;eACT,OAAO;iBACL,WAAW,GAAG,IAAI;kBACjB,WAAW,GAAG,IAAI;aACvB,OAAO;oBACA,OAAO;qBACN,OAAO;uBACL,WAAW,GAAG,MAAM,GAAG,MAAM,GAAG,cAAc;WAC1D,KAAK,GAAG,IAAI;CAwKtB,CAAC"}

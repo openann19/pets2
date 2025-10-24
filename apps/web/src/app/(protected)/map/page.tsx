@@ -1,0 +1,498 @@
+'use client';
+import PlaygroundMap from '@/components/Map/PlaygroundMap';
+import { useToast } from '@/components/ui/toast';
+import { _useAuthStore as useAuthStore } from '@/stores/auth-store';
+import { ClockIcon, GlobeAltIcon, HeartIcon, MapPinIcon, PhoneIcon, } from '@heroicons/react/24/outline';
+import { StarIcon } from '@heroicons/react/24/solid';
+import { logger } from '@pawfectmatch/core';
+import { useEffect, useState } from 'react';
+export default function MapPage() {
+    const toast = useToast();
+    const { user: _user } = useAuthStore();
+    const [playgrounds, setPlaygrounds] = useState([]);
+    const [selectedPlayground, setSelectedPlayground] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    useEffect(() => {
+        fetchPlaygrounds();
+    }, []);
+    const fetchPlaygrounds = async () => {
+        setIsLoading(true);
+        try {
+            // In a real app, you would fetch from your API
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Sample playground data
+            const mockPlaygrounds = [
+                {
+                    id: 'playground1',
+                    name: 'Central Park Dog Run',
+                    description: 'A spacious off-leash dog park with separate areas for small and large dogs, water fountains, and plenty of shade.',
+                    address: '85th Street, Central Park, New York, NY 10028',
+                    coordinates: { lat: 40.7812, lng: -73.9665 },
+                    type: 'dog-park',
+                    amenities: ['Water Fountains', 'Fenced Area', 'Shade', 'Seating', 'Waste Stations'],
+                    rating: 4.7,
+                    reviews: 128,
+                    photos: ['https://i.pravatar.cc/300?img=1', 'https://i.pravatar.cc/300?img=2'],
+                    hours: {
+                        Monday: { open: '06:00', close: '22:00' },
+                        Tuesday: { open: '06:00', close: '22:00' },
+                        Wednesday: { open: '06:00', close: '22:00' },
+                        Thursday: { open: '06:00', close: '22:00' },
+                        Friday: { open: '06:00', close: '22:00' },
+                        Saturday: { open: '06:00', close: '22:00' },
+                        Sunday: { open: '06:00', close: '22:00' },
+                    },
+                    website: 'https://www.centralparknyc.org/locations/dog-friendly-areas',
+                    phone: '212-555-1234',
+                    isFavorite: true,
+                },
+                {
+                    id: 'playground2',
+                    name: 'Barking Springs Pet Resort',
+                    description: 'Upscale pet resort with indoor and outdoor play areas, grooming services, and boarding facilities.',
+                    address: '123 Main St, New York, NY 10001',
+                    coordinates: { lat: 40.7505, lng: -73.9934 },
+                    type: 'boarding',
+                    amenities: ['Indoor Play Area', 'Outdoor Area', 'Grooming', 'Daycare', 'Training'],
+                    rating: 4.5,
+                    reviews: 87,
+                    photos: ['https://i.pravatar.cc/300?img=3'],
+                    hours: {
+                        Monday: { open: '07:00', close: '19:00' },
+                        Tuesday: { open: '07:00', close: '19:00' },
+                        Wednesday: { open: '07:00', close: '19:00' },
+                        Thursday: { open: '07:00', close: '19:00' },
+                        Friday: { open: '07:00', close: '19:00' },
+                        Saturday: { open: '08:00', close: '17:00' },
+                        Sunday: { open: '09:00', close: '16:00' },
+                    },
+                    website: 'https://example.com/barking-springs',
+                    phone: '212-555-5678',
+                },
+                {
+                    id: 'playground3',
+                    name: 'Paws & Relax Cafe',
+                    description: 'Pet-friendly cafe where you can enjoy coffee with your furry friend. Offers special treats for pets and a relaxing atmosphere.',
+                    address: '456 Park Ave, New York, NY 10022',
+                    coordinates: { lat: 40.758, lng: -73.9855 },
+                    type: 'pet-friendly-cafe',
+                    amenities: ['Outdoor Seating', 'Pet Menu', 'Water Bowls', 'Pet Treats'],
+                    rating: 4.3,
+                    reviews: 65,
+                    photos: ['https://i.pravatar.cc/300?img=4'],
+                    hours: {
+                        Monday: { open: '08:00', close: '20:00' },
+                        Tuesday: { open: '08:00', close: '20:00' },
+                        Wednesday: { open: '08:00', close: '20:00' },
+                        Thursday: { open: '08:00', close: '20:00' },
+                        Friday: { open: '08:00', close: '22:00' },
+                        Saturday: { open: '09:00', close: '22:00' },
+                        Sunday: { open: '09:00', close: '18:00' },
+                    },
+                    website: 'https://example.com/paws-relax',
+                    phone: '212-555-9012',
+                },
+                {
+                    id: 'playground4',
+                    name: 'Hudson River Dog Beach',
+                    description: 'A section of beach where dogs are allowed to swim and play off-leash during designated hours.',
+                    address: 'Hudson River Park, New York, NY 10014',
+                    coordinates: { lat: 40.7322, lng: -74.011 },
+                    type: 'beach',
+                    amenities: ['Off-Leash Area', 'Water Access', 'Waste Stations'],
+                    rating: 4.6,
+                    reviews: 92,
+                    hours: {
+                        Monday: { open: '06:00', close: '22:00' },
+                        Tuesday: { open: '06:00', close: '22:00' },
+                        Wednesday: { open: '06:00', close: '22:00' },
+                        Thursday: { open: '06:00', close: '22:00' },
+                        Friday: { open: '06:00', close: '22:00' },
+                        Saturday: { open: '06:00', close: '22:00' },
+                        Sunday: { open: '06:00', close: '22:00' },
+                    },
+                },
+                {
+                    id: 'playground5',
+                    name: 'PetSmart',
+                    description: 'Large pet supply store with grooming services and occasional pet adoption events.',
+                    address: '632 Broadway, New York, NY 10012',
+                    coordinates: { lat: 40.7264, lng: -73.9957 },
+                    type: 'pet-store',
+                    amenities: ['Grooming', 'Training Classes', 'Pet Supplies', 'Adoption Events'],
+                    rating: 4.1,
+                    reviews: 145,
+                    photos: ['https://i.pravatar.cc/300?img=5'],
+                    hours: {
+                        Monday: { open: '09:00', close: '21:00' },
+                        Tuesday: { open: '09:00', close: '21:00' },
+                        Wednesday: { open: '09:00', close: '21:00' },
+                        Thursday: { open: '09:00', close: '21:00' },
+                        Friday: { open: '09:00', close: '21:00' },
+                        Saturday: { open: '09:00', close: '21:00' },
+                        Sunday: { open: '10:00', close: '19:00' },
+                    },
+                    website: 'https://www.petsmart.com',
+                    phone: '212-555-3456',
+                },
+                {
+                    id: 'playground6',
+                    name: 'Animal Medical Center',
+                    description: 'Full-service veterinary hospital offering emergency care, specialty services, and routine checkups.',
+                    address: '510 East 62nd St, New York, NY 10065',
+                    coordinates: { lat: 40.7622, lng: -73.9584 },
+                    type: 'veterinary',
+                    amenities: ['Emergency Services', '24/7 Care', 'Specialists', 'Pharmacy'],
+                    rating: 4.8,
+                    reviews: 203,
+                    photos: ['https://i.pravatar.cc/300?img=6'],
+                    hours: {
+                        Monday: { open: '00:00', close: '24:00' },
+                        Tuesday: { open: '00:00', close: '24:00' },
+                        Wednesday: { open: '00:00', close: '24:00' },
+                        Thursday: { open: '00:00', close: '24:00' },
+                        Friday: { open: '00:00', close: '24:00' },
+                        Saturday: { open: '00:00', close: '24:00' },
+                        Sunday: { open: '00:00', close: '24:00' },
+                    },
+                    website: 'https://www.amcny.org',
+                    phone: '212-555-7890',
+                },
+            ];
+            setPlaygrounds(mockPlaygrounds);
+        }
+        catch (error) {
+            logger.error('Error fetching playgrounds:', { error });
+        }
+        finally {
+            setIsLoading(false);
+        }
+    };
+    const handlePlaygroundSelect = (playground) => {
+        setSelectedPlayground(playground);
+        setShowModal(true);
+    };
+    const handleMyLocationClick = () => {
+        // In a real app, you would center the map on the user's location
+        toast.info('Centering map on your location...', 'Getting your GPS coordinates.');
+    };
+    const handleFilterChange = (filters) => {
+        // In a real app, you would filter the playgrounds based on the selected filters
+        logger.info('Filters changed:', { filters });
+        // Example implementation to filter by type and rating:
+        // const filteredPlaygrounds = allPlaygrounds.filter(
+        //   pg => filters.types[pg.type] && pg.rating >= filters.ratings
+        // );
+        // setPlaygrounds(filteredPlaygrounds);
+    };
+    const handleToggleFavorite = (playground) => {
+        // In a real app, you would make an API call to toggle favorite status
+        const updatedPlaygrounds = playgrounds.map((pg) => pg.id === playground.id ? { ...pg, isFavorite: !pg.isFavorite } : pg);
+        setPlaygrounds(updatedPlaygrounds);
+        if (selectedPlayground && selectedPlayground.id === playground.id) {
+            setSelectedPlayground({ ...selectedPlayground, isFavorite: !selectedPlayground.isFavorite });
+        }
+    };
+    const getDayOfWeek = () => {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[new Date().getDay()];
+    };
+    const isOpenNow = (playground) => {
+        if (!playground.hours)
+            return 'Unknown';
+        const currentDay = getDayOfWeek();
+        const hours = playground.hours[currentDay];
+        if (!hours)
+            return 'Unknown';
+        const now = new Date();
+        const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        if (currentTime >= hours.open && currentTime <= hours.close) {
+            return 'Open';
+        }
+        else {
+            return 'Closed';
+        }
+    };
+    const getPlaygroundTypeIcon = (type) => {
+        switch (type) {
+            case 'dog-park':
+                return '🐕';
+            case 'pet-friendly-cafe':
+                return '☕';
+            case 'pet-store':
+                return '🛍️';
+            case 'veterinary':
+                return '🏥';
+            case 'grooming':
+                return '🧼';
+            case 'boarding':
+                return '🏠';
+            case 'beach':
+                return '🏖️';
+            case 'trail':
+                return '🥾';
+            default:
+                return '📍';
+        }
+    };
+    // Get readable name for type
+    const getReadableTypeName = (type) => {
+        switch (type) {
+            case 'dog-park':
+                return 'Dog Park';
+            case 'pet-friendly-cafe':
+                return 'Pet-Friendly Cafe';
+            case 'pet-store':
+                return 'Pet Store';
+            case 'veterinary':
+                return 'Veterinary';
+            case 'grooming':
+                return 'Grooming';
+            case 'boarding':
+                return 'Boarding';
+            case 'beach':
+                return 'Pet-Friendly Beach';
+            case 'trail':
+                return 'Pet-Friendly Trail';
+            default:
+                return type;
+        }
+    };
+    return (<div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+            <MapPinIcon className="w-8 h-8 mr-3 text-pink-500"/>
+            Pet Playgrounds
+          </h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
+            Find pet-friendly locations near you
+          </p>
+        </div>
+
+        {/* Map */}
+        <div className="mb-8">
+          {isLoading ? (<div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 h-[600px] flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"/>
+                <p className="text-gray-600 dark:text-gray-400">Loading map...</p>
+              </div>
+            </div>) : (<PlaygroundMap playgrounds={playgrounds} onPlaygroundSelect={handlePlaygroundSelect} onMyLocationClick={handleMyLocationClick} onFilterChange={handleFilterChange}/>)}
+        </div>
+
+        {/* Playgrounds Grid */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Popular Playgrounds
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {playgrounds.slice(0, 6).map((playground) => (<div key={playground.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow" onClick={() => handlePlaygroundSelect(playground)}>
+                {/* Image */}
+                <div className="h-48 bg-gray-200 dark:bg-gray-700 relative">
+                  {playground.photos && playground.photos.length > 0 ? (<img src={playground.photos[0]} alt={playground.name} className="w-full h-full object-cover"/>) : (<div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-pink-400 to-purple-500">
+                      <span className="text-white text-5xl">
+                        {getPlaygroundTypeIcon(playground.type)}
+                      </span>
+                    </div>)}
+
+                  {/* Favorite button */}
+                  <button onClick={(e) => {
+                e.stopPropagation();
+                handleToggleFavorite(playground);
+            }} className="absolute top-4 right-4 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <HeartIcon className={`w-5 h-5 ${playground.isFavorite
+                ? 'text-pink-500 fill-pink-500'
+                : 'text-gray-400 dark:text-gray-500'}`}/>
+                  </button>
+
+                  {/* Type badge */}
+                  <div className="absolute bottom-4 left-4">
+                    <span className="px-2 py-1 bg-black bg-opacity-70 text-white text-xs rounded-full">
+                      {getReadableTypeName(playground.type)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (<StarIcon key={star} className={`w-4 h-4 ${star <= playground.rating
+                    ? 'text-yellow-500 fill-yellow-500'
+                    : 'text-gray-300 dark:text-gray-600'}`}/>))}
+                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                        ({playground.reviews})
+                      </span>
+                    </div>
+
+                    <span className={`text-xs ${isOpenNow(playground) === 'Open'
+                ? 'text-green-600 dark:text-green-400'
+                : isOpenNow(playground) === 'Closed'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-500 dark:text-gray-400'}`}>
+                      {isOpenNow(playground)}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">
+                    {playground.name}
+                  </h3>
+
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
+                    {playground.address}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {playground.amenities.slice(0, 3).map((amenity, index) => (<span key={index} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs rounded">
+                        {amenity}
+                      </span>))}
+                    {playground.amenities.length > 3 && (<span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs rounded">
+                        +{playground.amenities.length - 3} more
+                      </span>)}
+                  </div>
+                </div>
+              </div>))}
+          </div>
+        </div>
+      </div>
+
+      {/* Playground Detail Modal */}
+      {showModal && selectedPlayground ? <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          {/* Header Image */}
+          <div className="h-64 bg-gray-200 dark:bg-gray-700 relative">
+            {selectedPlayground.photos && selectedPlayground.photos.length > 0 ? (<img src={selectedPlayground.photos[0]} alt={selectedPlayground.name} className="w-full h-full object-cover"/>) : (<div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-pink-400 to-purple-500">
+                <span className="text-white text-6xl">
+                  {getPlaygroundTypeIcon(selectedPlayground.type)}
+                </span>
+              </div>)}
+
+            {/* Close button */}
+            <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70 transition-opacity">
+              ×
+            </button>
+
+            {/* Favorite button */}
+            <button onClick={() => handleToggleFavorite(selectedPlayground)} className="absolute top-4 right-16 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <HeartIcon className={`w-5 h-5 ${selectedPlayground.isFavorite
+                ? 'text-pink-500 fill-pink-500'
+                : 'text-gray-400 dark:text-gray-500'}`}/>
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="px-2 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300 text-sm rounded-full">
+                {getReadableTypeName(selectedPlayground.type)}
+              </span>
+              <div className="flex items-center">
+                {[1, 2, 3, 4, 5].map((star) => (<StarIcon key={star} className={`w-4 h-4 ${star <= selectedPlayground.rating
+                    ? 'text-yellow-500 fill-yellow-500'
+                    : 'text-gray-300 dark:text-gray-600'}`}/>))}
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                  ({selectedPlayground.reviews})
+                </span>
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {selectedPlayground.name}
+            </h2>
+
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              {selectedPlayground.description}
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {/* Address */}
+              <div className="flex items-start space-x-2">
+                <MapPinIcon className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5"/>
+                <div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">Address</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {selectedPlayground.address}
+                  </div>
+                </div>
+              </div>
+
+              {/* Hours */}
+              <div className="flex items-start space-x-2">
+                <ClockIcon className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5"/>
+                <div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">Hours</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {selectedPlayground.hours?.[getDayOfWeek()] ? (<>
+                        Today: {selectedPlayground.hours[getDayOfWeek()].open} -{' '}
+                        {selectedPlayground.hours[getDayOfWeek()].close}
+                      </>) : ('Hours not available')}
+                  </div>
+                  <div className={`text-xs font-medium ${isOpenNow(selectedPlayground) === 'Open'
+                ? 'text-green-600 dark:text-green-400'
+                : isOpenNow(selectedPlayground) === 'Closed'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-gray-500 dark:text-gray-400'}`}>
+                    {isOpenNow(selectedPlayground)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Phone */}
+              {selectedPlayground.phone ? <div className="flex items-start space-x-2">
+                <PhoneIcon className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5"/>
+                <div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">Phone</div>
+                  <a href={`tel:${selectedPlayground.phone}`} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    {selectedPlayground.phone}
+                  </a>
+                </div>
+              </div> : null}
+
+              {/* Website */}
+              {selectedPlayground.website ? <div className="flex items-start space-x-2">
+                <GlobeAltIcon className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5"/>
+                <div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    Website
+                  </div>
+                  <a href={selectedPlayground.website} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate block max-w-[200px]">
+                    {selectedPlayground.website.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
+              </div> : null}
+            </div>
+
+            {/* Amenities */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Amenities
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedPlayground.amenities.map((amenity, index) => (<span key={index} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-sm rounded-full">
+                    {amenity}
+                  </span>))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex space-x-2">
+              <button onClick={() => {
+                // In a real app, you would open directions in a map app
+                window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedPlayground.address)}`, '_blank');
+            }} className="flex-1 py-2 px-4 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg transition-colors text-center">
+                Get Directions
+              </button>
+
+              <button onClick={() => setShowModal(false)} className="py-2 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-colors">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div> : null}
+    </div>);
+}
+//# sourceMappingURL=page.jsx.map

@@ -1,0 +1,24 @@
+{
+  "id": "pi_test_success",
+  "object": "payment_intent",
+  "amount": 999,
+  "currency": "usd",
+  "status": "succeeded",
+  "client_secret": "pi_test_success_secret",
+  "payment_method": {
+    "id": "pm_test_card",
+    "type": "card",
+    "card": {
+      "brand": "visa",
+      "last4": "4242",
+      "exp_month": 12,
+      "exp_year": 2025
+    }
+  },
+  "customer": "cus_test_customer",
+  "subscription": {
+    "id": "sub_test_premium",
+    "status": "active",
+    "current_period_end": 1735689599
+  }
+}

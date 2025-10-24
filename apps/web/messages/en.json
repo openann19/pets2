@@ -1,0 +1,145 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "getStarted": "Get Started",
+    "createProfile": "Create Profile",
+    "startBrowsing": "Start Browsing"
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "admin": "Admin",
+    "premium": "Premium",
+    "swipe": "Swipe",
+    "matches": "Matches",
+    "chat": "Chat",
+    "systemStatus": "System Status",
+    "browse": "Browse",
+    "map": "Map",
+    "language": "Language",
+    "aiBio": "AI Bio",
+    "aiPhoto": "AI Photo"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "rememberMe": "Remember Me",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "pets": "Pets",
+    "matches": "Matches",
+    "systemHealth": "System Health",
+    "quickActions": "Quick Actions",
+    "userManagement": "User Management",
+    "petManagement": "Pet Management",
+    "matchManagement": "Match Management",
+    "apiManagement": "API Management",
+    "systemActions": "System Actions"
+  },
+  "premium": {
+    "title": "Premium Features",
+    "subtitle": "Unlock exclusive features and enhance your pet matching experience",
+    "upgrade": "Upgrade",
+    "plans": "Plans",
+    "features": "Features",
+    "pricing": "Pricing",
+    "subscribe": "Subscribe",
+    "cancel": "Cancel Subscription",
+    "features": {
+      "unlimitedLikes": "Unlimited Likes",
+      "superLikes": "Super Likes",
+      "rewind": "Rewind Last Swipe"
+    }
+  },
+  "landing": {
+    "browsePets": "Browse Pets",
+    "myMatches": "My Matches",
+    "petMap": "Pet Map",
+    "toggleMenu": "Toggle Menu",
+    "premiumPetMatching": "Premium Pet Matching",
+    "headlinePrefix": "Find Your Perfect",
+    "headlineHighlight": "Pet Match",
+    "description": "AI-powered pet matching for the perfect companion. Connect with pets that match your lifestyle and preferences.",
+    "hero": {
+      "title": "Find Your Perfect Pet Match",
+      "subtitle": "AI-powered pet matching for the perfect companion",
+      "cta": "Start Matching"
+    },
+    "features": {
+      "title": "Why Choose PawfectMatch?",
+      "ai": {
+        "title": "AI-Powered Matching",
+        "description": "Advanced algorithms find your ideal pet companion"
+      },
+      "premium": {
+        "title": "Premium Experience",
+        "description": "Exclusive features and premium support"
+      },
+      "community": {
+        "title": "Active Community",
+        "description": "Connect with other pet lovers and experts"
+      }
+    },
+    "premiumExperience": "Premium Experience"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "network": "Network error",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "notFound": "Not found",
+    "serverError": "Server error",
+    "validation": "Validation error"
+  },
+  "forms": {
+    "searchBreeds": "Search breeds (e.g., Shiba Inu, Golden Retriever)",
+    "enterNewPassword": "Enter new password",
+    "confirmNewPassword": "Confirm new password",
+    "passwordsDontMatch": "Passwords don't match",
+    "mustAgreeToTerms": "You must agree to the terms and conditions"
+  },
+  "chat": {
+    "quickMessages": {
+      "hiAdorable": "Hi! Your pet looks adorable! 😊",
+      "playdate": "Would love to arrange a playdate! 🐾",
+      "favoriteActivity": "What's your pet's favorite activity?"
+    },
+    "uploadPhoto": "Upload photo",
+    "noMessagesYet": "No messages yet. Start the conversation!"
+  }
+}

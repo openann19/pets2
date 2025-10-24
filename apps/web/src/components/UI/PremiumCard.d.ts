@@ -1,0 +1,31 @@
+export default function PremiumCard({ children, variant, hover, tilt, glow, blur, shimmer, magnetic, padding, className, onClick, entrance, delay, haptic, sound, disabled, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, 'aria-labelledby': ariaLabelledBy, 'aria-expanded': ariaExpanded, 'aria-selected': ariaSelected, 'aria-hidden': ariaHidden, 'aria-live': ariaLive, 'aria-atomic': ariaAtomic, 'aria-relevant': ariaRelevant, role, tabIndex, 'data-testid': dataTestId, }: {
+    children: any;
+    variant?: string | undefined;
+    hover?: boolean | undefined;
+    tilt?: boolean | undefined;
+    glow?: boolean | undefined;
+    blur?: boolean | undefined;
+    shimmer?: boolean | undefined;
+    magnetic?: boolean | undefined;
+    padding?: string | undefined;
+    className?: string | undefined;
+    onClick: any;
+    entrance?: string | undefined;
+    delay?: number | undefined;
+    haptic?: boolean | undefined;
+    sound?: boolean | undefined;
+    disabled?: boolean | undefined;
+    "aria-label": any;
+    "aria-describedby": any;
+    "aria-labelledby": any;
+    "aria-expanded": any;
+    "aria-selected": any;
+    "aria-hidden": any;
+    "aria-live": any;
+    "aria-atomic": any;
+    "aria-relevant": any;
+    role: any;
+    tabIndex: any;
+    "data-testid": any;
+}): JSX.Element;
+//# sourceMappingURL=PremiumCard.d.ts.map

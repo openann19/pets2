@@ -1,0 +1,51 @@
+{
+  "tasks": [
+    {
+      "id": "nav-web-001",
+      "title": "Add back buttons to all web screens",
+      "status": "in_progress",
+      "priority": "critical",
+      "files": ["apps/web/app/**/*.tsx"]
+    },
+    {
+      "id": "nav-mobile-001",
+      "title": "Add back buttons to all mobile screens",
+      "status": "in_progress",
+      "priority": "critical",
+      "files": ["apps/mobile/src/screens/**/*.tsx"]
+    },
+    {
+      "id": "filter-web-001",
+      "title": "Implement filter system for web discovery",
+      "status": "pending",
+      "priority": "high",
+      "files": ["apps/web/src/components/Discovery/FilterSystem.tsx"]
+    },
+    {
+      "id": "filter-mobile-001",
+      "title": "Implement filter system for mobile swipe",
+      "status": "pending",
+      "priority": "high",
+      "files": ["apps/mobile/src/components/SwipeFilters.tsx"]
+    },
+    {
+      "id": "safety-001",
+      "title": "Create report/block system",
+      "status": "pending",
+      "priority": "critical",
+      "files": [
+        "packages/core/src/services/SafetyService.ts",
+        "apps/web/src/components/Safety/ReportDialog.tsx",
+        "apps/mobile/src/screens/report/ReportScreen.tsx"
+      ]
+    }
+    // 200+ more tasks automatically generated from audit document
+  ],
+  "stats": {
+    "total_tasks": 247,
+    "completed": 12,
+    "in_progress": 8,
+    "pending": 227
+  },
+  "last_updated": "2025-10-13T06:13:00Z"
+}

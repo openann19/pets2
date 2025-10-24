@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+    --primary-rgb: 34, 197, 94; /* Green for matches/success (e.g., pet swipe yes) */
+    --secondary-rgb: 239, 68, 68; /* Red for no-match (e.g., swipe no) */
+    --accent-rgb: 59, 130, 246; /* Blue for AI/premium buttons */
+    --neutral-rgb: 107, 114, 128; /* Gray for text/UI elements */
+    --background-gradient: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb))); /* Explicit gradient for app bg */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --foreground-rgb: 255, 255, 255;
+      --background-start-rgb: 0, 0, 0;
+      --background-end-rgb: 0, 0, 0;
+      --primary-rgb: 134, 239, 172; /* Lighter green for dark visibility */
+      --secondary-rgb: 248, 113, 113; /* Lighter red */
+      --accent-rgb: 147, 197, 253; /* Lighter blue */
+      --neutral-rgb: 209, 213, 219; /* Lighter gray */
+      --background-gradient: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb))); /* Consistent gradient */
+    }
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: var(--background-gradient); /* Apply gradient globally or override in components */
+  }
+
+  /* Ensure WCAG contrast (e.g., 4.5:1 ratio for text) */
+  .text-primary { color: rgb(var(--primary-rgb)); }
+  .bg-primary { background-color: rgb(var(--primary-rgb)); }
+  /* Repeat for secondary, accent, neutral as needed */
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+    /* Fallback for unsupported browsers (e.g., older Safari/IE) */
+    @supports not (text-wrap: balance) {
+      text-wrap: pretty; /* Alternative mode if available */
+    }
+  }
+
+  /* Custom app utilities */
+  .pet-card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .premium-glow {
+    box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.5); /* Glow for PremiumButton */
+  }
+}

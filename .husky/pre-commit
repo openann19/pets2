@@ -1,0 +1,82 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Professional Pre-commit Hook - 2025 Standards
+# This hook runs before every commit and blocks commits with quality issues
+
+echo "🔍 Running Pre-commit Quality Checks..."
+
+# 1. TypeScript Type Check - Must pass
+echo "📝 TypeScript Type Check..."
+pnpm run type-check
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript type check failed. Commit blocked."
+  echo "Please fix type errors before committing."
+  exit 1
+fi
+
+# 2. ESLint Check - Zero tolerance
+echo "🔧 ESLint Check..."
+pnpm run lint:check
+if [ $? -ne 0 ]; then
+  echo "❌ ESLint check failed. Commit blocked."
+  echo "Please fix linting errors before committing."
+  exit 1
+fi
+
+# 3. Format Check - Enforce consistent formatting
+echo "🎨 Code Format Check..."
+pnpm run format:check
+if [ $? -ne 0 ]; then
+  echo "❌ Code formatting check failed. Commit blocked."
+  echo "Run 'pnpm run format' to fix formatting issues."
+  exit 1
+fi
+
+# 4. Test Check - Critical tests must pass
+echo "🧪 Critical Tests..."
+pnpm run test:critical
+if [ $? -ne 0 ]; then
+  echo "❌ Critical tests failed. Commit blocked."
+  echo "Please fix failing tests before committing."
+  exit 1
+fi
+
+# 5. Security Check - No vulnerabilities
+echo "🔒 Security Check..."
+pnpm audit --audit-level moderate
+if [ $? -ne 0 ]; then
+  echo "❌ Security vulnerabilities detected. Commit blocked."
+  echo "Please fix security issues before committing."
+  exit 1
+fi
+
+# 6. Bundle Size Check - Prevent bloat
+echo "📦 Bundle Size Check..."
+pnpm run bundle:check
+if [ $? -ne 0 ]; then
+  echo "❌ Bundle size limit exceeded. Commit blocked."
+  echo "Please optimize bundle size before committing."
+  exit 1
+fi
+
+# 7. Performance Check - Maintain performance
+echo "⚡ Performance Check..."
+pnpm run perf:check
+if [ $? -ne 0 ]; then
+  echo "❌ Performance regression detected. Commit blocked."
+  echo "Please fix performance issues before committing."
+  exit 1
+fi
+
+# 8. Accessibility Check - Maintain accessibility
+echo "♿ Accessibility Check..."
+pnpm run a11y:check
+if [ $? -ne 0 ]; then
+  echo "❌ Accessibility issues detected. Commit blocked."
+  echo "Please fix accessibility issues before committing."
+  exit 1
+fi
+
+echo "✅ All quality checks passed. Commit allowed."
+echo "🚀 Your code meets professional standards!"

@@ -1,0 +1,85 @@
+{
+  "activeMatches": [
+    {
+      "id": "match-1",
+      "pet1": {
+        "id": "pet-dog-1",
+        "name": "Buddy",
+        "owner": {
+          "id": "owner-1",
+          "name": "John Doe"
+        }
+      },
+      "pet2": {
+        "id": "pet-dog-2",
+        "name": "Luna",
+        "owner": {
+          "id": "owner-2",
+          "name": "Jane Smith"
+        }
+      },
+      "createdAt": "2024-01-15T10:30:00Z",
+      "lastMessage": {
+        "id": "msg-1",
+        "text": "Hi! Our pets seem like a great match!",
+        "sender": "owner-1",
+        "timestamp": "2024-01-15T10:35:00Z"
+      },
+      "isActive": true,
+      "unreadCount": 2
+    },
+    {
+      "id": "match-2",
+      "pet1": {
+        "id": "pet-cat-1",
+        "name": "Whiskers",
+        "owner": {
+          "id": "owner-4",
+          "name": "Sarah Wilson"
+        }
+      },
+      "pet2": {
+        "id": "pet-cat-2",
+        "name": "Shadow",
+        "owner": {
+          "id": "owner-5",
+          "name": "David Brown"
+        }
+      },
+      "createdAt": "2024-01-14T15:20:00Z",
+      "lastMessage": {
+        "id": "msg-2",
+        "text": "Would you like to schedule a playdate?",
+        "sender": "owner-5",
+        "timestamp": "2024-01-15T09:15:00Z"
+      },
+      "isActive": true,
+      "unreadCount": 0
+    }
+  ],
+  "expiredMatches": [
+    {
+      "id": "match-3",
+      "pet1": {
+        "id": "pet-dog-3",
+        "name": "Max",
+        "owner": {
+          "id": "owner-3",
+          "name": "Mike Johnson"
+        }
+      },
+      "pet2": {
+        "id": "pet-dog-1",
+        "name": "Buddy",
+        "owner": {
+          "id": "owner-1",
+          "name": "John Doe"
+        }
+      },
+      "createdAt": "2024-01-10T12:00:00Z",
+      "expiredAt": "2024-01-17T12:00:00Z",
+      "isActive": false,
+      "reason": "expired"
+    }
+  ]
+}

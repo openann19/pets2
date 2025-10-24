@@ -1,0 +1,733 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+  RefreshControl,
+  Dimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '@pawfectmatch/core';
+// Removed gradients for a more refined, solid-color design
+import { useCallManager } from '../components/calling/CallManager';
+import { useTheme } from '../contexts/ThemeContext';
+import { matchesAPI } from '../services/api';
+import * as Haptics from 'expo-haptics';
+
+const { width: screenWidth } = Dimensions.get('window');
+
+interface Match {
+  _id: string;
+  petId: string;
+  petName: string;
+  petPhoto: string;
+  ownerName: string;
+  lastMessage?: {
+    content: string;
+    timestamp: string;
+    senderId: string;
+  };
+  isOnline: boolean;
+  matchedAt: string;
+  unreadCount: number;
+}
+
+interface MatchesScreenProps {
+  navigation: any;
+}
+
+export default function MatchesScreen({ navigation }: MatchesScreenProps) {
+  const { user } = useAuthStore();
+  const { startCall, isCallActive } = useCallManager();
+  const { isDark, colors } = useTheme();
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [likedYou, setLikedYou] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'matches' | 'likes'>('matches');
+  const fabAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (selectedTab === 'matches') {
+      loadMatches();
+    } else {
+      loadLikedYou();
+    }
+  }, [selectedTab]);
+
+  useEffect(() => {
+    loadMatches();
+  }, []);
+
+  useEffect(() => {
+    fabAnim.setValue(0);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fabAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
+        Animated.timing(fabAnim, { toValue: 0, duration: 1000, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  const loadMatches = async () => {
+    setIsLoading(true);
+    try {
+      // Use real API call
+      const matchesData = await matchesAPI.getMatches();
+      setMatches(matchesData || []);
+    } catch (error) {
+      // Fallback to sample data for demo
+      const mockMatches: Match[] = [
+        {
+          _id: '1',
+          petId: 'pet1',
+          petName: 'Buddy',
+          petPhoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
+          ownerName: 'John Doe',
+          lastMessage: {
+            content: 'Hey! Would love to set up a playdate 🐕',
+            timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+            senderId: 'other',
+          },
+          isOnline: true,
+          matchedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+          unreadCount: 2,
+        },
+        {
+          _id: '2',
+          petId: 'pet2',
+          petName: 'Luna',
+          petPhoto: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400',
+          ownerName: 'Jane Smith',
+          lastMessage: {
+            content: 'Thanks for the like! Luna would love to meet your pet',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(), // 4 hours ago
+            senderId: 'other',
+          },
+          isOnline: false,
+          matchedAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6 hours ago
+          unreadCount: 0,
+        },
+        {
+          _id: '3',
+          petId: 'pet3',
+          petName: 'Max',
+          petPhoto: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400',
+          ownerName: 'Mike Johnson',
+          isOnline: true,
+          matchedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(), // 12 hours ago
+          unreadCount: 0,
+        },
+        {
+          _id: '4',
+          petId: 'pet4',
+          petName: 'Bella',
+          petPhoto: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400',
+          ownerName: 'Sarah Wilson',
+          lastMessage: {
+            content: 'Your pet is so cute! 😍',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+            senderId: 'me',
+          },
+          isOnline: false,
+          matchedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+          unreadCount: 1,
+        },
+      ];
+      setMatches(mockMatches);
+      console.log('Using fallback data, API call failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadLikedYou = async () => {
+    setIsLoading(true);
+    try {
+      // In a real app, this would be an API call
+      // const likedYouData = await api.getLikedYou();
+      setLikedYou(mockLikedYou);
+    } catch (error) {
+      console.error('Failed to load liked you:', error);
+      setLikedYou(mockLikedYou);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    if (selectedTab === 'matches') {
+      await loadMatches();
+    } else {
+      await loadLikedYou();
+    }
+    setRefreshing(false);
+  };
+
+  const formatLastMessageTime = (timestamp: string) => {
+    const now = new Date();
+    const messageTime = new Date(timestamp);
+    const diffInMinutes = Math.floor((now.getTime() - messageTime.getTime()) / (1000 * 60));
+
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes}m`;
+    } else if (diffInMinutes < 1440) {
+      return `${Math.floor(diffInMinutes / 60)}h`;
+    } else if (diffInMinutes < 2880) {
+      return 'Yesterday';
+    } else {
+      return `${Math.floor(diffInMinutes / 1440)}d`;
+    }
+  };
+
+  const handleVoiceCall = async (match: Match) => {
+    if (isCallActive()) {
+      Alert.alert('Call in Progress', 'You already have an active call.');
+      return;
+    }
+
+    Alert.alert(
+      'Voice Call',
+      `Start a voice call with ${match.petName}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Call', 
+          onPress: async () => {
+            const success = await startCall(match._id, 'voice');
+            if (!success) {
+              Alert.alert('Error', 'Failed to start call. Please check your permissions and try again.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleVideoCall = async (match: Match) => {
+    if (isCallActive()) {
+      Alert.alert('Call in Progress', 'You already have an active call.');
+      return;
+    }
+
+    Alert.alert(
+      'Video Call',
+      `Start a video call with ${match.petName}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Call', 
+          onPress: async () => {
+            const success = await startCall(match._id, 'video');
+            if (!success) {
+              Alert.alert('Error', 'Failed to start call. Please check your permissions and try again.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const renderMatch = ({ item }: { item: Match }) => (
+    <TouchableOpacity
+      style={styles.matchCard}
+      onPress={() => navigation.navigate('Chat', { 
+        matchId: item._id, 
+        petName: item.petName 
+      })}
+      onLongPress={() => {
+        // Navigate to Memory Weave on long press
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        navigation.navigate('MemoryWeave', {
+          matchId: item._id,
+          petName: item.petName
+        });
+      }}
+      activeOpacity={0.7}
+    >
+      <View style={styles.matchImageContainer}>
+        <Image source={{ uri: item.petPhoto }} style={styles.matchImage} />
+        {item.isOnline && <View style={styles.onlineIndicator} />}
+        {item.unreadCount > 0 && (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadCount}>
+              {item.unreadCount > 99 ? '99+' : item.unreadCount}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.matchInfo}>
+        <View style={styles.matchHeader}>
+          <Text style={styles.petName}>{item.petName}</Text>
+          {item.lastMessage && (
+            <Text style={styles.messageTime}>
+              {formatLastMessageTime(item.lastMessage.timestamp)}
+            </Text>
+          )}
+        </View>
+        
+        <Text style={styles.ownerName}>with {item.ownerName}</Text>
+        
+        {item.lastMessage ? (
+          <Text style={[styles.lastMessage, item.unreadCount > 0 && styles.unreadMessage]} numberOfLines={1}>
+            {item.lastMessage.senderId === 'me' ? 'You: ' : ''}{item.lastMessage.content}
+          </Text>
+        ) : (
+          <Text style={styles.noMessage}>Say hello! 👋</Text>
+        )}
+      </View>
+
+      <View style={styles.matchActions}>
+        <TouchableOpacity
+          style={styles.callButton}
+          onPress={(e) => {
+            e.stopPropagation();
+            handleVoiceCall(item);
+          }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="call" size={18} color="#4CAF50" />
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.callButton}
+          onPress={(e) => {
+            e.stopPropagation();
+            handleVideoCall(item);
+          }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="videocam" size={18} color="#2196F3" />
+        </TouchableOpacity>
+        
+        <Ionicons name="chevron-forward" size={20} color="#ccc" />
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderLikedYou = ({ item }: { item: any }) => (
+    <TouchableOpacity 
+      style={styles.likedCard}
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        // Navigate to pet profile or create match
+        navigation.navigate('PetProfile', { petId: item._id });
+      }}
+      activeOpacity={0.8}
+    >
+      <Image source={{ uri: item.petPhoto }} style={styles.likedImage} />
+      <View style={[styles.likedOverlay, { backgroundColor: 'rgba(0,0,0,0.55)' }]}> 
+        <Text style={styles.likedName}>{item.petName}</Text>
+        <Text style={styles.likedAction}>Liked you!</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const mockLikedYou = [
+    {
+      _id: '1',
+      petName: 'Charlie',
+      petPhoto: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400',
+    },
+    {
+      _id: '2',
+      petName: 'Daisy',
+      petPhoto: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400',
+    },
+    {
+      _id: '3',
+      petName: 'Rocky',
+      petPhoto: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
+    },
+  ];
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Premium Header */}
+      <View style={[styles.header, { backgroundColor: 'rgba(255,255,255,0.08)', borderBottomColor: colors.gray200 }]}>
+        <TouchableOpacity 
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.goBack();
+          }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="arrow-back" size={24} color={colors.gray800} />
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.gray800 }]}>Matches</Text>
+        <TouchableOpacity 
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate('Settings');
+          }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="settings-outline" size={24} color={colors.gray800} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Enhanced Tab Selector */}
+      <View style={[styles.tabContainer, { backgroundColor: 'rgba(255,255,255,0.08)' }]}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'matches' && [styles.activeTab, { backgroundColor: colors.primary }]]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setSelectedTab('matches');
+          }}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.tabText, { color: colors.gray600 }, selectedTab === 'matches' && styles.activeTabText]}>
+            Matches ({matches.length})
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'likes' && [styles.activeTab, { backgroundColor: colors.primary }]]}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setSelectedTab('likes');
+          }}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.tabText, { color: colors.gray600 }, selectedTab === 'likes' && styles.activeTabText]}>
+            Liked You ({likedYou.length})
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Content */}
+      {selectedTab === 'matches' ? (
+        matches.length > 0 ? (
+          <FlatList
+            data={matches}
+            renderItem={renderMatch}
+            keyExtractor={(item) => item._id}
+            refreshControl={
+              <RefreshControl 
+                refreshing={refreshing} 
+                onRefresh={onRefresh}
+                tintColor={colors.primary}
+                colors={[colors.primary]}
+              />
+            }
+            initialNumToRender={10}
+            windowSize={10}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="heart-outline" size={80} color="#ccc" />
+            <Text style={styles.emptyTitle}>No matches yet</Text>
+            <Text style={styles.emptySubtitle}>
+              Start swiping to find your pet's perfect match!
+            </Text>
+            <TouchableOpacity
+              style={styles.startSwipingButton}
+              onPress={() => navigation.navigate('Swipe')}
+            >
+              <Text style={styles.startSwipingText}>Start Swiping</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      ) : (
+        <View style={styles.likedYouContainer}>
+          <Text style={[styles.likedYouTitle, { color: colors.gray800 }]}>These pets liked you!</Text>
+          <Text style={[styles.likedYouSubtitle, { color: colors.gray600 }]}>Tap to view their profile</Text>
+          <FlatList
+            data={likedYou}
+            renderItem={renderLikedYou}
+            keyExtractor={(item) => item._id}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.likedGrid}
+            refreshControl={
+              <RefreshControl 
+                refreshing={refreshing} 
+                onRefresh={onRefresh}
+                tintColor={colors.primary}
+                colors={[colors.primary]}
+              />
+            }
+            initialNumToRender={10}
+            windowSize={10}
+          />
+        </View>
+      )}
+
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate('Swipe')}
+      >
+        <Animated.View style={[
+          styles.fabGradient,
+          { backgroundColor: '#0b0b0c', borderWidth: 2, borderColor: '#ec4899', transform: [{ scale: fabAnim.interpolate({ inputRange: [0,1], outputRange: [1,1.06] }) }] }
+        ]}>
+          <Ionicons name="heart" size={24} color="#fff" />
+        </Animated.View>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    marginTop: 15,
+    borderRadius: 25,
+    padding: 4,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 20,
+  },
+  activeTab: {
+    backgroundColor: '#ff6b6b',
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+  },
+  activeTabText: {
+    color: '#fff',
+  },
+  listContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  matchCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  matchImageContainer: {
+    position: 'relative',
+    marginRight: 15,
+  },
+  matchImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 16,
+    height: 16,
+    backgroundColor: '#4CAF50',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  unreadBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#ff6b6b',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  unreadCount: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  matchInfo: {
+    flex: 1,
+  },
+  matchHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  petName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  messageTime: {
+    fontSize: 12,
+    color: '#999',
+  },
+  ownerName: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  lastMessage: {
+    fontSize: 14,
+    color: '#999',
+  },
+  unreadMessage: {
+    color: '#333',
+    fontWeight: '500',
+  },
+  noMessage: {
+    fontSize: 14,
+    color: '#999',
+    fontStyle: 'italic',
+  },
+  matchActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  callButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f8f9fa',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 20,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 30,
+  },
+  startSwipingButton: {
+    backgroundColor: '#ff6b6b',
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 25,
+  },
+  startSwipingText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  likedYouContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  likedYouTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  likedYouSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  likedGrid: {
+    paddingBottom: 100,
+  },
+  likedCard: {
+    width: (screenWidth - 60) / 2,
+    height: 200,
+    marginHorizontal: 5,
+    marginBottom: 10,
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  likedImage: {
+    width: '100%',
+    height: '100%',
+  },
+  likedOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '50%',
+    justifyContent: 'flex-end',
+    padding: 15,
+  },
+  likedName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  likedAction: {
+    fontSize: 12,
+    color: '#fff',
+    opacity: 0.8,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  fabGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

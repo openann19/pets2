@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.base.json", // <-- Inherits all strict rules
+  "compilerOptions": {
+    // --- Overrides & additions for React Native ---
+    "lib": ["ES2023"],
+    "types": ["jest", "react-native"],
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "jsx": "react-jsx", // Use modern JSX transform
+    "allowJs": true,
+    "noEmit": true, // Metro handles bundling
+    "isolatedModules": true,
+    "skipLibCheck": true // Skip type checking of declaration files to avoid conflicts
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "App.tsx",
+    "app.config.cjs",
+    "babel.config.cjs",
+    "metro.config.cjs"
+  ],
+  "exclude": [
+    "node_modules", 
+    "dist", 
+    "coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

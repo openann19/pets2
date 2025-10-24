@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Gate Report - 10/11/2025</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .status { padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.failure { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .metric { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; }
+        .metric-value { font-size: 2em; font-weight: bold; color: #007bff; }
+        .metric-label { color: #6c757d; margin-top: 5px; }
+        .checks { margin-top: 30px; }
+        .check-item { padding: 15px; margin-bottom: 10px; border-radius: 6px; }
+        .check-item.passed { background: #d4edda; border-left: 4px solid #28a745; }
+        .check-item.failed { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .check-name { font-weight: bold; margin-bottom: 5px; }
+        .check-details { font-size: 0.9em; color: #6c757d; }
+        .footer { text-align: center; margin-top: 30px; color: #6c757d; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Quality Gate Report</h1>
+            <p>Generated on 10/11/2025, 3:08:12 AM</p>
+        </div>
+        
+        <div class="status failure">
+            <h2>❌ Quality Gate Failed</h2>
+            <p>Please fix the issues below before proceeding.</p>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Total Checks</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" style="color: #28a745;">1</div>
+                <div class="metric-label">Passed</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" style="color: #dc3545;">9</div>
+                <div class="metric-label">Failed</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">55725ms</div>
+                <div class="metric-label">Duration</div>
+            </div>
+        </div>
+        
+        <div class="checks">
+            <h3>Check Results</h3>
+            
+                <div class="check-item passed">
+                    <div class="check-name">✅ Code Complexity Check</div>
+                    <div class="check-details">Command: pnpm run complexity:check</div>
+                </div>
+            
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ TypeScript Type Check</div>
+                    <div class="check-details">Command: pnpm run type-check</div>
+                    <div class="check-details">Error: Command failed: pnpm run type-check
+turbo 2.5.8
+
+@pawfectmatch/ui:type-check: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run type-check exited (1)
+@pawfectmatch/ui#type-check: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run type-check exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ ESLint Check</div>
+                    <div class="check-details">Command: pnpm run lint:check</div>
+                    <div class="check-details">Error: Command failed: pnpm run lint:check
+turbo 2.5.8
+
+@pawfectmatch/ui:lint:check: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run lint:check exited (2)
+@pawfectmatch/mobile:lint:check: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/apps/mobile) /opt/homebrew/bin/pnpm run lint:check exited (2)
+@pawfectmatch/ui#lint:check: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run lint:check exited (2)
+@pawfectmatch/mobile#lint:check: command (/Users/elvira/Downloads/pets-pr-1/apps/mobile) /opt/homebrew/bin/pnpm run lint:check exited (2)
+ ERROR  run failed: command  exited (2)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Code Format Check</div>
+                    <div class="check-details">Command: pnpm run format:check</div>
+                    <div class="check-details">Error: Command failed: pnpm run format:check
+turbo 2.5.8
+
+@pawfectmatch/core:format:check: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/packages/core) /opt/homebrew/bin/pnpm run format:check exited (1)
+@pawfectmatch/core#format:check: command (/Users/elvira/Downloads/pets-pr-1/packages/core) /opt/homebrew/bin/pnpm run format:check exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Test Suite</div>
+                    <div class="check-details">Command: pnpm run test:ci</div>
+                    <div class="check-details">Error: Command failed: pnpm run test:ci
+turbo 2.5.8
+
+@pawfectmatch/mobile:test:ci: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/apps/mobile) /opt/homebrew/bin/pnpm run test:ci exited (1)
+@pawfectmatch/mobile#test:ci: command (/Users/elvira/Downloads/pets-pr-1/apps/mobile) /opt/homebrew/bin/pnpm run test:ci exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Security Audit</div>
+                    <div class="check-details">Command: pnpm audit --audit-level moderate</div>
+                    <div class="check-details">Error: Command failed: pnpm audit --audit-level moderate
+(node:38879) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Bundle Size Check</div>
+                    <div class="check-details">Command: pnpm run bundle:check</div>
+                    <div class="check-details">Error: Command failed: pnpm run bundle:check
+turbo 2.5.8
+
+@pawfectmatch/ui:build: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run build exited (1)
+@pawfectmatch/ui#build: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run build exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Performance Check</div>
+                    <div class="check-details">Command: pnpm run perf:check</div>
+                    <div class="check-details">Error: Command failed: pnpm run perf:check
+turbo 2.5.8
+
+@pawfectmatch/ui:build: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run build exited (1)
+@pawfectmatch/ui#build: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run build exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Accessibility Check</div>
+                    <div class="check-details">Command: pnpm run a11y:check</div>
+                    <div class="check-details">Error: Command failed: pnpm run a11y:check
+turbo 2.5.8
+
+@pawfectmatch/ui:build: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run build exited (1)
+@pawfectmatch/ui#build: command (/Users/elvira/Downloads/pets-pr-1/packages/ui) /opt/homebrew/bin/pnpm run build exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+                <div class="check-item failed">
+                    <div class="check-name">❌ Dependency Check</div>
+                    <div class="check-details">Command: pnpm run deps:check</div>
+                    <div class="check-details">Error: Command failed: pnpm run deps:check
+turbo 2.5.8
+
+pawfectmatch-web:deps:check: ERROR: command finished with error: command (/Users/elvira/Downloads/pets-pr-1/apps/web) /opt/homebrew/bin/pnpm run deps:check exited (1)
+pawfectmatch-web#deps:check: command (/Users/elvira/Downloads/pets-pr-1/apps/web) /opt/homebrew/bin/pnpm run deps:check exited (1)
+ ERROR  run failed: command  exited (1)
+</div>
+                </div>
+            
+        </div>
+        
+        <div class="footer">
+            <p>Quality Gate System - Professional Standards 2025</p>
+        </div>
+    </div>
+</body>
+</html>
+    

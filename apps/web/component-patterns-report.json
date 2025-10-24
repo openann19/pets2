@@ -1,0 +1,1372 @@
+{
+  "analyzedFiles": 159,
+  "componentCount": 96,
+  "patternsFound": {
+    "reactFC": 0,
+    "fc": 0,
+    "implicitChildren": 37,
+    "missingReturnType": 102,
+    "nonMemoized": 96
+  },
+  "componentsByDirectory": {
+    "src": 0,
+    "src/utils": 2,
+    "src/tests": 0,
+    "src/providers": 2,
+    "src/hooks": 2,
+    "src/hooks/__tests__": 0,
+    "src/contexts": 2,
+    "src/components": 8,
+    "src/components/ui": 0,
+    "src/components/providers": 1,
+    "src/components/common": 0,
+    "src/components/admin": 18,
+    "src/components/VideoCall": 0,
+    "src/components/VideoCall/__tests__": 0,
+    "src/components/Verification": 1,
+    "src/components/Reminders": 1,
+    "src/components/Profile": 1,
+    "src/components/Privacy": 1,
+    "src/components/Premium": 1,
+    "src/components/Premium/__tests__": 0,
+    "src/components/Photo": 2,
+    "src/components/Pet": 2,
+    "src/components/Pet/SwipeCard": 6,
+    "src/components/Personality": 2,
+    "src/components/Performance": 3,
+    "src/components/PWA": 1,
+    "src/components/Notifications": 1,
+    "src/components/MemoryWeave": 3,
+    "src/components/Map": 1,
+    "src/components/Location": 3,
+    "src/components/Layout": 0,
+    "src/components/Layout/__tests__": 0,
+    "src/components/Gamification": 3,
+    "src/components/ErrorBoundary": 0,
+    "src/components/Community": 3,
+    "src/components/Chat": 5,
+    "src/components/Calendar": 2,
+    "src/components/Brand": 0,
+    "src/components/Background": 0,
+    "src/components/Auth": 2,
+    "src/components/Animation": 0,
+    "src/components/Adoption": 6,
+    "src/components/Adoption/sections": 6,
+    "src/components/Accessibility": 2,
+    "src/components/AI": 3,
+    "src/components/AI/__tests__": 0,
+    "src/app": 0,
+    "src/app/providers": 0,
+    "src/app/components/UI": 0,
+    "src/app/(protected)/settings": 0,
+    "src/app/(protected)/reminders": 0,
+    "src/app/(protected)/profile": 0,
+    "src/app/(protected)/pets": 0,
+    "src/app/(protected)/pets/[id]": 0,
+    "src/app/(protected)/map": 0,
+    "src/app/(protected)/leaderboard": 0,
+    "src/app/(protected)/calendar": 0,
+    "src/app/(admin)/enhanced-features": 0,
+    "src/__tests__": 0
+  },
+  "componentsToUpdate": [
+    {
+      "path": "src/components/ButtonShowcase2025.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 7
+    },
+    {
+      "path": "src/components/admin/UIEnhancements.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 9
+    },
+    {
+      "path": "src/components/Performance/CodeSplitter.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/AdoptionApplicationForm.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/AIAdoptionAssistant.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/sections/ReviewSection.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/sections/PersonalInfoSection.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/utils/imageOptimization.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 2
+    },
+    {
+      "path": "src/utils/error-boundary.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/tests/premium-test-utils.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/tests/component-tests.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/providers/SocketProvider.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/providers/NotificationProvider.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/hooks/useReactQuery.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/hooks/useAuth.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/hooks/useAdminPermissions.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 2
+    },
+    {
+      "path": "src/contexts/SocketContext.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/contexts/AuthContext.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/DevTools.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/ui/select.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/providers/AuthProvider.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/providers/AppErrorBoundary.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/admin/NotificationManagement.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/admin/LeaderboardManagement.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/admin/EnhancedFeaturesOverview.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/admin/BiometricManagement.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/admin/AccessibilityUtils.jsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": true
+      },
+      "componentCount": 5
+    },
+    {
+      "path": "src/components/Verification/ProfileVerification.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Reminders/PetCareReminders.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Profile/PetProfileEditor.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Privacy/PrivacyControls.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Premium/SubscriptionManager.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Premium/__tests__/SubscriptionManager.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Photo/PhotoEditor.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Photo/PhotoCropper.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Pet/SwipeStackSkeleton.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Pet/OptimizedSwipeCard.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Pet/SwipeCard/SwipeCardPremiumEffects.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Pet/SwipeCard/SwipeCardOverlay.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Pet/SwipeCard/SwipeCardInfo.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Personality/PersonalityCard.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Personality/CompatibilityMatrix.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Notifications/SmartNotifications.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/MemoryWeave/MemoryWeave3D.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/MemoryWeave/MemoryWeave.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/MemoryWeave/ConversationTimeline.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Map/PlaygroundMap.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Location/TravelMode.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Location/NearbyEvents.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Location/LocationPrivacy.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Layout/PremiumLayout.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Layout/__tests__/Header.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Gamification/Leaderboard.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/ErrorBoundary/AppErrorBoundary.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Community/PackGroupsManager.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Community/CommunityFeed.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Community/AICommunitySuggestions.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Chat/VoiceRecorder.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Chat/StickerPicker.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Chat/MessageReactions.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Chat/GifPicker.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Calendar/PetCalendar.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Calendar/EventForm.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Auth/TwoFactorAuth.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Animation/AnimationTests.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Adoption/VirtualMeetupScheduler.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/ShelterRegistration.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/RescueWorkflowManager.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/AdoptionStoriesGallery.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/sections/StepIndicator.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/sections/PetExperienceSection.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/Adoption/sections/LifestyleSection.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/AI/PhotoAnalyzer.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/AI/CompatibilityAnalyzer.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/components/AI/BioGenerator.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": true
+      },
+      "componentCount": 1
+    },
+    {
+      "path": "src/app/App.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/__tests__/accessibility-premium.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/utils/codeSplitting.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/hooks/useSwipe.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/hooks/premium-hooks.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/HydrationBoundary.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ErrorBoundary.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/tabs.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/progress.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/label.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/dialog.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/card.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/avatar.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/alert.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/PremiumCard.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/ui/PremiumButton.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/common/ShareButton.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/admin/SecurityAlertsDashboard.jsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/admin/ReportsManagement.jsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/admin/AnalyticsVisualization.jsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/VideoCall/__tests__/VideoCallRoom.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Pet/SwipeCard.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Pet/MatchModal.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Pet/MatchModal.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Map/MapView.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Map/AIMapFeatures.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Layout/ProtectedLayout.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Layout/PageTransition.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Layout/PageTransition.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Chat/VirtualizedMessageList.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Chat/TypingIndicator.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Chat/SimpleMessageList.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/Chat/MessageBubble.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/AI/AIBioAssistant.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/components/AI/__tests__/BioGenerator.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/app/providers/AppProviders.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": true,
+        "missingReturnType": false,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/app/components/UI/LoadingSpinner.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/app/(protected)/pets/page.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/app/(protected)/map/page.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/app/(protected)/leaderboard/page.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/app/(protected)/calendar/page.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/__tests__/paw-animations-integration.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    },
+    {
+      "path": "src/__tests__/comprehensive.test.tsx",
+      "issues": {
+        "reactFC": false,
+        "fc": false,
+        "implicitChildren": false,
+        "missingReturnType": true,
+        "nonMemoized": false
+      },
+      "componentCount": 0
+    }
+  ]
+}

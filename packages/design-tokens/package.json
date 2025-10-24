@@ -1,0 +1,56 @@
+{
+  "name": "@pawfectmatch/design-tokens",
+  "version": "1.0.0",
+  "description": "Unified design tokens for PawfectMatch across web, mobile, and UI packages",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js && rollup -c",
+    "build:tokens": "node build.js",
+    "build:clean": "pnpm run clean && pnpm run build",
+    "dev": "rollup -c -w",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint ./src",
+    "lint:check": "eslint ./src --max-warnings 0",
+    "lint:fix": "eslint ./src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,md}\"",
+    "test": "pnpm run lint:check && pnpm run type-check",
+    "clean": "rm -rf dist",
+    "clean:all": "rm -rf dist node_modules/.cache"
+  },
+  "keywords": [
+    "design-tokens",
+    "design-system",
+    "pawfectmatch",
+    "colors",
+    "typography",
+    "spacing",
+    "shadows"
+  ],
+  "author": "PawfectMatch Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.0",
+    "@types/node": "^20.16.5",
+    "rollup": "^4.24.3",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pawfectmatch/design-tokens.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pawfectmatch/design-tokens/issues"
+  },
+  "homepage": "https://github.com/pawfectmatch/design-tokens#readme"
+}

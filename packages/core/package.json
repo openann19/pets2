@@ -1,0 +1,108 @@
+{
+  "name": "@pawfectmatch/core",
+  "version": "1.0.0",
+  "description": "Shared TypeScript logic for PawfectMatch - validation schemas, types, API clients",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && pnpm build:cjs && pnpm build:merge-cjs",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:merge-cjs": "node -e \"require('fs').cpSync('dist-cjs','dist',{recursive:true});\"",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "clean:all": "rm -rf dist node_modules/.cache",
+    "lint": "eslint src",
+    "lint:check": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:critical": "jest --testPathPatterns=\"(critical|integration)\" --ci --watchAll=false",
+    "bundle:check": "echo 'Bundle check not applicable for core package'",
+    "perf:check": "echo 'Performance check not applicable for core package'",
+    "a11y:check": "echo 'Accessibility check not applicable for core package'",
+    "deps:check": "npm audit --audit-level moderate",
+    "complexity:check": "echo 'Complexity check not implemented'",
+    "analyze:bundle": "echo 'Bundle analysis not applicable for core package'"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "1.21.0",
+    "@tanstack/react-query": "^5.89.0",
+    "axios": "^1.6.2",
+    "@pawfectmatch/design-tokens": "workspace:*",
+    "immer": "^10.0.3",
+    "zod": "^3.25.76",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/plugin-transform-runtime": "^7.23.7",
+    "@babel/preset-env": "^7.23.7",
+    "@babel/preset-react": "^7.23.7",
+    "@babel/preset-typescript": "^7.23.7",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.19.17",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "axios-mock-adapter": "^1.21.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "msw": "^1.2.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js",
+      "require": "./dist/schemas/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js",
+      "require": "./dist/api/index.js"
+    },
+    "./services": {
+      "types": "./dist/services/index.d.ts",
+      "import": "./dist/services/index.js",
+      "require": "./dist/services/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.js"
+    },
+    "./stores": {
+      "types": "./dist/stores/index.d.ts",
+      "import": "./dist/stores/index.js",
+      "require": "./dist/stores/index.js"
+    },
+    "./mappers": {
+      "types": "./dist/mappers/index.d.ts",
+      "import": "./dist/mappers/index.js",
+      "require": "./dist/mappers/index.js"
+    }
+  }
+}

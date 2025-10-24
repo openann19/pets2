@@ -1,0 +1,321 @@
+/**
+ * 🎨 UHD/4K OPTIMIZATION STYLES
+ * Ultra High Definition CSS optimizations for maximum visual quality
+ */
+
+/* ===== UHD DISPLAY OPTIMIZATIONS ===== */
+
+/* High DPI Image Optimization */
+.uhd-high-dpi-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* GPU Acceleration for UHD */
+.uhd-gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Crisp Text Rendering for UHD */
+.uhd-crisp-text {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1;
+  font-kerning: auto;
+}
+
+/* Smooth Animations for UHD */
+.uhd-smooth-animation {
+  transform: translateZ(0);
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== MEDIA QUERIES FOR UHD DISPLAYS ===== */
+
+/* Retina Display (2x DPI) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .retina-optimized {
+    background-size: 200% 200%;
+  }
+
+  .retina-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Super Retina Display (3x DPI) */
+@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi) {
+  .super-retina-optimized {
+    background-size: 300% 300%;
+  }
+
+  .super-retina-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Ultra Retina Display (4x DPI) */
+@media (-webkit-min-device-pixel-ratio: 4), (min-resolution: 384dpi) {
+  .ultra-retina-optimized {
+    background-size: 400% 400%;
+  }
+
+  .ultra-retina-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* ===== UHD RESOLUTION BREAKPOINTS ===== */
+
+/* UHD (1920x1080 and above) */
+@media (min-width: 1920px) and (min-height: 1080px) {
+  .uhd-container {
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+
+  .uhd-text {
+    font-size: 1.125rem; /* 18px base */
+    line-height: 1.75;
+  }
+
+  .uhd-spacing {
+    padding: 2rem;
+    margin: 1.5rem;
+  }
+}
+
+/* 4K UHD (3840x2160) */
+@media (min-width: 3840px) and (min-height: 2160px) {
+  .uhd-4k-container {
+    max-width: 3840px;
+    margin: 0 auto;
+  }
+
+  .uhd-4k-text {
+    font-size: 1.25rem; /* 20px base */
+    line-height: 1.8;
+  }
+
+  .uhd-4k-spacing {
+    padding: 3rem;
+    margin: 2rem;
+  }
+
+  /* 4K Image Optimization */
+  .uhd-4k-image {
+    max-width: 100%;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* 8K UHD (7680x4320) */
+@media (min-width: 7680px) and (min-height: 4320px) {
+  .uhd-8k-container {
+    max-width: 7680px;
+    margin: 0 auto;
+  }
+
+  .uhd-8k-text {
+    font-size: 1.5rem; /* 24px base */
+    line-height: 2;
+  }
+
+  .uhd-8k-spacing {
+    padding: 4rem;
+    margin: 3rem;
+  }
+}
+
+/* ===== PREMIUM COMPONENT UHD OPTIMIZATIONS ===== */
+
+/* Premium Card UHD Optimization */
+.premium-card-uhd {
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 16px 64px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Premium Button UHD Optimization */
+.premium-button-uhd {
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-button-uhd:hover {
+  transform: translateZ(0) translateY(-2px) scale(1.02);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== ANIMATION OPTIMIZATIONS FOR UHD ===== */
+
+/* Smooth 60fps animations */
+@keyframes uhd-float {
+  0%,
+  100% {
+    transform: translateY(0px) translateZ(0);
+  }
+  50% {
+    transform: translateY(-10px) translateZ(0);
+  }
+}
+
+.uhd-float-animation {
+  animation: uhd-float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* UHD Glow Effect */
+@keyframes uhd-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(236, 72, 153, 0.6);
+  }
+}
+
+.uhd-glow-effect {
+  animation: uhd-glow 2s ease-in-out infinite;
+  will-change: box-shadow;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .uhd-smooth-animation,
+  .uhd-float-animation,
+  .uhd-glow-effect {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .premium-card-uhd {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* ===== MOBILE UHD OPTIMIZATIONS ===== */
+
+/* High DPI Mobile Displays */
+@media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  .mobile-uhd-optimized {
+    font-size: 16px; /* Prevent zoom on iOS */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .mobile-uhd-image {
+    max-width: 100%;
+    height: auto;
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* ===== PRINT OPTIMIZATIONS ===== */
+
+@media print {
+  .uhd-print-optimized {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* UHD Spacing Scale */
+.uhd-spacing-xs {
+  padding: 0.5rem;
+}
+.uhd-spacing-sm {
+  padding: 1rem;
+}
+.uhd-spacing-md {
+  padding: 1.5rem;
+}
+.uhd-spacing-lg {
+  padding: 2rem;
+}
+.uhd-spacing-xl {
+  padding: 3rem;
+}
+.uhd-spacing-2xl {
+  padding: 4rem;
+}
+
+/* UHD Typography Scale */
+.uhd-text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.uhd-text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.uhd-text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.uhd-text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+.uhd-text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+.uhd-text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+.uhd-text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+.uhd-text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+/* UHD Border Radius Scale */
+.uhd-rounded-sm {
+  border-radius: 0.25rem;
+}
+.uhd-rounded-md {
+  border-radius: 0.5rem;
+}
+.uhd-rounded-lg {
+  border-radius: 0.75rem;
+}
+.uhd-rounded-xl {
+  border-radius: 1rem;
+}
+.uhd-rounded-2xl {
+  border-radius: 1.5rem;
+}
+.uhd-rounded-3xl {
+  border-radius: 2rem;
+}

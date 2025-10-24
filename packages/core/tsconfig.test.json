@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // --- Test-specific overrides ---
+    "lib": ["ES2023", "DOM"],
+    "types": ["node", "jest"],
+    "noEmit": true,
+    "isolatedModules": false, // Allow Jest to process files
+    
+    // --- Relaxed rules for testing ---
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strictNullChecks": true, // Keep strict null checks for better test reliability
+    "noImplicitAny": false, // Allow any in tests for mocking
+    "exactOptionalPropertyTypes": false, // Relax for test data
+    "noUncheckedIndexedAccess": false // Relax for test data access
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/__tests__/**/*.ts",
+    "src/**/__tests__/**/*.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/setupTests.ts",
+    "src/__mocks__/**/*.ts",
+    "src/__mocks__/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage"
+  ]
+}

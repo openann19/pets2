@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "display": "ESLint TypeScript Configuration",
+  "compilerOptions": {
+    // Include DOM libs for browser globals
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+
+    // Include test files for ESLint parsing
+    "types": ["jest", "node"],
+
+    // Enforce strict safety even during lint parsing
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Root should not emit
+    "noEmit": true
+  },
+  "include": [
+  "**/*.ts", 
+  "**/*.tsx", 
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/setupTests.ts",
+    "**/setupTests.js"
+  ],
+  "exclude": [
+    "node_modules",
+    ".github",
+    "**/cypress/**",
+    "**/*.cy.ts",
+    "**/*.cy.tsx",
+    "cypress",
+    "dist",
+    ".next",
+    "coverage"
+  ]
+}

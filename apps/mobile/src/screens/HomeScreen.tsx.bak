@@ -1,0 +1,543 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  runOnJS
+} from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../contexts/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
+
+const SPRING_CONFIG = {
+  damping: 17,
+  stiffness: 400,
+  mass: 1,
+  overshootClamping: false,
+};
+
+const HomeScreen = () => {
+  const navigation = useNavigation();
+  const { colors, styles: themeStyles, isDark } = useTheme();
+  const [refreshing, setRefreshing] = useState(false);
+  const [userPets, setUserPets] = useState([]);
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Animation values
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      opacity: opacity.value
+    };
+  });
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95, SPRING_CONFIG);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, SPRING_CONFIG);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    // Simulate data refresh
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
+
+const SPRING_CONFIG = {
+  damping: 17,
+  stiffness: 400,
+  mass: 1,
+  overshootClamping: false,
+};
+
+// Removed duplicate HomeScreen definition
+
+  // Animation values
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      opacity: opacity.value
+    };
+  });
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95, SPRING_CONFIG);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, SPRING_CONFIG);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    // The React Query hooks will automatically refetch when refreshing is true
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  const navigateToSwipe = () => {
+    navigation.navigate('Swipe' as never);
+  };
+
+  const navigateToMatches = () => {
+    navigation.navigate('Matches' as never);
+  };
+
+  const navigateToProfile = () => {
+    navigation.navigate('Profile' as never);
+  };
+
+  // Show loading screen while fetching initial data
+  if (userLoading || petsLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#ec4899" />
+          <Text style={styles.loadingText}>Loading your pet's world...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error state if any critical data fails to load
+  if (userError || petsError) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Unable to load your data</Text>
+          <Text style={styles.errorSubtext}>Please check your connection and try again</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => window.location.reload()}>
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.gray50 }]}>
+      <ScrollView
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={[styles.header, { backgroundColor: colors.white }]}>
+          <View style={styles.headerTop}>
+            <View>
+              <Text style={[styles.title, { color: colors.gray800 }]}>PawfectMatch</Text>
+              <Text style={[styles.subtitle, { color: colors.gray600 }]}>Find perfect companions for your pets</Text>
+            </View>
+            <ThemeToggle variant="icon" size="medium" />
+          </View>
+        </View>
+
+        <View style={styles.content}>
+          {/* Welcome Section */}
+          <View style={styles.welcomeSection}>
+            <Text style={styles.welcomeText}>
+              Welcome back, {user?.firstName || 'Pet Lover'}! 👋
+            </Text>
+            <Text style={styles.welcomeSubtext}>
+              Ready to find some pawfect matches today?
+            </Text>
+          </View>
+
+          {/* Quick Actions */}
+          <View style={styles.quickActions}>
+            <Text style={styles.sectionTitle}>Quick Actions</Text>
+
+            <View style={styles.actionsGrid}>
+              <Animated.View style={[styles.actionCard, animatedStyle]}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPressIn={handlePressIn}
+                  onPressOut={handlePressOut}
+                  onPress={navigateToSwipe}
+                >
+                  <View style={[styles.actionIcon, { backgroundColor: '#ec4899' }]}>
+                    <Text style={styles.actionEmoji}>❤️</Text>
+                  </View>
+                  <Text style={styles.actionTitle}>Discover</Text>
+                  <Text style={styles.actionDescription}>Find new matches</Text>
+                </TouchableOpacity>
+              </Animated.View>
+
+              <Animated.View style={[styles.actionCard, animatedStyle]}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPressIn={handlePressIn}
+                  onPressOut={handlePressOut}
+                  onPress={navigateToMatches}
+                >
+                  <View style={[styles.actionIcon, { backgroundColor: '#8b5cf6' }]}>
+                    <Text style={styles.actionEmoji}>💬</Text>
+                  </View>
+                  <Text style={styles.actionTitle}>Matches</Text>
+                  <Text style={styles.actionDescription}>Chat with matches</Text>
+                </TouchableOpacity>
+              </Animated.View>
+
+              <Animated.View style={[styles.actionCard, animatedStyle]}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPressIn={handlePressIn}
+                  onPressOut={handlePressOut}
+                  onPress={navigateToProfile}
+                >
+                  <View style={[styles.actionIcon, { backgroundColor: '#10b981' }]}>
+                    <Text style={styles.actionEmoji}>👤</Text>
+                  </View>
+                  <Text style={styles.actionTitle}>Profile</Text>
+                  <Text style={styles.actionDescription}>Manage pets</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          </View>
+
+          {/* Your Pets Section */}
+          <View style={styles.petsSection}>
+            <Text style={styles.sectionTitle}>Your Pets</Text>
+            <View style={styles.petsList}>
+              {pets && pets.length > 0 ? (
+                pets.slice(0, 3).map((pet: any) => (
+                  <View key={pet.id} style={styles.petCard}>
+                    <Text style={styles.petEmoji}>{pet.breed === 'Dog' ? '🐕' : pet.breed === 'Cat' ? '🐱' : '🐾'}</Text>
+                    <View style={styles.petInfo}>
+                      <Text style={styles.petName}>{pet.name}</Text>
+                      <Text style={styles.petBreed}>{pet.breed}</Text>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyStateText}>No pets yet!</Text>
+                  <Text style={styles.emptyStateSubtext}>Add your first pet to get started</Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Recent Matches */}
+          <View style={styles.matchesSection}>
+            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <View style={styles.matchesList}>
+              {matchesLoading ? (
+                <View style={styles.loadingMatches}>
+                  <ActivityIndicator size="small" color="#6b7280" />
+                  <Text style={styles.loadingMatchesText}>Loading matches...</Text>
+                </View>
+              ) : matches && matches.length > 0 ? (
+                matches.slice(0, 3).map((match: any) => (
+                  <View key={match.id} style={styles.matchCard}>
+                    <View style={styles.matchInfo}>
+                      <Text style={styles.matchName}>{match.petName}</Text>
+                      <Text style={styles.matchBreed}>{match.breed}</Text>
+                      <View style={[styles.matchStatus, styles.statusPending]}>
+                        <Text style={styles.statusText}>New Match</Text>
+                      </View>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyStateText}>No matches yet!</Text>
+                  <Text style={styles.emptyStateSubtext}>Start swiping to find matches</Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Weather Tips Section */}
+          <View style={styles.tipsSection}>
+            <Text style={styles.sectionTitle}>Pet Care Tips</Text>
+            <View style={styles.tipsCard}>
+              <Text style={styles.tipTitle}>🌤️ Perfect Weather for Walks!</Text>
+              <Text style={styles.tipText}>
+                The weather is ideal for outdoor activities. Consider a park visit or playdate!
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#374151',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ef4444',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#ec4899',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  retryText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ec4899',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  welcomeSection: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  welcomeText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 8,
+  },
+  welcomeSubtext: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginBottom: 16,
+  },
+  quickActions: {
+    marginBottom: 32,
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  actionCard: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  actionButton: {
+    backgroundColor: '#fdf2f8',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  actionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  actionEmoji: {
+    fontSize: 24,
+  },
+  actionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+    marginBottom: 4,
+  },
+  actionDescription: {
+    fontSize: 12,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  petsSection: {
+    marginBottom: 32,
+  },
+  petsList: {
+    backgroundColor: '#f9fafb',
+    borderRadius: 12,
+    padding: 16,
+  },
+  petCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  petEmoji: {
+    fontSize: 32,
+    marginRight: 16,
+  },
+  petInfo: {
+    flex: 1,
+  },
+  petName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+  },
+  petBreed: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  matchesSection: {
+    marginBottom: 32,
+  },
+  matchesList: {
+    backgroundColor: '#f9fafb',
+    borderRadius: 12,
+    padding: 16,
+  },
+  matchCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  matchInfo: {
+    flex: 1,
+  },
+  matchName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+  },
+  matchBreed: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  matchStatus: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusPending: {
+    backgroundColor: '#fef3c7',
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#92400e',
+  },
+  loadingMatches: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  loadingMatchesText: {
+    marginLeft: 8,
+    color: '#6b7280',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: '#9ca3af',
+    textAlign: 'center',
+  },
+  tipsSection: {
+    marginBottom: 32,
+  },
+  tipsCard: {
+    backgroundColor: '#eff6ff',
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3b82f6',
+  },
+  tipTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1e40af',
+    marginBottom: 8,
+  },
+  tipText: {
+    fontSize: 14,
+    color: '#1e40af',
+    lineHeight: 20,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+});
+
+export default HomeScreen;
