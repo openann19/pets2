@@ -64,6 +64,9 @@ export const ColorsDark = {
   textSecondary: "#9ca3af",
   border: "#374151",
   borderLight: "#273449",
+  card: "#1f2937",
+  tertiary: "#374151",
+  inverse: "#f9fafb",
 };
 
 // Dark Theme Shadows

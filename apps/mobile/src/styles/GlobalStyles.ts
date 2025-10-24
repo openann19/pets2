@@ -94,6 +94,9 @@ const Colors = {
   textSecondary: COLORS.neutral[600],
   border: COLORS.neutral[200],
   borderLight: COLORS.neutral[100],
+  card: COLORS.neutral[50],
+  tertiary: COLORS.neutral[400],
+  inverse: COLORS.neutral[900],
 };
 
 // Legacy typography mappings

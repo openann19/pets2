@@ -55,6 +55,9 @@ export interface ThemeColors {
   textSecondary: string;
   border: string;
   borderLight: string;
+  card: string;
+  tertiary: string;
+  inverse: string;
 }
 
 export interface ThemeContextType {
