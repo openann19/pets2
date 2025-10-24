@@ -168,7 +168,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
     shadowRadius: glowIntensity.value * 25,
   }));
 
-  const gradientColors = HOLOGRAPHIC_CONFIGS.gradients[variant];
+  const gradientColors = [...HOLOGRAPHIC_CONFIGS.gradients[variant]];
 
   return (
     <Animated.View
@@ -413,7 +413,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
     transform: [{ rotate: `${gradientRotation.value}deg` }],
   }));
 
-  const gradientColors = HOLOGRAPHIC_CONFIGS.gradients[variant];
+  const gradientColors = [...HOLOGRAPHIC_CONFIGS.gradients[variant]];
 
   return (
     <View style={[{ position: "relative" }, style]}>
@@ -522,7 +522,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     });
   }, [speed]);
 
-  const gradientColors = HOLOGRAPHIC_CONFIGS.gradients[variant];
+  const gradientColors = [...HOLOGRAPHIC_CONFIGS.gradients[variant]];
 
   return (
     <View

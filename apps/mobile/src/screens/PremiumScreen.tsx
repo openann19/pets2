@@ -235,7 +235,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
             </Text>
             <TouchableOpacity
               style={styles.manageButton}
-              onPress={() => navigation.navigate("ManageSubscription")}
+              onPress={() => { navigation.navigate("ManageSubscription"); }}
             >
               <Text style={styles.manageButtonText}>Manage Subscription</Text>
             </TouchableOpacity>

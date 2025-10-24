@@ -71,6 +71,8 @@ export const EnhancedShadows = {
     sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 2 } as ViewStyle,
     md: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 6, elevation: 4 } as ViewStyle,
     lg: { shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 } as ViewStyle,
+    xl: { shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.18, shadowRadius: 16, elevation: 12 } as ViewStyle,
+    xxl: { shadowColor: '#000', shadowOffset: { width: 0, height: 20 }, shadowOpacity: 0.22, shadowRadius: 24, elevation: 20 } as ViewStyle,
   },
   glow: {
     primary:   { shadowColor: COLORS.primary[500],   shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.3, shadowRadius: 8,  elevation: 8 } as ViewStyle,

@@ -153,7 +153,7 @@ export function useSocketWithStatus(): UseSocketReturn {
     const newSocket = io(socketUrl, {
       auth: {
         token: accessToken,
-        userId: user!._id, // Non-null assertion, guarded by check above
+        userId: user._id, // Non-null assertion, guarded by check above
       },
       transports: ["websocket"],
     });

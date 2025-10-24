@@ -246,7 +246,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
         return (
           <LinearGradient
             colors={gradient.colors as any}
-            locations={gradient.locations}
+            locations={[...gradient.locations]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{ flex: 1 }}
@@ -299,8 +299,8 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               onPress={onPress}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
+              onPressIn={handleTouchStart}
+              onPressOut={handleTouchEnd}
               activeOpacity={1}
               style={{ borderRadius: sizeConfig.borderRadius }}
               {...props}
@@ -319,8 +319,8 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onPress}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+        onPressIn={handleTouchStart}
+        onPressOut={handleTouchEnd}
         activeOpacity={1}
         style={{ borderRadius: sizeConfig.borderRadius }}
         {...props}

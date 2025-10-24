@@ -324,9 +324,9 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
           onPressOut={handlePressOut}
           onPress={handlePress}
           disabled={disabled || loading}
-          onTouchStart={handleTouchStart}
+          onPressIn={handleTouchStart}
           onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          onPressOut={handleTouchEnd}
           activeOpacity={1}
           {...props}
         >

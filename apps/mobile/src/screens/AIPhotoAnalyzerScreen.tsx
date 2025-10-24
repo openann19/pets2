@@ -399,7 +399,7 @@ export default function AIPhotoAnalyzerScreen({
       >
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => { navigation.goBack(); }}
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
