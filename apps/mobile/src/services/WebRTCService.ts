@@ -547,4 +547,6 @@ class WebRTCService extends EventEmitter {
   }
 }
 
-export default WebRTCService;
+// Export singleton instance
+const webRTCServiceInstance = new WebRTCService();
+export default webRTCServiceInstance;
