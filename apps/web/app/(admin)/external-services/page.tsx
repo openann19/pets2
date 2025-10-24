@@ -26,7 +26,7 @@ import {
   EnhancedInput,
   EnhancedProgressBar,
   LoadingSkeleton,
-} from '@/components/admin/UIEnhancements';
+} from '@/src/components/admin/UIEnhancements';
 
 interface ExternalService {
   id: string;

@@ -218,6 +218,94 @@ export const Theme = {
     xl: 1280,
   },
 
+  // Semantic colors for interactive elements
+  semantic: {
+    interactive: {
+      primary: "#db2777",
+      secondary: "#0284c7",
+      tertiary: "#9ca3af",
+    },
+    feedback: {
+      success: "#10b981",
+      warning: "#f59e0b",
+      error: "#ef4444",
+      info: "#3b82f6",
+    },
+  },
+
+  // Gradient definitions
+  gradients: {
+    primary: ["#ec4899", "#db2777"],
+    secondary: ["#0ea5e9", "#0284c7"],
+    success: ["#10b981", "#059669"],
+    warning: ["#f59e0b", "#d97706"],
+    error: ["#ef4444", "#dc2626"],
+    glass: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"],
+    glow: ["rgba(236, 72, 153, 0.3)", "rgba(236, 72, 153, 0.1)"],
+  },
+
+  // Glass morphism effects
+  glass: {
+    light: {
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      backdropFilter: "blur(10px)",
+    },
+    dark: {
+      backgroundColor: "rgba(0, 0, 0, 0.1)",
+      backdropFilter: "blur(10px)",
+    },
+  },
+
+  // Glow effects
+  glow: {
+    sm: {
+      shadowColor: "#ec4899",
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    md: {
+      shadowColor: "#ec4899",
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.3,
+      shadowRadius: 16,
+      elevation: 5,
+    },
+    lg: {
+      shadowColor: "#ec4899",
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.4,
+      shadowRadius: 24,
+      elevation: 8,
+    },
+  },
+
+  // Shadow effects (alias for shadows.depth)
+  shadow: {
+    sm: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    md: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    lg: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.15,
+      shadowRadius: 15,
+      elevation: 5,
+    },
+  },
+
   // Z-index system
   zIndex: {
     hide: -1,

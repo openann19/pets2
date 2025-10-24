@@ -7,4 +7,4 @@ declare const Card: ({ variant, padding, hover, children, className, ...props }:
     className?: string | undefined;
 }) => JSX.Element;
 export default Card;
-//# sourceMappingURL=card.d.ts.map
+//# sourceMappingURL=Card.d.ts.map

@@ -25,4 +25,4 @@ const Card = ({ variant = 'default', padding = 'md', hover = false, children, cl
     </motion.div>);
 };
 export default Card;
-//# sourceMappingURL=card.jsx.map
+//# sourceMappingURL=Card.jsx.map
