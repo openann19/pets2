@@ -6,11 +6,11 @@
 import React from 'react';
 export const motion = new Proxy({}, {
     get: (_target, prop) => {
-        return React.forwardRef((props, ref) => React.createElement(prop, { ...props, ref }));
+        return React.forwardRef((props: Record<string, unknown>, ref: React.ForwardedRef<unknown>) => React.createElement(prop as string, { ...props, ref }));
     },
 });
 // Mock AnimatePresence
-export const AnimatePresence = ({ children }) => {
+export const AnimatePresence = ({ children }: { children: React.ReactNode }) => {
     return React.createElement(React.Fragment, null, children);
 };
 // Mock useAnimation
@@ -20,7 +20,7 @@ export const useAnimation = () => ({
     set: jest.fn(),
 });
 // Mock useMotionValue
-export const useMotionValue = (initial) => ({
+export const useMotionValue = (initial: unknown) => ({
     get: () => initial,
     set: jest.fn(),
     onChange: jest.fn(),
@@ -28,7 +28,7 @@ export const useMotionValue = (initial) => ({
 // Mock useTransform
 export const useTransform = () => ({ get: () => 0, set: jest.fn() });
 // Mock useSpring (generic)
-export const useSpring = (value) => value;
+export const useSpring = (value: unknown) => value;
 // Mock useScroll
 export const useScroll = () => ({
     scrollX: { get: () => 0 },

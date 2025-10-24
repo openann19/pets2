@@ -160,7 +160,7 @@ export function useMobileAnalytics(config = {}) {
                 body: JSON.stringify({ events }),
             });
             if (finalConfig.debug) {
-                logger.info('[Analytics] Events flushed:', { events.length });
+                logger.info('[Analytics] Events flushed:', { count: events.length });
             }
         }
         catch (error) {

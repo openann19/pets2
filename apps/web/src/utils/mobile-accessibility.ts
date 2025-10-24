@@ -335,7 +335,7 @@ export function useVoiceControl() {
                 setTranscript(finalTranscript || interimTranscript);
             };
             recognition.onerror = (event) => {
-                logger.error('Speech recognition error:', { event.error });
+                logger.error('Speech recognition error:', { error: event.error });
                 setIsListening(false);
             };
             recognition.onend = () => {

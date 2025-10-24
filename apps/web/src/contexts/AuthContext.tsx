@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
                 };
                 setTokens(demoTokens.accessToken, demoTokens.refreshToken);
                 setUser(demoUser);
-                logger.info('%c[DEV] Auth bypass tokens injected', { 'color: #8b5cf6' });
+                logger.info('[DEV] Auth bypass tokens injected', { color: '#8b5cf6' });
             }
         }
     }, [isAuthenticated, setTokens, setUser]);

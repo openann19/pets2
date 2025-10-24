@@ -397,7 +397,7 @@ export const useOfflineDetection = () => {
             setIsOnline(true);
             // Process offline queue when coming back online
             if (offlineQueue.length > 0) {
-                logger.info('Processing offline queue:', { offlineQueue.length, 'items' });
+                logger.info('Processing offline queue:', { count: offlineQueue.length, items: 'items' });
                 setOfflineQueue([]);
             }
         };

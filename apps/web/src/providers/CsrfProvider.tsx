@@ -36,7 +36,7 @@ async function fetchCsrfToken() {
             credentials: 'include',
         });
         if (!response.ok) {
-            logger.warn('[CSRF] Failed to fetch token:', { response.status });
+            logger.warn('[CSRF] Failed to fetch token:', { status: response.status });
             return null;
         }
         // Token should now be in cookies

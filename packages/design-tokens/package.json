@@ -2,10 +2,22 @@
   "name": "@pawfectmatch/design-tokens",
   "version": "1.0.0",
   "description": "Unified design tokens for PawfectMatch across web, mobile, and UI packages",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
   "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "default": "./dist/index.js"
+    },
+    "./react-native": {
+      "types": "./dist/react-native.d.ts",
+      "import": "./dist/react-native.esm.js",
+      "default": "./dist/react-native.js"
+    }
+  },
+  "react-native": "./dist/react-native.js",
+  "typesVersions": { "*": { "react-native": ["./dist/react-native.d.ts"] } },
   "files": [
     "dist"
   ],
@@ -38,12 +50,13 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.0",
     "@types/node": "^20.16.5",
+    "@types/react-native": "^0.73.0",
     "rollup": "^4.24.3",
     "tslib": "^2.7.0",
     "typescript": "^5.6.3"
   },
   "peerDependencies": {
-    "typescript": ">=5.6.0"
+    "react-native": "*"
   },
   "repository": {
     "type": "git",

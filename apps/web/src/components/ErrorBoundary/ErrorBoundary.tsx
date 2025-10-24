@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component {
             console.group('🚨 Error Boundary Caught Error');
             logger.error('Error:', { error });
             logger.error('Error Info:', { errorInfo });
-            logger.error('Component Stack:', { errorInfo.componentStack });
+            logger.error('Component Stack:', { componentStack: errorInfo.componentStack });
             console.groupEnd();
         }
         // Call custom error handler if provided
@@ -203,7 +203,7 @@ export class ErrorBoundary extends Component {
                 Retry
               </button>
               
-              {process.env.NODE_ENV === 'development' && (<button onClick={() => logger.error('Error Details:', { this.state.error })} className="text-sm bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700 transition-colors flex items-center gap-1">
+              {process.env.NODE_ENV === 'development' && (<button onClick={() => logger.error('Error Details:', { error: this.state.error })} className="text-sm bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700 transition-colors flex items-center gap-1">
                   <Bug className="w-3 h-3"/>
                   Debug
                 </button>)}

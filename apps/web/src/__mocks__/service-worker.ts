@@ -3,10 +3,10 @@
  */
 // Mock ServiceWorker registration
 export class MockServiceWorkerRegistration {
-    scope;
-    active;
-    installing;
-    waiting;
+    scope: string;
+    active: { state: string; scriptURL: string; onstatechange: null };
+    installing: unknown;
+    waiting: unknown;
     pushManager;
     sync;
     navigationPreload;
@@ -56,20 +56,20 @@ export class MockServiceWorkerRegistration {
     async unregister() {
         return true;
     }
-    async showNotification(_title, _options) {
+    async showNotification(_title: string, _options?: NotificationOptions): Promise<void> {
         return;
     }
-    async getNotifications(_options) {
+    async getNotifications(_options?: GetNotificationOptions): Promise<Notification[]> {
         return [];
     }
 }
 // Mock ServiceWorkerContainer
 export class MockServiceWorkerContainer {
-    controller;
-    ready;
-    oncontrollerchange;
-    onmessage;
-    onmessageerror;
+    controller: ServiceWorker | null;
+    ready: Promise<MockServiceWorkerRegistration>;
+    oncontrollerchange: ((event: Event) => void) | null;
+    onmessage: ((event: MessageEvent) => void) | null;
+    onmessageerror: ((event: MessageEvent) => void) | null;
     constructor() {
         this.controller = null;
         this.ready = Promise.resolve(new MockServiceWorkerRegistration());
@@ -77,51 +77,51 @@ export class MockServiceWorkerContainer {
         this.onmessage = null;
         this.onmessageerror = null;
     }
-    async register(_scriptURL, _options) {
+    async register(_scriptURL: string, _options?: RegistrationOptions): Promise<MockServiceWorkerRegistration> {
         return new MockServiceWorkerRegistration();
     }
-    async getRegistration(_clientURL) {
+    async getRegistration(_clientURL?: string): Promise<MockServiceWorkerRegistration | undefined> {
         return new MockServiceWorkerRegistration();
     }
-    async getRegistrations() {
+    async getRegistrations(): Promise<MockServiceWorkerRegistration[]> {
         return [new MockServiceWorkerRegistration()];
     }
     startMessages() { }
 }
 // Mock Notification API
 export class MockNotification {
-    static permission = 'granted';
-    static async requestPermission() {
+    static permission: NotificationPermission = 'granted';
+    static async requestPermission(): Promise<NotificationPermission> {
         return MockNotification.permission;
     }
-    static async get(_tag) {
+    static async get(_tag?: string): Promise<Notification | null> {
         return null;
     }
-    static async getNotifications() {
+    static async getNotifications(): Promise<Notification[]> {
         return [];
     }
-    constructor(_title, _options) {
+    constructor(_title: string, _options?: NotificationOptions) {
         // Constructor implementation
     }
-    close() { }
-    addEventListener(_type, _listener) { }
-    removeEventListener(_type, _listener) { }
-    dispatchEvent(_event) {
+    close(): void { }
+    addEventListener(_type: string, _listener: EventListener): void { }
+    removeEventListener(_type: string, _listener: EventListener): void { }
+    dispatchEvent(_event: Event): boolean {
         return true;
     }
 }
 // Mock Push API
 export class MockPushManager {
-    supportedContentEncodings;
+    supportedContentEncodings: string[];
     constructor() {
         this.supportedContentEncodings = ['aes128gcm'];
     }
-    async subscribe(_options) {
+    async subscribe(_options?: PushSubscriptionOptionsInit): Promise<PushSubscription> {
         return {
             endpoint: 'https://fcm.googleapis.com/fcm/send/example',
             expirationTime: null,
-            options,
-            getKey: (_name) => new Uint8Array([1, 2, 3, 4]),
+            options: _options || {},
+            getKey: (_name: string): ArrayBuffer => new Uint8Array([1, 2, 3, 4]).buffer,
             toJSON: () => ({
                 endpoint: 'https://fcm.googleapis.com/fcm/send/example',
                 keys: {
@@ -131,10 +131,10 @@ export class MockPushManager {
             }),
         };
     }
-    async getSubscription() {
+    async getSubscription(): Promise<PushSubscription | null> {
         return null;
     }
-    async permissionState(_options) {
+    async permissionState(_options?: PushSubscriptionOptionsInit): Promise<NotificationPermission> {
         return 'granted';
     }
 }

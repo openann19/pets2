@@ -45,7 +45,7 @@ export function useErrorDisplay() {
         }
         // Log to console in development
         if (process.env.NODE_ENV === 'development') {
-            logger.error('[Error Display]', { apiError.toJSON( }), options.context);
+            logger.error('[Error Display]', { error: apiError.toJSON() }, options.context);
         }
         // Call custom error handler
         options.onError?.(apiError);

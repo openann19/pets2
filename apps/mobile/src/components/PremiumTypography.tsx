@@ -4,8 +4,7 @@ import {
   Text,
   View,
   type TextStyle,
-  type ViewStyle,
-  MaskedViewIOS,
+  type ViewStyle
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -18,6 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Colors, Spacing, BorderRadius } from "../styles/GlobalStyles";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = {

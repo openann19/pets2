@@ -1,7 +1,8 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { AuthProvider } from '../src/components/providers/AuthProvider';
 import { EnhancedErrorBoundary } from '../src/utils/error-boundary';
 import { DevTools } from '../src/components/DevTools';

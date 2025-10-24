@@ -3,14 +3,31 @@
  * Comprehensive error handling with recovery mechanisms and user feedback
  */
 'use client';
-import React, { Component, ErrorInfo, ReactNode } from 'react'
+import React, { Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { logger } from '@pawfectmatch/core';
-;
 import { motion } from 'framer-motion';
 import { ExclamationTriangleIcon, ArrowPathIcon, HomeIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
-export class EnhancedErrorBoundary extends Component {
-    retryTimeoutId = null;
-    constructor(props) {
+
+interface EnhancedErrorBoundaryProps {
+    children: ReactNode;
+    level?: 'component' | 'critical';
+    fallback?: ReactNode;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onError?: (error: Error, errorInfo: ErrorInfo) => void;
+}
+
+interface EnhancedErrorBoundaryState {
+    hasError: boolean;
+    error: Error | null;
+    errorInfo: ErrorInfo | null;
+    errorId: string | null;
+    retryCount: number;
+}
+
+export class EnhancedErrorBoundary extends Component<EnhancedErrorBoundaryProps, EnhancedErrorBoundaryState> {
+    retryTimeoutId: NodeJS.Timeout | null = null;
+    constructor(props: EnhancedErrorBoundaryProps) {
         super(props);
         this.state = {
             hasError: false,
@@ -20,14 +37,14 @@ export class EnhancedErrorBoundary extends Component {
             retryCount: 0,
         };
     }
-    static getDerivedStateFromError(error) {
+    static getDerivedStateFromError(error: Error) {
         return {
             hasError: true,
             error,
             errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         };
     }
-    componentDidCatch(error, errorInfo) {
+    override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
         this.setState({ errorInfo });
         // Log error details
         logger.error('🚨 Error Boundary Caught:', { error });
@@ -41,7 +58,7 @@ export class EnhancedErrorBoundary extends Component {
             this.scheduleRetry();
         }
     }
-    reportError(error, errorInfo) {
+    reportError(error: Error, errorInfo: ErrorInfo) {
         try {
             // Send to analytics/monitoring
             if (typeof window !== 'undefined') {
@@ -105,7 +122,7 @@ export class EnhancedErrorBoundary extends Component {
             window.open(`mailto:support@pawfectmatch.com?subject=${subject}&body=${body}`);
         }
     };
-    render() {
+    override render(): ReactNode {
         if (this.state.hasError) {
             // Custom fallback UI
             if (this.props.fallback) {
@@ -185,15 +202,15 @@ export class EnhancedErrorBoundary extends Component {
         }
         return this.props.children;
     }
-    componentWillUnmount() {
+    override componentWillUnmount(): void {
         if (this.retryTimeoutId) {
             clearTimeout(this.retryTimeoutId);
         }
     }
 }
 // ====== ERROR BOUNDARY FACTORY ======
-export const withErrorBoundary = (Component, errorBoundaryProps) => {
-    const WrappedComponent = (props) => (<EnhancedErrorBoundary {...errorBoundaryProps}>
+export const withErrorBoundary = (Component: React.ComponentType<Record<string, unknown>>, errorBoundaryProps: Partial<EnhancedErrorBoundaryProps>) => {
+    const WrappedComponent = (props: Record<string, unknown>) => (<EnhancedErrorBoundary {...errorBoundaryProps}>
       <Component {...props}/>
     </EnhancedErrorBoundary>);
     WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
@@ -201,7 +218,7 @@ export const withErrorBoundary = (Component, errorBoundaryProps) => {
 };
 // ====== HOOK FOR ERROR REPORTING ======
 export const useErrorReporting = () => {
-    const reportError = React.useCallback((error, context) => {
+    const reportError = React.useCallback((error: Error, context?: string) => {
         logger.error('🚨 Manual Error Report:', { error });
         try {
             const errorReport = {

@@ -296,7 +296,7 @@ export class WebSocketManager {
                 }
                 break;
             case 'success':
-                logger.info(`%c${prefix} ${message}`, { 'color: green', { timestamp } });
+                logger.info(`${prefix} ${message}`, { color: 'green', timestamp });
                 break;
             default:
                 logger.info(`${prefix} ${message}`, { timestamp });

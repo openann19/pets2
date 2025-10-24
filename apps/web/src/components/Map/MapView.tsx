@@ -205,7 +205,7 @@ const MapView = ({ filters }) => {
         });
         // Connection error
         socket.on('connect_error', (error) => {
-            logger.warn('⚠️ MapView connection error:', { error.message });
+            logger.warn('⚠️ MapView connection error:', { message: error.message });
             setIsConnected(false);
             setConnectionError('Unable to connect to live updates. Retrying...');
             // Add some mock data for development when connection fails
