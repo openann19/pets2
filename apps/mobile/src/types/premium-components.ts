@@ -3,15 +3,27 @@
  * Type-safe definitions for premium mobile components
  */
 
-import React from 'react';
-import type { ViewStyle } from 'react-native';
+import React from "react";
+import type { ViewStyle } from "react-native";
 
 // ====== BASE TYPES ======
-export type ButtonVariant = 'primary' | 'secondary' | 'glass' | 'gradient' | 'neon' | 'ghost';
-export type CardVariant = 'default' | 'glass' | 'elevated' | 'gradient' | 'neon' | 'holographic';
-export type SizeVariant = 'sm' | 'md' | 'lg';
-export type PaddingVariant = 'none' | 'sm' | 'md' | 'lg' | 'xl';
-export type IconPosition = 'left' | 'right';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "glass"
+  | "gradient"
+  | "neon"
+  | "ghost";
+export type CardVariant =
+  | "default"
+  | "glass"
+  | "elevated"
+  | "gradient"
+  | "neon"
+  | "holographic";
+export type SizeVariant = "sm" | "md" | "lg";
+export type PaddingVariant = "none" | "sm" | "md" | "lg" | "xl";
+export type IconPosition = "left" | "right";
 
 // ====== VARIANT STYLE TYPES ======
 export interface BaseVariantStyle {
@@ -83,7 +95,7 @@ export interface AnimationConfig {
 }
 
 export interface HapticConfig {
-  type: 'light' | 'medium' | 'heavy';
+  type: "light" | "medium" | "heavy";
   enabled: boolean;
 }
 
@@ -112,7 +124,7 @@ export interface ThemeShadows {
   md: ViewStyle;
   lg: ViewStyle;
   xl: ViewStyle;
-  '2xl': ViewStyle;
+  "2xl": ViewStyle;
   primaryGlow: ViewStyle;
   secondaryGlow: ViewStyle;
   glass: ViewStyle;
@@ -168,7 +180,4 @@ export interface AccessibilityProps {
 }
 
 // ====== EXPORT ALL TYPES ======
-export type {
-    ImageStyle, TextStyle, ViewStyle
-} from 'react-native';
-
+export type { ImageStyle, TextStyle, ViewStyle } from "react-native";

@@ -1,13 +1,20 @@
-import { Ionicons } from '@expo/vector-icons';
-import { logger } from '@pawfectmatch/core';
-import React, { useEffect, useState } from 'react';
-import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 // Mock Siri Shortcuts API for non-iOS platforms
 let ExpoSiriShortcuts: any = null;
-if (Platform.OS === 'ios') {
+if (Platform.OS === "ios") {
   try {
-    ExpoSiriShortcuts = require('expo-siri-shortcuts');
+    ExpoSiriShortcuts = require("expo-siri-shortcuts");
   } catch {
     ExpoSiriShortcuts = null;
   }
@@ -25,37 +32,37 @@ interface SiriShortcut {
 export function SiriShortcuts(): React.JSX.Element {
   const [shortcuts, setShortcuts] = useState<SiriShortcut[]>([
     {
-      id: 'find-pets',
-      title: 'Find Pets',
-      description: 'Open PawfectMatch to find nearby pets',
-      phrase: 'Find pets',
-      icon: 'paw-outline',
-      isActive: false
+      id: "find-pets",
+      title: "Find Pets",
+      description: "Open PawfectMatch to find nearby pets",
+      phrase: "Find pets",
+      icon: "paw-outline",
+      isActive: false,
     },
     {
-      id: 'check-matches',
-      title: 'Check Matches',
-      description: 'View your latest matches',
-      phrase: 'Check my matches',
-      icon: 'heart-outline',
-      isActive: false
+      id: "check-matches",
+      title: "Check Matches",
+      description: "View your latest matches",
+      phrase: "Check my matches",
+      icon: "heart-outline",
+      isActive: false,
     },
     {
-      id: 'start-swiping',
-      title: 'Start Swiping',
-      description: 'Begin swiping on pet profiles',
-      phrase: 'Start swiping',
-      icon: 'swap-horizontal-outline',
-      isActive: false
+      id: "start-swiping",
+      title: "Start Swiping",
+      description: "Begin swiping on pet profiles",
+      phrase: "Start swiping",
+      icon: "swap-horizontal-outline",
+      isActive: false,
     },
     {
-      id: 'view-events',
-      title: 'View Events',
-      description: 'See upcoming pet events nearby',
-      phrase: 'Show pet events',
-      icon: 'calendar-outline',
-      isActive: false
-    }
+      id: "view-events",
+      title: "View Events",
+      description: "See upcoming pet events nearby",
+      phrase: "Show pet events",
+      icon: "calendar-outline",
+      isActive: false,
+    },
   ]);
 
   useEffect(() => {
@@ -63,30 +70,39 @@ export function SiriShortcuts(): React.JSX.Element {
   }, []);
 
   const checkShortcutStatus = async () => {
-    if (!ExpoSiriShortcuts || Platform.OS !== 'ios') {
-      setShortcuts(prev => prev.map(shortcut => ({
-        ...shortcut,
-        isActive: false
-      })));
+    if (!ExpoSiriShortcuts || Platform.OS !== "ios") {
+      setShortcuts((prev) =>
+        prev.map((shortcut) => ({
+          ...shortcut,
+          isActive: false,
+        })),
+      );
       return;
     }
 
     try {
       const activeShortcuts = await ExpoSiriShortcuts.getShortcuts();
-      const activeIds = activeShortcuts.map((shortcut: any) => shortcut.identifier);
+      const activeIds = activeShortcuts.map(
+        (shortcut: any) => shortcut.identifier,
+      );
 
-      setShortcuts(prev => prev.map(shortcut => ({
-        ...shortcut,
-        isActive: activeIds.includes(shortcut.id)
-      })));
+      setShortcuts((prev) =>
+        prev.map((shortcut) => ({
+          ...shortcut,
+          isActive: activeIds.includes(shortcut.id),
+        })),
+      );
     } catch (error) {
-      logger.error('Error checking shortcut status:', { error });
+      logger.error("Error checking shortcut status:", { error });
     }
   };
 
   const createShortcut = async (shortcut: SiriShortcut) => {
-    if (!ExpoSiriShortcuts || Platform.OS !== 'ios') {
-      Alert.alert('Unsupported', 'Siri Shortcuts are only available on iOS devices.');
+    if (!ExpoSiriShortcuts || Platform.OS !== "ios") {
+      Alert.alert(
+        "Unsupported",
+        "Siri Shortcuts are only available on iOS devices.",
+      );
       return;
     }
 
@@ -98,26 +114,29 @@ export function SiriShortcuts(): React.JSX.Element {
         phrase: shortcut.phrase,
         icon: {
           name: shortcut.icon,
-          color: '#8B5CF6'
-        }
+          color: "#8B5CF6",
+        },
       });
 
       Alert.alert(
-        'Shortcut Created',
+        "Shortcut Created",
         `You can now say "${shortcut.phrase}" to activate this shortcut.`,
-        [{ text: 'OK' }]
+        [{ text: "OK" }],
       );
 
       checkShortcutStatus();
     } catch (error) {
-      logger.error('Error creating shortcut:', { error });
-      Alert.alert('Error', 'Failed to create shortcut. Please try again.');
+      logger.error("Error creating shortcut:", { error });
+      Alert.alert("Error", "Failed to create shortcut. Please try again.");
     }
   };
 
   const deleteShortcut = async (shortcut: SiriShortcut) => {
-    if (!ExpoSiriShortcuts || Platform.OS !== 'ios') {
-      Alert.alert('Unsupported', 'Siri Shortcuts are only available on iOS devices.');
+    if (!ExpoSiriShortcuts || Platform.OS !== "ios") {
+      Alert.alert(
+        "Unsupported",
+        "Siri Shortcuts are only available on iOS devices.",
+      );
       return;
     }
 
@@ -125,8 +144,8 @@ export function SiriShortcuts(): React.JSX.Element {
       await ExpoSiriShortcuts.removeShortcut(shortcut.id);
       checkShortcutStatus();
     } catch (error) {
-      logger.error('Error deleting shortcut:', { error });
-      Alert.alert('Error', 'Failed to delete shortcut. Please try again.');
+      logger.error("Error deleting shortcut:", { error });
+      Alert.alert("Error", "Failed to delete shortcut. Please try again.");
     }
   };
 
@@ -142,20 +161,30 @@ export function SiriShortcuts(): React.JSX.Element {
           <View key={shortcut.id} style={styles.shortcutItem}>
             <View style={styles.shortcutInfo}>
               <View style={styles.shortcutHeader}>
-                <Ionicons name={shortcut.icon as any} size={20} color="#8B5CF6" />
+                <Ionicons
+                  name={shortcut.icon as any}
+                  size={20}
+                  color="#8B5CF6"
+                />
                 <Text style={styles.shortcutTitle}>{shortcut.title}</Text>
-                {shortcut.isActive ? <View style={styles.activeBadge}>
-                  <Text style={styles.activeText}>Active</Text>
-                </View> : null}
+                {shortcut.isActive ? (
+                  <View style={styles.activeBadge}>
+                    <Text style={styles.activeText}>Active</Text>
+                  </View>
+                ) : null}
               </View>
-              <Text style={styles.shortcutDescription}>{shortcut.description}</Text>
-              <Text style={styles.shortcutPhrase}>Say: "{shortcut.phrase}"</Text>
+              <Text style={styles.shortcutDescription}>
+                {shortcut.description}
+              </Text>
+              <Text style={styles.shortcutPhrase}>
+                Say: "{shortcut.phrase}"
+              </Text>
             </View>
 
             <TouchableOpacity
               style={[
                 styles.actionButton,
-                shortcut.isActive ? styles.deleteButton : styles.createButton
+                shortcut.isActive ? styles.deleteButton : styles.createButton,
               ]}
               onPress={() =>
                 shortcut.isActive
@@ -164,7 +193,7 @@ export function SiriShortcuts(): React.JSX.Element {
               }
             >
               <Text style={styles.actionButtonText}>
-                {shortcut.isActive ? 'Remove' : 'Add'}
+                {shortcut.isActive ? "Remove" : "Add"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -174,22 +203,22 @@ export function SiriShortcuts(): React.JSX.Element {
       <View style={styles.instructions}>
         <Text style={styles.instructionsTitle}>How to Use:</Text>
         <Text style={styles.instructionsText}>
-          1. Tap "Add" to create a shortcut{'\n'}
-          2. Say "Hey Siri" followed by the phrase{'\n'}
+          1. Tap "Add" to create a shortcut{"\n"}
+          2. Say "Hey Siri" followed by the phrase{"\n"}
           3. Siri will open PawfectMatch and perform the action
         </Text>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -197,60 +226,60 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontWeight: "600",
+    color: "#1F2937",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 16,
   },
   shortcutsList: {
     marginBottom: 16,
   },
   shortcutItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: "#F3F4F6",
   },
   shortcutInfo: {
     flex: 1,
   },
   shortcutHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 4,
   },
   shortcutTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontWeight: "600",
+    color: "#1F2937",
     marginLeft: 8,
     flex: 1,
   },
   activeBadge: {
-    backgroundColor: '#10B981',
+    backgroundColor: "#10B981",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
   },
   activeText: {
-    color: 'white',
+    color: "white",
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   shortcutDescription: {
     fontSize: 14,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 2,
   },
   shortcutPhrase: {
     fontSize: 12,
-    color: '#9CA3AF',
-    fontStyle: 'italic',
+    color: "#9CA3AF",
+    fontStyle: "italic",
   },
   actionButton: {
     paddingHorizontal: 16,
@@ -259,30 +288,30 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   createButton: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: "#8B5CF6",
   },
   deleteButton: {
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
   },
   actionButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   instructions: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
     borderRadius: 8,
     padding: 12,
   },
   instructionsTitle: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontWeight: "600",
+    color: "#1F2937",
     marginBottom: 4,
   },
   instructionsText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: "#6B7280",
     lineHeight: 18,
   },
 });

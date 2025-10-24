@@ -4,16 +4,16 @@
  * Reduced from 17,000+ lines to focused, maintainable component
  */
 
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import type { NavigationProp } from '@react-navigation/native';
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import type { NavigationProp } from "@react-navigation/native";
 
-import { useAIBio } from '../../hooks/useAIBio';
-import { PetInfoForm } from '../../components/ai/PetInfoForm';
-import { ToneSelector } from '../../components/ai/ToneSelector';
-import { BioResults } from '../../components/ai/BioResults';
-import { Theme } from '../../theme/unified-theme';
+import { useAIBio } from "../../hooks/useAIBio";
+import { PetInfoForm } from "../../components/ai/PetInfoForm";
+import { ToneSelector } from "../../components/ai/ToneSelector";
+import { BioResults } from "../../components/ai/BioResults";
+import { Theme } from "../../theme/unified-theme";
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;
@@ -114,7 +114,11 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                   </View>
                 ) : (
                   <View style={styles.photoPlaceholder}>
-                    <Ionicons name="camera" size={32} color={Theme.colors.textMuted} />
+                    <Ionicons
+                      name="camera"
+                      size={32}
+                      color={Theme.colors.textMuted}
+                    />
                     <Text style={styles.photoText}>Add Photo</Text>
                   </View>
                 )}
@@ -132,7 +136,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               accessibilityLabel="Generate AI bio"
             >
               <Text style={styles.generateButtonText}>
-                {isGenerating ? 'Generating...' : 'Generate Bio'}
+                {isGenerating ? "Generating..." : "Generate Bio"}
               </Text>
             </TouchableOpacity>
 
@@ -153,7 +157,8 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             {bioHistory.length > 1 && (
               <View style={styles.historySummary}>
                 <Text style={styles.historyText}>
-                  {bioHistory.length} bio{bioHistory.length !== 1 ? 's' : ''} generated
+                  {bioHistory.length} bio{bioHistory.length !== 1 ? "s" : ""}{" "}
+                  generated
                 </Text>
               </View>
             )}
@@ -167,7 +172,11 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               }}
               accessibilityLabel="Create new bio"
             >
-              <Ionicons name="add-circle" size={20} color={Theme.colors.primary} />
+              <Ionicons
+                name="add-circle"
+                size={20}
+                color={Theme.colors.primary}
+              />
               <Text style={styles.newBioText}>Create New Bio</Text>
             </TouchableOpacity>
           </View>
@@ -183,8 +192,8 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     borderBottomWidth: 1,
@@ -221,18 +230,18 @@ const styles = StyleSheet.create({
   photoPicker: {
     borderWidth: 2,
     borderColor: Theme.colors.border,
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.xl,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Theme.colors.surface,
   },
   photoPlaceholder: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   photoPreview: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   photoText: {
     fontSize: Theme.typography.sizes.base,
@@ -244,7 +253,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     margin: Theme.spacing.lg,
-    alignItems: 'center',
+    alignItems: "center",
     shadowColor: Theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -264,7 +273,7 @@ const styles = StyleSheet.create({
   submitError: {
     fontSize: Theme.typography.sizes.sm,
     color: Theme.colors.error,
-    textAlign: 'center',
+    textAlign: "center",
     marginHorizontal: Theme.spacing.lg,
     marginBottom: Theme.spacing.lg,
   },
@@ -273,16 +282,16 @@ const styles = StyleSheet.create({
   },
   historySummary: {
     padding: Theme.spacing.lg,
-    alignItems: 'center',
+    alignItems: "center",
   },
   historyText: {
     fontSize: Theme.typography.sizes.sm,
     color: Theme.colors.textMuted,
   },
   newBioButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: Theme.spacing.md,
     margin: Theme.spacing.lg,
     borderWidth: 1,

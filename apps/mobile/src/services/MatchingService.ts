@@ -2,8 +2,8 @@
  * Matching Service for PawfectMatch Mobile App
  * Handles pet matching logic, compatibility calculations, and recommendations
  */
-import { logger } from '@pawfectmatch/core';
-import { api } from './api';
+import { logger } from "@pawfectmatch/core";
+import { api } from "./api";
 
 // Local interfaces for this service
 export interface Pet {
@@ -38,39 +38,48 @@ export interface MatchResult {
 
 export interface SwipeAction {
   petId: string;
-  action: 'like' | 'pass' | 'superlike';
+  action: "like" | "pass" | "superlike";
   timestamp: number;
 }
 
 class MatchingService {
-
   /**
    * Get pet recommendations for the current user
    */
-  async getRecommendations(filters?: PetFilters, limit: number = 20): Promise<MatchResult[]> {
+  async getRecommendations(
+    filters?: PetFilters,
+    limit: number = 20,
+  ): Promise<MatchResult[]> {
     try {
       const queryParams = new URLSearchParams();
-      if (filters?.species !== undefined && filters.species !== '') queryParams.set('species', filters.species);
-      if (filters?.minAge !== undefined) queryParams.set('minAge', filters.minAge.toString());
-      if (filters?.maxAge !== undefined) queryParams.set('maxAge', filters.maxAge.toString());
-      if (filters?.size !== undefined && filters.size !== '') queryParams.set('size', filters.size);
-      if (filters?.intent !== undefined && filters.intent !== '') queryParams.set('intent', filters.intent);
-      if (filters?.distance !== undefined) queryParams.set('distance', filters.distance.toString());
-      if (filters?.breed !== undefined && filters.breed !== '') queryParams.set('breed', filters.breed);
-      queryParams.set('limit', limit.toString());
+      if (filters?.species !== undefined && filters.species !== "")
+        queryParams.set("species", filters.species);
+      if (filters?.minAge !== undefined)
+        queryParams.set("minAge", filters.minAge.toString());
+      if (filters?.maxAge !== undefined)
+        queryParams.set("maxAge", filters.maxAge.toString());
+      if (filters?.size !== undefined && filters.size !== "")
+        queryParams.set("size", filters.size);
+      if (filters?.intent !== undefined && filters.intent !== "")
+        queryParams.set("intent", filters.intent);
+      if (filters?.distance !== undefined)
+        queryParams.set("distance", filters.distance.toString());
+      if (filters?.breed !== undefined && filters.breed !== "")
+        queryParams.set("breed", filters.breed);
+      queryParams.set("limit", limit.toString());
 
       const endpoint = `/matches/recommendations?${queryParams.toString()}`;
 
       const response = await api.request<MatchResult[]>(endpoint);
 
-      logger.info('Fetched pet recommendations', {
+      logger.info("Fetched pet recommendations", {
         count: response.length,
-        filters: filters !== undefined ? Object.keys(filters).length : 0
+        filters: filters !== undefined ? Object.keys(filters).length : 0,
       });
 
       return response;
     } catch (error) {
-      logger.error('Failed to get recommendations', { error, filters });
+      logger.error("Failed to get recommendations", { error, filters });
       // Return empty array as fallback
       return [];
     }
@@ -86,20 +95,27 @@ class MatchingService {
     // Species preference (30 points)
     if (pet1.species === pet2.species) {
       score += 30;
-      reasons.push('Same species preference');
+      reasons.push("Same species preference");
     }
 
     // Intent compatibility (25 points)
-    if (pet1.intent === pet2.intent || pet1.intent === 'all' || pet2.intent === 'all') {
+    if (
+      pet1.intent === pet2.intent ||
+      pet1.intent === "all" ||
+      pet2.intent === "all"
+    ) {
       score += 25;
-      reasons.push('Compatible intentions');
+      reasons.push("Compatible intentions");
     }
 
     // Size compatibility (15 points)
-    const sizeCompatibility = this.calculateSizeCompatibility(pet1.size, pet2.size);
+    const sizeCompatibility = this.calculateSizeCompatibility(
+      pet1.size,
+      pet2.size,
+    );
     score += sizeCompatibility * 15;
     if (sizeCompatibility > 0.7) {
-      reasons.push('Size compatible');
+      reasons.push("Size compatible");
     }
 
     // Age compatibility (15 points)
@@ -107,7 +123,7 @@ class MatchingService {
     const ageScore = Math.max(0, 1 - ageDiff / 10);
     score += ageScore * 15;
     if (ageScore > 0.7) {
-      reasons.push('Age compatible');
+      reasons.push("Age compatible");
     }
 
     // Personality tags overlap (15 points)
@@ -115,11 +131,14 @@ class MatchingService {
       pet2.personalityTags.includes(tag),
     );
     const personalityScore =
-      commonTags.length / Math.max(pet1.personalityTags.length, pet2.personalityTags.length, 1);
+      commonTags.length /
+      Math.max(pet1.personalityTags.length, pet2.personalityTags.length, 1);
     score += personalityScore * 15;
 
     if (commonTags.length > 0) {
-      reasons.push(`Shared personality traits: ${commonTags.slice(0, 3).join(', ')}`);
+      reasons.push(
+        `Shared personality traits: ${commonTags.slice(0, 3).join(", ")}`,
+      );
     }
 
     return Math.round(Math.min(100, Math.max(0, score)));
@@ -129,7 +148,7 @@ class MatchingService {
    * Calculate size compatibility
    */
   private calculateSizeCompatibility(size1: string, size2: string): number {
-    const sizeOrder = ['tiny', 'small', 'medium', 'large', 'extra-large'];
+    const sizeOrder = ["tiny", "small", "medium", "large", "extra-large"];
     const index1 = sizeOrder.indexOf(size1);
     const index2 = sizeOrder.indexOf(size2);
 
@@ -144,20 +163,23 @@ class MatchingService {
    */
   async recordSwipe(action: SwipeAction): Promise<boolean> {
     try {
-      const response = await api.request<{ success: boolean }>('/matching/swipe', {
-        method: 'POST',
-        body: JSON.stringify(action)
-      });
+      const response = await api.request<{ success: boolean }>(
+        "/matching/swipe",
+        {
+          method: "POST",
+          body: JSON.stringify(action),
+        },
+      );
 
-      logger.info('Swipe recorded', {
+      logger.info("Swipe recorded", {
         petId: action.petId,
         action: action.action,
-        timestamp: action.timestamp
+        timestamp: action.timestamp,
       });
 
       return response.success;
     } catch (error) {
-      logger.error('Failed to record swipe', { error, action });
+      logger.error("Failed to record swipe", { error, action });
       return false;
     }
   }
@@ -167,13 +189,15 @@ class MatchingService {
    */
   async getMatches(limit: number = 50): Promise<MatchResult[]> {
     try {
-      const response = await api.request<MatchResult[]>(`/matching/matches?limit=${String(limit)}`);
+      const response = await api.request<MatchResult[]>(
+        `/matching/matches?limit=${String(limit)}`,
+      );
 
-      logger.info('Fetched user matches', { count: response.length });
+      logger.info("Fetched user matches", { count: response.length });
 
       return response;
     } catch (error) {
-      logger.error('Failed to get matches', { error });
+      logger.error("Failed to get matches", { error });
       return [];
     }
   }
@@ -181,25 +205,37 @@ class MatchingService {
   /**
    * Get detailed compatibility analysis between two pets
    */
-  async getCompatibilityAnalysis(petId1: string, petId2: string): Promise<{ score: number; reasons: string[]; details: Record<string, unknown> } | null> {
+  async getCompatibilityAnalysis(
+    petId1: string,
+    petId2: string,
+  ): Promise<{
+    score: number;
+    reasons: string[];
+    details: Record<string, unknown>;
+  } | null> {
     try {
-      const response = await api.request<{ score: number; reasons: string[]; details: Record<string, unknown> }>(
-        '/matching/compatibility',
-        {
-          method: 'POST',
-          body: JSON.stringify({ petId1, petId2 })
-        }
-      );
+      const response = await api.request<{
+        score: number;
+        reasons: string[];
+        details: Record<string, unknown>;
+      }>("/matching/compatibility", {
+        method: "POST",
+        body: JSON.stringify({ petId1, petId2 }),
+      });
 
-      logger.info('Fetched compatibility analysis', {
+      logger.info("Fetched compatibility analysis", {
         petId1,
         petId2,
-        score: response.score
+        score: response.score,
       });
 
       return response;
     } catch (error) {
-      logger.error('Failed to get compatibility analysis', { error, petId1, petId2 });
+      logger.error("Failed to get compatibility analysis", {
+        error,
+        petId1,
+        petId2,
+      });
       return null;
     }
   }
@@ -211,13 +247,41 @@ class MatchingService {
     return pets.filter((match: MatchResult) => {
       const pet = match.pet;
 
-      if (filters.species !== undefined && filters.species !== '' && pet.species !== filters.species) return false;
-      if (filters.minAge !== undefined && pet.age < filters.minAge) return false;
-      if (filters.maxAge !== undefined && pet.age > filters.maxAge) return false;
-      if (filters.size !== undefined && filters.size !== '' && pet.size !== filters.size) return false;
-      if (filters.intent !== undefined && filters.intent !== '' && pet.intent !== filters.intent && pet.intent !== 'all') return false;
-      if (filters.breed !== undefined && filters.breed !== '' && pet.breed !== filters.breed) return false;
-      if (filters.distance !== undefined && match.distance !== undefined && match.distance > filters.distance) return false;
+      if (
+        filters.species !== undefined &&
+        filters.species !== "" &&
+        pet.species !== filters.species
+      )
+        return false;
+      if (filters.minAge !== undefined && pet.age < filters.minAge)
+        return false;
+      if (filters.maxAge !== undefined && pet.age > filters.maxAge)
+        return false;
+      if (
+        filters.size !== undefined &&
+        filters.size !== "" &&
+        pet.size !== filters.size
+      )
+        return false;
+      if (
+        filters.intent !== undefined &&
+        filters.intent !== "" &&
+        pet.intent !== filters.intent &&
+        pet.intent !== "all"
+      )
+        return false;
+      if (
+        filters.breed !== undefined &&
+        filters.breed !== "" &&
+        pet.breed !== filters.breed
+      )
+        return false;
+      if (
+        filters.distance !== undefined &&
+        match.distance !== undefined &&
+        match.distance > filters.distance
+      )
+        return false;
 
       return true;
     });
@@ -262,13 +326,13 @@ class MatchingService {
         superlikes: number;
         matches: number;
         todaySwipes: number;
-      }>('/matching/stats');
+      }>("/matching/stats");
 
-      logger.info('Fetched swipe statistics', response);
+      logger.info("Fetched swipe statistics", response);
 
       return response;
     } catch (error) {
-      logger.error('Failed to get swipe stats', { error });
+      logger.error("Failed to get swipe stats", { error });
       // Return default stats
       return {
         totalSwipes: 0,
@@ -286,15 +350,18 @@ class MatchingService {
    */
   async undoLastSwipe(): Promise<boolean> {
     try {
-      const response = await api.request<{ success: boolean }>('/matching/undo', {
-        method: 'POST'
-      });
+      const response = await api.request<{ success: boolean }>(
+        "/matching/undo",
+        {
+          method: "POST",
+        },
+      );
 
-      logger.info('Last swipe undone', { success: response.success });
+      logger.info("Last swipe undone", { success: response.success });
 
       return response.success;
     } catch (error) {
-      logger.error('Failed to undo last swipe', { error });
+      logger.error("Failed to undo last swipe", { error });
       return false;
     }
   }
@@ -304,10 +371,12 @@ class MatchingService {
    */
   async canUndoSwipe(): Promise<boolean> {
     try {
-      const response = await api.request<{ canUndo: boolean }>('/matching/can-undo');
+      const response = await api.request<{ canUndo: boolean }>(
+        "/matching/can-undo",
+      );
       return response.canUndo;
     } catch (error) {
-      logger.error('Failed to check undo availability', { error });
+      logger.error("Failed to check undo availability", { error });
       return false;
     }
   }
@@ -319,11 +388,11 @@ class MatchingService {
     try {
       const response = await api.request<Pet>(`/pets/${petId}`);
 
-      logger.info('Fetched pet details', { petId, petName: response.name });
+      logger.info("Fetched pet details", { petId, petName: response.name });
 
       return response;
     } catch (error) {
-      logger.error('Failed to get pet details', { error, petId });
+      logger.error("Failed to get pet details", { error, petId });
       return null;
     }
   }

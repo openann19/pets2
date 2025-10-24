@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -11,11 +11,11 @@ import {
   Text,
   TouchableOpacity,
   Vibration,
-  View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { CallData } from '../../services/WebRTCService';
+import type { CallData } from "../../services/WebRTCService";
 
 interface IncomingCallScreenProps {
   callData: CallData;
@@ -23,12 +23,12 @@ interface IncomingCallScreenProps {
   onReject: () => void;
 }
 
-export default function IncomingCallScreen({ 
-  callData, 
-  onAnswer, 
-  onReject 
+export default function IncomingCallScreen({
+  callData,
+  onAnswer,
+  onReject,
 }: IncomingCallScreenProps) {
-  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const [pulseAnim] = useState(new Animated.Value(1));
   const [slideAnim] = useState(new Animated.Value(0));
 
@@ -46,7 +46,7 @@ export default function IncomingCallScreen({
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     // Slide in animation
@@ -80,16 +80,20 @@ export default function IncomingCallScreen({
   };
 
   const formatCallType = (type: string) => {
-    return type === 'video' ? 'Video Call' : 'Voice Call';
+    return type === "video" ? "Video Call" : "Voice Call";
   };
 
   return (
     <View style={styles.container} testID="incoming-call-container">
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
+
       {/* Background Gradient */}
       <LinearGradient
-        colors={['#1a1a2e', '#16213e', '#0f3460']}
+        colors={["#1a1a2e", "#16213e", "#0f3460"]}
         style={styles.backgroundGradient}
       />
 
@@ -98,52 +102,58 @@ export default function IncomingCallScreen({
 
       <SafeAreaView style={styles.content}>
         {/* Header */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.header,
             {
-              transform: [{
-                translateY: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0],
-                })
-              }]
-            }
+              transform: [
+                {
+                  translateY: slideAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-50, 0],
+                  }),
+                },
+              ],
+            },
           ]}
         >
           <Text style={styles.incomingCallText}>Incoming Call</Text>
-          <Text style={styles.callTypeText}>{formatCallType(callData.callType)}</Text>
+          <Text style={styles.callTypeText}>
+            {formatCallType(callData.callType)}
+          </Text>
         </Animated.View>
 
         {/* Caller Info */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.callerInfo,
             {
-              transform: [{
-                scale: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.8, 1],
-                })
-              }]
-            }
+              transform: [
+                {
+                  scale: slideAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.8, 1],
+                  }),
+                },
+              ],
+            },
           ]}
         >
           {/* Avatar with pulsing effect */}
-          <Animated.View 
+          <Animated.View
             style={[
               styles.avatarContainer,
               {
-                transform: [{ scale: pulseAnim }]
-              }
+                transform: [{ scale: pulseAnim }],
+              },
             ]}
           >
             <View style={styles.avatarRing}>
               <Image
                 source={
-                  callData.callerAvatar != null && callData.callerAvatar !== ''
+                  callData.callerAvatar != null && callData.callerAvatar !== ""
                     ? { uri: callData.callerAvatar }
-                    : require('../../assets/default-avatar.png')
+                    : require("../../assets/default-avatar.png")
                 }
                 style={styles.avatar}
                 testID="caller-avatar"
@@ -156,17 +166,19 @@ export default function IncomingCallScreen({
         </Animated.View>
 
         {/* Call Actions */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.actionsContainer,
             {
-              transform: [{
-                translateY: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [100, 0],
-                })
-              }]
-            }
+              transform: [
+                {
+                  translateY: slideAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [100, 0],
+                  }),
+                },
+              ],
+            },
           ]}
         >
           {/* Reject Button */}
@@ -177,10 +189,15 @@ export default function IncomingCallScreen({
             testID="reject-button"
           >
             <LinearGradient
-              colors={['#ff4757', '#ff3838']}
+              colors={["#ff4757", "#ff3838"]}
               style={styles.buttonGradient}
             >
-              <Ionicons name="call" size={32} color="#fff" style={{ transform: [{ rotate: '135deg' }] }} />
+              <Ionicons
+                name="call"
+                size={32}
+                color="#fff"
+                style={{ transform: [{ rotate: "135deg" }] }}
+              />
             </LinearGradient>
           </TouchableOpacity>
 
@@ -192,7 +209,7 @@ export default function IncomingCallScreen({
             testID="answer-button"
           >
             <LinearGradient
-              colors={['#2ed573', '#1dd1a1']}
+              colors={["#2ed573", "#1dd1a1"]}
               style={styles.buttonGradient}
             >
               <Ionicons name="call" size={32} color="#fff" />
@@ -201,12 +218,12 @@ export default function IncomingCallScreen({
         </Animated.View>
 
         {/* Additional Actions */}
-        <Animated.View 
+        <Animated.View
           style={[
             styles.additionalActions,
             {
               opacity: slideAnim,
-            }
+            },
           ]}
         >
           <TouchableOpacity style={styles.additionalButton}>
@@ -227,17 +244,17 @@ export default function IncomingCallScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   backgroundGradient: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
   },
   blurOverlay: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
@@ -245,28 +262,28 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: 30,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 60,
   },
   incomingCallText: {
     fontSize: 18,
-    color: '#fff',
+    color: "#fff",
     opacity: 0.8,
     marginBottom: 5,
   },
   callTypeText: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
     opacity: 0.6,
   },
   callerInfo: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   avatarContainer: {
     marginBottom: 30,
@@ -276,32 +293,32 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
     borderWidth: 4,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: "rgba(255, 255, 255, 0.3)",
     padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   avatar: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 92,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
   },
   callerName: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   callerSubtext: {
     fontSize: 18,
-    color: '#fff',
+    color: "#fff",
     opacity: 0.7,
   },
   actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     marginBottom: 50,
   },
   actionButton: {
@@ -309,7 +326,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     elevation: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -317,23 +334,23 @@ const styles = StyleSheet.create({
   rejectButton: {},
   answerButton: {},
   buttonGradient: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   additionalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginBottom: 40,
   },
   additionalButton: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 15,
   },
   additionalButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
     marginTop: 5,
     opacity: 0.8,

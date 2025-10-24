@@ -4,10 +4,10 @@
  * Performance optimized with Reanimated and Gesture Handler
  */
 
-import React, { useCallback, useRef } from 'react';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { 
-  useSharedValue, 
+import React, { useCallback, useRef } from "react";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  useSharedValue,
   withDecay,
   useAnimatedStyle,
   runOnJS,
@@ -15,11 +15,11 @@ import Animated, {
   Extrapolate,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { View, Image, StyleSheet, Dimensions } from 'react-native';
-import * as Haptics from 'expo-haptics';
+} from "react-native-reanimated";
+import { View, Image, StyleSheet, Dimensions } from "react-native";
+import * as Haptics from "expo-haptics";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export interface PinchZoomProps {
   /** Image source */
@@ -60,7 +60,7 @@ export interface PinchZoomProps {
   /** Disable gesture */
   disabled?: boolean;
   /** Image resize mode */
-  resizeMode?: 'cover' | 'contain' | 'stretch' | 'repeat' | 'center';
+  resizeMode?: "cover" | "contain" | "stretch" | "repeat" | "center";
 }
 
 const DEFAULT_MOMENTUM_CONFIG = {
@@ -95,7 +95,7 @@ export function PinchZoom({
   onScaleChange,
   style,
   disabled = false,
-  resizeMode = 'cover',
+  resizeMode = "cover",
 }: PinchZoomProps) {
   // Shared values for transformations
   const scale = useSharedValue(initialScale);
@@ -103,7 +103,7 @@ export function PinchZoom({
   const translateY = useSharedValue(0);
   const focalX = useSharedValue(0);
   const focalY = useSharedValue(0);
-  
+
   // Gesture state tracking
   const isZooming = useSharedValue(false);
   const lastScale = useSharedValue(initialScale);
@@ -111,101 +111,109 @@ export function PinchZoom({
   const lastTranslateY = useSharedValue(0);
 
   // Haptic feedback function
-  const triggerHaptic = useCallback((type: 'start' | 'end' | 'limit') => {
-    if (!hapticConfig.enabled || disabled) return;
-    
-    switch (type) {
-      case 'start':
-        if (hapticConfig.onZoomStart) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
-        break;
-      case 'end':
-        if (hapticConfig.onZoomEnd) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }
-        break;
-      case 'limit':
-        if (hapticConfig.onLimitReached) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        }
-        break;
-    }
-  }, [hapticConfig, disabled]);
+  const triggerHaptic = useCallback(
+    (type: "start" | "end" | "limit") => {
+      if (!hapticConfig.enabled || disabled) return;
+
+      switch (type) {
+        case "start":
+          if (hapticConfig.onZoomStart) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }
+          break;
+        case "end":
+          if (hapticConfig.onZoomEnd) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+          break;
+        case "limit":
+          if (hapticConfig.onLimitReached) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          }
+          break;
+      }
+    },
+    [hapticConfig, disabled],
+  );
 
   // Scale change callback
-  const handleScaleChange = useCallback((newScale: number) => {
-    onScaleChange?.(newScale);
-  }, [onScaleChange]);
+  const handleScaleChange = useCallback(
+    (newScale: number) => {
+      onScaleChange?.(newScale);
+    },
+    [onScaleChange],
+  );
 
   // Pinch gesture configuration
   const pinchGesture = Gesture.Pinch()
     .onStart(() => {
       if (disabled) return;
-      
+
       isZooming.value = true;
       lastScale.value = scale.value;
       lastTranslateX.value = translateX.value;
       lastTranslateY.value = translateY.value;
-      
-      runOnJS(triggerHaptic)('start');
+
+      runOnJS(triggerHaptic)("start");
       runOnJS(onZoomStart)?.();
     })
     .onUpdate((event) => {
       if (disabled) return;
-      
+
       const newScale = lastScale.value * event.scale;
-      
+
       // Clamp scale to limits
       if (newScale < minScale) {
         scale.value = minScale;
-        runOnJS(triggerHaptic)('limit');
+        runOnJS(triggerHaptic)("limit");
       } else if (newScale > maxScale) {
         scale.value = maxScale;
-        runOnJS(triggerHaptic)('limit');
+        runOnJS(triggerHaptic)("limit");
       } else {
         scale.value = newScale;
       }
-      
+
       // Update focal point
       focalX.value = event.focalX;
       focalY.value = event.focalY;
-      
+
       // Calculate translation based on focal point
       const scaleDiff = scale.value - lastScale.value;
       const focalPointX = focalX.value - width / 2;
       const focalPointY = focalY.value - height / 2;
-      
-      translateX.value = lastTranslateX.value - (focalPointX * scaleDiff) / scale.value;
-      translateY.value = lastTranslateY.value - (focalPointY * scaleDiff) / scale.value;
-      
+
+      translateX.value =
+        lastTranslateX.value - (focalPointX * scaleDiff) / scale.value;
+      translateY.value =
+        lastTranslateY.value - (focalPointY * scaleDiff) / scale.value;
+
       runOnJS(handleScaleChange)(scale.value);
     })
     .onEnd((event) => {
       if (disabled) return;
-      
+
       isZooming.value = false;
-      
+
       // Apply momentum if enabled
       if (enableMomentum && event.velocity !== 0) {
         const velocity = event.velocity;
         const currentScale = scale.value;
-        
+
         // Calculate momentum scale
         const momentumScale = withDecay({
           velocity: velocity * momentumConfig.velocity,
           clamp: momentumConfig.clamp,
           deceleration: momentumConfig.deceleration,
         });
-        
+
         // Apply momentum with limits
         scale.value = interpolate(
           momentumScale,
           [0, 1],
           [currentScale, Math.min(maxScale, currentScale * 1.5)],
-          Extrapolate.CLAMP
+          Extrapolate.CLAMP,
         );
-        
+
         // Ensure scale stays within bounds
         if (scale.value < minScale) {
           scale.value = withSpring(minScale, {
@@ -236,8 +244,8 @@ export function PinchZoom({
           });
         }
       }
-      
-      runOnJS(triggerHaptic)('end');
+
+      runOnJS(triggerHaptic)("end");
       runOnJS(onZoomEnd)?.();
       runOnJS(handleScaleChange)(scale.value);
     });
@@ -246,39 +254,45 @@ export function PinchZoom({
   const panGesture = Gesture.Pan()
     .onStart(() => {
       if (disabled || scale.value <= minScale) return;
-      
+
       lastTranslateX.value = translateX.value;
       lastTranslateY.value = translateY.value;
     })
     .onUpdate((event) => {
       if (disabled || scale.value <= minScale) return;
-      
+
       const maxTranslateX = (width * (scale.value - 1)) / 2;
       const maxTranslateY = (height * (scale.value - 1)) / 2;
-      
+
       translateX.value = Math.max(
         -maxTranslateX,
-        Math.min(maxTranslateX, lastTranslateX.value + event.translationX)
+        Math.min(maxTranslateX, lastTranslateX.value + event.translationX),
       );
-      
+
       translateY.value = Math.max(
         -maxTranslateY,
-        Math.min(maxTranslateY, lastTranslateY.value + event.translationY)
+        Math.min(maxTranslateY, lastTranslateY.value + event.translationY),
       );
     })
     .onEnd(() => {
       if (disabled || scale.value <= minScale) return;
-      
+
       // Apply momentum to pan
       if (enableMomentum) {
         translateX.value = withDecay({
           velocity: 0,
-          clamp: [-(width * (scale.value - 1)) / 2, (width * (scale.value - 1)) / 2],
+          clamp: [
+            -(width * (scale.value - 1)) / 2,
+            (width * (scale.value - 1)) / 2,
+          ],
         });
-        
+
         translateY.value = withDecay({
           velocity: 0,
-          clamp: [-(height * (scale.value - 1)) / 2, (height * (scale.value - 1)) / 2],
+          clamp: [
+            -(height * (scale.value - 1)) / 2,
+            (height * (scale.value - 1)) / 2,
+          ],
         });
       }
     });
@@ -288,25 +302,25 @@ export function PinchZoom({
     .numberOfTaps(2)
     .onEnd(() => {
       if (disabled) return;
-      
+
       scale.value = withSpring(initialScale, {
         stiffness: 400,
         damping: 20,
         mass: 0.8,
       });
-      
+
       translateX.value = withSpring(0, {
         stiffness: 400,
         damping: 20,
         mass: 0.8,
       });
-      
+
       translateY.value = withSpring(0, {
         stiffness: 400,
         damping: 20,
         mass: 0.8,
       });
-      
+
       runOnJS(handleScaleChange)(initialScale);
     });
 
@@ -314,7 +328,7 @@ export function PinchZoom({
   const composedGesture = Gesture.Simultaneous(
     pinchGesture,
     panGesture,
-    doubleTapGesture
+    doubleTapGesture,
   );
 
   // Animated styles
@@ -328,13 +342,22 @@ export function PinchZoom({
 
   const containerStyle = useAnimatedStyle(() => ({
     transform: [
-      { scale: interpolate(scale.value, [minScale, maxScale], [1, 1.02], Extrapolate.CLAMP) },
+      {
+        scale: interpolate(
+          scale.value,
+          [minScale, maxScale],
+          [1, 1.02],
+          Extrapolate.CLAMP,
+        ),
+      },
     ],
   }));
 
   return (
     <GestureDetector gesture={composedGesture}>
-      <Animated.View style={[styles.container, { width, height }, style, containerStyle]}>
+      <Animated.View
+        style={[styles.container, { width, height }, style, containerStyle]}
+      >
         <Animated.View style={[styles.imageContainer, animatedStyle]}>
           <Image
             source={source}
@@ -358,7 +381,7 @@ export function PinchZoomContent({
   width = SCREEN_WIDTH,
   height = 300,
   ...props
-}: Omit<PinchZoomProps, 'source' | 'resizeMode'> & {
+}: Omit<PinchZoomProps, "source" | "resizeMode"> & {
   children: React.ReactNode;
 }) {
   const scale = useSharedValue(initialScale);
@@ -378,13 +401,12 @@ export function PinchZoomContent({
       }
     });
 
-  const panGesture = Gesture.Pan()
-    .onUpdate((event) => {
-      if (scale.value > minScale) {
-        translateX.value += event.translationX;
-        translateY.value += event.translationY;
-      }
-    });
+  const panGesture = Gesture.Pan().onUpdate((event) => {
+    if (scale.value > minScale) {
+      translateX.value += event.translationX;
+      translateY.value += event.translationY;
+    }
+  });
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -411,7 +433,7 @@ export function PinchZoomContent({
 export function usePinchZoom(
   initialScale: number = 1,
   minScale: number = 1,
-  maxScale: number = 4
+  maxScale: number = 4,
 ) {
   const scale = useSharedValue(initialScale);
   const translateX = useSharedValue(0);
@@ -423,10 +445,13 @@ export function usePinchZoom(
     translateY.value = withSpring(0);
   }, [initialScale]);
 
-  const setZoom = useCallback((newScale: number) => {
-    const clampedScale = Math.max(minScale, Math.min(maxScale, newScale));
-    scale.value = withSpring(clampedScale);
-  }, [minScale, maxScale]);
+  const setZoom = useCallback(
+    (newScale: number) => {
+      const clampedScale = Math.max(minScale, Math.min(maxScale, newScale));
+      scale.value = withSpring(clampedScale);
+    },
+    [minScale, maxScale],
+  );
 
   return {
     scale,
@@ -445,36 +470,51 @@ export const PINCH_ZOOM_PRESETS = {
     minScale: 1,
     maxScale: 2,
     momentumConfig: { velocity: 0.3, clamp: [1, 2], deceleration: 0.995 },
-    hapticConfig: { enabled: true, onZoomStart: false, onZoomEnd: true, onLimitReached: false },
+    hapticConfig: {
+      enabled: true,
+      onZoomStart: false,
+      onZoomEnd: true,
+      onLimitReached: false,
+    },
   },
   medium: {
     minScale: 1,
     maxScale: 3,
     momentumConfig: { velocity: 0.5, clamp: [1, 3], deceleration: 0.998 },
-    hapticConfig: { enabled: true, onZoomStart: true, onZoomEnd: true, onLimitReached: true },
+    hapticConfig: {
+      enabled: true,
+      onZoomStart: true,
+      onZoomEnd: true,
+      onLimitReached: true,
+    },
   },
   dramatic: {
     minScale: 0.8,
     maxScale: 5,
     momentumConfig: { velocity: 0.7, clamp: [0.8, 5], deceleration: 0.999 },
-    hapticConfig: { enabled: true, onZoomStart: true, onZoomEnd: true, onLimitReached: true },
+    hapticConfig: {
+      enabled: true,
+      onZoomStart: true,
+      onZoomEnd: true,
+      onLimitReached: true,
+    },
   },
 };
 
 const styles = StyleSheet.create({
   container: {
-    overflow: 'hidden',
-    backgroundColor: '#000',
+    overflow: "hidden",
+    backgroundColor: "#000",
   },
   imageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
   },
   contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

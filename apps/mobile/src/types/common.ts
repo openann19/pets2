@@ -3,9 +3,9 @@
  * Replaces all `any` types with proper TypeScript interfaces for React Native
  */
 
-import React from 'react';
-import type { ComponentType } from 'react';
-import type { RouteProp, NavigationProp } from '@react-navigation/native';
+import React from "react";
+import type { ComponentType } from "react";
+import type { RouteProp, NavigationProp } from "@react-navigation/native";
 
 // Navigation Types
 export interface RootStackParamList {
@@ -44,7 +44,9 @@ export interface BaseScreenProps {
   route?: RouteProp<RootStackParamList>;
 }
 
-export interface ScreenProps<T extends keyof RootStackParamList = keyof RootStackParamList> {
+export interface ScreenProps<
+  T extends keyof RootStackParamList = keyof RootStackParamList,
+> {
   navigation: NavigationProp<RootStackParamList, T>;
   route: RouteProp<RootStackParamList, T>;
 }
@@ -66,7 +68,16 @@ export interface TouchableComponentProps extends BaseComponentProps {
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'textarea' | 'checkbox' | 'radio' | 'file';
+  type:
+    | "text"
+    | "email"
+    | "password"
+    | "number"
+    | "select"
+    | "textarea"
+    | "checkbox"
+    | "radio"
+    | "file";
   required: boolean;
   placeholder?: string;
   options?: { value: string; label: string }[];
@@ -170,9 +181,9 @@ export interface PerformanceMonitorConfig {
 
 // Haptic Types
 export interface HapticFeedbackConfig {
-  type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
-  impactStyle?: 'light' | 'medium' | 'heavy';
-  notificationType?: 'success' | 'warning' | 'error';
+  type: "light" | "medium" | "heavy" | "success" | "warning" | "error";
+  impactStyle?: "light" | "medium" | "heavy";
+  notificationType?: "success" | "warning" | "error";
 }
 
 // Theme Types
@@ -277,11 +288,11 @@ export interface WebRTCConfig {
     credential?: string;
   }[];
   iceCandidatePoolSize: number;
-  iceTransportPolicy: 'all' | 'relay';
+  iceTransportPolicy: "all" | "relay";
 }
 
 export interface CallState {
-  status: 'idle' | 'connecting' | 'connected' | 'disconnected' | 'failed';
+  status: "idle" | "connecting" | "connected" | "disconnected" | "failed";
   localStream?: MediaStream;
   remoteStream?: MediaStream;
   peerConnection?: RTCPeerConnection;
@@ -290,13 +301,19 @@ export interface CallState {
 
 // Camera Types
 export interface CameraConfig {
-  type: 'front' | 'back';
-  flashMode: 'auto' | 'on' | 'off';
-  whiteBalance: 'auto' | 'sunny' | 'cloudy' | 'shadow' | 'incandescent' | 'fluorescent';
-  focusMode: 'on' | 'off';
+  type: "front" | "back";
+  flashMode: "auto" | "on" | "off";
+  whiteBalance:
+    | "auto"
+    | "sunny"
+    | "cloudy"
+    | "shadow"
+    | "incandescent"
+    | "fluorescent";
+  focusMode: "on" | "off";
   zoom: number;
   ratio: string;
-  quality: 'low' | 'medium' | 'high';
+  quality: "low" | "medium" | "high";
 }
 
 export interface PhotoResult {
@@ -319,7 +336,7 @@ export interface LocationData {
 }
 
 export interface LocationConfig {
-  accuracy: 'low' | 'balanced' | 'high' | 'passive';
+  accuracy: "low" | "balanced" | "high" | "passive";
   distanceFilter: number;
   interval: number;
   fastestInterval: number;
@@ -340,7 +357,7 @@ export interface NotificationConfig {
 
 export interface PushNotificationToken {
   token: string;
-  type: 'ios' | 'android';
+  type: "ios" | "android";
   deviceId: string;
 }
 
@@ -390,7 +407,10 @@ export interface PaginationState {
 // Lazy Loading Types
 export interface LazyComponentConfig {
   fallback?: ComponentType;
-  errorBoundary?: ComponentType<{ children: React.ReactNode; fallback?: React.ReactNode }>;
+  errorBoundary?: ComponentType<{
+    children: React.ReactNode;
+    fallback?: React.ReactNode;
+  }>;
   preload?: boolean;
   timeout?: number;
 }

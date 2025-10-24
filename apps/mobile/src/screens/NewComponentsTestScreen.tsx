@@ -1,21 +1,15 @@
 /**
  * NEW COMPONENTS TEST SCREEN
- * 
+ *
  * Comprehensive test of all new architecture components.
  * This screen verifies that all components work properly.
  */
 
-import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Alert,
-  Dimensions,
-} from 'react-native';
+import React, { useState } from "react";
+import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
 
 // Import new architecture components
-import { EliteContainer, EliteHeader } from '../components/EliteComponents';
+import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import {
   Theme,
   EliteButton,
@@ -33,40 +27,47 @@ import {
   Label,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from '../components/NewComponents';
+} from "../components/NewComponents";
 
 // Import legacy components for comparison
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Mock data for testing
 const mockPet = {
-  _id: '1',
-  id: '1',
-  name: 'Luna',
-  species: 'Dog',
-  breed: 'Golden Retriever',
+  _id: "1",
+  id: "1",
+  name: "Luna",
+  species: "Dog",
+  breed: "Golden Retriever",
   age: 3,
-  description: 'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
-  bio: 'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
+  description:
+    "A friendly and energetic golden retriever who loves playing fetch and going on long walks.",
+  bio: "A friendly and energetic golden retriever who loves playing fetch and going on long walks.",
   photos: [
-    'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
-    'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
+    "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
+    "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
   ],
-  location: 'San Francisco, CA',
+  location: "San Francisco, CA",
   distance: 2.5,
   compatibility: 95,
   isVerified: true,
   owner: {
-    name: 'Sarah Johnson',
+    name: "Sarah Johnson",
     verified: true,
   },
-  tags: ['Friendly', 'Playful', 'Good with kids', 'House trained'],
+  tags: ["Friendly", "Playful", "Good with kids", "House trained"],
 };
 
 const mockPhotos = [
-  { id: '1', uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400' },
-  { id: '2', uri: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400' },
+  {
+    id: "1",
+    uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
+  },
+  {
+    id: "2",
+    uri: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
+  },
 ];
 
 export default function NewComponentsTestScreen() {
@@ -74,17 +75,15 @@ export default function NewComponentsTestScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(
-    8, // Number of sections
-    100,
-    'gentle'
-  );
+  const { start: startStaggeredAnimation, getAnimatedStyle } =
+    useStaggeredAnimation(
+      8, // Number of sections
+      100,
+      "gentle",
+    );
 
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeInUp',
-    0,
-    'bouncy'
-  );
+  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
+    useEntranceAnimation("fadeInUp", 0, "bouncy");
 
   // Start animations
   React.useEffect(() => {
@@ -94,26 +93,26 @@ export default function NewComponentsTestScreen() {
 
   // Event handlers
   const handleButtonPress = (buttonName: string) => {
-    Alert.alert('Button Pressed', `${buttonName} button was pressed!`);
+    Alert.alert("Button Pressed", `${buttonName} button was pressed!`);
   };
 
   const handleSwipeLeft = () => {
-    Alert.alert('Swipe Left', 'You swiped left on Luna!');
+    Alert.alert("Swipe Left", "You swiped left on Luna!");
   };
 
   const handleSwipeRight = () => {
-    Alert.alert('Swipe Right', 'You swiped right on Luna!');
+    Alert.alert("Swipe Right", "You swiped right on Luna!");
   };
 
   const handleSwipeUp = () => {
-    Alert.alert('Swipe Up', 'You swiped up on Luna!');
+    Alert.alert("Swipe Up", "You swiped up on Luna!");
   };
 
   const handleLoadingTest = async () => {
     setIsLoading(true);
-    await new Promise<void>(resolve => setTimeout(resolve, 2000));
+    await new Promise<void>((resolve) => setTimeout(resolve, 2000));
     setIsLoading(false);
-    Alert.alert('Loading Complete', 'The loading animation has finished!');
+    Alert.alert("Loading Complete", "The loading animation has finished!");
   };
 
   return (
@@ -152,29 +151,39 @@ export default function NewComponentsTestScreen() {
                 title="Primary"
                 variant="primary"
                 size="md"
-                onPress={() => { handleButtonPress('Primary'); }}
+                onPress={() => {
+                  handleButtonPress("Primary");
+                }}
               />
               <EliteButton
                 title="Secondary"
                 variant="secondary"
                 size="md"
-                onPress={() => { handleButtonPress('Secondary'); }}
+                onPress={() => {
+                  handleButtonPress("Secondary");
+                }}
               />
               <EliteButton
                 title="Outline"
                 variant="outline"
                 size="md"
-                onPress={() => { handleButtonPress('Outline'); }}
+                onPress={() => {
+                  handleButtonPress("Outline");
+                }}
               />
               <EliteButtonPresets.holographic
                 title="Holographic"
                 size="md"
-                onPress={() => { handleButtonPress('Holographic'); }}
+                onPress={() => {
+                  handleButtonPress("Holographic");
+                }}
               />
               <EliteButtonPresets.glass
                 title="Glass"
                 size="md"
-                onPress={() => { handleButtonPress('Glass'); }}
+                onPress={() => {
+                  handleButtonPress("Glass");
+                }}
               />
               <EliteButton
                 title="Loading Test"
@@ -190,7 +199,9 @@ export default function NewComponentsTestScreen() {
         {/* Container Tests */}
         <View style={getAnimatedStyle(2)}>
           <FXContainerPresets.glass style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Container System Test</Heading2>
+            <Heading2 style={styles.sectionTitle}>
+              Container System Test
+            </Heading2>
             <BodySmall style={styles.sectionSubtitle}>
               Testing FXContainer and presets
             </BodySmall>
@@ -274,8 +285,12 @@ export default function NewComponentsTestScreen() {
               <Heading1>Heading 1 - Main Title</Heading1>
               <Heading2>Heading 2 - Section Title</Heading2>
               <Heading3>Heading 3 - Subsection</Heading3>
-              <Body>Body text - Regular content with proper line height and spacing.</Body>
-              <BodySmall>Body Small - Secondary information and captions.</BodySmall>
+              <Body>
+                Body text - Regular content with proper line height and spacing.
+              </Body>
+              <BodySmall>
+                Body Small - Secondary information and captions.
+              </BodySmall>
               <Label>Label - Form labels and UI elements</Label>
             </View>
           </FXContainerPresets.glass>
@@ -286,8 +301,8 @@ export default function NewComponentsTestScreen() {
           <PerformanceTestSuite
             onTestComplete={(results) => {
               Alert.alert(
-                'Performance Test Complete',
-                `Overall Grade: ${results.overallGrade}\nFPS: ${results.animationFPS}\nMemory: ${Math.round(results.memoryUsage / 1024 / 1024)}MB`
+                "Performance Test Complete",
+                `Overall Grade: ${results.overallGrade}\nFPS: ${results.animationFPS}\nMemory: ${Math.round(results.memoryUsage / 1024 / 1024)}MB`,
               );
             }}
           />
@@ -296,7 +311,9 @@ export default function NewComponentsTestScreen() {
         {/* Success Message */}
         <View style={getAnimatedStyle(7)}>
           <FXContainerPresets.holographic style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>✅ All Tests Passed!</Heading2>
+            <Heading2 style={styles.sectionTitle}>
+              ✅ All Tests Passed!
+            </Heading2>
             <BodySmall style={styles.sectionSubtitle}>
               The new architecture is working perfectly
             </BodySmall>
@@ -334,20 +351,20 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing['4xl'],
+    paddingBottom: Theme.spacing["4xl"],
   },
   heroSection: {
     padding: Theme.spacing.xl,
     marginBottom: Theme.spacing.lg,
-    alignItems: 'center',
+    alignItems: "center",
   },
   heroTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.md,
   },
   heroSubtitle: {
-    textAlign: 'center',
-    color: Theme.semantic.text.secondary,
+    textAlign: "center",
+    color: Theme.colors.text.primary.secondary,
   },
   section: {
     padding: Theme.spacing.xl,
@@ -358,23 +375,23 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   buttonGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Theme.spacing.sm,
   },
   containerGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Theme.spacing.md,
   },
   demoContainer: {
     flex: 1,
     minWidth: (SCREEN_WIDTH - Theme.spacing.xl * 2 - Theme.spacing.md * 2) / 3,
     padding: Theme.spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
   },
   swipeCardContainer: {
     height: 600,

@@ -1,11 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { logger } from '@pawfectmatch/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useRef, useState } from 'react';
-import { Alert } from 'react-native';
-import type { FlatList } from 'react-native';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { logger } from "@pawfectmatch/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useRef, useState } from "react";
+import { Alert } from "react-native";
+import type { FlatList } from "react-native";
 
-import { matchesAPI } from '../services/api';
+import { matchesAPI } from "../services/api";
 
 export interface Match {
   _id: string;
@@ -27,19 +27,21 @@ export interface Match {
 export interface UseMatchesDataReturn {
   matches: Match[];
   likedYou: Match[];
-  selectedTab: 'matches' | 'likedYou';
+  selectedTab: "matches" | "likedYou";
   refreshing: boolean;
   isLoading: boolean;
   initialOffset: number;
   listRef: React.RefObject<FlatList<Match>>;
   loadMatches: () => Promise<void>;
   onRefresh: () => Promise<void>;
-  setSelectedTab: (tab: 'matches' | 'likedYou') => void;
+  setSelectedTab: (tab: "matches" | "likedYou") => void;
   handleScroll: (offset: number) => Promise<void>;
 }
 
 export function useMatchesData(): UseMatchesDataReturn {
-  const [selectedTab, setSelectedTab] = useState<'matches' | 'likedYou'>('matches');
+  const [selectedTab, setSelectedTab] = useState<"matches" | "likedYou">(
+    "matches",
+  );
   const [refreshing, setRefreshing] = useState(false);
   const [initialOffset, setInitialOffset] = useState<number>(0);
   const listRef = useRef<FlatList<Match>>(null);
@@ -52,13 +54,13 @@ export function useMatchesData(): UseMatchesDataReturn {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['matches'],
+    queryKey: ["matches"],
     queryFn: async () => {
       try {
         const realMatches = await matchesAPI.getMatches();
         return realMatches as Match[];
       } catch (error) {
-        logger.error('Failed to load matches:', { error });
+        logger.error("Failed to load matches:", { error });
         throw error;
       }
     },
@@ -69,18 +71,18 @@ export function useMatchesData(): UseMatchesDataReturn {
   useEffect(() => {
     if (error) {
       Alert.alert(
-        'Connection Error',
-        'Unable to load matches. Please check your connection and try again.',
+        "Connection Error",
+        "Unable to load matches. Please check your connection and try again.",
         [
           {
-            text: 'Retry',
+            text: "Retry",
             onPress: () => refetch(),
           },
           {
-            text: 'Cancel',
-            style: 'cancel',
+            text: "Cancel",
+            style: "cancel",
           },
-        ]
+        ],
       );
     }
   }, [error, refetch]);
@@ -92,7 +94,7 @@ export function useMatchesData(): UseMatchesDataReturn {
       return realMatches as Match[];
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(['matches'], data);
+      queryClient.setQueryData(["matches"], data);
     },
   });
 
@@ -100,7 +102,7 @@ export function useMatchesData(): UseMatchesDataReturn {
   useEffect(() => {
     const restore = async () => {
       try {
-        const saved = await AsyncStorage.getItem('mobile_matches_scroll');
+        const saved = await AsyncStorage.getItem("mobile_matches_scroll");
         if (saved) setInitialOffset(Number(saved));
       } catch {
         // Ignore storage errors
@@ -113,7 +115,10 @@ export function useMatchesData(): UseMatchesDataReturn {
   useEffect(() => {
     if (!isLoading && initialOffset > 0) {
       requestAnimationFrame(() => {
-        listRef.current?.scrollToOffset({ offset: initialOffset, animated: false });
+        listRef.current?.scrollToOffset({
+          offset: initialOffset,
+          animated: false,
+        });
       });
     }
   }, [isLoading, initialOffset]);
@@ -133,24 +138,21 @@ export function useMatchesData(): UseMatchesDataReturn {
 
   const handleScroll = async (offset: number) => {
     try {
-      await AsyncStorage.setItem('mobile_matches_scroll', String(offset));
+      await AsyncStorage.setItem("mobile_matches_scroll", String(offset));
     } catch {
       // Ignore storage errors
     }
   };
 
   // Query for liked you data
-  const {
-    data: likedYouData,
-    isLoading: isLoadingLikedYou,
-  } = useQuery({
-    queryKey: ['liked-you'],
+  const { data: likedYouData, isLoading: isLoadingLikedYou } = useQuery({
+    queryKey: ["liked-you"],
     queryFn: async () => {
       try {
         const likedYouMatches = await matchesAPI.getLikedYou();
         return likedYouMatches as Match[];
       } catch (error) {
-        logger.error('Failed to load liked you:', { error });
+        logger.error("Failed to load liked you:", { error });
         return [];
       }
     },

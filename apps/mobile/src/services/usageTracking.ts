@@ -3,11 +3,11 @@
  * Comprehensive user behavior tracking, performance monitoring, and crash reporting
  */
 
-import { logger } from '@pawfectmatch/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dimensions, Platform } from 'react-native';
-import Constants from 'expo-constants';
-import { api } from './api';
+import { logger } from "@pawfectmatch/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Dimensions, Platform } from "react-native";
+import Constants from "expo-constants";
+import { api } from "./api";
 
 type AnalyticsMetadata = Record<string, unknown>;
 
@@ -41,7 +41,7 @@ interface AnalyticsEvent {
   timestamp: number;
   sessionId: string;
   metadata: AnalyticsMetadata;
-  platform: 'ios' | 'android';
+  platform: "ios" | "android";
   appVersion: string;
   deviceInfo: {
     model: string;
@@ -94,7 +94,7 @@ class AnalyticsService {
   async trackEvent(
     eventType: string,
     metadata: AnalyticsMetadata = {},
-    userId?: string
+    userId?: string,
   ): Promise<void> {
     try {
       const event: AnalyticsEvent = {
@@ -103,7 +103,7 @@ class AnalyticsService {
         sessionId: this.sessionId,
         metadata,
         platform: this.getPlatform(),
-        appVersion: Constants.expoConfig?.version || '1.0.0',
+        appVersion: Constants.expoConfig?.version || "1.0.0",
         deviceInfo: this.getDeviceInfo(),
         ...(userId !== undefined ? { userId } : {}),
       };
@@ -116,10 +116,10 @@ class AnalyticsService {
       }
 
       if (isDevelopment) {
-        logger.debug('Analytics event tracked', { eventType, metadata });
+        logger.debug("Analytics event tracked", { eventType, metadata });
       }
     } catch (error: unknown) {
-      logger.error('Failed to track analytics event', { error, eventType });
+      logger.error("Failed to track analytics event", { error, eventType });
     }
   }
 
@@ -127,7 +127,7 @@ class AnalyticsService {
    * Track screen view
    */
   async trackScreenView(screenName: string, userId?: string): Promise<void> {
-    await this.trackEvent('screen_view', { screenName }, userId);
+    await this.trackEvent("screen_view", { screenName }, userId);
   }
 
   /**
@@ -137,29 +137,40 @@ class AnalyticsService {
     element: string,
     action: string,
     metadata: AnalyticsMetadata = {},
-    userId?: string
+    userId?: string,
   ): Promise<void> {
-    await this.trackEvent('user_interaction', {
-      element,
-      action,
-      ...metadata,
-    }, userId);
+    await this.trackEvent(
+      "user_interaction",
+      {
+        element,
+        action,
+        ...metadata,
+      },
+      userId,
+    );
   }
 
   /**
    * Track performance metrics
    */
-  async trackPerformance(metrics: Partial<PerformanceMetrics>, userId?: string): Promise<void> {
-    await this.trackEvent('performance_metric', metrics, userId);
+  async trackPerformance(
+    metrics: Partial<PerformanceMetrics>,
+    userId?: string,
+  ): Promise<void> {
+    await this.trackEvent("performance_metric", metrics, userId);
   }
 
   /**
    * Track crash/error
    */
-  async trackCrash(error: Error, context: AnalyticsMetadata = {}, userId?: string): Promise<void> {
+  async trackCrash(
+    error: Error,
+    context: AnalyticsMetadata = {},
+    userId?: string,
+  ): Promise<void> {
     const crashReport: CrashReport = {
       error: error.message,
-      stackTrace: error.stack ?? '',
+      stackTrace: error.stack ?? "",
       userId: userId ?? undefined,
       timestamp: Date.now(),
       deviceInfo: this.getDeviceInfo(),
@@ -175,8 +186,8 @@ class AnalyticsService {
       appState: crashReport.appState,
     };
 
-    await this.trackEvent('app_crash', crashMetadata, userId);
-    logger.error('App crash tracked', crashReport);
+    await this.trackEvent("app_crash", crashMetadata, userId);
+    logger.error("App crash tracked", crashReport);
   }
 
   /**
@@ -185,29 +196,33 @@ class AnalyticsService {
   static async trackSwipe(
     userId: string,
     petId: string,
-    action: 'like' | 'pass' | 'superlike',
-    metadata: AnalyticsMetadata = {}
+    action: "like" | "pass" | "superlike",
+    metadata: AnalyticsMetadata = {},
   ): Promise<boolean> {
     try {
       const analytics = AnalyticsService.getInstance();
 
       // Track the swipe event
-      await analytics.trackEvent('swipe_action', {
-        petId,
-        action,
-        ...metadata,
-      }, userId);
+      await analytics.trackEvent(
+        "swipe_action",
+        {
+          petId,
+          action,
+          ...metadata,
+        },
+        userId,
+      );
 
       // Also track via API for server-side analytics
       const result = await api.request<{ success: boolean }>(`/usage/swipe`, {
-        method: 'POST',
+        method: "POST",
         body: { userId, petId, action },
       });
 
       return result.success;
     } catch (error: unknown) {
       if (isDevelopment) {
-        logger.error('Failed to track swipe', { error });
+        logger.error("Failed to track swipe", { error });
       }
       return false;
     }
@@ -219,27 +234,34 @@ class AnalyticsService {
   static async trackSuperLike(
     userId: string,
     petId: string,
-    metadata: AnalyticsMetadata = {}
+    metadata: AnalyticsMetadata = {},
   ): Promise<boolean> {
     try {
       const analytics = AnalyticsService.getInstance();
 
       // Track the super like event
-      await analytics.trackEvent('super_like', {
-        petId,
-        ...metadata,
-      }, userId);
+      await analytics.trackEvent(
+        "super_like",
+        {
+          petId,
+          ...metadata,
+        },
+        userId,
+      );
 
       // Also track via API
-      const result = await api.request<{ success: boolean }>(`/usage/superlike`, {
-        method: 'POST',
-        body: { userId, petId },
-      });
+      const result = await api.request<{ success: boolean }>(
+        `/usage/superlike`,
+        {
+          method: "POST",
+          body: { userId, petId },
+        },
+      );
 
       return result.success;
     } catch (error: unknown) {
       if (isDevelopment) {
-        logger.error('Failed to track super like', { error });
+        logger.error("Failed to track super like", { error });
       }
       return false;
     }
@@ -250,24 +272,24 @@ class AnalyticsService {
    */
   static async trackBoost(
     userId: string,
-    metadata: AnalyticsMetadata = {}
+    metadata: AnalyticsMetadata = {},
   ): Promise<boolean> {
     try {
       const analytics = AnalyticsService.getInstance();
 
       // Track the boost event
-      await analytics.trackEvent('profile_boost', metadata, userId);
+      await analytics.trackEvent("profile_boost", metadata, userId);
 
       // Also track via API
       const result = await api.request<{ success: boolean }>(`/usage/boost`, {
-        method: 'POST',
+        method: "POST",
         body: { userId },
       });
 
       return result.success;
     } catch (error: unknown) {
       if (isDevelopment) {
-        logger.error('Failed to track boost', { error });
+        logger.error("Failed to track boost", { error });
       }
       return false;
     }
@@ -278,14 +300,14 @@ class AnalyticsService {
    */
   static async getUsageStats(userId: string): Promise<UsageStats | null> {
     try {
-      const stats = await api.request<UsageStats | null>('/usage/stats', {
+      const stats = await api.request<UsageStats | null>("/usage/stats", {
         params: { userId },
       });
 
       return stats ?? null;
     } catch (error: unknown) {
       if (isDevelopment) {
-        logger.error('Failed to get usage stats', { error });
+        logger.error("Failed to get usage stats", { error });
       }
       return null;
     }
@@ -294,15 +316,20 @@ class AnalyticsService {
   /**
    * Get analytics insights
    */
-  async getAnalyticsInsights(userId: string): Promise<AnalyticsInsights | null> {
+  async getAnalyticsInsights(
+    userId: string,
+  ): Promise<AnalyticsInsights | null> {
     try {
-      const insights = await api.request<AnalyticsInsights | null>('/analytics/insights', {
-        params: { userId },
-      });
+      const insights = await api.request<AnalyticsInsights | null>(
+        "/analytics/insights",
+        {
+          params: { userId },
+        },
+      );
 
       return insights ?? null;
     } catch (error: unknown) {
-      logger.error('Failed to get analytics insights', { error });
+      logger.error("Failed to get analytics insights", { error });
       return null;
     }
   }
@@ -312,13 +339,16 @@ class AnalyticsService {
    */
   async exportUserData(userId: string): Promise<ExportedUserData | null> {
     try {
-      const userData = await api.request<ExportedUserData | null>('/analytics/export', {
-        params: { userId },
-      });
+      const userData = await api.request<ExportedUserData | null>(
+        "/analytics/export",
+        {
+          params: { userId },
+        },
+      );
 
       return userData ?? null;
     } catch (error: unknown) {
-      logger.error('Failed to export user data', { error });
+      logger.error("Failed to export user data", { error });
       return null;
     }
   }
@@ -344,7 +374,7 @@ class AnalyticsService {
         await this.sendEventsToServer(eventsToFlush);
       }
     } catch (error: unknown) {
-      logger.error('Failed to flush analytics events', { error });
+      logger.error("Failed to flush analytics events", { error });
       // Re-queue events for retry
       this.eventQueue.unshift(...eventsToFlush);
     }
@@ -352,23 +382,27 @@ class AnalyticsService {
 
   private async storeEventsLocally(events: AnalyticsEvent[]): Promise<void> {
     try {
-      const stored = await AsyncStorage.getItem('@analytics_queue');
-      const existingEvents: AnalyticsEvent[] = stored !== null ? (JSON.parse(stored) as AnalyticsEvent[]) : [];
+      const stored = await AsyncStorage.getItem("@analytics_queue");
+      const existingEvents: AnalyticsEvent[] =
+        stored !== null ? (JSON.parse(stored) as AnalyticsEvent[]) : [];
       const combinedEvents = [...existingEvents, ...events];
-      await AsyncStorage.setItem('@analytics_queue', JSON.stringify(combinedEvents));
+      await AsyncStorage.setItem(
+        "@analytics_queue",
+        JSON.stringify(combinedEvents),
+      );
     } catch (error: unknown) {
-      logger.error('Failed to store events locally', { error });
+      logger.error("Failed to store events locally", { error });
     }
   }
 
   private async sendEventsToServer(events: AnalyticsEvent[]): Promise<void> {
     try {
-      await api.request('/analytics/events', {
-        method: 'POST',
+      await api.request("/analytics/events", {
+        method: "POST",
         body: { events },
       });
     } catch (error: unknown) {
-      logger.error('Failed to send events to server', { error });
+      logger.error("Failed to send events to server", { error });
       throw error;
     }
   }
@@ -384,22 +418,23 @@ class AnalyticsService {
     return `${Date.now().toString()}_${randomSegment}`;
   }
 
-  private getPlatform(): 'ios' | 'android' {
-    return Platform.OS === 'ios' ? 'ios' : 'android';
+  private getPlatform(): "ios" | "android" {
+    return Platform.OS === "ios" ? "ios" : "android";
   }
 
-  private getDeviceInfo(): AnalyticsEvent['deviceInfo'] {
+  private getDeviceInfo(): AnalyticsEvent["deviceInfo"] {
     // This would use react-native-device-info or similar
-    const windowDimensions = Dimensions.get('window');
+    const windowDimensions = Dimensions.get("window");
     const widthLabel = Math.round(windowDimensions.width).toString();
     const heightLabel = Math.round(windowDimensions.height).toString();
     const platformVersion = Platform.Version;
-    const osVersion = typeof platformVersion === 'string'
-      ? platformVersion
-      : String(platformVersion);
+    const osVersion =
+      typeof platformVersion === "string"
+        ? platformVersion
+        : String(platformVersion);
 
     return {
-      model: 'Unknown Device',
+      model: "Unknown Device",
       osVersion,
       screenSize: `${widthLabel}x${heightLabel}`,
     };

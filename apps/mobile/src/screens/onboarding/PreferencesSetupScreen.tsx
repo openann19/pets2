@@ -1,9 +1,8 @@
-import { INTENT_OPTIONS, SPECIES_OPTIONS } from '@pawfectmatch/core'
-import { logger } from '@pawfectmatch/core';
-;
-import Slider from '@react-native-community/slider';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import { INTENT_OPTIONS, SPECIES_OPTIONS } from "@pawfectmatch/core";
+import { logger } from "@pawfectmatch/core";
+import Slider from "@react-native-community/slider";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -12,14 +11,14 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -28,7 +27,10 @@ type OnboardingStackParamList = {
   Welcome: undefined;
 };
 
-type PreferencesSetupScreenProps = NativeStackScreenProps<OnboardingStackParamList, 'PreferencesSetup'>;
+type PreferencesSetupScreenProps = NativeStackScreenProps<
+  OnboardingStackParamList,
+  "PreferencesSetup"
+>;
 
 interface PreferencesData {
   maxDistance: number;
@@ -52,7 +54,10 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
-const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenProps) => {
+const PreferencesSetupScreen = ({
+  navigation,
+  route,
+}: PreferencesSetupScreenProps) => {
   const { userIntent } = route.params;
   const [preferences, setPreferences] = useState<PreferencesData>({
     maxDistance: 25,
@@ -61,7 +66,7 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
       max: 15,
     },
     species: [],
-    intents: userIntent === 'adopt' ? ['adoption'] : ['adoption', 'playdate'],
+    intents: userIntent === "adopt" ? ["adoption"] : ["adoption", "playdate"],
     notifications: {
       email: true,
       push: true,
@@ -83,14 +88,14 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
   }));
 
   const updatePreferences = (field: string, value: any) => {
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
   const updateNotifications = (field: string, value: boolean) => {
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
       notifications: {
         ...prev.notifications,
@@ -100,38 +105,41 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
   };
 
   const toggleSpecies = (species: string) => {
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
       species: prev.species.includes(species)
-        ? prev.species.filter(s => s !== species)
+        ? prev.species.filter((s) => s !== species)
         : [...prev.species, species],
     }));
   };
 
   const toggleIntent = (intent: string) => {
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
       intents: prev.intents.includes(intent)
-        ? prev.intents.filter(i => i !== intent)
+        ? prev.intents.filter((i) => i !== intent)
         : [...prev.intents, intent],
     }));
   };
 
   const handleComplete = async () => {
     if (preferences.species.length === 0) {
-      Alert.alert('Missing Information', 'Please select at least one species you\'re interested in.');
+      Alert.alert(
+        "Missing Information",
+        "Please select at least one species you're interested in.",
+      );
       return;
     }
 
     if (preferences.intents.length === 0) {
-      Alert.alert('Missing Information', 'Please select at least one intent.');
+      Alert.alert("Missing Information", "Please select at least one intent.");
       return;
     }
 
     try {
       // Save preferences to backend
-      logger.info('Saving preferences:', { preferences });
-      
+      logger.info("Saving preferences:", { preferences });
+
       // Animate completion
       scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
         scaleValue.value = withSpring(1, SPRING_CONFIG);
@@ -139,10 +147,10 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
 
       // Navigate to welcome screen
       setTimeout(() => {
-        navigation.navigate('Welcome');
+        navigation.navigate("Welcome");
       }, 500);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save preferences. Please try again.');
+      Alert.alert("Error", "Failed to save preferences. Please try again.");
     }
   };
 
@@ -162,7 +170,8 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>📍 Search Distance</Text>
             <Text style={styles.sectionSubtitle}>
-              How far are you willing to travel? ({preferences.maxDistance} miles)
+              How far are you willing to travel? ({preferences.maxDistance}{" "}
+              miles)
             </Text>
             <View style={styles.sliderContainer}>
               <Slider
@@ -170,7 +179,9 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
                 minimumValue={5}
                 maximumValue={100}
                 value={preferences.maxDistance}
-                onValueChange={(value) => { updatePreferences('maxDistance', Math.round(value)); }}
+                onValueChange={(value) => {
+                  updatePreferences("maxDistance", Math.round(value));
+                }}
                 minimumTrackTintColor="#ec4899"
                 maximumTrackTintColor="#e5e7eb"
               />
@@ -185,7 +196,8 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🎂 Pet Age Range</Text>
             <Text style={styles.sectionSubtitle}>
-              What age range interests you? ({preferences.ageRange.min} - {preferences.ageRange.max} years)
+              What age range interests you? ({preferences.ageRange.min} -{" "}
+              {preferences.ageRange.max} years)
             </Text>
             <View style={styles.ageRangeContainer}>
               <View style={styles.ageSlider}>
@@ -195,10 +207,12 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
                   minimumValue={0}
                   maximumValue={15}
                   value={preferences.ageRange.min}
-                  onValueChange={(value) => { updatePreferences('ageRange', {
-                    ...preferences.ageRange,
-                    min: Math.round(value)
-                  }); }}
+                  onValueChange={(value) => {
+                    updatePreferences("ageRange", {
+                      ...preferences.ageRange,
+                      min: Math.round(value),
+                    });
+                  }}
                   minimumTrackTintColor="#ec4899"
                   maximumTrackTintColor="#e5e7eb"
                 />
@@ -210,10 +224,12 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
                   minimumValue={preferences.ageRange.min}
                   maximumValue={20}
                   value={preferences.ageRange.max}
-                  onValueChange={(value) => { updatePreferences('ageRange', {
-                    ...preferences.ageRange,
-                    max: Math.round(value)
-                  }); }}
+                  onValueChange={(value) => {
+                    updatePreferences("ageRange", {
+                      ...preferences.ageRange,
+                      max: Math.round(value),
+                    });
+                  }}
                   minimumTrackTintColor="#ec4899"
                   maximumTrackTintColor="#e5e7eb"
                 />
@@ -233,14 +249,20 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
                   key={option.value}
                   style={[
                     styles.optionButton,
-                    preferences.species.includes(option.value) && styles.selectedOption,
+                    preferences.species.includes(option.value) &&
+                      styles.selectedOption,
                   ]}
-                  onPress={() => { toggleSpecies(option.value); }}
+                  onPress={() => {
+                    toggleSpecies(option.value);
+                  }}
                 >
-                  <Text style={[
-                    styles.optionText,
-                    preferences.species.includes(option.value) && styles.selectedOptionText,
-                  ]}>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      preferences.species.includes(option.value) &&
+                        styles.selectedOptionText,
+                    ]}
+                  >
                     {option.label}
                   </Text>
                 </TouchableOpacity>
@@ -260,14 +282,20 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
                   key={option.value}
                   style={[
                     styles.optionButton,
-                    preferences.intents.includes(option.value) && styles.selectedOption,
+                    preferences.intents.includes(option.value) &&
+                      styles.selectedOption,
                   ]}
-                  onPress={() => { toggleIntent(option.value); }}
+                  onPress={() => {
+                    toggleIntent(option.value);
+                  }}
                 >
-                  <Text style={[
-                    styles.optionText,
-                    preferences.intents.includes(option.value) && styles.selectedOptionText,
-                  ]}>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      preferences.intents.includes(option.value) &&
+                        styles.selectedOptionText,
+                    ]}
+                  >
                     {option.label}
                   </Text>
                 </TouchableOpacity>
@@ -283,21 +311,51 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
             </Text>
             <View style={styles.notificationOptions}>
               {[
-                { key: 'push', label: 'Push Notifications', description: 'Get notified instantly' },
-                { key: 'email', label: 'Email Updates', description: 'Weekly summaries and important updates' },
-                { key: 'matches', label: 'New Matches', description: 'When you get a new match' },
-                { key: 'messages', label: 'New Messages', description: 'When someone messages you' },
+                {
+                  key: "push",
+                  label: "Push Notifications",
+                  description: "Get notified instantly",
+                },
+                {
+                  key: "email",
+                  label: "Email Updates",
+                  description: "Weekly summaries and important updates",
+                },
+                {
+                  key: "matches",
+                  label: "New Matches",
+                  description: "When you get a new match",
+                },
+                {
+                  key: "messages",
+                  label: "New Messages",
+                  description: "When someone messages you",
+                },
               ].map((option) => (
                 <View key={option.key} style={styles.notificationOption}>
                   <View style={styles.notificationInfo}>
                     <Text style={styles.notificationLabel}>{option.label}</Text>
-                    <Text style={styles.notificationDescription}>{option.description}</Text>
+                    <Text style={styles.notificationDescription}>
+                      {option.description}
+                    </Text>
                   </View>
                   <Switch
-                    value={preferences.notifications[option.key as keyof typeof preferences.notifications]}
-                    onValueChange={(value) => { updateNotifications(option.key, value); }}
-                    trackColor={{ false: '#e5e7eb', true: '#fce7f3' }}
-                    thumbColor={preferences.notifications[option.key as keyof typeof preferences.notifications] ? '#ec4899' : '#9ca3af'}
+                    value={
+                      preferences.notifications[
+                        option.key as keyof typeof preferences.notifications
+                      ]
+                    }
+                    onValueChange={(value) => {
+                      updateNotifications(option.key, value);
+                    }}
+                    trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
+                    thumbColor={
+                      preferences.notifications[
+                        option.key as keyof typeof preferences.notifications
+                      ]
+                        ? "#ec4899"
+                        : "#9ca3af"
+                    }
                   />
                 </View>
               ))}
@@ -307,7 +365,8 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
           {/* Privacy Note */}
           <View style={styles.privacyNote}>
             <Text style={styles.privacyText}>
-              🔒 Your privacy is important to us. You can change these preferences anytime in settings.
+              🔒 Your privacy is important to us. You can change these
+              preferences anytime in settings.
             </Text>
           </View>
         </Animated.View>
@@ -315,11 +374,17 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
 
       {/* Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.completeButton} onPress={handleComplete}>
+
+        <TouchableOpacity
+          style={styles.completeButton}
+          onPress={handleComplete}
+        >
           <Text style={styles.completeButtonText}>Complete Setup</Text>
         </TouchableOpacity>
       </View>
@@ -330,7 +395,7 @@ const PreferencesSetupScreen = ({ navigation, route }: PreferencesSetupScreenPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -340,32 +405,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
+    color: "#6b7280",
+    textAlign: "center",
   },
   section: {
     marginBottom: 32,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 8,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -373,22 +438,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   slider: {
-    width: '100%',
+    width: "100%",
     height: 40,
   },
   sliderThumb: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
     width: 20,
     height: 20,
   },
   sliderLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 8,
   },
   sliderLabel: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: "#9ca3af",
   },
   ageRangeContainer: {
     gap: 16,
@@ -398,47 +463,47 @@ const styles = StyleSheet.create({
   },
   ageLabel: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 8,
   },
   optionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   optionButton: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
     minWidth: 100,
-    alignItems: 'center',
+    alignItems: "center",
   },
   selectedOption: {
-    backgroundColor: '#fdf2f8',
-    borderColor: '#ec4899',
+    backgroundColor: "#fdf2f8",
+    borderColor: "#ec4899",
   },
   optionText: {
     fontSize: 14,
-    color: '#6b7280',
-    fontWeight: '500',
-    textAlign: 'center',
+    color: "#6b7280",
+    fontWeight: "500",
+    textAlign: "center",
   },
   selectedOptionText: {
-    color: '#ec4899',
-    fontWeight: '600',
+    color: "#ec4899",
+    fontWeight: "600",
   },
   notificationOptions: {
     gap: 16,
   },
   notificationOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#f9fafb',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#f9fafb",
     borderRadius: 12,
     padding: 16,
   },
@@ -448,16 +513,16 @@ const styles = StyleSheet.create({
   },
   notificationLabel: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontWeight: "600",
+    color: "#1f2937",
     marginBottom: 4,
   },
   notificationDescription: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
   },
   privacyNote: {
-    backgroundColor: '#f0f9ff',
+    backgroundColor: "#f0f9ff",
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
@@ -465,41 +530,41 @@ const styles = StyleSheet.create({
   },
   privacyText: {
     fontSize: 14,
-    color: '#0369a1',
+    color: "#0369a1",
     lineHeight: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
+    borderTopColor: "#f3f4f6",
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
   },
   backButtonText: {
     fontSize: 16,
-    color: '#6b7280',
-    fontWeight: '600',
+    color: "#6b7280",
+    fontWeight: "600",
   },
   completeButton: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     minWidth: 140,
-    alignItems: 'center',
+    alignItems: "center",
   },
   completeButtonText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
 });
 

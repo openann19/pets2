@@ -4,11 +4,11 @@
  * Features: Visual selection, accessibility, responsive design
  */
 
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { Theme } from '../../theme/unified-theme';
-import { TONE_OPTIONS } from '../../hooks/useAIBio';
+import { Theme } from "../../theme/unified-theme";
+import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
 interface ToneSelectorProps {
   selectedTone: string;
@@ -23,33 +23,38 @@ interface ToneOption {
   description: string;
 }
 
-const TONE_DETAILS: ToneOption[] = TONE_OPTIONS.map(tone => ({
+const TONE_DETAILS: ToneOption[] = TONE_OPTIONS.map((tone) => ({
   ...tone,
   description: getToneDescription(tone.id),
 }));
 
 function getToneDescription(toneId: string): string {
   switch (toneId) {
-    case 'playful':
-      return 'Fun and energetic personality';
-    case 'professional':
-      return 'Polite and well-mannered';
-    case 'casual':
-      return 'Relaxed and friendly';
-    case 'romantic':
-      return 'Sweet and affectionate';
-    case 'mysterious':
-      return 'Intriguing and enigmatic';
+    case "playful":
+      return "Fun and energetic personality";
+    case "professional":
+      return "Polite and well-mannered";
+    case "casual":
+      return "Relaxed and friendly";
+    case "romantic":
+      return "Sweet and affectionate";
+    case "mysterious":
+      return "Intriguing and enigmatic";
     default:
-      return 'Unique personality';
+      return "Unique personality";
   }
 }
 
-export function ToneSelector({ selectedTone, onToneSelect }: ToneSelectorProps) {
+export function ToneSelector({
+  selectedTone,
+  onToneSelect,
+}: ToneSelectorProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Bio Tone</Text>
-      <Text style={styles.sectionSubtitle}>Choose the personality for your pet's bio</Text>
+      <Text style={styles.sectionSubtitle}>
+        Choose the personality for your pet's bio
+      </Text>
 
       <View style={styles.grid}>
         {TONE_DETAILS.map((tone) => (
@@ -58,13 +63,20 @@ export function ToneSelector({ selectedTone, onToneSelect }: ToneSelectorProps) 
             style={[
               styles.toneCard,
               selectedTone === tone.id && styles.selectedCard,
-              { borderColor: selectedTone === tone.id ? tone.color : Theme.colors.border },
+              {
+                borderColor:
+                  selectedTone === tone.id ? tone.color : Theme.colors.border,
+              },
             ]}
-            onPress={() => { onToneSelect(tone.id); }}
+            onPress={() => {
+              onToneSelect(tone.id);
+            }}
             accessibilityLabel={`Select ${tone.label} tone`}
             accessibilityState={{ selected: selectedTone === tone.id }}
           >
-            <View style={[styles.iconContainer, { backgroundColor: tone.color }]}>
+            <View
+              style={[styles.iconContainer, { backgroundColor: tone.color }]}
+            >
               <Text style={styles.icon}>{tone.icon}</Text>
             </View>
 
@@ -72,7 +84,12 @@ export function ToneSelector({ selectedTone, onToneSelect }: ToneSelectorProps) 
             <Text style={styles.toneDescription}>{tone.description}</Text>
 
             {selectedTone === tone.id && (
-              <View style={[styles.selectedIndicator, { backgroundColor: tone.color }]}>
+              <View
+                style={[
+                  styles.selectedIndicator,
+                  { backgroundColor: tone.color },
+                ]}
+              >
                 <Text style={styles.checkmark}>✓</Text>
               </View>
             )}
@@ -88,7 +105,7 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes['2xl'],
+    fontSize: Theme.typography.sizes["2xl"],
     fontWeight: Theme.typography.weights.bold,
     color: Theme.colors.text,
     marginBottom: Theme.spacing.sm,
@@ -99,8 +116,8 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xl,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Theme.spacing.md,
   },
   toneCard: {
@@ -110,7 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
     shadowColor: Theme.colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -127,8 +144,8 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: Theme.borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Theme.spacing.sm,
   },
   icon: {
@@ -139,23 +156,23 @@ const styles = StyleSheet.create({
     fontWeight: Theme.typography.weights.semibold,
     color: Theme.colors.text,
     marginBottom: Theme.spacing.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
   toneDescription: {
     fontSize: Theme.typography.sizes.sm,
     color: Theme.colors.textMuted,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: Theme.typography.lineHeights.normal,
   },
   selectedIndicator: {
-    position: 'absolute',
+    position: "absolute",
     top: -8,
     right: -8,
     width: 24,
     height: 24,
     borderRadius: Theme.borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   checkmark: {
     color: Theme.colors.surface,

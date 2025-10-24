@@ -1,9 +1,8 @@
-import { Ionicons } from '@expo/vector-icons'
-import { logger } from '@pawfectmatch/core';
-;
-import { useAuthStore } from '@pawfectmatch/core';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import { useAuthStore } from "@pawfectmatch/core";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -15,14 +14,14 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { api } from '../services/api';
-import { useTheme } from '../contexts/ThemeContext';
-import type { NavigationProp, RouteProp } from '../navigation/types';
+import { api } from "../services/api";
+import { useTheme } from "../contexts/ThemeContext";
+import type { NavigationProp, RouteProp } from "../navigation/types";
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 
 interface AICompatibilityScreenProps {
   navigation: NavigationProp;
@@ -60,21 +59,25 @@ interface CompatibilityResult {
   };
 }
 
-export default function AICompatibilityScreen({ navigation, route }: AICompatibilityScreenProps) {
+export default function AICompatibilityScreen({
+  navigation,
+  route,
+}: AICompatibilityScreenProps) {
   const { user } = useAuthStore();
   const { isDark, colors } = useTheme();
-  
+
   const [availablePets, setAvailablePets] = useState<Pet[]>([]);
   const [selectedPet1, setSelectedPet1] = useState<Pet | null>(null);
   const [selectedPet2, setSelectedPet2] = useState<Pet | null>(null);
-  const [compatibilityResult, setCompatibilityResult] = useState<CompatibilityResult | null>(null);
+  const [compatibilityResult, setCompatibilityResult] =
+    useState<CompatibilityResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isLoadingPets, setIsLoadingPets] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadAvailablePets();
-    
+
     // Check if pets were passed via route params
     if (route?.params?.pet1Id && route?.params?.pet2Id) {
       // Load specific pets for analysis
@@ -89,47 +92,55 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
       // For now, we'll use mock data
       const mockPets: Pet[] = [
         {
-          _id: '1',
-          name: 'Buddy',
-          photos: ['https://images.unsplash.com/photo-1552053831-71594a27632d?w=200'],
-          breed: 'Golden Retriever',
+          _id: "1",
+          name: "Buddy",
+          photos: [
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
+          ],
+          breed: "Golden Retriever",
           age: 3,
-          species: 'dog',
-          owner: { _id: user?._id || '1', name: user?.name || 'You' }
+          species: "dog",
+          owner: { _id: user?._id || "1", name: user?.name || "You" },
         },
         {
-          _id: '2',
-          name: 'Luna',
-          photos: ['https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200'],
-          breed: 'Labrador',
+          _id: "2",
+          name: "Luna",
+          photos: [
+            "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200",
+          ],
+          breed: "Labrador",
           age: 2,
-          species: 'dog',
-          owner: { _id: '2', name: 'Sarah' }
+          species: "dog",
+          owner: { _id: "2", name: "Sarah" },
         },
         {
-          _id: '3',
-          name: 'Max',
-          photos: ['https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=200'],
-          breed: 'German Shepherd',
+          _id: "3",
+          name: "Max",
+          photos: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=200",
+          ],
+          breed: "German Shepherd",
           age: 4,
-          species: 'dog',
-          owner: { _id: '3', name: 'Mike' }
+          species: "dog",
+          owner: { _id: "3", name: "Mike" },
         },
         {
-          _id: '4',
-          name: 'Bella',
-          photos: ['https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=200'],
-          breed: 'Border Collie',
+          _id: "4",
+          name: "Bella",
+          photos: [
+            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=200",
+          ],
+          breed: "Border Collie",
           age: 1,
-          species: 'dog',
-          owner: { _id: '4', name: 'Emma' }
-        }
+          species: "dog",
+          owner: { _id: "4", name: "Emma" },
+        },
       ];
-      
+
       setAvailablePets(mockPets);
     } catch (err: any) {
-      logger.error('Error loading pets:', { error });
-      setError('Failed to load pets. Please try again.');
+      logger.error("Error loading pets:", { error });
+      setError("Failed to load pets. Please try again.");
     } finally {
       setIsLoadingPets(false);
     }
@@ -138,9 +149,9 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
   const loadSpecificPets = async (pet1Id: string, pet2Id: string) => {
     try {
       // In a real app, you'd fetch these pets from the API
-      const pet1 = availablePets.find(p => p._id === pet1Id);
-      const pet2 = availablePets.find(p => p._id === pet2Id);
-      
+      const pet1 = availablePets.find((p) => p._id === pet1Id);
+      const pet2 = availablePets.find((p) => p._id === pet2Id);
+
       if (pet1 && pet2) {
         setSelectedPet1(pet1);
         setSelectedPet2(pet2);
@@ -148,14 +159,17 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
         setTimeout(() => analyzeCompatibility(), 500);
       }
     } catch (err: any) {
-      logger.error('Error loading specific pets:', { error });
-      setError('Failed to load pet information.');
+      logger.error("Error loading specific pets:", { error });
+      setError("Failed to load pet information.");
     }
   };
 
   const analyzeCompatibility = async () => {
     if (!selectedPet1 || !selectedPet2) {
-      Alert.alert('Selection Required', 'Please select two pets to analyze compatibility.');
+      Alert.alert(
+        "Selection Required",
+        "Please select two pets to analyze compatibility.",
+      );
       return;
     }
 
@@ -169,8 +183,10 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
       });
       setCompatibilityResult(result);
     } catch (err: any) {
-      logger.error('Compatibility analysis error:', { error });
-      setError(err.message || 'Failed to analyze compatibility. Please try again.');
+      logger.error("Compatibility analysis error:", { error });
+      setError(
+        err.message || "Failed to analyze compatibility. Please try again.",
+      );
     } finally {
       setIsAnalyzing(false);
     }
@@ -183,20 +199,28 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
     setError(null);
   };
 
-  const renderPetCard = (pet: Pet, isSelected: boolean, onSelect: () => void) => (
+  const renderPetCard = (
+    pet: Pet,
+    isSelected: boolean,
+    onSelect: () => void,
+  ) => (
     <TouchableOpacity
       style={[
         styles.petCard,
         { backgroundColor: colors.card },
-        isSelected && { borderColor: colors.primary, borderWidth: 2 }
+        isSelected && { borderColor: colors.primary, borderWidth: 2 },
       ]}
       onPress={onSelect}
     >
       <Image source={{ uri: pet.photos[0] }} style={styles.petImage} />
       <View style={styles.petInfo}>
         <Text style={[styles.petName, { color: colors.text }]}>{pet.name}</Text>
-        <Text style={[styles.petBreed, { color: colors.textSecondary }]}>{pet.breed}</Text>
-        <Text style={[styles.petAge, { color: colors.textSecondary }]}>{pet.age} years old</Text>
+        <Text style={[styles.petBreed, { color: colors.textSecondary }]}>
+          {pet.breed}
+        </Text>
+        <Text style={[styles.petAge, { color: colors.textSecondary }]}>
+          {pet.age} years old
+        </Text>
         <Text style={[styles.petOwner, { color: colors.textSecondary }]}>
           Owner: {pet.owner.name}
         </Text>
@@ -211,27 +235,27 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
 
   const renderCompatibilityScore = () => {
     if (!compatibilityResult) return null;
-    
+
     const score = Math.round(compatibilityResult.compatibility_score);
     const getScoreColor = (score: number) => {
-      if (score >= 80) return '#4CAF50';
-      if (score >= 60) return '#FF9800';
-      return '#F44336';
+      if (score >= 80) return "#4CAF50";
+      if (score >= 60) return "#FF9800";
+      return "#F44336";
     };
-    
+
     const getScoreLabel = (score: number) => {
-      if (score >= 80) return 'Excellent Match!';
-      if (score >= 60) return 'Good Compatibility';
-      if (score >= 40) return 'Moderate Compatibility';
-      return 'Low Compatibility';
+      if (score >= 80) return "Excellent Match!";
+      if (score >= 60) return "Good Compatibility";
+      if (score >= 40) return "Moderate Compatibility";
+      return "Low Compatibility";
     };
-    
+
     return (
       <View style={styles.scoreSection}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           💕 Compatibility Score
         </Text>
-        
+
         <View style={styles.scoreCard}>
           <Text style={[styles.scoreValue, { color: getScoreColor(score) }]}>
             {score}/100
@@ -239,7 +263,9 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
           <Text style={[styles.scoreLabel, { color: getScoreColor(score) }]}>
             {getScoreLabel(score)}
           </Text>
-          <Text style={[styles.scoreDescription, { color: colors.textSecondary }]}>
+          <Text
+            style={[styles.scoreDescription, { color: colors.textSecondary }]}
+          >
             {compatibilityResult.ai_analysis}
           </Text>
         </View>
@@ -249,31 +275,31 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
 
   const renderBreakdown = () => {
     if (!compatibilityResult?.breakdown) return null;
-    
+
     const breakdown = compatibilityResult.breakdown;
     const categories = [
-      { key: 'personality_compatibility', label: 'Personality', icon: '😊' },
-      { key: 'lifestyle_compatibility', label: 'Lifestyle', icon: '🏠' },
-      { key: 'activity_compatibility', label: 'Activity Level', icon: '⚡' },
-      { key: 'social_compatibility', label: 'Social Behavior', icon: '👥' },
-      { key: 'environment_compatibility', label: 'Environment', icon: '🌍' },
+      { key: "personality_compatibility", label: "Personality", icon: "😊" },
+      { key: "lifestyle_compatibility", label: "Lifestyle", icon: "🏠" },
+      { key: "activity_compatibility", label: "Activity Level", icon: "⚡" },
+      { key: "social_compatibility", label: "Social Behavior", icon: "👥" },
+      { key: "environment_compatibility", label: "Environment", icon: "🌍" },
     ];
-    
+
     return (
       <View style={styles.breakdownSection}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           📊 Detailed Breakdown
         </Text>
-        
+
         <View style={styles.breakdownCard}>
           {categories.map((category) => {
             const score = Math.round((breakdown as any)[category.key] * 100);
             const getBarColor = (score: number) => {
-              if (score >= 80) return '#4CAF50';
-              if (score >= 60) return '#FF9800';
-              return '#F44336';
+              if (score >= 80) return "#4CAF50";
+              if (score >= 60) return "#FF9800";
+              return "#F44336";
             };
-            
+
             return (
               <View key={category.key} style={styles.breakdownItem}>
                 <View style={styles.breakdownHeader}>
@@ -281,19 +307,24 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
                   <Text style={[styles.breakdownLabel, { color: colors.text }]}>
                     {category.label}
                   </Text>
-                  <Text style={[styles.breakdownScore, { color: getBarColor(score) }]}>
+                  <Text
+                    style={[
+                      styles.breakdownScore,
+                      { color: getBarColor(score) },
+                    ]}
+                  >
                     {score}%
                   </Text>
                 </View>
                 <View style={styles.progressBar}>
-                  <View 
+                  <View
                     style={[
-                      styles.progressFill, 
-                      { 
-                        width: `${score}%`, 
-                        backgroundColor: getBarColor(score) 
-                      }
-                    ]} 
+                      styles.progressFill,
+                      {
+                        width: `${score}%`,
+                        backgroundColor: getBarColor(score),
+                      },
+                    ]}
                   />
                 </View>
               </View>
@@ -306,55 +337,83 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
 
   const renderRecommendations = () => {
     if (!compatibilityResult?.recommendations) return null;
-    
+
     const { recommendations } = compatibilityResult;
-    
+
     return (
       <View style={styles.recommendationsSection}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           💡 Recommendations
         </Text>
-        
+
         <View style={styles.recommendationsCard}>
           {recommendations.meeting_suggestions.length > 0 && (
             <View style={styles.recommendationGroup}>
-              <Text style={[styles.recommendationTitle, { color: colors.text }]}>
+              <Text
+                style={[styles.recommendationTitle, { color: colors.text }]}
+              >
                 🎯 Meeting Suggestions
               </Text>
               {recommendations.meeting_suggestions.map((suggestion, index) => (
-                <Text key={index} style={[styles.recommendation, { color: colors.textSecondary }]}>
+                <Text
+                  key={index}
+                  style={[
+                    styles.recommendation,
+                    { color: colors.textSecondary },
+                  ]}
+                >
                   • {suggestion}
                 </Text>
               ))}
             </View>
           )}
-          
+
           {recommendations.activity_recommendations.length > 0 && (
             <View style={styles.recommendationGroup}>
-              <Text style={[styles.recommendationTitle, { color: colors.text }]}>
+              <Text
+                style={[styles.recommendationTitle, { color: colors.text }]}
+              >
                 🎾 Activity Recommendations
               </Text>
-              {recommendations.activity_recommendations.map((activity, index) => (
-                <Text key={index} style={[styles.recommendation, { color: colors.textSecondary }]}>
-                  • {activity}
-                </Text>
-              ))}
+              {recommendations.activity_recommendations.map(
+                (activity, index) => (
+                  <Text
+                    key={index}
+                    style={[
+                      styles.recommendation,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    • {activity}
+                  </Text>
+                ),
+              )}
             </View>
           )}
-          
+
           {recommendations.supervision_requirements.length > 0 && (
             <View style={styles.recommendationGroup}>
-              <Text style={[styles.recommendationTitle, { color: colors.text }]}>
+              <Text
+                style={[styles.recommendationTitle, { color: colors.text }]}
+              >
                 ⚠️ Supervision Requirements
               </Text>
-              {recommendations.supervision_requirements.map((requirement, index) => (
-                <Text key={index} style={[styles.recommendation, { color: colors.textSecondary }]}>
-                  • {requirement}
-                </Text>
-              ))}
+              {recommendations.supervision_requirements.map(
+                (requirement, index) => (
+                  <Text
+                    key={index}
+                    style={[
+                      styles.recommendation,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    • {requirement}
+                  </Text>
+                ),
+              )}
             </View>
           )}
-          
+
           <View style={styles.successProbability}>
             <Text style={[styles.successLabel, { color: colors.text }]}>
               Success Probability:
@@ -370,7 +429,9 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
 
   if (isLoadingPets) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.text }]}>
@@ -382,9 +443,11 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <LinearGradient
-        colors={isDark ? ['#1a1a2e', '#16213e'] : ['#667eea', '#764ba2']}
+        colors={isDark ? ["#1a1a2e", "#16213e"] : ["#667eea", "#764ba2"]}
         style={styles.header}
       >
         <TouchableOpacity
@@ -404,70 +467,114 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
               <Text style={[styles.sectionTitle, { color: colors.text }]}>
                 🐕 Select Two Pets
               </Text>
-              <Text style={[styles.sectionDescription, { color: colors.textSecondary }]}>
-                Choose two pets to analyze their compatibility using AI technology.
+              <Text
+                style={[
+                  styles.sectionDescription,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                Choose two pets to analyze their compatibility using AI
+                technology.
               </Text>
-              
+
               <View style={styles.petSelection}>
                 <View style={styles.petColumn}>
                   <Text style={[styles.columnTitle, { color: colors.text }]}>
                     Pet 1
                   </Text>
                   {selectedPet1 ? (
-                    renderPetCard(selectedPet1, true, () => { setSelectedPet1(null); })
+                    renderPetCard(selectedPet1, true, () => {
+                      setSelectedPet1(null);
+                    })
                   ) : (
-                    <View style={[styles.placeholderCard, { backgroundColor: colors.card }]}>
-                      <Ionicons name="paw" size={40} color={colors.textSecondary} />
-                      <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+                    <View
+                      style={[
+                        styles.placeholderCard,
+                        { backgroundColor: colors.card },
+                      ]}
+                    >
+                      <Ionicons
+                        name="paw"
+                        size={40}
+                        color={colors.textSecondary}
+                      />
+                      <Text
+                        style={[
+                          styles.placeholderText,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
                         Select Pet 1
                       </Text>
                     </View>
                   )}
                 </View>
-                
+
                 <View style={styles.vsContainer}>
-                  <Text style={[styles.vsText, { color: colors.primary }]}>VS</Text>
+                  <Text style={[styles.vsText, { color: colors.primary }]}>
+                    VS
+                  </Text>
                 </View>
-                
+
                 <View style={styles.petColumn}>
                   <Text style={[styles.columnTitle, { color: colors.text }]}>
                     Pet 2
                   </Text>
                   {selectedPet2 ? (
-                    renderPetCard(selectedPet2, true, () => { setSelectedPet2(null); })
+                    renderPetCard(selectedPet2, true, () => {
+                      setSelectedPet2(null);
+                    })
                   ) : (
-                    <View style={[styles.placeholderCard, { backgroundColor: colors.card }]}>
-                      <Ionicons name="paw" size={40} color={colors.textSecondary} />
-                      <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+                    <View
+                      style={[
+                        styles.placeholderCard,
+                        { backgroundColor: colors.card },
+                      ]}
+                    >
+                      <Ionicons
+                        name="paw"
+                        size={40}
+                        color={colors.textSecondary}
+                      />
+                      <Text
+                        style={[
+                          styles.placeholderText,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
                         Select Pet 2
                       </Text>
                     </View>
                   )}
                 </View>
               </View>
-              
+
               <Text style={[styles.availablePetsTitle, { color: colors.text }]}>
                 Available Pets
               </Text>
-              
+
               <FlatList
                 data={availablePets}
                 keyExtractor={(item) => item._id}
                 numColumns={2}
                 scrollEnabled={false}
                 renderItem={({ item }) => {
-                  const isSelected = selectedPet1?._id === item._id || selectedPet2?._id === item._id;
-                  const isDisabled = isSelected || 
+                  const isSelected =
+                    selectedPet1?._id === item._id ||
+                    selectedPet2?._id === item._id;
+                  const isDisabled =
+                    isSelected ||
                     (selectedPet1 && selectedPet2) ||
-                    (selectedPet1 && selectedPet1.owner._id === item.owner._id) ||
+                    (selectedPet1 &&
+                      selectedPet1.owner._id === item.owner._id) ||
                     (selectedPet2 && selectedPet2.owner._id === item.owner._id);
-                  
+
                   return (
                     <TouchableOpacity
                       style={[
                         styles.availablePetCard,
                         { backgroundColor: colors.card },
-                        isDisabled && { opacity: 0.5 }
+                        isDisabled && { opacity: 0.5 },
                       ]}
                       onPress={() => {
                         if (isDisabled) return;
@@ -479,21 +586,37 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
                       }}
                       disabled={isDisabled}
                     >
-                      <Image source={{ uri: item.photos[0] }} style={styles.availablePetImage} />
-                      <Text style={[styles.availablePetName, { color: colors.text }]}>
+                      <Image
+                        source={{ uri: item.photos[0] }}
+                        style={styles.availablePetImage}
+                      />
+                      <Text
+                        style={[
+                          styles.availablePetName,
+                          { color: colors.text },
+                        ]}
+                      >
                         {item.name}
                       </Text>
-                      <Text style={[styles.availablePetBreed, { color: colors.textSecondary }]}>
+                      <Text
+                        style={[
+                          styles.availablePetBreed,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
                         {item.breed}
                       </Text>
                     </TouchableOpacity>
                   );
                 }}
               />
-              
+
               {selectedPet1 && selectedPet2 && (
                 <TouchableOpacity
-                  style={[styles.analyzeButton, { opacity: isAnalyzing ? 0.7 : 1 }]}
+                  style={[
+                    styles.analyzeButton,
+                    { opacity: isAnalyzing ? 0.7 : 1 },
+                  ]}
                   onPress={analyzeCompatibility}
                   disabled={isAnalyzing}
                 >
@@ -503,7 +626,7 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
                     <Ionicons name="analytics" size={20} color="#fff" />
                   )}
                   <Text style={styles.analyzeButtonText}>
-                    {isAnalyzing ? 'Analyzing...' : 'Analyze Compatibility'}
+                    {isAnalyzing ? "Analyzing..." : "Analyze Compatibility"}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -521,19 +644,21 @@ export default function AICompatibilityScreen({ navigation, route }: AICompatibi
                   onPress={resetAnalysis}
                 >
                   <Ionicons name="refresh" size={20} color={colors.primary} />
-                  <Text style={[styles.resetButtonText, { color: colors.primary }]}>
+                  <Text
+                    style={[styles.resetButtonText, { color: colors.primary }]}
+                  >
                     New Analysis
                   </Text>
                 </TouchableOpacity>
               </View>
-              
+
               {renderCompatibilityScore()}
               {renderBreakdown()}
               {renderRecommendations()}
             </View>
           </>
         )}
-        
+
         {error && (
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle" size={24} color="#ff4444" />
@@ -550,9 +675,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 15,
     paddingTop: 50,
@@ -562,8 +687,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   headerRight: {
     width: 34,
@@ -574,8 +699,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
@@ -586,7 +711,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   sectionDescription: {
@@ -595,26 +720,26 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   petSelection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 30,
   },
   petColumn: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   columnTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   petCard: {
-    width: '100%',
+    width: "100%",
     padding: 15,
     borderRadius: 15,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
   petImage: {
     width: 80,
@@ -623,11 +748,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   petInfo: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   petName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   petBreed: {
@@ -642,16 +767,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   selectedIndicator: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
   },
   placeholderCard: {
-    width: '100%',
+    width: "100%",
     height: 150,
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   placeholderText: {
     marginTop: 10,
@@ -662,11 +787,11 @@ const styles = StyleSheet.create({
   },
   vsText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   availablePetsTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
   },
   availablePetCard: {
@@ -674,7 +799,7 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 15,
     borderRadius: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   availablePetImage: {
     width: 60,
@@ -684,25 +809,25 @@ const styles = StyleSheet.create({
   },
   availablePetName: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 2,
   },
   availablePetBreed: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   analyzeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#9C27B0',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#9C27B0",
     paddingVertical: 15,
     borderRadius: 25,
     marginTop: 20,
   },
   analyzeButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
     marginLeft: 8,
   },
@@ -710,52 +835,52 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   resultsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   resultsTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   resetButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   resetButtonText: {
     marginLeft: 5,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   scoreSection: {
     marginBottom: 25,
   },
   scoreCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     padding: 25,
     borderRadius: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   scoreValue: {
     fontSize: 48,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   scoreLabel: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   scoreDescription: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 22,
   },
   breakdownSection: {
     marginBottom: 25,
   },
   breakdownCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     padding: 20,
     borderRadius: 15,
   },
@@ -763,8 +888,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   breakdownHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   breakdownIcon: {
@@ -777,23 +902,23 @@ const styles = StyleSheet.create({
   },
   breakdownScore: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
   },
   recommendationsSection: {
     marginBottom: 25,
   },
   recommendationsCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     padding: 20,
     borderRadius: 15,
   },
@@ -802,7 +927,7 @@ const styles = StyleSheet.create({
   },
   recommendationTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   recommendation: {
@@ -811,31 +936,31 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   successProbability: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingTop: 15,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: "#e0e0e0",
   },
   successLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   successValue: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffebee',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffebee",
     padding: 15,
     borderRadius: 10,
     marginTop: 20,
   },
   errorText: {
-    color: '#c62828',
+    color: "#c62828",
     marginLeft: 10,
     flex: 1,
   },

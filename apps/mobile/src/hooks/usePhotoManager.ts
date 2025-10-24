@@ -1,6 +1,6 @@
-import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
-import { Alert } from 'react-native';
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
+import { Alert } from "react-native";
 
 export interface PhotoData {
   uri: string;
@@ -22,8 +22,11 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Please grant permission to access your photos');
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission needed",
+        "Please grant permission to access your photos",
+      );
       return;
     }
 
@@ -39,17 +42,17 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
     if (!result.canceled) {
       const newPhotos: PhotoData[] = result.assets.map((asset, index) => ({
         uri: asset.uri,
-        type: 'image/jpeg',
+        type: "image/jpeg",
         fileName: `pet-photo-${Date.now()}-${index}.jpg`,
         isPrimary: photos.length === 0 && index === 0, // First photo is primary
       }));
 
-      setPhotos(prev => [...prev, ...newPhotos]);
+      setPhotos((prev) => [...prev, ...newPhotos]);
     }
   };
 
   const removePhoto = (index: number) => {
-    setPhotos(prev => {
+    setPhotos((prev) => {
       const newPhotos = prev.filter((_, i) => i !== index);
       // If we removed the primary photo, make the first remaining photo primary
       if (prev[index].isPrimary && newPhotos.length > 0) {
@@ -60,10 +63,12 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
   };
 
   const setPrimaryPhoto = (index: number) => {
-    setPhotos(prev => prev.map((photo, i) => ({
-      ...photo,
-      isPrimary: i === index,
-    })));
+    setPhotos((prev) =>
+      prev.map((photo, i) => ({
+        ...photo,
+        isPrimary: i === index,
+      })),
+    );
   };
 
   return {

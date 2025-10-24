@@ -1,6 +1,6 @@
-import { logger } from '@pawfectmatch/core';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import { logger } from "@pawfectmatch/core";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -11,9 +11,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as Haptics from "expo-haptics";
 
 // Define the navigation props type
 type RootStackParamList = {
@@ -23,10 +23,15 @@ type RootStackParamList = {
   ResetPassword: { token: string };
 };
 
-type ForgotPasswordScreenProps = NativeStackScreenProps<RootStackParamList, 'ForgotPassword'>;
+type ForgotPasswordScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ForgotPassword"
+>;
 
-function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.Element {
-  const [email, setEmail] = useState('');
+function ForgotPasswordScreen({
+  navigation,
+}: ForgotPasswordScreenProps): JSX.Element {
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string | undefined }>({});
 
@@ -34,9 +39,9 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
     const newErrors: { email?: string } = {};
 
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
 
     setErrors(newErrors);
@@ -52,10 +57,10 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       // TODO: Replace with actual API call
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
@@ -65,28 +70,28 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         Alert.alert(
-          'Check Your Email',
-          'We\'ve sent you a password reset link. Please check your email and follow the instructions.',
+          "Check Your Email",
+          "We've sent you a password reset link. Please check your email and follow the instructions.",
           [
             {
-              text: 'OK',
+              text: "OK",
               onPress: () => navigation.goBack(),
             },
-          ]
+          ],
         );
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to send reset email');
+        throw new Error(errorData.message || "Failed to send reset email");
       }
     } catch (error) {
       // Error haptic feedback
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
-      logger.error('Forgot password error:', { error });
+      logger.error("Forgot password error:", { error });
       Alert.alert(
-        'Error',
-        'Unable to send password reset email. Please try again.',
-        [{ text: 'OK' }]
+        "Error",
+        "Unable to send password reset email. Please try again.",
+        [{ text: "OK" }],
       );
     } finally {
       setLoading(false);
@@ -96,7 +101,7 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -110,7 +115,8 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
           <View style={styles.header}>
             <Text style={styles.title}>Reset Password</Text>
             <Text style={styles.subtitle}>
-              Enter your email address and we'll send you a link to reset your password.
+              Enter your email address and we'll send you a link to reset your
+              password.
             </Text>
           </View>
 
@@ -130,7 +136,9 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
                 autoCorrect={false}
                 editable={!loading}
               />
-              {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+              {errors.email ? (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              ) : null}
             </View>
 
             <TouchableOpacity
@@ -138,17 +146,22 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
               onPress={handleForgotPassword}
               disabled={loading}
             >
-              <Text style={[styles.buttonText, loading && styles.buttonTextDisabled]}>
-                {loading ? 'Sending...' : 'Send Reset Link'}
+              <Text
+                style={[
+                  styles.buttonText,
+                  loading && styles.buttonTextDisabled,
+                ]}
+              >
+                {loading ? "Sending..." : "Send Reset Link"}
               </Text>
             </TouchableOpacity>
 
             <View style={styles.helpText}>
               <Text style={styles.helpTextContent}>
-                Remember your password?{' '}
+                Remember your password?{" "}
                 <Text
                   style={styles.linkText}
-                  onPress={() => navigation.navigate('Login')}
+                  onPress={() => navigation.navigate("Login")}
                 >
                   Sign In
                 </Text>
@@ -159,12 +172,12 @@ function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps): JSX.El
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   keyboardView: {
     flex: 1,
@@ -172,34 +185,34 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   backButton: {
     marginBottom: 20,
   },
   backButtonText: {
     fontSize: 16,
-    color: '#ec4899',
+    color: "#ec4899",
   },
   header: {
     marginBottom: 40,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     lineHeight: 24,
   },
   form: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -210,56 +223,56 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   inputError: {
-    borderColor: '#ef4444',
+    borderColor: "#ef4444",
   },
   errorText: {
-    color: '#ef4444',
+    color: "#ef4444",
     fontSize: 12,
     marginTop: 4,
   },
   button: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
     borderRadius: 8,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 16,
   },
   buttonDisabled: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: "#f3f4f6",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   buttonTextDisabled: {
-    color: '#9ca3af',
+    color: "#9ca3af",
   },
   helpText: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 16,
   },
   helpTextContent: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
   },
   linkText: {
-    color: '#ec4899',
-    fontWeight: 'bold',
+    color: "#ec4899",
+    fontWeight: "bold",
   },
 });
 

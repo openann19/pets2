@@ -1,9 +1,5 @@
-import React, { type ReactNode, useEffect } from 'react';
-import {
-  View,
-  type ViewStyle,
-  type ViewProps,
-} from 'react-native';
+import React, { type ReactNode, useEffect } from "react";
+import { View, type ViewStyle, type ViewProps } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,65 +8,65 @@ import Animated, {
   withTiming,
   interpolate,
   Extrapolate,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { BorderRadius, Spacing } from '../styles/GlobalStyles';
+import { BorderRadius, Spacing } from "../styles/GlobalStyles";
 
 // === GLOW AND SHADOW CONSTANTS ===
 export const GLOW_SHADOW_CONFIGS = {
   // Colored shadows
   coloredShadows: {
     primary: {
-      shadowColor: '#ec4899',
+      shadowColor: "#ec4899",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
       elevation: 15,
     },
     secondary: {
-      shadowColor: '#0ea5e9',
+      shadowColor: "#0ea5e9",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
       elevation: 15,
     },
     success: {
-      shadowColor: '#22c55e',
+      shadowColor: "#22c55e",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
       elevation: 15,
     },
     warning: {
-      shadowColor: '#f59e0b',
+      shadowColor: "#f59e0b",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
       elevation: 15,
     },
     error: {
-      shadowColor: '#ef4444',
+      shadowColor: "#ef4444",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
       elevation: 15,
     },
     purple: {
-      shadowColor: '#a855f7',
+      shadowColor: "#a855f7",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.4,
       shadowRadius: 20,
       elevation: 15,
     },
     neon: {
-      shadowColor: '#00f5ff',
+      shadowColor: "#00f5ff",
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.8,
       shadowRadius: 30,
       elevation: 25,
     },
     holographic: {
-      shadowColor: '#667eea',
+      shadowColor: "#667eea",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.6,
       shadowRadius: 25,
@@ -81,35 +77,35 @@ export const GLOW_SHADOW_CONFIGS = {
   // Depth shadows
   depthShadows: {
     sm: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 2,
     },
     md: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 4,
     },
     lg: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.2,
       shadowRadius: 16,
       elevation: 8,
     },
     xl: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 12 },
       shadowOpacity: 0.25,
       shadowRadius: 24,
       elevation: 12,
     },
-    '2xl': {
-      shadowColor: '#000',
+    "2xl": {
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 16 },
       shadowOpacity: 0.3,
       shadowRadius: 32,
@@ -146,10 +142,10 @@ interface GlowContainerProps extends ViewProps {
 
 export const GlowContainer: React.FC<GlowContainerProps> = ({
   children,
-  color = 'primary',
-  intensity = 'medium',
+  color = "primary",
+  intensity = "medium",
   animated = true,
-  speed = 'normal',
+  speed = "normal",
   style,
   ...props
 }) => {
@@ -164,10 +160,10 @@ export const GlowContainer: React.FC<GlowContainerProps> = ({
           }),
           withTiming(1, {
             duration: GLOW_SHADOW_CONFIGS.animationSpeeds[speed],
-          })
+          }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [animated, intensity, speed]);
@@ -209,20 +205,14 @@ interface ShadowContainerProps extends ViewProps {
 
 export const ShadowContainer: React.FC<ShadowContainerProps> = ({
   children,
-  depth = 'md',
+  depth = "md",
   style,
   ...props
 }) => {
   const shadowStyle = GLOW_SHADOW_CONFIGS.depthShadows[depth];
 
   return (
-    <View
-      style={[
-        shadowStyle,
-        style,
-      ]}
-      {...props}
-    >
+    <View style={[shadowStyle, style]} {...props}>
       {children}
     </View>
   );
@@ -240,10 +230,10 @@ interface NeonBorderProps extends ViewProps {
 
 export const NeonBorder: React.FC<NeonBorderProps> = ({
   children,
-  color = 'neon',
+  color = "neon",
   width = 2,
   animated = true,
-  speed = 'normal',
+  speed = "normal",
   style,
   ...props
 }) => {
@@ -258,10 +248,10 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
           }),
           withTiming(1, {
             duration: GLOW_SHADOW_CONFIGS.animationSpeeds[speed],
-          })
+          }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [animated, speed]);
@@ -278,7 +268,7 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
         {
           borderWidth: width,
           borderColor: baseShadow.shadowColor,
-          borderRadius: BorderRadius['2xl'],
+          borderRadius: BorderRadius["2xl"],
           ...baseShadow,
         },
         animated ? animatedStyle : {},
@@ -303,9 +293,9 @@ interface GlowingCardProps extends ViewProps {
 
 export const GlowingCard: React.FC<GlowingCardProps> = ({
   children,
-  glowColor = 'primary',
-  shadowDepth = 'lg',
-  glowIntensity = 'medium',
+  glowColor = "primary",
+  shadowDepth = "lg",
+  glowIntensity = "medium",
   animated = true,
   style,
   ...props
@@ -317,8 +307,8 @@ export const GlowingCard: React.FC<GlowingCardProps> = ({
       animated={animated}
       style={[
         {
-          borderRadius: BorderRadius['2xl'],
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: BorderRadius["2xl"],
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
           padding: Spacing.lg,
         },
         GLOW_SHADOW_CONFIGS.depthShadows[shadowDepth],
@@ -342,9 +332,9 @@ interface PulsingGlowProps extends ViewProps {
 
 export const PulsingGlow: React.FC<PulsingGlowProps> = ({
   children,
-  color = 'primary',
-  intensity = 'heavy',
-  speed = 'normal',
+  color = "primary",
+  intensity = "heavy",
+  speed = "normal",
   style,
   ...props
 }) => {
@@ -359,10 +349,10 @@ export const PulsingGlow: React.FC<PulsingGlowProps> = ({
         }),
         withTiming(1, {
           duration: GLOW_SHADOW_CONFIGS.animationSpeeds[speed],
-        })
+        }),
       ),
       -1,
-      false
+      false,
     );
 
     glowIntensity.value = withRepeat(
@@ -372,10 +362,10 @@ export const PulsingGlow: React.FC<PulsingGlowProps> = ({
         }),
         withTiming(1, {
           duration: GLOW_SHADOW_CONFIGS.animationSpeeds[speed],
-        })
+        }),
       ),
       -1,
-      false
+      false,
     );
   }, [intensity, speed]);
 
@@ -424,13 +414,13 @@ export const MultiLayerShadow: React.FC<MultiLayerShadowProps> = ({
   children,
   layers = [
     {
-      color: 'primary',
+      color: "primary",
       offset: { width: 0, height: 4 },
       radius: 8,
       opacity: 0.3,
     },
     {
-      color: 'secondary',
+      color: "secondary",
       offset: { width: 0, height: 8 },
       radius: 16,
       opacity: 0.2,
@@ -443,7 +433,7 @@ export const MultiLayerShadow: React.FC<MultiLayerShadowProps> = ({
     <View
       style={[
         {
-          position: 'relative',
+          position: "relative",
         },
         style,
       ]}
@@ -456,12 +446,12 @@ export const MultiLayerShadow: React.FC<MultiLayerShadowProps> = ({
           <View
             key={index}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
               shadowColor: baseShadow.shadowColor,
               shadowOffset: layer.offset,
               shadowOpacity: layer.opacity,
@@ -472,11 +462,9 @@ export const MultiLayerShadow: React.FC<MultiLayerShadowProps> = ({
           />
         );
       })}
-      
+
       {/* Content */}
-      <View style={{ position: 'relative', zIndex: 1 }}>
-        {children}
-      </View>
+      <View style={{ position: "relative", zIndex: 1 }}>{children}</View>
     </View>
   );
 };
@@ -492,8 +480,8 @@ interface FloatingShadowProps extends ViewProps {
 
 export const FloatingShadow: React.FC<FloatingShadowProps> = ({
   children,
-  color = 'primary',
-  depth = 'xl',
+  color = "primary",
+  depth = "xl",
   animated = true,
   style,
   ...props
@@ -505,10 +493,10 @@ export const FloatingShadow: React.FC<FloatingShadowProps> = ({
       translateY.value = withRepeat(
         withSequence(
           withTiming(-8, { duration: 2000 }),
-          withTiming(0, { duration: 2000 })
+          withTiming(0, { duration: 2000 }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [animated]);

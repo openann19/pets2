@@ -1,6 +1,6 @@
-import React, { createContext, useContext, type ReactNode } from 'react';
+import React, { createContext, useContext, type ReactNode } from "react";
 
-import { useUIStore, type NotificationCounts } from '../stores/useUIStore';
+import { useUIStore, type NotificationCounts } from "../stores/useUIStore";
 
 export interface NotificationContextType {
   counts: NotificationCounts;
@@ -12,13 +12,17 @@ export interface NotificationContextType {
   getTotalCount: () => number;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined,
+);
 
 interface NotificationProviderProps {
   children: ReactNode;
 }
 
-export function NotificationProvider({ children }: NotificationProviderProps): React.JSX.Element {
+export function NotificationProvider({
+  children,
+}: NotificationProviderProps): React.JSX.Element {
   const {
     notificationCounts,
     updateNotificationCount,
@@ -49,7 +53,9 @@ export function NotificationProvider({ children }: NotificationProviderProps): R
 export const useNotifications = (): NotificationContextType => {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider",
+    );
   }
   return context;
 };

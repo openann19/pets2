@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { PetFormData } from '../../hooks/usePetForm';
+import { PetFormData } from "../../hooks/usePetForm";
 
 interface PetPersonalitySectionProps {
   formData: PetFormData;
@@ -9,8 +9,17 @@ interface PetPersonalitySectionProps {
 }
 
 const personalityTags = [
-  'friendly', 'energetic', 'playful', 'calm', 'shy', 'protective',
-  'good-with-kids', 'good-with-pets', 'trained', 'house-trained', 'intelligent',
+  "friendly",
+  "energetic",
+  "playful",
+  "calm",
+  "shy",
+  "protective",
+  "good-with-kids",
+  "good-with-pets",
+  "trained",
+  "house-trained",
+  "intelligent",
 ];
 
 export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
@@ -19,10 +28,10 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
 }) => {
   const togglePersonalityTag = (tag: string) => {
     onUpdateFormData(
-      'personalityTags',
+      "personalityTags",
       formData.personalityTags.includes(tag)
-        ? formData.personalityTags.filter(t => t !== tag)
-        : [...formData.personalityTags, tag]
+        ? formData.personalityTags.filter((t) => t !== tag)
+        : [...formData.personalityTags, tag],
     );
   };
 
@@ -41,13 +50,18 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
               styles.tag,
               formData.personalityTags.includes(tag) && styles.tagSelected,
             ]}
-            onPress={() => { togglePersonalityTag(tag); }}
+            onPress={() => {
+              togglePersonalityTag(tag);
+            }}
           >
-            <Text style={[
-              styles.tagText,
-              formData.personalityTags.includes(tag) && styles.tagTextSelected,
-            ]}>
-              {tag.replace('-', ' ')}
+            <Text
+              style={[
+                styles.tagText,
+                formData.personalityTags.includes(tag) &&
+                  styles.tagTextSelected,
+              ]}
+            >
+              {tag.replace("-", " ")}
             </Text>
           </TouchableOpacity>
         ))}
@@ -62,38 +76,38 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
+    fontWeight: "bold",
+    color: "#111827",
     marginBottom: 16,
   },
   sectionDesc: {
     fontSize: 14,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 16,
   },
   tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   tag: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: "#D1D5DB",
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   tagSelected: {
-    borderColor: '#8B5CF6',
-    backgroundColor: '#F3F4F6',
+    borderColor: "#8B5CF6",
+    backgroundColor: "#F3F4F6",
   },
   tagText: {
     fontSize: 14,
-    color: '#374151',
+    color: "#374151",
   },
   tagTextSelected: {
-    color: '#8B5CF6',
-    fontWeight: '600',
+    color: "#8B5CF6",
+    fontWeight: "600",
   },
 });

@@ -1,13 +1,7 @@
-import React, { Suspense, lazy, ComponentType } from 'react'
-import { logger } from '@pawfectmatch/core';
-;
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import React, { Suspense, lazy, ComponentType } from "react";
+import { logger } from "@pawfectmatch/core";
+import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface LazyScreenProps {
   fallback?: React.ComponentType;
@@ -30,16 +24,16 @@ interface LazyScreenProps {
  */
 function DefaultLoadingFallback() {
   const { colors } = useTheme();
-  
+
   return (
-    <View 
+    <View
       style={[styles.loadingContainer, { backgroundColor: colors.background }]}
       accessible={true}
       accessibilityLabel="Loading screen"
       accessibilityRole="progressbar"
     >
-      <ActivityIndicator 
-        size="large" 
+      <ActivityIndicator
+        size="large"
         color={colors.primary}
         style={styles.loadingIndicator}
       />
@@ -48,16 +42,22 @@ function DefaultLoadingFallback() {
       </Text>
     </View>
   );
-};
+}
 
 /**
  * Default Error Boundary Component
  */
-function DefaultErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
+function DefaultErrorBoundary({
+  error,
+  retry,
+}: {
+  error: Error;
+  retry: () => void;
+}) {
   const { colors } = useTheme();
-  
+
   return (
-    <View 
+    <View
       style={[styles.errorContainer, { backgroundColor: colors.background }]}
       accessible={true}
       accessibilityLabel="Screen failed to load"
@@ -67,9 +67,9 @@ function DefaultErrorBoundary({ error, retry }: { error: Error; retry: () => voi
         Oops! Something went wrong
       </Text>
       <Text style={[styles.errorMessage, { color: colors.text }]}>
-        {error.message || 'Failed to load this screen'}
+        {error.message || "Failed to load this screen"}
       </Text>
-      <Text 
+      <Text
         style={[styles.retryButton, { color: colors.primary }]}
         onPress={retry}
         accessible={true}
@@ -80,14 +80,14 @@ function DefaultErrorBoundary({ error, retry }: { error: Error; retry: () => voi
       </Text>
     </View>
   );
-};
+}
 
 /**
  * Error Boundary Class Component
  */
 class LazyScreenErrorBoundary extends React.Component<
-  { 
-    children: React.ReactNode; 
+  {
+    children: React.ReactNode;
     fallback: React.ComponentType<{ error: Error; retry: () => void }>;
   },
   { hasError: boolean; error: Error | null }
@@ -102,7 +102,7 @@ class LazyScreenErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    logger.error('LazyScreen Error:', { error, errorInfo });
+    logger.error("LazyScreen Error:", { error, errorInfo });
   }
 
   retry = () => {
@@ -124,7 +124,7 @@ class LazyScreenErrorBoundary extends React.Component<
  */
 export const createLazyScreen = <P extends object>(
   importFunction: () => Promise<{ default: ComponentType<P> }>,
-  options: LazyScreenProps = {}
+  options: LazyScreenProps = {},
 ) => {
   const LazyComponent = lazy(importFunction);
   const LoadingFallback = options.fallback || DefaultLoadingFallback;
@@ -140,8 +140,8 @@ export const createLazyScreen = <P extends object>(
     );
   }
 
-  LazyScreenWrapper.displayName = `LazyScreen(${LazyComponent.displayName || 'Component'})`;
-  
+  LazyScreenWrapper.displayName = `LazyScreen(${LazyComponent.displayName || "Component"})`;
+
   return LazyScreenWrapper;
 };
 
@@ -150,11 +150,11 @@ export const createLazyScreen = <P extends object>(
  * Useful for preloading screens the user is likely to visit
  */
 export const preloadLazyScreen = (
-  importFunction: () => Promise<{ default: ComponentType<any> }>
+  importFunction: () => Promise<{ default: ComponentType<any> }>,
 ): void => {
   // Start loading the component in the background
-  importFunction().catch(error => {
-    logger.warn('Failed to preload lazy screen:', { error });
+  importFunction().catch((error) => {
+    logger.warn("Failed to preload lazy screen:", { error });
   });
 };
 
@@ -162,25 +162,33 @@ export const preloadLazyScreen = (
  * Hook for managing lazy screen preloading
  */
 export const useLazyScreenPreloader = () => {
-  const preloadScreens = React.useCallback((
-    importFunctions: Array<() => Promise<{ default: ComponentType<any> }>>
-  ) => {
-    importFunctions.forEach(importFunction => {
-      preloadLazyScreen(importFunction);
-    });
-  }, []);
+  const preloadScreens = React.useCallback(
+    (
+      importFunctions: Array<() => Promise<{ default: ComponentType<any> }>>,
+    ) => {
+      importFunctions.forEach((importFunction) => {
+        preloadLazyScreen(importFunction);
+      });
+    },
+    [],
+  );
 
   return { preloadScreens };
 };
 
 // Pre-configured lazy screen creators for common heavy screens
 export const LazyProfileScreen = createLazyScreen(
-  () => import('../screens/ProfileScreen'),
+  () => import("../screens/ProfileScreen"),
   {
     fallback: () => {
       const { colors } = useTheme();
       return (
-        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <View
+          style={[
+            styles.loadingContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.text }]}>
             Loading Profile...
@@ -188,16 +196,21 @@ export const LazyProfileScreen = createLazyScreen(
         </View>
       );
     },
-  }
+  },
 );
 
 export const LazySettingsScreen = createLazyScreen(
-  () => import('../screens/SettingsScreen'),
+  () => import("../screens/SettingsScreen"),
   {
     fallback: () => {
       const { colors } = useTheme();
       return (
-        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <View
+          style={[
+            styles.loadingContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.text }]}>
             Loading Settings...
@@ -205,16 +218,21 @@ export const LazySettingsScreen = createLazyScreen(
         </View>
       );
     },
-  }
+  },
 );
 
 export const LazyMatchesScreen = createLazyScreen(
-  () => import('../screens/MatchesScreen'),
+  () => import("../screens/MatchesScreen"),
   {
     fallback: () => {
       const { colors } = useTheme();
       return (
-        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <View
+          style={[
+            styles.loadingContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.text }]}>
             Loading Matches...
@@ -222,14 +240,14 @@ export const LazyMatchesScreen = createLazyScreen(
         </View>
       );
     },
-  }
+  },
 );
 
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   loadingIndicator: {
@@ -237,31 +255,31 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     opacity: 0.7,
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorMessage: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     opacity: 0.7,
     marginBottom: 20,
   },
   retryButton: {
     fontSize: 16,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+    fontWeight: "600",
+    textDecorationLine: "underline",
   },
 });
 

@@ -4,13 +4,20 @@
  * Features: Rich display, copy functionality, save options, match scoring
  */
 
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Alert, ScrollView } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  ScrollView,
+} from "react-native";
+import * as Clipboard from "expo-clipboard";
+import { Ionicons } from "@expo/vector-icons";
 
-import { Theme } from '../../theme/unified-theme';
-import { GeneratedBio } from '../../hooks/useAIBio';
+import { Theme } from "../../theme/unified-theme";
+import { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {
   generatedBio: GeneratedBio;
@@ -18,23 +25,29 @@ interface BioResultsProps {
   onRegenerate?: () => void;
 }
 
-export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsProps) {
+export function BioResults({
+  generatedBio,
+  onSave,
+  onRegenerate,
+}: BioResultsProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
       await Clipboard.setStringAsync(generatedBio.bio);
       setCopied(true);
-      setTimeout(() => { setCopied(false); }, 2000);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
     } catch (error) {
-      Alert.alert('Error', 'Failed to copy bio to clipboard');
+      Alert.alert("Error", "Failed to copy bio to clipboard");
     }
   };
 
   const handleSave = () => {
     if (onSave) {
       onSave(generatedBio);
-      Alert.alert('Success', 'Bio saved to history!');
+      Alert.alert("Success", "Bio saved to history!");
     }
   };
 
@@ -56,7 +69,10 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
 
       {/* Bio Content */}
       <View style={styles.bioCard}>
-        <ScrollView style={styles.bioScroll} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.bioScroll}
+          showsVerticalScrollIndicator={false}
+        >
           <Text style={styles.bioText}>{generatedBio.bio}</Text>
         </ScrollView>
 
@@ -72,8 +88,13 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
               size={20}
               color={copied ? Theme.colors.success : Theme.colors.text}
             />
-            <Text style={[styles.actionText, copied && { color: Theme.colors.success }]}>
-              {copied ? 'Copied!' : 'Copy'}
+            <Text
+              style={[
+                styles.actionText,
+                copied && { color: Theme.colors.success },
+              ]}
+            >
+              {copied ? "Copied!" : "Copy"}
             </Text>
           </TouchableOpacity>
 
@@ -83,7 +104,11 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
               onPress={handleSave}
               accessibilityLabel="Save bio to history"
             >
-              <Ionicons name="bookmark-outline" size={20} color={Theme.colors.text} />
+              <Ionicons
+                name="bookmark-outline"
+                size={20}
+                color={Theme.colors.text}
+              />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
           )}
@@ -94,7 +119,11 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
               onPress={onRegenerate}
               accessibilityLabel="Generate new bio"
             >
-              <Ionicons name="refresh-outline" size={20} color={Theme.colors.text} />
+              <Ionicons
+                name="refresh-outline"
+                size={20}
+                color={Theme.colors.text}
+              />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
           )}
@@ -109,7 +138,12 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           {/* Match Score */}
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Match Score</Text>
-            <Text style={[styles.metricValue, { color: getMatchScoreColor(generatedBio.matchScore) }]}>
+            <Text
+              style={[
+                styles.metricValue,
+                { color: getMatchScoreColor(generatedBio.matchScore) },
+              ]}
+            >
               {generatedBio.matchScore}/100
             </Text>
             <View style={styles.progressBar}>
@@ -118,7 +152,9 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
                   styles.progressFill,
                   {
                     width: `${generatedBio.matchScore}%`,
-                    backgroundColor: getMatchScoreColor(generatedBio.matchScore),
+                    backgroundColor: getMatchScoreColor(
+                      generatedBio.matchScore,
+                    ),
                   },
                 ]}
               />
@@ -128,7 +164,12 @@ export function BioResults({ generatedBio, onSave, onRegenerate }: BioResultsPro
           {/* Sentiment Score */}
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Sentiment</Text>
-            <Text style={[styles.metricValue, { color: getSentimentColor(generatedBio.sentiment.score) }]}>
+            <Text
+              style={[
+                styles.metricValue,
+                { color: getSentimentColor(generatedBio.sentiment.score) },
+              ]}
+            >
               {generatedBio.sentiment.label}
             </Text>
             <Text style={styles.metricSubtext}>
@@ -160,7 +201,7 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes['2xl'],
+    fontSize: Theme.typography.sizes["2xl"],
     fontWeight: Theme.typography.weights.bold,
     color: Theme.colors.text,
     marginBottom: Theme.spacing.xl,
@@ -185,16 +226,16 @@ const styles = StyleSheet.create({
     lineHeight: Theme.typography.lineHeights.relaxed,
   },
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Theme.colors.border,
   },
   actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: Theme.spacing.sm,
     borderRadius: Theme.borderRadius.md,
   },
@@ -216,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
   },
@@ -225,7 +266,7 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.background,
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
   },
   metricLabel: {
     fontSize: Theme.typography.sizes.sm,
@@ -233,7 +274,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
-    fontSize: Theme.typography.sizes['2xl'],
+    fontSize: Theme.typography.sizes["2xl"],
     fontWeight: Theme.typography.weights.bold,
     marginBottom: Theme.spacing.xs,
   },
@@ -242,14 +283,14 @@ const styles = StyleSheet.create({
     color: Theme.colors.textMuted,
   },
   progressBar: {
-    width: '100%',
+    width: "100%",
     height: 4,
     backgroundColor: Theme.colors.border,
     borderRadius: Theme.borderRadius.full,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: Theme.borderRadius.full,
   },
   keywordsSection: {
@@ -264,8 +305,8 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Theme.spacing.sm,
   },
   keywordChip: {

@@ -3,7 +3,7 @@
  * Imports from unified design tokens package and adds mobile-specific overrides
  */
 
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions, Platform } from "react-native";
 import {
   COLORS,
   GRADIENTS,
@@ -30,9 +30,9 @@ import {
   type ButtonVariant,
   type CardVariant,
   type InputVariant,
-} from '@pawfectmatch/design-tokens';
+} from "@pawfectmatch/design-tokens";
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 
 // Mobile-specific overrides and extensions
 export const MOBILE_TOKENS = {
@@ -48,10 +48,10 @@ export const MOBILE_TOKENS = {
   spacing: {
     ...SPACING,
     // Mobile-optimized spacing
-    safeAreaTop: Platform.OS === 'ios' ? SPACING[12] : SPACING[4],
-    safeAreaBottom: Platform.OS === 'ios' ? SPACING[8] : SPACING[4],
+    safeAreaTop: Platform.OS === "ios" ? SPACING[12] : SPACING[4],
+    safeAreaBottom: Platform.OS === "ios" ? SPACING[8] : SPACING[4],
     tabBar: SPACING[16],
-    statusBar: Platform.OS === 'ios' ? SPACING[11] : SPACING[6],
+    statusBar: Platform.OS === "ios" ? SPACING[11] : SPACING[6],
   },
 
   // Mobile typography adjustments
@@ -60,9 +60,9 @@ export const MOBILE_TOKENS = {
     // Adjust line heights for mobile readability
     lineHeights: {
       ...TYPOGRAPHY.lineHeights,
-      mobileTight: '1.2',
-      mobileNormal: '1.4',
-      mobileRelaxed: '1.6',
+      mobileTight: "1.2",
+      mobileNormal: "1.4",
+      mobileRelaxed: "1.6",
     },
   },
 
@@ -70,10 +70,10 @@ export const MOBILE_TOKENS = {
   shadows: {
     ...SHADOWS,
     mobile: {
-      xs: '0 1px 2px 0 rgba(0, 0, 0, 0.08)',
-      sm: '0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.08)',
-      md: '0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.08)',
-      lg: '0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.06)',
+      xs: "0 1px 2px 0 rgba(0, 0, 0, 0.08)",
+      sm: "0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.08)",
+      md: "0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.08)",
+      lg: "0 10px 15px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.06)",
     },
   },
 
@@ -83,11 +83,11 @@ export const MOBILE_TOKENS = {
     mobile: {
       tap: {
         duration: 100,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
       slide: {
         duration: 250,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },
@@ -149,8 +149,8 @@ export const getResponsiveSpacing = (size: keyof typeof SPACING): string => {
     // Small phones - reduce spacing
     const scale = 0.9;
     const baseValue = SPACING[size];
-    if (typeof baseValue === 'string' && baseValue.endsWith('rem')) {
-      const numValue = parseFloat(baseValue.replace('rem', ''));
+    if (typeof baseValue === "string" && baseValue.endsWith("rem")) {
+      const numValue = parseFloat(baseValue.replace("rem", ""));
       const scaled = numValue * scale;
       return `${scaled.toString()}rem`;
     }
@@ -158,12 +158,14 @@ export const getResponsiveSpacing = (size: keyof typeof SPACING): string => {
   return SPACING[size];
 };
 
-export const getMobileTypography = (size: keyof typeof TYPOGRAPHY.fontSizes): string => {
+export const getMobileTypography = (
+  size: keyof typeof TYPOGRAPHY.fontSizes,
+): string => {
   // Adjust font sizes for mobile readability
   const baseSize = TYPOGRAPHY.fontSizes[size];
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     // iOS font scaling
-    if (size === 'xs' || size === 'sm') {
+    if (size === "xs" || size === "sm") {
       return baseSize; // Keep small text readable
     }
   }

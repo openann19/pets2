@@ -3,11 +3,11 @@
  * Component for setting up and managing biometric authentication
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { logger } from '@pawfectmatch/core';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,8 +16,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { useBiometric } from '../../hooks/useBiometric';
+} from "react-native";
+import { useBiometric } from "../../hooks/useBiometric";
 
 interface BiometricSetupProps {
   onComplete?: () => void;
@@ -68,7 +68,7 @@ export default function BiometricSetup({
         }
       }
     } catch (error) {
-      logger.error('Error toggling biometric:', { error });
+      logger.error("Error toggling biometric:", { error });
     } finally {
       setIsToggling(false);
     }
@@ -76,26 +76,24 @@ export default function BiometricSetup({
 
   const handleDemoAuth = async () => {
     try {
-      const result = await authenticate('Demo authentication');
+      const result = await authenticate("Demo authentication");
       if (result.success) {
         Alert.alert(
-          'Success!',
-          'Biometric authentication is working correctly.',
-          [{ text: 'OK' }]
+          "Success!",
+          "Biometric authentication is working correctly.",
+          [{ text: "OK" }],
         );
       } else {
         Alert.alert(
-          'Authentication Failed',
-          result.error || 'Please try again.',
-          [{ text: 'OK' }]
+          "Authentication Failed",
+          result.error || "Please try again.",
+          [{ text: "OK" }],
         );
       }
     } catch {
-      Alert.alert(
-        'Error',
-        'Something went wrong. Please try again.',
-        [{ text: 'OK' }]
-      );
+      Alert.alert("Error", "Something went wrong. Please try again.", [
+        { text: "OK" },
+      ]);
     }
   };
 
@@ -112,7 +110,9 @@ export default function BiometricSetup({
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#667eea" />
-          <Text style={styles.loadingText}>Setting up biometric authentication...</Text>
+          <Text style={styles.loadingText}>
+            Setting up biometric authentication...
+          </Text>
         </View>
       </View>
     );
@@ -125,12 +125,15 @@ export default function BiometricSetup({
           <Ionicons name="finger-print" size={80} color="#ccc" />
           <Text style={styles.title}>Biometric Not Available</Text>
           <Text style={styles.subtitle}>
-            Biometric authentication is not available on this device.
-            You can still use the app with your password.
+            Biometric authentication is not available on this device. You can
+            still use the app with your password.
           </Text>
-          <TouchableOpacity style={styles.continueButton} onPress={handleComplete}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={handleComplete}
+          >
             <LinearGradient
-              colors={['#667eea', '#764ba2']}
+              colors={["#667eea", "#764ba2"]}
               style={styles.buttonGradient}
             >
               <Text style={styles.buttonText}>Continue</Text>
@@ -143,16 +146,13 @@ export default function BiometricSetup({
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#667eea', '#764ba2']}
-        style={styles.gradient}
-      >
+      <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.gradient}>
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.iconContainer}>
               <Ionicons
-                name={biometryType === 'Face ID' ? 'face-id' : 'finger-print'}
+                name={biometryType === "Face ID" ? "face-id" : "finger-print"}
                 size={60}
                 color="#fff"
               />
@@ -186,47 +186,59 @@ export default function BiometricSetup({
               value={isEnabled}
               onValueChange={handleToggleBiometric}
               disabled={isToggling}
-              trackColor={{ false: '#767577', true: '#4CAF50' }}
-              thumbColor={isEnabled ? '#fff' : '#f4f3f4'}
+              trackColor={{ false: "#767577", true: "#4CAF50" }}
+              thumbColor={isEnabled ? "#fff" : "#f4f3f4"}
             />
           </View>
 
           {/* Error Message */}
-          {error ? <View style={styles.errorContainer}>
-            <Ionicons name="warning" size={20} color="#ff4757" />
-            <Text style={styles.errorText}>{error}</Text>
-          </View> : null}
+          {error ? (
+            <View style={styles.errorContainer}>
+              <Ionicons name="warning" size={20} color="#ff4757" />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
 
           {/* Demo Section */}
-          {isEnabled && showDemo ? <BlurView intensity={20} style={styles.demoContainer}>
-            <Text style={styles.demoTitle}>Try it out!</Text>
-            <Text style={styles.demoDescription}>
-              Test your {biometryType} authentication
-            </Text>
-            <TouchableOpacity style={styles.demoButton} onPress={handleDemoAuth}>
-              <LinearGradient
-                colors={['#4CAF50', '#45a049']}
-                style={styles.demoButtonGradient}
+          {isEnabled && showDemo ? (
+            <BlurView intensity={20} style={styles.demoContainer}>
+              <Text style={styles.demoTitle}>Try it out!</Text>
+              <Text style={styles.demoDescription}>
+                Test your {biometryType} authentication
+              </Text>
+              <TouchableOpacity
+                style={styles.demoButton}
+                onPress={handleDemoAuth}
               >
-                <Ionicons name="play" size={20} color="#fff" />
-                <Text style={styles.demoButtonText}>Demo Authentication</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </BlurView> : null}
+                <LinearGradient
+                  colors={["#4CAF50", "#45a049"]}
+                  style={styles.demoButtonGradient}
+                >
+                  <Ionicons name="play" size={20} color="#fff" />
+                  <Text style={styles.demoButtonText}>Demo Authentication</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </BlurView>
+          ) : null}
 
           {/* Action Buttons */}
           <View style={styles.actionButtons}>
-            {showSkip ? <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-              <Text style={styles.skipButtonText}>Skip for now</Text>
-            </TouchableOpacity> : null}
+            {showSkip ? (
+              <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+                <Text style={styles.skipButtonText}>Skip for now</Text>
+              </TouchableOpacity>
+            ) : null}
 
-            <TouchableOpacity style={styles.continueButton} onPress={handleComplete}>
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={handleComplete}
+            >
               <LinearGradient
-                colors={['#4CAF50', '#45a049']}
+                colors={["#4CAF50", "#45a049"]}
                 style={styles.buttonGradient}
               >
                 <Text style={styles.buttonText}>
-                  {isEnabled ? 'Continue' : 'Set Up Later'}
+                  {isEnabled ? "Continue" : "Set Up Later"}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -252,68 +264,68 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
   unavailableContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 24,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   iconContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 24,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
-    textAlign: 'center',
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
     lineHeight: 24,
   },
   featuresContainer: {
     marginBottom: 40,
   },
   feature: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   featureText: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
     marginLeft: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderRadius: 12,
@@ -321,13 +333,13 @@ const styles = StyleSheet.create({
   },
   toggleLabel: {
     fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
   errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 71, 87, 0.1)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 71, 87, 0.1)",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
@@ -335,69 +347,69 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 14,
-    color: '#ff4757',
+    color: "#ff4757",
     marginLeft: 8,
     flex: 1,
   },
   demoContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 20,
     borderRadius: 12,
     marginBottom: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   demoTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 8,
   },
   demoDescription: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-    textAlign: 'center',
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
     marginBottom: 16,
   },
   demoButton: {
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   demoButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 12,
   },
   demoButtonText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     marginLeft: 8,
   },
   actionButtons: {
-    marginTop: 'auto',
+    marginTop: "auto",
   },
   skipButton: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 16,
     marginBottom: 16,
   },
   skipButtonText: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fontWeight: '500',
+    color: "rgba(255, 255, 255, 0.7)",
+    fontWeight: "500",
   },
   continueButton: {
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   buttonGradient: {
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
     fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

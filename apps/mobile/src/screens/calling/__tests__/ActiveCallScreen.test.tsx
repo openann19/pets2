@@ -1,24 +1,24 @@
-import { act, fireEvent, render } from '@testing-library/react-native';
-import React from 'react';
+import { act, fireEvent, render } from "@testing-library/react-native";
+import React from "react";
 
-import type { CallState } from '../../../services/WebRTCService';
-import ActiveCallScreen from '../ActiveCallScreen';
+import type { CallState } from "../../../services/WebRTCService";
+import ActiveCallScreen from "../ActiveCallScreen";
 
 // Mock dependencies
-jest.mock('react-native-webrtc', () => ({
-  RTCView: 'RTCView',
+jest.mock("react-native-webrtc", () => ({
+  RTCView: "RTCView",
 }));
 
-jest.mock('expo-linear-gradient', () => ({
-  LinearGradient: 'LinearGradient',
+jest.mock("expo-linear-gradient", () => ({
+  LinearGradient: "LinearGradient",
 }));
 
-jest.mock('expo-blur', () => ({
-  BlurView: 'BlurView',
+jest.mock("expo-blur", () => ({
+  BlurView: "BlurView",
 }));
 
 // React Native is already mocked in jest.setup.ts
-jest.mock('react-native', () => ({
+jest.mock("react-native", () => ({
   Animated: {
     timing: jest.fn(() => ({ start: jest.fn() })),
     Value: jest.fn(() => ({
@@ -41,11 +41,11 @@ const mockCallState: CallState = {
   isConnected: true,
   isIncoming: false,
   callData: {
-    callId: 'test-call-id',
-    matchId: 'test-match-id',
-    callerId: 'test-caller-id',
-    callerName: 'Test Caller',
-    callType: 'video',
+    callId: "test-call-id",
+    matchId: "test-match-id",
+    callerId: "test-caller-id",
+    callerName: "Test Caller",
+    callType: "video",
     timestamp: Date.now(),
   },
   localStream: {} as any,
@@ -55,7 +55,7 @@ const mockCallState: CallState = {
   callDuration: 120, // 2 minutes
 };
 
-describe('ActiveCallScreen', () => {
+describe("ActiveCallScreen", () => {
   const mockOnEndCall = jest.fn();
   const mockOnToggleMute = jest.fn();
   const mockOnToggleVideo = jest.fn();
@@ -71,7 +71,7 @@ describe('ActiveCallScreen', () => {
     jest.useRealTimers();
   });
 
-  it('should render correctly with call state', () => {
+  it("should render correctly with call state", () => {
     const { getByText } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -80,17 +80,17 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    expect(getByText('Test Caller')).toBeTruthy();
-    expect(getByText('02:00')).toBeTruthy(); // 2 minutes formatted
+    expect(getByText("Test Caller")).toBeTruthy();
+    expect(getByText("02:00")).toBeTruthy(); // 2 minutes formatted
   });
 
-  it('should render voice call layout correctly', () => {
+  it("should render voice call layout correctly", () => {
     const voiceCallState = {
       ...mockCallState,
-      callData: { ...mockCallState.callData!, callType: 'voice' as const },
+      callData: { ...mockCallState.callData!, callType: "voice" as const },
     };
 
     const { queryByTestId } = render(
@@ -101,15 +101,15 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
     // Video views should not be present for voice calls
-    expect(queryByTestId('remote-video')).toBeNull();
-    expect(queryByTestId('local-video')).toBeNull();
+    expect(queryByTestId("remote-video")).toBeNull();
+    expect(queryByTestId("local-video")).toBeNull();
   });
 
-  it('should render video call layout correctly', () => {
+  it("should render video call layout correctly", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -118,14 +118,14 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    expect(getByTestId('remote-video')).toBeTruthy();
-    expect(getByTestId('local-video')).toBeTruthy();
+    expect(getByTestId("remote-video")).toBeTruthy();
+    expect(getByTestId("local-video")).toBeTruthy();
   });
 
-  it('should call onEndCall when end call button is pressed', () => {
+  it("should call onEndCall when end call button is pressed", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -134,16 +134,16 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const endCallButton = getByTestId('end-call-button');
+    const endCallButton = getByTestId("end-call-button");
     fireEvent.press(endCallButton);
 
     expect(mockOnEndCall).toHaveBeenCalled();
   });
 
-  it('should call onToggleMute when mute button is pressed', () => {
+  it("should call onToggleMute when mute button is pressed", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -152,16 +152,16 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const muteButton = getByTestId('mute-button');
+    const muteButton = getByTestId("mute-button");
     fireEvent.press(muteButton);
 
     expect(mockOnToggleMute).toHaveBeenCalled();
   });
 
-  it('should call onToggleVideo when video button is pressed', () => {
+  it("should call onToggleVideo when video button is pressed", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -170,16 +170,16 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const videoButton = getByTestId('video-button');
+    const videoButton = getByTestId("video-button");
     fireEvent.press(videoButton);
 
     expect(mockOnToggleVideo).toHaveBeenCalled();
   });
 
-  it('should call onSwitchCamera when camera switch button is pressed', () => {
+  it("should call onSwitchCamera when camera switch button is pressed", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -188,16 +188,16 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const switchCameraButton = getByTestId('switch-camera-button');
+    const switchCameraButton = getByTestId("switch-camera-button");
     fireEvent.press(switchCameraButton);
 
     expect(mockOnSwitchCamera).toHaveBeenCalled();
   });
 
-  it('should call onToggleSpeaker when speaker button is pressed', () => {
+  it("should call onToggleSpeaker when speaker button is pressed", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -206,16 +206,16 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const speakerButton = getByTestId('speaker-button');
+    const speakerButton = getByTestId("speaker-button");
     fireEvent.press(speakerButton);
 
     expect(mockOnToggleSpeaker).toHaveBeenCalled();
   });
 
-  it('should show muted state correctly', () => {
+  it("should show muted state correctly", () => {
     const mutedCallState = { ...mockCallState, isMuted: true };
 
     const { getByTestId } = render(
@@ -226,15 +226,15 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const muteButton = getByTestId('mute-button');
+    const muteButton = getByTestId("mute-button");
     // Should show mic-off icon when muted
     expect(muteButton).toBeTruthy();
   });
 
-  it('should show video disabled state correctly', () => {
+  it("should show video disabled state correctly", () => {
     const videoDisabledCallState = { ...mockCallState, isVideoEnabled: false };
 
     const { getByTestId } = render(
@@ -245,24 +245,27 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const videoButton = getByTestId('video-button');
+    const videoButton = getByTestId("video-button");
     // Should show videocam-off icon when video disabled
     expect(videoButton).toBeTruthy();
   });
 
-  it('should format call duration correctly', () => {
+  it("should format call duration correctly", () => {
     const testCases = [
-      { duration: 30, expected: '00:30' },
-      { duration: 90, expected: '01:30' },
-      { duration: 3661, expected: '61:01' }, // Over 1 hour
+      { duration: 30, expected: "00:30" },
+      { duration: 90, expected: "01:30" },
+      { duration: 3661, expected: "61:01" }, // Over 1 hour
     ];
 
     testCases.forEach(({ duration, expected }) => {
-      const callStateWithDuration = { ...mockCallState, callDuration: duration };
-      
+      const callStateWithDuration = {
+        ...mockCallState,
+        callDuration: duration,
+      };
+
       const { getByText } = render(
         <ActiveCallScreen
           callState={callStateWithDuration}
@@ -271,14 +274,14 @@ describe('ActiveCallScreen', () => {
           onToggleVideo={mockOnToggleVideo}
           onSwitchCamera={mockOnSwitchCamera}
           onToggleSpeaker={mockOnToggleSpeaker}
-        />
+        />,
       );
 
       expect(getByText(expected)).toBeTruthy();
     });
   });
 
-  it('should auto-hide controls for video calls', async () => {
+  it("should auto-hide controls for video calls", async () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -287,11 +290,11 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
     // Controls should be visible initially
-    const controlsContainer = getByTestId('call-controls');
+    const controlsContainer = getByTestId("call-controls");
     expect(controlsContainer).toBeTruthy();
 
     // Fast-forward time to trigger auto-hide
@@ -303,7 +306,7 @@ describe('ActiveCallScreen', () => {
     expect(controlsContainer).toBeTruthy();
   });
 
-  it('should handle screen tap to show/hide controls', () => {
+  it("should handle screen tap to show/hide controls", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -312,19 +315,19 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const screenContainer = getByTestId('call-screen-container');
-    
+    const screenContainer = getByTestId("call-screen-container");
+
     // Tap to toggle controls
     fireEvent.press(screenContainer);
-    
+
     // Controls visibility should toggle (tested via state changes)
     expect(screenContainer).toBeTruthy();
   });
 
-  it('should handle draggable local video for video calls', () => {
+  it("should handle draggable local video for video calls", () => {
     const { getByTestId } = render(
       <ActiveCallScreen
         callState={mockCallState}
@@ -333,20 +336,20 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
-    const localVideo = getByTestId('local-video');
-    
+    const localVideo = getByTestId("local-video");
+
     // Should be draggable (PanResponder should be set up)
-    expect(require('react-native').PanResponder.create).toHaveBeenCalled();
+    expect(require("react-native").PanResponder.create).toHaveBeenCalled();
     expect(localVideo).toBeTruthy();
   });
 
-  it('should not show video-specific controls for voice calls', () => {
+  it("should not show video-specific controls for voice calls", () => {
     const voiceCallState = {
       ...mockCallState,
-      callData: { ...mockCallState.callData!, callType: 'voice' as const },
+      callData: { ...mockCallState.callData!, callType: "voice" as const },
     };
 
     const { queryByTestId } = render(
@@ -357,11 +360,11 @@ describe('ActiveCallScreen', () => {
         onToggleVideo={mockOnToggleVideo}
         onSwitchCamera={mockOnSwitchCamera}
         onToggleSpeaker={mockOnToggleSpeaker}
-      />
+      />,
     );
 
     // Video and camera switch buttons should not be present for voice calls
-    expect(queryByTestId('video-button')).toBeNull();
-    expect(queryByTestId('switch-camera-button')).toBeNull();
+    expect(queryByTestId("video-button")).toBeNull();
+    expect(queryByTestId("switch-camera-button")).toBeNull();
   });
 });

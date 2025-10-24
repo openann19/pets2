@@ -4,11 +4,11 @@
  * Performance optimized with proper lifecycle management
  */
 
-import React, { useRef, useEffect, useState } from 'react';
-import LottieView from 'lottie-react-native';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import React, { useRef, useEffect, useState } from "react";
+import LottieView from "lottie-react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export interface LottieAnimationProps {
   /** Animation source (JSON file or URL) */
@@ -121,7 +121,7 @@ export function SuccessLottie({
           r: { a: 0, k: 0 },
           p: { a: 0, k: [256, 256, 0] },
           a: { a: 0, k: [0, 0, 0] },
-          s: { a: 0, k: [100, 100, 100] }
+          s: { a: 0, k: [100, 100, 100] },
         },
         ao: 0,
         shapes: [
@@ -135,7 +135,7 @@ export function SuccessLottie({
                 p: { a: 0, k: [0, 0] },
                 nm: "Ellipse Path 1",
                 mn: "ADBE Vector Shape - Ellipse",
-                hd: false
+                hd: false,
               },
               {
                 ty: "st",
@@ -149,7 +149,7 @@ export function SuccessLottie({
                 d: [{ n: "d", nm: "dash", v: 0 }],
                 nm: "Stroke 1",
                 mn: "ADBE Vector Graphic - Stroke",
-                hd: false
+                hd: false,
               },
               {
                 ty: "tr",
@@ -162,8 +162,8 @@ export function SuccessLottie({
                 os: { a: 0, k: [0, 0] },
                 ir: { a: 0, k: [0, 0] },
                 is: { a: 0, k: [0, 0] },
-                sy: 1
-              }
+                sy: 1,
+              },
             ],
             nm: "Ellipse 1",
             np: 2,
@@ -171,16 +171,16 @@ export function SuccessLottie({
             bm: 0,
             ix: 1,
             mn: "ADBE Vector Group",
-            hd: false
-          }
+            hd: false,
+          },
         ],
         ip: 0,
         op: 120,
         st: 0,
-        bm: 0
-      }
+        bm: 0,
+      },
     ],
-    markers: []
+    markers: [],
   };
 
   return (
@@ -226,13 +226,21 @@ export function LoadingLottie({
         sr: 1,
         ks: {
           o: { a: 0, k: 100 },
-          r: { a: 1, k: [
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 0, s: [0] },
-            { t: 90, s: [360] }
-          ] },
+          r: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 0,
+                s: [0],
+              },
+              { t: 90, s: [360] },
+            ],
+          },
           p: { a: 0, k: [100, 100, 0] },
           a: { a: 0, k: [0, 0, 0] },
-          s: { a: 0, k: [100, 100, 100] }
+          s: { a: 0, k: [100, 100, 100] },
         },
         ao: 0,
         shapes: [
@@ -246,7 +254,7 @@ export function LoadingLottie({
                 p: { a: 0, k: [0, 0] },
                 nm: "Ellipse Path 1",
                 mn: "ADBE Vector Shape - Ellipse",
-                hd: false
+                hd: false,
               },
               {
                 ty: "st",
@@ -260,8 +268,8 @@ export function LoadingLottie({
                 d: [{ n: "d", nm: "dash", v: 0 }],
                 nm: "Stroke 1",
                 mn: "ADBE Vector Graphic - Stroke",
-                hd: false
-              }
+                hd: false,
+              },
             ],
             nm: "Circle",
             np: 2,
@@ -269,16 +277,16 @@ export function LoadingLottie({
             bm: 0,
             ix: 1,
             mn: "ADBE Vector Group",
-            hd: false
-          }
+            hd: false,
+          },
         ],
         ip: 0,
         op: 90,
         st: 0,
-        bm: 0
-      }
+        bm: 0,
+      },
     ],
-    markers: []
+    markers: [],
   };
 
   return (
@@ -322,20 +330,51 @@ export function EmptyLottie({
         nm: "Heart",
         sr: 1,
         ks: {
-          o: { a: 1, k: [
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 0, s: [0] },
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 30, s: [100] },
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 90, s: [100] },
-            { t: 120, s: [0] }
-          ] },
+          o: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 0,
+                s: [0],
+              },
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 30,
+                s: [100],
+              },
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 90,
+                s: [100],
+              },
+              { t: 120, s: [0] },
+            ],
+          },
           r: { a: 0, k: 0 },
           p: { a: 0, k: [150, 150, 0] },
           a: { a: 0, k: [0, 0, 0] },
-          s: { a: 1, k: [
-            { i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] }, o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] }, t: 0, s: [0, 0, 100] },
-            { i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] }, o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] }, t: 30, s: [100, 100, 100] },
-            { t: 90, s: [100, 100, 100] }
-          ] }
+          s: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] },
+                o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] },
+                t: 0,
+                s: [0, 0, 100],
+              },
+              {
+                i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] },
+                o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] },
+                t: 30,
+                s: [100, 100, 100],
+              },
+              { t: 90, s: [100, 100, 100] },
+            ],
+          },
         },
         ao: 0,
         shapes: [
@@ -350,7 +389,7 @@ export function EmptyLottie({
                 r: { a: 0, k: 30 },
                 nm: "Rectangle Path 1",
                 mn: "ADBE Vector Shape - Rect",
-                hd: false
+                hd: false,
               },
               {
                 ty: "fl",
@@ -360,8 +399,8 @@ export function EmptyLottie({
                 bm: 0,
                 nm: "Fill 1",
                 mn: "ADBE Vector Graphic - Fill",
-                hd: false
-              }
+                hd: false,
+              },
             ],
             nm: "Heart",
             np: 2,
@@ -369,16 +408,16 @@ export function EmptyLottie({
             bm: 0,
             ix: 1,
             mn: "ADBE Vector Group",
-            hd: false
-          }
+            hd: false,
+          },
         ],
         ip: 0,
         op: 120,
         st: 0,
-        bm: 0
-      }
+        bm: 0,
+      },
     ],
-    markers: []
+    markers: [],
   };
 
   return (
@@ -425,17 +464,38 @@ export function ErrorLottie({
         sr: 1,
         ks: {
           o: { a: 0, k: 100 },
-          r: { a: 1, k: [
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 0, s: [0] },
-            { t: 90, s: [360] }
-          ] },
+          r: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 0,
+                s: [0],
+              },
+              { t: 90, s: [360] },
+            ],
+          },
           p: { a: 0, k: [100, 100, 0] },
           a: { a: 0, k: [0, 0, 0] },
-          s: { a: 1, k: [
-            { i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] }, o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] }, t: 0, s: [0, 0, 100] },
-            { i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] }, o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] }, t: 30, s: [100, 100, 100] },
-            { t: 90, s: [100, 100, 100] }
-          ] }
+          s: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] },
+                o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] },
+                t: 0,
+                s: [0, 0, 100],
+              },
+              {
+                i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] },
+                o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] },
+                t: 30,
+                s: [100, 100, 100],
+              },
+              { t: 90, s: [100, 100, 100] },
+            ],
+          },
         },
         ao: 0,
         shapes: [
@@ -449,7 +509,7 @@ export function ErrorLottie({
                 p: { a: 0, k: [0, 0] },
                 nm: "Ellipse Path 1",
                 mn: "ADBE Vector Shape - Ellipse",
-                hd: false
+                hd: false,
               },
               {
                 ty: "st",
@@ -463,8 +523,8 @@ export function ErrorLottie({
                 d: [{ n: "d", nm: "dash", v: 0 }],
                 nm: "Stroke 1",
                 mn: "ADBE Vector Graphic - Stroke",
-                hd: false
-              }
+                hd: false,
+              },
             ],
             nm: "Circle",
             np: 2,
@@ -472,16 +532,16 @@ export function ErrorLottie({
             bm: 0,
             ix: 1,
             mn: "ADBE Vector Group",
-            hd: false
-          }
+            hd: false,
+          },
         ],
         ip: 0,
         op: 90,
         st: 0,
-        bm: 0
-      }
+        bm: 0,
+      },
     ],
-    markers: []
+    markers: [],
   };
 
   return (
@@ -528,20 +588,46 @@ export function CelebrationLottie({
         nm: "Confetti",
         sr: 1,
         ks: {
-          o: { a: 1, k: [
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 0, s: [0] },
-            { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 30, s: [100] },
-            { t: 120, s: [100] },
-            { t: 150, s: [0] }
-          ] },
+          o: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 0,
+                s: [0],
+              },
+              {
+                i: { x: [0.833], y: [0.833] },
+                o: { x: [0.167], y: [0.167] },
+                t: 30,
+                s: [100],
+              },
+              { t: 120, s: [100] },
+              { t: 150, s: [0] },
+            ],
+          },
           r: { a: 0, k: 0 },
           p: { a: 0, k: [200, 200, 0] },
           a: { a: 0, k: [0, 0, 0] },
-          s: { a: 1, k: [
-            { i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] }, o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] }, t: 0, s: [0, 0, 100] },
-            { i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] }, o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] }, t: 30, s: [100, 100, 100] },
-            { t: 120, s: [100, 100, 100] }
-          ] }
+          s: {
+            a: 1,
+            k: [
+              {
+                i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] },
+                o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] },
+                t: 0,
+                s: [0, 0, 100],
+              },
+              {
+                i: { x: [0.833, 0.833, 0.833], y: [0.833, 0.833, 0.833] },
+                o: { x: [0.167, 0.167, 0.167], y: [0.167, 0.167, 0.167] },
+                t: 30,
+                s: [100, 100, 100],
+              },
+              { t: 120, s: [100, 100, 100] },
+            ],
+          },
         },
         ao: 0,
         shapes: [
@@ -556,7 +642,7 @@ export function CelebrationLottie({
                 r: { a: 0, k: 10 },
                 nm: "Rectangle Path 1",
                 mn: "ADBE Vector Shape - Rect",
-                hd: false
+                hd: false,
               },
               {
                 ty: "fl",
@@ -566,8 +652,8 @@ export function CelebrationLottie({
                 bm: 0,
                 nm: "Fill 1",
                 mn: "ADBE Vector Graphic - Fill",
-                hd: false
-              }
+                hd: false,
+              },
             ],
             nm: "Confetti",
             np: 2,
@@ -575,16 +661,16 @@ export function CelebrationLottie({
             bm: 0,
             ix: 1,
             mn: "ADBE Vector Group",
-            hd: false
-          }
+            hd: false,
+          },
         ],
         ip: 0,
         op: 150,
         st: 0,
-        bm: 0
-      }
+        bm: 0,
+      },
     ],
-    markers: []
+    markers: [],
   };
 
   return (
@@ -603,8 +689,8 @@ export function CelebrationLottie({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

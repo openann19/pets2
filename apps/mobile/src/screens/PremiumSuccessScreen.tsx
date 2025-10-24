@@ -3,20 +3,15 @@
  * Displayed after successful Stripe payment
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import type { NavigationProp } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
-import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../contexts/ThemeContext';
-import type { RootStackParamList } from '../navigation/types';
+import { Ionicons } from "@expo/vector-icons";
+import type { NavigationProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../contexts/ThemeContext";
+import type { RootStackParamList } from "../navigation/types";
 
 const PremiumSuccessScreen = (): React.JSX.Element => {
   const { colors } = useTheme();
@@ -28,7 +23,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
     const verifySubscription = async () => {
       // In a real app, you would verify the subscription status
       // For now, just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setIsVerified(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     };
@@ -38,11 +33,13 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
 
   const handleContinue = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.navigate('MainTabs');
+    navigation.navigate("MainTabs");
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <View style={styles.content}>
         {isVerified ? (
           <>
@@ -55,8 +52,8 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             </Text>
 
             <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-              Your subscription has been activated successfully.
-              Enjoy all premium features!
+              Your subscription has been activated successfully. Enjoy all
+              premium features!
             </Text>
 
             <View style={styles.featuresList}>
@@ -81,7 +78,10 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             </View>
 
             <TouchableOpacity
-              style={[styles.continueButton, { backgroundColor: colors.primary }]}
+              style={[
+                styles.continueButton,
+                { backgroundColor: colors.primary },
+              ]}
               onPress={handleContinue}
             >
               <Text style={styles.continueButtonText}>Start Matching</Text>
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 24,
   },
   successIcon: {
@@ -125,23 +125,23 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 24,
     marginBottom: 32,
   },
   featuresList: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     marginBottom: 40,
   },
   featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
     paddingHorizontal: 16,
   },
@@ -155,12 +155,12 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     minWidth: 200,
-    alignItems: 'center',
+    alignItems: "center",
   },
   continueButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

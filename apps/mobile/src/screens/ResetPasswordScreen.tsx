@@ -1,6 +1,6 @@
-import { logger } from '@pawfectmatch/core';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import { logger } from "@pawfectmatch/core";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -11,8 +11,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Define the navigation props type
 type RootStackParamList = {
@@ -22,13 +22,19 @@ type RootStackParamList = {
   ResetPassword: { token: string };
 };
 
-type ResetPasswordScreenProps = NativeStackScreenProps<RootStackParamList, 'ResetPassword'>;
+type ResetPasswordScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ResetPassword"
+>;
 
-function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): JSX.Element {
+function ResetPasswordScreen({
+  navigation,
+  route,
+}: ResetPasswordScreenProps): JSX.Element {
   const { token } = route.params;
   const [formData, setFormData] = useState({
-    password: '',
-    confirmPassword: '',
+    password: "",
+    confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
@@ -40,15 +46,15 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
     const newErrors: { password?: string; confirmPassword?: string } = {};
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
@@ -62,34 +68,34 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
     try {
       // TODO: Replace with actual API call
       const response = await fetch(`/api/auth/reset-password/${token}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ password: formData.password }),
       });
 
       if (response.ok) {
         Alert.alert(
-          'Password Reset Successful',
-          'Your password has been reset successfully. You can now log in with your new password.',
+          "Password Reset Successful",
+          "Your password has been reset successfully. You can now log in with your new password.",
           [
             {
-              text: 'Go to Login',
-              onPress: () => navigation.navigate('Login'),
+              text: "Go to Login",
+              onPress: () => navigation.navigate("Login"),
             },
-          ]
+          ],
         );
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to reset password');
+        throw new Error(errorData.message || "Failed to reset password");
       }
     } catch (error) {
-      logger.error('Reset password error:', { error });
+      logger.error("Reset password error:", { error });
       Alert.alert(
-        'Error',
-        'Unable to reset password. The reset link may have expired. Please try again.',
-        [{ text: 'OK' }]
+        "Error",
+        "Unable to reset password. The reset link may have expired. Please try again.",
+        [{ text: "OK" }],
       );
     } finally {
       setLoading(false);
@@ -97,16 +103,16 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
   };
 
   const updateField = (field: keyof typeof formData, value: string): void => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -120,7 +126,8 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
           <View style={styles.header}>
             <Text style={styles.title}>Set New Password</Text>
             <Text style={styles.subtitle}>
-              Enter your new password below. Make sure it's secure and easy to remember.
+              Enter your new password below. Make sure it's secure and easy to
+              remember.
             </Text>
           </View>
 
@@ -130,27 +137,38 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
               <TextInput
                 style={[styles.input, errors.password && styles.inputError]}
                 value={formData.password}
-                onChangeText={(value) => { updateField('password', value); }}
+                onChangeText={(value) => {
+                  updateField("password", value);
+                }}
                 placeholder="Enter new password"
                 secureTextEntry
                 autoCapitalize="none"
                 editable={!loading}
               />
-              {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
+              {errors.password ? (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              ) : null}
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Confirm New Password</Text>
               <TextInput
-                style={[styles.input, errors.confirmPassword && styles.inputError]}
+                style={[
+                  styles.input,
+                  errors.confirmPassword && styles.inputError,
+                ]}
                 value={formData.confirmPassword}
-                onChangeText={(value) => { updateField('confirmPassword', value); }}
+                onChangeText={(value) => {
+                  updateField("confirmPassword", value);
+                }}
                 placeholder="Confirm new password"
                 secureTextEntry
                 autoCapitalize="none"
                 editable={!loading}
               />
-              {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
+              {errors.confirmPassword ? (
+                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+              ) : null}
             </View>
 
             <TouchableOpacity
@@ -158,8 +176,13 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
               onPress={handleResetPassword}
               disabled={loading}
             >
-              <Text style={[styles.buttonText, loading && styles.buttonTextDisabled]}>
-                {loading ? 'Resetting...' : 'Reset Password'}
+              <Text
+                style={[
+                  styles.buttonText,
+                  loading && styles.buttonTextDisabled,
+                ]}
+              >
+                {loading ? "Resetting..." : "Reset Password"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -167,12 +190,12 @@ function ResetPasswordScreen({ navigation, route }: ResetPasswordScreenProps): J
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   keyboardView: {
     flex: 1,
@@ -180,34 +203,34 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   backButton: {
     marginBottom: 20,
   },
   backButtonText: {
     fontSize: 16,
-    color: '#ec4899',
+    color: "#ec4899",
   },
   header: {
     marginBottom: 40,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     lineHeight: 24,
   },
   form: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -218,44 +241,44 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   inputError: {
-    borderColor: '#ef4444',
+    borderColor: "#ef4444",
   },
   errorText: {
-    color: '#ef4444',
+    color: "#ef4444",
     fontSize: 12,
     marginTop: 4,
   },
   button: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
     borderRadius: 8,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 16,
   },
   buttonDisabled: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: "#f3f4f6",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   buttonTextDisabled: {
-    color: '#9ca3af',
+    color: "#9ca3af",
   },
 });
 

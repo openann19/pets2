@@ -1,7 +1,7 @@
-import { logger } from '@pawfectmatch/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
-import type { StateStorage } from 'zustand/middleware';
+import { logger } from "@pawfectmatch/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
+import type { StateStorage } from "zustand/middleware";
 
 /**
  * Secure storage adapter for Zustand persist middleware
@@ -15,8 +15,9 @@ export const createSecureStorage = (): StateStorage => {
         const value = await SecureStore.getItemAsync(name);
         return value;
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        logger.error('secure-storage.getItem.failed', { name, message });
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        logger.error("secure-storage.getItem.failed", { name, message });
         return null;
       }
     },
@@ -24,8 +25,14 @@ export const createSecureStorage = (): StateStorage => {
       try {
         await SecureStore.setItemAsync(name, value);
       } catch (error: unknown) {
-        const err = error instanceof Error ? error : new Error('Failed to set secure item');
-        logger.error('secure-storage.setItem.failed', { name, message: err.message });
+        const err =
+          error instanceof Error
+            ? error
+            : new Error("Failed to set secure item");
+        logger.error("secure-storage.setItem.failed", {
+          name,
+          message: err.message,
+        });
         throw err;
       }
     },
@@ -33,8 +40,14 @@ export const createSecureStorage = (): StateStorage => {
       try {
         await SecureStore.deleteItemAsync(name);
       } catch (error: unknown) {
-        const err = error instanceof Error ? error : new Error('Failed to remove secure item');
-        logger.error('secure-storage.removeItem.failed', { name, message: err.message });
+        const err =
+          error instanceof Error
+            ? error
+            : new Error("Failed to remove secure item");
+        logger.error("secure-storage.removeItem.failed", {
+          name,
+          message: err.message,
+        });
         throw err;
       }
     },
@@ -52,8 +65,9 @@ export const createAsyncStorage = (): StateStorage => {
         const value = await AsyncStorage.getItem(name);
         return value;
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        logger.error('async-storage.getItem.failed', { name, message });
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        logger.error("async-storage.getItem.failed", { name, message });
         return null;
       }
     },
@@ -61,8 +75,14 @@ export const createAsyncStorage = (): StateStorage => {
       try {
         await AsyncStorage.setItem(name, value);
       } catch (error: unknown) {
-        const err = error instanceof Error ? error : new Error('Failed to set async item');
-        logger.error('async-storage.setItem.failed', { name, message: err.message });
+        const err =
+          error instanceof Error
+            ? error
+            : new Error("Failed to set async item");
+        logger.error("async-storage.setItem.failed", {
+          name,
+          message: err.message,
+        });
         throw err;
       }
     },
@@ -70,8 +90,14 @@ export const createAsyncStorage = (): StateStorage => {
       try {
         await AsyncStorage.removeItem(name);
       } catch (error: unknown) {
-        const err = error instanceof Error ? error : new Error('Failed to remove async item');
-        logger.error('async-storage.removeItem.failed', { name, message: err.message });
+        const err =
+          error instanceof Error
+            ? error
+            : new Error("Failed to remove async item");
+        logger.error("async-storage.removeItem.failed", {
+          name,
+          message: err.message,
+        });
         throw err;
       }
     },

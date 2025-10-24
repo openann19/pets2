@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
-import { useTheme } from '../../theme/useTheme';
-import { Text } from './Text';
+import React, { useMemo } from "react";
+import { StyleSheet, TextInput, View, type TextInputProps } from "react-native";
+import { useTheme } from "../../theme/useTheme";
+import { Text } from "./Text";
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -15,8 +15,8 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
 ) {
   const { colors, radii, spacing } = useTheme();
 
-  const hasError = typeof errorText === 'string' && errorText.length > 0;
-  const hasHelper = typeof helperText === 'string' && helperText.length > 0;
+  const hasError = typeof errorText === "string" && errorText.length > 0;
+  const hasHelper = typeof helperText === "string" && helperText.length > 0;
 
   const borderColor = useMemo(() => {
     if (hasError) {
@@ -42,8 +42,12 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
 
   return (
     <View style={styles.wrapper}>
-      {typeof label === 'string' && label.length > 0 ? (
-        <Text variant="callout" tone="textMuted" style={{ marginBottom: spacing.xs }}>
+      {typeof label === "string" && label.length > 0 ? (
+        <Text
+          variant="callout"
+          tone="textMuted"
+          style={{ marginBottom: spacing.xs }}
+        >
           {label}
         </Text>
       ) : null}
@@ -61,7 +65,11 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
           {errorText}
         </Text>
       ) : hasHelper ? (
-        <Text variant="caption" tone="textMuted" style={{ marginTop: spacing.xs }}>
+        <Text
+          variant="caption"
+          tone="textMuted"
+          style={{ marginTop: spacing.xs }}
+        >
           {helperText}
         </Text>
       ) : null}
@@ -71,7 +79,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: '100%',
+    width: "100%",
   },
   input: {
     borderWidth: 1,

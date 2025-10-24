@@ -1,13 +1,13 @@
 /**
  * PROJECT HYPERION: NEW COMPONENTS EXPORT
- * 
+ *
  * Simplified export file for the new architecture components.
  * This provides a clean API for importing the new components.
  */
 
 // === THEME SYSTEM ===
-export { default as Theme } from '../theme/unified-theme';
-export type { ThemeType } from '../theme/unified-theme';
+export { default as Theme } from "../theme/unified-theme";
+export type { ThemeType } from "../theme/unified-theme";
 
 // === ANIMATION HOOKS ===
 export {
@@ -21,11 +21,14 @@ export {
   useRippleEffect,
   useShimmerEffect,
   useScrollAnimation,
-} from '../hooks/useUnifiedAnimations';
+} from "../hooks/useUnifiedAnimations";
 
 // === BUTTON SYSTEM ===
-export { default as BaseButton } from './buttons/BaseButton';
-export { default as EliteButton, EliteButtonPresets } from './buttons/EliteButton';
+export { default as BaseButton } from "./buttons/BaseButton";
+export {
+  default as EliteButton,
+  EliteButtonPresets,
+} from "./buttons/EliteButton";
 export {
   WithGlowFX,
   WithMagneticFX,
@@ -33,10 +36,13 @@ export {
   WithShimmerFX,
   WithPressFX,
   WithGradientFX,
-} from './buttons/EffectWrappers';
+} from "./buttons/EffectWrappers";
 
 // === CONTAINER SYSTEM ===
-export { default as FXContainer, FXContainerPresets } from './containers/FXContainer';
+export {
+  default as FXContainer,
+  FXContainerPresets,
+} from "./containers/FXContainer";
 
 // === TYPOGRAPHY SYSTEM ===
 export {
@@ -58,11 +64,11 @@ export {
   HolographicText,
   AnimatedHeading,
   AnimatedText,
-} from './typography/ModernTypography';
+} from "./typography/ModernTypography";
 
 // === MODERNIZED COMPONENTS ===
-export { default as ModernSwipeCard } from './ModernSwipeCard';
-export { default as ModernPhotoUpload } from './ModernPhotoUpload';
+export { default as ModernSwipeCard } from "./ModernSwipeCard";
+export { default as ModernPhotoUpload } from "./ModernPhotoUpload";
 
 // === PERFORMANCE TESTING ===
-export { default as PerformanceTestSuite } from './PerformanceTestSuite';
+export { default as PerformanceTestSuite } from "./PerformanceTestSuite";

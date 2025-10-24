@@ -1,8 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useState, forwardRef } from 'react';
-import type {
-  ViewStyle,
-  TouchableOpacityProps} from 'react-native';
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useRef, useState, forwardRef } from "react";
+import type { ViewStyle, TouchableOpacityProps } from "react-native";
 import {
   View,
   TouchableOpacity,
@@ -10,26 +8,29 @@ import {
   Animated,
   PanGestureHandler,
   State,
-} from 'react-native';
+} from "react-native";
 
-import { useGyroscopeTilt, useEntranceAnimation } from '../hooks/useMotionSystem';
+import {
+  useGyroscopeTilt,
+  useEntranceAnimation,
+} from "../hooks/useMotionSystem";
 import {
   DynamicColors,
   EnhancedShadows,
   SemanticColors,
   EnhancedTypography,
-} from '../styles/EnhancedDesignTokens';
+} from "../styles/EnhancedDesignTokens";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
 export type ImmersiveCardVariant =
-  | 'default'
-  | 'glass'
-  | 'holographic'
-  | 'elevated'
-  | 'minimal';
+  | "default"
+  | "glass"
+  | "holographic"
+  | "elevated"
+  | "minimal";
 
-export type ImmersiveCardSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ImmersiveCardSize = "sm" | "md" | "lg" | "xl";
 
 export interface ImmersiveCardProps extends TouchableOpacityProps {
   children?: React.ReactNode;
@@ -38,7 +39,7 @@ export interface ImmersiveCardProps extends TouchableOpacityProps {
   tiltEnabled?: boolean;
   magneticHover?: boolean;
   shimmerEffect?: boolean;
-  entranceAnimation?: 'fadeInUp' | 'scaleIn' | 'slideInLeft' | 'none';
+  entranceAnimation?: "fadeInUp" | "scaleIn" | "slideInLeft" | "none";
   gradientName?: keyof typeof DynamicColors.gradients;
   glowColor?: keyof typeof EnhancedShadows.glow;
   style?: ViewStyle;
@@ -74,12 +75,12 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
   (
     {
       children,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       tiltEnabled = true,
       magneticHover = true,
       shimmerEffect = false,
-      entranceAnimation = 'none',
+      entranceAnimation = "none",
       gradientName,
       glowColor,
       style,
@@ -87,7 +88,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       onPress,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isPressed, setIsPressed] = useState(false);
@@ -96,7 +97,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     // Animation hooks
     const gyroscope = useGyroscopeTilt(0.3, 10);
     const entrance = useEntranceAnimation(
-      entranceAnimation !== 'none' ? entranceAnimation : 'fadeInUp'
+      entranceAnimation !== "none" ? entranceAnimation : "fadeInUp",
     );
 
     // Size config
@@ -107,40 +108,40 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       const baseStyles: ViewStyle = {
         borderRadius: sizeConfig.borderRadius,
         minHeight: sizeConfig.minHeight,
-        overflow: 'hidden',
-        position: 'relative',
+        overflow: "hidden",
+        position: "relative",
       };
 
       switch (variant) {
-        case 'default':
+        case "default":
           return {
             ...baseStyles,
             backgroundColor: SemanticColors.background.secondary,
             ...EnhancedShadows.depth.lg,
           };
 
-        case 'glass':
+        case "glass":
           return {
             ...baseStyles,
             ...DynamicColors.glass.medium,
             ...EnhancedShadows.depth.sm,
           };
 
-        case 'holographic':
+        case "holographic":
           return {
             ...baseStyles,
-            backgroundColor: 'transparent',
+            backgroundColor: "transparent",
             ...EnhancedShadows.depth.lg,
           };
 
-        case 'elevated':
+        case "elevated":
           return {
             ...baseStyles,
             backgroundColor: SemanticColors.background.secondary,
             ...EnhancedShadows.depth.xl,
           };
 
-        case 'minimal':
+        case "minimal":
           return {
             ...baseStyles,
             backgroundColor: SemanticColors.background.secondary,
@@ -157,7 +158,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     // Handle press states
     const handlePressIn = () => {
       setIsPressed(true);
-      if (entranceAnimation !== 'none') {
+      if (entranceAnimation !== "none") {
         entrance.animate();
       }
     };
@@ -176,7 +177,9 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     };
 
     // Handle gyroscope updates (would be connected to actual gyroscope)
-    const handlePanGesture = (event: { nativeEvent: { translationX: number; translationY: number } }) => {
+    const handlePanGesture = (event: {
+      nativeEvent: { translationX: number; translationY: number };
+    }) => {
       if (!tiltEnabled) return;
 
       const { translationX, translationY } = event.nativeEvent;
@@ -194,21 +197,21 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       return (
         <Animated.View
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
-            left: '-100%',
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            transform: [{ skewX: '-20deg' }],
+            left: "-100%",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255,255,255,0.1)",
+            transform: [{ skewX: "-20deg" }],
           }}
         >
           <Animated.View
             style={{
-              width: '20%',
-              height: '100%',
-              backgroundColor: 'rgba(255,255,255,0.3)',
-              animation: 'shimmer 2s infinite',
+              width: "20%",
+              height: "100%",
+              backgroundColor: "rgba(255,255,255,0.3)",
+              animation: "shimmer 2s infinite",
             }}
           />
         </Animated.View>
@@ -233,7 +236,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
             {
               padding: sizeConfig.padding,
               flex: 1,
-              justifyContent: 'center',
+              justifyContent: "center",
             },
             contentStyle,
           ]}
@@ -244,7 +247,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       );
 
       // Wrap with gradient for holographic variant
-      if (variant === 'holographic' && gradientName) {
+      if (variant === "holographic" && gradientName) {
         const gradient = DynamicColors.gradients[gradientName];
         return (
           <LinearGradient
@@ -272,10 +275,12 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
           {
             transform: [
               ...(tiltEnabled ? [gyroscope.transform] : []),
-              ...(entranceAnimation !== 'none' ? [entrance.style.transform] : []),
+              ...(entranceAnimation !== "none"
+                ? [entrance.style.transform]
+                : []),
               ...(isPressed ? [{ scale: 0.98 }] : []),
             ],
-            opacity: entranceAnimation !== 'none' ? entrance.style.opacity : 1,
+            opacity: entranceAnimation !== "none" ? entrance.style.opacity : 1,
           },
           style,
         ]}
@@ -329,9 +334,9 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
         {cardContent}
       </TouchableOpacity>
     );
-  }
+  },
 );
 
-ImmersiveCard.displayName = 'ImmersiveCard';
+ImmersiveCard.displayName = "ImmersiveCard";
 
 export default ImmersiveCard;

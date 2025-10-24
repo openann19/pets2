@@ -1,10 +1,10 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { PersistStorage } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import { createSecureStorage } from '../utils/secureStorage';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { PersistStorage } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+import { createSecureStorage } from "../utils/secureStorage";
 
-import type { User } from '@pawfectmatch/core';
+import type { User } from "@pawfectmatch/core";
 
 export interface AuthState {
   user: User | null;
@@ -39,51 +39,57 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       // Update user data
-      setUser: (user: User | null) => set((state) => {
-        state.user = user;
-        state.isAuthenticated = user !== null;
-        return state;
-      }),
+      setUser: (user: User | null) =>
+        set((state) => {
+          state.user = user;
+          state.isAuthenticated = user !== null;
+          return state;
+        }),
 
       // Set tokens after successful login/registration
-      setTokens: (accessToken: string, refreshToken: string) => set((state) => {
-        state.accessToken = accessToken;
-        state.refreshToken = refreshToken;
-        state.isAuthenticated = true;
-        return state;
-      }),
+      setTokens: (accessToken: string, refreshToken: string) =>
+        set((state) => {
+          state.accessToken = accessToken;
+          state.refreshToken = refreshToken;
+          state.isAuthenticated = true;
+          return state;
+        }),
 
       // Clear tokens on logout
-      clearTokens: () => set((state) => {
-        state.accessToken = null;
-        state.refreshToken = null;
-        state.isAuthenticated = false;
-        return state;
-      }),
+      clearTokens: () =>
+        set((state) => {
+          state.accessToken = null;
+          state.refreshToken = null;
+          state.isAuthenticated = false;
+          return state;
+        }),
 
       // Full logout
-      logout: () => set((state) => {
-        state.user = null;
-        state.accessToken = null;
-        state.refreshToken = null;
-        state.isAuthenticated = false;
-        return state;
-      }),
+      logout: () =>
+        set((state) => {
+          state.user = null;
+          state.accessToken = null;
+          state.refreshToken = null;
+          state.isAuthenticated = false;
+          return state;
+        }),
 
       // Set loading state
-      setIsLoading: (isLoading: boolean) => set((state) => {
-        state.isLoading = isLoading;
-        return state;
-      }),
+      setIsLoading: (isLoading: boolean) =>
+        set((state) => {
+          state.isLoading = isLoading;
+          return state;
+        }),
 
       // Set error message
-      setError: (error: string | null) => set((state) => {
-        state.error = error;
-        return state;
-      }),
+      setError: (error: string | null) =>
+        set((state) => {
+          state.error = error;
+          return state;
+        }),
     })),
     {
-      name: 'auth-storage-secure',
+      name: "auth-storage-secure",
       storage: createSecureStorage() as PersistStorage<{
         accessToken: string | null;
         refreshToken: string | null;
@@ -94,8 +100,8 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         user: state.user,
-        isAuthenticated: state.isAuthenticated
+        isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );

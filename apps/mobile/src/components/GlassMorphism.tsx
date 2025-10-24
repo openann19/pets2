@@ -1,11 +1,7 @@
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { type ReactNode } from 'react';
-import {
-  View,
-  type ViewStyle,
-  type ViewProps,
-} from 'react-native';
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { type ReactNode } from "react";
+import { View, type ViewStyle, type ViewProps } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -13,9 +9,9 @@ import Animated, {
   withTiming,
   interpolate,
   Extrapolate,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { BorderRadius, Spacing } from '../styles/GlobalStyles';
+import { BorderRadius, Spacing } from "../styles/GlobalStyles";
 
 // === GLASS MORPHISM CONSTANTS ===
 export const GLASS_CONFIGS = {
@@ -39,36 +35,36 @@ export const GLASS_CONFIGS = {
   borders: {
     light: {
       borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderColor: "rgba(255, 255, 255, 0.2)",
     },
     medium: {
       borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 0.3)',
+      borderColor: "rgba(255, 255, 255, 0.3)",
     },
     heavy: {
       borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 0.4)',
+      borderColor: "rgba(255, 255, 255, 0.4)",
     },
   },
 
   // Shadow styles
   shadows: {
     light: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
       elevation: 4,
     },
     medium: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.15,
       shadowRadius: 16,
       elevation: 8,
     },
     heavy: {
-      shadowColor: '#000',
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 12 },
       shadowOpacity: 0.2,
       shadowRadius: 24,
@@ -92,11 +88,11 @@ interface GlassContainerProps extends ViewProps {
 
 export const GlassContainer: React.FC<GlassContainerProps> = ({
   children,
-  intensity = 'medium',
-  transparency = 'medium',
-  border = 'light',
-  shadow = 'medium',
-  borderRadius = '2xl',
+  intensity = "medium",
+  transparency = "medium",
+  border = "light",
+  shadow = "medium",
+  borderRadius = "2xl",
   animated = false,
   hover = false,
   style,
@@ -126,7 +122,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
 
   const glassStyle: ViewStyle = {
     borderRadius: BorderRadius[borderRadius],
-    overflow: 'hidden',
+    overflow: "hidden",
     ...GLASS_CONFIGS.borders[border],
     ...GLASS_CONFIGS.shadows[shadow],
     ...style,
@@ -171,8 +167,8 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
 // === GLASS CARD COMPONENT ===
 interface GlassCardProps extends ViewProps {
   children: ReactNode;
-  variant?: 'default' | 'premium' | 'frosted' | 'crystal';
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: "default" | "premium" | "frosted" | "crystal";
+  size?: "sm" | "md" | "lg" | "xl";
   animated?: boolean;
   hover?: boolean;
   style?: ViewStyle;
@@ -180,8 +176,8 @@ interface GlassCardProps extends ViewProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
-  variant = 'default',
-  size = 'md',
+  variant = "default",
+  size = "md",
   animated = true,
   hover = true,
   style,
@@ -189,45 +185,45 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 }) => {
   const getVariantConfig = () => {
     switch (variant) {
-      case 'premium':
+      case "premium":
         return {
-          intensity: 'heavy' as const,
-          transparency: 'heavy' as const,
-          border: 'heavy' as const,
-          shadow: 'heavy' as const,
+          intensity: "heavy" as const,
+          transparency: "heavy" as const,
+          border: "heavy" as const,
+          shadow: "heavy" as const,
         };
-      case 'frosted':
+      case "frosted":
         return {
-          intensity: 'ultra' as const,
-          transparency: 'ultra' as const,
-          border: 'medium' as const,
-          shadow: 'medium' as const,
+          intensity: "ultra" as const,
+          transparency: "ultra" as const,
+          border: "medium" as const,
+          shadow: "medium" as const,
         };
-      case 'crystal':
+      case "crystal":
         return {
-          intensity: 'light' as const,
-          transparency: 'light' as const,
-          border: 'light' as const,
-          shadow: 'light' as const,
+          intensity: "light" as const,
+          transparency: "light" as const,
+          border: "light" as const,
+          shadow: "light" as const,
         };
       default:
         return {
-          intensity: 'medium' as const,
-          transparency: 'medium' as const,
-          border: 'light' as const,
-          shadow: 'medium' as const,
+          intensity: "medium" as const,
+          transparency: "medium" as const,
+          border: "light" as const,
+          shadow: "medium" as const,
         };
     }
   };
 
   const getSizeConfig = () => {
     switch (size) {
-      case 'sm':
+      case "sm":
         return { padding: Spacing.md };
-      case 'lg':
+      case "lg":
         return { padding: Spacing.xl };
-      case 'xl':
-        return { padding: Spacing['2xl'] };
+      case "xl":
+        return { padding: Spacing["2xl"] };
       default:
         return { padding: Spacing.lg };
     }
@@ -255,8 +251,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 // === GLASS BUTTON COMPONENT ===
 interface GlassButtonProps extends ViewProps {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   onPress?: () => void;
   style?: ViewStyle;
@@ -264,8 +260,8 @@ interface GlassButtonProps extends ViewProps {
 
 export const GlassButton: React.FC<GlassButtonProps> = ({
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   disabled = false,
   onPress,
   style,
@@ -276,54 +272,54 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
 
   const getVariantConfig = () => {
     switch (variant) {
-      case 'primary':
+      case "primary":
         return {
-          intensity: 'medium' as const,
-          transparency: 'medium' as const,
-          border: 'medium' as const,
-          shadow: 'medium' as const,
+          intensity: "medium" as const,
+          transparency: "medium" as const,
+          border: "medium" as const,
+          shadow: "medium" as const,
         };
-      case 'secondary':
+      case "secondary":
         return {
-          intensity: 'light' as const,
-          transparency: 'light' as const,
-          border: 'light' as const,
-          shadow: 'light' as const,
+          intensity: "light" as const,
+          transparency: "light" as const,
+          border: "light" as const,
+          shadow: "light" as const,
         };
-      case 'ghost':
+      case "ghost":
         return {
-          intensity: 'light' as const,
-          transparency: 'light' as const,
-          border: 'light' as const,
-          shadow: 'light' as const,
+          intensity: "light" as const,
+          transparency: "light" as const,
+          border: "light" as const,
+          shadow: "light" as const,
         };
       default:
         return {
-          intensity: 'medium' as const,
-          transparency: 'medium' as const,
-          border: 'medium' as const,
-          shadow: 'medium' as const,
+          intensity: "medium" as const,
+          transparency: "medium" as const,
+          border: "medium" as const,
+          shadow: "medium" as const,
         };
     }
   };
 
   const getSizeConfig = () => {
     switch (size) {
-      case 'sm':
-        return { 
-          paddingHorizontal: Spacing.lg, 
+      case "sm":
+        return {
+          paddingHorizontal: Spacing.lg,
           paddingVertical: Spacing.sm,
           minHeight: 36,
         };
-      case 'lg':
-        return { 
-          paddingHorizontal: Spacing['2xl'], 
+      case "lg":
+        return {
+          paddingHorizontal: Spacing["2xl"],
           paddingVertical: Spacing.lg,
           minHeight: 56,
         };
       default:
-        return { 
-          paddingHorizontal: Spacing.xl, 
+        return {
+          paddingHorizontal: Spacing.xl,
           paddingVertical: Spacing.md,
           minHeight: 48,
         };
@@ -364,8 +360,8 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
         style={[
           sizeConfig,
           {
-            justifyContent: 'center',
-            alignItems: 'center',
+            justifyContent: "center",
+            alignItems: "center",
             opacity: disabled ? 0.5 : 1,
           },
         ]}
@@ -386,7 +382,7 @@ interface GlassHeaderProps extends ViewProps {
 
 export const GlassHeader: React.FC<GlassHeaderProps> = ({
   children,
-  intensity = 'heavy',
+  intensity = "heavy",
   style,
   ...props
 }) => {
@@ -399,7 +395,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
       borderRadius="none"
       style={[
         {
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
@@ -453,14 +449,14 @@ export const GlassModal: React.FC<GlassModalProps> = ({
     <Animated.View
       style={[
         {
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          justifyContent: 'center',
-          alignItems: 'center',
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          justifyContent: "center",
+          alignItems: "center",
           zIndex: 9999,
         },
         animatedStyle,
@@ -472,8 +468,8 @@ export const GlassModal: React.FC<GlassModalProps> = ({
         size="lg"
         style={[
           {
-            maxWidth: '90%',
-            maxHeight: '80%',
+            maxWidth: "90%",
+            maxHeight: "80%",
           },
           style,
         ]}
@@ -505,7 +501,7 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
       borderRadius="none"
       style={[
         {
-          position: 'absolute',
+          position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,

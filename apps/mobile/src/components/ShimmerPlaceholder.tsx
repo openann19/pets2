@@ -1,7 +1,7 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useRef } from 'react';
-import type { ViewStyle } from 'react-native';
-import { Animated, StyleSheet, View } from 'react-native';
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef } from "react";
+import type { ViewStyle } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 
 interface ShimmerPlaceholderProps {
   width?: number | string;
@@ -12,7 +12,7 @@ interface ShimmerPlaceholderProps {
 }
 
 export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
-  width = '100%',
+  width = "100%",
   height = 20,
   borderRadius = 4,
   style,
@@ -23,8 +23,12 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
 
   useEffect(() => {
     if (delay > 0) {
-      const timer = setTimeout(() => { setVisible(true); }, delay);
-      return () => { clearTimeout(timer); };
+      const timer = setTimeout(() => {
+        setVisible(true);
+      }, delay);
+      return () => {
+        clearTimeout(timer);
+      };
     }
     return undefined;
   }, [delay]);
@@ -44,7 +48,7 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [visible, animatedValue]);
 
@@ -60,27 +64,31 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
   return (
     <View
       // Cast style to any to align with RN style unions
-      style={[
-        styles.container,
-        {
-          width,
-          height,
-          borderRadius,
-          backgroundColor: '#E5E5E5',
-        },
-        style as any,
-      ] as any}
+      style={
+        [
+          styles.container,
+          {
+            width,
+            height,
+            borderRadius,
+            backgroundColor: "#E5E5E5",
+          },
+          style as any,
+        ] as any
+      }
     >
       <Animated.View
-        style={[
-          styles.shimmer,
-          {
-            transform: [{ translateX: translateX as any }],
-          },
-        ] as any}
+        style={
+          [
+            styles.shimmer,
+            {
+              transform: [{ translateX: translateX as any }],
+            },
+          ] as any
+        }
       >
         <LinearGradient
-          colors={['transparent', 'rgba(255,255,255,0.8)', 'transparent']}
+          colors={["transparent", "rgba(255,255,255,0.8)", "transparent"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
@@ -92,11 +100,11 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   shimmer: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   gradient: {
     flex: 1,
@@ -106,10 +114,20 @@ const styles = StyleSheet.create({
 // Preset components
 export const ShimmerCard: React.FC<{ delay?: number }> = ({ delay }) => (
   <View style={{ padding: 16 }}>
-    <ShimmerPlaceholder width={60} height={60} borderRadius={30} delay={delay ?? 0} />
+    <ShimmerPlaceholder
+      width={60}
+      height={60}
+      borderRadius={30}
+      delay={delay ?? 0}
+    />
     <View style={{ marginTop: 12 }}>
       <ShimmerPlaceholder width="80%" height={16} delay={delay ?? 0} />
-      <ShimmerPlaceholder width="60%" height={14} style={{ marginTop: 8 }} delay={delay ?? 0} />
+      <ShimmerPlaceholder
+        width="60%"
+        height={14}
+        style={{ marginTop: 8 }}
+        delay={delay ?? 0}
+      />
     </View>
   </View>
 );

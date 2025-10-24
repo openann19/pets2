@@ -1,8 +1,8 @@
-import { logger } from '@pawfectmatch/core';
+import { logger } from "@pawfectmatch/core";
 
 /**
  * 🎨 PAWFECTMATCH PREMIUM COMPONENTS INDEX
- * 
+ *
  * This file exports all premium components and systems for the mobile app.
  * Import from this file to get access to all premium UI components.
  */
@@ -26,7 +26,7 @@ export {
   // Premium Gradients and Shadows
   PREMIUM_GRADIENTS,
   PREMIUM_SHADOWS,
-} from './EliteComponents';
+} from "./EliteComponents";
 
 // === PREMIUM TYPOGRAPHY SYSTEM ===
 export {
@@ -37,7 +37,7 @@ export {
   PremiumLabel,
   TEXT_GRADIENTS,
   TEXT_SHADOWS,
-} from './PremiumTypography';
+} from "./PremiumTypography";
 
 // === GLASS MORPHISM SYSTEM ===
 export {
@@ -48,7 +48,7 @@ export {
   GlassHeader,
   GlassModal,
   GlassNavigation,
-} from './GlassMorphism';
+} from "./GlassMorphism";
 
 // === HOLOGRAPHIC EFFECTS SYSTEM ===
 export {
@@ -58,7 +58,7 @@ export {
   HolographicButton,
   HolographicText,
   ParticleEffect,
-} from './HolographicEffects';
+} from "./HolographicEffects";
 
 // === GLOW & SHADOW SYSTEM ===
 export {
@@ -70,7 +70,7 @@ export {
   PulsingGlow,
   MultiLayerShadow,
   FloatingShadow,
-} from './GlowShadowSystem';
+} from "./GlowShadowSystem";
 
 // === PREMIUM ANIMATION HOOKS ===
 export {
@@ -87,57 +87,57 @@ export {
   usePageTransition,
   useLoadingAnimation,
   useParallaxEffect,
-} from '../hooks/usePremiumAnimations';
+} from "../hooks/usePremiumAnimations";
 
 // === COMPONENT VARIANTS ===
 export const COMPONENT_VARIANTS = {
   // Button variants
   button: {
-    primary: 'primary',
-    secondary: 'secondary',
-    ghost: 'ghost',
-    glass: 'glass',
-    holographic: 'holographic',
-    neon: 'neon',
+    primary: "primary",
+    secondary: "secondary",
+    ghost: "ghost",
+    glass: "glass",
+    holographic: "holographic",
+    neon: "neon",
   },
-  
+
   // Card variants
   card: {
-    default: 'default',
-    glass: 'glass',
-    holographic: 'holographic',
-    glow: 'glow',
-    '3d': '3d',
+    default: "default",
+    glass: "glass",
+    holographic: "holographic",
+    glow: "glow",
+    "3d": "3d",
   },
-  
+
   // Size variants
   size: {
-    sm: 'sm',
-    md: 'md',
-    lg: 'lg',
-    xl: 'xl',
+    sm: "sm",
+    md: "md",
+    lg: "lg",
+    xl: "xl",
   },
-  
+
   // Animation variants
   animation: {
-    fadeIn: 'fadeIn',
-    slideIn: 'slideIn',
-    scaleIn: 'scaleIn',
-    bounceIn: 'bounceIn',
+    fadeIn: "fadeIn",
+    slideIn: "slideIn",
+    scaleIn: "scaleIn",
+    bounceIn: "bounceIn",
   },
-  
+
   // Gradient variants
   gradient: {
-    primary: 'primary',
-    secondary: 'secondary',
-    premium: 'premium',
-    sunset: 'sunset',
-    ocean: 'ocean',
-    holographic: 'holographic',
-    neon: 'neon',
-    rainbow: 'rainbow',
-    cyber: 'cyber',
-    aurora: 'aurora',
+    primary: "primary",
+    secondary: "secondary",
+    premium: "premium",
+    sunset: "sunset",
+    ocean: "ocean",
+    holographic: "holographic",
+    neon: "neon",
+    rainbow: "rainbow",
+    cyber: "cyber",
+    aurora: "aurora",
   },
 } as const;
 
@@ -156,7 +156,7 @@ export const USAGE_EXAMPLES = {
       onPress={() => logger.info('Premium action!')}
     />
   `,
-  
+
   // Glass Card with 3D tilt
   glassCard: `
     <EliteCard
@@ -174,7 +174,7 @@ export const USAGE_EXAMPLES = {
       </PremiumBody>
     </EliteCard>
   `,
-  
+
   // Holographic Container
   holographicContainer: `
     <HolographicContainer
@@ -189,7 +189,7 @@ export const USAGE_EXAMPLES = {
       </PremiumHeading>
     </HolographicContainer>
   `,
-  
+
   // Glowing Card with Animation
   glowingCard: `
     <GlowingCard
@@ -203,7 +203,7 @@ export const USAGE_EXAMPLES = {
       </GradientText>
     </GlowingCard>
   `,
-  
+
   // Staggered Animation Container
   staggeredContainer: `
     <StaggeredContainer delay={100}>
@@ -224,61 +224,61 @@ export const USAGE_EXAMPLES = {
 export const PREMIUM_FEATURES = {
   // Enhanced Button Features
   buttonFeatures: [
-    'Magnetic mouse tracking',
-    'Ripple animations on press',
-    'Glow effects with animated shadows',
-    'Holographic variant with shimmer',
-    'Glass morphism variant',
-    'Loading states with animated spinners',
-    'Haptic feedback integration',
-    'Multiple size variants (sm, md, lg, xl)',
+    "Magnetic mouse tracking",
+    "Ripple animations on press",
+    "Glow effects with animated shadows",
+    "Holographic variant with shimmer",
+    "Glass morphism variant",
+    "Loading states with animated spinners",
+    "Haptic feedback integration",
+    "Multiple size variants (sm, md, lg, xl)",
   ],
-  
+
   // Enhanced Card Features
   cardFeatures: [
-    '3D tilt effects with gyroscope support',
-    'Glass morphism with backdrop blur',
-    'Holographic variant with animated gradients',
-    'Shimmer effects on hover',
-    'Magnetic mouse tracking',
-    'Entrance animations (fadeInUp, scaleIn, slideIn)',
-    'Glow variants with colored shadows',
+    "3D tilt effects with gyroscope support",
+    "Glass morphism with backdrop blur",
+    "Holographic variant with animated gradients",
+    "Shimmer effects on hover",
+    "Magnetic mouse tracking",
+    "Entrance animations (fadeInUp, scaleIn, slideIn)",
+    "Glow variants with colored shadows",
   ],
-  
+
   // Animation System Features
   animationFeatures: [
-    'Spring physics configurations',
-    'Staggered animations for lists',
-    'Page transition animations',
-    'Shared element transitions',
-    'Loading skeleton animations',
-    'Haptic feedback for interactions',
-    'Sound effects integration',
-    'Magnetic button effects',
-    'Ripple animations on touch',
-    'Tilt effects for cards',
+    "Spring physics configurations",
+    "Staggered animations for lists",
+    "Page transition animations",
+    "Shared element transitions",
+    "Loading skeleton animations",
+    "Haptic feedback for interactions",
+    "Sound effects integration",
+    "Magnetic button effects",
+    "Ripple animations on touch",
+    "Tilt effects for cards",
   ],
-  
+
   // Visual Effects Features
   visualEffects: [
-    'Glass morphism with backdrop blur',
-    'Holographic animated gradients',
-    'Colored shadows (primary, secondary, success, error)',
-    'Animated glow effects with pulsing',
-    'Neon border effects with glow',
-    'Shadow depth system (sm, md, lg, xl, 2xl)',
-    'Particle effects for premium screens',
+    "Glass morphism with backdrop blur",
+    "Holographic animated gradients",
+    "Colored shadows (primary, secondary, success, error)",
+    "Animated glow effects with pulsing",
+    "Neon border effects with glow",
+    "Shadow depth system (sm, md, lg, xl, 2xl)",
+    "Particle effects for premium screens",
   ],
-  
+
   // Typography Features
   typographyFeatures: [
-    'Gradient text effects using masks',
-    'Text shadow effects for depth',
-    'Animated text components with entrance animations',
-    'Premium font weights (extrabold, black)',
-    'Multiple gradient variants',
-    'Shimmer text effects',
-    'Glow text effects',
+    "Gradient text effects using masks",
+    "Text shadow effects for depth",
+    "Animated text components with entrance animations",
+    "Premium font weights (extrabold, black)",
+    "Multiple gradient variants",
+    "Shimmer text effects",
+    "Glow text effects",
   ],
 } as const;
 

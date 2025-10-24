@@ -3,25 +3,20 @@
  * Handles admin-specific navigation and role-based access
  */
 
-import { useAuthStore } from '@pawfectmatch/core';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { useAuthStore } from "@pawfectmatch/core";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 // Admin Screens
-import AdminAnalyticsScreen from '../screens/admin/AdminAnalyticsScreen';
-import AdminBillingScreen from '../screens/admin/AdminBillingScreen';
-import AdminChatsScreen from '../screens/admin/AdminChatsScreen';
-import AdminDashboardScreen from '../screens/admin/AdminDashboardScreen';
-import AdminSecurityScreen from '../screens/admin/AdminSecurityScreen';
-import AdminUploadsScreen from '../screens/admin/AdminUploadsScreen';
-import AdminUsersScreen from '../screens/admin/AdminUsersScreen';
-import AdminVerificationsScreen from '../screens/admin/AdminVerificationsScreen';
+import AdminAnalyticsScreen from "../screens/admin/AdminAnalyticsScreen";
+import AdminBillingScreen from "../screens/admin/AdminBillingScreen";
+import AdminChatsScreen from "../screens/admin/AdminChatsScreen";
+import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
+import AdminSecurityScreen from "../screens/admin/AdminSecurityScreen";
+import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
+import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
+import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +34,7 @@ export default function AdminNavigator(): React.JSX.Element {
   }
 
   // Check admin access
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== "admin") {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>Access Denied</Text>
@@ -55,11 +50,11 @@ export default function AdminNavigator(): React.JSX.Element {
       initialRouteName="AdminDashboard"
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#1F2937',
+          backgroundColor: "#1F2937",
         },
-        headerTintColor: '#FFFFFF',
+        headerTintColor: "#FFFFFF",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     >
@@ -67,7 +62,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminDashboard"
         component={AdminDashboardScreen as React.ComponentType<any>}
         options={{
-          title: 'Admin Dashboard',
+          title: "Admin Dashboard",
           headerShown: false, // Custom header in component
         }}
       />
@@ -76,7 +71,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminAnalytics"
         component={AdminAnalyticsScreen as React.ComponentType<any>}
         options={{
-          title: 'Analytics Dashboard',
+          title: "Analytics Dashboard",
           headerShown: false, // Custom header in component
         }}
       />
@@ -85,7 +80,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminUsers"
         component={AdminUsersScreen as React.ComponentType<any>}
         options={{
-          title: 'User Management',
+          title: "User Management",
           headerShown: false, // Custom header in component
         }}
       />
@@ -94,7 +89,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminSecurity"
         component={AdminSecurityScreen as React.ComponentType<any>}
         options={{
-          title: 'Security Dashboard',
+          title: "Security Dashboard",
           headerShown: false, // Custom header in component
         }}
       />
@@ -103,7 +98,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminBilling"
         component={AdminBillingScreen as React.ComponentType<any>}
         options={{
-          title: 'Billing Management',
+          title: "Billing Management",
           headerShown: false, // Custom header in component
         }}
       />
@@ -113,7 +108,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminChats"
         component={AdminChatsScreen as React.ComponentType<any>}
         options={{
-          title: 'Chat Moderation',
+          title: "Chat Moderation",
           headerShown: false,
         }}
       />
@@ -123,7 +118,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminUploads"
         component={AdminUploadsScreen as React.ComponentType<any>}
         options={{
-          title: 'Upload Management',
+          title: "Upload Management",
           headerShown: false,
         }}
       />
@@ -133,7 +128,7 @@ export default function AdminNavigator(): React.JSX.Element {
         name="AdminVerifications"
         component={AdminVerificationsScreen as React.ComponentType<any>}
         options={{
-          title: 'Verification Management',
+          title: "Verification Management",
           headerShown: false,
         }}
       />
@@ -144,33 +139,33 @@ export default function AdminNavigator(): React.JSX.Element {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#6B7280',
+    color: "#6B7280",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
     paddingHorizontal: 32,
   },
   errorTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#EF4444',
+    fontWeight: "bold",
+    color: "#EF4444",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorMessage: {
     fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
+    color: "#6B7280",
+    textAlign: "center",
     lineHeight: 24,
   },
 });

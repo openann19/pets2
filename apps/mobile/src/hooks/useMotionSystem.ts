@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Dimensions, Platform } from 'react-native';
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Dimensions, Platform } from "react-native";
 
-import { MotionSystem, Accessibility } from '../styles/EnhancedDesignTokens';
+import { MotionSystem, Accessibility } from "../styles/EnhancedDesignTokens";
 
 // === PROJECT HYPERION: MOTION & ANIMATION HOOKS ===
 
 // Custom hook for spring animations with physics
 export const useSpring = (
   initialValue = 0,
-  config: keyof typeof MotionSystem.springs = 'standard'
+  config: keyof typeof MotionSystem.springs = "standard",
 ) => {
   const animatedValue = useRef(new Animated.Value(initialValue)).current;
   const [value, setValue] = useState(initialValue);
@@ -18,10 +18,15 @@ export const useSpring = (
     const listener = animatedValue.addListener(({ value: newValue }) => {
       setValue(newValue);
     });
-    return () => { animatedValue.removeListener(listener); };
+    return () => {
+      animatedValue.removeListener(listener);
+    };
   }, [animatedValue]);
 
-  const animate = (toValue: number, customConfig?: Partial<typeof MotionSystem.springs.standard>) => {
+  const animate = (
+    toValue: number,
+    customConfig?: Partial<typeof MotionSystem.springs.standard>,
+  ) => {
     const springConfig = {
       ...MotionSystem.springs[config],
       ...customConfig,
@@ -30,9 +35,10 @@ export const useSpring = (
     };
 
     // Check for reduced motion preference
-    const {prefersReducedMotion} = Accessibility.motion;
+    const { prefersReducedMotion } = Accessibility.motion;
     if (prefersReducedMotion) {
-      springConfig.timing = Accessibility.motion.reducedMotionConfigs.timings.standard;
+      springConfig.timing =
+        Accessibility.motion.reducedMotionConfigs.timings.standard;
     }
 
     return Animated.spring(animatedValue, springConfig);
@@ -44,7 +50,7 @@ export const useSpring = (
 // Hook for transform animations
 export const useTransform = (
   initialValue = 0,
-  config: keyof typeof MotionSystem.springs = 'gentle'
+  config: keyof typeof MotionSystem.springs = "gentle",
 ) => {
   const { value, animatedValue, animate } = useSpring(initialValue, config);
 
@@ -63,7 +69,7 @@ export const useTransform = (
     }),
     rotate: animatedValue.interpolate({
       inputRange: [0, 1],
-      outputRange: ['0deg', '360deg'],
+      outputRange: ["0deg", "360deg"],
     }),
     opacity: animatedValue.interpolate({
       inputRange: [0, 1],
@@ -78,10 +84,10 @@ export const useTransform = (
 export const useStaggeredFadeIn = (
   itemCount: number,
   delay = 100,
-  config: keyof typeof MotionSystem.springs = 'gentle'
+  config: keyof typeof MotionSystem.springs = "gentle",
 ) => {
   const animatedValues = useRef(
-    Array.from({ length: itemCount }, () => new Animated.Value(0))
+    Array.from({ length: itemCount }, () => new Animated.Value(0)),
   ).current;
 
   const [values, setValues] = useState(new Array(itemCount).fill(0));
@@ -90,18 +96,18 @@ export const useStaggeredFadeIn = (
   useEffect(() => {
     const listeners = animatedValues.map((animatedValue, index) =>
       animatedValue.addListener(({ value: newValue }) => {
-        setValues(prev => {
+        setValues((prev) => {
           const newValues = [...prev];
           newValues[index] = newValue;
           return newValues;
         });
-      })
+      }),
     );
 
     return () => {
-      listeners.forEach((listener, index) =>
-        { animatedValues[index].removeListener(listener); }
-      );
+      listeners.forEach((listener, index) => {
+        animatedValues[index].removeListener(listener);
+      });
     };
   }, [animatedValues]);
 
@@ -112,7 +118,7 @@ export const useStaggeredFadeIn = (
         toValue: 1,
         delay: index * delay,
         useNativeDriver: true,
-      })
+      }),
     );
 
     return Animated.stagger(delay, animations);
@@ -138,14 +144,14 @@ export const useStaggeredFadeIn = (
 
 // Hook for entrance animations with different effects
 export const useEntranceAnimation = (
-  type: 'fadeInUp' | 'scaleIn' | 'slideInLeft' | 'slideInRight' = 'fadeInUp',
-  config: keyof typeof MotionSystem.springs = 'standard'
+  type: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight" = "fadeInUp",
+  config: keyof typeof MotionSystem.springs = "standard",
 ) => {
   const { value, animatedValue, animate } = useSpring(0, config);
 
   const getTransform = () => {
     switch (type) {
-      case 'fadeInUp':
+      case "fadeInUp":
         return {
           opacity: animatedValue,
           transform: [
@@ -157,7 +163,7 @@ export const useEntranceAnimation = (
             },
           ],
         };
-      case 'scaleIn':
+      case "scaleIn":
         return {
           opacity: animatedValue,
           transform: [
@@ -169,7 +175,7 @@ export const useEntranceAnimation = (
             },
           ],
         };
-      case 'slideInLeft':
+      case "slideInLeft":
         return {
           opacity: animatedValue,
           transform: [
@@ -181,7 +187,7 @@ export const useEntranceAnimation = (
             },
           ],
         };
-      case 'slideInRight':
+      case "slideInRight":
         return {
           opacity: animatedValue,
           transform: [
@@ -205,23 +211,35 @@ export const useEntranceAnimation = (
     return animate(1);
   };
 
-  return { value, animatedValue, animate: startEntrance, style: getTransform() };
+  return {
+    value,
+    animatedValue,
+    animate: startEntrance,
+    style: getTransform(),
+  };
 };
 
 // Hook for magnetic/touch-following effects
-export const useMagneticEffect = (
-  sensitivity = 0.3,
-  maxDistance = 50
-) => {
+export const useMagneticEffect = (sensitivity = 0.3, maxDistance = 50) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isActive, setIsActive] = useState(false);
 
-  const handleTouchStart = (touchX: number, touchY: number, centerX: number, centerY: number) => {
+  const handleTouchStart = (
+    touchX: number,
+    touchY: number,
+    centerX: number,
+    centerY: number,
+  ) => {
     setIsActive(true);
     calculatePosition(touchX, touchY, centerX, centerY);
   };
 
-  const handleTouchMove = (touchX: number, touchY: number, centerX: number, centerY: number) => {
+  const handleTouchMove = (
+    touchX: number,
+    touchY: number,
+    centerX: number,
+    centerY: number,
+  ) => {
     if (isActive) {
       calculatePosition(touchX, touchY, centerX, centerY);
     }
@@ -232,7 +250,12 @@ export const useMagneticEffect = (
     setPosition({ x: 0, y: 0 });
   };
 
-  const calculatePosition = (touchX: number, touchY: number, centerX: number, centerY: number) => {
+  const calculatePosition = (
+    touchX: number,
+    touchY: number,
+    centerX: number,
+    centerY: number,
+  ) => {
     const deltaX = touchX - centerX;
     const deltaY = touchY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -264,10 +287,7 @@ export const useMagneticEffect = (
 };
 
 // Hook for 3D tilt effects using device gyroscope
-export const useGyroscopeTilt = (
-  sensitivity = 0.5,
-  maxTilt = 15
-) => {
+export const useGyroscopeTilt = (sensitivity = 0.5, maxTilt = 15) => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
   // This would integrate with react-native-sensors or similar
@@ -288,10 +308,7 @@ export const useGyroscopeTilt = (
   };
 
   const transform = {
-    transform: [
-      { rotateX: `${tilt.y}deg` },
-      { rotateY: `${-tilt.x}deg` },
-    ],
+    transform: [{ rotateX: `${tilt.y}deg` }, { rotateY: `${-tilt.x}deg` }],
   };
 
   return {
@@ -306,7 +323,7 @@ export const useGyroscopeTilt = (
 
 // Hook for ripple effects on press
 export const useRippleEffect = (
-  duration: number = MotionSystem.timings.standard
+  duration: number = MotionSystem.timings.standard,
 ) => {
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -342,10 +359,7 @@ export const useRippleEffect = (
 };
 
 // Hook for shimmer/glow effects
-export const useGlowEffect = (
-  intensity = 1,
-  duration = 2000
-) => {
+export const useGlowEffect = (intensity = 1, duration = 2000) => {
   const glowAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -364,7 +378,7 @@ export const useGlowEffect = (
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: false,
           }),
-        ])
+        ]),
       ).start();
     };
 
@@ -388,13 +402,17 @@ export const useGlowEffect = (
 // Hook for scroll-triggered animations
 export const useScrollAnimation = (
   triggerPoint = 0.8,
-  config: keyof typeof MotionSystem.springs = 'gentle'
+  config: keyof typeof MotionSystem.springs = "gentle",
 ) => {
   const [isVisible, setIsVisible] = useState(false);
   const { value, animatedValue, animate } = useSpring(0, config);
 
-  const checkVisibility = (scrollY: number, elementY: number, elementHeight: number) => {
-    const windowHeight = Dimensions.get('window').height;
+  const checkVisibility = (
+    scrollY: number,
+    elementY: number,
+    elementHeight: number,
+  ) => {
+    const windowHeight = Dimensions.get("window").height;
     const triggerY = elementY + elementHeight * triggerPoint;
 
     if (scrollY + windowHeight > triggerY && !isVisible) {

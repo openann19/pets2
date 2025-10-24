@@ -1,6 +1,6 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface PetFormSubmitProps {
   isSubmitting: boolean;
@@ -14,13 +14,21 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({
   return (
     <View style={styles.submitContainer}>
       <TouchableOpacity
-        style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+        style={[
+          styles.submitButton,
+          isSubmitting && styles.submitButtonDisabled,
+        ]}
         onPress={onSubmit}
         disabled={isSubmitting}
       >
         {isSubmitting ? (
           <View style={styles.submitContent}>
-            <Ionicons name="sync" size={20} color="#FFFFFF" style={{ transform: [{ rotate: '45deg' }] }} />
+            <Ionicons
+              name="sync"
+              size={20}
+              color="#FFFFFF"
+              style={{ transform: [{ rotate: "45deg" }] }}
+            />
             <Text style={styles.submitButtonText}>Creating Profile...</Text>
           </View>
         ) : (
@@ -40,11 +48,11 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   submitButton: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: "#8B5CF6",
     borderRadius: 12,
     padding: 16,
-    alignItems: 'center',
-    shadowColor: '#8B5CF6',
+    alignItems: "center",
+    shadowColor: "#8B5CF6",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -54,19 +62,19 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   submitButtonDisabled: {
-    backgroundColor: '#9CA3AF',
+    backgroundColor: "#9CA3AF",
     shadowOpacity: 0,
     elevation: 0,
   },
   submitContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   submitButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
     marginLeft: 8,
   },
 });

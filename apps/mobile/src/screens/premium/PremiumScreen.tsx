@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
-import { logger } from '@pawfectmatch/core';
-import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,11 +11,11 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
-import Footer from '../../components/Footer';
+  View,
+} from "react-native";
+import Footer from "../../components/Footer";
 
-type BillingPeriod = 'monthly' | 'yearly';
+type BillingPeriod = "monthly" | "yearly";
 
 interface SubscriptionTier {
   id: string;
@@ -34,85 +34,85 @@ interface SubscriptionTier {
 
 const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   {
-    id: 'basic',
-    name: 'Basic',
+    id: "basic",
+    name: "Basic",
     price: { monthly: 0, yearly: 0 },
     stripePriceId: {
-      monthly: '',
-      yearly: '',
+      monthly: "",
+      yearly: "",
     },
     features: [
-      '5 daily swipes',
-      'Basic matching',
-      'Standard chat',
-      'Weather updates',
-      'Community support',
+      "5 daily swipes",
+      "Basic matching",
+      "Standard chat",
+      "Weather updates",
+      "Community support",
     ],
   },
   {
-    id: 'premium',
-    name: 'Premium',
+    id: "premium",
+    name: "Premium",
     price: { monthly: 9.99, yearly: 99.99 },
     stripePriceId: {
-      monthly: 'price_premium_monthly',
-      yearly: 'price_premium_yearly',
+      monthly: "price_premium_monthly",
+      yearly: "price_premium_yearly",
     },
     features: [
-      'Unlimited swipes',
-      'See who liked you',
-      'Advanced filters',
-      'Ad-free experience',
-      'Advanced matching algorithm',
-      'Priority in search results',
-      'Read receipts',
-      'Video calls',
+      "Unlimited swipes",
+      "See who liked you",
+      "Advanced filters",
+      "Ad-free experience",
+      "Advanced matching algorithm",
+      "Priority in search results",
+      "Read receipts",
+      "Video calls",
     ],
     popular: true,
   },
   {
-    id: 'ultimate',
-    name: 'Ultimate',
+    id: "ultimate",
+    name: "Ultimate",
     price: { monthly: 19.99, yearly: 199.99 },
     stripePriceId: {
-      monthly: 'price_ultimate_monthly',
-      yearly: 'price_ultimate_yearly',
+      monthly: "price_ultimate_monthly",
+      yearly: "price_ultimate_yearly",
     },
     features: [
-      'All Premium features',
-      'AI-powered recommendations',
-      'Exclusive events access',
-      'Priority support',
-      'Profile boost',
-      'Unlimited Super Likes',
-      'Advanced analytics',
-      'VIP status',
+      "All Premium features",
+      "AI-powered recommendations",
+      "Exclusive events access",
+      "Priority support",
+      "Profile boost",
+      "Unlimited Super Likes",
+      "Advanced analytics",
+      "VIP status",
     ],
   },
 ];
 
 export function PremiumScreen(): JSX.Element {
   const navigation = useNavigation();
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
-  const [selectedTier, setSelectedTier] = useState<string>('premium');
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
+  const [selectedTier, setSelectedTier] = useState<string>("premium");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubscribe = async (tierId: string) => {
     setIsLoading(true);
     try {
       // Get the selected tier's price ID
-      const tier = SUBSCRIPTION_TIERS.find(t => t.id === tierId);
+      const tier = SUBSCRIPTION_TIERS.find((t) => t.id === tierId);
       if (!tier) {
-        throw new Error('Invalid subscription tier');
+        throw new Error("Invalid subscription tier");
       }
 
       const priceId = tier.stripePriceId[billingPeriod];
 
       // Create checkout session
-      const { _subscriptionAPI } = await import('../../services/api');
+      const { _subscriptionAPI } = await import("../../services/api");
       const session = await _subscriptionAPI.createCheckoutSession({
         priceId,
-        successUrl: 'pawfectmatch://subscription/success',
-        cancelUrl: 'pawfectmatch://subscription/cancel',
+        successUrl: "pawfectmatch://subscription/success",
+        cancelUrl: "pawfectmatch://subscription/cancel",
         metadata: {
           tier: tierId,
           billingPeriod,
@@ -124,12 +124,12 @@ export function PremiumScreen(): JSX.Element {
         await Linking.openURL(session.url);
       }
     } catch (error) {
-      logger.error('Subscription error:', { error });
+      logger.error("Subscription error:", { error });
       // Show error to user
       Alert.alert(
-        'Subscription Error',
-        'Failed to start checkout process. Please try again.',
-        [{ text: 'OK' }]
+        "Subscription Error",
+        "Failed to start checkout process. Please try again.",
+        [{ text: "OK" }],
       );
     } finally {
       setIsLoading(false);
@@ -139,14 +139,17 @@ export function PremiumScreen(): JSX.Element {
   const renderTierCard = (tier: SubscriptionTier) => {
     const isSelected = selectedTier === tier.id;
     const price = tier.price[billingPeriod];
-    const yearlyDiscount = billingPeriod === 'yearly'
-      ? Math.round((1 - (tier.price.yearly / 12) / tier.price.monthly) * 100)
-      : 0;
+    const yearlyDiscount =
+      billingPeriod === "yearly"
+        ? Math.round((1 - tier.price.yearly / 12 / tier.price.monthly) * 100)
+        : 0;
 
     return (
       <TouchableOpacity
         key={tier.id}
-        onPress={() => { setSelectedTier(tier.id); }}
+        onPress={() => {
+          setSelectedTier(tier.id);
+        }}
         style={[
           styles.tierCard,
           isSelected && styles.tierCardSelected,
@@ -154,23 +157,25 @@ export function PremiumScreen(): JSX.Element {
         ]}
         accessibilityLabel={`${tier.name} tier`}
       >
-        {tier.popular ? <View style={styles.popularBadge}>
-          <Text style={styles.popularText}>Most Popular</Text>
-        </View> : null}
+        {tier.popular ? (
+          <View style={styles.popularBadge}>
+            <Text style={styles.popularText}>Most Popular</Text>
+          </View>
+        ) : null}
 
         <Text style={styles.tierName}>{tier.name}</Text>
 
         <View style={styles.priceContainer}>
           <Text style={styles.priceSymbol}>$</Text>
           <Text style={styles.priceAmount}>
-            {billingPeriod === 'yearly' ? (price / 12).toFixed(2) : price}
+            {billingPeriod === "yearly" ? (price / 12).toFixed(2) : price}
           </Text>
           <Text style={styles.pricePeriod}>
-            /{billingPeriod === 'yearly' ? 'mo' : 'month'}
+            /{billingPeriod === "yearly" ? "mo" : "month"}
           </Text>
         </View>
 
-        {billingPeriod === 'yearly' && yearlyDiscount > 0 && (
+        {billingPeriod === "yearly" && yearlyDiscount > 0 && (
           <Text style={styles.discount}>Save {yearlyDiscount}%</Text>
         )}
 
@@ -195,7 +200,7 @@ export function PremiumScreen(): JSX.Element {
             <ActivityIndicator color="#fff" testID="loading-indicator" />
           ) : (
             <Text style={styles.subscribeButtonText}>
-              {isSelected ? 'Subscribe Now' : 'Select Plan'}
+              {isSelected ? "Subscribe Now" : "Select Plan"}
             </Text>
           )}
         </TouchableOpacity>
@@ -205,13 +210,18 @@ export function PremiumScreen(): JSX.Element {
 
   return (
     <LinearGradient
-      colors={['#ec4899', '#8b5cf6', '#3b82f6']}
+      colors={["#ec4899", "#8b5cf6", "#3b82f6"]}
       style={styles.container}
     >
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => { navigation.goBack(); }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButton}
             accessibilityLabel="Back"
           >
@@ -228,14 +238,16 @@ export function PremiumScreen(): JSX.Element {
           <TouchableOpacity
             style={[
               styles.billingOption,
-              billingPeriod === 'monthly' && styles.billingOptionActive,
+              billingPeriod === "monthly" && styles.billingOptionActive,
             ]}
-            onPress={() => { setBillingPeriod('monthly'); }}
+            onPress={() => {
+              setBillingPeriod("monthly");
+            }}
           >
             <Text
               style={[
                 styles.billingText,
-                billingPeriod === 'monthly' && styles.billingTextActive,
+                billingPeriod === "monthly" && styles.billingTextActive,
               ]}
             >
               Monthly
@@ -245,14 +257,16 @@ export function PremiumScreen(): JSX.Element {
           <TouchableOpacity
             style={[
               styles.billingOption,
-              billingPeriod === 'yearly' && styles.billingOptionActive,
+              billingPeriod === "yearly" && styles.billingOptionActive,
             ]}
-            onPress={() => { setBillingPeriod('yearly'); }}
+            onPress={() => {
+              setBillingPeriod("yearly");
+            }}
           >
             <Text
               style={[
                 styles.billingText,
-                billingPeriod === 'yearly' && styles.billingTextActive,
+                billingPeriod === "yearly" && styles.billingTextActive,
               ]}
             >
               Yearly
@@ -284,7 +298,7 @@ export function PremiumScreen(): JSX.Element {
       />
     </LinearGradient>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -296,28 +310,28 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     paddingTop: 60,
-    alignItems: 'center',
+    alignItems: "center",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 60,
     left: 20,
     zIndex: 10,
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
+    color: "rgba(255, 255, 255, 0.9)",
+    textAlign: "center",
   },
   billingToggle: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 12,
     padding: 4,
     marginHorizontal: 20,
@@ -327,101 +341,101 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
   billingOptionActive: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   billingText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.8)",
   },
   billingTextActive: {
-    color: '#8b5cf6',
+    color: "#8b5cf6",
   },
   saveBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: -8,
     right: 8,
-    backgroundColor: '#10b981',
+    backgroundColor: "#10b981",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
   },
   saveText: {
     fontSize: 10,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   tiersContainer: {
     padding: 20,
     gap: 16,
   },
   tierCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
-    borderColor: 'transparent',
-    position: 'relative',
+    borderColor: "transparent",
+    position: "relative",
   },
   tierCardSelected: {
-    borderColor: '#8b5cf6',
-    shadowColor: '#8b5cf6',
+    borderColor: "#8b5cf6",
+    shadowColor: "#8b5cf6",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
   },
   tierCardPopular: {
-    borderColor: '#10b981',
+    borderColor: "#10b981",
   },
   popularBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: -12,
     right: 20,
-    backgroundColor: '#10b981',
+    backgroundColor: "#10b981",
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
   },
   popularText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   tierName: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 8,
   },
   priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    alignItems: "baseline",
     marginBottom: 4,
   },
   priceSymbol: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
   },
   priceAmount: {
     fontSize: 48,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
   },
   pricePeriod: {
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
     marginLeft: 4,
   },
   discount: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#10b981',
+    fontWeight: "600",
+    color: "#10b981",
     marginBottom: 16,
   },
   featuresContainer: {
@@ -429,36 +443,36 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   featureText: {
     fontSize: 14,
-    color: '#4b5563',
+    color: "#4b5563",
     flex: 1,
   },
   subscribeButton: {
-    backgroundColor: '#e5e7eb',
+    backgroundColor: "#e5e7eb",
     paddingVertical: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   subscribeButtonSelected: {
-    backgroundColor: '#8b5cf6',
+    backgroundColor: "#8b5cf6",
   },
   subscribeButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   footer: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   footerText: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
-    textAlign: 'center',
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
   },
 });

@@ -1,5 +1,12 @@
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from "react";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface MatchWidgetProps {
   matches: Array<{
@@ -18,7 +25,7 @@ interface MatchWidgetProps {
 export function MatchWidget({
   matches,
   onMatchPress,
-  onViewAll
+  onViewAll,
 }: MatchWidgetProps): React.JSX.Element {
   return (
     <View style={styles.container}>
@@ -35,7 +42,9 @@ export function MatchWidget({
             <TouchableOpacity
               key={match.id}
               style={styles.matchCard}
-              onPress={() => { onMatchPress(match.id); }}
+              onPress={() => {
+                onMatchPress(match.id);
+              }}
             >
               <View style={styles.petImageContainer}>
                 <Image
@@ -43,18 +52,24 @@ export function MatchWidget({
                   style={styles.petImage}
                   resizeMode="cover"
                 />
-                {match.unreadCount && match.unreadCount > 0 ? <View style={styles.unreadBadge}>
+                {match.unreadCount && match.unreadCount > 0 ? (
+                  <View style={styles.unreadBadge}>
                     <Text style={styles.unreadText}>{match.unreadCount}</Text>
-                  </View> : null}
+                  </View>
+                ) : null}
               </View>
-              
+
               <View style={styles.matchInfo}>
                 <Text style={styles.matchName}>{match.name}</Text>
                 <Text style={styles.petName}>{match.petName}</Text>
-                {match.lastMessage ? <Text style={styles.lastMessage} numberOfLines={1}>
+                {match.lastMessage ? (
+                  <Text style={styles.lastMessage} numberOfLines={1}>
                     {match.lastMessage}
-                  </Text> : null}
-                {match.timestamp ? <Text style={styles.timestamp}>{match.timestamp}</Text> : null}
+                  </Text>
+                ) : null}
+                {match.timestamp ? (
+                  <Text style={styles.timestamp}>{match.timestamp}</Text>
+                ) : null}
               </View>
             </TouchableOpacity>
           ))}
@@ -66,34 +81,34 @@ export function MatchWidget({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 12,
   },
   title: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontWeight: "600",
+    color: "#1F2937",
   },
   viewAll: {
     fontSize: 14,
-    color: '#8B5CF6',
-    fontWeight: '500',
+    color: "#8B5CF6",
+    fontWeight: "500",
   },
   matchesContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingRight: 16,
   },
   matchCard: {
@@ -101,52 +116,52 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   petImageContainer: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 8,
   },
   petImage: {
-    width: '100%',
+    width: "100%",
     height: 80,
     borderRadius: 8,
   },
   unreadBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   unreadText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   matchInfo: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   matchName: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#1F2937',
+    fontWeight: "600",
+    color: "#1F2937",
     marginBottom: 2,
   },
   petName: {
     fontSize: 11,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 4,
   },
   lastMessage: {
     fontSize: 10,
-    color: '#9CA3AF',
-    textAlign: 'center',
+    color: "#9CA3AF",
+    textAlign: "center",
     marginBottom: 2,
   },
   timestamp: {
     fontSize: 9,
-    color: '#D1D5DB',
+    color: "#D1D5DB",
   },
 });

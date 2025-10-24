@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useCallback, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -10,9 +10,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../contexts/ThemeContext';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface SafetyCenterScreenProps {
   navigation: {
@@ -29,96 +29,112 @@ interface SafetyOption {
   action: () => void;
 }
 
-function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Element {
+function SafetyCenterScreen({
+  navigation,
+}: SafetyCenterScreenProps): JSX.Element {
   const { colors: _colors } = useTheme();
   const [emergencyMode, setEmergencyMode] = useState(false);
 
   const safetyOptions: SafetyOption[] = [
     {
-      id: 'report',
-      title: 'Report User',
-      description: 'Report inappropriate behavior or content',
-      icon: 'flag-outline',
-      color: '#EF4444',
+      id: "report",
+      title: "Report User",
+      description: "Report inappropriate behavior or content",
+      icon: "flag-outline",
+      color: "#EF4444",
       action: () => {
-        Alert.alert('Report User', 'This feature is coming soon. Please contact support for urgent issues.');
+        Alert.alert(
+          "Report User",
+          "This feature is coming soon. Please contact support for urgent issues.",
+        );
       },
     },
     {
-      id: 'block',
-      title: 'Block & Report',
-      description: 'Block a user and report their behavior',
-      icon: 'person-remove-outline',
-      color: '#F59E0B',
+      id: "block",
+      title: "Block & Report",
+      description: "Block a user and report their behavior",
+      icon: "person-remove-outline",
+      color: "#F59E0B",
       action: () => {
         navigation.goBack(); // Navigate back to profile where blocking is handled
       },
     },
     {
-      id: 'privacy',
-      title: 'Privacy Settings',
-      description: 'Control who can see your profile and contact you',
-      icon: 'lock-closed-outline',
-      color: '#10B981',
+      id: "privacy",
+      title: "Privacy Settings",
+      description: "Control who can see your profile and contact you",
+      icon: "lock-closed-outline",
+      color: "#10B981",
       action: () => {
-        Alert.alert('Privacy Settings', 'Navigate to Privacy Settings screen (coming soon)');
+        Alert.alert(
+          "Privacy Settings",
+          "Navigate to Privacy Settings screen (coming soon)",
+        );
       },
     },
     {
-      id: 'emergency',
-      title: 'Emergency Contacts',
-      description: 'Set up emergency contacts for safety',
-      icon: 'call-outline',
-      color: '#8B5CF6',
+      id: "emergency",
+      title: "Emergency Contacts",
+      description: "Set up emergency contacts for safety",
+      icon: "call-outline",
+      color: "#8B5CF6",
       action: () => {
-        Alert.alert('Emergency Contacts', 'Emergency contact setup coming soon');
+        Alert.alert(
+          "Emergency Contacts",
+          "Emergency contact setup coming soon",
+        );
       },
     },
     {
-      id: 'safety-tips',
-      title: 'Safety Tips',
-      description: 'Learn about online safety and best practices',
-      icon: 'shield-checkmark-outline',
-      color: '#06B6D4',
+      id: "safety-tips",
+      title: "Safety Tips",
+      description: "Learn about online safety and best practices",
+      icon: "shield-checkmark-outline",
+      color: "#06B6D4",
       action: () => {
-        Alert.alert('Safety Tips', 'Safety tips and guidelines will be available soon');
+        Alert.alert(
+          "Safety Tips",
+          "Safety tips and guidelines will be available soon",
+        );
       },
     },
   ];
 
   const handleEmergencyMode = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => { });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
     Alert.alert(
-      emergencyMode ? 'Disable Emergency Mode' : 'Enable Emergency Mode',
+      emergencyMode ? "Disable Emergency Mode" : "Enable Emergency Mode",
       emergencyMode
-        ? 'This will restore normal app functionality.'
-        : 'Emergency mode will limit interactions and enhance safety features.',
+        ? "This will restore normal app functionality."
+        : "Emergency mode will limit interactions and enhance safety features.",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: emergencyMode ? 'Disable' : 'Enable',
-          style: emergencyMode ? 'default' : 'destructive',
+          text: emergencyMode ? "Disable" : "Enable",
+          style: emergencyMode ? "default" : "destructive",
           onPress: () => {
             setEmergencyMode(!emergencyMode);
             Alert.alert(
-              'Emergency Mode',
-              emergencyMode ? 'Emergency mode disabled' : 'Emergency mode enabled. Stay safe!'
+              "Emergency Mode",
+              emergencyMode
+                ? "Emergency mode disabled"
+                : "Emergency mode enabled. Stay safe!",
             );
           },
         },
-      ]
+      ],
     );
   }, [emergencyMode]);
 
   const handleSafetyOption = useCallback((option: SafetyOption) => {
-    Haptics.selectionAsync().catch(() => { });
+    Haptics.selectionAsync().catch(() => {});
     option.action();
   }, []);
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1e3c72', '#2a5298', '#3b82f6']}
+        colors={["#1e3c72", "#2a5298", "#3b82f6"]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -128,7 +144,9 @@ function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Elemen
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+                () => {},
+              );
               navigation.goBack();
             }}
           >
@@ -150,21 +168,25 @@ function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Elemen
             />
             <View style={styles.emergencyText}>
               <Text style={styles.emergencyTitle}>
-                {emergencyMode ? 'Emergency Mode Active' : 'Emergency Mode Available'}
+                {emergencyMode
+                  ? "Emergency Mode Active"
+                  : "Emergency Mode Available"}
               </Text>
               <Text style={styles.emergencySubtitle}>
                 {emergencyMode
-                  ? 'Enhanced safety features are enabled'
-                  : 'Activate for additional safety measures'
-                }
+                  ? "Enhanced safety features are enabled"
+                  : "Activate for additional safety measures"}
               </Text>
             </View>
             <TouchableOpacity
-              style={[styles.emergencyButton, { backgroundColor: emergencyMode ? '#10B981' : '#EF4444' }]}
+              style={[
+                styles.emergencyButton,
+                { backgroundColor: emergencyMode ? "#10B981" : "#EF4444" },
+              ]}
               onPress={handleEmergencyMode}
             >
               <Text style={styles.emergencyButtonText}>
-                {emergencyMode ? 'Active' : 'Activate'}
+                {emergencyMode ? "Active" : "Activate"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -178,25 +200,40 @@ function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Elemen
             <TouchableOpacity
               key={option.id}
               style={styles.optionCard}
-              onPress={() => { handleSafetyOption(option); }}
+              onPress={() => {
+                handleSafetyOption(option);
+              }}
             >
               <BlurView intensity={20} style={styles.optionBlur}>
                 <View style={styles.optionContent}>
-                  <View style={[styles.optionIcon, { backgroundColor: option.color }]}>
+                  <View
+                    style={[
+                      styles.optionIcon,
+                      { backgroundColor: option.color },
+                    ]}
+                  >
                     <Ionicons name={option.icon} size={24} color="white" />
                   </View>
                   <View style={styles.optionText}>
                     <Text style={styles.optionTitle}>{option.title}</Text>
-                    <Text style={styles.optionDescription}>{option.description}</Text>
+                    <Text style={styles.optionDescription}>
+                      {option.description}
+                    </Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.6)" />
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color="rgba(255,255,255,0.6)"
+                  />
                 </View>
               </BlurView>
             </TouchableOpacity>
           ))}
 
           {/* Quick Actions */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>Quick Actions</Text>
+          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+            Quick Actions
+          </Text>
 
           <TouchableOpacity style={styles.quickActionCard}>
             <BlurView intensity={20} style={styles.quickActionBlur}>
@@ -204,9 +241,15 @@ function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Elemen
                 <Ionicons name="help-buoy-outline" size={24} color="#3B82F6" />
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Contact Support</Text>
-                  <Text style={styles.quickActionDescription}>Get help with safety concerns</Text>
+                  <Text style={styles.quickActionDescription}>
+                    Get help with safety concerns
+                  </Text>
                 </View>
-                <Ionicons name="open-outline" size={20} color="rgba(255,255,255,0.6)" />
+                <Ionicons
+                  name="open-outline"
+                  size={20}
+                  color="rgba(255,255,255,0.6)"
+                />
               </View>
             </BlurView>
           </TouchableOpacity>
@@ -214,12 +257,22 @@ function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Elemen
           <TouchableOpacity style={styles.quickActionCard}>
             <BlurView intensity={20} style={styles.quickActionBlur}>
               <View style={styles.quickActionContent}>
-                <Ionicons name="document-text-outline" size={24} color="#10B981" />
+                <Ionicons
+                  name="document-text-outline"
+                  size={24}
+                  color="#10B981"
+                />
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Safety Guidelines</Text>
-                  <Text style={styles.quickActionDescription}>Read our community guidelines</Text>
+                  <Text style={styles.quickActionDescription}>
+                    Read our community guidelines
+                  </Text>
                 </View>
-                <Ionicons name="open-outline" size={20} color="rgba(255,255,255,0.6)" />
+                <Ionicons
+                  name="open-outline"
+                  size={20}
+                  color="rgba(255,255,255,0.6)"
+                />
               </View>
             </BlurView>
           </TouchableOpacity>
@@ -227,7 +280,7 @@ function SafetyCenterScreen({ navigation }: SafetyCenterScreenProps): JSX.Elemen
       </SafeAreaView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -237,9 +290,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -247,17 +300,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   backButtonBlur: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   headerSpacer: {
     width: 40,
@@ -266,13 +319,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: "rgba(255,255,255,0.2)",
   },
   emergencyContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
   },
   emergencyText: {
@@ -281,13 +334,13 @@ const styles = StyleSheet.create({
   },
   emergencyTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
     marginBottom: 2,
   },
   emergencySubtitle: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.8)',
+    color: "rgba(255,255,255,0.8)",
   },
   emergencyButton: {
     paddingHorizontal: 16,
@@ -295,9 +348,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   emergencyButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   content: {
     flex: 1,
@@ -305,28 +358,28 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
     marginBottom: 16,
   },
   optionCard: {
     marginBottom: 12,
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   optionBlur: {
     padding: 16,
   },
   optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   optionIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 16,
   },
   optionText: {
@@ -334,26 +387,26 @@ const styles = StyleSheet.create({
   },
   optionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
     marginBottom: 4,
   },
   optionDescription: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
+    color: "rgba(255,255,255,0.7)",
     lineHeight: 20,
   },
   quickActionCard: {
     marginBottom: 12,
     borderRadius: 16,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   quickActionBlur: {
     padding: 16,
   },
   quickActionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   quickActionText: {
     flex: 1,
@@ -361,13 +414,13 @@ const styles = StyleSheet.create({
   },
   quickActionTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
+    fontWeight: "600",
+    color: "white",
     marginBottom: 2,
   },
   quickActionDescription: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
+    color: "rgba(255,255,255,0.7)",
   },
 });
 

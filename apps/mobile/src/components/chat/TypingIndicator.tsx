@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { Animated } from 'react-native';
-import { tokens } from '@pawfectmatch/design-tokens';
-import { useTheme } from '../../contexts/ThemeContext';
+import React from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { Animated } from "react-native";
+import { tokens } from "@pawfectmatch/design-tokens";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface TypingIndicatorProps {
   typingUsers: string[];
@@ -14,16 +14,23 @@ export function TypingIndicator({
   animationValue,
 }: TypingIndicatorProps): React.JSX.Element {
   const { colors } = useTheme();
-  
+
   if (typingUsers.length === 0) return null;
 
   return (
     <View style={styles.container}>
-      <Image 
-        source={{ uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=100' }} 
-        style={styles.avatar} 
+      <Image
+        source={{
+          uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=100",
+        }}
+        style={styles.avatar}
       />
-      <View style={[styles.typingBubble, { backgroundColor: colors.white, borderColor: colors.gray200 }]}>
+      <View
+        style={[
+          styles.typingBubble,
+          { backgroundColor: colors.white, borderColor: colors.gray200 },
+        ]}
+      >
         <View style={styles.typingDots}>
           {[0, 1, 2].map((i) => (
             <Animated.View
@@ -32,16 +39,20 @@ export function TypingIndicator({
                 styles.typingDot,
                 {
                   backgroundColor: colors.gray500,
-                  opacity: animationValue?.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0.3, 1, 0.3],
-                  }) ?? 0.5,
-                  transform: [{
-                    translateY: animationValue?.interpolate({
+                  opacity:
+                    animationValue?.interpolate({
                       inputRange: [0, 0.5, 1],
-                      outputRange: [0, -3, 0],
-                    }) ?? 0,
-                  }],
+                      outputRange: [0.3, 1, 0.3],
+                    }) ?? 0.5,
+                  transform: [
+                    {
+                      translateY:
+                        animationValue?.interpolate({
+                          inputRange: [0, 0.5, 1],
+                          outputRange: [0, -3, 0],
+                        }) ?? 0,
+                    },
+                  ],
                 },
               ]}
             />
@@ -55,12 +66,12 @@ export function TypingIndicator({
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     paddingHorizontal: tokens.spacing.lg,
     marginBottom: tokens.spacing.sm,
   },
@@ -69,7 +80,7 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   typingBubble: {
     paddingHorizontal: tokens.spacing.md,
@@ -80,8 +91,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   typingDots: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: tokens.spacing.xs,
   },
   typingDot: {
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
   },
   typingText: {
     fontSize: tokens.typography.caption.fontSize,
-    fontStyle: 'italic',
+    fontStyle: "italic",
     marginTop: tokens.spacing.xs,
   },
 });

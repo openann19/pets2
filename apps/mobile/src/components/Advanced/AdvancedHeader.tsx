@@ -4,16 +4,13 @@
  * Enterprise-level implementation with full TypeScript support
  */
 
-import { Ionicons } from '@expo/vector-icons'
-import { logger } from '@pawfectmatch/core';
-;
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import type {
-  ViewStyle,
-  TextStyle} from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useRef, useState, useCallback, useEffect } from "react";
+import type { ViewStyle, TextStyle } from "react-native";
 import {
   View,
   Text,
@@ -23,37 +20,37 @@ import {
   Platform,
   Dimensions,
   StatusBar,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { matchesAPI } from '../../services/api';
+import { matchesAPI } from "../../services/api";
 
-import { AdvancedButton } from './AdvancedInteractionSystem';
+import { AdvancedButton } from "./AdvancedInteractionSystem";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Header Variants
-export type HeaderVariant = 
-  | 'default' 
-  | 'glass' 
-  | 'gradient' 
-  | 'premium' 
-  | 'minimal' 
-  | 'floating';
+export type HeaderVariant =
+  | "default"
+  | "glass"
+  | "gradient"
+  | "premium"
+  | "minimal"
+  | "floating";
 
-export type HeaderButtonType = 
-  | 'back' 
-  | 'close' 
-  | 'menu' 
-  | 'search' 
-  | 'filter' 
-  | 'settings' 
-  | 'profile' 
-  | 'add' 
-  | 'edit' 
-  | 'share' 
-  | 'more' 
-  | 'custom';
+export type HeaderButtonType =
+  | "back"
+  | "close"
+  | "menu"
+  | "search"
+  | "filter"
+  | "settings"
+  | "profile"
+  | "add"
+  | "edit"
+  | "share"
+  | "more"
+  | "custom";
 
 interface HeaderButton {
   type: HeaderButtonType;
@@ -61,8 +58,8 @@ interface HeaderButton {
   title?: string;
   onPress?: () => void | Promise<void>;
   apiAction?: () => Promise<any>;
-  variant?: 'primary' | 'secondary' | 'glass' | 'minimal';
-  haptic?: 'light' | 'medium' | 'heavy';
+  variant?: "primary" | "secondary" | "glass" | "minimal";
+  haptic?: "light" | "medium" | "heavy";
   disabled?: boolean;
   loading?: boolean;
   badge?: number;
@@ -94,15 +91,15 @@ interface AdvancedHeaderProps {
 export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   title,
   subtitle,
-  variant = 'default',
+  variant = "default",
   leftButtons = [],
   rightButtons = [],
   onBackPress,
   showBackButton = true,
-  backgroundColor = '#fff',
-  textColor = '#333',
+  backgroundColor = "#fff",
+  textColor = "#333",
   blurIntensity = 20,
-  gradientColors = ['#ec4899', '#db2777'],
+  gradientColors = ["#ec4899", "#db2777"],
   style,
   titleStyle,
   subtitleStyle,
@@ -128,79 +125,101 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   }, [onBackPress]);
 
   // Handle Button Press
-  const handleButtonPress = useCallback(async (button: HeaderButton) => {
-    if (button.disabled || button.loading) return;
-    
-    setIsLoading(true);
-    
-    try {
-      // Trigger haptic feedback
-      if (button.haptic) {
-        await Haptics.impactAsync(
-          button.haptic === 'light' ? Haptics.ImpactFeedbackStyle.Light :
-          button.haptic === 'medium' ? Haptics.ImpactFeedbackStyle.Medium :
-          Haptics.ImpactFeedbackStyle.Heavy
-        );
-      }
+  const handleButtonPress = useCallback(
+    async (button: HeaderButton) => {
+      if (button.disabled || button.loading) return;
 
-      // Execute API action if provided
-      if (button.apiAction) {
-        await button.apiAction();
-      }
+      setIsLoading(true);
 
-      // Execute custom onPress
-      if (button.onPress) {
-        await button.onPress();
-      }
+      try {
+        // Trigger haptic feedback
+        if (button.haptic) {
+          await Haptics.impactAsync(
+            button.haptic === "light"
+              ? Haptics.ImpactFeedbackStyle.Light
+              : button.haptic === "medium"
+                ? Haptics.ImpactFeedbackStyle.Medium
+                : Haptics.ImpactFeedbackStyle.Heavy,
+          );
+        }
 
-      // Execute API action from props
-      if (apiActions[button.type]) {
-        await apiActions[button.type]();
+        // Execute API action if provided
+        if (button.apiAction) {
+          await button.apiAction();
+        }
+
+        // Execute custom onPress
+        if (button.onPress) {
+          await button.onPress();
+        }
+
+        // Execute API action from props
+        if (apiActions[button.type]) {
+          await apiActions[button.type]();
+        }
+      } catch (error) {
+        logger.error("Header button action failed:", { error });
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      logger.error('Header button action failed:', { error });
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [apiActions]);
+    },
+    [apiActions],
+  );
 
   // Get Button Icon
-  const getButtonIcon = (type: HeaderButtonType, customIcon?: string): string => {
+  const getButtonIcon = (
+    type: HeaderButtonType,
+    customIcon?: string,
+  ): string => {
     if (customIcon) return customIcon;
-    
+
     switch (type) {
-      case 'back': return 'arrow-back';
-      case 'close': return 'close';
-      case 'menu': return 'menu';
-      case 'search': return 'search';
-      case 'filter': return 'options-outline';
-      case 'settings': return 'settings-outline';
-      case 'profile': return 'person-outline';
-      case 'add': return 'add';
-      case 'edit': return 'create-outline';
-      case 'share': return 'share-outline';
-      case 'more': return 'ellipsis-vertical';
-      default: return 'ellipsis-vertical';
+      case "back":
+        return "arrow-back";
+      case "close":
+        return "close";
+      case "menu":
+        return "menu";
+      case "search":
+        return "search";
+      case "filter":
+        return "options-outline";
+      case "settings":
+        return "settings-outline";
+      case "profile":
+        return "person-outline";
+      case "add":
+        return "add";
+      case "edit":
+        return "create-outline";
+      case "share":
+        return "share-outline";
+      case "more":
+        return "ellipsis-vertical";
+      default:
+        return "ellipsis-vertical";
     }
   };
 
   // Get Button Variant
-  const getButtonVariant = (button: HeaderButton): 'primary' | 'secondary' | 'glass' | 'minimal' => {
+  const getButtonVariant = (
+    button: HeaderButton,
+  ): "primary" | "secondary" | "glass" | "minimal" => {
     if (button.variant) return button.variant;
-    
+
     switch (button.type) {
-      case 'back':
-      case 'close':
-        return 'minimal';
-      case 'search':
-      case 'filter':
-        return 'glass';
-      case 'add':
-      case 'edit':
-        return 'primary';
+      case "back":
+      case "close":
+        return "minimal";
+      case "search":
+      case "filter":
+        return "glass";
+      case "add":
+      case "edit":
+        return "primary";
       default:
-        return 'secondary';
+        return "secondary";
     }
   };
 
@@ -219,8 +238,8 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         title={button.title}
         variant={variant}
         size="sm"
-        interactions={['hover', 'press', 'glow']}
-        haptic={button.haptic || 'light'}
+        interactions={["hover", "press", "glow"]}
+        haptic={button.haptic || "light"}
         onPress={() => handleButtonPress(button)}
         disabled={button.disabled}
         loading={button.loading || isLoading}
@@ -228,12 +247,12 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           styles.headerButton,
           isLeft ? styles.leftButton : styles.rightButton,
         ]}
-        glowColor={variant === 'primary' ? '#ec4899' : '#6b7280'}
+        glowColor={variant === "primary" ? "#ec4899" : "#6b7280"}
       >
         {button.badge && button.badge > 0 && (
           <View style={styles.badge}>
             <Text style={styles.badgeText}>
-              {button.badge > 99 ? '99+' : button.badge}
+              {button.badge > 99 ? "99+" : button.badge}
             </Text>
           </View>
         )}
@@ -244,49 +263,53 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   // Get Header Styles
   const getHeaderStyles = (): ViewStyle => {
     const baseStyles: ViewStyle = {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
       paddingHorizontal: 16,
       paddingVertical: 12,
       minHeight: 56,
     };
 
     switch (variant) {
-      case 'glass':
+      case "glass":
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : 'rgba(255, 255, 255, 0.1)',
+          backgroundColor: transparent
+            ? "transparent"
+            : "rgba(255, 255, 255, 0.1)",
           borderBottomWidth: 1,
-          borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+          borderBottomColor: "rgba(255, 255, 255, 0.1)",
         };
-      case 'gradient':
+      case "gradient":
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : backgroundColor,
+          backgroundColor: transparent ? "transparent" : backgroundColor,
         };
-      case 'premium':
+      case "premium":
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : 'rgba(139, 92, 246, 0.1)',
+          backgroundColor: transparent
+            ? "transparent"
+            : "rgba(139, 92, 246, 0.1)",
           borderBottomWidth: 1,
-          borderBottomColor: 'rgba(139, 92, 246, 0.2)',
+          borderBottomColor: "rgba(139, 92, 246, 0.2)",
         };
-      case 'minimal':
+      case "minimal":
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : 'transparent',
+          backgroundColor: transparent ? "transparent" : "transparent",
           borderBottomWidth: 1,
-          borderBottomColor: '#f3f4f6',
+          borderBottomColor: "#f3f4f6",
         };
-      case 'floating':
+      case "floating":
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : backgroundColor,
+          backgroundColor: transparent ? "transparent" : backgroundColor,
           borderRadius: 12,
           marginHorizontal: 16,
           marginTop: 8,
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -295,9 +318,9 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
       default:
         return {
           ...baseStyles,
-          backgroundColor: transparent ? 'transparent' : backgroundColor,
+          backgroundColor: transparent ? "transparent" : backgroundColor,
           borderBottomWidth: 1,
-          borderBottomColor: '#e5e7eb',
+          borderBottomColor: "#e5e7eb",
         };
     }
   };
@@ -323,7 +346,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
               icon="arrow-back"
               variant="minimal"
               size="sm"
-              interactions={['hover', 'press', 'glow']}
+              interactions={["hover", "press", "glow"]}
               haptic="light"
               onPress={handleBackPress}
               style={styles.backButton}
@@ -350,7 +373,9 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
               </Text>
             )}
             {subtitle && (
-              <Text style={[styles.subtitle, { color: textColor }, subtitleStyle]}>
+              <Text
+                style={[styles.subtitle, { color: textColor }, subtitleStyle]}
+              >
                 {subtitle}
               </Text>
             )}
@@ -372,14 +397,14 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   // Render Background
   const renderBackground = () => {
     switch (variant) {
-      case 'glass':
+      case "glass":
         return (
           <BlurView
             intensity={blurIntensity}
             style={StyleSheet.absoluteFillObject}
           />
         );
-      case 'gradient':
+      case "gradient":
         return (
           <LinearGradient
             colors={gradientColors}
@@ -388,10 +413,10 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
             end={{ x: 1, y: 1 }}
           />
         );
-      case 'premium':
+      case "premium":
         return (
           <LinearGradient
-            colors={['rgba(139, 92, 246, 0.1)', 'rgba(139, 92, 246, 0.05)']}
+            colors={["rgba(139, 92, 246, 0.1)", "rgba(139, 92, 246, 0.05)"]}
             style={StyleSheet.absoluteFillObject}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -409,14 +434,18 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
       ]}
-      edges={['top']}
+      edges={["top"]}
     >
       <StatusBar
-        barStyle={variant === 'glass' || variant === 'gradient' ? 'light-content' : 'dark-content'}
-        backgroundColor={transparent ? 'transparent' : backgroundColor}
+        barStyle={
+          variant === "glass" || variant === "gradient"
+            ? "light-content"
+            : "dark-content"
+        }
+        backgroundColor={transparent ? "transparent" : backgroundColor}
         translucent={transparent}
       />
-      
+
       <View style={styles.headerWrapper}>
         {renderBackground()}
         {renderHeaderContent()}
@@ -429,48 +458,48 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
 export const HeaderConfigs = {
   // Default header with back button
   default: (props: Partial<AdvancedHeaderProps>) => ({
-    variant: 'default' as HeaderVariant,
+    variant: "default" as HeaderVariant,
     showBackButton: true,
     ...props,
   }),
 
   // Glass morphism header
   glass: (props: Partial<AdvancedHeaderProps>) => ({
-    variant: 'glass' as HeaderVariant,
+    variant: "glass" as HeaderVariant,
     showBackButton: true,
     blurIntensity: 20,
-    textColor: '#fff',
+    textColor: "#fff",
     ...props,
   }),
 
   // Gradient header
   gradient: (props: Partial<AdvancedHeaderProps>) => ({
-    variant: 'gradient' as HeaderVariant,
+    variant: "gradient" as HeaderVariant,
     showBackButton: true,
-    gradientColors: ['#ec4899', '#db2777'],
-    textColor: '#fff',
+    gradientColors: ["#ec4899", "#db2777"],
+    textColor: "#fff",
     ...props,
   }),
 
   // Premium header
   premium: (props: Partial<AdvancedHeaderProps>) => ({
-    variant: 'premium' as HeaderVariant,
+    variant: "premium" as HeaderVariant,
     showBackButton: true,
-    textColor: '#8b5cf6',
+    textColor: "#8b5cf6",
     ...props,
   }),
 
   // Minimal header
   minimal: (props: Partial<AdvancedHeaderProps>) => ({
-    variant: 'minimal' as HeaderVariant,
+    variant: "minimal" as HeaderVariant,
     showBackButton: true,
-    textColor: '#6b7280',
+    textColor: "#6b7280",
     ...props,
   }),
 
   // Floating header
   floating: (props: Partial<AdvancedHeaderProps>) => ({
-    variant: 'floating' as HeaderVariant,
+    variant: "floating" as HeaderVariant,
     showBackButton: true,
     floating: true,
     ...props,
@@ -480,31 +509,31 @@ export const HeaderConfigs = {
 // Styles
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   floatingContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   transparentContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   headerWrapper: {
-    position: 'relative',
+    position: "relative",
   },
   leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   centerSection: {
     flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
     flex: 1,
   },
   buttonContainer: {
@@ -525,33 +554,33 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
+    fontWeight: "400",
+    textAlign: "center",
     marginTop: 2,
     opacity: 0.8,
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   badgeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

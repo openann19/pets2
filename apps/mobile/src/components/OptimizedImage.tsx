@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from 'react'
-import { logger } from '@pawfectmatch/core';
-;
+import React, { useState, useCallback } from "react";
+import { logger } from "@pawfectmatch/core";
 import {
   View,
   StyleSheet,
@@ -8,12 +7,16 @@ import {
   Text,
   ViewStyle,
   ImageStyle,
-} from 'react-native';
-import FastImage, { FastImageProps, Priority, ResizeMode } from 'react-native-fast-image';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../contexts/ThemeContext';
+} from "react-native";
+import FastImage, {
+  FastImageProps,
+  Priority,
+  ResizeMode,
+} from "react-native-fast-image";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../contexts/ThemeContext";
 
-interface OptimizedImageProps extends Omit<FastImageProps, 'source'> {
+interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
   uri: string;
   style?: ViewStyle | ImageStyle;
   containerStyle?: ViewStyle;
@@ -22,7 +25,7 @@ interface OptimizedImageProps extends Omit<FastImageProps, 'source'> {
   fallbackIcon?: keyof typeof Ionicons.glyphMap;
   priority?: Priority;
   resizeMode?: ResizeMode;
-  cache?: 'immutable' | 'web' | 'cacheOnly';
+  cache?: "immutable" | "web" | "cacheOnly";
   onLoadStart?: () => void;
   onLoadEnd?: () => void;
   onError?: (error: unknown) => void;
@@ -47,10 +50,10 @@ export function OptimizedImage({
   containerStyle,
   showLoadingIndicator = true,
   showErrorState = true,
-  fallbackIcon = 'image-outline',
+  fallbackIcon = "image-outline",
   priority = FastImage.priority.normal,
   resizeMode = FastImage.resizeMode.cover,
-  cache = 'immutable',
+  cache = "immutable",
   onLoadStart,
   onLoadEnd,
   onError,
@@ -73,15 +76,18 @@ export function OptimizedImage({
     onLoadEnd?.();
   }, [onLoadEnd]);
 
-  const handleError = useCallback((error: unknown) => {
-    setIsLoading(false);
-    setHasError(true);
-    onError?.(error);
-    
-    if (__DEV__) {
-      logger.warn('OptimizedImage load error:', { error });
-    }
-  }, [onError]);
+  const handleError = useCallback(
+    (error: unknown) => {
+      setIsLoading(false);
+      setHasError(true);
+      onError?.(error);
+
+      if (__DEV__) {
+        logger.warn("OptimizedImage load error:", { error });
+      }
+    },
+    [onError],
+  );
 
   const imageSource = {
     uri,
@@ -107,8 +113,8 @@ export function OptimizedImage({
       {/* Loading Indicator */}
       {isLoading && showLoadingIndicator && (
         <View style={[styles.overlay, styles.loadingOverlay]}>
-          <ActivityIndicator 
-            size="small" 
+          <ActivityIndicator
+            size="small"
             color={colors.primary}
             accessible={true}
             accessibilityLabel="Loading image"
@@ -118,16 +124,20 @@ export function OptimizedImage({
 
       {/* Error State */}
       {hasError && showErrorState && (
-        <View 
-          style={[styles.overlay, styles.errorOverlay, { backgroundColor: colors.card }]}
+        <View
+          style={[
+            styles.overlay,
+            styles.errorOverlay,
+            { backgroundColor: colors.card },
+          ]}
           accessible={true}
           accessibilityLabel="Image failed to load"
           accessibilityRole="alert"
         >
-          <Ionicons 
-            name={fallbackIcon} 
-            size={32} 
-            color={colors.text} 
+          <Ionicons
+            name={fallbackIcon}
+            size={32}
+            color={colors.text}
             style={styles.errorIcon}
           />
           <Text style={[styles.errorText, { color: colors.text }]}>
@@ -137,17 +147,20 @@ export function OptimizedImage({
       )}
     </View>
   );
-};
+}
 
 /**
  * Preload images for better performance
  * Useful for preloading next pet images in swipe stack
  */
-export const preloadImages = (uris: string[], priority: Priority = FastImage.priority.low): void => {
-  const sources = uris.map(uri => ({
+export const preloadImages = (
+  uris: string[],
+  priority: Priority = FastImage.priority.low,
+): void => {
+  const sources = uris.map((uri) => ({
     uri,
     priority,
-    cache: 'immutable' as const,
+    cache: "immutable" as const,
   }));
 
   FastImage.preload(sources);
@@ -172,7 +185,10 @@ export const clearDiskCache = (): Promise<void> => {
 /**
  * Get cache size information
  */
-export const getCacheSize = (): Promise<{ memoryCache: number; diskCache: number }> => {
+export const getCacheSize = (): Promise<{
+  memoryCache: number;
+  diskCache: number;
+}> => {
   // Note: This would need to be implemented with native modules
   // For now, return a placeholder
   return Promise.resolve({ memoryCache: 0, diskCache: 0 });
@@ -182,15 +198,19 @@ export const getCacheSize = (): Promise<{ memoryCache: number; diskCache: number
  * High Priority Image Component
  * For critical images like the current swipe card
  */
-export function HighPriorityImage(props: Omit<OptimizedImageProps, 'priority'>): JSX.Element {
+export function HighPriorityImage(
+  props: Omit<OptimizedImageProps, "priority">,
+): JSX.Element {
   return <OptimizedImage {...props} priority={FastImage.priority.high} />;
 }
 
 /**
- * Low Priority Image Component  
+ * Low Priority Image Component
  * For background or prefetch images
  */
-export function LowPriorityImage(props: Omit<OptimizedImageProps, 'priority'>): JSX.Element {
+export function LowPriorityImage(
+  props: Omit<OptimizedImageProps, "priority">,
+): JSX.Element {
   return <OptimizedImage {...props} priority={FastImage.priority.low} />;
 }
 
@@ -198,53 +218,53 @@ export function LowPriorityImage(props: Omit<OptimizedImageProps, 'priority'>): 
  * Avatar Image Component
  * Optimized for small profile images
  */
-export function AvatarImage({ 
-  size = 40, 
+export function AvatarImage({
+  size = 40,
   style,
-  ...props 
+  ...props
 }: OptimizedImageProps & { size?: number }): JSX.Element {
   return (
     <OptimizedImage
       {...props}
       style={[
         {
-        width: size,
-        height: size,
-        borderRadius: size / 2,
-      },
-      style,
-    ]}
-    resizeMode={FastImage.resizeMode.cover}
-    cache="web" // Use web cache for avatars as they might change
-  />
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+        },
+        style,
+      ]}
+      resizeMode={FastImage.resizeMode.cover}
+      cache="web" // Use web cache for avatars as they might change
+    />
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+    position: "relative",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingOverlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
   },
   errorOverlay: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderWidth: 1,
-    borderColor: '#e9ecef',
-    borderStyle: 'dashed',
+    borderColor: "#e9ecef",
+    borderStyle: "dashed",
   },
   errorIcon: {
     marginBottom: 8,
@@ -252,7 +272,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     opacity: 0.6,
   },
 });

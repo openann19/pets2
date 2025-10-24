@@ -1,9 +1,9 @@
 /**
  * PROJECT HYPERION: UNIFIED ANIMATION HOOKS
- * 
+ *
  * Centralized animation system using react-native-reanimated exclusively.
  * Replaces all legacy Animated API usage with performant, UI-thread animations.
- * 
+ *
  * Features:
  * - All animations run on UI thread for 60fps performance
  * - Consistent spring physics across the app
@@ -11,9 +11,9 @@
  * - Composable and reusable hooks
  */
 
-import { useEffect, useCallback, useState } from 'react';
-import { Dimensions, AccessibilityInfo } from 'react-native';
-import type { PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import { useEffect, useCallback, useState } from "react";
+import { Dimensions, AccessibilityInfo } from "react-native";
+import type { PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -25,9 +25,9 @@ import {
   runOnJS,
   interpolate,
   Extrapolate,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 // === ACCESSIBILITY AWARE ANIMATION CONFIG ===
 let prefersReducedMotion = false;
@@ -70,18 +70,24 @@ const TIMING_CONFIGS = {
 // === 1. SPRING ANIMATION HOOK ===
 interface UseSpringAnimationReturn {
   value: ReturnType<typeof useSharedValue<number>>;
-  animate: (toValue: number, customConfig?: Partial<typeof SPRING_CONFIGS.standard>) => void;
+  animate: (
+    toValue: number,
+    customConfig?: Partial<typeof SPRING_CONFIGS.standard>,
+  ) => void;
   reset: () => void;
 }
 
 export function useSpringAnimation(
   initialValue: number = 0,
-  config: keyof typeof SPRING_CONFIGS = 'standard'
+  config: keyof typeof SPRING_CONFIGS = "standard",
 ): UseSpringAnimationReturn {
   const animatedValue = useSharedValue(initialValue);
 
   const animate = useCallback(
-    (toValue: number, customConfig?: Partial<typeof SPRING_CONFIGS.standard>) => {
+    (
+      toValue: number,
+      customConfig?: Partial<typeof SPRING_CONFIGS.standard>,
+    ) => {
       const springConfig = {
         ...SPRING_CONFIGS[config],
         ...customConfig,
@@ -96,7 +102,7 @@ export function useSpringAnimation(
         animatedValue.value = withSpring(toValue, springConfig);
       }
     },
-    [animatedValue, config]
+    [animatedValue, config],
   );
 
   const reset = useCallback(() => {
@@ -117,9 +123,14 @@ interface UseEntranceAnimationReturn {
 
 // === 2. ENTRANCE ANIMATION HOOK ===
 export function useEntranceAnimation(
-  type: 'fadeInUp' | 'scaleIn' | 'slideInLeft' | 'slideInRight' | 'fadeIn' = 'fadeInUp',
+  type:
+    | "fadeInUp"
+    | "scaleIn"
+    | "slideInLeft"
+    | "slideInRight"
+    | "fadeIn" = "fadeInUp",
   delay: number = 0,
-  config: keyof typeof SPRING_CONFIGS = 'standard'
+  config: keyof typeof SPRING_CONFIGS = "standard",
 ): UseEntranceAnimationReturn {
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(0);
@@ -135,23 +146,23 @@ export function useEntranceAnimation(
     }
 
     switch (type) {
-      case 'fadeInUp':
+      case "fadeInUp":
         opacity.value = withDelay(delay, withSpring(1, springConfig));
         translateY.value = withDelay(delay, withSpring(0, springConfig));
         break;
-      case 'scaleIn':
+      case "scaleIn":
         opacity.value = withDelay(delay, withSpring(1, springConfig));
         scale.value = withDelay(delay, withSpring(1, springConfig));
         break;
-      case 'slideInLeft':
+      case "slideInLeft":
         opacity.value = withDelay(delay, withSpring(1, springConfig));
         translateX.value = withDelay(delay, withSpring(0, springConfig));
         break;
-      case 'slideInRight':
+      case "slideInRight":
         opacity.value = withDelay(delay, withSpring(1, springConfig));
         translateX.value = withDelay(delay, withSpring(0, springConfig));
         break;
-      case 'fadeIn':
+      case "fadeIn":
         opacity.value = withDelay(delay, withSpring(1, springConfig));
         break;
     }
@@ -196,7 +207,7 @@ export function useSwipeGesture(
   onSwipeLeft?: () => void,
   onSwipeRight?: () => void,
   onSwipeUp?: () => void,
-  threshold: number = 120
+  threshold: number = 120,
 ): UseSwipeGestureReturn {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -253,7 +264,7 @@ export function useSwipeGesture(
       translateX.value,
       [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
       [-10, 0, 10],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
@@ -282,7 +293,7 @@ interface UsePressAnimationReturn {
 
 // === 4. PRESS ANIMATION HOOK ===
 export function usePressAnimation(
-  config: keyof typeof SPRING_CONFIGS = 'snappy'
+  config: keyof typeof SPRING_CONFIGS = "snappy",
 ): UsePressAnimationReturn {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
@@ -319,9 +330,9 @@ interface UseGlowAnimationReturn {
 
 // === 5. GLOW ANIMATION HOOK ===
 export function useGlowAnimation(
-  color: string = '#ec4899',
+  color: string = "#ec4899",
   intensity: number = 1,
-  duration: number = 2000
+  duration: number = 2000,
 ): UseGlowAnimationReturn {
   const glowIntensity = useSharedValue(0);
 
@@ -331,14 +342,16 @@ export function useGlowAnimation(
     const animate = () => {
       glowIntensity.value = withSequence(
         withTiming(intensity, { duration: duration / 2 }),
-        withTiming(0, { duration: duration / 2 })
+        withTiming(0, { duration: duration / 2 }),
       );
     };
 
     const interval = setInterval(animate, duration);
     animate(); // Start immediately
 
-    return () => { clearInterval(interval); };
+    return () => {
+      clearInterval(interval);
+    };
   }, [glowIntensity, intensity, duration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -348,19 +361,19 @@ export function useGlowAnimation(
       glowIntensity.value,
       [0, 1],
       [0.1, 0.8],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     ),
     shadowRadius: interpolate(
       glowIntensity.value,
       [0, 1],
       [4, 16],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     ),
     elevation: interpolate(
       glowIntensity.value,
       [0, 1],
       [2, 12],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     ),
   }));
 
@@ -370,7 +383,12 @@ export function useGlowAnimation(
 }
 
 interface UseMagneticEffectReturn {
-  handleTouchStart: (touchX: number, touchY: number, centerX: number, centerY: number) => void;
+  handleTouchStart: (
+    touchX: number,
+    touchY: number,
+    centerX: number,
+    centerY: number,
+  ) => void;
   handleTouchEnd: () => void;
   animatedStyle: ReturnType<typeof useAnimatedStyle>;
 }
@@ -378,7 +396,7 @@ interface UseMagneticEffectReturn {
 // === 6. MAGNETIC EFFECT HOOK ===
 export function useMagneticEffect(
   sensitivity: number = 0.3,
-  maxDistance: number = 30
+  maxDistance: number = 30,
 ): UseMagneticEffectReturn {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -392,21 +410,27 @@ export function useMagneticEffect(
       const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
       if (distance < maxDistance) {
-        translateX.value = withSpring(deltaX * sensitivity, SPRING_CONFIGS.gentle);
-        translateY.value = withSpring(deltaY * sensitivity, SPRING_CONFIGS.gentle);
+        translateX.value = withSpring(
+          deltaX * sensitivity,
+          SPRING_CONFIGS.gentle,
+        );
+        translateY.value = withSpring(
+          deltaY * sensitivity,
+          SPRING_CONFIGS.gentle,
+        );
       } else {
         const angle = Math.atan2(deltaY, deltaX);
         translateX.value = withSpring(
           Math.cos(angle) * maxDistance * sensitivity,
-          SPRING_CONFIGS.gentle
+          SPRING_CONFIGS.gentle,
         );
         translateY.value = withSpring(
           Math.sin(angle) * maxDistance * sensitivity,
-          SPRING_CONFIGS.gentle
+          SPRING_CONFIGS.gentle,
         );
       }
     },
-    [translateX, translateY, sensitivity, maxDistance]
+    [translateX, translateY, sensitivity, maxDistance],
   );
 
   const handleTouchEnd = useCallback(() => {

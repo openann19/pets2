@@ -1,20 +1,20 @@
 /**
  * PROJECT HYPERION: ELITE BUTTON COMPONENT
- * 
+ *
  * Composed button using the composition pattern. This demonstrates how to
  * combine multiple effects to create a premium button experience while
  * maintaining clean, maintainable code.
- * 
+ *
  * Architecture:
  * - BaseButton: Core functionality
  * - EffectWrappers: Individual visual effects
  * - Composition: Combine effects declaratively
  */
 
-import React, { forwardRef } from 'react';
-import type { View, ViewStyle } from 'react-native';
+import React, { forwardRef } from "react";
+import type { View, ViewStyle } from "react-native";
 
-import BaseButton, { type BaseButtonProps } from './BaseButton';
+import BaseButton, { type BaseButtonProps } from "./BaseButton";
 import {
   WithGlowFX,
   WithMagneticFX,
@@ -22,7 +22,7 @@ import {
   WithShimmerFX,
   WithPressFX,
   WithGradientFX,
-} from './EffectWrappers';
+} from "./EffectWrappers";
 
 // === TYPES ===
 export interface EliteButtonProps extends BaseButtonProps {
@@ -33,136 +33,118 @@ export interface EliteButtonProps extends BaseButtonProps {
   shimmerEffect?: boolean;
   pressEffect?: boolean;
   gradientEffect?: boolean;
-  
+
   // Effect configurations
   glowColor?: string;
   glowIntensity?: number;
   magneticSensitivity?: number;
   shimmerDuration?: number;
-  gradientName?: keyof typeof import('../../theme/unified-theme').Theme.gradients;
+  gradientName?: keyof typeof import("../../theme/unified-theme").Theme.gradients;
   gradientColors?: string[];
-  
+
   // Haptic feedback
   hapticFeedback?: boolean;
 }
 
 // === MAIN COMPONENT ===
-const EliteButton = forwardRef<View, EliteButtonProps>(({
-  // Effect toggles
-  glowEffect = false,
-  magneticEffect = false,
-  rippleEffect = true,
-  shimmerEffect = false,
-  pressEffect = true,
-  gradientEffect = false,
-  
-  // Effect configurations
-  glowColor,
-  glowIntensity = 1,
-  magneticSensitivity = 0.3,
-  shimmerDuration = 2000,
-  gradientName,
-  gradientColors,
-  
-  // Haptic feedback
-  hapticFeedback = true,
-  
-  // Base button props
-  style,
-  onPress,
-  ...baseProps
-}, ref) => {
-  
-  // Enhanced press handler with haptic feedback
-  const handlePress = () => {
-    if (hapticFeedback) {
-      // Haptic feedback would be implemented here
-      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+const EliteButton = forwardRef<View, EliteButtonProps>(
+  (
+    {
+      // Effect toggles
+      glowEffect = false,
+      magneticEffect = false,
+      rippleEffect = true,
+      shimmerEffect = false,
+      pressEffect = true,
+      gradientEffect = false,
+
+      // Effect configurations
+      glowColor,
+      glowIntensity = 1,
+      magneticSensitivity = 0.3,
+      shimmerDuration = 2000,
+      gradientName,
+      gradientColors,
+
+      // Haptic feedback
+      hapticFeedback = true,
+
+      // Base button props
+      style,
+      onPress,
+      ...baseProps
+    },
+    ref,
+  ) => {
+    // Enhanced press handler with haptic feedback
+    const handlePress = () => {
+      if (hapticFeedback) {
+        // Haptic feedback would be implemented here
+        // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+      onPress?.();
+    };
+
+    // Create the button with all effects applied
+    let ButtonComponent = (
+      <BaseButton {...baseProps} onPress={handlePress} style={style} />
+    );
+
+    // Apply effects in reverse order (outermost to innermost)
+    if (shimmerEffect) {
+      ButtonComponent = (
+        <WithShimmerFX duration={shimmerDuration} style={style}>
+          {ButtonComponent}
+        </WithShimmerFX>
+      );
     }
-    onPress?.();
-  };
 
-  // Create the button with all effects applied
-  let ButtonComponent = (
-    <BaseButton
-      {...baseProps}
-      onPress={handlePress}
-      style={style}
-    />
-  );
+    if (gradientEffect) {
+      ButtonComponent = (
+        <WithGradientFX
+          gradient={gradientName}
+          colors={gradientColors}
+          style={style}
+        >
+          {ButtonComponent}
+        </WithGradientFX>
+      );
+    }
 
-  // Apply effects in reverse order (outermost to innermost)
-  if (shimmerEffect) {
-    ButtonComponent = (
-      <WithShimmerFX
-        duration={shimmerDuration}
-        style={style}
-      >
-        {ButtonComponent}
-      </WithShimmerFX>
-    );
-  }
+    if (rippleEffect) {
+      ButtonComponent = (
+        <WithRippleFX style={style}>{ButtonComponent}</WithRippleFX>
+      );
+    }
 
-  if (gradientEffect) {
-    ButtonComponent = (
-      <WithGradientFX
-        gradient={gradientName}
-        colors={gradientColors}
-        style={style}
-      >
-        {ButtonComponent}
-      </WithGradientFX>
-    );
-  }
+    if (pressEffect) {
+      ButtonComponent = (
+        <WithPressFX style={style}>{ButtonComponent}</WithPressFX>
+      );
+    }
 
-  if (rippleEffect) {
-    ButtonComponent = (
-      <WithRippleFX
-        style={style}
-      >
-        {ButtonComponent}
-      </WithRippleFX>
-    );
-  }
+    if (magneticEffect) {
+      ButtonComponent = (
+        <WithMagneticFX sensitivity={magneticSensitivity} style={style}>
+          {ButtonComponent}
+        </WithMagneticFX>
+      );
+    }
 
-  if (pressEffect) {
-    ButtonComponent = (
-      <WithPressFX
-        style={style}
-      >
-        {ButtonComponent}
-      </WithPressFX>
-    );
-  }
+    if (glowEffect) {
+      ButtonComponent = (
+        <WithGlowFX color={glowColor} intensity={glowIntensity} style={style}>
+          {ButtonComponent}
+        </WithGlowFX>
+      );
+    }
 
-  if (magneticEffect) {
-    ButtonComponent = (
-      <WithMagneticFX
-        sensitivity={magneticSensitivity}
-        style={style}
-      >
-        {ButtonComponent}
-      </WithMagneticFX>
-    );
-  }
-
-  if (glowEffect) {
-    ButtonComponent = (
-      <WithGlowFX
-        color={glowColor}
-        intensity={glowIntensity}
-        style={style}
-      >
-        {ButtonComponent}
-      </WithGlowFX>
-    );
-  }
-
-  return ButtonComponent;
-});
+    return ButtonComponent;
+  },
+);
 
 // Display name for debugging
-EliteButton.displayName = 'EliteButton';
+EliteButton.displayName = "EliteButton";
 
 // === PRESET CONFIGURATIONS ===
 export const EliteButtonPresets = {
@@ -210,9 +192,9 @@ export const EliteButtonPresets = {
       pressEffect={true}
       style={[
         {
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.2)',
+          borderColor: "rgba(255, 255, 255, 0.2)",
         },
         props.style,
       ]}

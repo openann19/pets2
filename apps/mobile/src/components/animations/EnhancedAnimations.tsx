@@ -1,20 +1,14 @@
-import React, { useRef, useEffect } from 'react';
-import type {
-  ViewStyle,
-  TextStyle} from 'react-native';
-import {
-  Animated,
-  Easing,
-  Dimensions,
-} from 'react-native';
+import React, { useRef, useEffect } from "react";
+import type { ViewStyle, TextStyle } from "react-native";
+import { Animated, Easing, Dimensions } from "react-native";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 // Enhanced Animation Hooks and Components
 
 export const useSpringAnimation = (initialValue = 0, config = {}) => {
   const animatedValue = useRef(new Animated.Value(initialValue)).current;
-  
+
   const animate = (toValue: number, customConfig = {}) => {
     return Animated.spring(animatedValue, {
       toValue,
@@ -34,7 +28,10 @@ export const useSequenceAnimation = () => {
     return Animated.sequence(animations);
   };
 
-  const createStagger = (animations: Animated.CompositeAnimation[], delay = 100) => {
+  const createStagger = (
+    animations: Animated.CompositeAnimation[],
+    delay = 100,
+  ) => {
     return Animated.stagger(delay, animations);
   };
 
@@ -59,11 +56,13 @@ export const usePulseAnimation = (duration = 1000) => {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     pulse.start();
 
-    return () => { pulse.stop(); };
+    return () => {
+      pulse.stop();
+    };
   }, [duration]);
 
   return pulseAnim;
@@ -87,11 +86,13 @@ export const useFloatingAnimation = (amplitude = 10, duration = 2000) => {
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     float.start();
 
-    return () => { float.stop(); };
+    return () => {
+      float.stop();
+    };
   }, [duration]);
 
   const translateY = floatAnim.interpolate({
@@ -112,11 +113,13 @@ export const useShimmerAnimation = (duration = 1500) => {
         duration,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     );
     shimmer.start();
 
-    return () => { shimmer.stop(); };
+    return () => {
+      shimmer.stop();
+    };
   }, [duration]);
 
   const translateX = shimmerAnim.interpolate({
@@ -136,7 +139,7 @@ export const useParallaxAnimation = () => {
         translateY: scrollY.interpolate({
           inputRange: [0, 1],
           outputRange: [offset, offset + speed],
-          extrapolate: 'extend',
+          extrapolate: "extend",
         }),
       },
     ],
@@ -172,7 +175,9 @@ export const FadeInView: React.FC<FadeInViewProps> = ({
       }).start();
     }, delay);
 
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, [duration, delay]);
 
   return (
@@ -184,7 +189,7 @@ export const FadeInView: React.FC<FadeInViewProps> = ({
 
 interface SlideInViewProps {
   children: React.ReactNode;
-  direction?: 'left' | 'right' | 'up' | 'down';
+  direction?: "left" | "right" | "up" | "down";
   duration?: number;
   delay?: number;
   distance?: number;
@@ -193,7 +198,7 @@ interface SlideInViewProps {
 
 export const SlideInView: React.FC<SlideInViewProps> = ({
   children,
-  direction = 'right',
+  direction = "right",
   duration = 500,
   delay = 0,
   distance = 50,
@@ -211,31 +216,49 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
       }).start();
     }, delay);
 
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, [duration, delay]);
 
   const getTransform = () => {
     switch (direction) {
-      case 'left':
-        return [{ translateX: slideAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -distance],
-        }) }];
-      case 'right':
-        return [{ translateX: slideAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, distance],
-        }) }];
-      case 'up':
-        return [{ translateY: slideAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -distance],
-        }) }];
-      case 'down':
-        return [{ translateY: slideAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, distance],
-        }) }];
+      case "left":
+        return [
+          {
+            translateX: slideAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -distance],
+            }),
+          },
+        ];
+      case "right":
+        return [
+          {
+            translateX: slideAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, distance],
+            }),
+          },
+        ];
+      case "up":
+        return [
+          {
+            translateY: slideAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -distance],
+            }),
+          },
+        ];
+      case "down":
+        return [
+          {
+            translateY: slideAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, distance],
+            }),
+          },
+        ];
       default:
         return [];
     }
@@ -275,7 +298,9 @@ export const ScaleInView: React.FC<ScaleInViewProps> = ({
       }).start();
     }, delay);
 
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, [duration, delay, initialScale]);
 
   return (
@@ -297,7 +322,7 @@ export const RotateInView: React.FC<RotateInViewProps> = ({
   children,
   duration = 500,
   delay = 0,
-  initialRotation = '180deg',
+  initialRotation = "180deg",
   style,
 }) => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -312,12 +337,14 @@ export const RotateInView: React.FC<RotateInViewProps> = ({
       }).start();
     }, delay);
 
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, [duration, delay]);
 
   const rotation = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [initialRotation, '0deg'],
+    outputRange: [initialRotation, "0deg"],
   });
 
   return (
@@ -342,14 +369,14 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
   style,
   onComplete,
 }) => {
-  const [displayText, setDisplayText] = React.useState('');
+  const [displayText, setDisplayText] = React.useState("");
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (currentIndex < text.length) {
         const interval = setInterval(() => {
-          setCurrentIndex(prev => {
+          setCurrentIndex((prev) => {
             if (prev >= text.length - 1) {
               clearInterval(interval);
               onComplete?.();
@@ -359,11 +386,15 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
           });
         }, duration / text.length);
 
-        return () => { clearInterval(interval); };
+        return () => {
+          clearInterval(interval);
+        };
       }
     }, delay);
 
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, [text, duration, delay, currentIndex]);
 
   useEffect(() => {
@@ -386,16 +417,16 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
 export const customEasing = {
   // Bouncy entrance
   bounceIn: Easing.out(Easing.back(2)),
-  
+
   // Smooth elastic
   elastic: Easing.elastic(2),
-  
+
   // Custom bezier curves
   smoothInOut: Easing.bezier(0.25, 0.46, 0.45, 0.94),
   quickOut: Easing.bezier(0.25, 0.46, 0.45, 0.94),
-  
+
   // Physics-based
-  spring: (tension = 100, friction = 8) => 
+  spring: (tension = 100, friction = 8) =>
     Easing.out(Easing.poly(tension / 100)),
 };
 
@@ -407,21 +438,21 @@ export const animationPresets = {
     easing: customEasing.smoothInOut,
     useNativeDriver: true,
   },
-  
+
   // Button press
   buttonPress: {
     duration: 150,
     easing: Easing.out(Easing.quad),
     useNativeDriver: true,
   },
-  
+
   // Modal entrance
   modalSlideUp: {
     duration: 400,
     easing: customEasing.bounceIn,
     useNativeDriver: true,
   },
-  
+
   // Loading spinner
   loadingSpin: {
     duration: 1000,
@@ -434,7 +465,7 @@ export const animationPresets = {
 export const createSwipeAnimation = (
   gestureState: any,
   screenWidth: number,
-  onSwipeComplete?: (direction: 'left' | 'right') => void
+  onSwipeComplete?: (direction: "left" | "right") => void,
 ) => {
   const translateX = new Animated.Value(0);
   const opacity = new Animated.Value(1);
@@ -445,8 +476,8 @@ export const createSwipeAnimation = (
     const velocity = Math.abs(vx) > 0.5;
 
     if (Math.abs(dx) > threshold || velocity) {
-      const direction = dx > 0 ? 'right' : 'left';
-      const toValue = direction === 'right' ? screenWidth : -screenWidth;
+      const direction = dx > 0 ? "right" : "left";
+      const toValue = direction === "right" ? screenWidth : -screenWidth;
 
       Animated.parallel([
         Animated.timing(translateX, {

@@ -1,14 +1,21 @@
-import { Ionicons } from '@expo/vector-icons';
-import type { Message } from '@pawfectmatch/core';
-import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../../contexts/ThemeContext';
-import { MessageBubble } from './MessageBubble';
-import { MobileVoiceRecorder } from './MobileVoiceRecorder';
+import { Ionicons } from "@expo/vector-icons";
+import type { Message } from "@pawfectmatch/core";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useTheme } from "../../contexts/ThemeContext";
+import { MessageBubble } from "./MessageBubble";
+import { MobileVoiceRecorder } from "./MobileVoiceRecorder";
 
 interface MobileChatProps {
   messages: Message[];
-  onSendMessage: (content: string, type?: Message['messageType']) => void;
+  onSendMessage: (content: string, type?: Message["messageType"]) => void;
   currentUserId: string;
   otherUserName: string;
 }
@@ -17,17 +24,17 @@ export function MobileChat({
   messages,
   onSendMessage,
   currentUserId,
-  otherUserName
+  otherUserName,
 }: MobileChatProps): React.JSX.Element {
   const { colors } = useTheme();
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   const handleSendText = () => {
     if (inputText.trim()) {
-      onSendMessage(inputText.trim(), 'text');
-      setInputText('');
+      onSendMessage(inputText.trim(), "text");
+      setInputText("");
     }
   };
 
@@ -36,13 +43,13 @@ export function MobileChat({
     const reader = new FileReader();
     reader.onload = () => {
       const audioUrl = reader.result as string;
-      onSendMessage(audioUrl, 'voice');
+      onSendMessage(audioUrl, "voice");
     };
     reader.readAsDataURL(audioBlob);
   };
 
   const handleKeyPress = (e: { nativeEvent: { key: string } }) => {
-    if (e.nativeEvent.key === 'Enter') {
+    if (e.nativeEvent.key === "Enter") {
       handleSendText();
     }
   };
@@ -59,7 +66,9 @@ export function MobileChat({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.card }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>{otherUserName}</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
+          {otherUserName}
+        </Text>
       </View>
 
       {/* Messages */}
@@ -83,7 +92,10 @@ export function MobileChat({
       <View style={[styles.inputContainer, { backgroundColor: colors.card }]}>
         <View style={styles.inputRow}>
           <TextInput
-            style={[styles.textInput, { backgroundColor: colors.background, color: colors.text }]}
+            style={[
+              styles.textInput,
+              { backgroundColor: colors.background, color: colors.text },
+            ]}
             value={inputText}
             onChangeText={setInputText}
             placeholder={`Message ${otherUserName}...`}
@@ -95,15 +107,22 @@ export function MobileChat({
 
           <TouchableOpacity
             style={[styles.voiceButton, { backgroundColor: colors.primary }]}
-            onPress={() => { setShowVoiceRecorder(true); }}
+            onPress={() => {
+              setShowVoiceRecorder(true);
+            }}
           >
             <Ionicons name="mic" size={20} color="white" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.sendButton, {
-              backgroundColor: inputText.trim() ? colors.primary : colors.gray400
-            }]}
+            style={[
+              styles.sendButton,
+              {
+                backgroundColor: inputText.trim()
+                  ? colors.primary
+                  : colors.gray400,
+              },
+            ]}
             onPress={handleSendText}
             disabled={!inputText.trim()}
           >
@@ -113,13 +132,17 @@ export function MobileChat({
       </View>
 
       {/* Voice Recorder Modal */}
-      {showVoiceRecorder ? <MobileVoiceRecorder
-        onSend={handleVoiceMessage}
-        onCancel={() => { setShowVoiceRecorder(false); }}
-      /> : null}
+      {showVoiceRecorder ? (
+        <MobileVoiceRecorder
+          onSend={handleVoiceMessage}
+          onCancel={() => {
+            setShowVoiceRecorder(false);
+          }}
+        />
+      ) : null}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -128,12 +151,12 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
   messagesList: {
     flex: 1,
@@ -144,12 +167,12 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: "#e0e0e0",
     padding: 16,
   },
   inputRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     gap: 8,
   },
   textInput: {
@@ -164,14 +187,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   sendButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

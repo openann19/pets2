@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
-import { FlatList, View, StyleSheet } from 'react-native';
-import { Message } from '../hooks/useChatData';
-import { MessageItem } from './MessageItem';
-import { TypingIndicator } from './TypingIndicator';
-import { tokens } from '@pawfectmatch/design-tokens';
+import React, { useCallback } from "react";
+import { FlatList, View, StyleSheet } from "react-native";
+import { Message } from "../hooks/useChatData";
+import { MessageItem } from "./MessageItem";
+import { TypingIndicator } from "./TypingIndicator";
+import { tokens } from "@pawfectmatch/design-tokens";
 
 interface MessageListProps {
   messages: Message[];
@@ -13,7 +13,9 @@ interface MessageListProps {
   onMessageLongPress?: (message: Message) => void;
   onRetryMessage?: (messageId: string) => void;
   flatListRef?: React.RefObject<FlatList>;
-  onScroll?: (event: { nativeEvent: { contentOffset: { x: number; y: number } } }) => void;
+  onScroll?: (event: {
+    nativeEvent: { contentOffset: { x: number; y: number } };
+  }) => void;
 }
 
 export function MessageList({
@@ -26,29 +28,36 @@ export function MessageList({
   flatListRef,
   onScroll,
 }: MessageListProps): React.JSX.Element {
-  const renderMessage = useCallback(({ item, index }: { item: Message; index: number }) => (
-    <MessageItem
-      message={item}
-      index={index}
-      messages={messages}
-      isOnline={isOnline}
-      onPress={onMessagePress}
-      onLongPress={onMessageLongPress}
-      onRetry={onRetryMessage}
-    />
-  ), [messages, isOnline, onMessagePress, onMessageLongPress, onRetryMessage]);
+  const renderMessage = useCallback(
+    ({ item, index }: { item: Message; index: number }) => (
+      <MessageItem
+        message={item}
+        index={index}
+        messages={messages}
+        isOnline={isOnline}
+        onPress={onMessagePress}
+        onLongPress={onMessageLongPress}
+        onRetry={onRetryMessage}
+      />
+    ),
+    [messages, isOnline, onMessagePress, onMessageLongPress, onRetryMessage],
+  );
 
-  const renderTypingIndicator = useCallback(() => (
-    <TypingIndicator typingUsers={typingUsers} />
-  ), [typingUsers]);
+  const renderTypingIndicator = useCallback(
+    () => <TypingIndicator typingUsers={typingUsers} />,
+    [typingUsers],
+  );
 
   const keyExtractor = useCallback((item: Message) => item._id, []);
 
-  const getItemLayout = useCallback((data: Message[] | null | undefined, index: number) => ({
-    length: 80, // Approximate message height
-    offset: 80 * index,
-    index,
-  }), []);
+  const getItemLayout = useCallback(
+    (data: Message[] | null | undefined, index: number) => ({
+      length: 80, // Approximate message height
+      offset: 80 * index,
+      index,
+    }),
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -71,7 +80,7 @@ export function MessageList({
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

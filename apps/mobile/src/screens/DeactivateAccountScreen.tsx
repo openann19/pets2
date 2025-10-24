@@ -1,5 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -8,11 +8,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Haptics from "expo-haptics";
 
 interface DeactivateAccountScreenProps {
   navigation: {
@@ -20,28 +20,33 @@ interface DeactivateAccountScreenProps {
   };
 }
 
-function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): JSX.Element {
-  const [reason, setReason] = useState('');
-  const [confirmText, setConfirmText] = useState('');
+function DeactivateAccountScreen({
+  navigation,
+}: DeactivateAccountScreenProps): JSX.Element {
+  const [reason, setReason] = useState("");
+  const [confirmText, setConfirmText] = useState("");
   const [loading, setLoading] = useState(false);
 
   const reasons = [
-    'Taking a break from dating',
-    'Found a partner',
-    'Not enjoying the app',
-    'Privacy concerns',
-    'Too many notifications',
-    'Other'
+    "Taking a break from dating",
+    "Found a partner",
+    "Not enjoying the app",
+    "Privacy concerns",
+    "Too many notifications",
+    "Other",
   ];
 
   const handleDeactivate = useCallback(async () => {
     if (!reason) {
-      Alert.alert('Required', 'Please select a reason for deactivation.');
+      Alert.alert("Required", "Please select a reason for deactivation.");
       return;
     }
 
-    if (confirmText.toLowerCase() !== 'deactivate') {
-      Alert.alert('Confirmation Required', 'Please type "deactivate" to confirm.');
+    if (confirmText.toLowerCase() !== "deactivate") {
+      Alert.alert(
+        "Confirmation Required",
+        'Please type "deactivate" to confirm.',
+      );
       return;
     }
 
@@ -50,23 +55,23 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       Alert.alert(
-        'Account Deactivated',
-        'Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.',
+        "Account Deactivated",
+        "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
         [
           {
-            text: 'OK',
+            text: "OK",
             onPress: () => {
               // In real app, would log out user
               navigation.goBack();
-            }
-          }
-        ]
+            },
+          },
+        ],
       );
     } catch (error) {
-      Alert.alert('Error', 'Failed to deactivate account. Please try again.');
+      Alert.alert("Error", "Failed to deactivate account. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -80,7 +85,7 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#ff9a9e', '#fecfef', '#ff9a9e']}
+        colors={["#ff9a9e", "#fecfef", "#ff9a9e"]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -90,7 +95,9 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+                () => {},
+              );
               navigation.goBack();
             }}
           >
@@ -108,8 +115,8 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
           <BlurView intensity={15} style={styles.warningCard}>
             <Ionicons name="warning-outline" size={24} color="#F59E0B" />
             <Text style={styles.warningText}>
-              Deactivating your account will temporarily hide your profile and pause all activity.
-              You can reactivate anytime by logging back in.
+              Deactivating your account will temporarily hide your profile and
+              pause all activity. You can reactivate anytime by logging back in.
             </Text>
           </BlurView>
 
@@ -121,15 +128,22 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
               key={item}
               style={[
                 styles.reasonCard,
-                reason === item && styles.reasonCardSelected
+                reason === item && styles.reasonCardSelected,
               ]}
-              onPress={() => { selectReason(item); }}
+              onPress={() => {
+                selectReason(item);
+              }}
             >
-              <BlurView intensity={reason === item ? 25 : 15} style={styles.reasonBlur}>
-                <Text style={[
-                  styles.reasonText,
-                  reason === item && styles.reasonTextSelected
-                ]}>
+              <BlurView
+                intensity={reason === item ? 25 : 15}
+                style={styles.reasonBlur}
+              >
+                <Text
+                  style={[
+                    styles.reasonText,
+                    reason === item && styles.reasonTextSelected,
+                  ]}
+                >
                   {item}
                 </Text>
                 {reason === item && (
@@ -140,7 +154,7 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
           ))}
 
           {/* Custom Reason */}
-          {reason === 'Other' && (
+          {reason === "Other" && (
             <BlurView intensity={15} style={styles.customReasonCard}>
               <TextInput
                 style={styles.customReasonInput}
@@ -175,7 +189,9 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
-              onPress={() => { navigation.goBack(); }}
+              onPress={() => {
+                navigation.goBack();
+              }}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -184,13 +200,18 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
               style={[
                 styles.button,
                 styles.deactivateButton,
-                (!reason || confirmText.toLowerCase() !== 'deactivate' || loading) && styles.buttonDisabled
+                (!reason ||
+                  confirmText.toLowerCase() !== "deactivate" ||
+                  loading) &&
+                  styles.buttonDisabled,
               ]}
               onPress={handleDeactivate}
-              disabled={!reason || confirmText.toLowerCase() !== 'deactivate' || loading}
+              disabled={
+                !reason || confirmText.toLowerCase() !== "deactivate" || loading
+              }
             >
               <Text style={styles.deactivateButtonText}>
-                {loading ? 'Deactivating...' : 'Deactivate Account'}
+                {loading ? "Deactivating..." : "Deactivate Account"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -203,7 +224,7 @@ function DeactivateAccountScreen({ navigation }: DeactivateAccountScreenProps): 
       </SafeAreaView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -213,9 +234,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -223,17 +244,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   backButtonBlur: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   headerSpacer: {
     width: 40,
@@ -243,50 +264,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   warningCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: "rgba(245, 158, 11, 0.2)",
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.3)',
+    borderColor: "rgba(245, 158, 11, 0.3)",
   },
   warningText: {
     flex: 1,
     marginLeft: 12,
     fontSize: 14,
-    color: 'white',
+    color: "white",
     lineHeight: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
     marginBottom: 16,
     marginTop: 8,
   },
   reasonCard: {
     borderRadius: 12,
     marginBottom: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   reasonCardSelected: {
     transform: [{ scale: 1.02 }],
   },
   reasonBlur: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
   },
   reasonText: {
     fontSize: 16,
-    color: 'white',
+    color: "white",
     flex: 1,
   },
   reasonTextSelected: {
-    fontWeight: '600',
+    fontWeight: "600",
   },
   customReasonCard: {
     borderRadius: 12,
@@ -295,14 +316,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   customReasonInput: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 8,
     padding: 12,
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: "rgba(255,255,255,0.2)",
   },
   confirmationCard: {
     borderRadius: 12,
@@ -311,21 +332,21 @@ const styles = StyleSheet.create({
   },
   confirmationText: {
     fontSize: 16,
-    color: 'white',
+    color: "white",
     marginBottom: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   confirmationInput: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 8,
     padding: 12,
-    color: 'white',
+    color: "white",
     fontSize: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: "rgba(255,255,255,0.2)",
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginBottom: 24,
   },
@@ -333,33 +354,33 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   cancelButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   deactivateButton: {
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
   },
   deactivateButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   buttonDisabled: {
     opacity: 0.5,
   },
   helpText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
+    color: "rgba(255,255,255,0.7)",
     marginBottom: 32,
   },
 });

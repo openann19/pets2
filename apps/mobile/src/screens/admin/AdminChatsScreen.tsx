@@ -3,8 +3,8 @@
  * Production-ready implementation for moderating user chats
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -15,11 +15,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../contexts/ThemeContext';
-import { _adminAPI } from '../../services/api';
-import { errorHandler } from '../../services/errorHandler';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../contexts/ThemeContext";
+import { _adminAPI } from "../../services/api";
+import { errorHandler } from "../../services/errorHandler";
 
 interface ChatMessage {
   id: string;
@@ -35,7 +35,7 @@ interface ChatMessage {
   reviewed: boolean;
   reviewedBy?: string;
   reviewedAt?: string;
-  action?: 'approved' | 'removed' | 'warned';
+  action?: "approved" | "removed" | "warned";
 }
 
 interface AdminChatsScreenProps {
@@ -49,152 +49,179 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'flagged' | 'unreviewed'>('flagged');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState<"all" | "flagged" | "unreviewed">(
+    "flagged",
+  );
 
-  const loadMessages = useCallback(async (refresh = false) => {
-    try {
-      if (refresh) setRefreshing(true);
-      else setLoading(true);
+  const loadMessages = useCallback(
+    async (refresh = false) => {
+      try {
+        if (refresh) setRefreshing(true);
+        else setLoading(true);
 
-      const response = await _adminAPI.getChatMessages({
-        filter,
-        search: searchQuery,
-        limit: 50,
-      });
+        const response = await _adminAPI.getChatMessages({
+          filter,
+          search: searchQuery,
+          limit: 50,
+        });
 
-      if (response?.success && response.data) {
-        setMessages(response.data);
-      }
-    } catch (error) {
-      errorHandler.handleError(
-        error instanceof Error ? error : new Error('Failed to load chat messages'),
-        {
-          component: 'AdminChatsScreen',
-          action: 'loadMessages',
+        if (response?.success && response.data) {
+          setMessages(response.data);
         }
-      );
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [filter, searchQuery]);
+      } catch (error) {
+        errorHandler.handleError(
+          error instanceof Error
+            ? error
+            : new Error("Failed to load chat messages"),
+          {
+            component: "AdminChatsScreen",
+            action: "loadMessages",
+          },
+        );
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [filter, searchQuery],
+  );
 
   useEffect(() => {
     void loadMessages();
   }, [loadMessages]);
 
-  const handleMessageAction = useCallback(async (
-    messageId: string,
-    action: 'approve' | 'remove' | 'warn'
-  ) => {
-    try {
-      const response = await _adminAPI.moderateMessage({
-        messageId,
-        action,
-      });
+  const handleMessageAction = useCallback(
+    async (messageId: string, action: "approve" | "remove" | "warn") => {
+      try {
+        const response = await _adminAPI.moderateMessage({
+          messageId,
+          action,
+        });
 
-      if (response?.success) {
-        setMessages(prev =>
-          prev.map(msg =>
-            msg.id === messageId
-              ? {
-                ...msg,
-                reviewed: true,
-                reviewedAt: new Date().toISOString(),
-                action: action === 'approve' ? 'approved' : action === 'remove' ? 'removed' : 'warned',
-              }
-              : msg
-          )
-        );
+        if (response?.success) {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === messageId
+                ? {
+                    ...msg,
+                    reviewed: true,
+                    reviewedAt: new Date().toISOString(),
+                    action:
+                      action === "approve"
+                        ? "approved"
+                        : action === "remove"
+                          ? "removed"
+                          : "warned",
+                  }
+                : msg,
+            ),
+          );
 
-        Alert.alert('Success', `Message ${action}d successfully`);
-      }
-    } catch (error) {
-      errorHandler.handleError(
-        error instanceof Error ? error : new Error(`Failed to ${action} message`),
-        {
-          component: 'AdminChatsScreen',
-          action: 'handleMessageAction',
-          metadata: { messageId, action },
+          Alert.alert("Success", `Message ${action}d successfully`);
         }
-      );
-    }
-  }, []);
+      } catch (error) {
+        errorHandler.handleError(
+          error instanceof Error
+            ? error
+            : new Error(`Failed to ${action} message`),
+          {
+            component: "AdminChatsScreen",
+            action: "handleMessageAction",
+            metadata: { messageId, action },
+          },
+        );
+      }
+    },
+    [],
+  );
 
-  const renderMessage = useCallback(({ item }: { item: ChatMessage }) => (
-    <View style={[styles.messageCard, { backgroundColor: colors.card }]}>
-      <View style={styles.messageHeader}>
-        <View style={styles.userInfo}>
-          <Text style={[styles.senderName, { color: colors.text }]}>
-            {item.senderName} → {item.receiverName}
-          </Text>
-          <Text style={[styles.timestamp, { color: colors.textSecondary }]}>
-            {new Date(item.timestamp).toLocaleString()}
-          </Text>
+  const renderMessage = useCallback(
+    ({ item }: { item: ChatMessage }) => (
+      <View style={[styles.messageCard, { backgroundColor: colors.card }]}>
+        <View style={styles.messageHeader}>
+          <View style={styles.userInfo}>
+            <Text style={[styles.senderName, { color: colors.text }]}>
+              {item.senderName} → {item.receiverName}
+            </Text>
+            <Text style={[styles.timestamp, { color: colors.textSecondary }]}>
+              {new Date(item.timestamp).toLocaleString()}
+            </Text>
+          </View>
+          {item.flagged ? (
+            <View style={[styles.flagBadge, { backgroundColor: colors.error }]}>
+              <Ionicons name="flag" size={12} color="white" />
+              <Text style={styles.flagText}>Flagged</Text>
+            </View>
+          ) : null}
         </View>
-        {item.flagged ? <View style={[styles.flagBadge, { backgroundColor: colors.error }]}>
-          <Ionicons name="flag" size={12} color="white" />
-          <Text style={styles.flagText}>Flagged</Text>
-        </View> : null}
+
+        <Text style={[styles.messageText, { color: colors.text }]}>
+          {item.message}
+        </Text>
+
+        {item.flagReason ? (
+          <Text style={[styles.flagReason, { color: colors.error }]}>
+            Reason: {item.flagReason}
+          </Text>
+        ) : null}
+
+        {item.reviewed ? (
+          <View
+            style={[styles.reviewedBadge, { backgroundColor: colors.success }]}
+          >
+            <Text style={styles.reviewedText}>
+              {item.action?.toUpperCase()} by {item.reviewedBy}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.approveButton]}
+              onPress={() => handleMessageAction(item.id, "approve")}
+            >
+              <Ionicons name="checkmark" size={16} color="white" />
+              <Text style={styles.actionButtonText}>Approve</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionButton, styles.warnButton]}
+              onPress={() => handleMessageAction(item.id, "warn")}
+            >
+              <Ionicons name="warning" size={16} color="white" />
+              <Text style={styles.actionButtonText}>Warn</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionButton, styles.removeButton]}
+              onPress={() => handleMessageAction(item.id, "remove")}
+            >
+              <Ionicons name="trash" size={16} color="white" />
+              <Text style={styles.actionButtonText}>Remove</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-
-      <Text style={[styles.messageText, { color: colors.text }]}>
-        {item.message}
-      </Text>
-
-      {item.flagReason ? <Text style={[styles.flagReason, { color: colors.error }]}>
-        Reason: {item.flagReason}
-      </Text> : null}
-
-      {item.reviewed ? (
-        <View style={[styles.reviewedBadge, { backgroundColor: colors.success }]}>
-          <Text style={styles.reviewedText}>
-            {item.action?.toUpperCase()} by {item.reviewedBy}
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.actionButtons}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.approveButton]}
-            onPress={() => handleMessageAction(item.id, 'approve')}
-          >
-            <Ionicons name="checkmark" size={16} color="white" />
-            <Text style={styles.actionButtonText}>Approve</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.warnButton]}
-            onPress={() => handleMessageAction(item.id, 'warn')}
-          >
-            <Ionicons name="warning" size={16} color="white" />
-            <Text style={styles.actionButtonText}>Warn</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.removeButton]}
-            onPress={() => handleMessageAction(item.id, 'remove')}
-          >
-            <Ionicons name="trash" size={16} color="white" />
-            <Text style={styles.actionButtonText}>Remove</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  ), [colors, handleMessageAction]);
+    ),
+    [colors, handleMessageAction],
+  );
 
   const renderFilterButton = (filterType: typeof filter, label: string) => (
     <TouchableOpacity
       style={[
         styles.filterButton,
-        { backgroundColor: filter === filterType ? colors.primary : colors.card },
+        {
+          backgroundColor: filter === filterType ? colors.primary : colors.card,
+        },
       ]}
-      onPress={() => { setFilter(filterType); }}
+      onPress={() => {
+        setFilter(filterType);
+      }}
     >
       <Text
         style={[
           styles.filterButtonText,
-          { color: filter === filterType ? 'white' : colors.text },
+          { color: filter === filterType ? "white" : colors.text },
         ]}
       >
         {label}
@@ -203,18 +230,32 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.card }]}>
-        <TouchableOpacity onPress={() => { navigation.goBack(); }} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>Chat Moderation</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>
+          Chat Moderation
+        </Text>
       </View>
 
       {/* Search and Filters */}
       <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
-        <View style={[styles.searchInputContainer, { backgroundColor: colors.background }]}>
+        <View
+          style={[
+            styles.searchInputContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
           <Ionicons name="search" size={20} color={colors.textSecondary} />
           <TextInput
             style={[styles.searchInput, { color: colors.text }]}
@@ -226,9 +267,9 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         </View>
 
         <View style={styles.filterContainer}>
-          {renderFilterButton('flagged', 'Flagged')}
-          {renderFilterButton('unreviewed', 'Unreviewed')}
-          {renderFilterButton('all', 'All')}
+          {renderFilterButton("flagged", "Flagged")}
+          {renderFilterButton("unreviewed", "Unreviewed")}
+          {renderFilterButton("all", "All")}
         </View>
       </View>
 
@@ -255,7 +296,11 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="chatbubbles-outline" size={64} color={colors.textSecondary} />
+              <Ionicons
+                name="chatbubbles-outline"
+                size={64}
+                color={colors.textSecondary}
+              />
               <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
                 No messages found
               </Text>
@@ -265,35 +310,35 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       )}
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
   backButton: {
     marginRight: 16,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
   },
   searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -305,7 +350,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   filterContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   filterButton: {
@@ -315,12 +360,12 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 12,
@@ -333,16 +378,16 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   messageHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 8,
   },
   userInfo: {
@@ -350,15 +395,15 @@ const styles = StyleSheet.create({
   },
   senderName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
   },
   timestamp: {
     fontSize: 12,
   },
   flagBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -366,8 +411,8 @@ const styles = StyleSheet.create({
   },
   flagText: {
     fontSize: 12,
-    color: 'white',
-    fontWeight: '500',
+    color: "white",
+    fontWeight: "500",
   },
   messageText: {
     fontSize: 16,
@@ -376,50 +421,50 @@ const styles = StyleSheet.create({
   },
   flagReason: {
     fontSize: 14,
-    fontStyle: 'italic',
+    fontStyle: "italic",
     marginBottom: 12,
   },
   reviewedBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   reviewedText: {
     fontSize: 12,
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
   },
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
     gap: 4,
   },
   approveButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: "#10B981",
   },
   warnButton: {
-    backgroundColor: '#F59E0B',
+    backgroundColor: "#F59E0B",
   },
   removeButton: {
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
   },
   actionButtonText: {
     fontSize: 12,
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 64,
   },
   emptyText: {

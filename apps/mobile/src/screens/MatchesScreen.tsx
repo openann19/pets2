@@ -1,19 +1,21 @@
-import {
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList, RefreshControl, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
-import { MatchCard } from '../components/matches/MatchCard';
-import { MatchesTabs } from '../components/matches/MatchesTabs';
-import { useMatchesData } from '../hooks/useMatchesData';
-import { logger } from '../services/logger';
+import {
+  AdvancedHeader,
+  HeaderConfigs,
+} from "../components/Advanced/AdvancedHeader";
+import { MatchCard } from "../components/matches/MatchCard";
+import { MatchesTabs } from "../components/matches/MatchesTabs";
+import { useMatchesData } from "../hooks/useMatchesData";
+import { logger } from "../services/logger";
 
 interface MatchesScreenProps {
   navigation: {
-    navigate: (screen: string, params: { matchId: string; petName: string }) => void;
+    navigate: (
+      screen: string,
+      params: { matchId: string; petName: string },
+    ) => void;
   };
 }
 
@@ -29,7 +31,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
   } = useMatchesData();
 
   const handleMatchPress = (matchId: string, petName: string) => {
-    navigation.navigate('Chat', { matchId, petName });
+    navigation.navigate("Chat", { matchId, petName });
   };
 
   return (
@@ -37,31 +39,31 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
       {/* Advanced Header */}
       <AdvancedHeader
         {...HeaderConfigs.glass({
-          title: 'Matches',
+          title: "Matches",
           rightButtons: [
             {
-              type: 'filter',
+              type: "filter",
               onPress: async () => {
-                logger.info('Filter matches button pressed');
+                logger.info("Filter matches button pressed");
               },
-              variant: 'glass',
-              haptic: 'light',
+              variant: "glass",
+              haptic: "light",
             },
             {
-              type: 'search',
+              type: "search",
               onPress: async () => {
-                logger.info('Search matches button pressed');
+                logger.info("Search matches button pressed");
               },
-              variant: 'minimal',
-              haptic: 'light',
+              variant: "minimal",
+              haptic: "light",
             },
           ],
           apiActions: {
             filter: async () => {
-              logger.info('Filter API action triggered');
+              logger.info("Filter API action triggered");
             },
             search: async () => {
-              logger.info('Search API action triggered');
+              logger.info("Search API action triggered");
             },
           },
         })}
@@ -70,14 +72,16 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
       <MatchesTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
 
       <FlatList
-        data={selectedTab === 'matches' ? matches : likedYou}
+        data={selectedTab === "matches" ? matches : likedYou}
         renderItem={({ item }) => (
           <MatchCard
             match={item}
-            onPress={() => { handleMatchPress(item._id, item.petName); }}
+            onPress={() => {
+              handleMatchPress(item._id, item.petName);
+            }}
           />
         )}
-        keyExtractor={item => item._id}
+        keyExtractor={(item) => item._id}
         style={styles.list}
         contentContainerStyle={styles.listContent}
         onScroll={async (e) => {
@@ -99,7 +103,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   list: {
     flex: 1,

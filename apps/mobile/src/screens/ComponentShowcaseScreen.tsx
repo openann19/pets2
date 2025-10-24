@@ -1,20 +1,13 @@
 /**
  * PROJECT HYPERION: COMPONENT SHOWCASE SCREEN
- * 
+ *
  * Comprehensive demonstration of all new architecture components.
  * This screen showcases the power and flexibility of the new system.
  */
 
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState, useCallback } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Alert,
-  Dimensions,
-} from 'react-native';
-
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState, useCallback } from "react";
+import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
 
 // Import new architecture components
 import {
@@ -34,66 +27,76 @@ import {
   Label,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from '../components';
+} from "../components";
 
 // Import legacy components for comparison
-import { EliteContainer, EliteHeader } from '../components/EliteComponents';
+import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 
 type RootStackParamList = {
   ComponentShowcase: undefined;
   Home: undefined;
 };
 
-type ComponentShowcaseScreenProps = NativeStackScreenProps<RootStackParamList, 'ComponentShowcase'>;
+type ComponentShowcaseScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ComponentShowcase"
+>;
 
 // Mock data for demonstration
 const mockPet = {
-  _id: '1',
-  id: '1',
-  name: 'Luna',
-  species: 'Dog',
-  breed: 'Golden Retriever',
+  _id: "1",
+  id: "1",
+  name: "Luna",
+  species: "Dog",
+  breed: "Golden Retriever",
   age: 3,
-  description: 'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
-  bio: 'A friendly and energetic golden retriever who loves playing fetch and going on long walks.',
+  description:
+    "A friendly and energetic golden retriever who loves playing fetch and going on long walks.",
+  bio: "A friendly and energetic golden retriever who loves playing fetch and going on long walks.",
   photos: [
-    'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
-    'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400',
+    "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
+    "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
   ],
-  location: 'San Francisco, CA',
+  location: "San Francisco, CA",
   distance: 2.5,
   compatibility: 95,
   isVerified: true,
   owner: {
-    name: 'Sarah Johnson',
+    name: "Sarah Johnson",
     verified: true,
   },
-  tags: ['Friendly', 'Playful', 'Good with kids', 'House trained'],
+  tags: ["Friendly", "Playful", "Good with kids", "House trained"],
 };
 
 const mockPhotos = [
-  { id: '1', uri: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400' },
-  { id: '2', uri: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400' },
+  {
+    id: "1",
+    uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
+  },
+  {
+    id: "2",
+    uri: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400",
+  },
 ];
 
-export default function ComponentShowcaseScreen({ navigation }: ComponentShowcaseScreenProps) {
-  const [_selectedButton, setSelectedButton] = useState<string>('');
-  const [_selectedContainer, setSelectedContainer] = useState<string>('');
+export default function ComponentShowcaseScreen({
+  navigation,
+}: ComponentShowcaseScreenProps) {
+  const [_selectedButton, setSelectedButton] = useState<string>("");
+  const [_selectedContainer, setSelectedContainer] = useState<string>("");
   const [photos, setPhotos] = useState(mockPhotos);
   const [isLoading, setIsLoading] = useState(false);
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(
-    8, // Number of sections
-    100,
-    'gentle'
-  );
+  const { start: startStaggeredAnimation, getAnimatedStyle } =
+    useStaggeredAnimation(
+      8, // Number of sections
+      100,
+      "gentle",
+    );
 
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeInUp',
-    0,
-    'bouncy'
-  );
+  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
+    useEntranceAnimation("fadeInUp", 0, "bouncy");
 
   // Start animations
   React.useEffect(() => {
@@ -102,33 +105,42 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
   }, [startStaggeredAnimation, startEntranceAnimation]);
 
   // Event handlers
-  const handleButtonPress = useCallback((buttonName: string) => {
-    setSelectedButton(buttonName);
-    Alert.alert('Button Pressed', `${buttonName} button was pressed!`);
-  }, [setSelectedButton]);
+  const handleButtonPress = useCallback(
+    (buttonName: string) => {
+      setSelectedButton(buttonName);
+      Alert.alert("Button Pressed", `${buttonName} button was pressed!`);
+    },
+    [setSelectedButton],
+  );
 
-  const _handleContainerPress = useCallback((containerName: string) => {
-    setSelectedContainer(containerName);
-    Alert.alert('Container Pressed', `${containerName} container was pressed!`);
-  }, [setSelectedContainer]);
+  const _handleContainerPress = useCallback(
+    (containerName: string) => {
+      setSelectedContainer(containerName);
+      Alert.alert(
+        "Container Pressed",
+        `${containerName} container was pressed!`,
+      );
+    },
+    [setSelectedContainer],
+  );
 
   const handleSwipeLeft = useCallback(() => {
-    Alert.alert('Swipe Left', 'You swiped left on Luna!');
+    Alert.alert("Swipe Left", "You swiped left on Luna!");
   }, []);
 
   const handleSwipeRight = useCallback(() => {
-    Alert.alert('Swipe Right', 'You swiped right on Luna!');
+    Alert.alert("Swipe Right", "You swiped right on Luna!");
   }, []);
 
   const handleSwipeUp = useCallback(() => {
-    Alert.alert('Swipe Up', 'You swiped up on Luna!');
+    Alert.alert("Swipe Up", "You swiped up on Luna!");
   }, []);
 
   const handleLoadingTest = useCallback(async () => {
     setIsLoading(true);
-    await new Promise<void>(resolve => setTimeout(resolve, 2000));
+    await new Promise<void>((resolve) => setTimeout(resolve, 2000));
     setIsLoading(false);
-    Alert.alert('Loading Complete', 'The loading animation has finished!');
+    Alert.alert("Loading Complete", "The loading animation has finished!");
   }, [setIsLoading]);
 
   return (
@@ -149,7 +161,8 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
           <FXContainerPresets.holographic style={styles.heroSection}>
             <Heading1 style={styles.heroTitle}>Project Hyperion</Heading1>
             <Body style={styles.heroSubtitle}>
-              Experience the future of mobile UI with our new component architecture
+              Experience the future of mobile UI with our new component
+              architecture
             </Body>
           </FXContainerPresets.holographic>
         </View>
@@ -170,19 +183,25 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
                   title="Primary"
                   variant="primary"
                   size="md"
-                  onPress={() => { handleButtonPress('Primary'); }}
+                  onPress={() => {
+                    handleButtonPress("Primary");
+                  }}
                 />
                 <EliteButton
                   title="Secondary"
                   variant="secondary"
                   size="md"
-                  onPress={() => { handleButtonPress('Secondary'); }}
+                  onPress={() => {
+                    handleButtonPress("Secondary");
+                  }}
                 />
                 <EliteButton
                   title="Outline"
                   variant="outline"
                   size="md"
-                  onPress={() => { handleButtonPress('Outline'); }}
+                  onPress={() => {
+                    handleButtonPress("Outline");
+                  }}
                 />
               </View>
 
@@ -194,21 +213,27 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
                   variant="primary"
                   size="md"
                   glowEffect={true}
-                  onPress={() => { handleButtonPress('Glow Effect'); }}
+                  onPress={() => {
+                    handleButtonPress("Glow Effect");
+                  }}
                 />
                 <EliteButton
                   title="Magnetic"
                   variant="secondary"
                   size="md"
                   magneticEffect={true}
-                  onPress={() => { handleButtonPress('Magnetic'); }}
+                  onPress={() => {
+                    handleButtonPress("Magnetic");
+                  }}
                 />
                 <EliteButton
                   title="Shimmer"
                   variant="primary"
                   size="md"
                   shimmerEffect={true}
-                  onPress={() => { handleButtonPress('Shimmer'); }}
+                  onPress={() => {
+                    handleButtonPress("Shimmer");
+                  }}
                 />
               </View>
 
@@ -218,12 +243,16 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
                 <EliteButtonPresets.holographic
                   title="Holographic"
                   size="md"
-                  onPress={() => { handleButtonPress('Holographic'); }}
+                  onPress={() => {
+                    handleButtonPress("Holographic");
+                  }}
                 />
                 <EliteButtonPresets.glass
                   title="Glass Morphism"
                   size="md"
-                  onPress={() => { handleButtonPress('Glass Morphism'); }}
+                  onPress={() => {
+                    handleButtonPress("Glass Morphism");
+                  }}
                 />
                 <EliteButton
                   title="Loading Test"
@@ -324,8 +353,12 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
               <Heading1>Heading 1 - Main Title</Heading1>
               <Heading2>Heading 2 - Section Title</Heading2>
               <Heading3>Heading 3 - Subsection</Heading3>
-              <Body>Body text - Regular content with proper line height and spacing.</Body>
-              <BodySmall>Body Small - Secondary information and captions.</BodySmall>
+              <Body>
+                Body text - Regular content with proper line height and spacing.
+              </Body>
+              <BodySmall>
+                Body Small - Secondary information and captions.
+              </BodySmall>
               <Label>Label - Form labels and UI elements</Label>
             </View>
           </FXContainerPresets.glass>
@@ -336,8 +369,8 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
           <PerformanceTestSuite
             onTestComplete={(results) => {
               Alert.alert(
-                'Performance Test Complete',
-                `Overall Grade: ${results.overallGrade}\nFPS: ${results.animationFPS}\nMemory: ${Math.round(results.memoryUsage / 1024 / 1024)}MB`
+                "Performance Test Complete",
+                `Overall Grade: ${results.overallGrade}\nFPS: ${results.animationFPS}\nMemory: ${Math.round(results.memoryUsage / 1024 / 1024)}MB`,
               );
             }}
           />
@@ -346,7 +379,9 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
         {/* Architecture Benefits */}
         <View style={getAnimatedStyle(7)}>
           <FXContainerPresets.holographic style={styles.section}>
-            <Heading2 style={styles.sectionTitle}>Architecture Benefits</Heading2>
+            <Heading2 style={styles.sectionTitle}>
+              Architecture Benefits
+            </Heading2>
             <BodySmall style={styles.sectionSubtitle}>
               What makes this system special
             </BodySmall>
@@ -378,7 +413,7 @@ export default function ComponentShowcaseScreen({ navigation }: ComponentShowcas
   );
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -386,20 +421,20 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing['4xl'],
+    paddingBottom: Theme.spacing["4xl"],
   },
   heroSection: {
     padding: Theme.spacing.xl,
     marginBottom: Theme.spacing.lg,
-    alignItems: 'center',
+    alignItems: "center",
   },
   heroTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.md,
   },
   heroSubtitle: {
-    textAlign: 'center',
-    color: Theme.semantic.text.secondary,
+    textAlign: "center",
+    color: Theme.colors.text.primary.secondary,
   },
   section: {
     padding: Theme.spacing.xl,
@@ -410,7 +445,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   buttonGrid: {
     gap: Theme.spacing.lg,
@@ -420,18 +455,18 @@ const styles = StyleSheet.create({
   },
   buttonGroupTitle: {
     marginBottom: Theme.spacing.sm,
-    color: Theme.semantic.text.accent,
+    color: Theme.colors.text.primary.accent,
   },
   containerGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Theme.spacing.md,
   },
   demoContainer: {
     flex: 1,
     minWidth: (SCREEN_WIDTH - Theme.spacing.xl * 2 - Theme.spacing.md * 2) / 3,
     padding: Theme.spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
   },
   swipeCardContainer: {
     height: 600,
@@ -441,18 +476,18 @@ const styles = StyleSheet.create({
     gap: Theme.spacing.md,
   },
   metricsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   metricItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   metricLabel: {
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
-    color: Theme.semantic.text.accent,
+    color: Theme.colors.text.primary.accent,
     fontWeight: Theme.typography.fontWeight.bold,
   },
   benefitsList: {

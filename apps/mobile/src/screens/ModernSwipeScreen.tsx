@@ -1,6 +1,6 @@
 /**
  * PROJECT HYPERION: MODERNIZED SWIPE SCREEN
- * 
+ *
  * This demonstrates the new architecture in action:
  * - Uses ModernSwipeCard with react-native-gesture-handler
  * - Implements EliteButton with composition pattern
@@ -9,16 +9,16 @@
  * - Performance optimized with proper memoization
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { useAuthStore, useSwipeLogic, type Pet, type PetFilters } from '@pawfectmatch/core';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
 import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Alert,
-} from 'react-native';
+  useAuthStore,
+  useSwipeLogic,
+  type Pet,
+  type PetFilters,
+} from "@pawfectmatch/core";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useCallback, useEffect, useState } from "react";
+import { View, StyleSheet, Dimensions, Alert } from "react-native";
 
 // Import new architecture components
 import {
@@ -34,14 +34,14 @@ import {
   BodySmall,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from '../components';
+} from "../components";
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from '../components/EliteComponents';
-import { useTheme } from '../contexts/ThemeContext';
-import { matchesAPI } from '../services/api';
+import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { useTheme } from "../contexts/ThemeContext";
+import { matchesAPI } from "../services/api";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 type RootStackParamList = {
   Swipe: undefined;
@@ -49,11 +49,11 @@ type RootStackParamList = {
   Chat: { matchId: string; petName: string };
 };
 
-type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, 'Swipe'>;
+type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   const { user } = useAuthStore();
-  
+
   // State management
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,10 +65,10 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 
   // Filter state
   const [filters, setFilters] = useState<PetFilters>({
-    breed: '',
-    species: '',
-    size: '',
-    maxDistance: 25
+    breed: "",
+    species: "",
+    size: "",
+    maxDistance: 25,
   });
 
   // Swipe logic hook
@@ -77,21 +77,19 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       if (result.isMatch) {
         setShowMatchModal(true);
       }
-    }
+    },
   });
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(
-    3, // Number of action buttons
-    100,
-    'gentle'
-  );
+  const { start: startStaggeredAnimation, getAnimatedStyle } =
+    useStaggeredAnimation(
+      3, // Number of action buttons
+      100,
+      "gentle",
+    );
 
-  const { start: startEntrance, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeInUp',
-    0,
-    'standard'
-  );
+  const { start: startEntrance, animatedStyle: entranceStyle } =
+    useEntranceAnimation("fadeInUp", 0, "standard");
 
   // Start animations
   useEffect(() => {
@@ -107,7 +105,10 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       const realPets = await matchesAPI.getPets(filters);
       setPets(realPets);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load pets. Please check your connection.';
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to load pets. Please check your connection.";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -115,82 +116,98 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   }, [filters]);
 
   // Swipe pet function
-  const swipePet = useCallback(async (petId: string, action: 'like' | 'pass' | 'superlike') => {
-    try {
-      const pet = pets.find(p => p._id === petId);
-      if (!pet) return null;
+  const swipePet = useCallback(
+    async (petId: string, action: "like" | "pass" | "superlike") => {
+      try {
+        const pet = pets.find((p) => p._id === petId);
+        if (!pet) return null;
 
-      const corePet = {
-        ...pet,
-        bio: pet.description ?? '',
-        distance: 0,
-        compatibility: 0,
-        isVerified: true,
-        owner: { _id: 'owner1', name: 'Owner' }
-      };
+        const corePet = {
+          ...pet,
+          bio: pet.description ?? "",
+          distance: 0,
+          compatibility: 0,
+          isVerified: true,
+          owner: { _id: "owner1", name: "Owner" },
+        };
 
-      switch (action) {
-        case 'like':
-          return await handleLike(corePet);
-        case 'pass':
-          return await handlePass(corePet);
-        case 'superlike':
-          return await handleSuperLike(corePet);
-        default:
-          return null;
+        switch (action) {
+          case "like":
+            return await handleLike(corePet);
+          case "pass":
+            return await handlePass(corePet);
+          case "superlike":
+            return await handleSuperLike(corePet);
+          default:
+            return null;
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error occurred";
+        Alert.alert("Error", `Failed to process swipe: ${errorMessage}`);
+        return null;
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      Alert.alert('Error', `Failed to process swipe: ${errorMessage}`);
-      return null;
-    }
-  }, [pets, handleLike, handlePass, handleSuperLike]);
+    },
+    [pets, handleLike, handlePass, handleSuperLike],
+  );
 
   // Swipe handlers
-  const handleSwipeLeft = useCallback(async (pet: Pet) => {
-    const result = await swipePet(pet._id, 'pass');
-    if (result?.isMatch) {
-      setMatchedPet(pet);
-      setShowMatchModal(true);
-    }
-    setCurrentIndex(prev => prev + 1);
-  }, [swipePet]);
+  const handleSwipeLeft = useCallback(
+    async (pet: Pet) => {
+      const result = await swipePet(pet._id, "pass");
+      if (result?.isMatch) {
+        setMatchedPet(pet);
+        setShowMatchModal(true);
+      }
+      setCurrentIndex((prev) => prev + 1);
+    },
+    [swipePet],
+  );
 
-  const handleSwipeRight = useCallback(async (pet: Pet) => {
-    const result = await swipePet(pet._id, 'like');
-    if (result?.isMatch) {
-      setMatchedPet(pet);
-      setShowMatchModal(true);
-    }
-    setCurrentIndex(prev => prev + 1);
-  }, [swipePet]);
+  const handleSwipeRight = useCallback(
+    async (pet: Pet) => {
+      const result = await swipePet(pet._id, "like");
+      if (result?.isMatch) {
+        setMatchedPet(pet);
+        setShowMatchModal(true);
+      }
+      setCurrentIndex((prev) => prev + 1);
+    },
+    [swipePet],
+  );
 
-  const handleSwipeUp = useCallback(async (pet: Pet) => {
-    const result = await swipePet(pet._id, 'superlike');
-    if (result?.isMatch) {
-      setMatchedPet(pet);
-      setShowMatchModal(true);
-    }
-    setCurrentIndex(prev => prev + 1);
-  }, [swipePet]);
+  const handleSwipeUp = useCallback(
+    async (pet: Pet) => {
+      const result = await swipePet(pet._id, "superlike");
+      if (result?.isMatch) {
+        setMatchedPet(pet);
+        setShowMatchModal(true);
+      }
+      setCurrentIndex((prev) => prev + 1);
+    },
+    [swipePet],
+  );
 
   // Button swipe handlers
-  const handleButtonSwipe = useCallback((action: 'like' | 'pass' | 'superlike') => {
-    const currentPet = pets[currentIndex];
-    if (!currentPet) return;
+  const handleButtonSwipe = useCallback(
+    (action: "like" | "pass" | "superlike") => {
+      const currentPet = pets[currentIndex];
+      if (!currentPet) return;
 
-    switch (action) {
-      case 'like':
-        handleSwipeRight(currentPet);
-        break;
-      case 'pass':
-        handleSwipeLeft(currentPet);
-        break;
-      case 'superlike':
-        handleSwipeUp(currentPet);
-        break;
-    }
-  }, [pets, currentIndex, handleSwipeRight, handleSwipeLeft, handleSwipeUp]);
+      switch (action) {
+        case "like":
+          handleSwipeRight(currentPet);
+          break;
+        case "pass":
+          handleSwipeLeft(currentPet);
+          break;
+        case "superlike":
+          handleSwipeUp(currentPet);
+          break;
+      }
+    },
+    [pets, currentIndex, handleSwipeRight, handleSwipeLeft, handleSwipeUp],
+  );
 
   // Load pets on mount
   useEffect(() => {
@@ -228,7 +245,11 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             glowColor={Theme.colors.status.error}
             style={styles.errorCard}
           >
-            <Ionicons name="alert-circle-outline" size={80} color={Theme.colors.status.error} />
+            <Ionicons
+              name="alert-circle-outline"
+              size={80}
+              color={Theme.colors.status.error}
+            />
             <Heading2 style={styles.errorTitle}>Error loading pets</Heading2>
             <Body style={styles.errorMessage}>{error}</Body>
             <EliteButtonPresets.premium
@@ -248,7 +269,11 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       <EliteContainer gradient="primary">
         <View style={styles.emptyContainer}>
           <FXContainerPresets.glass style={styles.emptyCard}>
-            <Ionicons name="heart-outline" size={80} color={Theme.colors.primary[500]} />
+            <Ionicons
+              name="heart-outline"
+              size={80}
+              color={Theme.colors.primary[500]}
+            />
             <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
             <Body style={styles.emptySubtitle}>
               Check back later for more matches
@@ -278,13 +303,15 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
               title="Filter"
               size="sm"
               leftIcon="options-outline"
-              onPress={() => { setShowFilters(!showFilters); }}
+              onPress={() => {
+                setShowFilters(!showFilters);
+              }}
             />
             <EliteButtonPresets.glass
               title=""
               size="sm"
               leftIcon="heart"
-              onPress={() => navigation.navigate('Matches')}
+              onPress={() => navigation.navigate("Matches")}
             />
           </View>
         }
@@ -295,22 +322,29 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
         <View style={styles.filterContainer}>
           <FXContainerPresets.glass style={styles.filterPanel}>
             <Heading2 style={styles.filterTitle}>Quick Filters</Heading2>
-            
+
             {/* Breed Filters */}
             <View style={styles.filterSection}>
               <BodySmall style={styles.filterLabel}>Popular Breeds:</BodySmall>
               <View style={styles.filterButtons}>
-                {['Shiba Inu', 'Golden Retriever', 'Labrador', 'Border Collie'].map(breed => (
+                {[
+                  "Shiba Inu",
+                  "Golden Retriever",
+                  "Labrador",
+                  "Border Collie",
+                ].map((breed) => (
                   <EliteButton
                     key={breed}
                     title={breed}
                     variant={filters.breed === breed ? "primary" : "outline"}
                     size="sm"
-                    onPress={() => { setFilters(prev => ({
-                      ...prev,
-                      breed: prev.breed === breed ? '' : breed,
-                      species: 'dog'
-                    })); }}
+                    onPress={() => {
+                      setFilters((prev) => ({
+                        ...prev,
+                        breed: prev.breed === breed ? "" : breed,
+                        species: "dog",
+                      }));
+                    }}
                   />
                 ))}
               </View>
@@ -320,16 +354,23 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             <View style={styles.filterSection}>
               <BodySmall style={styles.filterLabel}>Species:</BodySmall>
               <View style={styles.filterButtons}>
-                {['All', 'Dogs', 'Cats', 'Birds'].map(species => (
+                {["All", "Dogs", "Cats", "Birds"].map((species) => (
                   <EliteButton
                     key={species}
                     title={species}
-                    variant={(species === 'All' ? '' : species.toLowerCase()) === filters.species ? "secondary" : "outline"}
+                    variant={
+                      (species === "All" ? "" : species.toLowerCase()) ===
+                      filters.species
+                        ? "secondary"
+                        : "outline"
+                    }
                     size="sm"
-                    onPress={() => { setFilters(prev => ({
-                      ...prev,
-                      species: species === 'All' ? '' : species.toLowerCase()
-                    })); }}
+                    onPress={() => {
+                      setFilters((prev) => ({
+                        ...prev,
+                        species: species === "All" ? "" : species.toLowerCase(),
+                      }));
+                    }}
                   />
                 ))}
               </View>
@@ -353,12 +394,12 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             name: currentPet.name,
             age: currentPet.age,
             breed: currentPet.breed,
-            photos: currentPet.photos.map(p => p.url),
-            bio: currentPet.description || '',
+            photos: currentPet.photos.map((p) => p.url),
+            bio: currentPet.description || "",
             distance: 2.5,
             compatibility: 85,
             isVerified: true,
-            tags: ['Friendly', 'Active', 'Playful']
+            tags: ["Friendly", "Active", "Playful"],
           }}
           onSwipeLeft={handleSwipeLeft}
           onSwipeRight={handleSwipeRight}
@@ -383,7 +424,9 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             title=""
             size="xl"
             leftIcon="close"
-            onPress={() => { handleButtonSwipe('pass'); }}
+            onPress={() => {
+              handleButtonSwipe("pass");
+            }}
             style={styles.actionButton}
           />
         </View>
@@ -393,7 +436,9 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             title=""
             size="lg"
             leftIcon="star"
-            onPress={() => { handleButtonSwipe('superlike'); }}
+            onPress={() => {
+              handleButtonSwipe("superlike");
+            }}
             style={styles.actionButton}
           />
         </View>
@@ -403,7 +448,9 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             title=""
             size="xl"
             leftIcon="heart"
-            onPress={() => { handleButtonSwipe('like'); }}
+            onPress={() => {
+              handleButtonSwipe("like");
+            }}
             style={styles.actionButton}
           />
         </View>
@@ -413,33 +460,37 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       {showMatchModal && matchedPet && (
         <View style={styles.matchModal}>
           <FXContainerPresets.holographic style={styles.matchModalContent}>
-            <Heading1 style={styles.matchTitle}>
-              It's a Match! 🎉
-            </Heading1>
-            
+            <Heading1 style={styles.matchTitle}>It's a Match! 🎉</Heading1>
+
             <View style={styles.matchPhotos}>
-              <FXContainer type="glow" hasGlow={true} style={styles.matchPhotoContainer}>
+              <FXContainer
+                type="glow"
+                hasGlow={true}
+                style={styles.matchPhotoContainer}
+              >
                 {/* Match photo would go here */}
               </FXContainer>
             </View>
-            
+
             <Body style={styles.matchText}>
               You and {matchedPet.name} liked each other!
             </Body>
-            
+
             <View style={styles.matchButtons}>
               <EliteButtonPresets.glass
                 title="Keep Swiping"
-                onPress={() => { setShowMatchModal(false); }}
+                onPress={() => {
+                  setShowMatchModal(false);
+                }}
               />
               <EliteButtonPresets.holographic
                 title="Send Message"
                 leftIcon="chatbubble"
                 onPress={() => {
                   setShowMatchModal(false);
-                  navigation.navigate('Chat', { 
-                    matchId: matchedPet._id, 
-                    petName: matchedPet.name 
+                  navigation.navigate("Chat", {
+                    matchId: matchedPet._id,
+                    petName: matchedPet.name,
                   });
                 }}
               />
@@ -454,59 +505,59 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Theme.spacing.xl,
   },
   loadingCard: {
-    padding: Theme.spacing['4xl'],
-    alignItems: 'center',
+    padding: Theme.spacing["4xl"],
+    alignItems: "center",
   },
   loadingTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.lg,
   },
   loadingSubtitle: {
-    textAlign: 'center',
-    color: Theme.semantic.text.secondary,
+    textAlign: "center",
+    color: Theme.colors.text.primary.secondary,
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Theme.spacing.xl,
   },
   errorCard: {
-    padding: Theme.spacing['4xl'],
-    alignItems: 'center',
+    padding: Theme.spacing["4xl"],
+    alignItems: "center",
   },
   errorTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: Theme.spacing.lg,
     marginBottom: Theme.spacing.md,
     color: Theme.colors.status.error,
   },
   errorMessage: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   emptyCard: {
-    padding: Theme.spacing['4xl'],
-    alignItems: 'center',
+    padding: Theme.spacing["4xl"],
+    alignItems: "center",
   },
   emptyTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: Theme.spacing.lg,
     marginBottom: Theme.spacing.md,
   },
   emptySubtitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   headerActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Theme.spacing.sm,
   },
   filterContainer: {
@@ -517,7 +568,7 @@ const styles = StyleSheet.create({
   },
   filterTitle: {
     marginBottom: Theme.spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
   },
   filterSection: {
     marginBottom: Theme.spacing.lg,
@@ -527,32 +578,32 @@ const styles = StyleSheet.create({
     fontWeight: Theme.typography.fontWeight.semibold,
   },
   filterButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Theme.spacing.sm,
   },
   cardContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: Theme.spacing.xl,
   },
   nextCardContainer: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: -1,
   },
   nextCard: {
-    width: screenWidth - Theme.spacing['4xl'] - Theme.spacing.lg,
+    width: screenWidth - Theme.spacing["4xl"] - Theme.spacing.lg,
     height: screenHeight * 0.65,
     transform: [{ scale: 0.95 }],
     opacity: 0.8,
   },
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: Theme.spacing.xl,
-    paddingHorizontal: Theme.spacing['4xl'],
+    paddingHorizontal: Theme.spacing["4xl"],
     gap: Theme.spacing.lg,
   },
   actionButton: {
@@ -561,27 +612,27 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   matchModal: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
   matchModalContent: {
-    width: screenWidth - Theme.spacing['4xl'],
-    padding: Theme.spacing['4xl'],
-    alignItems: 'center',
+    width: screenWidth - Theme.spacing["4xl"],
+    padding: Theme.spacing["4xl"],
+    alignItems: "center",
   },
   matchTitle: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.xl,
   },
   matchPhotos: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: Theme.spacing.xl,
     gap: Theme.spacing.lg,
   },
@@ -591,12 +642,12 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   matchText: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   matchButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Theme.spacing.lg,
   },
 });

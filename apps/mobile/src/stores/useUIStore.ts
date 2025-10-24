@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { TokensType } from '@pawfectmatch/design-tokens';
+import { create } from "zustand";
+import { TokensType } from "@pawfectmatch/design-tokens";
 
 interface UIState {
   theme: keyof TokensType;
@@ -11,7 +11,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  theme: 'light',
+  theme: "light",
   setTheme: (theme) => set({ theme }),
   isLoading: false,
   setLoading: (loading) => set({ isLoading: loading }),

@@ -3,11 +3,11 @@
  * Advanced compatibility scoring and analysis between pets
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { useAuthStore } from '@pawfectmatch/core';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as Haptics from 'expo-haptics';
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from "@pawfectmatch/core";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import * as Haptics from "expo-haptics";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,13 +16,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../contexts/ThemeContext';
-import type { RootStackParamList } from '../../navigation/types';
-import { _aiAPI, _petAPI } from '../../services/api';
-import { logger } from '../../services/logger';
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { RootStackParamList } from "../../navigation/types";
+import { _aiAPI, _petAPI } from "../../services/api";
+import { logger } from "../../services/logger";
 
 interface Pet {
   id: string;
@@ -86,17 +86,26 @@ interface CompatibilityResponse {
   };
 }
 
-type AICompatibilityScreenProps = NativeStackScreenProps<RootStackParamList, 'AICompatibility'>;
+type AICompatibilityScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "AICompatibility"
+>;
 
-const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps): React.JSX.Element => {
+const AICompatibilityScreen = ({
+  navigation,
+  route,
+}: AICompatibilityScreenProps): React.JSX.Element => {
   const { colors } = useTheme();
   const { user: _user } = useAuthStore();
   const [pets, setPets] = useState<Pet[]>([]);
   const [selectedPetA, setSelectedPetA] = useState<Pet | null>(null);
   const [selectedPetB, setSelectedPetB] = useState<Pet | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<CompatibilityAnalysis | null>(null);
-  const [analysisHistory, setAnalysisHistory] = useState<CompatibilityAnalysis[]>([]);
+  const [analysisResult, setAnalysisResult] =
+    useState<CompatibilityAnalysis | null>(null);
+  const [analysisHistory, setAnalysisHistory] = useState<
+    CompatibilityAnalysis[]
+  >([]);
   const [loading, _setLoading] = useState(true);
 
   useEffect(() => {
@@ -105,8 +114,8 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
   useEffect(() => {
     if (route?.params?.petAId && route?.params?.petBId) {
-      const petA = pets.find(p => p.id === route.params.petAId);
-      const petB = pets.find(p => p.id === route.params.petBId);
+      const petA = pets.find((p) => p.id === route.params.petAId);
+      const petB = pets.find((p) => p.id === route.params.petBId);
       if (petA != null && petB != null) {
         setSelectedPetA(petA);
         setSelectedPetB(petB);
@@ -117,12 +126,15 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
   const loadPets = async (): Promise<void> => {
     try {
-      const response = await _petAPI.getPets() as unknown as { success: boolean; data?: Pet[] };
+      const response = (await _petAPI.getPets()) as unknown as {
+        success: boolean;
+        data?: Pet[];
+      };
       if (response?.success && response.data) {
         setPets(response.data);
       }
     } catch (error) {
-      logger.error('Failed to load pets:', { error });
+      logger.error("Failed to load pets:", { error });
     }
   };
 
@@ -133,10 +145,10 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
     setIsAnalyzing(true);
     try {
-      const response = await _aiAPI.analyzeCompatibility(petA.id, petB.id, {
+      const response = (await _aiAPI.analyzeCompatibility(petA.id, petB.id, {
         includeDetailedAnalysis: true,
-        includeRecommendations: true
-      }) as CompatibilityResponse;
+        includeRecommendations: true,
+      })) as CompatibilityResponse;
 
       if (response && response.success && response.data) {
         const analysis: CompatibilityAnalysis = {
@@ -150,37 +162,48 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
               size: 85,
               age: 75,
               interests: 88,
-              lifestyle: 82
+              lifestyle: 82,
             },
             factors: {
-              strengths: ['Both are playful', 'Similar energy levels', 'Compatible sizes'],
-              concerns: ['Age difference', 'Different play styles'],
-              recommendations: ['Gradual introduction', 'Supervised playtime', 'Monitor interactions']
+              strengths: [
+                "Both are playful",
+                "Similar energy levels",
+                "Compatible sizes",
+              ],
+              concerns: ["Age difference", "Different play styles"],
+              recommendations: [
+                "Gradual introduction",
+                "Supervised playtime",
+                "Monitor interactions",
+              ],
             },
             interaction: {
               playdate: 88,
               adoption: 75,
-              breeding: 65
-            }
+              breeding: 65,
+            },
           },
           analysis: response.data.analysis || {
             summary: `${petA.name} and ${petB.name} show strong compatibility with an overall score of 85%.`,
-            detailed: 'Both pets share similar temperaments and energy levels, making them well-suited for playdates and potential adoption.',
+            detailed:
+              "Both pets share similar temperaments and energy levels, making them well-suited for playdates and potential adoption.",
             tips: [
-              'Introduce them gradually in a neutral environment',
-              'Monitor their interactions closely during initial meetings',
-              'Consider their individual needs and preferences'
-            ]
+              "Introduce them gradually in a neutral environment",
+              "Monitor their interactions closely during initial meetings",
+              "Consider their individual needs and preferences",
+            ],
           },
-          generatedAt: new Date().toISOString()
+          generatedAt: new Date().toISOString(),
         };
 
         setAnalysisResult(analysis);
-        setAnalysisHistory(prev => [analysis, ...prev.slice(0, 4)]); // Keep last 5
-        logger.info('Compatibility analysis completed', { score: analysis.score.overall });
+        setAnalysisHistory((prev) => [analysis, ...prev.slice(0, 4)]); // Keep last 5
+        logger.info("Compatibility analysis completed", {
+          score: analysis.score.overall,
+        });
       }
     } catch (error) {
-      logger.error('Compatibility analysis failed:', { error });
+      logger.error("Compatibility analysis failed:", { error });
 
       // Fallback analysis for demo
       const fallbackAnalysis: CompatibilityAnalysis = {
@@ -194,33 +217,37 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
             size: 90,
             age: 70,
             interests: 85,
-            lifestyle: 80
+            lifestyle: 80,
           },
           factors: {
-            strengths: ['Compatible personalities', 'Similar activity levels'],
-            concerns: ['Age gap', 'Different play preferences'],
-            recommendations: ['Supervised introduction', 'Gradual socialization']
+            strengths: ["Compatible personalities", "Similar activity levels"],
+            concerns: ["Age gap", "Different play preferences"],
+            recommendations: [
+              "Supervised introduction",
+              "Gradual socialization",
+            ],
           },
           interaction: {
             playdate: 85,
             adoption: 75,
-            breeding: 60
-          }
+            breeding: 60,
+          },
         },
         analysis: {
           summary: `${petA.name} and ${petB.name} have good compatibility potential.`,
-          detailed: 'These pets show promising compatibility with some areas that need attention.',
+          detailed:
+            "These pets show promising compatibility with some areas that need attention.",
           tips: [
-            'Start with short supervised interactions',
-            'Pay attention to body language',
-            'Respect their individual boundaries'
-          ]
+            "Start with short supervised interactions",
+            "Pay attention to body language",
+            "Respect their individual boundaries",
+          ],
         },
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
       };
 
       setAnalysisResult(fallbackAnalysis);
-      setAnalysisHistory(prev => [fallbackAnalysis, ...prev.slice(0, 4)]);
+      setAnalysisHistory((prev) => [fallbackAnalysis, ...prev.slice(0, 4)]);
     } finally {
       setIsAnalyzing(false);
     }
@@ -242,12 +269,15 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
   const handleAnalyze = () => {
     if (!selectedPetA || !selectedPetB) {
-      Alert.alert('Selection Required', 'Please select both pets to analyze compatibility');
+      Alert.alert(
+        "Selection Required",
+        "Please select both pets to analyze compatibility",
+      );
       return;
     }
 
     if (selectedPetA.id === selectedPetB.id) {
-      Alert.alert('Invalid Selection', 'Please select two different pets');
+      Alert.alert("Invalid Selection", "Please select two different pets");
       return;
     }
 
@@ -255,17 +285,17 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return '#10B981';
-    if (score >= 80) return '#3B82F6';
-    if (score >= 70) return '#F59E0B';
-    return '#EF4444';
+    if (score >= 90) return "#10B981";
+    if (score >= 80) return "#3B82F6";
+    if (score >= 70) return "#F59E0B";
+    return "#EF4444";
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 90) return 'Excellent';
-    if (score >= 80) return 'Good';
-    if (score >= 70) return 'Fair';
-    return 'Poor';
+    if (score >= 90) return "Excellent";
+    if (score >= 80) return "Good";
+    if (score >= 70) return "Fair";
+    return "Poor";
   };
 
   const renderPetItem = ({ item }: { item: Pet }) => (
@@ -273,7 +303,8 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
       style={[
         styles.petCard,
         { backgroundColor: colors.card },
-        (selectedPetA?.id === item.id || selectedPetB?.id === item.id) && styles.petCardSelected
+        (selectedPetA?.id === item.id || selectedPetB?.id === item.id) &&
+          styles.petCardSelected,
       ]}
       onPress={() => {
         if (selectedPetA?.id === item.id) {
@@ -302,7 +333,10 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
           </Text>
           <View style={styles.petTags}>
             {item.temperament.slice(0, 2).map((trait, index) => (
-              <View key={index} style={[styles.petTag, { backgroundColor: colors.primary }]}>
+              <View
+                key={index}
+                style={[styles.petTag, { backgroundColor: colors.primary }]}
+              >
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>
             ))}
@@ -323,7 +357,9 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.text }]}>
@@ -335,12 +371,19 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => { navigation.goBack(); }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text} />
@@ -351,9 +394,15 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
           <View style={styles.headerActions}>
             {analysisHistory.length > 0 && (
               <TouchableOpacity
-                style={[styles.historyButton, { backgroundColor: colors.primary }]}
+                style={[
+                  styles.historyButton,
+                  { backgroundColor: colors.primary },
+                ]}
                 onPress={() => {
-                  Alert.alert('Analysis History', `${analysisHistory.length} previous analyses`);
+                  Alert.alert(
+                    "Analysis History",
+                    `${analysisHistory.length} previous analyses`,
+                  );
                 }}
               >
                 <Ionicons name="time" size={20} color="#FFFFFF" />
@@ -370,22 +419,38 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
           <View style={styles.selectionStatus}>
             <View style={styles.selectionItem}>
-              <Ionicons name="paw" size={20} color={selectedPetA ? colors.primary : colors.textSecondary} />
-              <Text style={[
-                styles.selectionText,
-                { color: selectedPetA ? colors.text : colors.textSecondary }
-              ]}>
-                {selectedPetA ? selectedPetA.name : 'Select Pet A'}
+              <Ionicons
+                name="paw"
+                size={20}
+                color={selectedPetA ? colors.primary : colors.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.selectionText,
+                  { color: selectedPetA ? colors.text : colors.textSecondary },
+                ]}
+              >
+                {selectedPetA ? selectedPetA.name : "Select Pet A"}
               </Text>
             </View>
-            <Ionicons name="arrow-forward" size={20} color={colors.textSecondary} />
+            <Ionicons
+              name="arrow-forward"
+              size={20}
+              color={colors.textSecondary}
+            />
             <View style={styles.selectionItem}>
-              <Ionicons name="heart" size={20} color={selectedPetB ? colors.primary : colors.textSecondary} />
-              <Text style={[
-                styles.selectionText,
-                { color: selectedPetB ? colors.text : colors.textSecondary }
-              ]}>
-                {selectedPetB ? selectedPetB.name : 'Select Pet B'}
+              <Ionicons
+                name="heart"
+                size={20}
+                color={selectedPetB ? colors.primary : colors.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.selectionText,
+                  { color: selectedPetB ? colors.text : colors.textSecondary },
+                ]}
+              >
+                {selectedPetB ? selectedPetB.name : "Select Pet B"}
               </Text>
             </View>
           </View>
@@ -406,7 +471,7 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
               style={[
                 styles.analyzeButton,
                 { backgroundColor: colors.primary },
-                isAnalyzing && styles.analyzeButtonDisabled
+                isAnalyzing && styles.analyzeButtonDisabled,
               ]}
               onPress={handleAnalyze}
               disabled={isAnalyzing}
@@ -419,7 +484,9 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
               ) : (
                 <>
                   <Ionicons name="analytics" size={20} color="#FFFFFF" />
-                  <Text style={styles.analyzeButtonText}>Analyze Compatibility</Text>
+                  <Text style={styles.analyzeButtonText}>
+                    Analyze Compatibility
+                  </Text>
                 </>
               )}
             </TouchableOpacity>
@@ -436,16 +503,27 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
             {/* Overall Score */}
             <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
               <View style={styles.resultHeader}>
-                <Ionicons name="trophy" size={24} color={getScoreColor(analysisResult.score.overall)} />
+                <Ionicons
+                  name="trophy"
+                  size={24}
+                  color={getScoreColor(analysisResult.score.overall)}
+                />
                 <Text style={[styles.resultTitle, { color: colors.text }]}>
                   Overall Compatibility
                 </Text>
               </View>
               <View style={styles.overallScore}>
-                <Text style={[styles.scoreValue, { color: getScoreColor(analysisResult.score.overall) }]}>
+                <Text
+                  style={[
+                    styles.scoreValue,
+                    { color: getScoreColor(analysisResult.score.overall) },
+                  ]}
+                >
                   {analysisResult.score.overall}%
                 </Text>
-                <Text style={[styles.scoreLabel, { color: colors.textSecondary }]}>
+                <Text
+                  style={[styles.scoreLabel, { color: colors.textSecondary }]}
+                >
                   {getScoreLabel(analysisResult.score.overall)}
                 </Text>
                 <Text style={[styles.scoreDescription, { color: colors.text }]}>
@@ -463,25 +541,36 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
                 </Text>
               </View>
               <View style={styles.breakdownList}>
-                {Object.entries(analysisResult.score.breakdown).map(([factor, score]) => (
-                  <View key={factor} style={styles.breakdownItem}>
-                    <Text style={[styles.breakdownLabel, { color: colors.textSecondary }]}>
-                      {factor.charAt(0).toUpperCase() + factor.slice(1)}
-                    </Text>
-                    <View style={styles.breakdownBar}>
-                      <View style={[
-                        styles.breakdownFill,
-                        {
-                          width: `${score}%`,
-                          backgroundColor: getScoreColor(score)
-                        }
-                      ]} />
+                {Object.entries(analysisResult.score.breakdown).map(
+                  ([factor, score]) => (
+                    <View key={factor} style={styles.breakdownItem}>
+                      <Text
+                        style={[
+                          styles.breakdownLabel,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
+                        {factor.charAt(0).toUpperCase() + factor.slice(1)}
+                      </Text>
+                      <View style={styles.breakdownBar}>
+                        <View
+                          style={[
+                            styles.breakdownFill,
+                            {
+                              width: `${score}%`,
+                              backgroundColor: getScoreColor(score),
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text
+                        style={[styles.breakdownScore, { color: colors.text }]}
+                      >
+                        {score}%
+                      </Text>
                     </View>
-                    <Text style={[styles.breakdownScore, { color: colors.text }]}>
-                      {score}%
-                    </Text>
-                  </View>
-                ))}
+                  ),
+                )}
               </View>
             </View>
 
@@ -494,16 +583,28 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
                 </Text>
               </View>
               <View style={styles.interactionGrid}>
-                {Object.entries(analysisResult.score.interaction).map(([type, score]) => (
-                  <View key={type} style={styles.interactionItem}>
-                    <Text style={[styles.interactionLabel, { color: colors.textSecondary }]}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </Text>
-                    <Text style={[styles.interactionScore, { color: getScoreColor(score) }]}>
-                      {score}%
-                    </Text>
-                  </View>
-                ))}
+                {Object.entries(analysisResult.score.interaction).map(
+                  ([type, score]) => (
+                    <View key={type} style={styles.interactionItem}>
+                      <Text
+                        style={[
+                          styles.interactionLabel,
+                          { color: colors.textSecondary },
+                        ]}
+                      >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.interactionScore,
+                          { color: getScoreColor(score) },
+                        ]}
+                      >
+                        {score}%
+                      </Text>
+                    </View>
+                  ),
+                )}
               </View>
             </View>
 
@@ -518,45 +619,61 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
 
               <View style={styles.factorsSection}>
                 <View style={styles.factorGroup}>
-                  <Text style={[styles.factorGroupTitle, { color: '#10B981' }]}>
+                  <Text style={[styles.factorGroupTitle, { color: "#10B981" }]}>
                     Strengths
                   </Text>
-                  {analysisResult.score.factors.strengths.map((strength, index) => (
-                    <View key={index} style={styles.factorItem}>
-                      <Ionicons name="checkmark-circle" size={16} color="#10B981" />
-                      <Text style={[styles.factorText, { color: colors.text }]}>
-                        {strength}
-                      </Text>
-                    </View>
-                  ))}
+                  {analysisResult.score.factors.strengths.map(
+                    (strength, index) => (
+                      <View key={index} style={styles.factorItem}>
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={16}
+                          color="#10B981"
+                        />
+                        <Text
+                          style={[styles.factorText, { color: colors.text }]}
+                        >
+                          {strength}
+                        </Text>
+                      </View>
+                    ),
+                  )}
                 </View>
 
                 <View style={styles.factorGroup}>
-                  <Text style={[styles.factorGroupTitle, { color: '#F59E0B' }]}>
+                  <Text style={[styles.factorGroupTitle, { color: "#F59E0B" }]}>
                     Concerns
                   </Text>
-                  {analysisResult.score.factors.concerns.map((concern, index) => (
-                    <View key={index} style={styles.factorItem}>
-                      <Ionicons name="warning" size={16} color="#F59E0B" />
-                      <Text style={[styles.factorText, { color: colors.text }]}>
-                        {concern}
-                      </Text>
-                    </View>
-                  ))}
+                  {analysisResult.score.factors.concerns.map(
+                    (concern, index) => (
+                      <View key={index} style={styles.factorItem}>
+                        <Ionicons name="warning" size={16} color="#F59E0B" />
+                        <Text
+                          style={[styles.factorText, { color: colors.text }]}
+                        >
+                          {concern}
+                        </Text>
+                      </View>
+                    ),
+                  )}
                 </View>
 
                 <View style={styles.factorGroup}>
-                  <Text style={[styles.factorGroupTitle, { color: '#3B82F6' }]}>
+                  <Text style={[styles.factorGroupTitle, { color: "#3B82F6" }]}>
                     Recommendations
                   </Text>
-                  {analysisResult.score.factors.recommendations.map((recommendation, index) => (
-                    <View key={index} style={styles.factorItem}>
-                      <Ionicons name="bulb" size={16} color="#3B82F6" />
-                      <Text style={[styles.factorText, { color: colors.text }]}>
-                        {recommendation}
-                      </Text>
-                    </View>
-                  ))}
+                  {analysisResult.score.factors.recommendations.map(
+                    (recommendation, index) => (
+                      <View key={index} style={styles.factorItem}>
+                        <Ionicons name="bulb" size={16} color="#3B82F6" />
+                        <Text
+                          style={[styles.factorText, { color: colors.text }]}
+                        >
+                          {recommendation}
+                        </Text>
+                      </View>
+                    ),
+                  )}
                 </View>
               </View>
             </View>
@@ -585,7 +702,11 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
               <View style={styles.tipsList}>
                 {analysisResult.analysis.tips.map((tip, index) => (
                   <View key={index} style={styles.tipItem}>
-                    <Ionicons name="checkmark-circle" size={16} color="#F59E0B" />
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={16}
+                      color="#F59E0B"
+                    />
                     <Text style={[styles.tipText, { color: colors.text }]}>
                       {tip}
                     </Text>
@@ -598,7 +719,7 @@ const AICompatibilityScreen = ({ navigation, route }: AICompatibilityScreenProps
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -610,17 +731,17 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 4,
   },
@@ -629,56 +750,56 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
     marginLeft: 8,
   },
   headerActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   historyButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   selectionSection: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   selectionStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
     gap: 12,
   },
   selectionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   selectionText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   petsList: {
     maxHeight: 300,
   },
   petCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -686,32 +807,32 @@ const styles = StyleSheet.create({
   },
   petCardSelected: {
     borderWidth: 2,
-    borderColor: '#3B82F6',
+    borderColor: "#3B82F6",
   },
   petInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   petAvatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#E5E7EB',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#E5E7EB",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   petAvatarText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   petDetails: {
     flex: 1,
   },
   petName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 2,
   },
   petBreed: {
@@ -719,7 +840,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   petTags: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 6,
   },
   petTag: {
@@ -728,9 +849,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   petTagText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   selectionIndicator: {
     padding: 8,
@@ -739,9 +860,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   analyzeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 16,
     borderRadius: 12,
     gap: 8,
@@ -750,9 +871,9 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   resultsSection: {
     marginBottom: 24,
@@ -761,45 +882,45 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
   },
   resultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
   resultTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
   },
   overallScore: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: 8,
   },
   scoreValue: {
     fontSize: 48,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   scoreLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   scoreDescription: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 20,
   },
   breakdownList: {
     gap: 12,
   },
   breakdownItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   breakdownLabel: {
@@ -809,30 +930,30 @@ const styles = StyleSheet.create({
   breakdownBar: {
     flex: 1,
     height: 8,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#E5E7EB",
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   breakdownFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
   },
   breakdownScore: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     width: 40,
-    textAlign: 'right',
+    textAlign: "right",
   },
   interactionGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
   },
   interactionItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 12,
     borderRadius: 8,
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    backgroundColor: "rgba(139, 92, 246, 0.1)",
   },
   interactionLabel: {
     fontSize: 12,
@@ -840,7 +961,7 @@ const styles = StyleSheet.create({
   },
   interactionScore: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   factorsSection: {
     gap: 16,
@@ -850,12 +971,12 @@ const styles = StyleSheet.create({
   },
   factorGroupTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
   },
   factorItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 8,
   },
   factorText: {
@@ -870,8 +991,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tipItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 8,
   },
   tipText: {

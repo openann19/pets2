@@ -1,8 +1,7 @@
-import { BlurView } from 'expo-blur'
-import { logger } from '@pawfectmatch/core';
-;
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState, useEffect } from 'react';
+import { BlurView } from "expo-blur";
+import { logger } from "@pawfectmatch/core";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,52 +9,54 @@ import {
   SafeAreaView,
   Dimensions,
   StatusBar,
-} from 'react-native';
+} from "react-native";
 
 // Project Hyperion Components
-import ImmersiveCard from '../components/ImmersiveCard';
-import InteractiveButton from '../components/InteractiveButton';
+import ImmersiveCard from "../components/ImmersiveCard";
+import InteractiveButton from "../components/InteractiveButton";
 import {
   StaggeredFadeInUpList,
   PhysicsBasedScaleIn,
   PageTransition,
   ScrollTrigger,
   AnimatedFlatList,
-} from '../components/MotionPrimitives';
+} from "../components/MotionPrimitives";
 
 // Project Hyperion Design System
 import {
   useEntranceAnimation,
   useStaggeredFadeIn,
   useGlowEffect,
-} from '../hooks/useMotionSystem';
+} from "../hooks/useMotionSystem";
 import {
   DynamicColors,
   EnhancedShadows,
   SemanticColors,
   EnhancedTypography,
   MotionSystem,
-} from '../styles/EnhancedDesignTokens';
+} from "../styles/EnhancedDesignTokens";
 
 // Hooks
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 // === PROJECT HYPERION: PREMIUM DEMO SCREEN ===
 // Showcases all premium components and features properly wired together
 
 function PremiumDemoScreen(): JSX.Element {
-  const [activeDemo, setActiveDemo] = useState<'buttons' | 'cards' | 'animations' | 'glass'>('buttons');
+  const [activeDemo, setActiveDemo] = useState<
+    "buttons" | "cards" | "animations" | "glass"
+  >("buttons");
 
   // Premium entrance animation
-  const headerEntrance = useEntranceAnimation('fadeInUp');
+  const headerEntrance = useEntranceAnimation("fadeInUp");
 
   // Staggered animations for demo sections
   const demoItems = [
-    { id: 'buttons', title: 'Interactive Buttons', icon: '⚡' },
-    { id: 'cards', title: 'Immersive Cards', icon: '💎' },
-    { id: 'animations', title: 'Motion System', icon: '🌊' },
-    { id: 'glass', title: 'Glass Morphism', icon: '✨' },
+    { id: "buttons", title: "Interactive Buttons", icon: "⚡" },
+    { id: "cards", title: "Immersive Cards", icon: "💎" },
+    { id: "animations", title: "Motion System", icon: "🌊" },
+    { id: "glass", title: "Glass Morphism", icon: "✨" },
   ];
 
   const staggeredAnimations = useStaggeredFadeIn(demoItems.length, 150);
@@ -64,16 +65,19 @@ function PremiumDemoScreen(): JSX.Element {
   const glowEffect = useGlowEffect(0.8, 2000);
 
   // Demo data
-  const buttonVariants: Array<'primary' | 'secondary' | 'holographic' | 'glass' | 'outline'> = [
-    'primary', 'secondary', 'holographic', 'glass', 'outline'
-  ];
+  const buttonVariants: Array<
+    "primary" | "secondary" | "holographic" | "glass" | "outline"
+  > = ["primary", "secondary", "holographic", "glass", "outline"];
 
-  const cardVariants: Array<'default' | 'glass' | 'holographic' | 'elevated'> = [
-    'default', 'glass', 'holographic', 'elevated'
-  ];
+  const cardVariants: Array<"default" | "glass" | "holographic" | "elevated"> =
+    ["default", "glass", "holographic", "elevated"];
 
   const gradientNames: Array<keyof typeof DynamicColors.gradients> = [
-    'primary', 'secondary', 'premium', 'sunset', 'ocean'
+    "primary",
+    "secondary",
+    "premium",
+    "sunset",
+    "ocean",
   ];
 
   const handleButtonPress = (variant: string) => {
@@ -89,13 +93,15 @@ function PremiumDemoScreen(): JSX.Element {
   const renderButtonDemo = () => (
     <ScrollTrigger animation="fadeInUp" triggerPoint={0.8}>
       <View style={{ padding: 20 }}>
-        <Text style={{
-          ...EnhancedTypography.effects.gradient.primary,
-          fontSize: 24,
-          fontWeight: '700',
-          textAlign: 'center',
-          marginBottom: 30,
-        }}>
+        <Text
+          style={{
+            ...EnhancedTypography.effects.gradient.primary,
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            marginBottom: 30,
+          }}
+        >
           Interactive Buttons
         </Text>
 
@@ -107,11 +113,17 @@ function PremiumDemoScreen(): JSX.Element {
                 variant={variant as any}
                 size="lg"
                 magneticEffect={true}
-                glowEffect={variant === 'holographic'}
-                gradientName={variant === 'holographic' ? gradientNames[index % gradientNames.length] : undefined}
+                glowEffect={variant === "holographic"}
+                gradientName={
+                  variant === "holographic"
+                    ? gradientNames[index % gradientNames.length]
+                    : undefined
+                }
                 hapticFeedback={true}
                 soundEffect={false}
-                onPress={() => { handleButtonPress(variant); }}
+                onPress={() => {
+                  handleButtonPress(variant);
+                }}
                 style={{ marginBottom: 10 }}
               />
 
@@ -124,30 +136,43 @@ function PremiumDemoScreen(): JSX.Element {
                 style={{ marginBottom: 10 }}
               />
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
                 <InteractiveButton
                   title="SM"
                   variant={variant as any}
                   size="sm"
-                  onPress={() => { handleButtonPress(`${variant}-sm`); }}
+                  onPress={() => {
+                    handleButtonPress(`${variant}-sm`);
+                  }}
                 />
                 <InteractiveButton
                   title="MD"
                   variant={variant as any}
                   size="md"
-                  onPress={() => { handleButtonPress(`${variant}-md`); }}
+                  onPress={() => {
+                    handleButtonPress(`${variant}-md`);
+                  }}
                 />
                 <InteractiveButton
                   title="LG"
                   variant={variant as any}
                   size="lg"
-                  onPress={() => { handleButtonPress(`${variant}-lg`); }}
+                  onPress={() => {
+                    handleButtonPress(`${variant}-lg`);
+                  }}
                 />
                 <InteractiveButton
                   title="XL"
                   variant={variant as any}
                   size="xl"
-                  onPress={() => { handleButtonPress(`${variant}-xl`); }}
+                  onPress={() => {
+                    handleButtonPress(`${variant}-xl`);
+                  }}
                 />
               </View>
             </View>
@@ -160,13 +185,15 @@ function PremiumDemoScreen(): JSX.Element {
   const renderCardDemo = () => (
     <ScrollTrigger animation="scaleIn" triggerPoint={0.8}>
       <View style={{ padding: 20 }}>
-        <Text style={{
-          ...EnhancedTypography.effects.gradient.secondary,
-          fontSize: 24,
-          fontWeight: '700',
-          textAlign: 'center',
-          marginBottom: 30,
-        }}>
+        <Text
+          style={{
+            ...EnhancedTypography.effects.gradient.secondary,
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            marginBottom: 30,
+          }}
+        >
           Immersive Cards
         </Text>
 
@@ -178,29 +205,38 @@ function PremiumDemoScreen(): JSX.Element {
               size="lg"
               tiltEnabled={true}
               magneticHover={true}
-              shimmerEffect={variant === 'holographic'}
+              shimmerEffect={variant === "holographic"}
               entranceAnimation="scaleIn"
-              gradientName={variant === 'holographic' ? gradientNames[index] : undefined}
-              glowColor={variant === 'elevated' ? 'primary' : undefined}
+              gradientName={
+                variant === "holographic" ? gradientNames[index] : undefined
+              }
+              glowColor={variant === "elevated" ? "primary" : undefined}
               style={{ marginBottom: 20 }}
-              onPress={() => { handleCardPress(variant); }}
+              onPress={() => {
+                handleCardPress(variant);
+              }}
             >
               <View style={{ padding: 20 }}>
-                <Text style={{
-                  fontSize: 18,
-                  fontWeight: '600',
-                  color: SemanticColors.text.primary,
-                  marginBottom: 10,
-                }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "600",
+                    color: SemanticColors.text.primary,
+                    marginBottom: 10,
+                  }}
+                >
                   {variant.charAt(0).toUpperCase() + variant.slice(1)} Card
                 </Text>
-                <Text style={{
-                  fontSize: 14,
-                  color: SemanticColors.text.secondary,
-                  lineHeight: 20,
-                }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: SemanticColors.text.secondary,
+                    lineHeight: 20,
+                  }}
+                >
                   This is a premium {variant} card with advanced visual effects,
-                  3D tilt interactions, and smooth animations. Experience the future of mobile UI.
+                  3D tilt interactions, and smooth animations. Experience the
+                  future of mobile UI.
                 </Text>
               </View>
             </ImmersiveCard>
@@ -213,24 +249,28 @@ function PremiumDemoScreen(): JSX.Element {
   const renderAnimationDemo = () => (
     <ScrollTrigger animation="slideInLeft" triggerPoint={0.8}>
       <View style={{ padding: 20 }}>
-        <Text style={{
-          fontSize: 24,
-          fontWeight: '700',
-          textAlign: 'center',
-          marginBottom: 30,
-          color: SemanticColors.text.primary,
-        }}>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            marginBottom: 30,
+            color: SemanticColors.text.primary,
+          }}
+        >
           Motion System Demo
         </Text>
 
         {/* Physics-based ScaleIn */}
         <PhysicsBasedScaleIn delay={300} style={{ marginBottom: 30 }}>
-          <View style={{
-            padding: 20,
-            backgroundColor: SemanticColors.background.secondary,
-            borderRadius: 16,
-            alignItems: 'center',
-          }}>
+          <View
+            style={{
+              padding: 20,
+              backgroundColor: SemanticColors.background.secondary,
+              borderRadius: 16,
+              alignItems: "center",
+            }}
+          >
             <Text style={{ fontSize: 16, color: SemanticColors.text.primary }}>
               Physics-Based Scale Animation
             </Text>
@@ -239,30 +279,36 @@ function PremiumDemoScreen(): JSX.Element {
 
         {/* Staggered List */}
         <StaggeredFadeInUpList delay={100} style={{ marginBottom: 30 }}>
-          {['First Item', 'Second Item', 'Third Item', 'Fourth Item'].map((item, index) => (
-            <View
-              key={index}
-              style={{
-                padding: 15,
-                backgroundColor: SemanticColors.background.secondary,
-                borderRadius: 12,
-                marginBottom: 10,
-              }}
-            >
-              <Text style={{ color: SemanticColors.text.primary }}>{item}</Text>
-            </View>
-          ))}
+          {["First Item", "Second Item", "Third Item", "Fourth Item"].map(
+            (item, index) => (
+              <View
+                key={index}
+                style={{
+                  padding: 15,
+                  backgroundColor: SemanticColors.background.secondary,
+                  borderRadius: 12,
+                  marginBottom: 10,
+                }}
+              >
+                <Text style={{ color: SemanticColors.text.primary }}>
+                  {item}
+                </Text>
+              </View>
+            ),
+          )}
         </StaggeredFadeInUpList>
 
         {/* Page Transition Demo */}
         <PageTransition type="scale" duration={800}>
-          <View style={{
-            padding: 20,
-            backgroundColor: DynamicColors.glass.medium.backgroundColor,
-            borderRadius: 16,
-            alignItems: 'center',
-            ...DynamicColors.glass.medium,
-          }}>
+          <View
+            style={{
+              padding: 20,
+              backgroundColor: DynamicColors.glass.medium.backgroundColor,
+              borderRadius: 16,
+              alignItems: "center",
+              ...DynamicColors.glass.medium,
+            }}
+          >
             <Text style={{ fontSize: 16, color: SemanticColors.text.primary }}>
               Page Transition Effect
             </Text>
@@ -275,13 +321,15 @@ function PremiumDemoScreen(): JSX.Element {
   const renderGlassDemo = () => (
     <ScrollTrigger animation="slideInRight" triggerPoint={0.8}>
       <View style={{ padding: 20 }}>
-        <Text style={{
-          fontSize: 24,
-          fontWeight: '700',
-          textAlign: 'center',
-          marginBottom: 30,
-          color: SemanticColors.text.primary,
-        }}>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            marginBottom: 30,
+            color: SemanticColors.text.primary,
+          }}
+        >
           Glass Morphism Showcase
         </Text>
 
@@ -304,33 +352,37 @@ function PremiumDemoScreen(): JSX.Element {
               ...DynamicColors.glass.strong,
             }}
           >
-            <Text style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: SemanticColors.text.primary,
-              textAlign: 'center',
-              marginBottom: 10,
-            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "600",
+                color: SemanticColors.text.primary,
+                textAlign: "center",
+                marginBottom: 10,
+              }}
+            >
               Premium Glass Container
             </Text>
-            <Text style={{
-              fontSize: 14,
-              color: SemanticColors.text.secondary,
-              textAlign: 'center',
-              lineHeight: 20,
-            }}>
-              Experience layered transparency with backdrop blur effects
-              and subtle border styling for a modern, premium look.
+            <Text
+              style={{
+                fontSize: 14,
+                color: SemanticColors.text.secondary,
+                textAlign: "center",
+                lineHeight: 20,
+              }}
+            >
+              Experience layered transparency with backdrop blur effects and
+              subtle border styling for a modern, premium look.
             </Text>
           </BlurView>
         </LinearGradient>
 
         {/* Multiple glass tiers */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          {(['subtle', 'medium', 'strong'] as const).map((tier) => (
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          {(["subtle", "medium", "strong"] as const).map((tier) => (
             <BlurView
               key={tier}
-              intensity={tier === 'subtle' ? 10 : tier === 'medium' ? 20 : 30}
+              intensity={tier === "subtle" ? 10 : tier === "medium" ? 20 : 30}
               tint="light"
               style={{
                 flex: 1,
@@ -338,22 +390,26 @@ function PremiumDemoScreen(): JSX.Element {
                 borderRadius: 12,
                 padding: 15,
                 ...DynamicColors.glass[tier],
-                alignItems: 'center',
+                alignItems: "center",
               }}
             >
-              <Text style={{
-                fontSize: 12,
-                fontWeight: '600',
-                color: SemanticColors.text.primary,
-                marginBottom: 5,
-              }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "600",
+                  color: SemanticColors.text.primary,
+                  marginBottom: 5,
+                }}
+              >
                 {tier.charAt(0).toUpperCase() + tier.slice(1)}
               </Text>
-              <Text style={{
-                fontSize: 10,
-                color: SemanticColors.text.secondary,
-                textAlign: 'center',
-              }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  color: SemanticColors.text.secondary,
+                  textAlign: "center",
+                }}
+              >
                 Glass Tier
               </Text>
             </BlurView>
@@ -365,13 +421,13 @@ function PremiumDemoScreen(): JSX.Element {
 
   const renderDemoContent = () => {
     switch (activeDemo) {
-      case 'buttons':
+      case "buttons":
         return renderButtonDemo();
-      case 'cards':
+      case "cards":
         return renderCardDemo();
-      case 'animations':
+      case "animations":
         return renderAnimationDemo();
-      case 'glass':
+      case "glass":
         return renderGlassDemo();
       default:
         return renderButtonDemo();
@@ -379,7 +435,9 @@ function PremiumDemoScreen(): JSX.Element {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: SemanticColors.background.primary }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: SemanticColors.background.primary }}
+    >
       <StatusBar barStyle="light-content" />
 
       {/* Premium Header with Glass Morphism */}
@@ -402,22 +460,26 @@ function PremiumDemoScreen(): JSX.Element {
           }}
         >
           <PageTransition type="fade" duration={1000}>
-            <Text style={{
-              fontSize: 32,
-              fontWeight: '800',
-              color: SemanticColors.text.inverse,
-              textAlign: 'center',
-              marginBottom: 10,
-              ...EnhancedTypography.effects.shadow.glow,
-            }}>
+            <Text
+              style={{
+                fontSize: 32,
+                fontWeight: "800",
+                color: SemanticColors.text.inverse,
+                textAlign: "center",
+                marginBottom: 10,
+                ...EnhancedTypography.effects.shadow.glow,
+              }}
+            >
               Project Hyperion
             </Text>
-            <Text style={{
-              fontSize: 16,
-              color: 'rgba(255,255,255,0.8)',
-              textAlign: 'center',
-              marginBottom: 20,
-            }}>
+            <Text
+              style={{
+                fontSize: 16,
+                color: "rgba(255,255,255,0.8)",
+                textAlign: "center",
+                marginBottom: 20,
+              }}
+            >
               Premium Mobile Experience Demo
             </Text>
           </PageTransition>
@@ -428,12 +490,14 @@ function PremiumDemoScreen(): JSX.Element {
               <InteractiveButton
                 key={item.id}
                 title={`${item.icon} ${item.title}`}
-                variant={activeDemo === item.id ? 'holographic' : 'glass'}
+                variant={activeDemo === item.id ? "holographic" : "glass"}
                 size="md"
                 magneticEffect={true}
                 glowEffect={activeDemo === item.id}
-                gradientName={activeDemo === item.id ? 'premium' : undefined}
-                onPress={() => { setActiveDemo(item.id as any); }}
+                gradientName={activeDemo === item.id ? "premium" : undefined}
+                onPress={() => {
+                  setActiveDemo(item.id as any);
+                }}
                 style={{ marginBottom: 10 }}
               />
             ))}
@@ -451,6 +515,6 @@ function PremiumDemoScreen(): JSX.Element {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 export default PremiumDemoScreen;

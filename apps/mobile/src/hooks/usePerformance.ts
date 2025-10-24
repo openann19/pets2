@@ -2,8 +2,8 @@
  * Performance Optimization Utilities
  * React hooks and utilities for preventing unnecessary re-renders
  */
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { logger } from '../services/logger';
+import { useCallback, useMemo, useRef, useState } from "react";
+import { logger } from "../services/logger";
 
 /**
  * Hook for stable callback references
@@ -11,7 +11,7 @@ import { logger } from '../services/logger';
  */
 export function useStableCallback<T extends (...args: never[]) => unknown>(
   callback: T,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ): T {
   const callbackRef = useRef<T>(callback);
   callbackRef.current = callback;
@@ -58,17 +58,20 @@ export function useDebounce<T>(value: T, delay: number): T {
  */
 export function useThrottle<T extends (...args: never[]) => unknown>(
   callback: T,
-  delay: number
+  delay: number,
 ): T {
   const lastCallRef = useRef<number>(0);
 
-  return useCallback((...args: Parameters<T>) => {
-    const now = Date.now();
-    if (now - lastCallRef.current >= delay) {
-      lastCallRef.current = now;
-      return callback(...args);
-    }
-  }, [callback, delay]) as T;
+  return useCallback(
+    (...args: Parameters<T>) => {
+      const now = Date.now();
+      if (now - lastCallRef.current >= delay) {
+        lastCallRef.current = now;
+        return callback(...args);
+      }
+    },
+    [callback, delay],
+  ) as T;
 }
 
 /**
@@ -78,7 +81,7 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
 export function useConditionalRender<T>(
   condition: boolean,
   render: () => T,
-  fallback: T = null as T
+  fallback: T = null as T,
 ): T {
   const lastConditionRef = useRef<boolean>(condition);
   const lastResultRef = useRef<T>(condition ? render() : fallback);
@@ -96,7 +99,7 @@ export function useConditionalRender<T>(
  */
 export function useMemoCompare<T>(
   next: T,
-  compare: (previous: T | undefined, next: T) => boolean
+  compare: (previous: T | undefined, next: T) => boolean,
 ): T {
   const previousRef = useRef<T | undefined>(undefined);
   const previous = previousRef.current;
@@ -127,7 +130,10 @@ export function usePrevious<T>(value: T): T | undefined {
  * Performance monitoring hook
  * Logs render counts and performance metrics
  */
-export function usePerformanceMonitor(componentName: string, enabled: boolean = __DEV__) {
+export function usePerformanceMonitor(
+  componentName: string,
+  enabled: boolean = __DEV__,
+) {
   const renderCountRef = useRef(0);
   const lastRenderTimeRef = useRef(Date.now());
 
@@ -140,10 +146,14 @@ export function usePerformanceMonitor(componentName: string, enabled: boolean = 
     const timeSinceLastRender = now - lastRenderTimeRef.current;
 
     if (renderCountRef.current > 1) {
-      logger.performance(`Component Render: ${componentName}`, timeSinceLastRender, {
-        renderCount: renderCountRef.current,
-        componentName
-      });
+      logger.performance(
+        `Component Render: ${componentName}`,
+        timeSinceLastRender,
+        {
+          renderCount: renderCountRef.current,
+          componentName,
+        },
+      );
     }
 
     lastRenderTimeRef.current = now;
@@ -155,7 +165,7 @@ export function usePerformanceMonitor(componentName: string, enabled: boolean = 
       if (enabled && renderCountRef.current > 1) {
         logger.performance(`Component Unmount: ${componentName}`, 0, {
           totalRenders: renderCountRef.current,
-          componentName
+          componentName,
         });
       }
     };
@@ -168,7 +178,7 @@ export function usePerformanceMonitor(componentName: string, enabled: boolean = 
  */
 export function useContextSelector<T, R>(
   context: React.Context<T>,
-  selector: (value: T) => R
+  selector: (value: T) => R,
 ): R {
   const [, forceUpdate] = useState({});
   const selectedRef = useRef<R | undefined>(undefined);
@@ -194,7 +204,7 @@ export function useContextSelector<T, R>(
  */
 export function useEventHandler<T extends (...args: never[]) => unknown>(
   handler: T,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ): T {
   const handlerRef = useRef<T | undefined>(undefined);
 
@@ -218,14 +228,14 @@ export function useVirtualization<T>(
   items: T[],
   itemHeight: number,
   containerHeight: number,
-  overscan: number = 5
+  overscan: number = 5,
 ) {
   const [scrollTop, setScrollTop] = useState(0);
 
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
   const endIndex = Math.min(
     items.length - 1,
-    Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan
+    Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan,
   );
 
   const visibleItems = useMemo(() => {
@@ -233,19 +243,22 @@ export function useVirtualization<T>(
       item,
       index: startIndex + index,
       style: {
-        position: 'absolute' as const,
+        position: "absolute" as const,
         top: (startIndex + index) * itemHeight,
         height: itemHeight,
-        width: '100%',
+        width: "100%",
       },
     }));
   }, [items, startIndex, endIndex, itemHeight]);
 
   const totalHeight = items.length * itemHeight;
 
-  const handleScroll = useThrottle((event: { nativeEvent: { contentOffset: { y: number } } }) => {
-    setScrollTop(event.nativeEvent.contentOffset.y);
-  }, 16); // ~60fps
+  const handleScroll = useThrottle(
+    (event: { nativeEvent: { contentOffset: { y: number } } }) => {
+      setScrollTop(event.nativeEvent.contentOffset.y);
+    },
+    16,
+  ); // ~60fps
 
   return {
     visibleItems,
@@ -260,7 +273,7 @@ export function useVirtualization<T>(
 export function useImperativeHandleStable<T>(
   ref: React.Ref<T>,
   createHandle: () => T,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ) {
   const handleRef = useRef<T | undefined>(undefined);
 
@@ -274,4 +287,4 @@ export function useImperativeHandleStable<T>(
 }
 
 // Import React for useEffect
-import React from 'react';
+import React from "react";

@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface ErrorFallbackProps {
   error: Error;
@@ -11,22 +11,37 @@ interface ErrorFallbackProps {
 /**
  * Universal Error Fallback Component for React Native
  */
-export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error: _error, resetError }) => {
+export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
+  error: _error,
+  resetError,
+}) => {
   const { isDark } = useTheme();
 
   return (
-    <View style={[styles.container, isDark ? styles.containerDark : styles.containerLight]}>
+    <View
+      style={[
+        styles.container,
+        isDark ? styles.containerDark : styles.containerLight,
+      ]}
+    >
       <Ionicons
         name="warning"
         size={48}
-        color={isDark ? '#FF6B6B' : '#F44336'}
+        color={isDark ? "#FF6B6B" : "#F44336"}
       />
 
-      <Text style={[styles.title, isDark ? styles.titleDark : styles.titleLight]}>
+      <Text
+        style={[styles.title, isDark ? styles.titleDark : styles.titleLight]}
+      >
         Something went wrong
       </Text>
 
-      <Text style={[styles.message, isDark ? styles.messageDark : styles.messageLight]}>
+      <Text
+        style={[
+          styles.message,
+          isDark ? styles.messageDark : styles.messageLight,
+        ]}
+      >
         Please try again or contact support if the issue persists.
       </Text>
 
@@ -44,57 +59,57 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error: _error, res
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 24,
   },
   containerLight: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   containerDark: {
-    backgroundColor: '#1E1E1E',
+    backgroundColor: "#1E1E1E",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginTop: 16,
     marginBottom: 8,
   },
   titleLight: {
-    color: '#1A1A1A',
+    color: "#1A1A1A",
   },
   titleDark: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   message: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 24,
     lineHeight: 22,
   },
   messageLight: {
-    color: '#666666',
+    color: "#666666",
   },
   messageDark: {
-    color: '#CCCCCC',
+    color: "#CCCCCC",
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
     minWidth: 120,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   retryButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: "#FF6B6B",
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
   },
 });

@@ -1,39 +1,35 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
 import {
   TouchableOpacity,
   View,
   Text,
   StyleSheet,
   Animated,
-} from 'react-native';
+} from "react-native";
 
-import { useThemeToggle } from '../hooks/useThemeToggle';
-import { Spacing, BorderRadius, Typography } from '../styles/GlobalStyles';
+import { useThemeToggle } from "../hooks/useThemeToggle";
+import { Spacing, BorderRadius, Typography } from "../styles/GlobalStyles";
 
 interface ThemeToggleProps {
-  variant?: 'icon' | 'button' | 'selector';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "icon" | "button" | "selector";
+  size?: "small" | "medium" | "large";
   showLabel?: boolean;
   style?: any;
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({
-  variant = 'icon',
-  size = 'medium',
+  variant = "icon",
+  size = "medium",
   showLabel = false,
   style,
 }) => {
-  const { 
-    isDark, 
-    themeMode, 
-    colors, 
-    styles, 
-    toggleTheme, 
-    showThemeSelector 
-  } = useThemeToggle();
+  const { isDark, themeMode, colors, styles, toggleTheme, showThemeSelector } =
+    useThemeToggle();
 
-  const animatedValue = React.useRef(new Animated.Value(isDark ? 1 : 0)).current;
+  const animatedValue = React.useRef(
+    new Animated.Value(isDark ? 1 : 0),
+  ).current;
 
   React.useEffect(() => {
     Animated.timing(animatedValue, {
@@ -67,7 +63,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     outputRange: [colors.gray100, colors.gray800],
   });
 
-  if (variant === 'icon') {
+  if (variant === "icon") {
     return (
       <TouchableOpacity
         onPress={toggleTheme}
@@ -81,21 +77,21 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       >
         <Animated.View>
           <Ionicons
-            name={isDark ? 'moon' : 'sunny'}
+            name={isDark ? "moon" : "sunny"}
             size={iconSizes[size]}
             color={isDark ? colors.primary : colors.warning}
           />
         </Animated.View>
         {showLabel && (
           <Text style={[themeStyles.label, { color: colors.gray600 }]}>
-            {isDark ? 'Dark' : 'Light'}
+            {isDark ? "Dark" : "Light"}
           </Text>
         )}
       </TouchableOpacity>
     );
   }
 
-  if (variant === 'button') {
+  if (variant === "button") {
     return (
       <TouchableOpacity
         onPress={toggleTheme}
@@ -109,23 +105,23 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       >
         <View style={themeStyles.buttonContent}>
           <Ionicons
-            name={isDark ? 'moon' : 'sunny'}
+            name={isDark ? "moon" : "sunny"}
             size={iconSizes[size]}
             color={colors.primary}
           />
           <Text style={[themeStyles.buttonText, { color: colors.primary }]}>
-            {isDark ? 'Dark Mode' : 'Light Mode'}
+            {isDark ? "Dark Mode" : "Light Mode"}
           </Text>
         </View>
       </TouchableOpacity>
     );
   }
 
-  if (variant === 'selector') {
+  if (variant === "selector") {
     const themeLabels = {
-      light: 'Light',
-      dark: 'Dark',
-      system: 'Auto',
+      light: "Light",
+      dark: "Dark",
+      system: "Auto",
     };
 
     return (
@@ -134,7 +130,10 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         style={[
           themeStyles.selectorContainer,
           buttonSizes[size],
-          { backgroundColor: colors.glassWhiteLight, borderColor: colors.gray300 },
+          {
+            backgroundColor: colors.glassWhiteLight,
+            borderColor: colors.gray300,
+          },
           style,
         ]}
         activeOpacity={0.8}
@@ -143,11 +142,11 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           <View style={themeStyles.selectorLeft}>
             <Ionicons
               name={
-                themeMode === 'system' 
-                  ? 'phone-portrait' 
-                  : isDark 
-                  ? 'moon' 
-                  : 'sunny'
+                themeMode === "system"
+                  ? "phone-portrait"
+                  : isDark
+                    ? "moon"
+                    : "sunny"
               }
               size={iconSizes[size]}
               color={colors.primary}
@@ -156,11 +155,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
               Theme: {themeLabels[themeMode]}
             </Text>
           </View>
-          <Ionicons
-            name="chevron-down"
-            size={16}
-            color={colors.gray500}
-          />
+          <Ionicons name="chevron-down" size={16} color={colors.gray500} />
         </View>
       </TouchableOpacity>
     );
@@ -172,54 +167,54 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 const themeStyles = StyleSheet.create({
   iconContainer: {
     borderRadius: BorderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     gap: Spacing.xs,
   },
-  
+
   buttonContainer: {
     borderRadius: BorderRadius.xl,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  
+
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
-  
+
   buttonText: {
     fontSize: Typography.sizes.base,
     fontWeight: Typography.weights.semibold,
   },
-  
+
   selectorContainer: {
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  
+
   selectorContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
   },
-  
+
   selectorLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
-  
+
   selectorText: {
     fontSize: Typography.sizes.base,
     fontWeight: Typography.weights.medium,
   },
-  
+
   label: {
     fontSize: Typography.sizes.sm,
     fontWeight: Typography.weights.medium,

@@ -1,5 +1,5 @@
-import * as Haptics from 'expo-haptics';
-import { useEffect } from 'react';
+import * as Haptics from "expo-haptics";
+import { useEffect } from "react";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -11,7 +11,7 @@ import {
   interpolate,
   Extrapolate,
   runOnJS,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
 // === PREMIUM ANIMATION CONSTANTS ===
 export const PREMIUM_ANIMATIONS = {
@@ -49,11 +49,11 @@ export const PREMIUM_ANIMATIONS = {
 
   // Easing curves
   easing: {
-    easeIn: 'ease-in',
-    easeOut: 'ease-out',
-    easeInOut: 'ease-in-out',
-    bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-    elastic: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    easeIn: "ease-in",
+    easeOut: "ease-out",
+    easeInOut: "ease-in-out",
+    bounce: "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+    elastic: "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
   },
 
   // Stagger delays
@@ -77,11 +77,11 @@ export const useMagneticEffect = (enabled = true) => {
 
     rotateX.value = withSpring(
       interpolate(deltaY, [-50, 50], [10, -10], Extrapolate.CLAMP),
-      PREMIUM_ANIMATIONS.spring.gentle
+      PREMIUM_ANIMATIONS.spring.gentle,
     );
     rotateY.value = withSpring(
       interpolate(deltaX, [-50, 50], [-10, 10], Extrapolate.CLAMP),
-      PREMIUM_ANIMATIONS.spring.gentle
+      PREMIUM_ANIMATIONS.spring.gentle,
     );
   };
 
@@ -138,10 +138,10 @@ export const useShimmerEffect = (enabled = true) => {
       shimmerOffset.value = withRepeat(
         withSequence(
           withTiming(100, { duration: 2000 }),
-          withDelay(1000, withTiming(-100, { duration: 0 }))
+          withDelay(1000, withTiming(-100, { duration: 0 })),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [enabled]);
@@ -164,10 +164,10 @@ export const useGlowEffect = (enabled = true) => {
       glowIntensity.value = withRepeat(
         withSequence(
           withTiming(1.5, { duration: 1000 }),
-          withTiming(1, { duration: 1000 })
+          withTiming(1, { duration: 1000 }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [enabled]);
@@ -191,10 +191,10 @@ export const usePulseEffect = (enabled = true) => {
       pulseScale.value = withRepeat(
         withSequence(
           withTiming(1.05, { duration: 1000 }),
-          withTiming(1, { duration: 1000 })
+          withTiming(1, { duration: 1000 }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [enabled]);
@@ -217,10 +217,10 @@ export const useFloatingEffect = (enabled = true) => {
       translateY.value = withRepeat(
         withSequence(
           withTiming(-10, { duration: 2000 }),
-          withTiming(0, { duration: 2000 })
+          withTiming(0, { duration: 2000 }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [enabled]);
@@ -236,8 +236,8 @@ export const useFloatingEffect = (enabled = true) => {
 
 // Entrance animations
 export const useEntranceAnimation = (
-  type: 'fadeIn' | 'slideIn' | 'scaleIn' | 'bounceIn' = 'fadeIn',
-  delay = 0
+  type: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" = "fadeIn",
+  delay = 0,
 ) => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(50);
@@ -247,25 +247,31 @@ export const useEntranceAnimation = (
   useEffect(() => {
     const animate = () => {
       switch (type) {
-        case 'fadeIn':
+        case "fadeIn":
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
-        case 'slideIn':
-          translateY.value = withDelay(delay, withSpring(0, PREMIUM_ANIMATIONS.spring.gentle));
+        case "slideIn":
+          translateY.value = withDelay(
+            delay,
+            withSpring(0, PREMIUM_ANIMATIONS.spring.gentle),
+          );
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
-        case 'scaleIn':
-          scale.value = withDelay(delay, withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy));
+        case "scaleIn":
+          scale.value = withDelay(
+            delay,
+            withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy),
+          );
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
-        case 'bounceIn':
+        case "bounceIn":
           scale.value = withDelay(
             delay,
             withSequence(
               withTiming(1.2, { duration: 300 }),
               withTiming(0.9, { duration: 200 }),
-              withTiming(1, { duration: 300 })
-            )
+              withTiming(1, { duration: 300 }),
+            ),
           );
           opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
           break;
@@ -291,15 +297,15 @@ export const useEntranceAnimation = (
 
 // Haptic feedback
 export const useHapticFeedback = () => {
-  const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'light') => {
+  const triggerHaptic = (type: "light" | "medium" | "heavy" = "light") => {
     switch (type) {
-      case 'light':
+      case "light":
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         break;
-      case 'medium':
+      case "medium":
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         break;
-      case 'heavy':
+      case "heavy":
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         break;
     }
@@ -328,7 +334,7 @@ export const useHapticFeedback = () => {
 // Staggered animations
 export const useStaggeredAnimation = (
   count: number,
-  delay = PREMIUM_ANIMATIONS.stagger.normal
+  delay = PREMIUM_ANIMATIONS.stagger.normal,
 ) => {
   const getStaggeredDelay = (index: number) => index * delay;
 
@@ -352,7 +358,7 @@ export const usePageTransition = () => {
   const exitScreen = (callback?: () => void) => {
     screenOpacity.value = withTiming(0, { duration: 300 });
     screenTranslateY.value = withTiming(-50, { duration: 300 });
-    
+
     if (callback) {
       setTimeout(() => {
         runOnJS(callback)();
@@ -378,27 +384,20 @@ export const useLoadingAnimation = () => {
   const scale = useSharedValue(1);
 
   useEffect(() => {
-    rotation.value = withRepeat(
-      withTiming(360, { duration: 1000 }),
-      -1,
-      false
-    );
-    
+    rotation.value = withRepeat(withTiming(360, { duration: 1000 }), -1, false);
+
     scale.value = withRepeat(
       withSequence(
         withTiming(1.1, { duration: 500 }),
-        withTiming(1, { duration: 500 })
+        withTiming(1, { duration: 500 }),
       ),
       -1,
-      false
+      false,
     );
   }, []);
 
   const loadingStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotate: `${rotation.value}deg` },
-      { scale: scale.value },
-    ],
+    transform: [{ rotate: `${rotation.value}deg` }, { scale: scale.value }],
   }));
 
   return {

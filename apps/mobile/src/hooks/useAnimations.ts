@@ -1,20 +1,19 @@
 // Mobile Animations for PawfectMatch Premium
 // High-impact micro-interactions for React Native
 
-import * as Haptics from 'expo-haptics'
-import { logger } from '@pawfectmatch/core';
-;
-import { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
-  withTiming, 
+import * as Haptics from "expo-haptics";
+import { logger } from "@pawfectmatch/core";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
   withSequence,
   withDelay,
   interpolate,
   Extrapolate,
-  runOnJS
-} from 'react-native-reanimated';
+  runOnJS,
+} from "react-native-reanimated";
 
 // Animation configurations
 export const AnimationConfigs = {
@@ -58,16 +57,13 @@ export function useHoverLift(): UseHoverLiftReturn {
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { scale: scale.value },
-        { translateY: translateY.value },
-      ],
+      transform: [{ scale: scale.value }, { translateY: translateY.value }],
       shadowOpacity: shadowOpacity.value,
       shadowRadius: interpolate(
         shadowOpacity.value,
         [0.1, 0.3],
         [4, 20],
-        Extrapolate.CLAMP
+        Extrapolate.CLAMP,
       ),
     };
   });
@@ -105,7 +101,7 @@ export function usePulse(): UsePulseReturn {
   const startPulse = () => {
     opacity.value = withSequence(
       withTiming(0.8, { duration: 1000 }),
-      withTiming(1, { duration: 1000 })
+      withTiming(1, { duration: 1000 }),
     );
   };
 
@@ -191,17 +187,14 @@ export function useButtonMicro(): UseButtonMicroReturn {
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { scale: scale.value },
-        { translateY: translateY.value },
-      ],
+      transform: [{ scale: scale.value }, { translateY: translateY.value }],
     };
   });
 
   const onPressIn = () => {
     scale.value = withSpring(0.98, AnimationConfigs.springBouncy);
     translateY.value = withSpring(2, AnimationConfigs.springBouncy);
-    
+
     // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
@@ -233,10 +226,7 @@ export function useCardEntrance(delay: number = 0): UseCardEntranceReturn {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
-      transform: [
-        { translateY: translateY.value },
-        { scale: scale.value },
-      ],
+      transform: [{ translateY: translateY.value }, { scale: scale.value }],
     };
   });
 
@@ -292,7 +282,7 @@ export function useBounceIn(): UseBounceInReturn {
     scale.value = withSequence(
       withTiming(1.05, { duration: 250 }),
       withTiming(0.9, { duration: 100 }),
-      withTiming(1, { duration: 150 })
+      withTiming(1, { duration: 150 }),
     );
     opacity.value = withTiming(1, { duration: 250 });
   };
@@ -359,18 +349,20 @@ export function useHoverScale(): UseHoverScaleReturn {
 }
 
 // Enhanced haptic feedback
-export function triggerHaptic(type: 'light' | 'medium' | 'heavy' = 'medium'): void {
+export function triggerHaptic(
+  type: "light" | "medium" | "heavy" = "medium",
+): void {
   const hapticTypes = {
     light: Haptics.ImpactFeedbackStyle.Light,
     medium: Haptics.ImpactFeedbackStyle.Medium,
     heavy: Haptics.ImpactFeedbackStyle.Heavy,
   };
-  
+
   Haptics.impactAsync(hapticTypes[type]);
 }
 
 // Sound feedback (if available)
-export function triggerSound(type: 'hover' | 'press' = 'press'): void {
+export function triggerSound(type: "hover" | "press" = "press"): void {
   // Note: Sound feedback would require additional audio setup
   // This is a placeholder for future implementation
   logger.info(`Sound feedback: ${type}`);

@@ -2,10 +2,10 @@
  * Asset Preloading Service for PawfectMatch Mobile App
  * Preloads critical images, fonts, and assets for instant UX
  */
-import { logger } from '@pawfectmatch/core';
-import * as Font from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { Image } from 'react-native';
+import { logger } from "@pawfectmatch/core";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { Image } from "react-native";
 
 // Critical assets that should be preloaded
 const CRITICAL_IMAGES: string[] = [
@@ -27,7 +27,7 @@ class AssetPreloader {
   private preloadPromise: Promise<void> | null = null;
   private isPreloaded = false;
 
-  private constructor() { }
+  private constructor() {}
 
   static getInstance(): AssetPreloader {
     if (AssetPreloader.instance === undefined) {
@@ -57,7 +57,7 @@ class AssetPreloader {
    */
   private async performPreloading(): Promise<void> {
     try {
-      logger.info('Starting asset preloading...');
+      logger.info("Starting asset preloading...");
 
       const startTime = Date.now();
 
@@ -65,27 +65,28 @@ class AssetPreloader {
       await SplashScreen.preventAutoHideAsync();
 
       // Preload images in parallel
-      const imagePromises = CRITICAL_IMAGES.map(uri => this.preloadImage(uri));
+      const imagePromises = CRITICAL_IMAGES.map((uri) =>
+        this.preloadImage(uri),
+      );
 
       // Load fonts
       const fontPromise = this.loadFonts();
 
       // Wait for all assets to load
-      await Promise.all([
-        ...imagePromises,
-        fontPromise,
-      ]);
+      await Promise.all([...imagePromises, fontPromise]);
 
       const loadTime = Date.now() - startTime;
-      logger.info('Asset preloading completed', { loadTime, imageCount: CRITICAL_IMAGES.length });
+      logger.info("Asset preloading completed", {
+        loadTime,
+        imageCount: CRITICAL_IMAGES.length,
+      });
 
       this.isPreloaded = true;
 
       // Hide splash screen after loading
       await SplashScreen.hideAsync();
-
     } catch (error) {
-      logger.error('Asset preloading failed', { error });
+      logger.error("Asset preloading failed", { error });
       // Don't fail the app if preloading fails
       this.isPreloaded = true;
       await SplashScreen.hideAsync();
@@ -100,9 +101,11 @@ class AssetPreloader {
       const imageSource = Image.resolveAssetSource(source as any);
       if (imageSource?.uri) {
         Image.prefetch(imageSource.uri)
-          .then(() => { resolve(); })
+          .then(() => {
+            resolve();
+          })
           .catch((error: unknown) => {
-            logger.warn('Image preload failed', { source, error });
+            logger.warn("Image preload failed", { source, error });
             resolve(); // Don't fail on individual image errors
           });
       } else {
@@ -118,10 +121,10 @@ class AssetPreloader {
     try {
       if (Object.keys(CRITICAL_FONTS).length > 0) {
         await Font.loadAsync(CRITICAL_FONTS);
-        logger.info('Fonts loaded successfully');
+        logger.info("Fonts loaded successfully");
       }
     } catch (error) {
-      logger.error('Font loading failed', { error });
+      logger.error("Font loading failed", { error });
       throw error;
     }
   }
@@ -131,34 +134,44 @@ class AssetPreloader {
    */
   async preloadRemoteImages(urls: string[]): Promise<void> {
     try {
-      const promises = urls.map(url =>
-        new Promise<void>((resolve) => {
-          Image.prefetch(url)
-            .then(() => { resolve(); })
-            .catch(() => { resolve(); }); // Don't fail on individual image errors
-        })
+      const promises = urls.map(
+        (url) =>
+          new Promise<void>((resolve) => {
+            Image.prefetch(url)
+              .then(() => {
+                resolve();
+              })
+              .catch(() => {
+                resolve();
+              }); // Don't fail on individual image errors
+          }),
       );
 
       await Promise.all(promises);
-      logger.info('Remote images preloaded', { count: urls.length });
+      logger.info("Remote images preloaded", { count: urls.length });
     } catch (error) {
-      logger.error('Remote image preloading failed', { error });
+      logger.error("Remote image preloading failed", { error });
     }
   }
 
   /**
    * Preload assets for a specific screen
    */
-  async preloadScreenAssets(screenName: string, assets: {
-    images?: string[];
-    fonts?: Record<string, unknown>;
-  }): Promise<void> {
+  async preloadScreenAssets(
+    screenName: string,
+    assets: {
+      images?: string[];
+      fonts?: Record<string, unknown>;
+    },
+  ): Promise<void> {
     try {
       const promises: Promise<void>[] = [];
 
       // Preload screen-specific images
       if (assets.images !== undefined && assets.images.length > 0) {
-        const imagePromises = assets.images.map(uri => this.preloadImage(uri));
+        const imagePromises = assets.images.map((uri) =>
+          this.preloadImage(uri),
+        );
         promises.push(...imagePromises);
       }
 
@@ -169,9 +182,12 @@ class AssetPreloader {
       }
 
       await Promise.all(promises);
-      logger.info('Screen assets preloaded', { screenName, assetCount: promises.length });
+      logger.info("Screen assets preloaded", {
+        screenName,
+        assetCount: promises.length,
+      });
     } catch (error) {
-      logger.error('Screen asset preloading failed', { error, screenName });
+      logger.error("Screen asset preloading failed", { error, screenName });
     }
   }
 
@@ -200,13 +216,17 @@ class AssetPreloader {
 export const assetPreloader = AssetPreloader.getInstance();
 
 // Export convenience functions
-export const preloadCriticalAssets = () => assetPreloader.preloadCriticalAssets();
-export const preloadRemoteImages = (urls: string[]) => assetPreloader.preloadRemoteImages(urls);
-export const preloadScreenAssets = (screenName: string, assets: {
-  images?: string[];
-  fonts?: Record<string, unknown>;
-}) =>
-  assetPreloader.preloadScreenAssets(screenName, assets);
+export const preloadCriticalAssets = () =>
+  assetPreloader.preloadCriticalAssets();
+export const preloadRemoteImages = (urls: string[]) =>
+  assetPreloader.preloadRemoteImages(urls);
+export const preloadScreenAssets = (
+  screenName: string,
+  assets: {
+    images?: string[];
+    fonts?: Record<string, unknown>;
+  },
+) => assetPreloader.preloadScreenAssets(screenName, assets);
 export const isAssetsPreloaded = () => assetPreloader.isAssetsPreloaded();
 
 export default assetPreloader;

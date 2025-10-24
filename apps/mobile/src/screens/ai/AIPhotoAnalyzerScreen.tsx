@@ -3,11 +3,11 @@
  * Advanced photo analysis with breed detection, health assessment, and quality scoring
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { useAuthStore } from '@pawfectmatch/core';
-import * as Haptics from 'expo-haptics';
-import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from "@pawfectmatch/core";
+import * as Haptics from "expo-haptics";
+import * as ImagePicker from "expo-image-picker";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -18,13 +18,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../contexts/ThemeContext';
-import type { AIScreenProps } from '../../navigation/types';
-import { logger } from '../../services/logger';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { AIScreenProps } from "../../navigation/types";
+import { logger } from "../../services/logger";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PhotoAnalysisResult {
   breed: {
@@ -33,7 +33,7 @@ interface PhotoAnalysisResult {
     confidence: number;
   };
   health: {
-    overall: 'excellent' | 'good' | 'fair' | 'poor';
+    overall: "excellent" | "good" | "fair" | "poor";
     score: number;
     indicators: {
       coat: string;
@@ -61,13 +61,18 @@ interface PhotoAnalysisResult {
   tags: string[];
 }
 
-export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): React.JSX.Element {
+export default function AIPhotoAnalyzerScreen({
+  navigation,
+}: AIScreenProps): React.JSX.Element {
   const { colors } = useTheme();
   const { user: _user } = useAuthStore();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<PhotoAnalysisResult | null>(null);
-  const [analysisHistory, setAnalysisHistory] = useState<PhotoAnalysisResult[]>([]);
+  const [analysisResult, setAnalysisResult] =
+    useState<PhotoAnalysisResult | null>(null);
+  const [analysisHistory, setAnalysisHistory] = useState<PhotoAnalysisResult[]>(
+    [],
+  );
 
   const pickImage = async (): Promise<void> => {
     try {
@@ -77,9 +82,13 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
     }
 
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'We need camera roll permissions to analyze your pet photo');
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "We need camera roll permissions to analyze your pet photo",
+        );
         return;
       }
 
@@ -98,8 +107,8 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
         }
       }
     } catch (error) {
-      logger.error('Error picking image:', { error });
-      Alert.alert('Error', 'Failed to pick image');
+      logger.error("Error picking image:", { error });
+      Alert.alert("Error", "Failed to pick image");
     }
   };
 
@@ -112,8 +121,11 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
 
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'We need camera permissions to take a photo');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "We need camera permissions to take a photo",
+        );
         return;
       }
 
@@ -131,14 +143,14 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
         }
       }
     } catch (error) {
-      logger.error('Error taking photo:', { error });
-      Alert.alert('Error', 'Failed to take photo');
+      logger.error("Error taking photo:", { error });
+      Alert.alert("Error", "Failed to take photo");
     }
   };
 
   const analyzePhoto = async (): Promise<void> => {
     if (selectedImage === null) {
-      Alert.alert('No Image', 'Please select an image first');
+      Alert.alert("No Image", "Please select an image first");
       return;
     }
 
@@ -146,30 +158,33 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
     try {
       // Create FormData for image upload
       const formData = new FormData();
-      formData.append('image', JSON.stringify({
-        uri: selectedImage,
-        type: 'image/jpeg',
-        name: 'pet-photo.jpg',
-      }));
-      formData.append('userId', 'unknown');
+      formData.append(
+        "image",
+        JSON.stringify({
+          uri: selectedImage,
+          type: "image/jpeg",
+          name: "pet-photo.jpg",
+        }),
+      );
+      formData.append("userId", "unknown");
 
       // Mock API call for demo purposes
       const response = {
         success: true,
         data: {
           breed: {
-            primary: 'Mixed Breed',
-            confidence: 0.75
+            primary: "Mixed Breed",
+            confidence: 0.75,
           },
           health: {
-            overall: 'good' as const,
+            overall: "good" as const,
             score: 85,
             indicators: {
-              coat: 'Healthy and shiny',
-              eyes: 'Bright and alert',
-              posture: 'Confident stance',
-              energy: 'Energetic appearance'
-            }
+              coat: "Healthy and shiny",
+              eyes: "Bright and alert",
+              posture: "Confident stance",
+              energy: "Energetic appearance",
+            },
           },
           quality: {
             score: 88,
@@ -177,39 +192,39 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
               lighting: 90,
               clarity: 85,
               composition: 88,
-              expression: 92
-            }
+              expression: 92,
+            },
           },
           characteristics: {
-            age: 'Adult',
-            size: 'Medium',
-            temperament: ['Friendly', 'Playful'],
-            features: ['Well-groomed', 'Alert expression']
+            age: "Adult",
+            size: "Medium",
+            temperament: ["Friendly", "Playful"],
+            features: ["Well-groomed", "Alert expression"],
           },
           suggestions: [
-            'Great photo! Consider adding more variety in poses',
-            'Try capturing different angles to show personality',
-            'Natural lighting works well for this pet'
+            "Great photo! Consider adding more variety in poses",
+            "Try capturing different angles to show personality",
+            "Natural lighting works well for this pet",
           ],
-          tags: ['cute', 'friendly', 'well-groomed']
-        }
+          tags: ["cute", "friendly", "well-groomed"],
+        },
       };
 
       if (response.success) {
         const result: PhotoAnalysisResult = {
           breed: response.data.breed ?? {
-            primary: 'Mixed Breed',
-            confidence: 0.7
+            primary: "Mixed Breed",
+            confidence: 0.7,
           },
           health: response.data.health ?? {
-            overall: 'good' as const,
+            overall: "good" as const,
             score: 85,
             indicators: {
-              coat: 'Healthy and shiny',
-              eyes: 'Bright and alert',
-              posture: 'Confident stance',
-              energy: 'Energetic appearance'
-            }
+              coat: "Healthy and shiny",
+              eyes: "Bright and alert",
+              posture: "Confident stance",
+              energy: "Energetic appearance",
+            },
           },
           quality: response.data.quality ?? {
             score: 88,
@@ -217,51 +232,51 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
               lighting: 90,
               clarity: 85,
               composition: 88,
-              expression: 92
-            }
+              expression: 92,
+            },
           },
           characteristics: response.data.characteristics ?? {
-            age: 'Adult',
-            size: 'Medium',
-            temperament: ['Friendly', 'Playful'],
-            features: ['Well-groomed', 'Alert expression']
+            age: "Adult",
+            size: "Medium",
+            temperament: ["Friendly", "Playful"],
+            features: ["Well-groomed", "Alert expression"],
           },
           suggestions: response.data.suggestions ?? [
-            'Great photo! Consider adding more variety in poses',
-            'Try capturing different angles to show personality',
-            'Natural lighting works well for this pet'
+            "Great photo! Consider adding more variety in poses",
+            "Try capturing different angles to show personality",
+            "Natural lighting works well for this pet",
           ],
-          tags: response.data.tags ?? ['cute', 'friendly', 'well-groomed']
+          tags: response.data.tags ?? ["cute", "friendly", "well-groomed"],
         };
 
         setAnalysisResult(result);
-        setAnalysisHistory(prev => [result, ...prev.slice(0, 4)]); // Keep last 5
-        logger.info('Photo analysis completed', {
-          userId: 'unknown',
-          sessionId: 'mobile-photo-analysis',
-          version: '1.0.0',
+        setAnalysisHistory((prev) => [result, ...prev.slice(0, 4)]); // Keep last 5
+        logger.info("Photo analysis completed", {
+          userId: "unknown",
+          sessionId: "mobile-photo-analysis",
+          version: "1.0.0",
           timestamp: new Date().toISOString(),
-          breed: result.breed.primary
+          breed: result.breed.primary,
         });
       }
     } catch (error) {
-      logger.error('Photo analysis failed:', { error });
+      logger.error("Photo analysis failed:", { error });
 
       // Fallback analysis for demo
       const fallbackResult: PhotoAnalysisResult = {
         breed: {
-          primary: 'Mixed Breed',
-          confidence: 0.75
+          primary: "Mixed Breed",
+          confidence: 0.75,
         },
         health: {
-          overall: 'good' as const,
+          overall: "good" as const,
           score: 82,
           indicators: {
-            coat: 'Healthy appearance',
-            eyes: 'Bright and alert',
-            posture: 'Good stance',
-            energy: 'Appears energetic'
-          }
+            coat: "Healthy appearance",
+            eyes: "Bright and alert",
+            posture: "Good stance",
+            energy: "Appears energetic",
+          },
         },
         quality: {
           score: 85,
@@ -269,25 +284,25 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
             lighting: 80,
             clarity: 85,
             composition: 88,
-            expression: 87
-          }
+            expression: 87,
+          },
         },
         characteristics: {
-          age: 'Adult',
-          size: 'Medium',
-          temperament: ['Friendly', 'Calm'],
-          features: ['Well-groomed', 'Alert']
+          age: "Adult",
+          size: "Medium",
+          temperament: ["Friendly", "Calm"],
+          features: ["Well-groomed", "Alert"],
         },
         suggestions: [
-          'Great photo quality!',
-          'Consider adding more personality shots',
-          'Try different lighting conditions'
+          "Great photo quality!",
+          "Consider adding more personality shots",
+          "Try different lighting conditions",
         ],
-        tags: ['cute', 'friendly', 'healthy']
+        tags: ["cute", "friendly", "healthy"],
       };
 
       setAnalysisResult(fallbackResult);
-      setAnalysisHistory(prev => [fallbackResult, ...prev.slice(0, 4)]);
+      setAnalysisHistory((prev) => [fallbackResult, ...prev.slice(0, 4)]);
     } finally {
       setIsAnalyzing(false);
     }
@@ -295,28 +310,40 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
 
   const getHealthColor = (overall: string): string => {
     switch (overall) {
-      case 'excellent': return '#10B981';
-      case 'good': return '#3B82F6';
-      case 'fair': return '#F59E0B';
-      case 'poor': return '#EF4444';
-      default: return '#6B7280';
+      case "excellent":
+        return "#10B981";
+      case "good":
+        return "#3B82F6";
+      case "fair":
+        return "#F59E0B";
+      case "poor":
+        return "#EF4444";
+      default:
+        return "#6B7280";
     }
   };
 
   const getQualityColor = (score: number): string => {
-    if (score >= 90) return '#10B981';
-    if (score >= 80) return '#3B82F6';
-    if (score >= 70) return '#F59E0B';
-    return '#EF4444';
+    if (score >= 90) return "#10B981";
+    if (score >= 80) return "#3B82F6";
+    if (score >= 70) return "#F59E0B";
+    return "#EF4444";
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => { navigation.goBack(); }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text} />
@@ -327,10 +354,16 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
           <View style={styles.headerActions}>
             {analysisHistory.length > 0 && (
               <TouchableOpacity
-                style={[styles.historyButton, { backgroundColor: colors.primary }]}
+                style={[
+                  styles.historyButton,
+                  { backgroundColor: colors.primary },
+                ]}
                 onPress={() => {
                   // Show analysis history modal
-                  Alert.alert('Analysis History', `${analysisHistory.length.toString()} previous analyses`);
+                  Alert.alert(
+                    "Analysis History",
+                    `${analysisHistory.length.toString()} previous analyses`,
+                  );
                 }}
               >
                 <Ionicons name="time" size={20} color="#FFFFFF" />
@@ -347,9 +380,15 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
 
           {selectedImage !== null ? (
             <View style={styles.imageContainer}>
-              <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.selectedImage}
+              />
               <TouchableOpacity
-                style={[styles.changeImageButton, { backgroundColor: colors.primary }]}
+                style={[
+                  styles.changeImageButton,
+                  { backgroundColor: colors.primary },
+                ]}
                 onPress={pickImage}
               >
                 <Ionicons name="camera" size={20} color="#FFFFFF" />
@@ -357,21 +396,37 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
               </TouchableOpacity>
             </View>
           ) : (
-            <View style={[styles.imagePlaceholder, { backgroundColor: colors.card }]}>
+            <View
+              style={[
+                styles.imagePlaceholder,
+                { backgroundColor: colors.card },
+              ]}
+            >
               <Ionicons name="camera" size={48} color={colors.textSecondary} />
-              <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.placeholderText,
+                  { color: colors.textSecondary },
+                ]}
+              >
                 No photo selected
               </Text>
               <View style={styles.imageButtons}>
                 <TouchableOpacity
-                  style={[styles.imageButton, { backgroundColor: colors.primary }]}
+                  style={[
+                    styles.imageButton,
+                    { backgroundColor: colors.primary },
+                  ]}
                   onPress={pickImage}
                 >
                   <Ionicons name="image" size={20} color="#FFFFFF" />
                   <Text style={styles.imageButtonText}>Gallery</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.imageButton, { backgroundColor: colors.secondary }]}
+                  style={[
+                    styles.imageButton,
+                    { backgroundColor: colors.secondary },
+                  ]}
                   onPress={takePhoto}
                 >
                   <Ionicons name="camera" size={20} color="#FFFFFF" />
@@ -383,215 +438,335 @@ export default function AIPhotoAnalyzerScreen({ navigation }: AIScreenProps): Re
         </View>
 
         {/* Analysis Button */}
-        {selectedImage !== null ? <View style={styles.analysisSection}>
-          <TouchableOpacity
-            style={[
-              styles.analyzeButton,
-              { backgroundColor: colors.primary },
-              isAnalyzing && styles.analyzeButtonDisabled
-            ]}
-            onPress={analyzePhoto}
-            disabled={isAnalyzing}
-          >
-            {isAnalyzing ? (
-              <>
-                <ActivityIndicator size="small" color="#FFFFFF" />
-                <Text style={styles.analyzeButtonText}>Analyzing...</Text>
-              </>
-            ) : (
-              <>
-                <Ionicons name="sparkles" size={20} color="#FFFFFF" />
-                <Text style={styles.analyzeButtonText}>Analyze Photo</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View> : null}
+        {selectedImage !== null ? (
+          <View style={styles.analysisSection}>
+            <TouchableOpacity
+              style={[
+                styles.analyzeButton,
+                { backgroundColor: colors.primary },
+                isAnalyzing && styles.analyzeButtonDisabled,
+              ]}
+              onPress={analyzePhoto}
+              disabled={isAnalyzing}
+            >
+              {isAnalyzing ? (
+                <>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <Text style={styles.analyzeButtonText}>Analyzing...</Text>
+                </>
+              ) : (
+                <>
+                  <Ionicons name="sparkles" size={20} color="#FFFFFF" />
+                  <Text style={styles.analyzeButtonText}>Analyze Photo</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        ) : null}
 
         {/* Analysis Results */}
-        {analysisResult !== null ? <View style={styles.resultsSection}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Analysis Results
-          </Text>
+        {analysisResult !== null ? (
+          <View style={styles.resultsSection}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Analysis Results
+            </Text>
 
-          {/* Breed Detection */}
-          <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
-            <View style={styles.resultHeader}>
-              <Ionicons name="paw" size={24} color="#8B5CF6" />
-              <Text style={[styles.resultTitle, { color: colors.text }]}>
-                Breed Detection
-              </Text>
-            </View>
-            <View style={styles.breedInfo}>
-              <Text style={[styles.breedPrimary, { color: colors.text }]}>
-                {analysisResult.breed.primary}
-              </Text>
-              {analysisResult.breed.secondary !== undefined ? <Text style={[styles.breedSecondary, { color: colors.textSecondary }]}>
-                Mixed with {analysisResult.breed.secondary}
-              </Text> : null}
-              <View style={styles.confidenceBar}>
-                <View style={[
-                  styles.confidenceFill,
-                  {
-                    width: `${Math.round(analysisResult.breed.confidence * 100)}%` as const,
-                    backgroundColor: '#8B5CF6'
-                  }
-                ]} />
-              </View>
-              <Text style={[styles.confidenceText, { color: colors.textSecondary }]}>
-                {Math.round(analysisResult.breed.confidence * 100)}% confidence
-              </Text>
-            </View>
-          </View>
-
-          {/* Health Assessment */}
-          <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
-            <View style={styles.resultHeader}>
-              <Ionicons name="heart" size={24} color={getHealthColor(analysisResult.health.overall)} />
-              <Text style={[styles.resultTitle, { color: colors.text }]}>
-                Health Assessment
-              </Text>
-            </View>
-            <View style={styles.healthInfo}>
-              <View style={styles.healthScore}>
-                <Text style={[styles.healthScoreValue, { color: getHealthColor(analysisResult.health.overall) }]}>
-                  {analysisResult.health.score}/100
-                </Text>
-                <Text style={[styles.healthScoreLabel, { color: colors.textSecondary }]}>
-                  Overall Health
+            {/* Breed Detection */}
+            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+              <View style={styles.resultHeader}>
+                <Ionicons name="paw" size={24} color="#8B5CF6" />
+                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                  Breed Detection
                 </Text>
               </View>
-              <View style={styles.healthIndicators}>
-                {Object.entries(analysisResult.health.indicators).map(([key, value]) => (
-                  <View key={key} style={styles.healthIndicator}>
-                    <Text style={[styles.healthIndicatorLabel, { color: colors.textSecondary }]}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </Text>
-                    <Text style={[styles.healthIndicatorValue, { color: colors.text }]}>
-                      {value}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Photo Quality */}
-          <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
-            <View style={styles.resultHeader}>
-              <Ionicons name="camera" size={24} color={getQualityColor(analysisResult.quality.score)} />
-              <Text style={[styles.resultTitle, { color: colors.text }]}>
-                Photo Quality
-              </Text>
-            </View>
-            <View style={styles.qualityInfo}>
-              <Text style={[styles.qualityScore, { color: getQualityColor(analysisResult.quality.score) }]}>
-                {analysisResult.quality.score}/100
-              </Text>
-              <View style={styles.qualityFactors}>
-                {Object.entries(analysisResult.quality.factors).map(([factor, score]) => (
-                  <View key={factor} style={styles.qualityFactor}>
-                    <Text style={[styles.qualityFactorLabel, { color: colors.textSecondary }]}>
-                      {factor.charAt(0).toUpperCase() + factor.slice(1)}
-                    </Text>
-                    <View style={styles.qualityFactorBar}>
-                      <View style={[
-                        styles.qualityFactorFill,
-                        {
-                          width: `${Math.round(score)}%` as const,
-                          backgroundColor: getQualityColor(score)
-                        }
-                      ]} />
-                    </View>
-                    <Text style={[styles.qualityFactorScore, { color: colors.text }]}>
-                      {score}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Characteristics */}
-          <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
-            <View style={styles.resultHeader}>
-              <Ionicons name="list" size={24} color="#3B82F6" />
-              <Text style={[styles.resultTitle, { color: colors.text }]}>
-                Characteristics
-              </Text>
-            </View>
-            <View style={styles.characteristicsInfo}>
-              <View style={styles.characteristicItem}>
-                <Text style={[styles.characteristicLabel, { color: colors.textSecondary }]}>Age</Text>
-                <Text style={[styles.characteristicValue, { color: colors.text }]}>
-                  {analysisResult.characteristics.age}
+              <View style={styles.breedInfo}>
+                <Text style={[styles.breedPrimary, { color: colors.text }]}>
+                  {analysisResult.breed.primary}
                 </Text>
-              </View>
-              <View style={styles.characteristicItem}>
-                <Text style={[styles.characteristicLabel, { color: colors.textSecondary }]}>Size</Text>
-                <Text style={[styles.characteristicValue, { color: colors.text }]}>
-                  {analysisResult.characteristics.size}
-                </Text>
-              </View>
-              <View style={styles.characteristicItem}>
-                <Text style={[styles.characteristicLabel, { color: colors.textSecondary }]}>Temperament</Text>
-                <View style={styles.tagsContainer}>
-                  {analysisResult.characteristics.temperament.map((trait, index) => (
-                    <View key={index} style={[styles.tag, { backgroundColor: '#3B82F6' }]}>
-                      <Text style={styles.tagText}>{trait}</Text>
-                    </View>
-                  ))}
+                {analysisResult.breed.secondary !== undefined ? (
+                  <Text
+                    style={[
+                      styles.breedSecondary,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Mixed with {analysisResult.breed.secondary}
+                  </Text>
+                ) : null}
+                <View style={styles.confidenceBar}>
+                  <View
+                    style={[
+                      styles.confidenceFill,
+                      {
+                        width:
+                          `${Math.round(analysisResult.breed.confidence * 100)}%` as const,
+                        backgroundColor: "#8B5CF6",
+                      },
+                    ]}
+                  />
                 </View>
-              </View>
-              <View style={styles.characteristicItem}>
-                <Text style={[styles.characteristicLabel, { color: colors.textSecondary }]}>Features</Text>
-                <View style={styles.tagsContainer}>
-                  {analysisResult.characteristics.features.map((feature, index) => (
-                    <View key={index} style={[styles.tag, { backgroundColor: '#10B981' }]}>
-                      <Text style={styles.tagText}>{feature}</Text>
-                    </View>
-                  ))}
-                </View>
+                <Text
+                  style={[
+                    styles.confidenceText,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  {Math.round(analysisResult.breed.confidence * 100)}%
+                  confidence
+                </Text>
               </View>
             </View>
-          </View>
 
-          {/* Suggestions */}
-          <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
-            <View style={styles.resultHeader}>
-              <Ionicons name="bulb" size={24} color="#F59E0B" />
-              <Text style={[styles.resultTitle, { color: colors.text }]}>
-                Suggestions
-              </Text>
-            </View>
-            <View style={styles.suggestionsList}>
-              {analysisResult.suggestions.map((suggestion, index) => (
-                <View key={index} style={styles.suggestionItem}>
-                  <Ionicons name="checkmark-circle" size={16} color="#F59E0B" />
-                  <Text style={[styles.suggestionText, { color: colors.text }]}>
-                    {suggestion}
+            {/* Health Assessment */}
+            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+              <View style={styles.resultHeader}>
+                <Ionicons
+                  name="heart"
+                  size={24}
+                  color={getHealthColor(analysisResult.health.overall)}
+                />
+                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                  Health Assessment
+                </Text>
+              </View>
+              <View style={styles.healthInfo}>
+                <View style={styles.healthScore}>
+                  <Text
+                    style={[
+                      styles.healthScoreValue,
+                      { color: getHealthColor(analysisResult.health.overall) },
+                    ]}
+                  >
+                    {analysisResult.health.score}/100
+                  </Text>
+                  <Text
+                    style={[
+                      styles.healthScoreLabel,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Overall Health
                   </Text>
                 </View>
-              ))}
-            </View>
-          </View>
-
-          {/* Tags */}
-          <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
-            <View style={styles.resultHeader}>
-              <Ionicons name="pricetag" size={24} color="#8B5CF6" />
-              <Text style={[styles.resultTitle, { color: colors.text }]}>
-                Photo Tags
-              </Text>
-            </View>
-            <View style={styles.tagsContainer}>
-              {analysisResult.tags.map((tag, index) => (
-                <View key={index} style={[styles.tag, { backgroundColor: '#8B5CF6' }]}>
-                  <Text style={styles.tagText}>#{tag}</Text>
+                <View style={styles.healthIndicators}>
+                  {Object.entries(analysisResult.health.indicators).map(
+                    ([key, value]) => (
+                      <View key={key} style={styles.healthIndicator}>
+                        <Text
+                          style={[
+                            styles.healthIndicatorLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          {key.charAt(0).toUpperCase() + key.slice(1)}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.healthIndicatorValue,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {value}
+                        </Text>
+                      </View>
+                    ),
+                  )}
                 </View>
-              ))}
+              </View>
+            </View>
+
+            {/* Photo Quality */}
+            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+              <View style={styles.resultHeader}>
+                <Ionicons
+                  name="camera"
+                  size={24}
+                  color={getQualityColor(analysisResult.quality.score)}
+                />
+                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                  Photo Quality
+                </Text>
+              </View>
+              <View style={styles.qualityInfo}>
+                <Text
+                  style={[
+                    styles.qualityScore,
+                    { color: getQualityColor(analysisResult.quality.score) },
+                  ]}
+                >
+                  {analysisResult.quality.score}/100
+                </Text>
+                <View style={styles.qualityFactors}>
+                  {Object.entries(analysisResult.quality.factors).map(
+                    ([factor, score]) => (
+                      <View key={factor} style={styles.qualityFactor}>
+                        <Text
+                          style={[
+                            styles.qualityFactorLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          {factor.charAt(0).toUpperCase() + factor.slice(1)}
+                        </Text>
+                        <View style={styles.qualityFactorBar}>
+                          <View
+                            style={[
+                              styles.qualityFactorFill,
+                              {
+                                width: `${Math.round(score)}%` as const,
+                                backgroundColor: getQualityColor(score),
+                              },
+                            ]}
+                          />
+                        </View>
+                        <Text
+                          style={[
+                            styles.qualityFactorScore,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {score}
+                        </Text>
+                      </View>
+                    ),
+                  )}
+                </View>
+              </View>
+            </View>
+
+            {/* Characteristics */}
+            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+              <View style={styles.resultHeader}>
+                <Ionicons name="list" size={24} color="#3B82F6" />
+                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                  Characteristics
+                </Text>
+              </View>
+              <View style={styles.characteristicsInfo}>
+                <View style={styles.characteristicItem}>
+                  <Text
+                    style={[
+                      styles.characteristicLabel,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Age
+                  </Text>
+                  <Text
+                    style={[styles.characteristicValue, { color: colors.text }]}
+                  >
+                    {analysisResult.characteristics.age}
+                  </Text>
+                </View>
+                <View style={styles.characteristicItem}>
+                  <Text
+                    style={[
+                      styles.characteristicLabel,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Size
+                  </Text>
+                  <Text
+                    style={[styles.characteristicValue, { color: colors.text }]}
+                  >
+                    {analysisResult.characteristics.size}
+                  </Text>
+                </View>
+                <View style={styles.characteristicItem}>
+                  <Text
+                    style={[
+                      styles.characteristicLabel,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Temperament
+                  </Text>
+                  <View style={styles.tagsContainer}>
+                    {analysisResult.characteristics.temperament.map(
+                      (trait, index) => (
+                        <View
+                          key={index}
+                          style={[styles.tag, { backgroundColor: "#3B82F6" }]}
+                        >
+                          <Text style={styles.tagText}>{trait}</Text>
+                        </View>
+                      ),
+                    )}
+                  </View>
+                </View>
+                <View style={styles.characteristicItem}>
+                  <Text
+                    style={[
+                      styles.characteristicLabel,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
+                    Features
+                  </Text>
+                  <View style={styles.tagsContainer}>
+                    {analysisResult.characteristics.features.map(
+                      (feature, index) => (
+                        <View
+                          key={index}
+                          style={[styles.tag, { backgroundColor: "#10B981" }]}
+                        >
+                          <Text style={styles.tagText}>{feature}</Text>
+                        </View>
+                      ),
+                    )}
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Suggestions */}
+            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+              <View style={styles.resultHeader}>
+                <Ionicons name="bulb" size={24} color="#F59E0B" />
+                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                  Suggestions
+                </Text>
+              </View>
+              <View style={styles.suggestionsList}>
+                {analysisResult.suggestions.map((suggestion, index) => (
+                  <View key={index} style={styles.suggestionItem}>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={16}
+                      color="#F59E0B"
+                    />
+                    <Text
+                      style={[styles.suggestionText, { color: colors.text }]}
+                    >
+                      {suggestion}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Tags */}
+            <View style={[styles.resultCard, { backgroundColor: colors.card }]}>
+              <View style={styles.resultHeader}>
+                <Ionicons name="pricetag" size={24} color="#8B5CF6" />
+                <Text style={[styles.resultTitle, { color: colors.text }]}>
+                  Photo Tags
+                </Text>
+              </View>
+              <View style={styles.tagsContainer}>
+                {analysisResult.tags.map((tag, index) => (
+                  <View
+                    key={index}
+                    style={[styles.tag, { backgroundColor: "#8B5CF6" }]}
+                  >
+                    <Text style={styles.tagText}>#{tag}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
-        </View> : null}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -606,8 +781,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 4,
   },
@@ -616,31 +791,31 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     flex: 1,
     marginLeft: 8,
   },
   headerActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   historyButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   imageSection: {
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   imageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   selectedImage: {
     width: SCREEN_WIDTH - 32,
@@ -649,23 +824,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   changeImageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     gap: 8,
   },
   changeImageText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   imagePlaceholder: {
     height: SCREEN_WIDTH - 32,
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   placeholderText: {
@@ -674,29 +849,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   imageButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
   },
   imageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
     gap: 8,
   },
   imageButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   analysisSection: {
     marginBottom: 24,
   },
   analyzeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 16,
     borderRadius: 12,
     gap: 8,
@@ -705,9 +880,9 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   resultsSection: {
     marginBottom: 24,
@@ -716,20 +891,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
   },
   resultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
   resultTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
   },
   breedInfo: {
@@ -737,19 +912,19 @@ const styles = StyleSheet.create({
   },
   breedPrimary: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   breedSecondary: {
     fontSize: 14,
   },
   confidenceBar: {
     height: 8,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#E5E7EB",
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   confidenceFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
   },
   confidenceText: {
@@ -759,11 +934,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   healthScore: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   healthScoreValue: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   healthScoreLabel: {
     fontSize: 12,
@@ -772,8 +947,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   healthIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   healthIndicatorLabel: {
     fontSize: 14,
@@ -781,24 +956,24 @@ const styles = StyleSheet.create({
   },
   healthIndicatorValue: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     flex: 2,
-    textAlign: 'right',
+    textAlign: "right",
   },
   qualityInfo: {
     gap: 12,
   },
   qualityScore: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   qualityFactors: {
     gap: 8,
   },
   qualityFactor: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   qualityFactorLabel: {
@@ -808,19 +983,19 @@ const styles = StyleSheet.create({
   qualityFactorBar: {
     flex: 1,
     height: 8,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#E5E7EB",
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   qualityFactorFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 4,
   },
   qualityFactorScore: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     width: 30,
-    textAlign: 'right',
+    textAlign: "right",
   },
   characteristicsInfo: {
     gap: 12,
@@ -830,14 +1005,14 @@ const styles = StyleSheet.create({
   },
   characteristicLabel: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   characteristicValue: {
     fontSize: 14,
   },
   tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   tag: {
@@ -846,16 +1021,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tagText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   suggestionsList: {
     gap: 8,
   },
   suggestionItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 8,
   },
   suggestionText: {

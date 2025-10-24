@@ -1,17 +1,16 @@
-import React, { useState } from 'react'
-import { logger } from '@pawfectmatch/core';
-;
-import { Ionicons } from '@expo/vector-icons';
-import { useAuthStore } from '@pawfectmatch/core';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState } from "react";
+import { logger } from "@pawfectmatch/core";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from "@pawfectmatch/core";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
-    Dimensions,
-    RefreshControl,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
+  Dimensions,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 // Import new architecture components
 import {
@@ -28,17 +27,17 @@ import {
   Label,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from '../components/NewComponents';
+} from "../components/NewComponents";
 
 // Import legacy components for backward compatibility
-import { 
+import {
   EliteContainer,
   EliteScrollContainer,
   EliteHeader,
   EliteCard,
   FadeInUp,
   StaggeredContainer,
-} from '../components/EliteComponents';
+} from "../components/EliteComponents";
 
 // Import premium components
 import {
@@ -47,10 +46,10 @@ import {
   HolographicCard,
   GlowContainer,
   ParticleEffect,
-} from '../components/PremiumComponents';
-import { matchesAPI } from '../services/api';
+} from "../components/PremiumComponents";
+import { matchesAPI } from "../services/api";
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 
 type RootStackParamList = {
   Home: undefined;
@@ -76,17 +75,15 @@ export default function HomeScreen() {
   });
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(
-    6, // Number of sections
-    150,
-    'gentle'
-  );
+  const { start: startStaggeredAnimation, getAnimatedStyle } =
+    useStaggeredAnimation(
+      6, // Number of sections
+      150,
+      "gentle",
+    );
 
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeInUp',
-    0,
-    'bouncy'
-  );
+  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
+    useEntranceAnimation("fadeInUp", 0, "bouncy");
 
   // Start animations
   React.useEffect(() => {
@@ -100,16 +97,18 @@ export default function HomeScreen() {
       // Fetch real data from API
       const [matches, stats] = await Promise.all([
         matchesAPI.getMatches().catch(() => []),
-        matchesAPI.getUserStats().catch(() => ({ matches: 0, messages: 0, pets: 0 })),
+        matchesAPI
+          .getUserStats()
+          .catch(() => ({ matches: 0, messages: 0, pets: 0 })),
       ]);
-      
+
       setStats({
         matches: matches.length,
         messages: stats.messages,
         pets: stats.pets,
       });
     } catch (error) {
-      logger.error('Failed to refresh data:', { error });
+      logger.error("Failed to refresh data:", { error });
     } finally {
       setRefreshing(false);
     }
@@ -119,56 +118,68 @@ export default function HomeScreen() {
     try {
       // ✅ REAL NAVIGATION - Navigate to actual screens
       switch (action) {
-        case 'swipe':
-          navigation.navigate('Swipe');
+        case "swipe":
+          navigation.navigate("Swipe");
           break;
-        case 'matches':
-          navigation.navigate('Matches');
+        case "matches":
+          navigation.navigate("Matches");
           break;
-        case 'messages':
+        case "messages":
           // Navigate to Matches screen since Messages is not a separate screen
-          navigation.navigate('Matches');
+          navigation.navigate("Matches");
           break;
-        case 'profile':
-          navigation.navigate('Profile');
+        case "profile":
+          navigation.navigate("Profile");
           break;
-        case 'settings':
-          navigation.navigate('Settings');
+        case "settings":
+          navigation.navigate("Settings");
           break;
-        case 'my-pets':
-          navigation.navigate('MyPets');
+        case "my-pets":
+          navigation.navigate("MyPets");
           break;
-        case 'create-pet':
-          navigation.navigate('CreatePet');
+        case "create-pet":
+          navigation.navigate("CreatePet");
           break;
-        case 'premium':
+        case "premium":
           // Navigate to Profile screen since Premium is part of profile
-          navigation.navigate('Profile');
+          navigation.navigate("Profile");
           break;
         default:
           logger.warn(`Unknown action: ${action}`);
       }
     } catch (error) {
-      logger.error('Navigation error:', { error });
+      logger.error("Navigation error:", { error });
     }
   };
 
-  const handleProfilePress = () => { handleQuickAction('profile'); };
-  const handleSettingsPress = () => { handleQuickAction('settings'); };
-  const handleSwipePress = () => { handleQuickAction('swipe'); };
-  const handleMatchesPress = () => { handleQuickAction('matches'); };
-  const handleMessagesPress = () => { handleQuickAction('messages'); };
-  const handleAdoptionPress = () => { handleQuickAction('adoption'); };
+  const handleProfilePress = () => {
+    handleQuickAction("profile");
+  };
+  const handleSettingsPress = () => {
+    handleQuickAction("settings");
+  };
+  const handleSwipePress = () => {
+    handleQuickAction("swipe");
+  };
+  const handleMatchesPress = () => {
+    handleQuickAction("matches");
+  };
+  const handleMessagesPress = () => {
+    handleQuickAction("messages");
+  };
+  const handleAdoptionPress = () => {
+    handleQuickAction("adoption");
+  };
 
   return (
     <EliteContainer gradient="primary">
       {/* Premium Glass Header */}
       <EliteHeader
         title="PawfectMatch"
-        subtitle={`Welcome back, ${user?.firstName ?? 'Pet Lover'}!`}
+        subtitle={`Welcome back, ${user?.firstName ?? "Pet Lover"}!`}
         blur={true}
         rightComponent={
-          <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={{ flexDirection: "row", gap: 8 }}>
             <EliteButton
               title=""
               variant="glass"
@@ -197,7 +208,6 @@ export default function HomeScreen() {
           />
         }
       >
-
         {/* Quick Actions with Premium Effects */}
         <FadeInUp delay={0}>
           <View style={styles.quickActions}>
@@ -209,12 +219,25 @@ export default function HomeScreen() {
                   onPress={handleSwipePress}
                   style={styles.actionCard}
                 >
-                  <GlowContainer color="primary" intensity="medium" animated={true}>
+                  <GlowContainer
+                    color="primary"
+                    intensity="medium"
+                    animated={true}
+                  >
                     <View style={styles.actionContent}>
-                      <View style={[styles.actionIcon, { backgroundColor: '#ec4899' }]}>
+                      <View
+                        style={[
+                          styles.actionIcon,
+                          { backgroundColor: "#ec4899" },
+                        ]}
+                      >
                         <Ionicons name="heart" size={24} color="#fff" />
                       </View>
-                      <PremiumBody size="sm" weight="semibold" gradient="primary">
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="primary"
+                      >
                         Swipe
                       </PremiumBody>
                     </View>
@@ -228,12 +251,25 @@ export default function HomeScreen() {
                   onPress={handleMatchesPress}
                   style={styles.actionCard}
                 >
-                  <GlowContainer color="success" intensity="medium" animated={true}>
+                  <GlowContainer
+                    color="success"
+                    intensity="medium"
+                    animated={true}
+                  >
                     <View style={styles.actionContent}>
-                      <View style={[styles.actionIcon, { backgroundColor: '#10b981' }]}>
+                      <View
+                        style={[
+                          styles.actionIcon,
+                          { backgroundColor: "#10b981" },
+                        ]}
+                      >
                         <Ionicons name="people" size={24} color="#fff" />
                       </View>
-                      <PremiumBody size="sm" weight="semibold" gradient="secondary">
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
                         Matches
                       </PremiumBody>
                       {stats.matches > 0 && (
@@ -252,12 +288,25 @@ export default function HomeScreen() {
                   onPress={handleMessagesPress}
                   style={styles.actionCard}
                 >
-                  <GlowContainer color="secondary" intensity="medium" animated={true}>
+                  <GlowContainer
+                    color="secondary"
+                    intensity="medium"
+                    animated={true}
+                  >
                     <View style={styles.actionContent}>
-                      <View style={[styles.actionIcon, { backgroundColor: '#3b82f6' }]}>
+                      <View
+                        style={[
+                          styles.actionIcon,
+                          { backgroundColor: "#3b82f6" },
+                        ]}
+                      >
                         <Ionicons name="chatbubbles" size={24} color="#fff" />
                       </View>
-                      <PremiumBody size="sm" weight="semibold" gradient="secondary">
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
                         Messages
                       </PremiumBody>
                       {stats.messages > 0 && (
@@ -277,15 +326,30 @@ export default function HomeScreen() {
                   magnetic={true}
                   shimmer={true}
                   entrance="scaleIn"
-                  onPress={() => { handleQuickAction('profile'); }}
+                  onPress={() => {
+                    handleQuickAction("profile");
+                  }}
                   style={styles.actionCard}
                 >
-                  <GlowContainer color="purple" intensity="medium" animated={true}>
+                  <GlowContainer
+                    color="purple"
+                    intensity="medium"
+                    animated={true}
+                  >
                     <View style={styles.actionContent}>
-                      <View style={[styles.actionIcon, { backgroundColor: '#8b5cf6' }]}>
+                      <View
+                        style={[
+                          styles.actionIcon,
+                          { backgroundColor: "#8b5cf6" },
+                        ]}
+                      >
                         <Ionicons name="person" size={24} color="#fff" />
                       </View>
-                      <PremiumBody size="sm" weight="semibold" gradient="premium">
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="premium"
+                      >
                         Profile
                       </PremiumBody>
                     </View>
@@ -312,13 +376,21 @@ export default function HomeScreen() {
               <StaggeredContainer delay={50}>
                 <FadeInUp delay={0}>
                   <View style={styles.activityItem}>
-                    <GlowContainer color="primary" intensity="light" animated={true}>
+                    <GlowContainer
+                      color="primary"
+                      intensity="light"
+                      animated={true}
+                    >
                       <View style={styles.activityIcon}>
                         <Ionicons name="heart" size={20} color="#ec4899" />
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
-                      <PremiumBody size="base" weight="semibold" gradient="primary">
+                      <PremiumBody
+                        size="base"
+                        weight="semibold"
+                        gradient="primary"
+                      >
                         New Match!
                       </PremiumBody>
                       <PremiumBody size="sm" weight="regular">
@@ -333,13 +405,21 @@ export default function HomeScreen() {
 
                 <FadeInUp delay={50}>
                   <View style={styles.activityItem}>
-                    <GlowContainer color="secondary" intensity="light" animated={true}>
+                    <GlowContainer
+                      color="secondary"
+                      intensity="light"
+                      animated={true}
+                    >
                       <View style={styles.activityIcon}>
                         <Ionicons name="chatbubble" size={20} color="#3b82f6" />
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
-                      <PremiumBody size="base" weight="semibold" gradient="secondary">
+                      <PremiumBody
+                        size="base"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
                         New Message
                       </PremiumBody>
                       <PremiumBody size="sm" weight="regular">
@@ -359,10 +439,15 @@ export default function HomeScreen() {
         {/* Premium Features with Particle Effects */}
         <FadeInUp delay={600}>
           <View style={styles.premiumSection}>
-            <PremiumHeading level={2} gradient="holographic" animated={true} glow={true}>
+            <PremiumHeading
+              level={2}
+              gradient="holographic"
+              animated={true}
+              glow={true}
+            >
               Premium Features
             </PremiumHeading>
-            <View style={{ position: 'relative' }}>
+            <View style={{ position: "relative" }}>
               <ParticleEffect count={15} variant="neon" speed="normal" />
               <HolographicCard
                 variant="rainbow"
@@ -373,15 +458,25 @@ export default function HomeScreen() {
               >
                 <View style={styles.premiumContent}>
                   <View style={styles.premiumHeader}>
-                    <GlowContainer color="neon" intensity="heavy" animated={true}>
+                    <GlowContainer
+                      color="neon"
+                      intensity="heavy"
+                      animated={true}
+                    >
                       <Ionicons name="diamond" size={32} color="#fbbf24" />
                     </GlowContainer>
-                    <PremiumHeading level={3} gradient="holographic" animated={true} glow={true}>
+                    <PremiumHeading
+                      level={3}
+                      gradient="holographic"
+                      animated={true}
+                      glow={true}
+                    >
                       PawfectMatch Premium
                     </PremiumHeading>
                   </View>
                   <PremiumBody size="base" weight="regular" gradient="primary">
-                    Unlock unlimited swipes, see who liked you, and get priority in search results.
+                    Unlock unlimited swipes, see who liked you, and get priority
+                    in search results.
                   </PremiumBody>
                   <View style={styles.premiumActions}>
                     <EliteButton
@@ -393,7 +488,9 @@ export default function HomeScreen() {
                       ripple={true}
                       glow={true}
                       shimmer={true}
-                      onPress={() => { handleQuickAction('premium'); }}
+                      onPress={() => {
+                        handleQuickAction("premium");
+                      }}
                     />
                   </View>
                 </View>
@@ -409,7 +506,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   scrollView: {
     flex: 1,
@@ -418,22 +515,22 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: "#e9ecef",
   },
   greeting: {
     fontSize: 16,
-    color: '#6c757d',
+    color: "#6c757d",
   },
   userName: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginTop: 4,
   },
   profileButton: {
@@ -449,80 +546,80 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 16,
   },
   actionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   actionCard: {
     width: (screenWidth - 60) / 2,
     marginBottom: 16,
   },
   actionContent: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 16,
   },
   actionIcon: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 12,
   },
   actionText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: -8,
     right: -8,
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
     borderRadius: 12,
     minWidth: 24,
     height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 6,
   },
   badgeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   recentActivity: {
     padding: 20,
   },
   activityCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   activityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f3f4',
+    borderBottomColor: "#f1f3f4",
   },
   activityIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f8f9fa',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#f8f9fa",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   activityContent: {
@@ -530,65 +627,65 @@ const styles = StyleSheet.create({
   },
   activityTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   activitySubtitle: {
     fontSize: 14,
-    color: '#6c757d',
+    color: "#6c757d",
     marginTop: 2,
   },
   activityTime: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: "#9ca3af",
   },
   premiumSection: {
     padding: 20,
   },
   premiumCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   premiumContent: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   premiumHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   premiumTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginLeft: 8,
   },
   premiumDescription: {
     fontSize: 14,
-    color: '#6c757d',
+    color: "#6c757d",
     lineHeight: 20,
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   premiumActions: {
     marginTop: 16,
   },
   premiumButton: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   premiumButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

@@ -3,9 +3,9 @@
  * Provides consistent haptic feedback across the app
  */
 
-import * as Haptics from 'expo-haptics';
-import { logger } from '@pawfectmatch/core';
-import { Platform } from 'react-native';
+import * as Haptics from "expo-haptics";
+import { logger } from "@pawfectmatch/core";
+import { Platform } from "react-native";
 
 class HapticFeedback {
   private enabled = true;
@@ -22,11 +22,11 @@ class HapticFeedback {
    * Use for: tab switches, button taps, minor selections
    */
   async light() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
@@ -35,11 +35,11 @@ class HapticFeedback {
    * Use for: likes, swipes, card flips
    */
   async medium() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
@@ -48,11 +48,11 @@ class HapticFeedback {
    * Use for: matches, important confirmations
    */
   async heavy() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
@@ -61,11 +61,11 @@ class HapticFeedback {
    * Use for: successful actions, confirmations
    */
   async success() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
@@ -74,11 +74,11 @@ class HapticFeedback {
    * Use for: warnings, cautions
    */
   async warning() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
@@ -87,11 +87,11 @@ class HapticFeedback {
    * Use for: errors, failures
    */
   async error() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
@@ -100,29 +100,29 @@ class HapticFeedback {
    * Use for: picker selections, scrolling through options
    */
   async selection() {
-    if (!this.enabled || Platform.OS === 'web') return;
+    if (!this.enabled || Platform.OS === "web") return;
     try {
       await Haptics.selectionAsync();
     } catch (error) {
-      logger.warn('Haptic feedback failed:', { error });
+      logger.warn("Haptic feedback failed:", { error });
     }
   }
 
   /**
    * Custom pattern - for unique interactions
    */
-  async pattern(pattern: 'double' | 'triple' | 'heartbeat') {
-    if (!this.enabled || Platform.OS === 'web') return;
+  async pattern(pattern: "double" | "triple" | "heartbeat") {
+    if (!this.enabled || Platform.OS === "web") return;
 
     try {
       switch (pattern) {
-        case 'double':
+        case "double":
           await this.light();
           await new Promise((resolve) => setTimeout(resolve, 100));
           await this.light();
           break;
 
-        case 'triple':
+        case "triple":
           await this.light();
           await new Promise((resolve) => setTimeout(resolve, 80));
           await this.light();
@@ -130,14 +130,14 @@ class HapticFeedback {
           await this.light();
           break;
 
-        case 'heartbeat':
+        case "heartbeat":
           await this.medium();
           await new Promise((resolve) => setTimeout(resolve, 150));
           await this.heavy();
           break;
       }
     } catch (error) {
-      logger.warn('Haptic pattern failed:', { error });
+      logger.warn("Haptic pattern failed:", { error });
     }
   }
 }
@@ -154,7 +154,8 @@ export const haptics = {
   warning: () => hapticFeedback.warning(),
   error: () => hapticFeedback.error(),
   selection: () => hapticFeedback.selection(),
-  pattern: (pattern: 'double' | 'triple' | 'heartbeat') => hapticFeedback.pattern(pattern),
+  pattern: (pattern: "double" | "triple" | "heartbeat") =>
+    hapticFeedback.pattern(pattern),
 };
 
 // Context-specific haptic patterns
@@ -167,8 +168,8 @@ export const hapticPatterns = {
 
   // Match actions
   like: () => hapticFeedback.medium(),
-  superLike: () => hapticFeedback.pattern('heartbeat'),
-  match: () => hapticFeedback.pattern('triple'),
+  superLike: () => hapticFeedback.pattern("heartbeat"),
+  match: () => hapticFeedback.pattern("triple"),
   unmatch: () => hapticFeedback.warning(),
 
   // Navigation

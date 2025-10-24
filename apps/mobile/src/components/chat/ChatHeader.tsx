@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { EliteHeader } from '../EliteHeader';
-import { EliteButton } from '../EliteButton';
-import { tokens } from '@pawfectmatch/design-tokens';
+import React, { useCallback } from "react";
+import { View, StyleSheet, Alert } from "react-native";
+import * as Haptics from "expo-haptics";
+import { EliteHeader } from "../EliteHeader";
+import { EliteButton } from "../EliteButton";
+import { tokens } from "@pawfectmatch/design-tokens";
 
 interface ChatHeaderProps {
   petName: string;
@@ -74,17 +74,17 @@ export function ChatHeader({
   return (
     <EliteHeader
       title={petName}
-      subtitle={isOnline ? 'Online now' : 'Last seen recently'}
+      subtitle={isOnline ? "Online now" : "Last seen recently"}
       blur={true}
       onBack={onBack}
       rightComponent={rightComponent}
     />
   );
-};
+}
 
 const styles = StyleSheet.create({
   rightComponent: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: tokens.spacing.xs,
   },
 });

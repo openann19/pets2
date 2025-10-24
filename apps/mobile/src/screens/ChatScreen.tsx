@@ -1,20 +1,36 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Dimensions, Easing, InteractionManager, KeyboardAvoidingView, LayoutAnimation, Platform, StatusBar, StyleSheet, UIManager, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Animated,
+  Dimensions,
+  Easing,
+  InteractionManager,
+  KeyboardAvoidingView,
+  LayoutAnimation,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  UIManager,
+  View,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { EliteContainer } from '../components/EliteContainer';
-import { ChatHeader } from '../components/chat/ChatHeader';
-import { MessageList } from '../components/chat/MessageList';
-import { MessageInput } from '../components/chat/MessageInput';
-import { QuickReplies } from '../components/chat/QuickReplies';
-import { useChatData } from '../hooks/useChatData';
-import { useTheme } from '../contexts/ThemeContext';
-import { tokens } from '@pawfectmatch/design-tokens';
-import { api } from '../services/api';
+import { EliteContainer } from "../components/EliteContainer";
+import { ChatHeader } from "../components/chat/ChatHeader";
+import { MessageList } from "../components/chat/MessageList";
+import { MessageInput } from "../components/chat/MessageInput";
+import { QuickReplies } from "../components/chat/QuickReplies";
+import { useChatData } from "../hooks/useChatData";
+import { useTheme } from "../contexts/ThemeContext";
+import { tokens } from "@pawfectmatch/design-tokens";
+import { api } from "../services/api";
 
 // Enable LayoutAnimation on Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -23,33 +39,33 @@ type RootStackParamList = {
   Matches: undefined;
 };
 
-type ChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chat'>;
+type ChatScreenProps = NativeStackScreenProps<RootStackParamList, "Chat">;
 
 export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   const { matchId, petName } = route.params;
   const { isDark } = useTheme();
-  
+
   // Use the extracted chat data hook
   const { data, actions } = useChatData(matchId);
-  
+
   // Local state for UI interactions
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  
+
   // Refs
   const flatListRef = useRef<any>(null);
   const inputRef = useRef<any>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const savedOffsetRef = useRef<number>(0);
   const didRestoreRef = useRef<boolean>(false);
-  
+
   // Animations
   const typingAnimation = useRef(new Animated.Value(0)).current;
 
   // Initialize component
   useEffect(() => {
-    StatusBar.setBarStyle(isDark ? 'light-content' : 'dark-content');
-    
+    StatusBar.setBarStyle(isDark ? "light-content" : "dark-content");
+
     InteractionManager.runAfterInteractions(() => {
       startTypingAnimation();
       inputRef.current?.focus();
@@ -66,7 +82,9 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   useEffect(() => {
     const loadDraft = async () => {
       try {
-        const draft = await AsyncStorage.getItem(`mobile_chat_draft_${matchId}`);
+        const draft = await AsyncStorage.getItem(
+          `mobile_chat_draft_${matchId}`,
+        );
         if (draft) {
           setInputText(draft);
         }
@@ -98,7 +116,9 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     const tryRestore = async () => {
       if (didRestoreRef.current) return;
       try {
-        const saved = await AsyncStorage.getItem(`mobile_chat_scroll_${matchId}`);
+        const saved = await AsyncStorage.getItem(
+          `mobile_chat_scroll_${matchId}`,
+        );
         const offset = saved ? Number(saved) : 0;
         if (offset > 0) {
           savedOffsetRef.current = offset;
@@ -134,7 +154,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
             useNativeDriver: true,
           }),
         ]),
-      ])
+      ]),
     ).start();
   }, [typingAnimation]);
 
@@ -143,13 +163,13 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     if (!inputText.trim()) return;
 
     const messageContent = inputText.trim();
-    
+
     // Clear input immediately for better UX
-    setInputText('');
-    
+    setInputText("");
+
     // Add message with animation
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    
+
     // Send message via hook
     await actions.sendMessage(messageContent);
 
@@ -162,12 +182,12 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   // Handle typing changes
   const handleTypingChange = useCallback((typing: boolean) => {
     setIsTyping(typing);
-    
+
     // Debounced typing indicator
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
+
     if (typing) {
       // Emit typing event to server
       api.chat.sendTypingIndicator(matchId, true);
@@ -180,14 +200,20 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   }, []);
 
   // Handle scroll events
-  const handleScroll = useCallback(async (e: any) => {
-    try {
-      const offset = e.nativeEvent.contentOffset.y;
-      await AsyncStorage.setItem(`mobile_chat_scroll_${matchId}`, String(offset));
-    } catch {
-      // Ignore errors
-    }
-  }, [matchId]);
+  const handleScroll = useCallback(
+    async (e: any) => {
+      try {
+        const offset = e.nativeEvent.contentOffset.y;
+        await AsyncStorage.setItem(
+          `mobile_chat_scroll_${matchId}`,
+          String(offset),
+        );
+      } catch {
+        // Ignore errors
+      }
+    },
+    [matchId],
+  );
 
   // Handle quick reply selection
   const handleQuickReplySelect = useCallback((reply: string) => {
@@ -197,39 +223,31 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
 
   // Call handlers
   const handleVoiceCall = useCallback(async () => {
-    Alert.alert(
-      'Voice Call',
-      `Start a voice call with ${petName}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Call', 
-          onPress: async () => {
-            Alert.alert('Call Feature', 'Voice calling feature coming soon!');
-          }
-        }
-      ]
-    );
+    Alert.alert("Voice Call", `Start a voice call with ${petName}?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Call",
+        onPress: async () => {
+          Alert.alert("Call Feature", "Voice calling feature coming soon!");
+        },
+      },
+    ]);
   }, [petName]);
 
   const handleVideoCall = useCallback(async () => {
-    Alert.alert(
-      'Video Call',
-      `Start a video call with ${petName}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Call', 
-          onPress: async () => {
-            Alert.alert('Call Feature', 'Video calling feature coming soon!');
-          }
-        }
-      ]
-    );
+    Alert.alert("Video Call", `Start a video call with ${petName}?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Call",
+        onPress: async () => {
+          Alert.alert("Call Feature", "Video calling feature coming soon!");
+        },
+      },
+    ]);
   }, [petName]);
 
   const handleMoreOptions = useCallback(() => {
-    Alert.alert('More Options', 'Additional options coming soon!');
+    Alert.alert("More Options", "Additional options coming soon!");
   }, []);
 
   // Quick replies
@@ -253,9 +271,9 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
       />
 
       {/* Messages */}
-      <KeyboardAvoidingView 
-        style={styles.chatContainer} 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAvoidingView
+        style={styles.chatContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <MessageList
           messages={data.messages}
@@ -265,7 +283,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           flatListRef={flatListRef}
           onScroll={handleScroll}
         />
-        
+
         {/* Quick Replies */}
         {data.messages.length > 0 && (
           <QuickReplies

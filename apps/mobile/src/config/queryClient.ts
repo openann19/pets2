@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -8,11 +8,11 @@ export const queryClient = new QueryClient({
       retry: 2,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
-      networkMode: 'offlineFirst',
+      networkMode: "offlineFirst",
     },
     mutations: {
       retry: 1,
-      networkMode: 'offlineFirst',
+      networkMode: "offlineFirst",
     },
   },
 });

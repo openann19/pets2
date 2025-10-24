@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, View, type ViewProps } from 'react-native';
-import { useTheme } from '../../theme/useTheme';
-import type { ShadowScale, SpacingScale } from '../../theme/theme';
+import React from "react";
+import { StyleSheet, View, type ViewProps } from "react-native";
+import { useTheme } from "../../theme/useTheme";
+import type { ShadowScale, SpacingScale } from "../../theme/theme";
 
 type SpacingKey = keyof SpacingScale;
 
@@ -9,18 +9,18 @@ type ShadowKey = keyof ShadowScale;
 
 export interface CardProps extends ViewProps {
   padding?: SpacingKey;
-  radius?: 'sm' | 'md' | 'lg';
+  radius?: "sm" | "md" | "lg";
   shadow?: ShadowKey;
-  tone?: 'surface' | 'surfaceMuted' | 'background';
+  tone?: "surface" | "surfaceMuted" | "background";
 }
 
 export function Card({
   style,
   children,
-  padding = 'lg',
-  radius = 'md',
-  shadow = 'soft',
-  tone = 'surface',
+  padding = "lg",
+  radius = "md",
+  shadow = "soft",
+  tone = "surface",
   ...rest
 }: CardProps): React.ReactElement {
   const { colors, spacing, radii, shadows } = useTheme();
@@ -53,6 +53,6 @@ export function Card({
 const styles = StyleSheet.create({
   base: {
     borderWidth: 1,
-    borderColor: 'rgba(15, 23, 42, 0.05)',
+    borderColor: "rgba(15, 23, 42, 0.05)",
   },
 });

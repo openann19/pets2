@@ -1,9 +1,14 @@
-import React, { createContext, useContext, useEffect, type ReactNode } from 'react';
-import { Appearance } from 'react-native';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  type ReactNode,
+} from "react";
+import { Appearance } from "react-native";
 
-import { ColorsDark, GlobalStylesDark, ShadowsDark } from '../styles/DarkTheme';
-import { Colors, GlobalStyles, Shadows } from '../styles/GlobalStyles';
-import { useUIStore, type ThemeMode } from '../stores/useUIStore';
+import { ColorsDark, GlobalStylesDark, ShadowsDark } from "../styles/DarkTheme";
+import { Colors, GlobalStyles, Shadows } from "../styles/GlobalStyles";
+import { useUIStore, type ThemeMode } from "../stores/useUIStore";
 
 export interface ThemeColors {
   primary: string;
@@ -68,14 +73,11 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Element {
-  const {
-    themeMode,
-    isDark,
-    setThemeMode,
-    setSystemColorScheme,
-    toggleTheme,
-  } = useUIStore();
+export function ThemeProvider({
+  children,
+}: ThemeProviderProps): React.JSX.Element {
+  const { themeMode, isDark, setThemeMode, setSystemColorScheme, toggleTheme } =
+    useUIStore();
 
   // Get current theme colors and styles
   const colors = isDark ? ColorsDark : Colors;
@@ -91,7 +93,9 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
     // Initialize with current system color scheme
     setSystemColorScheme(Appearance.getColorScheme());
 
-    return () => { subscription?.remove(); };
+    return () => {
+      subscription?.remove();
+    };
   }, [setSystemColorScheme]);
 
   const contextValue: ThemeContextType = {
@@ -109,12 +113,12 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 };

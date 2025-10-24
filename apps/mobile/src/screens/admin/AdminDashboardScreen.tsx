@@ -3,10 +3,10 @@
  * Professional admin interface for mobile devices
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { logger, useAuthStore } from '@pawfectmatch/core';
-import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { logger, useAuthStore } from "@pawfectmatch/core";
+import * as Haptics from "expo-haptics";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,15 +16,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../contexts/ThemeContext';
-import type { AdminScreenProps } from '../../navigation/types';
-import { _adminAPI as adminAPI } from '../../services/api';
-;
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { AdminScreenProps } from "../../navigation/types";
+import { _adminAPI as adminAPI } from "../../services/api";
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AdminStats {
   users: {
@@ -68,7 +66,9 @@ interface SystemHealth {
   environment: string;
 }
 
-export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'AdminDashboard'>): React.JSX.Element {
+export default function AdminDashboardScreen({
+  navigation,
+}: AdminScreenProps<"AdminDashboard">): React.JSX.Element {
   const { colors } = useTheme();
   const { user: _user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -85,14 +85,14 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
       setLoading(true);
       const [statsResponse, healthResponse] = await Promise.all([
         adminAPI.getAnalytics(),
-        adminAPI.getSystemHealth()
+        adminAPI.getSystemHealth(),
       ]);
 
       setStats(statsResponse.data);
       setSystemHealth(healthResponse.data);
     } catch (error: unknown) {
-      logger.error('Error loading dashboard data:', { error });
-      Alert.alert('Error', 'Failed to load dashboard data');
+      logger.error("Error loading dashboard data:", { error });
+      Alert.alert("Error", "Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -110,26 +110,26 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
     }
 
     switch (action) {
-      case 'analytics':
-        navigation.navigate('AdminAnalytics');
+      case "analytics":
+        navigation.navigate("AdminAnalytics");
         break;
-      case 'users':
-        navigation.navigate('AdminUsers');
+      case "users":
+        navigation.navigate("AdminUsers");
         break;
-      case 'security':
-        navigation.navigate('AdminSecurity');
+      case "security":
+        navigation.navigate("AdminSecurity");
         break;
-      case 'billing':
-        navigation.navigate('AdminBilling');
+      case "billing":
+        navigation.navigate("AdminBilling");
         break;
-      case 'chats':
-        navigation.navigate('AdminChats');
+      case "chats":
+        navigation.navigate("AdminChats");
         break;
-      case 'uploads':
-        navigation.navigate('AdminUploads');
+      case "uploads":
+        navigation.navigate("AdminUploads");
         break;
-      case 'verifications':
-        navigation.navigate('AdminVerifications');
+      case "verifications":
+        navigation.navigate("AdminVerifications");
         break;
       default:
         logger.info(`Quick action: ${action}`);
@@ -138,16 +138,22 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'healthy': return '#10B981';
-      case 'warning': return '#F59E0B';
-      case 'error': return '#EF4444';
-      default: return '#6B7280';
+      case "healthy":
+        return "#10B981";
+      case "warning":
+        return "#F59E0B";
+      case "error":
+        return "#EF4444";
+      default:
+        return "#6B7280";
     }
   };
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.loadingText, { color: colors.text }]}>
@@ -159,7 +165,9 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <ScrollView
         style={styles.scrollView}
         refreshControl={
@@ -181,32 +189,47 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
         </View>
 
         {/* System Health */}
-        {systemHealth ? <View style={[styles.card, { backgroundColor: colors.card }]}>
-          <View style={styles.cardHeader}>
-            <Ionicons
-              name="server-outline"
-              size={24}
-              color={getStatusColor(systemHealth.status)}
-            />
-            <Text style={[styles.cardTitle, { color: colors.text }]}>
-              System Status
-            </Text>
+        {systemHealth ? (
+          <View style={[styles.card, { backgroundColor: colors.card }]}>
+            <View style={styles.cardHeader}>
+              <Ionicons
+                name="server-outline"
+                size={24}
+                color={getStatusColor(systemHealth.status)}
+              />
+              <Text style={[styles.cardTitle, { color: colors.text }]}>
+                System Status
+              </Text>
+            </View>
+            <View style={styles.healthInfo}>
+              <Text
+                style={[
+                  styles.healthStatus,
+                  { color: getStatusColor(systemHealth.status) },
+                ]}
+              >
+                {systemHealth.status.toUpperCase()}
+              </Text>
+              <Text
+                style={[styles.healthDetails, { color: colors.textSecondary }]}
+              >
+                Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
+                {Math.floor((systemHealth.uptime % 3600) / 60)}m
+              </Text>
+              <Text
+                style={[styles.healthDetails, { color: colors.textSecondary }]}
+              >
+                Database: {systemHealth.database.status}
+              </Text>
+              <Text
+                style={[styles.healthDetails, { color: colors.textSecondary }]}
+              >
+                Memory: {systemHealth.memory.used}MB /{" "}
+                {systemHealth.memory.total}MB
+              </Text>
+            </View>
           </View>
-          <View style={styles.healthInfo}>
-            <Text style={[styles.healthStatus, { color: getStatusColor(systemHealth.status) }]}>
-              {systemHealth.status.toUpperCase()}
-            </Text>
-            <Text style={[styles.healthDetails, { color: colors.textSecondary }]}>
-              Uptime: {Math.floor(systemHealth.uptime / 3600)}h {Math.floor((systemHealth.uptime % 3600) / 60)}m
-            </Text>
-            <Text style={[styles.healthDetails, { color: colors.textSecondary }]}>
-              Database: {systemHealth.database.status}
-            </Text>
-            <Text style={[styles.healthDetails, { color: colors.textSecondary }]}>
-              Memory: {systemHealth.memory.used}MB / {systemHealth.memory.total}MB
-            </Text>
-          </View>
-        </View> : null}
+        ) : null}
 
         {/* Quick Actions */}
         <View style={styles.section}>
@@ -216,7 +239,9 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
               style={[styles.quickActionCard, { backgroundColor: colors.card }]}
-              onPress={() => { handleQuickAction('analytics'); }}
+              onPress={() => {
+                handleQuickAction("analytics");
+              }}
             >
               <Ionicons name="analytics-outline" size={32} color="#3B82F6" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
@@ -226,7 +251,9 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
 
             <TouchableOpacity
               style={[styles.quickActionCard, { backgroundColor: colors.card }]}
-              onPress={() => { handleQuickAction('users'); }}
+              onPress={() => {
+                handleQuickAction("users");
+              }}
             >
               <Ionicons name="people-outline" size={32} color="#8B5CF6" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
@@ -236,7 +263,9 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
 
             <TouchableOpacity
               style={[styles.quickActionCard, { backgroundColor: colors.card }]}
-              onPress={() => { handleQuickAction('security'); }}
+              onPress={() => {
+                handleQuickAction("security");
+              }}
             >
               <Ionicons name="shield-outline" size={32} color="#EF4444" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
@@ -246,7 +275,9 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
 
             <TouchableOpacity
               style={[styles.quickActionCard, { backgroundColor: colors.card }]}
-              onPress={() => { handleQuickAction('billing'); }}
+              onPress={() => {
+                handleQuickAction("billing");
+              }}
             >
               <Ionicons name="card-outline" size={32} color="#10B981" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
@@ -256,8 +287,12 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
 
             <TouchableOpacity
               style={[styles.quickActionCard, { backgroundColor: colors.card }]}
-              onPress={() => { handleQuickAction('chats'); }}
-            >?     <Ionicons name="chatbubbles-outline" size={32} color="#F59E0B" />
+              onPress={() => {
+                handleQuickAction("chats");
+              }}
+            >
+              ?{" "}
+              <Ionicons name="chatbubbles-outline" size={32} color="#F59E0B" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
                 Chats
               </Text>
@@ -265,7 +300,9 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
 
             <TouchableOpacity
               style={[styles.quickActionCard, { backgroundColor: colors.card }]}
-              onPress={() => { handleQuickAction('uploads'); }}
+              onPress={() => {
+                handleQuickAction("uploads");
+              }}
             >
               <Ionicons name="cloud-upload-outline" size={32} color="#06B6D4" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
@@ -276,104 +313,116 @@ export default function AdminDashboardScreen({ navigation }: AdminScreenProps<'A
         </View>
 
         {/* Statistics */}
-        {stats ? <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Platform Statistics
-          </Text>
-
-          {/* Users Stats */}
-          <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-            <View style={styles.statHeader}>
-              <Ionicons name="people" size={24} color="#3B82F6" />
-              <Text style={[styles.statTitle, { color: colors.text }]}>
-                Users
-              </Text>
-            </View>
-            <Text style={[styles.statNumber, { color: colors.text }]}>
-              {stats.users.total.toLocaleString()}
+        {stats ? (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Platform Statistics
             </Text>
-            <View style={styles.statDetails}>
-              <Text style={[styles.statDetail, { color: colors.textSecondary }]}>
-                Active: {stats.users.active}
+
+            {/* Users Stats */}
+            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+              <View style={styles.statHeader}>
+                <Ionicons name="people" size={24} color="#3B82F6" />
+                <Text style={[styles.statTitle, { color: colors.text }]}>
+                  Users
+                </Text>
+              </View>
+              <Text style={[styles.statNumber, { color: colors.text }]}>
+                {stats.users.total.toLocaleString()}
               </Text>
-              <Text style={[styles.statDetail, { color: colors.textSecondary }]}>
-                Verified: {stats.users.verified}
+              <View style={styles.statDetails}>
+                <Text
+                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                >
+                  Active: {stats.users.active}
+                </Text>
+                <Text
+                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                >
+                  Verified: {stats.users.verified}
+                </Text>
+                <Text style={[styles.statDetail, { color: "#F59E0B" }]}>
+                  Suspended: {stats.users.suspended}
+                </Text>
+                <Text style={[styles.statDetail, { color: "#EF4444" }]}>
+                  Banned: {stats.users.banned}
+                </Text>
+              </View>
+            </View>
+
+            {/* Pets Stats */}
+            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+              <View style={styles.statHeader}>
+                <Ionicons name="paw" size={24} color="#10B981" />
+                <Text style={[styles.statTitle, { color: colors.text }]}>
+                  Pets
+                </Text>
+              </View>
+              <Text style={[styles.statNumber, { color: colors.text }]}>
+                {stats.pets.total.toLocaleString()}
               </Text>
-              <Text style={[styles.statDetail, { color: '#F59E0B' }]}>
-                Suspended: {stats.users.suspended}
+              <View style={styles.statDetails}>
+                <Text
+                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                >
+                  Active: {stats.pets.active}
+                </Text>
+                <Text style={[styles.statDetail, { color: "#10B981" }]}>
+                  +{stats.pets.recent24h} today
+                </Text>
+              </View>
+            </View>
+
+            {/* Matches Stats */}
+            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+              <View style={styles.statHeader}>
+                <Ionicons name="heart" size={24} color="#EC4899" />
+                <Text style={[styles.statTitle, { color: colors.text }]}>
+                  Matches
+                </Text>
+              </View>
+              <Text style={[styles.statNumber, { color: colors.text }]}>
+                {stats.matches.total.toLocaleString()}
               </Text>
-              <Text style={[styles.statDetail, { color: '#EF4444' }]}>
-                Banned: {stats.users.banned}
+              <View style={styles.statDetails}>
+                <Text
+                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                >
+                  Active: {stats.matches.active}
+                </Text>
+                <Text style={[styles.statDetail, { color: "#EF4444" }]}>
+                  Blocked: {stats.matches.blocked}
+                </Text>
+                <Text style={[styles.statDetail, { color: "#10B981" }]}>
+                  +{stats.matches.recent24h} today
+                </Text>
+              </View>
+            </View>
+
+            {/* Messages Stats */}
+            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+              <View style={styles.statHeader}>
+                <Ionicons name="chatbubble" size={24} color="#8B5CF6" />
+                <Text style={[styles.statTitle, { color: colors.text }]}>
+                  Messages
+                </Text>
+              </View>
+              <Text style={[styles.statNumber, { color: colors.text }]}>
+                {stats.messages.total.toLocaleString()}
               </Text>
+              <View style={styles.statDetails}>
+                <Text
+                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                >
+                  Deleted: {stats.messages.deleted}
+                </Text>
+                <Text style={[styles.statDetail, { color: "#10B981" }]}>
+                  +{stats.messages.recent24h} today
+                </Text>
+              </View>
             </View>
           </View>
-
-          {/* Pets Stats */}
-          <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-            <View style={styles.statHeader}>
-              <Ionicons name="paw" size={24} color="#10B981" />
-              <Text style={[styles.statTitle, { color: colors.text }]}>
-                Pets
-              </Text>
-            </View>
-            <Text style={[styles.statNumber, { color: colors.text }]}>
-              {stats.pets.total.toLocaleString()}
-            </Text>
-            <View style={styles.statDetails}>
-              <Text style={[styles.statDetail, { color: colors.textSecondary }]}>
-                Active: {stats.pets.active}
-              </Text>
-              <Text style={[styles.statDetail, { color: '#10B981' }]}>
-                +{stats.pets.recent24h} today
-              </Text>
-            </View>
-          </View>
-
-          {/* Matches Stats */}
-          <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-            <View style={styles.statHeader}>
-              <Ionicons name="heart" size={24} color="#EC4899" />
-              <Text style={[styles.statTitle, { color: colors.text }]}>
-                Matches
-              </Text>
-            </View>
-            <Text style={[styles.statNumber, { color: colors.text }]}>
-              {stats.matches.total.toLocaleString()}
-            </Text>
-            <View style={styles.statDetails}>
-              <Text style={[styles.statDetail, { color: colors.textSecondary }]}>
-                Active: {stats.matches.active}
-              </Text>
-              <Text style={[styles.statDetail, { color: '#EF4444' }]}>
-                Blocked: {stats.matches.blocked}
-              </Text>
-              <Text style={[styles.statDetail, { color: '#10B981' }]}>
-                +{stats.matches.recent24h} today
-              </Text>
-            </View>
-          </View>
-
-          {/* Messages Stats */}
-          <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-            <View style={styles.statHeader}>
-              <Ionicons name="chatbubble" size={24} color="#8B5CF6" />
-              <Text style={[styles.statTitle, { color: colors.text }]}>
-                Messages
-              </Text>
-            </View>
-            <Text style={[styles.statNumber, { color: colors.text }]}>
-              {stats.messages.total.toLocaleString()}
-            </Text>
-            <View style={styles.statDetails}>
-              <Text style={[styles.statDetail, { color: colors.textSecondary }]}>
-                Deleted: {stats.messages.deleted}
-              </Text>
-              <Text style={[styles.statDetail, { color: '#10B981' }]}>
-                +{stats.messages.recent24h} today
-              </Text>
-            </View>
-          </View>
-        </View> : null}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -389,13 +438,13 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   header: {
     paddingVertical: 24,
@@ -403,18 +452,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   card: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -424,13 +473,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
   },
   healthInfo: {
@@ -438,7 +487,7 @@ const styles = StyleSheet.create({
   },
   healthStatus: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   healthDetails: {
     fontSize: 14,
@@ -448,20 +497,20 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   quickActionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   quickActionCard: {
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -472,15 +521,15 @@ const styles = StyleSheet.create({
   },
   quickActionTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginTop: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   statCard: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -490,27 +539,27 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   statHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   statTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
   },
   statNumber: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   statDetails: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   statDetail: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

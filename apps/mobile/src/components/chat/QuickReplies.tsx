@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { EliteButton } from '../EliteButton';
-import { FadeInUp } from '../FadeInUp';
-import { tokens } from '@pawfectmatch/design-tokens';
+import React from "react";
+import { View, FlatList, StyleSheet } from "react-native";
+import { EliteButton } from "../EliteButton";
+import { FadeInUp } from "../FadeInUp";
+import { tokens } from "@pawfectmatch/design-tokens";
 
 interface QuickRepliesProps {
   replies: string[];
@@ -32,7 +32,9 @@ export function QuickReplies({
         size="sm"
         magnetic={true}
         ripple={true}
-        onPress={() => { onReplySelect(item); }}
+        onPress={() => {
+          onReplySelect(item);
+        }}
         style={styles.quickReply}
       />
     </FadeInUp>
@@ -54,7 +56,7 @@ export function QuickReplies({
       </View>
     </FadeInUp>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -65,14 +67,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: tokens.spacing.xs,
   },
   quickReply: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingHorizontal: tokens.spacing.md,
     paddingVertical: tokens.spacing.sm,
     borderRadius: tokens.borderRadius.xl,
     marginRight: tokens.spacing.sm,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    shadowColor: '#000',
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,

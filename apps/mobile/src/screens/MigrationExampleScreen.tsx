@@ -1,16 +1,15 @@
 /**
  * PROJECT HYPERION: MIGRATION EXAMPLE SCREEN
- * 
+ *
  * This screen demonstrates how to gradually migrate from legacy components
  * to the new architecture. It shows both old and new approaches side by side
  * for easy comparison and gradual migration.
  */
 
-import { Ionicons } from '@expo/vector-icons'
-import { logger } from '@pawfectmatch/core';
-;
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import React, { useState } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
 
 // Import both old and new components
 import {
@@ -26,28 +25,24 @@ import {
   Body,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from '../components';
+} from "../components";
 
 // Legacy components (to be migrated)
-import { EliteContainer, EliteHeader } from '../components/EliteComponents';
-import { EliteButton as LegacyEliteButton } from '../components/EliteComponents';
+import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { EliteButton as LegacyEliteButton } from "../components/EliteComponents";
 
 export default function MigrationExampleScreen() {
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
-  const [selectedExample, setSelectedExample] = useState<'buttons' | 'containers' | 'typography'>('buttons');
+  const [selectedExample, setSelectedExample] = useState<
+    "buttons" | "containers" | "typography"
+  >("buttons");
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } = useStaggeredAnimation(
-    3,
-    100,
-    'gentle'
-  );
+  const { start: startStaggeredAnimation, getAnimatedStyle } =
+    useStaggeredAnimation(3, 100, "gentle");
 
-  const { start: startEntrance, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeInUp',
-    0,
-    'standard'
-  );
+  const { start: startEntrance, animatedStyle: entranceStyle } =
+    useEntranceAnimation("fadeInUp", 0, "standard");
 
   React.useEffect(() => {
     startStaggeredAnimation();
@@ -57,9 +52,9 @@ export default function MigrationExampleScreen() {
   const renderButtonExamples = () => (
     <View style={styles.exampleSection}>
       <Heading2 style={styles.exampleTitle}>
-        {useNewArchitecture ? 'New Architecture' : 'Legacy Architecture'}
+        {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
       </Heading2>
-      
+
       {useNewArchitecture ? (
         // NEW ARCHITECTURE - Composition Pattern
         <View style={styles.buttonGrid}>
@@ -67,23 +62,29 @@ export default function MigrationExampleScreen() {
             <EliteButtonPresets.premium
               title="Premium Button"
               leftIcon="star"
-              onPress={() => { logger.info('Premium pressed'); }}
+              onPress={() => {
+                logger.info("Premium pressed");
+              }}
             />
           </View>
-          
+
           <View style={getAnimatedStyle(1)}>
             <EliteButtonPresets.holographic
               title="Holographic"
               leftIcon="sparkles"
-              onPress={() => { logger.info('Holographic pressed'); }}
+              onPress={() => {
+                logger.info("Holographic pressed");
+              }}
             />
           </View>
-          
+
           <View style={getAnimatedStyle(2)}>
             <EliteButtonPresets.magnetic
               title="Magnetic"
               leftIcon="magnet"
-              onPress={() => { logger.info('Magnetic pressed'); }}
+              onPress={() => {
+                logger.info("Magnetic pressed");
+              }}
             />
           </View>
         </View>
@@ -99,10 +100,12 @@ export default function MigrationExampleScreen() {
               magnetic={true}
               ripple={true}
               glow={true}
-              onPress={() => { logger.info('Legacy premium pressed'); }}
+              onPress={() => {
+                logger.info("Legacy premium pressed");
+              }}
             />
           </View>
-          
+
           <View style={getAnimatedStyle(1)}>
             <LegacyEliteButton
               title="Holographic"
@@ -113,10 +116,12 @@ export default function MigrationExampleScreen() {
               ripple={true}
               glow={true}
               shimmer={true}
-              onPress={() => { logger.info('Legacy holographic pressed'); }}
+              onPress={() => {
+                logger.info("Legacy holographic pressed");
+              }}
             />
           </View>
-          
+
           <View style={getAnimatedStyle(2)}>
             <LegacyEliteButton
               title="Magnetic"
@@ -126,7 +131,9 @@ export default function MigrationExampleScreen() {
               magnetic={true}
               ripple={true}
               glow={true}
-              onPress={() => { logger.info('Legacy magnetic pressed'); }}
+              onPress={() => {
+                logger.info("Legacy magnetic pressed");
+              }}
             />
           </View>
         </View>
@@ -137,9 +144,9 @@ export default function MigrationExampleScreen() {
   const renderContainerExamples = () => (
     <View style={styles.exampleSection}>
       <Heading2 style={styles.exampleTitle}>
-        {useNewArchitecture ? 'New Architecture' : 'Legacy Architecture'}
+        {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
       </Heading2>
-      
+
       {useNewArchitecture ? (
         // NEW ARCHITECTURE - Unified FXContainer
         <View style={styles.containerGrid}>
@@ -148,13 +155,13 @@ export default function MigrationExampleScreen() {
               <Body>Glass Container</Body>
             </FXContainerPresets.glass>
           </View>
-          
+
           <View style={getAnimatedStyle(1)}>
             <FXContainerPresets.holographic style={styles.exampleContainer}>
               <Body>Holographic Container</Body>
             </FXContainerPresets.holographic>
           </View>
-          
+
           <View style={getAnimatedStyle(2)}>
             <FXContainerPresets.glow style={styles.exampleContainer}>
               <Body>Glow Container</Body>
@@ -169,13 +176,13 @@ export default function MigrationExampleScreen() {
               <Body>Legacy Glass Container</Body>
             </View>
           </View>
-          
+
           <View style={getAnimatedStyle(1)}>
             <View style={[styles.legacyContainer, styles.holographicContainer]}>
               <Body>Legacy Holographic Container</Body>
             </View>
           </View>
-          
+
           <View style={getAnimatedStyle(2)}>
             <View style={[styles.legacyContainer, styles.glowContainer]}>
               <Body>Legacy Glow Container</Body>
@@ -189,9 +196,9 @@ export default function MigrationExampleScreen() {
   const renderTypographyExamples = () => (
     <View style={styles.exampleSection}>
       <Heading2 style={styles.exampleTitle}>
-        {useNewArchitecture ? 'New Architecture' : 'Legacy Architecture'}
+        {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
       </Heading2>
-      
+
       {useNewArchitecture ? (
         // NEW ARCHITECTURE - Unified Typography
         <View style={styles.typographyGrid}>
@@ -201,7 +208,7 @@ export default function MigrationExampleScreen() {
             <Body>Body text with consistent styling</Body>
             <BodySmall>Small body text</BodySmall>
           </View>
-          
+
           <View style={getAnimatedStyle(1)}>
             <ModernText variant="h1" gradient="primary">
               Gradient Heading
@@ -210,7 +217,7 @@ export default function MigrationExampleScreen() {
               Gradient Body Text
             </ModernText>
           </View>
-          
+
           <View style={getAnimatedStyle(2)}>
             <ModernText variant="h2" animated={true}>
               Animated Heading
@@ -229,7 +236,7 @@ export default function MigrationExampleScreen() {
             <Text style={styles.legacyBody}>Legacy body text</Text>
             <Text style={styles.legacyBodySmall}>Legacy small text</Text>
           </View>
-          
+
           <View style={getAnimatedStyle(1)}>
             <Text style={[styles.legacyHeading1, styles.legacyGradient]}>
               Legacy Gradient Heading
@@ -238,7 +245,7 @@ export default function MigrationExampleScreen() {
               Legacy gradient body text
             </Text>
           </View>
-          
+
           <View style={getAnimatedStyle(2)}>
             <Text style={styles.legacyHeading2}>Legacy Animated Heading</Text>
             <Text style={styles.legacyBody}>Legacy animated body text</Text>
@@ -259,33 +266,45 @@ export default function MigrationExampleScreen() {
             variant="outline"
             size="sm"
             leftIcon={useNewArchitecture ? "arrow-back" : "arrow-forward"}
-            onPress={() => { setUseNewArchitecture(!useNewArchitecture); }}
+            onPress={() => {
+              setUseNewArchitecture(!useNewArchitecture);
+            }}
           />
         }
       />
 
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         {/* Architecture Toggle */}
         <View style={styles.toggleSection}>
           <FXContainerPresets.glass style={styles.toggleContainer}>
-            <Heading2 style={styles.toggleTitle}>Architecture Comparison</Heading2>
+            <Heading2 style={styles.toggleTitle}>
+              Architecture Comparison
+            </Heading2>
             <Body style={styles.toggleDescription}>
               Toggle between legacy and new architecture to see the differences.
-              The new architecture provides better performance, maintainability, and consistency.
+              The new architecture provides better performance, maintainability,
+              and consistency.
             </Body>
-            
+
             <View style={styles.toggleButtons}>
               <EliteButton
                 title="Legacy"
                 variant={!useNewArchitecture ? "primary" : "outline"}
                 size="sm"
-                onPress={() => { setUseNewArchitecture(false); }}
+                onPress={() => {
+                  setUseNewArchitecture(false);
+                }}
               />
               <EliteButton
                 title="New Architecture"
                 variant={useNewArchitecture ? "primary" : "outline"}
                 size="sm"
-                onPress={() => { setUseNewArchitecture(true); }}
+                onPress={() => {
+                  setUseNewArchitecture(true);
+                }}
               />
             </View>
           </FXContainerPresets.glass>
@@ -295,9 +314,9 @@ export default function MigrationExampleScreen() {
         <View style={styles.selectorSection}>
           <View style={styles.selectorButtons}>
             {[
-              { key: 'buttons', label: 'Buttons', icon: 'radio-button-on' },
-              { key: 'containers', label: 'Containers', icon: 'square' },
-              { key: 'typography', label: 'Typography', icon: 'text' },
+              { key: "buttons", label: "Buttons", icon: "radio-button-on" },
+              { key: "containers", label: "Containers", icon: "square" },
+              { key: "typography", label: "Typography", icon: "text" },
             ].map(({ key, label, icon }) => (
               <EliteButton
                 key={key}
@@ -305,24 +324,30 @@ export default function MigrationExampleScreen() {
                 variant={selectedExample === key ? "primary" : "outline"}
                 size="sm"
                 leftIcon={icon as any}
-                onPress={() => { setSelectedExample(key as any); }}
+                onPress={() => {
+                  setSelectedExample(key as any);
+                }}
               />
             ))}
           </View>
         </View>
 
         {/* Examples */}
-        {selectedExample === 'buttons' && renderButtonExamples()}
-        {selectedExample === 'containers' && renderContainerExamples()}
-        {selectedExample === 'typography' && renderTypographyExamples()}
+        {selectedExample === "buttons" && renderButtonExamples()}
+        {selectedExample === "containers" && renderContainerExamples()}
+        {selectedExample === "typography" && renderTypographyExamples()}
 
         {/* Migration Benefits */}
         <View style={styles.benefitsSection}>
           <FXContainerPresets.glass style={styles.benefitsContainer}>
             <Heading2 style={styles.benefitsTitle}>Migration Benefits</Heading2>
-            
+
             <View style={styles.benefitItem}>
-              <Ionicons name="flash" size={24} color={Theme.colors.primary[500]} />
+              <Ionicons
+                name="flash"
+                size={24}
+                color={Theme.colors.primary[500]}
+              />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Performance</Body>
                 <BodySmall style={styles.benefitDescription}>
@@ -330,9 +355,13 @@ export default function MigrationExampleScreen() {
                 </BodySmall>
               </View>
             </View>
-            
+
             <View style={styles.benefitItem}>
-              <Ionicons name="construct" size={24} color={Theme.colors.primary[500]} />
+              <Ionicons
+                name="construct"
+                size={24}
+                color={Theme.colors.primary[500]}
+              />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Maintainability</Body>
                 <BodySmall style={styles.benefitDescription}>
@@ -340,9 +369,13 @@ export default function MigrationExampleScreen() {
                 </BodySmall>
               </View>
             </View>
-            
+
             <View style={styles.benefitItem}>
-              <Ionicons name="layers" size={24} color={Theme.colors.primary[500]} />
+              <Ionicons
+                name="layers"
+                size={24}
+                color={Theme.colors.primary[500]}
+              />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Composition</Body>
                 <BodySmall style={styles.benefitDescription}>
@@ -350,9 +383,13 @@ export default function MigrationExampleScreen() {
                 </BodySmall>
               </View>
             </View>
-            
+
             <View style={styles.benefitItem}>
-              <Ionicons name="accessibility" size={24} color={Theme.colors.primary[500]} />
+              <Ionicons
+                name="accessibility"
+                size={24}
+                color={Theme.colors.primary[500]}
+              />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Accessibility</Body>
                 <BodySmall style={styles.benefitDescription}>
@@ -373,7 +410,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing['4xl'],
+    paddingBottom: Theme.spacing["4xl"],
   },
   toggleSection: {
     marginBottom: Theme.spacing.xl,
@@ -386,17 +423,17 @@ const styles = StyleSheet.create({
   },
   toggleDescription: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   toggleButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Theme.spacing.sm,
   },
   selectorSection: {
     marginBottom: Theme.spacing.xl,
   },
   selectorButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Theme.spacing.sm,
   },
   exampleSection: {
@@ -404,7 +441,7 @@ const styles = StyleSheet.create({
   },
   exampleTitle: {
     marginBottom: Theme.spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
   },
   buttonGrid: {
     gap: Theme.spacing.lg,
@@ -415,24 +452,24 @@ const styles = StyleSheet.create({
   exampleContainer: {
     padding: Theme.spacing.lg,
     minHeight: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   legacyContainer: {
     padding: Theme.spacing.lg,
     minHeight: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: Theme.borderRadius.lg,
     ...Theme.shadows.depth.md,
   },
   glassContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
   holographicContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 2,
     borderColor: Theme.colors.primary[500],
   },
@@ -444,25 +481,25 @@ const styles = StyleSheet.create({
     gap: Theme.spacing.lg,
   },
   legacyHeading1: {
-    fontSize: Theme.typography.fontSize['4xl'],
+    fontSize: Theme.typography.fontSize["4xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.semantic.text.primary,
+    color: Theme.colors.text.primary.primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyHeading2: {
-    fontSize: Theme.typography.fontSize['2xl'],
+    fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.semantic.text.primary,
+    color: Theme.colors.text.primary.primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyBody: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.semantic.text.primary,
+    color: Theme.colors.text.primary.primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyBodySmall: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
     marginBottom: Theme.spacing.sm,
   },
   legacyGradient: {
@@ -477,11 +514,11 @@ const styles = StyleSheet.create({
   },
   benefitsTitle: {
     marginBottom: Theme.spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
   },
   benefitItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: Theme.spacing.lg,
   },
   benefitContent: {
@@ -493,6 +530,6 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xs,
   },
   benefitDescription: {
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
 });

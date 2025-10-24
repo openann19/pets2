@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
-import type { Theme } from './theme';
-import { darkTheme, lightTheme, type ThemeName } from './theme';
-import { useColorScheme } from '../hooks/useColorScheme';
+import React, { createContext, useContext, useMemo, useState } from "react";
+import type { Theme } from "./theme";
+import { darkTheme, lightTheme, type ThemeName } from "./theme";
+import { useColorScheme } from "../hooks/useColorScheme";
 
 interface ThemeContextValue {
   theme: Theme;
@@ -16,14 +16,20 @@ interface ThemeProviderProps {
   initialTheme?: ThemeName;
 }
 
-export function ThemeProvider({ children, initialTheme }: ThemeProviderProps): React.ReactElement {
+export function ThemeProvider({
+  children,
+  initialTheme,
+}: ThemeProviderProps): React.ReactElement {
   const systemScheme = useColorScheme();
-  const [userTheme, setUserTheme] = useState<ThemeName | undefined>(initialTheme);
+  const [userTheme, setUserTheme] = useState<ThemeName | undefined>(
+    initialTheme,
+  );
 
-  const resolvedThemeName: ThemeName = userTheme ?? (systemScheme === 'dark' ? 'dark' : 'light');
+  const resolvedThemeName: ThemeName =
+    userTheme ?? (systemScheme === "dark" ? "dark" : "light");
 
   const value = useMemo<ThemeContextValue>(() => {
-    const resolvedTheme = resolvedThemeName === 'dark' ? darkTheme : lightTheme;
+    const resolvedTheme = resolvedThemeName === "dark" ? darkTheme : lightTheme;
 
     return {
       theme: resolvedTheme,
@@ -34,14 +40,16 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps): R
     };
   }, [resolvedThemeName]);
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 export function useThemeContext(): ThemeContextValue {
   const context = useContext(ThemeContext);
 
   if (context === undefined) {
-    throw new Error('useThemeContext must be used within a ThemeProvider');
+    throw new Error("useThemeContext must be used within a ThemeProvider");
   }
 
   return context;

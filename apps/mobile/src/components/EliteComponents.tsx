@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { type ReactNode, useEffect } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { type ReactNode, useEffect } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -13,7 +13,7 @@ import {
   type TouchableOpacityProps,
   type ViewStyle,
   StyleSheet,
-} from 'react-native';
+} from "react-native";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -22,18 +22,18 @@ import Animated, {
   withTiming,
   withSequence,
   withDelay,
-} from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from "../contexts/ThemeContext";
 import {
   AnimationConfigs,
   BorderRadius,
   Colors,
   GlobalStyles,
   Shadows,
-  Spacing
-} from '../styles/GlobalStyles';
+  Spacing,
+} from "../styles/GlobalStyles";
 
 // === STYLES ===
 const styles = StyleSheet.create({
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: Colors.glassWhite,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
     marginRight: Spacing.md,
     ...Shadows.sm,
   },
@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
   },
   headerTitleContainer: {
     flex: 1,
-    alignItems: 'center' as const,
+    alignItems: "center" as const,
   },
   headerRight: {
     width: 40,
-    alignItems: 'flex-end' as const,
+    alignItems: "flex-end" as const,
   },
   onlineIndicator: {
-    position: 'absolute' as const,
+    position: "absolute" as const,
     bottom: 2,
     right: 2,
     width: 12,
@@ -80,24 +80,24 @@ interface EliteContainerProps {
   style?: ViewStyle;
 }
 
-export const EliteContainer: React.FC<EliteContainerProps> = ({ 
-  children, 
-  gradient = 'gradientPrimary',
-  style 
+export const EliteContainer: React.FC<EliteContainerProps> = ({
+  children,
+  gradient = "gradientPrimary",
+  style,
 }) => {
   const { colors } = useTheme();
-  
-  const gradientColors = (colors[gradient as keyof typeof colors] as string[]) ?? colors.gradientPrimary;
-  
+
+  const gradientColors =
+    (colors[gradient as keyof typeof colors] as string[]) ??
+    colors.gradientPrimary;
+
   return (
     <View style={[GlobalStyles.container, style]}>
       <LinearGradient
         colors={gradientColors}
         style={GlobalStyles.backgroundGradient}
       />
-      <SafeAreaView style={GlobalStyles.safeArea}>
-        {children}
-      </SafeAreaView>
+      <SafeAreaView style={GlobalStyles.safeArea}>{children}</SafeAreaView>
     </View>
   );
 };
@@ -107,14 +107,14 @@ interface EliteScrollContainerProps extends ScrollViewProps {
   gradient?: keyof typeof Colors;
 }
 
-export const EliteScrollContainer: React.FC<EliteScrollContainerProps> = ({ 
-  children, 
-  gradient = 'gradientPrimary',
-  ...props 
+export const EliteScrollContainer: React.FC<EliteScrollContainerProps> = ({
+  children,
+  gradient = "gradientPrimary",
+  ...props
 }) => {
   return (
     <EliteContainer gradient={gradient}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={GlobalStyles.scrollContainer}
         showsVerticalScrollIndicator={false}
         bounces={true}
@@ -165,7 +165,7 @@ export const EliteHeader: React.FC<EliteHeaderProps> = ({
           <Ionicons name="arrow-back" size={24} color={Colors.gray800} />
         </TouchableOpacity>
       )}
-      
+
       <View style={styles.headerTitleContainer}>
         <Text style={GlobalStyles.heading2}>{title}</Text>
         {subtitle != null && subtitle.length > 0 && (
@@ -173,9 +173,7 @@ export const EliteHeader: React.FC<EliteHeaderProps> = ({
         )}
       </View>
 
-      <View style={styles.headerRight}>
-        {rightComponent}
-      </View>
+      <View style={styles.headerRight}>{rightComponent}</View>
     </View>
   );
 
@@ -220,41 +218,41 @@ export const ElitePageHeader: React.FC<ElitePageHeaderProps> = ({
 
 // === PREMIUM GRADIENT COLORS ===
 const PREMIUM_GRADIENTS = {
-  primary: ['#ec4899', '#f472b6', '#f9a8d4'],
-  secondary: ['#0ea5e9', '#38bdf8', '#7dd3fc'],
-  premium: ['#a855f7', '#c084fc', '#d8b4fe'],
-  sunset: ['#f59e0b', '#f97316', '#fb923c'],
-  ocean: ['#0ea5e9', '#06b6d4', '#22d3ee'],
-  holographic: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'],
-  neon: ['#00f5ff', '#ff00ff', '#ffff00'],
-  glass: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)'],
+  primary: ["#ec4899", "#f472b6", "#f9a8d4"],
+  secondary: ["#0ea5e9", "#38bdf8", "#7dd3fc"],
+  premium: ["#a855f7", "#c084fc", "#d8b4fe"],
+  sunset: ["#f59e0b", "#f97316", "#fb923c"],
+  ocean: ["#0ea5e9", "#06b6d4", "#22d3ee"],
+  holographic: ["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe"],
+  neon: ["#00f5ff", "#ff00ff", "#ffff00"],
+  glass: ["rgba(255,255,255,0.1)", "rgba(255,255,255,0.05)"],
 };
 
 // === PREMIUM SHADOWS ===
 const PREMIUM_SHADOWS = {
   primaryGlow: {
-    shadowColor: '#ec4899',
+    shadowColor: "#ec4899",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
   },
   secondaryGlow: {
-    shadowColor: '#0ea5e9',
+    shadowColor: "#0ea5e9",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
   },
   holographicGlow: {
-    shadowColor: '#667eea',
+    shadowColor: "#667eea",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.6,
     shadowRadius: 25,
     elevation: 20,
   },
   neonGlow: {
-    shadowColor: '#00f5ff',
+    shadowColor: "#00f5ff",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 30,
@@ -266,8 +264,14 @@ const PREMIUM_SHADOWS = {
 
 interface EliteButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'glass' | 'holographic' | 'neon';
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?:
+    | "primary"
+    | "secondary"
+    | "ghost"
+    | "glass"
+    | "holographic"
+    | "neon";
+  size?: "sm" | "md" | "lg" | "xl";
   icon?: keyof typeof Ionicons.glyphMap;
   loading?: boolean;
   gradient?: string[];
@@ -278,8 +282,8 @@ interface EliteButtonProps extends TouchableOpacityProps {
 
 export const EliteButton: React.FC<EliteButtonProps> = ({
   title,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   icon,
   loading = false,
   gradient,
@@ -302,7 +306,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
     if (shimmer) {
       shimmerOffset.value = withSequence(
         withTiming(100, { duration: 2000 }),
-        withDelay(1000, withTiming(-100, { duration: 0 }))
+        withDelay(1000, withTiming(-100, { duration: 0 })),
       );
     }
   }, [shimmer]);
@@ -328,14 +332,14 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   const handlePressIn = () => {
     scale.value = withSpring(0.96, AnimationConfigs.spring);
     glowIntensity.value = withSpring(1.2, AnimationConfigs.spring);
-    
+
     if (ripple) {
       rippleScale.value = 0;
       rippleOpacity.value = 0.6;
       rippleScale.value = withTiming(2, { duration: 300 });
       rippleOpacity.value = withTiming(0, { duration: 300 });
     }
-    
+
     runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
   };
 
@@ -346,42 +350,50 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 
   const getButtonStyle = () => {
     const baseStyle = {
-      borderRadius: BorderRadius['2xl'],
-      overflow: 'hidden' as const,
-      position: 'relative' as const,
+      borderRadius: BorderRadius["2xl"],
+      overflow: "hidden" as const,
+      position: "relative" as const,
     };
 
     switch (variant) {
-      case 'secondary':
+      case "secondary":
         return { ...baseStyle, ...GlobalStyles.buttonSecondary };
-      case 'ghost':
+      case "ghost":
         return { ...baseStyle, ...GlobalStyles.buttonGhost };
-      case 'glass':
-        return { 
-          ...baseStyle, 
-          backgroundColor: 'rgba(255,255,255,0.1)',
+      case "glass":
+        return {
+          ...baseStyle,
+          backgroundColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.2)',
+          borderColor: "rgba(255,255,255,0.2)",
         };
-      case 'holographic':
+      case "holographic":
         return { ...baseStyle, ...PREMIUM_SHADOWS.holographicGlow };
-      case 'neon':
+      case "neon":
         return { ...baseStyle, ...PREMIUM_SHADOWS.neonGlow };
       default:
-        return { ...baseStyle, ...GlobalStyles.buttonPrimary, ...(glow ? PREMIUM_SHADOWS.primaryGlow : {}) };
+        return {
+          ...baseStyle,
+          ...GlobalStyles.buttonPrimary,
+          ...(glow ? PREMIUM_SHADOWS.primaryGlow : {}),
+        };
     }
   };
 
   const getTextStyle = () => {
     switch (variant) {
-      case 'secondary':
+      case "secondary":
         return GlobalStyles.buttonTextSecondary;
-      case 'ghost':
-      case 'glass':
+      case "ghost":
+      case "glass":
         return { ...GlobalStyles.buttonTextSecondary, color: Colors.white };
-      case 'holographic':
-      case 'neon':
-        return { ...GlobalStyles.buttonTextPrimary, color: Colors.white, fontWeight: 'bold' as const };
+      case "holographic":
+      case "neon":
+        return {
+          ...GlobalStyles.buttonTextPrimary,
+          color: Colors.white,
+          fontWeight: "bold" as const,
+        };
       default:
         return GlobalStyles.buttonTextPrimary;
     }
@@ -389,12 +401,24 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 
   const getSizeStyle = () => {
     switch (size) {
-      case 'sm':
-        return { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, minHeight: 36 };
-      case 'lg':
-        return { paddingHorizontal: Spacing['3xl'], paddingVertical: Spacing.lg, minHeight: 56 };
-      case 'xl':
-        return { paddingHorizontal: Spacing['4xl'], paddingVertical: Spacing.xl, minHeight: 64 };
+      case "sm":
+        return {
+          paddingHorizontal: Spacing.lg,
+          paddingVertical: Spacing.sm,
+          minHeight: 36,
+        };
+      case "lg":
+        return {
+          paddingHorizontal: Spacing["3xl"],
+          paddingVertical: Spacing.lg,
+          minHeight: 56,
+        };
+      case "xl":
+        return {
+          paddingHorizontal: Spacing["4xl"],
+          paddingVertical: Spacing.xl,
+          minHeight: 64,
+        };
       default:
         return { ...GlobalStyles.buttonContent, minHeight: 48 };
     }
@@ -402,15 +426,15 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 
   const getGradientColors = () => {
     if (gradient) return gradient;
-    
+
     switch (variant) {
-      case 'secondary':
+      case "secondary":
         return PREMIUM_GRADIENTS.secondary;
-      case 'glass':
+      case "glass":
         return PREMIUM_GRADIENTS.glass;
-      case 'holographic':
+      case "holographic":
         return PREMIUM_GRADIENTS.holographic;
-      case 'neon':
+      case "neon":
         return PREMIUM_GRADIENTS.neon;
       default:
         return PREMIUM_GRADIENTS.primary;
@@ -420,28 +444,58 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   const ButtonContent = (
     <View style={[getSizeStyle(), { opacity: (disabled ?? false) ? 0.6 : 1 }]}>
       {loading ? (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator 
-            color={variant === 'primary' || variant === 'holographic' || variant === 'neon' ? Colors.white : Colors.primary} 
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ActivityIndicator
+            color={
+              variant === "primary" ||
+              variant === "holographic" ||
+              variant === "neon"
+                ? Colors.white
+                : Colors.primary
+            }
             size="small"
           />
-          <Text style={[GlobalStyles.buttonText, getTextStyle(), { marginLeft: Spacing.sm }]}>
+          <Text
+            style={[
+              GlobalStyles.buttonText,
+              getTextStyle(),
+              { marginLeft: Spacing.sm },
+            ]}
+          >
             Loading...
           </Text>
         </View>
       ) : (
         <>
           {icon && (
-            <Ionicons 
-              name={icon} 
-              size={size === 'sm' ? 16 : size === 'lg' ? 24 : size === 'xl' ? 28 : 20} 
-              color={variant === 'primary' || variant === 'holographic' || variant === 'neon' ? Colors.white : Colors.primary} 
+            <Ionicons
+              name={icon}
+              size={
+                size === "sm"
+                  ? 16
+                  : size === "lg"
+                    ? 24
+                    : size === "xl"
+                      ? 28
+                      : 20
+              }
+              color={
+                variant === "primary" ||
+                variant === "holographic" ||
+                variant === "neon"
+                  ? Colors.white
+                  : Colors.primary
+              }
               style={{ marginRight: Spacing.xs }}
             />
           )}
-          <Text style={[GlobalStyles.buttonText, getTextStyle()]}>
-            {title}
-          </Text>
+          <Text style={[GlobalStyles.buttonText, getTextStyle()]}>{title}</Text>
         </>
       )}
     </View>
@@ -462,13 +516,13 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
           <Animated.View
             style={[
               {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
+                position: "absolute",
+                top: "50%",
+                left: "50%",
                 width: 100,
                 height: 100,
                 borderRadius: 50,
-                backgroundColor: 'rgba(255,255,255,0.3)',
+                backgroundColor: "rgba(255,255,255,0.3)",
                 marginTop: -50,
                 marginLeft: -50,
               },
@@ -482,12 +536,12 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
           <Animated.View
             style={[
               {
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(255,255,255,0.1)',
+                backgroundColor: "rgba(255,255,255,0.1)",
               },
               shimmerStyle,
             ]}
@@ -495,13 +549,13 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
         )}
 
         {/* Gradient Background */}
-        <LinearGradient 
-          colors={getGradientColors()} 
-          style={{ 
-            borderRadius: BorderRadius['2xl'],
+        <LinearGradient
+          colors={getGradientColors()}
+          style={{
+            borderRadius: BorderRadius["2xl"],
             flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
+            justifyContent: "center",
+            alignItems: "center",
           }}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -519,7 +573,7 @@ interface EliteCardProps {
   children: ReactNode;
   style?: ViewStyle;
   onPress?: () => void;
-  variant?: 'default' | 'glass' | 'holographic' | 'glow';
+  variant?: "default" | "glass" | "holographic" | "glow";
   gradient?: boolean;
   blur?: boolean;
   shadow?: keyof typeof Shadows;
@@ -530,10 +584,10 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   children,
   style,
   onPress,
-  variant = 'default',
+  variant = "default",
   gradient = false,
   blur = false,
-  shadow = 'lg',
+  shadow = "lg",
   shimmer = false,
 }) => {
   const scale = useSharedValue(1);
@@ -544,7 +598,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
     if (shimmer) {
       shimmerOffset.value = withSequence(
         withTiming(100, { duration: 2000 }),
-        withDelay(1000, withTiming(-100, { duration: 0 }))
+        withDelay(1000, withTiming(-100, { duration: 0 })),
       );
     }
   }, [shimmer]);
@@ -570,30 +624,30 @@ export const EliteCard: React.FC<EliteCardProps> = ({
 
   const getCardStyle = () => {
     const baseStyle = {
-      borderRadius: BorderRadius['2xl'],
-      overflow: 'hidden' as const,
-      position: 'relative' as const,
+      borderRadius: BorderRadius["2xl"],
+      overflow: "hidden" as const,
+      position: "relative" as const,
     };
 
     switch (variant) {
-      case 'glass':
+      case "glass":
         return {
           ...baseStyle,
-          backgroundColor: 'rgba(255,255,255,0.1)',
+          backgroundColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.2)',
-          shadowColor: '#000',
+          borderColor: "rgba(255,255,255,0.2)",
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.37,
           shadowRadius: 32,
           elevation: 15,
         };
-      case 'holographic':
+      case "holographic":
         return {
           ...baseStyle,
           ...PREMIUM_SHADOWS.holographicGlow,
         };
-      case 'glow':
+      case "glow":
         return {
           ...baseStyle,
           ...PREMIUM_SHADOWS.primaryGlow,
@@ -609,21 +663,21 @@ export const EliteCard: React.FC<EliteCardProps> = ({
 
   const getGradientColors = () => {
     switch (variant) {
-      case 'glass':
+      case "glass":
         return PREMIUM_GRADIENTS.glass;
-      case 'holographic':
+      case "holographic":
         return PREMIUM_GRADIENTS.holographic;
-      case 'glow':
+      case "glow":
         return PREMIUM_GRADIENTS.primary;
       default:
-        return gradient ? ['rgba(255,255,255,0.9)', 'rgba(255,255,255,0.7)'] : undefined;
+        return gradient
+          ? ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)"]
+          : undefined;
     }
   };
 
   const CardContent = (
-    <View style={[GlobalStyles.cardContent, style]}>
-      {children}
-    </View>
+    <View style={[GlobalStyles.cardContent, style]}>{children}</View>
   );
 
   const cardStyle = getCardStyle();
@@ -644,12 +698,12 @@ export const EliteCard: React.FC<EliteCardProps> = ({
             <Animated.View
               style={[
                 {
-                  position: 'absolute',
+                  position: "absolute",
                   top: 0,
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  backgroundColor: "rgba(255,255,255,0.1)",
                   zIndex: 1,
                 },
                 shimmerStyle,
@@ -661,15 +715,18 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           {gradientColors ? (
             <LinearGradient
               colors={gradientColors}
-              style={{ 
-                borderRadius: BorderRadius['2xl'],
+              style={{
+                borderRadius: BorderRadius["2xl"],
                 flex: 1,
               }}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
               {blur ? (
-                <BlurView intensity={15} style={{ borderRadius: BorderRadius['2xl'], flex: 1 }}>
+                <BlurView
+                  intensity={15}
+                  style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+                >
                   {CardContent}
                 </BlurView>
               ) : (
@@ -679,7 +736,10 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           ) : (
             <>
               {blur ? (
-                <BlurView intensity={15} style={{ borderRadius: BorderRadius['2xl'], flex: 1 }}>
+                <BlurView
+                  intensity={15}
+                  style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+                >
                   {CardContent}
                 </BlurView>
               ) : (
@@ -699,12 +759,12 @@ export const EliteCard: React.FC<EliteCardProps> = ({
         <Animated.View
           style={[
             {
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(255,255,255,0.1)',
+              backgroundColor: "rgba(255,255,255,0.1)",
               zIndex: 1,
             },
             shimmerStyle,
@@ -716,15 +776,18 @@ export const EliteCard: React.FC<EliteCardProps> = ({
       {gradientColors ? (
         <LinearGradient
           colors={gradientColors}
-          style={{ 
-            borderRadius: BorderRadius['2xl'],
+          style={{
+            borderRadius: BorderRadius["2xl"],
             flex: 1,
           }}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
           {blur ? (
-            <BlurView intensity={15} style={{ borderRadius: BorderRadius['2xl'], flex: 1 }}>
+            <BlurView
+              intensity={15}
+              style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+            >
               {CardContent}
             </BlurView>
           ) : (
@@ -734,7 +797,10 @@ export const EliteCard: React.FC<EliteCardProps> = ({
       ) : (
         <>
           {blur ? (
-            <BlurView intensity={15} style={{ borderRadius: BorderRadius['2xl'], flex: 1 }}>
+            <BlurView
+              intensity={15}
+              style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+            >
               {CardContent}
             </BlurView>
           ) : (

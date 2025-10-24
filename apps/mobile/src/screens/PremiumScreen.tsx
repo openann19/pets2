@@ -3,12 +3,11 @@
  * Professional implementation with Stripe integration
  */
 
-import { Ionicons } from '@expo/vector-icons'
-import { logger } from '@pawfectmatch/core';
-;
-import { useAuthStore } from '@pawfectmatch/core';
-import * as Haptics from 'expo-haptics';
-import React, { useEffect, useRef, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import { useAuthStore } from "@pawfectmatch/core";
+import * as Haptics from "expo-haptics";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -20,14 +19,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 // Removed gradients for a more refined, solid-color design
 
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from "../contexts/ThemeContext";
 
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PremiumPlan {
   id: string;
@@ -39,7 +37,7 @@ interface PremiumPlan {
   savings?: string;
 }
 
-import type { NavigationProp } from '../navigation/types';
+import type { NavigationProp } from "../navigation/types";
 
 interface PremiumScreenProps {
   navigation: NavigationProp;
@@ -48,73 +46,83 @@ interface PremiumScreenProps {
 function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
   const { colors, isDark } = useTheme();
   const { user } = useAuthStore();
-  const [selectedPlan, setSelectedPlan] = useState<string>('monthly');
+  const [selectedPlan, setSelectedPlan] = useState<string>("monthly");
   const [isLoading, setIsLoading] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const pulseAnim = useRef(new Animated.Value(0)).current;
 
   const premiumPlans: PremiumPlan[] = [
     {
-      id: 'weekly',
-      name: 'Weekly',
+      id: "weekly",
+      name: "Weekly",
       price: 4.99,
-      duration: 'week',
-      features: ['Unlimited swipes', 'See who liked you', 'Priority matching'],
+      duration: "week",
+      features: ["Unlimited swipes", "See who liked you", "Priority matching"],
     },
     {
-      id: 'monthly',
-      name: 'Monthly',
+      id: "monthly",
+      name: "Monthly",
       price: 14.99,
-      duration: 'month',
-      features: ['Unlimited swipes', 'See who liked you', 'Priority matching', 'Advanced filters'],
+      duration: "month",
+      features: [
+        "Unlimited swipes",
+        "See who liked you",
+        "Priority matching",
+        "Advanced filters",
+      ],
       popular: true,
     },
     {
-      id: 'yearly',
-      name: 'Yearly',
+      id: "yearly",
+      name: "Yearly",
       price: 99.99,
-      duration: 'year',
-      features: ['All monthly features', 'AI bio generation', 'Photo analysis', 'Compatibility insights'],
-      savings: 'Save 44%',
+      duration: "year",
+      features: [
+        "All monthly features",
+        "AI bio generation",
+        "Photo analysis",
+        "Compatibility insights",
+      ],
+      savings: "Save 44%",
     },
   ];
 
   const premiumFeatures = [
     {
-      icon: 'heart',
-      title: 'Unlimited Swipes',
-      description: 'Never run out of potential matches',
-      color: '#FF6B6B',
+      icon: "heart",
+      title: "Unlimited Swipes",
+      description: "Never run out of potential matches",
+      color: "#FF6B6B",
     },
     {
-      icon: 'eye',
-      title: 'See Who Liked You',
-      description: 'Know who\'s interested before you swipe',
-      color: '#4ECDC4',
+      icon: "eye",
+      title: "See Who Liked You",
+      description: "Know who's interested before you swipe",
+      color: "#4ECDC4",
     },
     {
-      icon: 'flash',
-      title: 'Priority Matching',
-      description: 'Get shown to more potential matches',
-      color: '#FFD700',
+      icon: "flash",
+      title: "Priority Matching",
+      description: "Get shown to more potential matches",
+      color: "#FFD700",
     },
     {
-      icon: 'filter',
-      title: 'Advanced Filters',
-      description: 'Filter by breed, age, distance and more',
-      color: '#9C27B0',
+      icon: "filter",
+      title: "Advanced Filters",
+      description: "Filter by breed, age, distance and more",
+      color: "#9C27B0",
     },
     {
-      icon: 'sparkles',
-      title: 'AI Features',
-      description: 'Bio generation and photo analysis',
-      color: '#FF9800',
+      icon: "sparkles",
+      title: "AI Features",
+      description: "Bio generation and photo analysis",
+      color: "#FF9800",
     },
     {
-      icon: 'analytics',
-      title: 'Compatibility Insights',
-      description: 'Deep compatibility analysis',
-      color: '#2196F3',
+      icon: "analytics",
+      title: "Compatibility Insights",
+      description: "Deep compatibility analysis",
+      color: "#2196F3",
     },
   ];
 
@@ -128,7 +136,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
       // This would be an API call in real implementation
       setIsPremium(false); // Default to false for demo
     } catch (error) {
-      logger.error('Error checking premium status:', { error });
+      logger.error("Error checking premium status:", { error });
     }
   };
 
@@ -141,9 +149,17 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
     pulseAnim.setValue(0);
     Animated.loop(
       Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 0, duration: 900, useNativeDriver: true }),
-      ])
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+      ]),
     ).start();
   };
 
@@ -165,26 +181,26 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
       // 4. Update user subscription status
 
       // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       Alert.alert(
-        'Success! 🎉',
-        'Welcome to PawfectMatch Premium! Your subscription is now active.',
+        "Success! 🎉",
+        "Welcome to PawfectMatch Premium! Your subscription is now active.",
         [
           {
-            text: 'Start Exploring',
+            text: "Start Exploring",
             onPress: () => {
               setIsPremium(true);
               navigation.goBack();
             },
           },
-        ]
+        ],
       );
     } catch (error) {
       Alert.alert(
-        'Payment Failed',
-        'There was an issue processing your payment. Please try again.',
-        [{ text: 'OK' }]
+        "Payment Failed",
+        "There was an issue processing your payment. Please try again.",
+        [{ text: "OK" }],
       );
     } finally {
       setIsLoading(false);
@@ -194,17 +210,24 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
   const handleRestorePurchases = async () => {
     try {
       // Restore purchases logic
-      Alert.alert('Restore Purchases', 'No previous purchases found.');
+      Alert.alert("Restore Purchases", "No previous purchases found.");
     } catch (error) {
-      Alert.alert('Error', 'Failed to restore purchases.');
+      Alert.alert("Error", "Failed to restore purchases.");
     }
   };
 
   if (isPremium) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.premiumActiveContainer}>
-          <View style={[styles.premiumActiveGradient, { backgroundColor: '#1f2937' }]}> 
+          <View
+            style={[
+              styles.premiumActiveGradient,
+              { backgroundColor: "#1f2937" },
+            ]}
+          >
             <Ionicons name="star" size={80} color="#fff" />
             <Text style={styles.premiumActiveTitle}>You're Premium!</Text>
             <Text style={styles.premiumActiveSubtitle}>
@@ -212,7 +235,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
             </Text>
             <TouchableOpacity
               style={styles.manageButton}
-              onPress={() => navigation.navigate('ManageSubscription')}
+              onPress={() => navigation.navigate("ManageSubscription")}
             >
               <Text style={styles.manageButtonText}>Manage Subscription</Text>
             </TouchableOpacity>
@@ -223,9 +246,22 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.gray900 }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.gray900 }]}
+    >
       {/* Header */}
-      <View style={[styles.header, styles.headerBlur, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.08)' : colors.glassDarkMedium }]}>
+      <View
+        style={[
+          styles.header,
+          styles.headerBlur,
+          {
+            backgroundColor:
+              Platform.OS === "ios"
+                ? "rgba(255,255,255,0.08)"
+                : colors.glassDarkMedium,
+          },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -235,17 +271,23 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
         >
           <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.white }]}>Go Premium</Text>
+        <Text style={[styles.headerTitle, { color: colors.white }]}>
+          Go Premium
+        </Text>
         <TouchableOpacity onPress={handleRestorePurchases}>
-          <Text style={[styles.restoreText, { color: colors.primary }]}>Restore</Text>
+          <Text style={[styles.restoreText, { color: colors.primary }]}>
+            Restore
+          </Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Holographic Hero */}
-        <View style={[styles.heroSection, styles.holographicBg]}> 
+        <View style={[styles.heroSection, styles.holographicBg]}>
           <Ionicons name="star" size={60} color="#fff" />
-          <Text style={[styles.heroTitle, styles.holoText]}>Unlock Premium Features</Text>
+          <Text style={[styles.heroTitle, styles.holoText]}>
+            Unlock Premium Features
+          </Text>
           <Text style={[styles.heroSubtitle, styles.holoTextSoft]}>
             Find your pet's perfect match faster with premium features
           </Text>
@@ -253,19 +295,36 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Features Grid */}
         <View style={styles.featuresSection}>
-          <Text style={[styles.sectionTitle, { color: colors.white }]}> 
+          <Text style={[styles.sectionTitle, { color: colors.white }]}>
             What You'll Get
           </Text>
           <View style={styles.featuresGrid}>
             {premiumFeatures.map((feature, index) => (
-              <View key={index} style={[styles.featureCard, { backgroundColor: colors.surface }]}>
-                <View style={[styles.featureIcon, { backgroundColor: `${feature.color  }20` }]}>
-                  <Ionicons name={feature.icon as any} size={24} color={feature.color} />
+              <View
+                key={index}
+                style={[
+                  styles.featureCard,
+                  { backgroundColor: colors.surface },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.featureIcon,
+                    { backgroundColor: `${feature.color}20` },
+                  ]}
+                >
+                  <Ionicons
+                    name={feature.icon as any}
+                    size={24}
+                    color={feature.color}
+                  />
                 </View>
-                <Text style={[styles.featureTitle, { color: colors.white }]}> 
+                <Text style={[styles.featureTitle, { color: colors.white }]}>
                   {feature.title}
                 </Text>
-                <Text style={[styles.featureDescription, { color: colors.gray300 }]}> 
+                <Text
+                  style={[styles.featureDescription, { color: colors.gray300 }]}
+                >
                   {feature.description}
                 </Text>
               </View>
@@ -275,7 +334,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Pricing Plans */}
         <View style={styles.pricingSection}>
-          <Text style={[styles.sectionTitle, { color: colors.white }]}> 
+          <Text style={[styles.sectionTitle, { color: colors.white }]}>
             Choose Your Plan
           </Text>
           {premiumPlans.map((plan) => (
@@ -284,29 +343,48 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
               style={[
                 styles.planCard,
                 { backgroundColor: colors.gray800 },
-                selectedPlan === plan.id && [styles.selectedPlan, { borderColor: colors.accent }],
+                selectedPlan === plan.id && [
+                  styles.selectedPlan,
+                  { borderColor: colors.accent },
+                ],
                 plan.popular && styles.popularPlan,
               ]}
-              onPress={() => { handlePlanSelection(plan.id); }}
+              onPress={() => {
+                handlePlanSelection(plan.id);
+              }}
               activeOpacity={0.8}
             >
               {plan.popular && (
-                <View style={[styles.popularBadge, { backgroundColor: colors.primary }]}>
+                <View
+                  style={[
+                    styles.popularBadge,
+                    { backgroundColor: colors.primary },
+                  ]}
+                >
                   <Text style={styles.popularText}>Most Popular</Text>
                 </View>
               )}
               {plan.savings && (
-                <View style={[styles.savingsBadge, { backgroundColor: colors.success }]}>
+                <View
+                  style={[
+                    styles.savingsBadge,
+                    { backgroundColor: colors.success },
+                  ]}
+                >
                   <Text style={styles.savingsText}>{plan.savings}</Text>
                 </View>
               )}
               <View style={styles.planHeader}>
-                  <Text style={[styles.planName, { color: colors.white }]}>{plan.name}</Text>
+                <Text style={[styles.planName, { color: colors.white }]}>
+                  {plan.name}
+                </Text>
                 <View style={styles.planPricing}>
-                  <Text style={[styles.planPrice, { color: colors.white }]}> 
+                  <Text style={[styles.planPrice, { color: colors.white }]}>
                     ${plan.price}
                   </Text>
-                  <Text style={[styles.planDuration, { color: colors.gray400 }]}> 
+                  <Text
+                    style={[styles.planDuration, { color: colors.gray400 }]}
+                  >
                     /{plan.duration}
                   </Text>
                 </View>
@@ -314,8 +392,17 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
               <View style={styles.planFeatures}>
                 {plan.features.map((feature, index) => (
                   <View key={index} style={styles.planFeature}>
-                    <Ionicons name="checkmark" size={16} color={colors.success} />
-                    <Text style={[styles.planFeatureText, { color: colors.gray300 }]}>
+                    <Ionicons
+                      name="checkmark"
+                      size={16}
+                      color={colors.success}
+                    />
+                    <Text
+                      style={[
+                        styles.planFeatureText,
+                        { color: colors.gray300 },
+                      ]}
+                    >
                       {feature}
                     </Text>
                   </View>
@@ -327,22 +414,39 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Subscribe Button */}
         <TouchableOpacity
-          style={[styles.subscribeButton, isLoading && styles.subscribeButtonLoading]}
+          style={[
+            styles.subscribeButton,
+            isLoading && styles.subscribeButtonLoading,
+          ]}
           onPress={handleSubscribe}
           disabled={isLoading}
         >
-          <Animated.View style={[
-            styles.subscribeButtonGradient,
-            styles.neonButton,
-            { opacity: isLoading ? 0.7 : 1, transform: [{ scale: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.03] }) }] }
-          ]}>
+          <Animated.View
+            style={[
+              styles.subscribeButtonGradient,
+              styles.neonButton,
+              {
+                opacity: isLoading ? 0.7 : 1,
+                transform: [
+                  {
+                    scale: pulseAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.03],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
             {isLoading ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <Ionicons name="star" size={20} color="#fff" />
             )}
             <Text style={styles.subscribeButtonText}>
-              {isLoading ? 'Processing...' : `Start ${premiumPlans.find(p => p.id === selectedPlan)?.name} Plan`}
+              {isLoading
+                ? "Processing..."
+                : `Start ${premiumPlans.find((p) => p.id === selectedPlan)?.name} Plan`}
             </Text>
           </Animated.View>
         </TouchableOpacity>
@@ -350,22 +454,30 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
         {/* Terms */}
         <View style={styles.termsSection}>
           <Text style={[styles.termsText, { color: colors.gray500 }]}>
-            Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.
+            Subscription automatically renews unless cancelled at least 24 hours
+            before the end of the current period.
           </Text>
           <View style={styles.termsLinks}>
             <TouchableOpacity>
-              <Text style={[styles.termsLink, { color: colors.primary }]}>Terms of Service</Text>
+              <Text style={[styles.termsLink, { color: colors.primary }]}>
+                Terms of Service
+              </Text>
             </TouchableOpacity>
-            <Text style={[styles.termsSeparator, { color: colors.gray500 }]}> • </Text>
+            <Text style={[styles.termsSeparator, { color: colors.gray500 }]}>
+              {" "}
+              •{" "}
+            </Text>
             <TouchableOpacity>
-              <Text style={[styles.termsLink, { color: colors.primary }]}>Privacy Policy</Text>
+              <Text style={[styles.termsLink, { color: colors.primary }]}>
+                Privacy Policy
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -378,63 +490,63 @@ const styles = StyleSheet.create({
       },
       android: {
         // Simulate blur via translucent background
-        backgroundColor: 'rgba(0,0,0,0.3)'
-      }
-    })
+        backgroundColor: "rgba(0,0,0,0.3)",
+      },
+    }),
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
+    borderBottomColor: "rgba(0,0,0,0.1)",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   restoreText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   content: {
     flex: 1,
   },
   heroSection: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 40,
     paddingHorizontal: 20,
   },
   holographicBg: {
-    backgroundColor: '#1f2937',
+    backgroundColor: "#1f2937",
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   holoText: {
-    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowColor: "rgba(255,255,255,0.6)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 8,
   },
   holoTextSoft: {
-    textShadowColor: 'rgba(255,255,255,0.3)',
+    textShadowColor: "rgba(255,255,255,0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },
   heroTitle: {
     fontSize: 28,
-    fontWeight: '800',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "800",
+    color: "#fff",
+    textAlign: "center",
     marginTop: 20,
     marginBottom: 10,
   },
   heroSubtitle: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.9)',
-    textAlign: 'center',
+    color: "rgba(255,255,255,0.9)",
+    textAlign: "center",
     lineHeight: 22,
   },
   featuresSection: {
@@ -442,20 +554,20 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 20,
   },
   featuresGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 15,
   },
   featureCard: {
     width: (SCREEN_WIDTH - 55) / 2,
     padding: 20,
     borderRadius: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -465,19 +577,19 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 15,
   },
   featureTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    textAlign: 'center',
+    fontWeight: "700",
+    textAlign: "center",
     marginBottom: 8,
   },
   featureDescription: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 16,
   },
   pricingSection: {
@@ -488,9 +600,9 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 15,
     borderWidth: 2,
-    borderColor: 'transparent',
-    position: 'relative',
-    shadowColor: '#000',
+    borderColor: "transparent",
+    position: "relative",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -503,21 +615,21 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.02 }],
   },
   popularBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: -10,
     left: 20,
     right: 20,
     paddingVertical: 6,
     borderRadius: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   popularText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   savingsBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 15,
     right: 15,
     paddingHorizontal: 10,
@@ -525,28 +637,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   savingsText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   planHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 15,
     marginTop: 10,
   },
   planName: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   planPricing: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    alignItems: "baseline",
   },
   planPrice: {
     fontSize: 24,
-    fontWeight: '800',
+    fontWeight: "800",
   },
   planDuration: {
     fontSize: 16,
@@ -556,8 +668,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   planFeature: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   planFeatureText: {
@@ -572,46 +684,46 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   subscribeButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 18,
     borderRadius: 25,
     gap: 10,
   },
   neonButton: {
-    backgroundColor: '#0b0b0c',
+    backgroundColor: "#0b0b0c",
     borderWidth: 2,
-    borderColor: '#ec4899',
-    shadowColor: '#ec4899',
+    borderColor: "#ec4899",
+    shadowColor: "#ec4899",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 12,
     elevation: 8,
   },
   subscribeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   termsSection: {
     paddingHorizontal: 20,
     paddingBottom: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   termsText: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 16,
     marginBottom: 10,
   },
   termsLinks: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   termsLink: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   termsSeparator: {
     fontSize: 12,
@@ -620,39 +732,39 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 20,
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   premiumActiveGradient: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 40,
   },
   premiumActiveTitle: {
     fontSize: 32,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: "800",
+    color: "#fff",
     marginTop: 20,
     marginBottom: 10,
   },
   premiumActiveSubtitle: {
     fontSize: 18,
-    color: 'rgba(255,255,255,0.9)',
-    textAlign: 'center',
+    color: "rgba(255,255,255,0.9)",
+    textAlign: "center",
     marginBottom: 30,
   },
   manageButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: "rgba(255,255,255,0.2)",
     paddingHorizontal: 30,
     paddingVertical: 15,
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: "rgba(255,255,255,0.3)",
   },
   manageButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });
 

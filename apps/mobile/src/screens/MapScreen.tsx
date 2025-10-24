@@ -1,11 +1,10 @@
-import { useAuthStore } from '@pawfectmatch/core'
-import { logger } from '@pawfectmatch/core';
-;
-import Geolocation from '@react-native-community/geolocation';
-import { useNavigation } from '@react-navigation/native';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAuthStore } from "@pawfectmatch/core";
+import { logger } from "@pawfectmatch/core";
+import Geolocation from "@react-native-community/geolocation";
+import { useNavigation } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Animated,
@@ -18,15 +17,14 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import type { Region } from 'react-native-maps';
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
-import type { Socket } from 'socket.io-client';
-import io from 'socket.io-client';
- 
+} from "react-native";
+import type { Region } from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
+import type { Socket } from "socket.io-client";
+import io from "socket.io-client";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 interface MapFilters {
   showMyPets: boolean;
@@ -77,8 +75,11 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  
-  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [pins, setPins] = useState<PulsePin[]>([]);
   const [selectedPin, setSelectedPin] = useState<PulsePin | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -86,7 +87,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
     showMyPets: true,
     showMatches: true,
     showNearby: true,
-    activityTypes: ['walking', 'playing', 'feeding'],
+    activityTypes: ["walking", "playing", "feeding"],
     radius: 5,
   });
   const [stats, setStats] = useState<MapStats>({
@@ -101,27 +102,62 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
 
   // Activity types configuration
   const activityTypes: ActivityType[] = [
-    { id: 'walking', name: 'Walking', label: 'Walking', emoji: '🚶‍♂️', color: '#4CAF50' },
-    { id: 'playing', name: 'Playing', label: 'Playing', emoji: '🎾', color: '#FF9800' },
-    { id: 'feeding', name: 'Feeding', label: 'Feeding', emoji: '🍽️', color: '#9C27B0' },
-    { id: 'resting', name: 'Resting', label: 'Resting', emoji: '😴', color: '#607D8B' },
-    { id: 'training', name: 'Training', label: 'Training', emoji: '🎯', color: '#E91E63' },
+    {
+      id: "walking",
+      name: "Walking",
+      label: "Walking",
+      emoji: "🚶‍♂️",
+      color: "#4CAF50",
+    },
+    {
+      id: "playing",
+      name: "Playing",
+      label: "Playing",
+      emoji: "🎾",
+      color: "#FF9800",
+    },
+    {
+      id: "feeding",
+      name: "Feeding",
+      label: "Feeding",
+      emoji: "🍽️",
+      color: "#9C27B0",
+    },
+    {
+      id: "resting",
+      name: "Resting",
+      label: "Resting",
+      emoji: "😴",
+      color: "#607D8B",
+    },
+    {
+      id: "training",
+      name: "Training",
+      label: "Training",
+      emoji: "🎯",
+      color: "#E91E63",
+    },
   ];
 
   // Location permission request
   const requestLocationPermission = useCallback(async () => {
     try {
       const permission = await request(
-        Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+        Platform.OS === "ios"
+          ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+          : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
-      
+
       if (permission === RESULTS.GRANTED) {
         getCurrentLocation();
       } else {
-        Alert.alert('Location Permission', 'Please enable location access to see nearby pets.');
+        Alert.alert(
+          "Location Permission",
+          "Please enable location access to see nearby pets.",
+        );
       }
     } catch (error) {
-      logger.error('Location permission error:', { error });
+      logger.error("Location permission error:", { error });
     }
   }, []);
 
@@ -139,46 +175,45 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
         });
       },
       (error) => {
-        logger.error('Location error:', { error });
-        Alert.alert('Location Error', 'Unable to get your current location.');
+        logger.error("Location error:", { error });
+        Alert.alert("Location Error", "Unable to get your current location.");
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
     );
   }, []);
 
- 
-
   useEffect(() => {
-    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+    const socketUrl =
+      process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
     const newSocket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
       upgrade: true,
     });
 
-    newSocket.on('connect', () => {
-      logger.info('📱 Mobile map connected to socket');
+    newSocket.on("connect", () => {
+      logger.info("📱 Mobile map connected to socket");
       if (user?._id) {
-        newSocket.emit('join', { userId: user._id });
+        newSocket.emit("join", { userId: user._id });
       }
     });
 
-    newSocket.on('authenticated', () => {
-      logger.info('✅ Mobile map authenticated');
-      newSocket.emit('request:initial-pins', { radius: filters.radius });
+    newSocket.on("authenticated", () => {
+      logger.info("✅ Mobile map authenticated");
+      newSocket.emit("request:initial-pins", { radius: filters.radius });
     });
 
-    newSocket.on('pin:update', (pin: PulsePin) => {
-      setPins(prev => {
-        const updated = prev.filter(p => p._id !== pin._id);
+    newSocket.on("pin:update", (pin: PulsePin) => {
+      setPins((prev) => {
+        const updated = prev.filter((p) => p._id !== pin._id);
         return [...updated, pin].slice(-100);
       });
     });
 
-    newSocket.on('pin:remove', (pinId: string) => {
-      setPins(prev => prev.filter(p => p._id !== pinId));
+    newSocket.on("pin:remove", (pinId: string) => {
+      setPins((prev) => prev.filter((p) => p._id !== pinId));
     });
 
-    newSocket.on('nearby:response', (nearbyPins: PulsePin[]) => {
+    newSocket.on("nearby:response", (nearbyPins: PulsePin[]) => {
       setPins(nearbyPins);
     });
 
@@ -201,18 +236,20 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
         totalPets: Math.floor(Math.random() * 50) + 20,
         activePets: pins.length,
         nearbyMatches: Math.floor(Math.random() * 8) + 2,
-        recentActivity: Math.floor(Math.random() * 12) + 3
+        recentActivity: Math.floor(Math.random() * 12) + 3,
       });
     };
 
     updateStats();
     const interval = setInterval(updateStats, 15000);
-    return () => { clearInterval(interval); };
+    return () => {
+      clearInterval(interval);
+    };
   }, [pins.length]);
 
   // Filter pins based on current filters
   const filteredPins = useMemo(() => {
-    return pins.filter(pin => {
+    return pins.filter((pin) => {
       if (!filters.activityTypes.includes(pin.activity)) return false;
       // Add distance filtering if user location is available
       if (userLocation && filters.radius) {
@@ -220,7 +257,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
           userLocation.latitude,
           userLocation.longitude,
           pin.latitude,
-          pin.longitude
+          pin.longitude,
         );
         return distance <= filters.radius;
       }
@@ -229,15 +266,22 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
   }, [pins, filters, userLocation]);
 
   // Calculate distance between two points
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number => {
     const R = 6371; // Earth's radius in kilometers
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(lat1)) *
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
@@ -252,7 +296,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
   const toggleFilters = useCallback(() => {
     const toValue = showFilters ? 0 : 300;
     setShowFilters(!showFilters);
-    
+
     Animated.spring(filterPanelHeight, {
       toValue,
       useNativeDriver: false,
@@ -263,29 +307,29 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
 
   // Toggle activity filter
   const toggleActivity = useCallback((activityId: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       activityTypes: prev.activityTypes.includes(activityId)
-        ? prev.activityTypes.filter(a => a !== activityId)
-        : [...prev.activityTypes, activityId]
+        ? prev.activityTypes.filter((a) => a !== activityId)
+        : [...prev.activityTypes, activityId],
     }));
   }, []);
 
   // Get marker color based on activity
   const getMarkerColor = (activity: string, isMatch = false): string => {
-    if (isMatch) return '#EC4899';
-    const activityType = activityTypes.find(a => a.id === activity);
-    return activityType?.color || '#6B7280';
+    if (isMatch) return "#EC4899";
+    const activityType = activityTypes.find((a) => a.id === activity);
+    return activityType?.color || "#6B7280";
   };
 
   // Update user location
   const updateUserLocation = useCallback(() => {
     if (userLocation && socket) {
-      socket.emit('location:update', {
+      socket.emit("location:update", {
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
-        activity: 'other',
-        message: 'Updated location'
+        activity: "other",
+        message: "Updated location",
       });
     }
   }, [userLocation, socket]);
@@ -293,12 +337,9 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1F2937" />
-      
+
       {/* Header */}
-      <LinearGradient
-        colors={['#1F2937', '#374151']}
-        style={styles.header}
-      >
+      <LinearGradient colors={["#1F2937", "#374151"]} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.headerLeft}>
             <View style={styles.logoContainer}>
@@ -309,17 +350,16 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
               <Text style={styles.headerSubtitle}>Real-time locations</Text>
             </View>
           </View>
-          
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={toggleFilters}
-          >
+
+          <TouchableOpacity style={styles.filterButton} onPress={toggleFilters}>
             <Text style={styles.filterButtonText}>⚙️</Text>
           </TouchableOpacity>
         </View>
 
         {/* Stats Bar */}
-        <Animated.View style={[styles.statsContainer, { opacity: statsOpacity }]}>
+        <Animated.View
+          style={[styles.statsContainer, { opacity: statsOpacity }]}
+        >
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.activePets}</Text>
             <Text style={styles.statLabel}>Active</Text>
@@ -362,19 +402,21 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
               <Marker
                 coordinate={{
                   latitude: pin.latitude,
-                  longitude: pin.longitude
+                  longitude: pin.longitude,
                 }}
                 title={pin.activity}
-                description={pin.message || 'Pet activity'}
+                description={pin.message || "Pet activity"}
                 pinColor={getMarkerColor(pin.activity, isMatch)}
-                onPress={() => { handleMarkerPress(pin); }}
+                onPress={() => {
+                  handleMarkerPress(pin);
+                }}
               />
-              
+
               {/* Activity radius circle */}
               <Circle
                 center={{
                   latitude: pin.latitude,
-                  longitude: pin.longitude
+                  longitude: pin.longitude,
                 }}
                 radius={100}
                 strokeColor={getMarkerColor(pin.activity, isMatch)}
@@ -387,15 +429,13 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
       </MapView>
 
       {/* Filter Panel */}
-      <Animated.View style={[styles.filterPanel, { height: filterPanelHeight }]}>
-        <BlurView
-          style={styles.filterBlur}
-          intensity={50}
-          tint="light"
-        >
+      <Animated.View
+        style={[styles.filterPanel, { height: filterPanelHeight }]}
+      >
+        <BlurView style={styles.filterBlur} intensity={50} tint="light">
           <ScrollView style={styles.filterContent}>
             <Text style={styles.filterTitle}>Map Filters</Text>
-            
+
             {/* Activity Types */}
             <Text style={styles.filterSectionTitle}>Activity Types</Text>
             <View style={styles.activityGrid}>
@@ -405,22 +445,28 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
                   style={[
                     styles.activityButton,
                     {
-                      backgroundColor: filters.activityTypes.includes(activity.id)
+                      backgroundColor: filters.activityTypes.includes(
+                        activity.id,
+                      )
                         ? activity.color
-                        : '#F3F4F6'
-                    }
+                        : "#F3F4F6",
+                    },
                   ]}
-                  onPress={() => { toggleActivity(activity.id); }}
+                  onPress={() => {
+                    toggleActivity(activity.id);
+                  }}
                 >
                   <Text style={styles.activityEmoji}>{activity.emoji}</Text>
-                  <Text style={[
-                    styles.activityLabel,
-                    {
-                      color: filters.activityTypes.includes(activity.id)
-                        ? '#FFFFFF'
-                        : '#374151'
-                    }
-                  ]}>
+                  <Text
+                    style={[
+                      styles.activityLabel,
+                      {
+                        color: filters.activityTypes.includes(activity.id)
+                          ? "#FFFFFF"
+                          : "#374151",
+                      },
+                    ]}
+                  >
                     {activity.label}
                   </Text>
                 </TouchableOpacity>
@@ -434,10 +480,10 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
             <View style={styles.sliderContainer}>
               {/* Simple slider implementation */}
               <View style={styles.sliderTrack}>
-                <View 
+                <View
                   style={[
                     styles.sliderThumb,
-                    { left: `${(filters.radius / 50) * 100}%` }
+                    { left: `${(filters.radius / 50) * 100}%` },
                   ]}
                 />
               </View>
@@ -452,21 +498,21 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
           style={[styles.fab, styles.arFab]}
           onPress={() => {
             // Navigate to AR Scent Trails
-            (navigation as any).navigate('ARScentTrails', {
-              initialLocation: userLocation
+            (navigation as any).navigate("ARScentTrails", {
+              initialLocation: userLocation,
             });
           }}
         >
           <Text style={styles.fabIcon}>👁️</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={[styles.fab, styles.locationFab]}
           onPress={getCurrentLocation}
         >
           <Text style={styles.fabIcon}>📍</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           style={[styles.fab, styles.updateFab]}
           onPress={updateUserLocation}
@@ -480,7 +526,9 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
         visible={!!selectedPin}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => { setSelectedPin(null); }}
+        onRequestClose={() => {
+          setSelectedPin(null);
+        }}
       >
         <View style={styles.modalOverlay}>
           <BlurView style={styles.modalBlur} intensity={80} tint="dark">
@@ -488,35 +536,43 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
               {selectedPin && (
                 <>
                   <Text style={styles.modalTitle}>
-                    {activityTypes.find(a => a.id === selectedPin.activity)?.emoji} {' '}
-                    {selectedPin.activity.charAt(0).toUpperCase() + selectedPin.activity.slice(1)}
+                    {
+                      activityTypes.find((a) => a.id === selectedPin.activity)
+                        ?.emoji
+                    }{" "}
+                    {selectedPin.activity.charAt(0).toUpperCase() +
+                      selectedPin.activity.slice(1)}
                   </Text>
-                  
+
                   {selectedPin.message && (
-                    <Text style={styles.modalMessage}>{selectedPin.message}</Text>
+                    <Text style={styles.modalMessage}>
+                      {selectedPin.message}
+                    </Text>
                   )}
-                  
+
                   <Text style={styles.modalTime}>
                     {new Date(selectedPin.createdAt).toLocaleTimeString()}
                   </Text>
-                  
+
                   <View style={styles.modalActions}>
                     <TouchableOpacity
                       style={[styles.modalButton, styles.likeButton]}
                     >
                       <Text style={styles.modalButtonText}>❤️ Like</Text>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                       style={[styles.modalButton, styles.chatButton]}
                     >
                       <Text style={styles.modalButtonText}>💬 Chat</Text>
                     </TouchableOpacity>
                   </View>
-                  
+
                   <TouchableOpacity
                     style={styles.closeButton}
-                    onPress={() => { setSelectedPin(null); }}
+                    onPress={() => {
+                      setSelectedPin(null);
+                    }}
                   >
                     <Text style={styles.closeButtonText}>Close</Text>
                   </TouchableOpacity>
@@ -528,35 +584,35 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
       </Modal>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingTop: Platform.OS === "ios" ? 50 : 20,
     paddingBottom: 16,
     paddingHorizontal: 16,
   },
   headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   logoContainer: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#EC4899',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#EC4899",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12,
   },
   logoEmoji: {
@@ -564,50 +620,50 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#D1D5DB',
+    color: "#D1D5DB",
   },
   filterButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   filterButtonText: {
     fontSize: 18,
   },
   statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     paddingHorizontal: 20,
   },
   statItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statValue: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   statLabel: {
     fontSize: 12,
-    color: '#D1D5DB',
+    color: "#D1D5DB",
   },
   map: {
     flex: 1,
   },
   filterPanel: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   filterBlur: {
     flex: 1,
@@ -617,27 +673,27 @@ const styles = StyleSheet.create({
   },
   filterTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: "#1F2937",
     marginBottom: 20,
   },
   filterSectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 12,
     marginTop: 16,
   },
   activityGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   activityButton: {
     width: (width - 64) / 3,
     padding: 12,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 8,
   },
   activityEmoji: {
@@ -646,27 +702,27 @@ const styles = StyleSheet.create({
   },
   activityLabel: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   sliderContainer: {
     marginTop: 8,
   },
   sliderTrack: {
     height: 4,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: "#E5E7EB",
     borderRadius: 2,
-    position: 'relative',
+    position: "relative",
   },
   sliderThumb: {
     width: 20,
     height: 20,
-    backgroundColor: '#EC4899',
+    backgroundColor: "#EC4899",
     borderRadius: 10,
-    position: 'absolute',
+    position: "absolute",
     top: -8,
   },
   fabContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: 16,
     bottom: 100,
   },
@@ -674,37 +730,37 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
   },
   locationFab: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: "#3B82F6",
   },
   updateFab: {
-    backgroundColor: '#10B981',
+    backgroundColor: "#10B981",
   },
   arFab: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: "#8B5CF6",
   },
   fabIcon: {
     fontSize: 24,
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   modalBlur: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
@@ -712,22 +768,22 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: "#1F2937",
     marginBottom: 8,
   },
   modalMessage: {
     fontSize: 16,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 12,
   },
   modalTime: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: "#9CA3AF",
     marginBottom: 20,
   },
   modalActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginBottom: 16,
   },
@@ -735,25 +791,25 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   likeButton: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: "#FEE2E2",
   },
   chatButton: {
-    backgroundColor: '#DBEAFE',
+    backgroundColor: "#DBEAFE",
   },
   modalButtonText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   closeButton: {
     padding: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   closeButtonText: {
     fontSize: 16,
-    color: '#6B7280',
+    color: "#6B7280",
   },
 });
 

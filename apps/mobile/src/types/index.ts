@@ -7,7 +7,7 @@ export type {
   SwipeAction,
   SwipeResult,
   PetFilters,
-} from '@pawfectmatch/core';
+} from "@pawfectmatch/core";
 
 // Mobile-specific type extensions (if needed in future)
 export interface MobileUserPreferences {

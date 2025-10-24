@@ -1,13 +1,13 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@react-navigation/native";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming
-} from 'react-native-reanimated';
+  withTiming,
+} from "react-native-reanimated";
 
 interface TabBarIconProps {
   routeName: string;
@@ -52,22 +52,22 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
 
   const getIconName = (): string => {
     switch (routeName) {
-      case 'Home':
-        return focused ? 'home' : 'home-outline';
-      case 'Swipe':
-        return focused ? 'heart' : 'heart-outline';
-      case 'Map':
-        return focused ? 'map' : 'map-outline';
-      case 'Matches':
-        return focused ? 'chatbubbles' : 'chatbubbles-outline';
-      case 'Profile':
-        return focused ? 'person' : 'person-outline';
-      case 'AdoptionManager':
-        return focused ? 'list' : 'list-outline';
-      case 'Premium':
-        return focused ? 'star' : 'star-outline';
+      case "Home":
+        return focused ? "home" : "home-outline";
+      case "Swipe":
+        return focused ? "heart" : "heart-outline";
+      case "Map":
+        return focused ? "map" : "map-outline";
+      case "Matches":
+        return focused ? "chatbubbles" : "chatbubbles-outline";
+      case "Profile":
+        return focused ? "person" : "person-outline";
+      case "AdoptionManager":
+        return focused ? "list" : "list-outline";
+      case "Premium":
+        return focused ? "star" : "star-outline";
       default:
-        return 'home-outline';
+        return "home-outline";
     }
   };
 
@@ -86,11 +86,13 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
         <Ionicons name={getIconName()} size={size} color={color} />
       </Animated.View>
 
-      {showBadge && badgeCount > 0 ? <Animated.View style={[styles.badge, animatedBadgeStyle]}>
-        <Text style={styles.badgeText}>
-          {badgeCount > 99 ? '99+' : badgeCount.toString()}
-        </Text>
-      </Animated.View> : null}
+      {showBadge && badgeCount > 0 ? (
+        <Animated.View style={[styles.badge, animatedBadgeStyle]}>
+          <Text style={styles.badgeText}>
+            {badgeCount > 99 ? "99+" : badgeCount.toString()}
+          </Text>
+        </Animated.View>
+      ) : null}
     </View>
   );
 };
@@ -121,19 +123,19 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   // Mock notification counts - in real app, these would come from state/context
   const getBadgeCount = (routeName: string): number => {
     switch (routeName) {
-      case 'Matches':
+      case "Matches":
         return 3; // Mock: 3 new matches
-      case 'Swipe':
+      case "Swipe":
         return 0; // No notifications
-      case 'Map':
+      case "Map":
         return 1; // Mock: 1 nearby pet
-      case 'Profile':
+      case "Profile":
         return 0; // No notifications
-      case 'Home':
+      case "Home":
         return 2; // Mock: 2 updates
-      case 'AdoptionManager':
+      case "AdoptionManager":
         return 0; // No notifications
-      case 'Premium':
+      case "Premium":
         return 0; // No notifications
       default:
         return 0;
@@ -150,17 +152,18 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
       {state.routes.map((route: TabRoute, index: number) => {
         const descriptor = descriptors[route.key];
         const options = descriptor?.options ?? {};
-        const label = options.tabBarLabel !== undefined
-          ? options.tabBarLabel
-          : options.title !== undefined
-            ? options.title
-            : route.name;
+        const label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+              ? options.title
+              : route.name;
 
         const isFocused = state.index === index;
 
         const onPress = (): void => {
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           });
@@ -172,7 +175,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
 
         const onLongPress = (): void => {
           navigation.emit({
-            type: 'tabLongPress',
+            type: "tabLongPress",
             target: route.key,
           });
         };
@@ -185,8 +188,14 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
             key={route.key}
             accessibilityRole="tab"
             accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel || `${label} tab`}
-            accessibilityHint={isFocused ? `Currently selected ${label} tab` : `Navigate to ${label} tab`}
+            accessibilityLabel={
+              options.tabBarAccessibilityLabel || `${label} tab`
+            }
+            accessibilityHint={
+              isFocused
+                ? `Currently selected ${label} tab`
+                : `Navigate to ${label} tab`
+            }
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
@@ -205,7 +214,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
                 styles.tabLabel,
                 {
                   color: isFocused ? colors.primary : colors.text,
-                  fontWeight: isFocused ? '600' : '400',
+                  fontWeight: isFocused ? "600" : "400",
                 },
               ]}
             >
@@ -220,13 +229,13 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
 
 const styles = StyleSheet.create({
   tabBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 60,
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
+    borderTopColor: "#e9ecef",
     paddingBottom: 5,
     paddingTop: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: -2,
@@ -237,38 +246,38 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 4,
   },
   iconContainer: {
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: -6,
     right: -8,
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   badgeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 10,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   tabLabel: {
     fontSize: 12,
     marginTop: 2,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 

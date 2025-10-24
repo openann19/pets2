@@ -1,8 +1,12 @@
-import { SPECIES_OPTIONS, SIZE_OPTIONS, INTENT_OPTIONS, PERSONALITY_TAGS } from '@pawfectmatch/core'
-import { logger } from '@pawfectmatch/core';
-;
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import {
+  SPECIES_OPTIONS,
+  SIZE_OPTIONS,
+  INTENT_OPTIONS,
+  PERSONALITY_TAGS,
+} from "@pawfectmatch/core";
+import { logger } from "@pawfectmatch/core";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,14 +17,14 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
+} from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -29,7 +33,10 @@ type OnboardingStackParamList = {
   Welcome: undefined;
 };
 
-type PetProfileSetupScreenProps = NativeStackScreenProps<OnboardingStackParamList, 'PetProfileSetup'>;
+type PetProfileSetupScreenProps = NativeStackScreenProps<
+  OnboardingStackParamList,
+  "PetProfileSetup"
+>;
 
 interface PetFormData {
   name: string;
@@ -54,18 +61,21 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
-const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps) => {
+const PetProfileSetupScreen = ({
+  navigation,
+  route,
+}: PetProfileSetupScreenProps) => {
   const { userIntent } = route.params;
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<PetFormData>({
-    name: '',
-    species: '',
-    breed: '',
-    age: '',
-    gender: '',
-    size: '',
-    description: '',
-    intent: userIntent === 'list' ? 'adoption' : 'all',
+    name: "",
+    species: "",
+    breed: "",
+    age: "",
+    gender: "",
+    size: "",
+    description: "",
+    intent: userIntent === "list" ? "adoption" : "all",
     personalityTags: [],
     healthInfo: {
       vaccinated: false,
@@ -86,14 +96,14 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   }));
 
   const updateFormData = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
   const updateHealthInfo = (field: string, value: boolean) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       healthInfo: {
         ...prev.healthInfo,
@@ -103,10 +113,10 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   };
 
   const togglePersonalityTag = (tag: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       personalityTags: prev.personalityTags.includes(tag)
-        ? prev.personalityTags.filter(t => t !== tag)
+        ? prev.personalityTags.filter((t) => t !== tag)
         : [...prev.personalityTags, tag],
     }));
   };
@@ -114,7 +124,9 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   const validateStep = () => {
     switch (currentStep) {
       case 0:
-        return formData.name.trim() && formData.species && formData.breed.trim();
+        return (
+          formData.name.trim() && formData.species && formData.breed.trim()
+        );
       case 1:
         return formData.age && formData.gender && formData.size;
       case 2:
@@ -128,12 +140,15 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
 
   const handleNext = () => {
     if (!validateStep()) {
-      Alert.alert('Missing Information', 'Please fill in all required fields to continue.');
+      Alert.alert(
+        "Missing Information",
+        "Please fill in all required fields to continue.",
+      );
       return;
     }
 
     if (currentStep < 3) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       handleComplete();
     }
@@ -141,7 +156,7 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
 
   const handleBack = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     } else {
       navigation.goBack();
     }
@@ -150,12 +165,12 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   const handleComplete = async () => {
     try {
       // Here you would save the pet profile to your backend
-      logger.info('Creating pet profile:', { formData });
-      
+      logger.info("Creating pet profile:", { formData });
+
       // Navigate to preferences setup or welcome screen
-      navigation.navigate('PreferencesSetup', { userIntent });
+      navigation.navigate("PreferencesSetup", { userIntent });
     } catch (error) {
-      Alert.alert('Error', 'Failed to create pet profile. Please try again.');
+      Alert.alert("Error", "Failed to create pet profile. Please try again.");
     }
   };
 
@@ -184,7 +199,9 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
         <TextInput
           style={styles.input}
           value={formData.name}
-          onChangeText={(text) => { updateFormData('name', text); }}
+          onChangeText={(text) => {
+            updateFormData("name", text);
+          }}
           placeholder="e.g., Buddy, Luna, Max"
         />
       </View>
@@ -199,12 +216,17 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
                 styles.optionButton,
                 formData.species === option.value && styles.selectedOption,
               ]}
-              onPress={() => { updateFormData('species', option.value); }}
+              onPress={() => {
+                updateFormData("species", option.value);
+              }}
             >
-              <Text style={[
-                styles.optionText,
-                formData.species === option.value && styles.selectedOptionText,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  formData.species === option.value &&
+                    styles.selectedOptionText,
+                ]}
+              >
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -217,7 +239,9 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
         <TextInput
           style={styles.input}
           value={formData.breed}
-          onChangeText={(text) => { updateFormData('breed', text); }}
+          onChangeText={(text) => {
+            updateFormData("breed", text);
+          }}
           placeholder="e.g., Golden Retriever, Persian Cat"
         />
       </View>
@@ -227,14 +251,18 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   const renderPhysicalInfoStep = () => (
     <View style={styles.stepContainer}>
       <Text style={styles.stepTitle}>Physical Details</Text>
-      <Text style={styles.stepSubtitle}>Help others find the perfect match</Text>
+      <Text style={styles.stepSubtitle}>
+        Help others find the perfect match
+      </Text>
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Age (years) *</Text>
         <TextInput
           style={styles.input}
           value={formData.age}
-          onChangeText={(text) => { updateFormData('age', text); }}
+          onChangeText={(text) => {
+            updateFormData("age", text);
+          }}
           placeholder="e.g., 2"
           keyboardType="numeric"
         />
@@ -243,19 +271,23 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Gender *</Text>
         <View style={styles.optionsRow}>
-          {['male', 'female'].map((gender) => (
+          {["male", "female"].map((gender) => (
             <TouchableOpacity
               key={gender}
               style={[
                 styles.optionButton,
                 formData.gender === gender && styles.selectedOption,
               ]}
-              onPress={() => { updateFormData('gender', gender); }}
+              onPress={() => {
+                updateFormData("gender", gender);
+              }}
             >
-              <Text style={[
-                styles.optionText,
-                formData.gender === gender && styles.selectedOptionText,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  formData.gender === gender && styles.selectedOptionText,
+                ]}
+              >
                 {gender.charAt(0).toUpperCase() + gender.slice(1)}
               </Text>
             </TouchableOpacity>
@@ -273,12 +305,16 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
                 styles.optionButton,
                 formData.size === option.value && styles.selectedOption,
               ]}
-              onPress={() => { updateFormData('size', option.value); }}
+              onPress={() => {
+                updateFormData("size", option.value);
+              }}
             >
-              <Text style={[
-                styles.optionText,
-                formData.size === option.value && styles.selectedOptionText,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  formData.size === option.value && styles.selectedOptionText,
+                ]}
+              >
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -303,12 +339,16 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
                 styles.optionButton,
                 formData.intent === option.value && styles.selectedOption,
               ]}
-              onPress={() => { updateFormData('intent', option.value); }}
+              onPress={() => {
+                updateFormData("intent", option.value);
+              }}
             >
-              <Text style={[
-                styles.optionText,
-                formData.intent === option.value && styles.selectedOptionText,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  formData.intent === option.value && styles.selectedOptionText,
+                ]}
+              >
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -317,7 +357,9 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
       </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Personality Tags * (Select at least one)</Text>
+        <Text style={styles.label}>
+          Personality Tags * (Select at least one)
+        </Text>
         <View style={styles.tagsContainer}>
           {PERSONALITY_TAGS.slice(0, 12).map((tag) => (
             <TouchableOpacity
@@ -326,12 +368,17 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
                 styles.tagButton,
                 formData.personalityTags.includes(tag) && styles.selectedTag,
               ]}
-              onPress={() => { togglePersonalityTag(tag); }}
+              onPress={() => {
+                togglePersonalityTag(tag);
+              }}
             >
-              <Text style={[
-                styles.tagText,
-                formData.personalityTags.includes(tag) && styles.selectedTagText,
-              ]}>
+              <Text
+                style={[
+                  styles.tagText,
+                  formData.personalityTags.includes(tag) &&
+                    styles.selectedTagText,
+                ]}
+              >
                 {tag}
               </Text>
             </TouchableOpacity>
@@ -344,7 +391,9 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
         <TextInput
           style={[styles.input, styles.textArea]}
           value={formData.description}
-          onChangeText={(text) => { updateFormData('description', text); }}
+          onChangeText={(text) => {
+            updateFormData("description", text);
+          }}
           placeholder="Tell us more about your pet's personality, habits, or special needs..."
           multiline
           numberOfLines={4}
@@ -356,27 +405,42 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   const renderHealthInfoStep = () => (
     <View style={styles.stepContainer}>
       <Text style={styles.stepTitle}>Health Information</Text>
-      <Text style={styles.stepSubtitle}>Help potential matches know your pet's health status</Text>
+      <Text style={styles.stepSubtitle}>
+        Help potential matches know your pet's health status
+      </Text>
 
       <View style={styles.healthOptions}>
         {[
-          { key: 'vaccinated', label: 'Vaccinated', icon: '💉' },
-          { key: 'spayedNeutered', label: 'Spayed/Neutered', icon: '🏥' },
-          { key: 'microchipped', label: 'Microchipped', icon: '🔍' },
+          { key: "vaccinated", label: "Vaccinated", icon: "💉" },
+          { key: "spayedNeutered", label: "Spayed/Neutered", icon: "🏥" },
+          { key: "microchipped", label: "Microchipped", icon: "🔍" },
         ].map((option) => (
           <TouchableOpacity
             key={option.key}
             style={[
               styles.healthOption,
-              formData.healthInfo[option.key as keyof typeof formData.healthInfo] && styles.selectedHealthOption,
+              formData.healthInfo[
+                option.key as keyof typeof formData.healthInfo
+              ] && styles.selectedHealthOption,
             ]}
-            onPress={() => { updateHealthInfo(option.key, !formData.healthInfo[option.key as keyof typeof formData.healthInfo]); }}
+            onPress={() => {
+              updateHealthInfo(
+                option.key,
+                !formData.healthInfo[
+                  option.key as keyof typeof formData.healthInfo
+                ],
+              );
+            }}
           >
             <Text style={styles.healthIcon}>{option.icon}</Text>
-            <Text style={[
-              styles.healthLabel,
-              formData.healthInfo[option.key as keyof typeof formData.healthInfo] && styles.selectedHealthLabel,
-            ]}>
+            <Text
+              style={[
+                styles.healthLabel,
+                formData.healthInfo[
+                  option.key as keyof typeof formData.healthInfo
+                ] && styles.selectedHealthLabel,
+              ]}
+            >
               {option.label}
             </Text>
           </TouchableOpacity>
@@ -384,7 +448,8 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
       </View>
 
       <Text style={styles.healthNote}>
-        💡 Providing health information helps build trust with potential adopters and ensures better matches.
+        💡 Providing health information helps build trust with potential
+        adopters and ensures better matches.
       </Text>
     </View>
   );
@@ -392,7 +457,7 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         {/* Header */}
@@ -415,14 +480,17 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.nextButton, !validateStep() && styles.disabledButton]} 
+
+          <TouchableOpacity
+            style={[
+              styles.nextButton,
+              !validateStep() && styles.disabledButton,
+            ]}
             onPress={handleNext}
             disabled={!validateStep()}
           >
             <Text style={styles.nextButtonText}>
-              {currentStep === 3 ? 'Complete' : 'Next'}
+              {currentStep === 3 ? "Complete" : "Next"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -434,7 +502,7 @@ const PetProfileSetupScreen = ({ navigation, route }: PetProfileSetupScreenProps
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   keyboardView: {
     flex: 1,
@@ -442,27 +510,27 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: "#f3f4f6",
   },
   progressContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   progressBar: {
-    width: '100%',
+    width: "100%",
     height: 4,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: "#e5e7eb",
     borderRadius: 2,
     marginBottom: 8,
   },
   progressFill: {
-    height: '100%',
-    backgroundColor: '#ec4899',
+    height: "100%",
+    backgroundColor: "#ec4899",
     borderRadius: 2,
   },
   progressText: {
     fontSize: 14,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: "#6b7280",
+    fontWeight: "500",
   },
   content: {
     flex: 1,
@@ -473,13 +541,13 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
     marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: 16,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 32,
   },
   inputGroup: {
@@ -487,93 +555,93 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#1f2937',
+    color: "#1f2937",
   },
   textArea: {
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   optionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   optionsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   optionButton: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
     minWidth: 80,
-    alignItems: 'center',
+    alignItems: "center",
   },
   selectedOption: {
-    backgroundColor: '#fdf2f8',
-    borderColor: '#ec4899',
+    backgroundColor: "#fdf2f8",
+    borderColor: "#ec4899",
   },
   optionText: {
     fontSize: 14,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: "#6b7280",
+    fontWeight: "500",
   },
   selectedOptionText: {
-    color: '#ec4899',
-    fontWeight: '600',
+    color: "#ec4899",
+    fontWeight: "600",
   },
   tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   tagButton: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: "#f3f4f6",
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
   selectedTag: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
   },
   tagText: {
     fontSize: 14,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: "#6b7280",
+    fontWeight: "500",
   },
   selectedTagText: {
-    color: '#fff',
+    color: "#fff",
   },
   healthOptions: {
     gap: 16,
     marginBottom: 24,
   },
   healthOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
     borderRadius: 12,
     padding: 16,
   },
   selectedHealthOption: {
-    backgroundColor: '#f0fdf4',
-    borderColor: '#10b981',
+    backgroundColor: "#f0fdf4",
+    borderColor: "#10b981",
   },
   healthIcon: {
     fontSize: 24,
@@ -581,53 +649,53 @@ const styles = StyleSheet.create({
   },
   healthLabel: {
     fontSize: 16,
-    color: '#6b7280',
-    fontWeight: '500',
+    color: "#6b7280",
+    fontWeight: "500",
   },
   selectedHealthLabel: {
-    color: '#10b981',
-    fontWeight: '600',
+    color: "#10b981",
+    fontWeight: "600",
   },
   healthNote: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
     lineHeight: 20,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
+    borderTopColor: "#f3f4f6",
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: "#e5e7eb",
   },
   backButtonText: {
     fontSize: 16,
-    color: '#6b7280',
-    fontWeight: '600',
+    color: "#6b7280",
+    fontWeight: "600",
   },
   nextButton: {
-    backgroundColor: '#ec4899',
+    backgroundColor: "#ec4899",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     minWidth: 100,
-    alignItems: 'center',
+    alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: '#d1d5db',
+    backgroundColor: "#d1d5db",
   },
   nextButtonText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
 });
 

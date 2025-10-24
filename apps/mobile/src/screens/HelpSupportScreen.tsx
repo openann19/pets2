@@ -1,15 +1,21 @@
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppInfoCard } from '../components/help/AppInfoCard';
-import { HelpContactCard } from '../components/help/HelpContactCard';
-import { HelpOptionCard } from '../components/help/HelpOptionCard';
-import { useHelpSupportData } from '../hooks/useHelpSupportData';
+import { AppInfoCard } from "../components/help/AppInfoCard";
+import { HelpContactCard } from "../components/help/HelpContactCard";
+import { HelpOptionCard } from "../components/help/HelpOptionCard";
+import { useHelpSupportData } from "../hooks/useHelpSupportData";
 
 interface HelpSupportScreenProps {
   navigation: {
@@ -17,18 +23,16 @@ interface HelpSupportScreenProps {
   };
 }
 
-function HelpSupportScreen({ navigation }: HelpSupportScreenProps): JSX.Element {
-  const {
-    helpOptions,
-    animatedStyles,
-    handleHelpOption,
-    handleEmailSupport,
-  } = useHelpSupportData();
+function HelpSupportScreen({
+  navigation,
+}: HelpSupportScreenProps): JSX.Element {
+  const { helpOptions, animatedStyles, handleHelpOption, handleEmailSupport } =
+    useHelpSupportData();
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#4facfe', '#00f2fe', '#4facfe']}
+        colors={["#4facfe", "#00f2fe", "#4facfe"]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -38,7 +42,9 @@ function HelpSupportScreen({ navigation }: HelpSupportScreenProps): JSX.Element 
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+                () => {},
+              );
               navigation.goBack();
             }}
           >
@@ -68,13 +74,15 @@ function HelpSupportScreen({ navigation }: HelpSupportScreenProps): JSX.Element 
           ))}
 
           {/* App Info */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>About PawfectMatch</Text>
+          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+            About PawfectMatch
+          </Text>
           <AppInfoCard />
         </ScrollView>
       </SafeAreaView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -84,9 +92,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
@@ -94,17 +102,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   backButtonBlur: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   headerSpacer: {
     width: 40,
@@ -115,8 +123,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
     marginBottom: 16,
   },
 });

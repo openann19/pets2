@@ -1,6 +1,6 @@
 /**
  * PROJECT HYPERION: MODERN SWIPE CARD COMPONENT
- * 
+ *
  * Enterprise-grade swipe card implementation using:
  * - react-native-gesture-handler for performant gestures
  * - react-native-reanimated for 60fps animations
@@ -9,12 +9,11 @@
  * - Performance optimized with proper memoization
  */
 
-import { Ionicons } from '@expo/vector-icons'
-import { logger } from '@pawfectmatch/core';
-;
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useMemo, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -24,19 +23,22 @@ import {
   Platform,
   AccessibilityInfo,
   type ViewStyle,
-} from 'react-native';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+} from "react-native";
+import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolate,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { useSwipeGesture, useEntranceAnimation } from '../hooks/useUnifiedAnimations';
-import { Theme } from '../theme/unified-theme';
-import { useTheme } from '../contexts/ThemeContext';
+import {
+  useSwipeGesture,
+  useEntranceAnimation,
+} from "../hooks/useUnifiedAnimations";
+import { Theme } from "../theme/unified-theme";
+import { useTheme } from "../contexts/ThemeContext";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 // === TYPES ===
 interface Pet {
@@ -91,84 +93,97 @@ function ModernSwipeCardComponent({
   }, []);
 
   // Swipe handlers with proper error handling
-  const handleLike = useCallback(async (pet: Pet) => {
-    if (isProcessing) return;
-    
-    setIsProcessing(true);
-    try {
-      logger.info('Liked pet:', { petName: pet.name });
-      // API call would go here
-      await new Promise(resolve => setTimeout(resolve, 100)); // Simulate API call
-    } catch (error) {
-      logger.error('Error liking pet:', { error });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [isProcessing]);
+  const handleLike = useCallback(
+    async (pet: Pet) => {
+      if (isProcessing) return;
 
-  const handlePass = useCallback(async (pet: Pet) => {
-    if (isProcessing) return;
-    
-    setIsProcessing(true);
-    try {
-      logger.info('Passed pet:', { petName: pet.name });
-      // API call would go here
-      await new Promise(resolve => setTimeout(resolve, 100)); // Simulate API call
-    } catch (error) {
-      logger.error('Error passing pet:', { error });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [isProcessing]);
+      setIsProcessing(true);
+      try {
+        logger.info("Liked pet:", { petName: pet.name });
+        // API call would go here
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
+      } catch (error) {
+        logger.error("Error liking pet:", { error });
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [isProcessing],
+  );
 
-  const handleSuperLike = useCallback(async (pet: Pet) => {
-    if (isProcessing) return;
-    
-    setIsProcessing(true);
-    try {
-      logger.info('Super liked pet:', { petName: pet.name });
-      // API call would go here
-      await new Promise(resolve => setTimeout(resolve, 100)); // Simulate API call
-    } catch (error) {
-      logger.error('Error super liking pet:', { error });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [isProcessing]);
+  const handlePass = useCallback(
+    async (pet: Pet) => {
+      if (isProcessing) return;
+
+      setIsProcessing(true);
+      try {
+        logger.info("Passed pet:", { petName: pet.name });
+        // API call would go here
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
+      } catch (error) {
+        logger.error("Error passing pet:", { error });
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [isProcessing],
+  );
+
+  const handleSuperLike = useCallback(
+    async (pet: Pet) => {
+      if (isProcessing) return;
+
+      setIsProcessing(true);
+      try {
+        logger.info("Super liked pet:", { petName: pet.name });
+        // API call would go here
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
+      } catch (error) {
+        logger.error("Error super liking pet:", { error });
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [isProcessing],
+  );
 
   // Swipe gesture handlers
   const handleSwipeLeft = useCallback(() => {
     if (disabled || isProcessing) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    handlePass(pet).then(() => { onSwipeLeft(pet); });
+    handlePass(pet).then(() => {
+      onSwipeLeft(pet);
+    });
   }, [disabled, isProcessing, pet, handlePass, onSwipeLeft]);
 
   const handleSwipeRight = useCallback(() => {
     if (disabled || isProcessing) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    handleLike(pet).then(() => { onSwipeRight(pet); });
+    handleLike(pet).then(() => {
+      onSwipeRight(pet);
+    });
   }, [disabled, isProcessing, pet, handleLike, onSwipeRight]);
 
   const handleSwipeUp = useCallback(() => {
     if (disabled || isProcessing) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    handleSuperLike(pet).then(() => { onSwipeUp(pet); });
+    handleSuperLike(pet).then(() => {
+      onSwipeUp(pet);
+    });
   }, [disabled, isProcessing, pet, handleSuperLike, onSwipeUp]);
 
   // Swipe gesture hook
-  const { gestureHandler, animatedStyle, translateX, translateY } = useSwipeGesture(
-    handleSwipeLeft,
-    handleSwipeRight,
-    handleSwipeUp,
-    SWIPE_CONFIG.threshold
-  );
+  const { gestureHandler, animatedStyle, translateX, translateY } =
+    useSwipeGesture(
+      handleSwipeLeft,
+      handleSwipeRight,
+      handleSwipeUp,
+      SWIPE_CONFIG.threshold,
+    );
 
   // Entrance animation for non-top cards
-  const { start: startEntrance, animatedStyle: entranceStyle } = useEntranceAnimation(
-    'fadeInUp',
-    0,
-    'gentle'
-  );
+  const { start: startEntrance, animatedStyle: entranceStyle } =
+    useEntranceAnimation("fadeInUp", 0, "gentle");
 
   // Start entrance animation for non-top cards
   React.useEffect(() => {
@@ -180,14 +195,14 @@ function ModernSwipeCardComponent({
   // Photo navigation handlers
   const nextPhoto = useCallback(() => {
     if (currentPhotoIndex < pet.photos.length - 1) {
-      setCurrentPhotoIndex(prev => prev + 1);
+      setCurrentPhotoIndex((prev) => prev + 1);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   }, [currentPhotoIndex, pet.photos.length]);
 
   const prevPhoto = useCallback(() => {
     if (currentPhotoIndex > 0) {
-      setCurrentPhotoIndex(prev => prev - 1);
+      setCurrentPhotoIndex((prev) => prev - 1);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   }, [currentPhotoIndex]);
@@ -198,7 +213,7 @@ function ModernSwipeCardComponent({
       translateX.value,
       [-SWIPE_CONFIG.threshold, 0, SWIPE_CONFIG.threshold],
       [0, 0, 1],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
@@ -211,7 +226,7 @@ function ModernSwipeCardComponent({
       translateX.value,
       [SWIPE_CONFIG.threshold, 0, -SWIPE_CONFIG.threshold],
       [0, 0, 1],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
@@ -224,7 +239,7 @@ function ModernSwipeCardComponent({
       translateY.value,
       [0, -SWIPE_CONFIG.threshold],
       [0, 1],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
@@ -233,20 +248,23 @@ function ModernSwipeCardComponent({
   });
 
   // Memoized styles for performance
-  const cardStyle = useMemo(() => [
-    styles.card,
-    {
-      opacity: isTopCard ? 1 : 0.8,
-      transform: [{ scale: isTopCard ? 1 : 0.95 }],
-    },
-    disabled && styles.cardDisabled,
-    style,
-  ], [isTopCard, disabled, style]);
+  const cardStyle = useMemo(
+    () => [
+      styles.card,
+      {
+        opacity: isTopCard ? 1 : 0.8,
+        transform: [{ scale: isTopCard ? 1 : 0.95 }],
+      },
+      disabled && styles.cardDisabled,
+      style,
+    ],
+    [isTopCard, disabled, style],
+  );
 
-  const combinedAnimatedStyle = useMemo(() => [
-    animatedStyle,
-    !isTopCard && entranceStyle,
-  ], [animatedStyle, isTopCard, entranceStyle]);
+  const combinedAnimatedStyle = useMemo(
+    () => [animatedStyle, !isTopCard && entranceStyle],
+    [animatedStyle, isTopCard, entranceStyle],
+  );
 
   return (
     <PanGestureHandler
@@ -267,7 +285,7 @@ function ModernSwipeCardComponent({
             style={styles.photo}
             resizeMode="cover"
           />
-          
+
           {/* Photo Navigation Dots */}
           <View style={styles.photoIndicators}>
             {pet.photos.map((_, index) => (
@@ -276,9 +294,10 @@ function ModernSwipeCardComponent({
                 style={[
                   styles.photoDot,
                   {
-                    backgroundColor: index === currentPhotoIndex 
-                      ? Theme.colors.neutral[0] 
-                      : 'rgba(255,255,255,0.4)',
+                    backgroundColor:
+                      index === currentPhotoIndex
+                        ? Theme.colors.neutral[0]
+                        : "rgba(255,255,255,0.4)",
                   },
                 ]}
               />
@@ -294,7 +313,11 @@ function ModernSwipeCardComponent({
           {/* Verification Badge */}
           {pet.isVerified && (
             <View style={styles.verifiedBadge}>
-              <Ionicons name="checkmark-circle" size={24} color={Theme.colors.status.success} />
+              <Ionicons
+                name="checkmark-circle"
+                size={24}
+                color={Theme.colors.status.success}
+              />
             </View>
           )}
 
@@ -304,22 +327,32 @@ function ModernSwipeCardComponent({
           </View>
 
           {/* Swipe Overlays */}
-          <Animated.View style={[styles.overlay, styles.likeOverlay, swipeOverlayStyle]}>
+          <Animated.View
+            style={[styles.overlay, styles.likeOverlay, swipeOverlayStyle]}
+          >
             <Text style={styles.overlayText}>LIKE</Text>
           </Animated.View>
 
-          <Animated.View style={[styles.overlay, styles.nopeOverlay, nopeOverlayStyle]}>
+          <Animated.View
+            style={[styles.overlay, styles.nopeOverlay, nopeOverlayStyle]}
+          >
             <Text style={styles.overlayText}>NOPE</Text>
           </Animated.View>
 
-          <Animated.View style={[styles.overlay, styles.superLikeOverlay, superLikeOverlayStyle]}>
+          <Animated.View
+            style={[
+              styles.overlay,
+              styles.superLikeOverlay,
+              superLikeOverlayStyle,
+            ]}
+          >
             <Text style={styles.overlayText}>SUPER LIKE</Text>
           </Animated.View>
         </View>
 
         {/* Info Section */}
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.8)']}
+          colors={["transparent", "rgba(0,0,0,0.8)"]}
           style={styles.infoGradient}
         >
           <View style={styles.infoContainer}>
@@ -327,30 +360,45 @@ function ModernSwipeCardComponent({
               <Text style={styles.name}>{pet.name}</Text>
               <Text style={styles.age}>{pet.age}</Text>
             </View>
-            
+
             <Text style={styles.breed}>{pet.breed}</Text>
-            
+
             {/* Compatibility Score */}
             <View style={styles.compatibilityContainer}>
               <View style={styles.compatibilityBar}>
-                <View 
+                <View
                   style={[
-                    styles.compatibilityFill, 
-                    { 
-                      width: `${pet.compatibility}%`, 
-                      backgroundColor: Theme.colors.primary[500] 
-                    }
-                  ]} 
+                    styles.compatibilityFill,
+                    {
+                      width: `${pet.compatibility}%`,
+                      backgroundColor: Theme.colors.primary[500],
+                    },
+                  ]}
                 />
               </View>
-              <Text style={styles.compatibilityText}>{pet.compatibility}% match</Text>
+              <Text style={styles.compatibilityText}>
+                {pet.compatibility}% match
+              </Text>
             </View>
 
             {/* Tags */}
             <View style={styles.tagsContainer}>
               {pet.tags.slice(0, 3).map((tag, index) => (
-                <View key={index} style={[styles.tag, { backgroundColor: `${Theme.colors.primary[500]}20` }]}>
-                  <Text style={[styles.tagText, { color: Theme.colors.primary[500] }]}>{tag}</Text>
+                <View
+                  key={index}
+                  style={[
+                    styles.tag,
+                    { backgroundColor: `${Theme.colors.primary[500]}20` },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tagText,
+                      { color: Theme.colors.primary[500] },
+                    ]}
+                  >
+                    {tag}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -371,10 +419,10 @@ const ModernSwipeCard = React.memo(ModernSwipeCardComponent);
 // === STYLES ===
 const styles = StyleSheet.create({
   card: {
-    position: 'absolute',
-    width: SCREEN_WIDTH - Theme.spacing['4xl'],
+    position: "absolute",
+    width: SCREEN_WIDTH - Theme.spacing["4xl"],
     height: SCREEN_HEIGHT * 0.75,
-    borderRadius: Theme.borderRadius['2xl'],
+    borderRadius: Theme.borderRadius["2xl"],
     backgroundColor: Theme.colors.neutral[0],
     ...Theme.shadows.depth.lg,
   },
@@ -383,20 +431,20 @@ const styles = StyleSheet.create({
   },
   photoContainer: {
     flex: 1,
-    borderRadius: Theme.borderRadius['2xl'],
-    overflow: 'hidden',
-    position: 'relative',
+    borderRadius: Theme.borderRadius["2xl"],
+    overflow: "hidden",
+    position: "relative",
   },
   photo: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   photoIndicators: {
-    position: 'absolute',
+    position: "absolute",
     top: Theme.spacing.xl,
     left: Theme.spacing.xl,
     right: Theme.spacing.xl,
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Theme.spacing.sm,
   },
   photoDot: {
@@ -405,12 +453,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   photoNavigation: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   photoNavLeft: {
     flex: 1,
@@ -419,18 +467,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   verifiedBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: Theme.spacing.xl,
     right: Theme.spacing.xl,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.xs,
   },
   distanceBadge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 120,
     right: Theme.spacing.xl,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: "rgba(0,0,0,0.6)",
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
     borderRadius: Theme.borderRadius.full,
@@ -441,82 +489,82 @@ const styles = StyleSheet.create({
     fontWeight: Theme.typography.fontWeight.semibold,
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: Theme.borderRadius['2xl'],
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: Theme.borderRadius["2xl"],
   },
   likeOverlay: {
-    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+    backgroundColor: "rgba(16, 185, 129, 0.8)",
   },
   nopeOverlay: {
-    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+    backgroundColor: "rgba(239, 68, 68, 0.8)",
   },
   superLikeOverlay: {
-    backgroundColor: 'rgba(14, 165, 233, 0.8)',
+    backgroundColor: "rgba(14, 165, 233, 0.8)",
   },
   overlayText: {
     color: Theme.colors.neutral[0],
-    fontSize: Theme.typography.fontSize['5xl'],
+    fontSize: Theme.typography.fontSize["5xl"],
     fontWeight: Theme.typography.fontWeight.black,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.5)',
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
   infoGradient: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     height: 200,
-    borderBottomLeftRadius: Theme.borderRadius['2xl'],
-    borderBottomRightRadius: Theme.borderRadius['2xl'],
+    borderBottomLeftRadius: Theme.borderRadius["2xl"],
+    borderBottomRightRadius: Theme.borderRadius["2xl"],
   },
   infoContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     padding: Theme.spacing.xl,
   },
   nameRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    alignItems: "baseline",
     marginBottom: Theme.spacing.xs,
   },
   name: {
-    fontSize: Theme.typography.fontSize['3xl'],
+    fontSize: Theme.typography.fontSize["3xl"],
     fontWeight: Theme.typography.fontWeight.bold,
     color: Theme.colors.neutral[0],
     marginRight: Theme.spacing.sm,
   },
   age: {
-    fontSize: Theme.typography.fontSize['2xl'],
+    fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.regular,
     color: Theme.colors.neutral[0],
   },
   breed: {
     fontSize: Theme.typography.fontSize.lg,
-    color: 'rgba(255,255,255,0.9)',
+    color: "rgba(255,255,255,0.9)",
     marginBottom: Theme.spacing.sm,
   },
   compatibilityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: Theme.spacing.sm,
   },
   compatibilityBar: {
     flex: 1,
     height: 4,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 2,
     marginRight: Theme.spacing.sm,
   },
   compatibilityFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 2,
   },
   compatibilityText: {
@@ -525,7 +573,7 @@ const styles = StyleSheet.create({
     fontWeight: Theme.typography.fontWeight.semibold,
   },
   tagsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: Theme.spacing.sm,
     gap: Theme.spacing.sm,
   },
@@ -540,12 +588,13 @@ const styles = StyleSheet.create({
   },
   bio: {
     fontSize: Theme.typography.fontSize.sm,
-    color: 'rgba(255,255,255,0.9)',
-    lineHeight: Theme.typography.fontSize.sm * Theme.typography.lineHeight.normal,
+    color: "rgba(255,255,255,0.9)",
+    lineHeight:
+      Theme.typography.fontSize.sm * Theme.typography.lineHeight.normal,
   },
 });
 
 // Display name for debugging
-ModernSwipeCard.displayName = 'ModernSwipeCard';
+ModernSwipeCard.displayName = "ModernSwipeCard";
 
 export default ModernSwipeCard;

@@ -1,9 +1,9 @@
-import * as Haptics from 'expo-haptics';
-import { useCallback } from 'react';
-import { Alert } from 'react-native';
+import * as Haptics from "expo-haptics";
+import { useCallback } from "react";
+import { Alert } from "react-native";
 
-import type { ThemeMode } from '../contexts/ThemeContext';
-import { useTheme } from '../contexts/ThemeContext';
+import type { ThemeMode } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export interface UseThemeToggleReturn {
   isDark: boolean;
@@ -19,14 +19,14 @@ export interface UseThemeToggleReturn {
 }
 
 export function useThemeToggle(): UseThemeToggleReturn {
-  const { 
-    isDark, 
-    themeMode, 
-    colors, 
-    styles, 
-    shadows, 
-    setThemeMode, 
-    toggleTheme: contextToggleTheme 
+  const {
+    isDark,
+    themeMode,
+    colors,
+    styles,
+    shadows,
+    setThemeMode,
+    toggleTheme: contextToggleTheme,
   } = useTheme();
 
   // Enhanced toggle with haptic feedback
@@ -43,53 +43,53 @@ export function useThemeToggle(): UseThemeToggleReturn {
 
   // Set specific theme modes
   const setLightTheme = useCallback(() => {
-    setThemeMode('light');
+    setThemeMode("light");
   }, [setThemeMode]);
 
   const setDarkTheme = useCallback(() => {
-    setThemeMode('dark');
+    setThemeMode("dark");
   }, [setThemeMode]);
 
   const setSystemTheme = useCallback(() => {
-    setThemeMode('system');
+    setThemeMode("system");
   }, [setThemeMode]);
 
   // Show theme selection modal
   const showThemeSelector = useCallback(() => {
     const currentThemeLabel = {
-      light: 'Light',
-      dark: 'Dark',
-      system: 'System Default'
+      light: "Light",
+      dark: "Dark",
+      system: "System Default",
     }[themeMode];
 
     Alert.alert(
-      'Select Theme',
+      "Select Theme",
       `Current theme: ${currentThemeLabel}`,
       [
         {
-          text: 'Light',
+          text: "Light",
           onPress: setLightTheme,
-          style: themeMode === 'light' ? 'default' : 'default',
+          style: themeMode === "light" ? "default" : "default",
         },
         {
-          text: 'Dark',
+          text: "Dark",
           onPress: setDarkTheme,
-          style: themeMode === 'dark' ? 'default' : 'default',
+          style: themeMode === "dark" ? "default" : "default",
         },
         {
-          text: 'System Default',
+          text: "System Default",
           onPress: setSystemTheme,
-          style: themeMode === 'system' ? 'default' : 'default',
+          style: themeMode === "system" ? "default" : "default",
         },
         {
-          text: 'Cancel',
-          style: 'cancel',
+          text: "Cancel",
+          style: "cancel",
         },
       ],
-      { 
+      {
         cancelable: true,
-        userInterfaceStyle: isDark ? 'dark' : 'light'
-      }
+        userInterfaceStyle: isDark ? "dark" : "light",
+      },
     );
   }, [themeMode, isDark, setLightTheme, setDarkTheme, setSystemTheme]);
 

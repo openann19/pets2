@@ -1,15 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import type {
-  ViewStyle,
-  FlatListProps} from 'react-native';
-import {
-  View,
-  Animated,
-  ScrollView,
-  FlatList
-} from 'react-native';
+import React, { useEffect, useRef } from "react";
+import type { ViewStyle, FlatListProps } from "react-native";
+import { View, Animated, ScrollView, FlatList } from "react-native";
 
-import { MotionSystem } from '../styles/EnhancedDesignTokens';
+import { MotionSystem } from "../styles/EnhancedDesignTokens";
 
 // === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
 
@@ -28,7 +21,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   containerStyle,
 }) => {
   const animatedValues = useRef(
-    children.map(() => new Animated.Value(0))
+    children.map(() => new Animated.Value(0)),
   ).current;
 
   useEffect(() => {
@@ -38,7 +31,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
         toValue: 1,
         delay: index * delay,
         useNativeDriver: true,
-      })
+      }),
     );
 
     Animated.stagger(delay, animations).start();
@@ -126,14 +119,14 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
 // Seamless PageTransition Component
 interface PageTransitionProps {
   children: React.ReactNode;
-  type?: 'fade' | 'slideLeft' | 'slideRight' | 'scale' | 'sharedElement';
+  type?: "fade" | "slideLeft" | "slideRight" | "scale" | "sharedElement";
   duration?: number;
   style?: ViewStyle;
 }
 
 export const PageTransition: React.FC<PageTransitionProps> = ({
   children,
-  type = 'fade',
+  type = "fade",
   duration = MotionSystem.timings.standard,
   style,
 }) => {
@@ -150,12 +143,12 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
 
   const getTransitionStyle = () => {
     switch (type) {
-      case 'fade':
+      case "fade":
         return {
           opacity: animatedValue,
         };
 
-      case 'slideLeft':
+      case "slideLeft":
         return {
           opacity: animatedValue,
           transform: [
@@ -168,7 +161,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
           ],
         };
 
-      case 'slideRight':
+      case "slideRight":
         return {
           opacity: animatedValue,
           transform: [
@@ -181,7 +174,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
           ],
         };
 
-      case 'scale':
+      case "scale":
         return {
           opacity: animatedValue,
           transform: [
@@ -194,7 +187,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
           ],
         };
 
-      case 'sharedElement':
+      case "sharedElement":
         return {
           opacity: animatedValue,
           transform: [
@@ -251,28 +244,24 @@ export const GestureWrapper: React.FC<GestureWrapperProps> = ({
 }) => {
   // This would integrate with react-native-gesture-handler
   // For now, returning a basic wrapper
-  return (
-    <View style={style}>
-      {children}
-    </View>
-  );
+  return <View style={style}>{children}</View>;
 };
 
 // Enhanced FlatList with Staggered Animations
 interface AnimatedFlatListProps<T> extends FlatListProps<T> {
-  animationType?: 'staggered' | 'fadeIn' | 'slideIn' | 'none';
+  animationType?: "staggered" | "fadeIn" | "slideIn" | "none";
   animationDelay?: number;
 }
 
 export function AnimatedFlatList<T>({
-  animationType = 'staggered',
+  animationType = "staggered",
   animationDelay = 100,
   ...props
 }: AnimatedFlatListProps<T>) {
   const animatedValues = useRef<Map<number, Animated.Value>>(new Map()).current;
 
   const getAnimatedStyle = (index: number) => {
-    if (animationType === 'none') return {};
+    if (animationType === "none") return {};
 
     let animatedValue = animatedValues.get(index);
     if (!animatedValue) {
@@ -289,7 +278,7 @@ export function AnimatedFlatList<T>({
     }
 
     switch (animationType) {
-      case 'staggered':
+      case "staggered":
         return {
           opacity: animatedValue,
           transform: [
@@ -302,7 +291,7 @@ export function AnimatedFlatList<T>({
           ],
         };
 
-      case 'fadeIn':
+      case "fadeIn":
         return {
           opacity: animatedValue.interpolate({
             inputRange: [0, 1],
@@ -310,7 +299,7 @@ export function AnimatedFlatList<T>({
           }),
         };
 
-      case 'slideIn':
+      case "slideIn":
         return {
           opacity: animatedValue,
           transform: [
@@ -344,7 +333,7 @@ export function AnimatedFlatList<T>({
 interface ScrollTriggerProps {
   children: React.ReactNode;
   triggerPoint?: number; // 0-1, where 1 is bottom of screen
-  animation?: 'fadeInUp' | 'scaleIn' | 'slideInLeft' | 'slideInRight';
+  animation?: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight";
   delay?: number;
   style?: ViewStyle;
 }
@@ -352,7 +341,7 @@ interface ScrollTriggerProps {
 export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
   children,
   triggerPoint = 0.8,
-  animation = 'fadeInUp',
+  animation = "fadeInUp",
   delay = 0,
   style,
 }) => {
@@ -377,7 +366,7 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
 
   const getAnimationStyle = () => {
     switch (animation) {
-      case 'fadeInUp':
+      case "fadeInUp":
         return {
           opacity: animatedValue,
           transform: [
@@ -390,7 +379,7 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
           ],
         };
 
-      case 'scaleIn':
+      case "scaleIn":
         return {
           opacity: animatedValue,
           transform: [
@@ -403,7 +392,7 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
           ],
         };
 
-      case 'slideInLeft':
+      case "slideInLeft":
         return {
           opacity: animatedValue,
           transform: [
@@ -416,7 +405,7 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
           ],
         };
 
-      case 'slideInRight':
+      case "slideInRight":
         return {
           opacity: animatedValue,
           transform: [

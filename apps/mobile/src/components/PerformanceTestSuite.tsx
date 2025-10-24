@@ -1,29 +1,34 @@
 /**
  * PROJECT HYPERION: PERFORMANCE TEST SUITE
- * 
+ *
  * Comprehensive performance testing component for the new architecture.
  * Tests animation performance, gesture responsiveness, and memory usage.
  */
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { logger } from '@pawfectmatch/core';
-;
-import { View, StyleSheet } from 'react-native';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
-  withRepeat, 
+import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@pawfectmatch/core";
+import { View, StyleSheet } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withRepeat,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { Theme } from '../theme/unified-theme';
-import PerformanceMonitor, { type PerformanceMetrics } from '../utils/PerformanceMonitor';
+import { Theme } from "../theme/unified-theme";
+import PerformanceMonitor, {
+  type PerformanceMetrics,
+} from "../utils/PerformanceMonitor";
 
-import { EliteButtonPresets } from './buttons/EliteButton';
-import { FXContainerPresets } from './containers/FXContainer';
-import { Heading2, Body, BodySmall, Label } from './typography/ModernTypography';
-
+import { EliteButtonPresets } from "./buttons/EliteButton";
+import { FXContainerPresets } from "./containers/FXContainer";
+import {
+  Heading2,
+  Body,
+  BodySmall,
+  Label,
+} from "./typography/ModernTypography";
 
 interface PerformanceTestSuiteProps {
   onTestComplete?: (results: PerformanceTestResults) => void;
@@ -44,10 +49,12 @@ interface TestState {
   results: PerformanceTestResults | null;
 }
 
-export default function PerformanceTestSuite({ onTestComplete }: PerformanceTestSuiteProps) {
+export default function PerformanceTestSuite({
+  onTestComplete,
+}: PerformanceTestSuiteProps) {
   const [testState, setTestState] = useState<TestState>({
     isRunning: false,
-    currentTest: '',
+    currentTest: "",
     progress: 0,
     results: null,
   });
@@ -79,25 +86,28 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
   // Test animations
   const testAnimations = useCallback(() => {
     return new Promise<void>((resolve) => {
-      setTestState(prev => ({ ...prev, currentTest: 'Testing Animations...' }));
+      setTestState((prev) => ({
+        ...prev,
+        currentTest: "Testing Animations...",
+      }));
 
       // Complex animation sequence
       testAnimationValue.value = withRepeat(
         withSpring(100, { damping: 15, stiffness: 150 }),
         10,
-        true
+        true,
       );
 
       testScaleValue.value = withRepeat(
         withSpring(1.2, { damping: 20, stiffness: 200 }),
         8,
-        true
+        true,
       );
 
       testRotationValue.value = withRepeat(
         withTiming(360, { duration: 2000 }),
         5,
-        false
+        false,
       );
 
       // Complete after 3 seconds
@@ -113,7 +123,7 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
   // Test gesture responsiveness
   const testGestures = useCallback(() => {
     return new Promise<void>((resolve) => {
-      setTestState(prev => ({ ...prev, currentTest: 'Testing Gestures...' }));
+      setTestState((prev) => ({ ...prev, currentTest: "Testing Gestures..." }));
 
       // Simulate rapid gesture interactions
       let gestureCount = 0;
@@ -122,11 +132,11 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
       const performGesture = () => {
         if (gestureCount < maxGestures) {
           // Simulate gesture
-          testAnimationValue.value = withSpring(
-            Math.random() * 50,
-            { damping: 10, stiffness: 300 }
-          );
-          
+          testAnimationValue.value = withSpring(Math.random() * 50, {
+            damping: 10,
+            stiffness: 300,
+          });
+
           gestureCount++;
           setTimeout(performGesture, 50);
         } else {
@@ -142,11 +152,14 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
   // Test memory usage
   const testMemoryUsage = useCallback(() => {
     return new Promise<void>((resolve) => {
-      setTestState(prev => ({ ...prev, currentTest: 'Testing Memory Usage...' }));
+      setTestState((prev) => ({
+        ...prev,
+        currentTest: "Testing Memory Usage...",
+      }));
 
       // Create and destroy components rapidly
       const components: Array<{ id: number; data: number[] }> = [];
-      
+
       for (let i = 0; i < 100; i++) {
         components.push({
           id: i,
@@ -168,26 +181,30 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
 
     setTestState({
       isRunning: true,
-      currentTest: 'Initializing...',
+      currentTest: "Initializing...",
       progress: 0,
       results: null,
     });
 
     try {
       // Test 1: Animations
-      setTestState(prev => ({ ...prev, progress: 25 }));
+      setTestState((prev) => ({ ...prev, progress: 25 }));
       await testAnimations();
 
       // Test 2: Gestures
-      setTestState(prev => ({ ...prev, progress: 50 }));
+      setTestState((prev) => ({ ...prev, progress: 50 }));
       await testGestures();
 
       // Test 3: Memory
-      setTestState(prev => ({ ...prev, progress: 75 }));
+      setTestState((prev) => ({ ...prev, progress: 75 }));
       await testMemoryUsage();
 
       // Calculate results
-      setTestState(prev => ({ ...prev, progress: 100, currentTest: 'Calculating Results...' }));
+      setTestState((prev) => ({
+        ...prev,
+        progress: 100,
+        currentTest: "Calculating Results...",
+      }));
 
       const finalMetrics = metrics || {
         fps: 0,
@@ -202,28 +219,36 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
         gestureResponseTime: finalMetrics.gestureResponseTime,
         memoryUsage: finalMetrics.memoryUsage,
         overallGrade: performanceMonitor.getPerformanceGrade(finalMetrics),
-        recommendations: performanceMonitor.getPerformanceRecommendations(finalMetrics),
+        recommendations:
+          performanceMonitor.getPerformanceRecommendations(finalMetrics),
       };
 
-      setTestState(prev => ({
+      setTestState((prev) => ({
         ...prev,
         isRunning: false,
-        currentTest: 'Complete!',
+        currentTest: "Complete!",
         results,
       }));
 
       onTestComplete?.(results);
       performanceMonitor.logMetrics(finalMetrics);
-
     } catch (error) {
-      logger.error('Performance test failed:', { error });
-      setTestState(prev => ({
+      logger.error("Performance test failed:", { error });
+      setTestState((prev) => ({
         ...prev,
         isRunning: false,
-        currentTest: 'Test Failed',
+        currentTest: "Test Failed",
       }));
     }
-  }, [testState.isRunning, testAnimations, testGestures, testMemoryUsage, metrics, performanceMonitor, onTestComplete]);
+  }, [
+    testState.isRunning,
+    testAnimations,
+    testGestures,
+    testMemoryUsage,
+    metrics,
+    performanceMonitor,
+    onTestComplete,
+  ]);
 
   // Animated styles for test visualization
   const animatedTestStyle = useAnimatedStyle(() => ({
@@ -246,17 +271,31 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
         <View style={styles.metricsContainer}>
           <View style={styles.metricRow}>
             <Label style={styles.metricLabel}>FPS:</Label>
-            <Body style={[styles.metricValue, { color: metrics.fps >= 55 ? Theme.semantic.text.success : Theme.semantic.text.error }]}>
+            <Body
+              style={[
+                styles.metricValue,
+                {
+                  color:
+                    metrics.fps >= 55
+                      ? Theme.colors.text.primary.success
+                      : Theme.colors.text.primary.error,
+                },
+              ]}
+            >
               {metrics.fps}
             </Body>
           </View>
           <View style={styles.metricRow}>
             <Label style={styles.metricLabel}>Frame Time:</Label>
-            <Body style={styles.metricValue}>{metrics.animationFrameTime}ms</Body>
+            <Body style={styles.metricValue}>
+              {metrics.animationFrameTime}ms
+            </Body>
           </View>
           <View style={styles.metricRow}>
             <Label style={styles.metricLabel}>Memory:</Label>
-            <Body style={styles.metricValue}>{Math.round(metrics.memoryUsage / 1024 / 1024)}MB</Body>
+            <Body style={styles.metricValue}>
+              {Math.round(metrics.memoryUsage / 1024 / 1024)}MB
+            </Body>
           </View>
         </View>
       )}
@@ -266,14 +305,13 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
         <View style={styles.progressContainer}>
           <Label style={styles.progressLabel}>{testState.currentTest}</Label>
           <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressFill, 
-                { width: `${testState.progress}%` }
-              ]} 
+            <View
+              style={[styles.progressFill, { width: `${testState.progress}%` }]}
             />
           </View>
-          <BodySmall style={styles.progressText}>{testState.progress}%</BodySmall>
+          <BodySmall style={styles.progressText}>
+            {testState.progress}%
+          </BodySmall>
         </View>
       )}
 
@@ -285,7 +323,9 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
       {/* Test Controls */}
       <View style={styles.controlsContainer}>
         <EliteButtonPresets.holographic
-          title={testState.isRunning ? 'Running Tests...' : 'Run Performance Tests'}
+          title={
+            testState.isRunning ? "Running Tests..." : "Run Performance Tests"
+          }
           size="lg"
           loading={testState.isRunning}
           onPress={runTestSuite}
@@ -297,27 +337,38 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
       {testState.results && (
         <View style={styles.resultsContainer}>
           <Heading2 style={styles.resultsTitle}>Test Results</Heading2>
-          
+
           <View style={styles.resultItem}>
             <Label style={styles.resultLabel}>Overall Grade:</Label>
-            <Body style={[styles.resultValue, { color: getGradeColor(testState.results.overallGrade) }]}>
+            <Body
+              style={[
+                styles.resultValue,
+                { color: getGradeColor(testState.results.overallGrade) },
+              ]}
+            >
               {testState.results.overallGrade}
             </Body>
           </View>
 
           <View style={styles.resultItem}>
             <Label style={styles.resultLabel}>Animation FPS:</Label>
-            <Body style={styles.resultValue}>{testState.results.animationFPS}</Body>
+            <Body style={styles.resultValue}>
+              {testState.results.animationFPS}
+            </Body>
           </View>
 
           <View style={styles.resultItem}>
             <Label style={styles.resultLabel}>Gesture Response:</Label>
-            <Body style={styles.resultValue}>{testState.results.gestureResponseTime}ms</Body>
+            <Body style={styles.resultValue}>
+              {testState.results.gestureResponseTime}ms
+            </Body>
           </View>
 
           <View style={styles.resultItem}>
             <Label style={styles.resultLabel}>Memory Usage:</Label>
-            <Body style={styles.resultValue}>{Math.round(testState.results.memoryUsage / 1024 / 1024)}MB</Body>
+            <Body style={styles.resultValue}>
+              {Math.round(testState.results.memoryUsage / 1024 / 1024)}MB
+            </Body>
           </View>
 
           <View style={styles.recommendationsContainer}>
@@ -337,18 +388,18 @@ export default function PerformanceTestSuite({ onTestComplete }: PerformanceTest
 // Helper function to get grade color
 function getGradeColor(grade: string): string {
   switch (grade) {
-    case 'A+':
-    case 'A':
-      return Theme.semantic.text.success;
-    case 'B':
-      return Theme.semantic.text.accent;
-    case 'C':
-      return Theme.semantic.text.warning;
-    case 'D':
-    case 'F':
-      return Theme.semantic.text.error;
+    case "A+":
+    case "A":
+      return Theme.colors.text.primary.success;
+    case "B":
+      return Theme.colors.text.primary.accent;
+    case "C":
+      return Theme.colors.text.primary.warning;
+    case "D":
+    case "F":
+      return Theme.colors.text.primary.error;
     default:
-      return Theme.semantic.text.primary;
+      return Theme.colors.text.primary.primary;
   }
 }
 
@@ -362,21 +413,21 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   metricsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginBottom: Theme.spacing.lg,
     padding: Theme.spacing.md,
     backgroundColor: Theme.colors.neutral[50],
     borderRadius: Theme.borderRadius.lg,
   },
   metricRow: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   metricLabel: {
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -387,28 +438,28 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     marginBottom: Theme.spacing.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
   progressBar: {
     height: 8,
     backgroundColor: Theme.colors.neutral[200],
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: Theme.spacing.sm,
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Theme.semantic.interactive.primary,
     borderRadius: 4,
   },
   progressText: {
-    textAlign: 'center',
-    color: Theme.semantic.text.secondary,
+    textAlign: "center",
+    color: Theme.colors.text.primary.secondary,
   },
   testVisualization: {
     height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: Theme.spacing.lg,
   },
   testBox: {
@@ -421,7 +472,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.lg,
   },
   testButton: {
-    width: '100%',
+    width: "100%",
   },
   resultsContainer: {
     padding: Theme.spacing.lg,
@@ -432,12 +483,12 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.md,
   },
   resultItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: Theme.spacing.sm,
   },
   resultLabel: {
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
   resultValue: {
     fontWeight: Theme.typography.fontWeight.bold,
@@ -446,14 +497,14 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.md,
     paddingTop: Theme.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Theme.semantic.border.subtle,
+    borderTopColor: Theme.colors.border.light.subtle,
   },
   recommendationsTitle: {
     marginBottom: Theme.spacing.sm,
-    color: Theme.semantic.text.accent,
+    color: Theme.colors.text.primary.accent,
   },
   recommendation: {
     marginBottom: Theme.spacing.xs,
-    color: Theme.semantic.text.secondary,
+    color: Theme.colors.text.primary.secondary,
   },
 });

@@ -1,12 +1,19 @@
-import { Ionicons } from '@expo/vector-icons'
-import { logger } from '@pawfectmatch/core';
-;
-import type { NavigationProp } from '@react-navigation/native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import type { NavigationProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef } from "react";
+import {
+  Animated,
+  Easing,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type RootStackParamList = {
   Home: undefined;
@@ -40,7 +47,7 @@ const AnimatedCheckmark = () => {
       }),
     ]).start(() => {
       // Provide haptic feedback when animation completes
-      if (Platform.OS !== 'web') {
+      if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     });
@@ -69,7 +76,7 @@ const AnimatedCheckmark = () => {
         ]}
       >
         <LinearGradient
-          colors={['#6D28D9', '#7C3AED', '#8B5CF6']}
+          colors={["#6D28D9", "#7C3AED", "#8B5CF6"]}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -90,13 +97,13 @@ export function SubscriptionSuccessScreen(): JSX.Element {
   useEffect(() => {
     const trackSubscriptionSuccess = async () => {
       try {
-        const { analyticsAPI } = await import('../../services/api');
-        await analyticsAPI.trackUserEvent('subscription_success', {
+        const { analyticsAPI } = await import("../../services/api");
+        await analyticsAPI.trackUserEvent("subscription_success", {
           sessionId,
           timestamp: new Date().toISOString(),
         });
       } catch (error) {
-        logger.error('Failed to track subscription success:', { error });
+        logger.error("Failed to track subscription success:", { error });
       }
     };
 
@@ -113,7 +120,8 @@ export function SubscriptionSuccessScreen(): JSX.Element {
         <Text style={styles.title}>Subscription Successful!</Text>
 
         <Text style={styles.message}>
-          Thank you for your purchase. Your premium subscription is now active, and you can enjoy all the exclusive features.
+          Thank you for your purchase. Your premium subscription is now active,
+          and you can enjoy all the exclusive features.
         </Text>
 
         <View style={styles.featuresContainer}>
@@ -142,33 +150,37 @@ export function SubscriptionSuccessScreen(): JSX.Element {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => { navigation.navigate('SubscriptionManager'); }}
+          onPress={() => {
+            navigation.navigate("SubscriptionManager");
+          }}
         >
           <Text style={styles.buttonText}>Manage Subscription</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, styles.secondaryButton]}
-          onPress={() => { navigation.navigate('Home'); }}
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
         >
           <Text style={styles.secondaryButtonText}>Go to Home</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 24,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkmarkContainer: {
     marginBottom: 32,
@@ -177,70 +189,70 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
   },
   gradient: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#111827',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#111827",
+    textAlign: "center",
     marginBottom: 16,
   },
   message: {
     fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
+    color: "#6B7280",
+    textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
   },
   featuresContainer: {
-    width: '100%',
+    width: "100%",
     padding: 16,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
     borderRadius: 12,
     marginVertical: 24,
   },
   featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   featureText: {
     fontSize: 16,
-    color: '#111827',
+    color: "#111827",
     marginLeft: 12,
   },
   buttonContainer: {
-    width: '100%',
+    width: "100%",
   },
   button: {
-    backgroundColor: '#6D28D9',
+    backgroundColor: "#6D28D9",
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 16,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   secondaryButton: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: "#F3F4F6",
   },
   secondaryButtonText: {
-    color: '#6D28D9',
+    color: "#6D28D9",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

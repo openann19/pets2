@@ -4,11 +4,11 @@
  * Features: Form validation, accessibility, responsive design
  */
 
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { TextInput } from "react-native";
 
-import { Theme } from '../theme/unified-theme';
+import { Theme } from "../theme/unified-theme";
 
 interface PetInfoFormProps {
   petName: string;
@@ -36,7 +36,9 @@ export function PetInfoForm({
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Pet Information</Text>
-      <Text style={styles.sectionSubtitle}>Tell us about your furry friend</Text>
+      <Text style={styles.sectionSubtitle}>
+        Tell us about your furry friend
+      </Text>
 
       {/* Pet Name Input */}
       <View style={styles.inputGroup}>
@@ -90,7 +92,10 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Personality *</Text>
         <TextInput
-          style={[styles.textarea, validationErrors.petPersonality && styles.inputError]}
+          style={[
+            styles.textarea,
+            validationErrors.petPersonality && styles.inputError,
+          ]}
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
@@ -101,7 +106,9 @@ export function PetInfoForm({
           textAlignVertical="top"
         />
         {validationErrors.petPersonality && (
-          <Text style={styles.errorText}>{validationErrors.petPersonality}</Text>
+          <Text style={styles.errorText}>
+            {validationErrors.petPersonality}
+          </Text>
         )}
         <Text style={styles.characterCount}>
           {petPersonality.length}/500 characters
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: Theme.typography.sizes['2xl'],
+    fontSize: Theme.typography.sizes["2xl"],
     fontWeight: Theme.typography.weights.bold,
     color: Theme.colors.text,
     marginBottom: Theme.spacing.sm,
@@ -167,7 +174,7 @@ const styles = StyleSheet.create({
   characterCount: {
     fontSize: Theme.typography.sizes.xs,
     color: Theme.colors.textMuted,
-    textAlign: 'right',
+    textAlign: "right",
     marginTop: Theme.spacing.xs,
   },
 });

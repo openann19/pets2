@@ -4,10 +4,10 @@
  * Features: Form state management, API integration, error handling, history tracking
  */
 
-import { useState, useCallback } from 'react';
-import * as ImagePicker from 'expo-image-picker';
-import { api } from '../services/api';
-import { logger } from '@pawfectmatch/core';
+import { useState, useCallback } from "react";
+import * as ImagePicker from "expo-image-picker";
+import { api } from "../services/api";
+import { logger } from "@pawfectmatch/core";
 
 export interface GeneratedBio {
   bio: string;
@@ -62,20 +62,20 @@ export interface UseAIBioReturn {
 }
 
 const TONE_OPTIONS = [
-  { id: 'playful', label: 'Playful', icon: '🎾', color: '#ff6b6b' },
-  { id: 'professional', label: 'Professional', icon: '💼', color: '#4dabf7' },
-  { id: 'casual', label: 'Casual', icon: '😊', color: '#69db7c' },
-  { id: 'romantic', label: 'Romantic', icon: '💕', color: '#f783ac' },
-  { id: 'mysterious', label: 'Mysterious', icon: '🕵️', color: '#a78bfa' },
+  { id: "playful", label: "Playful", icon: "🎾", color: "#ff6b6b" },
+  { id: "professional", label: "Professional", icon: "💼", color: "#4dabf7" },
+  { id: "casual", label: "Casual", icon: "😊", color: "#69db7c" },
+  { id: "romantic", label: "Romantic", icon: "💕", color: "#f783ac" },
+  { id: "mysterious", label: "Mysterious", icon: "🕵️", color: "#a78bfa" },
 ];
 
 export function useAIBio(): UseAIBioReturn {
   // Form state
-  const [petName, setPetName] = useState('');
-  const [petBreed, setPetBreed] = useState('');
-  const [petAge, setPetAge] = useState('');
-  const [petPersonality, setPetPersonality] = useState('');
-  const [selectedTone, setSelectedTone] = useState('playful');
+  const [petName, setPetName] = useState("");
+  const [petBreed, setPetBreed] = useState("");
+  const [petAge, setPetAge] = useState("");
+  const [petPersonality, setPetPersonality] = useState("");
+  const [selectedTone, setSelectedTone] = useState("playful");
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   // Generation state
@@ -84,16 +84,19 @@ export function useAIBio(): UseAIBioReturn {
   const [bioHistory, setBioHistory] = useState<GeneratedBio[]>([]);
 
   // Validation state
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   // Validation function
   const validateForm = useCallback((): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!petName.trim()) errors.petName = 'Pet name is required';
-    if (!petBreed.trim()) errors.petBreed = 'Pet breed is required';
-    if (!petAge.trim()) errors.petAge = 'Pet age is required';
-    if (!petPersonality.trim()) errors.petPersonality = 'Pet personality is required';
+    if (!petName.trim()) errors.petName = "Pet name is required";
+    if (!petBreed.trim()) errors.petBreed = "Pet breed is required";
+    if (!petAge.trim()) errors.petAge = "Pet age is required";
+    if (!petPersonality.trim())
+      errors.petPersonality = "Pet personality is required";
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -102,7 +105,9 @@ export function useAIBio(): UseAIBioReturn {
   // Generate bio function
   const generateBio = useCallback(async (): Promise<void> => {
     if (!validateForm()) {
-      logger.warn('Bio generation validation failed', { errors: validationErrors });
+      logger.warn("Bio generation validation failed", {
+        errors: validationErrors,
+      });
       return;
     }
 
@@ -119,7 +124,10 @@ export function useAIBio(): UseAIBioReturn {
         photoUri: selectedPhoto || undefined,
       };
 
-      logger.info('Generating AI bio', { petName: params.petName, tone: params.tone });
+      logger.info("Generating AI bio", {
+        petName: params.petName,
+        tone: params.tone,
+      });
 
       const response = await api.generatePetBio(params);
 
@@ -130,33 +138,45 @@ export function useAIBio(): UseAIBioReturn {
         };
 
         setGeneratedBio(newBio);
-        setBioHistory(prev => [newBio, ...prev.slice(0, 9)]); // Keep last 10
+        setBioHistory((prev) => [newBio, ...prev.slice(0, 9)]); // Keep last 10
 
-        logger.info('AI bio generated successfully', {
+        logger.info("AI bio generated successfully", {
           bioLength: newBio.bio.length,
           keywordsCount: newBio.keywords.length,
           matchScore: newBio.matchScore,
         });
       } else {
-        throw new Error(response.error || 'Failed to generate bio');
+        throw new Error(response.error || "Failed to generate bio");
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      logger.error('AI bio generation failed', { error: errorMessage });
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      logger.error("AI bio generation failed", { error: errorMessage });
       setValidationErrors({ submit: errorMessage });
       throw error;
     } finally {
       setIsGenerating(false);
     }
-  }, [petName, petBreed, petAge, petPersonality, selectedTone, selectedPhoto, validateForm]);
+  }, [
+    petName,
+    petBreed,
+    petAge,
+    petPersonality,
+    selectedTone,
+    selectedPhoto,
+    validateForm,
+  ]);
 
   // Pick image function
   const pickImage = useCallback(async (): Promise<void> => {
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (status !== 'granted') {
-        throw new Error('Camera roll permissions are required to select photos');
+      if (status !== "granted") {
+        throw new Error(
+          "Camera roll permissions are required to select photos",
+        );
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -169,41 +189,44 @@ export function useAIBio(): UseAIBioReturn {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const uri = result.assets[0].uri;
         setSelectedPhoto(uri);
-        logger.info('Photo selected for AI bio', { uri: uri.substring(0, 50) + '...' });
+        logger.info("Photo selected for AI bio", {
+          uri: uri.substring(0, 50) + "...",
+        });
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to pick image';
-      logger.error('Image picker failed', { error: errorMessage });
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to pick image";
+      logger.error("Image picker failed", { error: errorMessage });
       setValidationErrors({ photo: errorMessage });
     }
   }, []);
 
   // Save bio function
   const saveBio = useCallback((bio: GeneratedBio): void => {
-    setBioHistory(prev => {
-      const filtered = prev.filter(b => b.createdAt !== bio.createdAt);
+    setBioHistory((prev) => {
+      const filtered = prev.filter((b) => b.createdAt !== bio.createdAt);
       return [bio, ...filtered.slice(0, 9)];
     });
-    logger.info('Bio saved to history', { bioLength: bio.bio.length });
+    logger.info("Bio saved to history", { bioLength: bio.bio.length });
   }, []);
 
   // Clear form function
   const clearForm = useCallback((): void => {
-    setPetName('');
-    setPetBreed('');
-    setPetAge('');
-    setPetPersonality('');
-    setSelectedTone('playful');
+    setPetName("");
+    setPetBreed("");
+    setPetAge("");
+    setPetPersonality("");
+    setSelectedTone("playful");
     setSelectedPhoto(null);
     setValidationErrors({});
-    logger.debug('AI bio form cleared');
+    logger.debug("AI bio form cleared");
   }, []);
 
   // Reset generation function
   const resetGeneration = useCallback((): void => {
     setGeneratedBio(null);
     setValidationErrors({});
-    logger.debug('AI bio generation reset');
+    logger.debug("AI bio generation reset");
   }, []);
 
   // Computed values

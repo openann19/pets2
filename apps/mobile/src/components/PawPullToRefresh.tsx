@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -6,12 +6,12 @@ import {
   Animated,
   StyleSheet,
   Dimensions,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
-import { useTheme } from '../contexts/ThemeContext';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { useTheme } from "../contexts/ThemeContext";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PawPullToRefreshProps {
   children: React.ReactNode;
@@ -37,7 +37,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   style,
 }) => {
   const { colors } = useTheme();
-  
+
   // Animation values
   const pawRotation = useRef(new Animated.Value(0)).current;
   const pawScale = useRef(new Animated.Value(1)).current;
@@ -49,7 +49,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
     if (refreshing) {
       // Haptic feedback on refresh start
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       // Create scratch animation sequence
       const scratchAnimation = Animated.loop(
         Animated.sequence([
@@ -71,7 +71,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
               useNativeDriver: true,
             }),
           ]),
-          
+
           // Paw moves back up
           Animated.parallel([
             Animated.timing(pawRotation, {
@@ -90,10 +90,10 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
               useNativeDriver: true,
             }),
           ]),
-          
+
           // Brief pause
           Animated.delay(200),
-        ])
+        ]),
       );
 
       scratchAnimation.start();
@@ -141,7 +141,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   // Calculate animation transforms
   const pawRotationInterpolate = pawRotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '15deg'],
+    outputRange: ["0deg", "15deg"],
   });
 
   const scratchTranslateY = scratchOffset.interpolate({
@@ -158,7 +158,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
     <View style={[styles.container, style]}>
       {/* Custom Refresh Indicator */}
       {refreshing && (
-        <View 
+        <View
           style={styles.refreshIndicator}
           accessible={true}
           accessibilityLabel="Refreshing content"
@@ -178,14 +178,14 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
               },
             ]}
           >
-            <Ionicons 
-              name="paw" 
-              size={24} 
+            <Ionicons
+              name="paw"
+              size={24}
               color={colors.primary}
               style={styles.pawIcon}
             />
           </Animated.View>
-          
+
           {/* Scratch marks effect */}
           <View style={styles.scratchMarks}>
             {[0, 1, 2].map((index) => (
@@ -197,11 +197,11 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                     backgroundColor: colors.primary,
                     opacity: pawOpacity,
                     transform: [
-                      { 
+                      {
                         translateY: scratchOffset.interpolate({
                           inputRange: [0, 1],
                           outputRange: [0, (index + 1) * 3],
-                        })
+                        }),
                       },
                     ],
                   },
@@ -234,41 +234,41 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   refreshIndicator: {
-    position: 'absolute',
+    position: "absolute",
     top: 40,
     left: 0,
     right: 0,
     height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
   pawContainer: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   pawIcon: {
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
   scratchMarks: {
-    position: 'absolute',
+    position: "absolute",
     top: 45,
-    left: '50%',
+    left: "50%",
     marginLeft: -10,
     width: 20,
     height: 15,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   scratchMark: {
     width: 2,

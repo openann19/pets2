@@ -1,9 +1,9 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
-import { EliteButton } from '../EliteButton';
-import { StaggeredContainer } from '../StaggeredContainer';
-import { FadeInUp } from '../FadeInUp';
+import { EliteButton } from "../EliteButton";
+import { StaggeredContainer } from "../StaggeredContainer";
+import { FadeInUp } from "../FadeInUp";
 
 interface SwipeActionsProps {
   onPass: () => void;
@@ -11,7 +11,11 @@ interface SwipeActionsProps {
   onLike: () => void;
 }
 
-export function SwipeActions({ onPass, onSuperLike, onLike }: SwipeActionsProps) {
+export function SwipeActions({
+  onPass,
+  onSuperLike,
+  onLike,
+}: SwipeActionsProps) {
   return (
     <StaggeredContainer delay={100}>
       <View style={styles.actionButtons}>
@@ -64,9 +68,9 @@ export function SwipeActions({ onPass, onSuperLike, onLike }: SwipeActionsProps)
 
 const styles = StyleSheet.create({
   actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 30,
     paddingHorizontal: 40,
   },
@@ -74,10 +78,10 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 15,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

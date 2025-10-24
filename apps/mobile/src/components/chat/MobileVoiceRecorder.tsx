@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
-import { logger } from '@pawfectmatch/core';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../../contexts/ThemeContext';
+import { Ionicons } from "@expo/vector-icons";
+import { logger } from "@pawfectmatch/core";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // Mock Audio for missing expo-av dependency
 type RecordingInstance = {
@@ -19,12 +19,12 @@ const Audio = {
     shouldDuckAndroid?: boolean;
     interruptionModeAndroid?: number;
     playThroughEarpieceAndroid?: boolean;
-  }) => { },
+  }) => {},
   Recording: {
     createAsync: async (_options?: unknown) => ({
       recording: {
-        stopAndUnloadAsync: async () => { },
-        getURI: () => 'mock-audio-uri',
+        stopAndUnloadAsync: async () => {},
+        getURI: () => "mock-audio-uri",
       } as RecordingInstance,
     }),
   },
@@ -42,7 +42,7 @@ interface MobileVoiceRecorderProps {
 
 export function MobileVoiceRecorder({
   onSend,
-  onCancel
+  onCancel,
 }: MobileVoiceRecorderProps): React.JSX.Element {
   const { colors } = useTheme();
   const [isRecording, setIsRecording] = useState(false);
@@ -54,7 +54,7 @@ export function MobileVoiceRecorder({
     try {
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) {
-        alert('Permission to access microphone is required!');
+        alert("Permission to access microphone is required!");
         onCancel();
         return;
       }
@@ -69,7 +69,7 @@ export function MobileVoiceRecorder({
       });
 
       const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
       );
 
       setRecording(recording);
@@ -77,12 +77,11 @@ export function MobileVoiceRecorder({
 
       // Start timer
       timerRef.current = setInterval(() => {
-        setDuration(prev => prev + 1);
+        setDuration((prev) => prev + 1);
       }, 1000) as unknown as number;
-
     } catch (error) {
-      logger.error('Failed to start recording:', { error });
-      alert('Failed to start recording. Please try again.');
+      logger.error("Failed to start recording:", { error });
+      alert("Failed to start recording. Please try again.");
       onCancel();
     }
   }, [onCancel]);
@@ -119,8 +118,8 @@ export function MobileVoiceRecorder({
         onSend(blob, duration);
       }
     } catch (error) {
-      logger.error('Failed to stop recording:', { error });
-      alert('Failed to save recording. Please try again.');
+      logger.error("Failed to stop recording:", { error });
+      alert("Failed to save recording. Please try again.");
       onCancel();
     }
   };
@@ -128,22 +127,17 @@ export function MobileVoiceRecorder({
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (
-    <Modal
-      visible
-      animationType="slide"
-      transparent
-      onRequestClose={onCancel}
-    >
+    <Modal visible animationType="slide" transparent onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={[styles.container, { backgroundColor: colors.card }]}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text }]}>
-              {isRecording ? 'Recording...' : 'Voice Message'}
+              {isRecording ? "Recording..." : "Voice Message"}
             </Text>
             <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
               <Ionicons name="close" size={24} color={colors.text} />
@@ -162,7 +156,7 @@ export function MobileVoiceRecorder({
                       {
                         backgroundColor: colors.primary,
                         height: `${Math.random() * 60 + 20}%`,
-                      }
+                      },
                     ]}
                   />
                 ))
@@ -178,8 +172,8 @@ export function MobileVoiceRecorder({
 
             <Text style={[styles.hint, { color: colors.gray500 }]}>
               {isRecording
-                ? 'Tap stop when finished (max 60 seconds)'
-                : 'Ready to send'}
+                ? "Tap stop when finished (max 60 seconds)"
+                : "Ready to send"}
             </Text>
           </View>
 
@@ -187,7 +181,7 @@ export function MobileVoiceRecorder({
           <View style={styles.controls}>
             {isRecording ? (
               <TouchableOpacity
-                style={[styles.recordButton, { backgroundColor: '#ef4444' }]}
+                style={[styles.recordButton, { backgroundColor: "#ef4444" }]}
                 onPress={stopRecording}
               >
                 <Ionicons name="stop" size={24} color="white" />
@@ -198,10 +192,15 @@ export function MobileVoiceRecorder({
                   style={[styles.cancelButton, { borderColor: colors.gray400 }]}
                   onPress={onCancel}
                 >
-                  <Text style={[styles.cancelText, { color: colors.text }]}>Cancel</Text>
+                  <Text style={[styles.cancelText, { color: colors.text }]}>
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.sendButton, { backgroundColor: colors.primary }]}
+                  style={[
+                    styles.sendButton,
+                    { backgroundColor: colors.primary },
+                  ]}
                   onPress={() => {
                     // This would normally send the recorded audio
                     onCancel();
@@ -216,13 +215,13 @@ export function MobileVoiceRecorder({
       </View>
     </Modal>
   );
-};
+}
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   container: {
     borderTopLeftRadius: 20,
@@ -231,26 +230,26 @@ const styles = StyleSheet.create({
     minHeight: 300,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 30,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   closeButton: {
     padding: 4,
   },
   recordingContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   waveformContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     height: 80,
     marginBottom: 20,
   },
@@ -262,25 +261,25 @@ const styles = StyleSheet.create({
   },
   duration: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   hint: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   controls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     gap: 20,
   },
   recordButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cancelButton: {
     paddingHorizontal: 24,
@@ -290,13 +289,13 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   sendButton: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

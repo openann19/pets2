@@ -1,10 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { type ReactNode, useEffect } from 'react';
-import {
-  View,
-  type ViewStyle,
-  type ViewProps,
-} from 'react-native';
+import { LinearGradient } from "expo-linear-gradient";
+import React, { type ReactNode, useEffect } from "react";
+import { View, type ViewStyle, type ViewProps } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,37 +10,68 @@ import Animated, {
   withDelay,
   interpolate,
   Extrapolate,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { BorderRadius, Spacing } from '../styles/GlobalStyles';
+import { BorderRadius, Spacing } from "../styles/GlobalStyles";
 
 // === HOLOGRAPHIC CONSTANTS ===
 export const HOLOGRAPHIC_CONFIGS = {
   // Gradient sets for different holographic effects
   gradients: {
     rainbow: [
-      '#ff0000', '#ff7f00', '#ffff00', '#00ff00', 
-      '#0000ff', '#4b0082', '#9400d3'
+      "#ff0000",
+      "#ff7f00",
+      "#ffff00",
+      "#00ff00",
+      "#0000ff",
+      "#4b0082",
+      "#9400d3",
     ],
     cyber: [
-      '#00f5ff', '#ff00ff', '#ffff00', '#00ff00',
-      '#ff0080', '#8000ff', '#00ffff'
+      "#00f5ff",
+      "#ff00ff",
+      "#ffff00",
+      "#00ff00",
+      "#ff0080",
+      "#8000ff",
+      "#00ffff",
     ],
     sunset: [
-      '#ff6b6b', '#ffd93d', '#6bcf7f', '#4d96ff',
-      '#9b59b6', '#e74c3c', '#f39c12'
+      "#ff6b6b",
+      "#ffd93d",
+      "#6bcf7f",
+      "#4d96ff",
+      "#9b59b6",
+      "#e74c3c",
+      "#f39c12",
     ],
     ocean: [
-      '#667eea', '#764ba2', '#f093fb', '#f5576c',
-      '#4facfe', '#00f2fe', '#43e97b'
+      "#667eea",
+      "#764ba2",
+      "#f093fb",
+      "#f5576c",
+      "#4facfe",
+      "#00f2fe",
+      "#43e97b",
     ],
     neon: [
-      '#00f5ff', '#ff00ff', '#ffff00', '#00ff00',
-      '#ff0080', '#8000ff', '#00ffff', '#ff8000'
+      "#00f5ff",
+      "#ff00ff",
+      "#ffff00",
+      "#00ff00",
+      "#ff0080",
+      "#8000ff",
+      "#00ffff",
+      "#ff8000",
     ],
     aurora: [
-      '#ff006e', '#8338ec', '#3a86ff', '#06ffa5',
-      '#ffbe0b', '#fb5607', '#ff006e'
+      "#ff006e",
+      "#8338ec",
+      "#3a86ff",
+      "#06ffa5",
+      "#ffbe0b",
+      "#fb5607",
+      "#ff006e",
     ],
   },
 
@@ -77,8 +104,8 @@ interface HolographicContainerProps extends ViewProps {
 
 export const HolographicContainer: React.FC<HolographicContainerProps> = ({
   children,
-  variant = 'rainbow',
-  speed = 'normal',
+  variant = "rainbow",
+  speed = "normal",
   animated = true,
   shimmer = true,
   glow = true,
@@ -95,7 +122,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       gradientRotation.value = withRepeat(
         withTiming(360, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] }),
         -1,
-        false
+        false,
       );
     }
   }, [animated, speed]);
@@ -106,10 +133,10 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       shimmerOffset.value = withRepeat(
         withSequence(
           withTiming(100, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] }),
-          withDelay(500, withTiming(-100, { duration: 0 }))
+          withDelay(500, withTiming(-100, { duration: 0 })),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [shimmer, speed]);
@@ -120,10 +147,10 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       glowIntensity.value = withRepeat(
         withSequence(
           withTiming(1.5, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
-          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 })
+          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
         ),
         -1,
-        false
+        false,
       );
     }
   }, [glow, speed]);
@@ -147,9 +174,9 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
     <Animated.View
       style={[
         {
-          borderRadius: BorderRadius['2xl'],
-          overflow: 'hidden',
-          position: 'relative',
+          borderRadius: BorderRadius["2xl"],
+          overflow: "hidden",
+          position: "relative",
         },
         glow ? glowStyle : {},
         style,
@@ -160,7 +187,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       <Animated.View
         style={[
           {
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -175,7 +202,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
           end={{ x: 1, y: 1 }}
           style={{
             flex: 1,
-            borderRadius: BorderRadius['2xl'],
+            borderRadius: BorderRadius["2xl"],
           }}
         />
       </Animated.View>
@@ -185,12 +212,12 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
         <Animated.View
           style={[
             {
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
             },
             shimmerStyle,
           ]}
@@ -200,7 +227,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       {/* Content */}
       <View
         style={{
-          position: 'relative',
+          position: "relative",
           zIndex: 1,
           padding: Spacing.lg,
         }}
@@ -215,7 +242,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
 interface HolographicCardProps extends ViewProps {
   children: ReactNode;
   variant?: keyof typeof HOLOGRAPHIC_CONFIGS.gradients;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   animated?: boolean;
   shimmer?: boolean;
   glow?: boolean;
@@ -224,8 +251,8 @@ interface HolographicCardProps extends ViewProps {
 
 export const HolographicCard: React.FC<HolographicCardProps> = ({
   children,
-  variant = 'rainbow',
-  size = 'md',
+  variant = "rainbow",
+  size = "md",
   animated = true,
   shimmer = true,
   glow = true,
@@ -234,12 +261,12 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
 }) => {
   const getSizeConfig = () => {
     switch (size) {
-      case 'sm':
+      case "sm":
         return { padding: Spacing.md };
-      case 'lg':
+      case "lg":
         return { padding: Spacing.xl };
-      case 'xl':
-        return { padding: Spacing['2xl'] };
+      case "xl":
+        return { padding: Spacing["2xl"] };
       default:
         return { padding: Spacing.lg };
     }
@@ -265,7 +292,7 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
 interface HolographicButtonProps extends ViewProps {
   children: ReactNode;
   variant?: keyof typeof HOLOGRAPHIC_CONFIGS.gradients;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   onPress?: () => void;
   style?: ViewStyle;
@@ -273,8 +300,8 @@ interface HolographicButtonProps extends ViewProps {
 
 export const HolographicButton: React.FC<HolographicButtonProps> = ({
   children,
-  variant = 'cyber',
-  size = 'md',
+  variant = "cyber",
+  size = "md",
   disabled = false,
   onPress,
   style,
@@ -285,21 +312,21 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
 
   const getSizeConfig = () => {
     switch (size) {
-      case 'sm':
-        return { 
-          paddingHorizontal: Spacing.lg, 
+      case "sm":
+        return {
+          paddingHorizontal: Spacing.lg,
           paddingVertical: Spacing.sm,
           minHeight: 36,
         };
-      case 'lg':
-        return { 
-          paddingHorizontal: Spacing['2xl'], 
+      case "lg":
+        return {
+          paddingHorizontal: Spacing["2xl"],
           paddingVertical: Spacing.lg,
           minHeight: 56,
         };
       default:
-        return { 
-          paddingHorizontal: Spacing.xl, 
+        return {
+          paddingHorizontal: Spacing.xl,
           paddingVertical: Spacing.md,
           minHeight: 48,
         };
@@ -339,8 +366,8 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
         style={[
           sizeConfig,
           {
-            justifyContent: 'center',
-            alignItems: 'center',
+            justifyContent: "center",
+            alignItems: "center",
             opacity: disabled ? 0.5 : 1,
           },
         ]}
@@ -357,16 +384,16 @@ interface HolographicTextProps {
   children: ReactNode;
   variant?: keyof typeof HOLOGRAPHIC_CONFIGS.gradients;
   size?: number;
-  weight?: 'normal' | 'bold';
+  weight?: "normal" | "bold";
   animated?: boolean;
   style?: ViewStyle;
 }
 
 export const HolographicText: React.FC<HolographicTextProps> = ({
   children,
-  variant = 'rainbow',
+  variant = "rainbow",
   size = 16,
-  weight = 'normal',
+  weight = "normal",
   animated = true,
   style,
 }) => {
@@ -377,7 +404,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
       gradientRotation.value = withRepeat(
         withTiming(360, { duration: 2000 }),
         -1,
-        false
+        false,
       );
     }
   }, [animated]);
@@ -389,11 +416,11 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
   const gradientColors = HOLOGRAPHIC_CONFIGS.gradients[variant];
 
   return (
-    <View style={[{ position: 'relative' }, style]}>
+    <View style={[{ position: "relative" }, style]}>
       <Animated.View
         style={[
           {
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             right: 0,
@@ -413,7 +440,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
       </Animated.View>
       <View
         style={{
-          position: 'relative',
+          position: "relative",
           zIndex: 1,
           padding: Spacing.xs,
         }}
@@ -423,7 +450,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
           style={{
             fontSize: size,
             fontWeight: weight,
-            color: 'transparent',
+            color: "transparent",
           }}
         >
           {children}
@@ -443,8 +470,8 @@ interface ParticleEffectProps extends ViewProps {
 
 export const ParticleEffect: React.FC<ParticleEffectProps> = ({
   count = 20,
-  variant = 'neon',
-  speed = 'normal',
+  variant = "neon",
+  speed = "normal",
   style,
   ...props
 }) => {
@@ -460,37 +487,37 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     particles.forEach((particle) => {
       particle.x.value = withRepeat(
         withSequence(
-          withTiming(Math.random() * 100, { 
-            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000 
+          withTiming(Math.random() * 100, {
+            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000,
           }),
-          withTiming(Math.random() * 100, { 
-            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000 
-          })
+          withTiming(Math.random() * 100, {
+            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000,
+          }),
         ),
         -1,
-        false
+        false,
       );
-      
+
       particle.y.value = withRepeat(
         withSequence(
-          withTiming(Math.random() * 100, { 
-            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000 
+          withTiming(Math.random() * 100, {
+            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000,
           }),
-          withTiming(Math.random() * 100, { 
-            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000 
-          })
+          withTiming(Math.random() * 100, {
+            duration: HOLOGRAPHIC_CONFIGS.speeds[speed] + Math.random() * 1000,
+          }),
         ),
         -1,
-        false
+        false,
       );
 
       particle.opacity.value = withRepeat(
         withSequence(
           withTiming(0, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
-          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 })
+          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
         ),
         -1,
-        false
+        false,
       );
     });
   }, [speed]);
@@ -501,12 +528,12 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     <View
       style={[
         {
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          overflow: 'hidden',
+          overflow: "hidden",
         },
         style,
       ]}
@@ -514,7 +541,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     >
       {particles.map((particle) => {
         const particleStyle = useAnimatedStyle(() => ({
-          position: 'absolute',
+          position: "absolute",
           left: `${particle.x.value}%`,
           top: `${particle.y.value}%`,
           width: 4,
@@ -525,10 +552,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
         }));
 
         return (
-          <Animated.View
-            key={particle.id}
-            style={particleStyle}
-          >
+          <Animated.View key={particle.id} style={particleStyle}>
             <LinearGradient
               colors={gradientColors}
               start={{ x: 0, y: 0 }}

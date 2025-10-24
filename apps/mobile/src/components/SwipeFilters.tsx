@@ -1,7 +1,14 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+  Modal,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface SwipeFiltersProps {
   visible: boolean;
@@ -30,10 +37,14 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+      <View
+        style={[styles.modalContainer, { backgroundColor: colors.background }]}
+      >
         <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Filter Preferences</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              Filter Preferences
+            </Text>
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color={colors.text} />
             </TouchableOpacity>
@@ -41,50 +52,69 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
 
           {/* Species Filter */}
           <View style={styles.filterSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Species</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Species
+            </Text>
             <View style={styles.speciesGrid}>
-              {['dog', 'cat', 'bird', 'rabbit', 'reptile', 'small-animal'].map((species) => (
-                <TouchableOpacity
-                  key={species}
-                  style={[
-                    styles.speciesButton,
-                    {
-                      backgroundColor: filters.species.includes(species)
-                        ? colors.primary
-                        : colors.card,
-                      borderColor: colors.border
-                    }
-                  ]}
-                  onPress={() => {
-                    const updated = filters.species.includes(species)
-                      ? filters.species.filter(s => s !== species)
-                      : [...filters.species, species];
-                    onFiltersChange({ ...filters, species: updated });
-                  }}
-                >
-                  <Text style={[styles.speciesText, { color: filters.species.includes(species) ? 'white' : colors.text }]}>
-                    {species.charAt(0).toUpperCase() + species.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {["dog", "cat", "bird", "rabbit", "reptile", "small-animal"].map(
+                (species) => (
+                  <TouchableOpacity
+                    key={species}
+                    style={[
+                      styles.speciesButton,
+                      {
+                        backgroundColor: filters.species.includes(species)
+                          ? colors.primary
+                          : colors.card,
+                        borderColor: colors.border,
+                      },
+                    ]}
+                    onPress={() => {
+                      const updated = filters.species.includes(species)
+                        ? filters.species.filter((s) => s !== species)
+                        : [...filters.species, species];
+                      onFiltersChange({ ...filters, species: updated });
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.speciesText,
+                        {
+                          color: filters.species.includes(species)
+                            ? "white"
+                            : colors.text,
+                        },
+                      ]}
+                    >
+                      {species.charAt(0).toUpperCase() + species.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ),
+              )}
             </View>
           </View>
 
           {/* Age Range Filter */}
           <View style={styles.filterSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Age Range</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              Age Range
+            </Text>
             {/* Age slider implementation would go here */}
           </View>
 
           {/* Verified Only */}
           <View style={styles.filterSection}>
             <View style={styles.switchRow}>
-              <Text style={[styles.switchLabel, { color: colors.text }]}>Verified Profiles Only</Text>
+              <Text style={[styles.switchLabel, { color: colors.text }]}>
+                Verified Profiles Only
+              </Text>
               <Switch
                 value={filters.onlyVerified}
-                onValueChange={(value) => { onFiltersChange({ ...filters, onlyVerified: value }); }}
+                onValueChange={(value) => {
+                  onFiltersChange({ ...filters, onlyVerified: value });
+                }}
                 trackColor={{ false: colors.border, true: colors.primary }}
-                thumbColor={filters.onlyVerified ? 'white' : '#f4f3f4'}
+                thumbColor={filters.onlyVerified ? "white" : "#f4f3f4"}
               />
             </View>
           </View>
@@ -104,36 +134,36 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    minHeight: '50%',
+    minHeight: "50%",
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   filterSection: {
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 10,
   },
   speciesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 10,
   },
   speciesButton: {
@@ -146,9 +176,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   switchLabel: {
     fontSize: 16,
@@ -156,12 +186,12 @@ const styles = StyleSheet.create({
   applyButton: {
     padding: 15,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
   applyButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 16,
   },
 });
