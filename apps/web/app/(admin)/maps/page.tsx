@@ -7,7 +7,7 @@ import {
   EnhancedProgressBar,
   LoadingSkeleton,
 } from '@/components/admin/UIEnhancements';
-import { Icon } from '@/components/UI/icon-helper';
+import { Icon } from '@/src/components/UI/icon-helper';
 import { logger } from '@/services/logger';
 import {
   ArrowPathIcon,

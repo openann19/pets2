@@ -97,21 +97,21 @@ const VARIANT_CONFIGS = {
   },
   body: {
     fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.regular,
+    fontWeight: Theme.typography.fontWeight.normal,
     lineHeight:
       Theme.typography.fontSize.base * Theme.typography.lineHeight.normal,
     letterSpacing: Theme.typography.letterSpacing.normal,
   },
   bodyLarge: {
     fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.regular,
+    fontWeight: Theme.typography.fontWeight.normal,
     lineHeight:
       Theme.typography.fontSize.lg * Theme.typography.lineHeight.relaxed,
     letterSpacing: Theme.typography.letterSpacing.normal,
   },
   bodySmall: {
     fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.regular,
+    fontWeight: Theme.typography.fontWeight.normal,
     lineHeight:
       Theme.typography.fontSize.sm * Theme.typography.lineHeight.normal,
     letterSpacing: Theme.typography.letterSpacing.normal,

@@ -95,6 +95,6 @@ export default defineConfig({
     toHaveScreenshot: { threshold: 0.2 },
     toMatchSnapshot: { threshold: 0.2 },
   },
-  globalSetup: require.resolve('./tests/playwright/global-setup.ts'),
-  globalTeardown: require.resolve('./tests/playwright/global-teardown.ts'),
+  globalSetup: './tests/playwright/global-setup.ts',
+  globalTeardown: './tests/playwright/global-teardown.ts',
 });

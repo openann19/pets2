@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { logger } from '@pawfectmatch/core';
-;
 import {
   CloudIcon,
   ChartBarIcon,
@@ -26,7 +25,7 @@ import {
   EnhancedInput,
   EnhancedProgressBar,
   LoadingSkeleton,
-} from '@/src/components/admin/UIEnhancements';
+} from '@/components/admin/UIEnhancements';
 
 interface ExternalService {
   id: string;

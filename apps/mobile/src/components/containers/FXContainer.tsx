@@ -84,7 +84,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
       case "glass":
         return {
           ...styles,
-          backgroundColor: Theme.colors.glass.light[variant],
+          backgroundColor: Theme.glass.light[variant],
           borderWidth: 1,
           borderColor: `rgba(255, 255, 255, ${variant === "subtle" ? 0.2 : variant === "strong" ? 0.4 : 0.3})`,
           ...Theme.shadows.depth.md,
@@ -94,7 +94,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
         return {
           ...styles,
           backgroundColor: Theme.colors.neutral[0],
-          ...Theme.shadows.glow.primary,
+          ...Theme.glow.primary,
         };
 
       case "holographic":

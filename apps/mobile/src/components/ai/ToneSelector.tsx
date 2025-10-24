@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    shadowColor: Theme.colors.shadow,
+    shadowColor: Theme.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   },
   glowContainer: {
     backgroundColor: Theme.colors.neutral[0],
-    ...Theme.shadows.glow.primary,
+    ...Theme.glow.primary,
   },
   typographyGrid: {
     gap: Theme.spacing.lg,

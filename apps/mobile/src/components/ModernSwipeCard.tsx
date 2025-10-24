@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   },
   age: {
     fontSize: Theme.typography.fontSize["2xl"],
-    fontWeight: Theme.typography.fontWeight.regular,
+    fontWeight: Theme.typography.fontWeight.normal,
     color: Theme.colors.neutral[0],
   },
   breed: {

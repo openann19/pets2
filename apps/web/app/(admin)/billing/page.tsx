@@ -7,7 +7,7 @@ import {
   EnhancedInput,
   LoadingSkeleton,
 } from '@/components/admin/UIEnhancements';
-import { Icon } from '@/components/UI/icon-helper';
+import { Icon } from '@/src/components/UI/icon-helper';
 import {
   ArrowDownTrayIcon,
   ArrowPathIcon,
