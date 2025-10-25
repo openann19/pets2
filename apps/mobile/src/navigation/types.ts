@@ -45,6 +45,10 @@ export type RootStackParamList = {
   AdminBilling: undefined;
   AdminSecurity: undefined;
   MainTabs: undefined;
+  Settings: undefined;
+  MyPets: undefined;
+  CreatePet: undefined;
+  AdoptionManager: undefined;
   SubscriptionManager: undefined;
   SubscriptionSuccess: { sessionId?: string };
   PrivacySettings: undefined;
