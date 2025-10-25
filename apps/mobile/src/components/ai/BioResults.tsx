@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     fontWeight: Theme.typography.fontWeight.medium,
   },
   analysisContainer: {
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor("primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
   },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor("primary"),
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
     alignItems: "center",
