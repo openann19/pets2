@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
-    shadowColor: Theme.shadow,
+    shadowColor: Theme.colors.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border,
+    borderTopColor: Theme.colors.border.light,
   },
   actionButton: {
     flexDirection: "row",
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.background.primary,
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
     alignItems: "center",
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: Theme.colors.border,
+    backgroundColor: Theme.colors.border.light,
     borderRadius: Theme.borderRadius.full,
     overflow: "hidden",
   },
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
   keywordsSection: {
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border,
+    borderTopColor: Theme.colors.border.light,
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {

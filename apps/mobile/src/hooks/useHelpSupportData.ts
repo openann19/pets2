@@ -1,5 +1,5 @@
 import * as Haptics from "expo-haptics";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Linking } from "react-native";
 import {
   interpolate,
@@ -8,6 +8,8 @@ import {
   withDelay,
   withSpring,
 } from "react-native-reanimated";
+import { matchesAPI } from "../services/api";
+import { logger } from "@pawfectmatch/core";
 
 export interface HelpOption {
   id: string;

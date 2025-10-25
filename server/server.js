@@ -126,6 +126,7 @@ const favoritesRoutes = require('./routes/favorites'); // Import favorites route
 const storiesRoutes = require('./routes/stories');
 const conversationsRoutes = require('./src/routes/conversations');
 const profileRoutes = require('./src/routes/profile');
+const supportRoutes = require('./src/routes/support');
 const adoptionRoutes = require('./src/routes/adoption');
 
 // Import middleware
@@ -517,6 +518,7 @@ app.use('/api/favorites', favoritesRoutes); // Favorites routes handle auth per-
 app.use('/api/stories', authenticateToken, storiesRoutes);
 app.use('/api/conversations', conversationsRoutes);
 app.use('/api/profile', profileRoutes); // Profile routes (handles auth internally)
+app.use('/api/support', authenticateToken, supportRoutes);
 app.use('/api/adoption', adoptionRoutes); // Adoption routes (handles auth internally)
 
 // Enhanced 2025 Features Routes

@@ -3,6 +3,7 @@
  * Handles Stripe subscription management and premium feature gating
  */
 import { logger } from "@pawfectmatch/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "./api";
 
 export interface SubscriptionStatus {
@@ -342,18 +343,44 @@ class PremiumService {
 
   // Private helper methods
 
-  private getCachedStatus(): Promise<{
+  private async getCachedStatus(): Promise<{
     status: SubscriptionStatus;
     timestamp: number;
   } | null> {
-    // This would typically use AsyncStorage or similar
-    // For now, return null to always fetch fresh data
-    return Promise.resolve(null);
+    try {
+      const cached = await AsyncStorage.getItem("premium_status_cache");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const now = Date.now();
+        const cacheAge = now - parsed.timestamp;
+        
+        // Cache is valid for 5 minutes
+        if (cacheAge < 5 * 60 * 1000) {
+          logger.debug("Premium status cache hit", { cacheAge });
+          return parsed;
+        } else {
+          logger.debug("Premium status cache expired", { cacheAge });
+          await AsyncStorage.removeItem("premium_status_cache");
+        }
+      }
+      return null;
+    } catch (error) {
+      logger.error("Failed to read premium status cache", { error });
+      return null;
+    }
   }
 
-  private async setCachedStatus(_status: SubscriptionStatus): Promise<void> {
-    // Cache implementation would go here
-    // For now, do nothing
+  private async setCachedStatus(status: SubscriptionStatus): Promise<void> {
+    try {
+      const cacheData = {
+        status,
+        timestamp: Date.now(),
+      };
+      await AsyncStorage.setItem("premium_status_cache", JSON.stringify(cacheData));
+      logger.debug("Premium status cached", { status });
+    } catch (error) {
+      logger.error("Failed to cache premium status", { error });
+    }
   }
 
   private isCacheValid(timestamp: number): boolean {

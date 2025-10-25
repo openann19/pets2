@@ -778,6 +778,17 @@ export const matchesAPI = {
     );
   },
 
+  // Deactivate account
+  deactivateAccount: async (data: {
+    reason: string;
+    feedback?: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>("/users/deactivate", {
+      method: "POST",
+      body: data,
+    });
+  },
+
   // Get user activity
   getUserActivity: async (): Promise<
     Array<{ type: string; description: string; timestamp: string }>
@@ -788,6 +799,48 @@ export const matchesAPI = {
       >("/users/activity"),
       "Failed to fetch user activity",
     );
+  },
+
+  // Support API methods
+  getFAQ: async (): Promise<Array<{
+    id: string;
+    category: string;
+    question: string;
+    answer: string;
+  }>> => {
+    return request<Array<{
+      id: string;
+      category: string;
+      question: string;
+      answer: string;
+    }>>("/support/faq");
+  },
+
+  createSupportTicket: async (data: {
+    subject: string;
+    message: string;
+    category: string;
+    priority?: string;
+  }): Promise<{ success: boolean; data: any; message: string }> => {
+    return request<{ success: boolean; data: any; message: string }>("/support/ticket", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  submitBugReport: async (data: {
+    title: string;
+    description: string;
+    stepsToReproduce?: string;
+    expectedBehavior?: string;
+    actualBehavior?: string;
+    deviceInfo?: string;
+    appVersion?: string;
+  }): Promise<{ success: boolean; data: any; message: string }> => {
+    return request<{ success: boolean; data: any; message: string }>("/support/bug-report", {
+      method: "POST",
+      body: data,
+    });
   },
 
   // Get app version info

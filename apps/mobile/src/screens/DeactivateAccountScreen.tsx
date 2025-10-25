@@ -54,22 +54,29 @@ function DeactivateAccountScreen({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Call real API to deactivate account
+      const response = await matchesAPI.deactivateAccount({
+        reason,
+        feedback: confirmText,
+      });
 
-      Alert.alert(
-        "Account Deactivated",
-        "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              // In real app, would log out user
-              navigation.goBack();
+      if (response.success) {
+        Alert.alert(
+          "Account Deactivated",
+          response.message || "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // In real app, would log out user
+                navigation.goBack();
+              },
             },
-          },
-        ],
-      );
+          ],
+        );
+      } else {
+        throw new Error(response.message || "Failed to deactivate account");
+      }
     } catch (error) {
       Alert.alert("Error", "Failed to deactivate account. Please try again.");
     } finally {

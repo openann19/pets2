@@ -190,27 +190,6 @@ export function useChatData(matchId: string): UseChatDataReturn {
             isTyping: false,
           });
         }
-
-        // Simulate realistic response for demo
-        setTimeout(() => {
-          setOtherUserTyping(true);
-          setTimeout(
-            () => {
-              setOtherUserTyping(false);
-              const response: Message = {
-                _id: `response_${Date.now()}`,
-                content: getIntelligentResponse(messageContent),
-                senderId: "other",
-                timestamp: new Date().toISOString(),
-                read: false,
-                type: "text",
-              };
-
-              setMessages((prev) => [...prev, response]);
-            },
-            1500 + Math.random() * 1000,
-          );
-        }, 800);
       } catch (err) {
         logger.error("Failed to send message", {
           error: err,
@@ -323,55 +302,4 @@ export function useChatData(matchId: string): UseChatDataReturn {
       clearError,
     },
   };
-}
-
-// Intelligent response generation based on message content
-function getIntelligentResponse(messageContent: string): string {
-  const content = messageContent.toLowerCase();
-
-  if (
-    content.includes("weekend") ||
-    content.includes("saturday") ||
-    content.includes("sunday")
-  ) {
-    return "Weekends work perfectly for me! My schedule is pretty flexible then 📅";
-  }
-  if (content.includes("park") || content.includes("dog park")) {
-    return "The dog park sounds amazing! My pup absolutely loves meeting new friends there 🌳🐕";
-  }
-  if (content.includes("time") || content.includes("when")) {
-    return "I'm pretty flexible with timing! What works best for your schedule? ⏰";
-  }
-  if (
-    content.includes("weather") ||
-    content.includes("sunny") ||
-    content.includes("perfect")
-  ) {
-    return "Yes! I checked the forecast too - it's going to be beautiful! Perfect day for our pets to play ☀️";
-  }
-  if (
-    content.includes("excited") ||
-    content.includes("can't wait") ||
-    content.includes("looking forward")
-  ) {
-    return "Me too! This is going to be so much fun. I think our pets are going to be best friends! 🐾💕";
-  }
-  if (
-    content.includes("photo") ||
-    content.includes("picture") ||
-    content.includes("pic")
-  ) {
-    return "I'd love to see more photos! Your pet is absolutely adorable 📸✨";
-  }
-
-  // Default contextual responses
-  const responses = [
-    "That sounds absolutely perfect! I'm really looking forward to it 🎾",
-    "Amazing! My pet is going to be so excited to meet yours 🐕💕",
-    "Perfect! I think this is going to be the start of a beautiful friendship 😊",
-    "Wonderful! I can already tell our pets are going to get along great 🌟",
-    "Fantastic! This is exactly what I was hoping for 🎉",
-    "Love it! I have a really good feeling about this playdate ✨",
-  ];
-  return responses[Math.floor(Math.random() * responses.length)];
 }

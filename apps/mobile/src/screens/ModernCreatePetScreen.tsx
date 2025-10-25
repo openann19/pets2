@@ -9,6 +9,7 @@
  * - Staggered animations for form sections
  */
 
+import { petAPI } from "../services/api";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useCallback } from "react";
 import {
@@ -181,8 +182,13 @@ export default function ModernCreatePetScreen({
 
     setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Call real API to create pet
+      const petData = {
+        ...formData,
+        photos: photos.map(photo => photo.uri),
+      };
+      
+      const response = await petAPI.createPet(petData);
 
       Alert.alert(
         "Success!",

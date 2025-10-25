@@ -56,22 +56,16 @@ function ForgotPasswordScreen({
       // Haptic feedback for password reset attempt
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      // TODO: Replace with actual API call
-      const response = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      // Call real API for password reset
+      const response = await authAPI.forgotPassword(email);
 
-      if (response.ok) {
+      if (response.success) {
         // Success haptic feedback
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         Alert.alert(
           "Check Your Email",
-          "We've sent you a password reset link. Please check your email and follow the instructions.",
+          response.message || "We've sent you a password reset link. Please check your email and follow the instructions.",
           [
             {
               text: "OK",
@@ -80,8 +74,7 @@ function ForgotPasswordScreen({
           ],
         );
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to send reset email");
+        throw new Error(response.message || "Failed to send reset email");
       }
     } catch (error) {
       // Error haptic feedback

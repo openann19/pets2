@@ -76,6 +76,9 @@ export const Theme = {
       medium: "#d1d5db",
       dark: "#9ca3af",
     },
+
+    // Shadow color for backward compatibility
+    shadowColor: "#000000",
   },
 
   // Typography system

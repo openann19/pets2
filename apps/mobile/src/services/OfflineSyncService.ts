@@ -153,10 +153,10 @@ class OfflineSyncService {
   /**
    * Get current sync status
    */
-  getSyncStatus(): SyncStatus {
+  async getSyncStatus(): Promise<SyncStatus> {
     return {
       isOnline: this.isOnline,
-      lastSyncTime: this.getLastSyncTime(),
+      lastSyncTime: await this.getLastSyncTime(),
       pendingItems: this.queue.length,
       failedItems: this.queue.filter(
         (item) => item.retryCount >= this.MAX_RETRY_COUNT,
@@ -374,18 +374,25 @@ class OfflineSyncService {
     }
   }
 
-  private getLastSyncTime(): number | null {
+  private async getLastSyncTime(): Promise<number | null> {
     try {
-      // This would be implemented to read from AsyncStorage
-      // For now, return current time as placeholder
-      return Date.now();
-    } catch {
+      // Read from AsyncStorage
+      const stored = await AsyncStorage.getItem("last_sync_time");
+      if (stored) {
+        const timestamp = parseInt(stored, 10);
+        if (!isNaN(timestamp)) {
+          return timestamp;
+        }
+      }
+      return null;
+    } catch (error) {
+      logger.error("Failed to read last sync time", { error });
       return null;
     }
   }
 
-  private notifyListeners(): void {
-    const status = this.getSyncStatus();
+  private async notifyListeners(): Promise<void> {
+    const status = await this.getSyncStatus();
     this.syncListeners.forEach((listener) => {
       try {
         listener(status);
