@@ -30,6 +30,7 @@ import {
 // Legacy components (to be migrated)
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import { EliteButton as LegacyEliteButton } from "../components/EliteComponents";
+import { getTextColor } from "../../theme/helpers";
 
 export default function MigrationExampleScreen() {
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
   },
   toggleDescription: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   toggleButtons: {
     flexDirection: "row",
@@ -499,7 +500,7 @@ const styles = StyleSheet.create({
   },
   legacyBodySmall: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.sm,
   },
   legacyGradient: {
@@ -530,6 +531,6 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xs,
   },
   benefitDescription: {
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
 });

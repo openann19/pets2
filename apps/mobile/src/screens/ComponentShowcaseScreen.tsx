@@ -31,6 +31,7 @@ import {
 
 // Import legacy components for comparison
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { getTextColor } from "../../theme/helpers";
 
 type RootStackParamList = {
   ComponentShowcase: undefined;
@@ -434,7 +435,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   section: {
     padding: Theme.spacing.xl,
@@ -445,7 +446,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   buttonGrid: {
     gap: Theme.spacing.lg,
@@ -483,7 +484,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: {
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {

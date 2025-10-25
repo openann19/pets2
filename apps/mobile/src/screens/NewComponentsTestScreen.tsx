@@ -10,6 +10,7 @@ import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
 
 // Import new architecture components
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { getTextColor } from "../../theme/helpers";
 import {
   Theme,
   EliteButton,

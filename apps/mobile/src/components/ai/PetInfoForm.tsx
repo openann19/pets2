@@ -8,7 +8,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native";
 
-import { Theme } from "../theme/unified-theme";
+import { Theme } from "../../theme/unified-theme";
+import { getTextColor } from "../../theme/helpers";
 
 interface PetInfoFormProps {
   petName: string;
@@ -48,7 +49,7 @@ export function PetInfoForm({
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={getTextColor(Theme, "secondary")}
           maxLength={50}
         />
         {validationErrors.petName && (
@@ -64,7 +65,7 @@ export function PetInfoForm({
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={getTextColor(Theme, "secondary")}
           maxLength={100}
         />
         {validationErrors.petBreed && (
@@ -80,7 +81,7 @@ export function PetInfoForm({
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={getTextColor(Theme, "secondary")}
           maxLength={50}
         />
         {validationErrors.petAge && (
@@ -99,7 +100,7 @@ export function PetInfoForm({
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={getTextColor(Theme, "secondary")}
           multiline
           numberOfLines={4}
           maxLength={500}
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.xl,
   },
   inputGroup: {
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
   },
   characterCount: {
     fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     textAlign: "right",
     marginTop: Theme.spacing.xs,
   },

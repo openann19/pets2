@@ -32,7 +32,7 @@ type RootStackParamList = {
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, "Profile">;
 
-const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+const ProfileScreen = ({ navigation, route }: ProfileScreenProps) => {
   const { user, logout } = useAuthStore();
   const [notifications, setNotifications] = useState({
     matches: true,

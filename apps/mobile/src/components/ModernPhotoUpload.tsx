@@ -29,6 +29,7 @@ import { Theme } from "../theme/unified-theme";
 
 import EliteButton from "./buttons/EliteButton";
 import FXContainer from "./containers/FXContainer";
+import { getTextColor } from "../../theme/helpers";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const PHOTO_SIZE =
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -391,7 +392,7 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     textAlign: "center",
     lineHeight:
       Theme.typography.fontSize.base * Theme.typography.lineHeight.relaxed,

@@ -17,6 +17,11 @@ import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Theme } from "../../theme/unified-theme";
+import {
+  getBackgroundColor,
+  getTextColor,
+  getBorderColor,
+} from "../../theme/helpers";
 import type { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {
@@ -205,11 +210,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.textColor,
+    color: getTextColor(Theme, "primary"),
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor(Theme, "primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
@@ -224,7 +229,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.textColor,
+    color: getTextColor(Theme, "primary"),
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
@@ -233,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.borderColor.light,
+    borderTopColor: getBorderColor(Theme, "light"),
   },
   actionButton: {
     flexDirection: "row",
@@ -243,7 +248,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.textColor,
+    color: getTextColor(Theme, "primary"),
     marginLeft: Theme.spacing.xs,
     fontWeight: Theme.typography.fontWeight.medium,
   },
@@ -255,7 +260,7 @@ const styles = StyleSheet.create({
   analysisTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.textColor,
+    color: getTextColor(Theme, "primary"),
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -272,7 +277,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -282,7 +287,7 @@ const styles = StyleSheet.create({
   },
   metricSubtext: {
     fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   progressBar: {
     width: "100%",
@@ -297,13 +302,13 @@ const styles = StyleSheet.create({
   },
   keywordsSection: {
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.borderColor.light,
+    borderTopColor: getBorderColor(Theme, "light"),
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.textColor,
+    color: getTextColor(Theme, "primary"),
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {

@@ -8,6 +8,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Theme } from "../../theme/unified-theme";
+import { createShadowStyle, getBackgroundColor, getTextColor } from "../../theme/helpers";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
 interface ToneSelectorProps {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -125,16 +126,12 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor(Theme, 'primary'),
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    shadowColor: Theme.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...createShadowStyle(Theme, 'sm'),
   },
   selectedCard: {
     shadowOffset: { width: 0, height: 4 },
@@ -162,7 +159,7 @@ const styles = StyleSheet.create({
   },
   toneDescription: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     textAlign: "center",
     lineHeight: Theme.typography.lineHeight.normal,
   },

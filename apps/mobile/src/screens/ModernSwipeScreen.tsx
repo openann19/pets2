@@ -40,6 +40,7 @@ import {
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import { useTheme } from "../contexts/ThemeContext";
 import { matchesAPI } from "../services/api";
+import { getTextColor } from "../../theme/helpers";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   emptyContainer: {
     flex: 1,
@@ -540,7 +541,7 @@ const styles = StyleSheet.create({
   errorMessage: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   emptyCard: {
     padding: Theme.spacing["4xl"],
@@ -554,7 +555,7 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   headerActions: {
     flexDirection: "row",
@@ -644,7 +645,7 @@ const styles = StyleSheet.create({
   matchText: {
     textAlign: "center",
     marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   matchButtons: {
     flexDirection: "row",

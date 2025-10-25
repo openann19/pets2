@@ -14,6 +14,7 @@ import { PetInfoForm } from "../components/ai/PetInfoForm";
 import { ToneSelector } from "../components/ai/ToneSelector";
 import { BioResults } from "../components/ai/BioResults";
 import Theme from "../theme/unified-theme";
+import { getTextColor } from "../../theme/helpers";
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;
@@ -121,7 +122,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                     <Ionicons
                       name="camera"
                       size={32}
-                      color={Theme.colors.text.secondary}
+                      color={getTextColor(Theme, "secondary")}
                     />
                     <Text style={styles.photoText}>Add Photo</Text>
                   </View>
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
   },
   photoText: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
     marginTop: Theme.spacing.sm,
   },
   generateButton: {
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   disabledButton: {
-    backgroundColor: Theme.colors.text.secondary,
+    backgroundColor: getTextColor(Theme, "secondary"),
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
   },
   historyText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, "secondary"),
   },
   newBioButton: {
     flexDirection: "row",

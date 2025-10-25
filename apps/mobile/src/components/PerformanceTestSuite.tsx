@@ -23,6 +23,7 @@ import PerformanceMonitor, {
 
 import { EliteButtonPresets } from "./buttons/EliteButton";
 import { FXContainerPresets } from "./containers/FXContainer";
+import { getTextColor } from "../../theme/helpers";
 import {
   Heading2,
   Body,
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, 'secondary'),
   },
   metricsContainer: {
     flexDirection: "row",
@@ -427,7 +428,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: {
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, 'secondary'),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -454,7 +455,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, 'secondary'),
   },
   testVisualization: {
     height: 100,
@@ -488,7 +489,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.sm,
   },
   resultLabel: {
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, 'secondary'),
   },
   resultValue: {
     fontWeight: Theme.typography.fontWeight.bold,
@@ -505,6 +506,6 @@ const styles = StyleSheet.create({
   },
   recommendation: {
     marginBottom: Theme.spacing.xs,
-    color: Theme.colors.text.secondary,
+    color: getTextColor(Theme, 'secondary'),
   },
 });

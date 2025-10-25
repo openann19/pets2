@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Socket } from 'socket.io';
+import mongoose, { Document } from 'mongoose';
 
 // User Types
 export interface User {
@@ -814,9 +815,6 @@ export interface AnalyticsRoutes {
   '/match/:matchId': RouteHandler;
   '/matches/:userId': RouteHandler;
 }
-
-// Import mongoose for Document type
-import mongoose, { Document } from 'mongoose';
 
 // Export all types
 export type {
