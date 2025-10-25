@@ -26,9 +26,19 @@ export function getBorderColor(variant: 'light' | 'medium' | 'dark' = 'light'): 
 }
 
 /**
- * Get text color with variant support
+ * Get text color object with primary and inverse properties
  */
-export function getTextColor(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
+export function getTextColor(): { primary: string; inverse: string } {
+  return {
+    primary: Theme.colors.text.primary,
+    inverse: Theme.colors.text.inverse,
+  };
+}
+
+/**
+ * Get text color string with variant support (legacy support)
+ */
+export function getTextColorString(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
   switch (variant) {
     case 'primary':
       return Theme.colors.text.primary;
@@ -44,9 +54,19 @@ export function getTextColor(variant: 'primary' | 'secondary' | 'tertiary' | 'in
 }
 
 /**
- * Get background color with variant support
+ * Get background color object with primary and inverse properties
  */
-export function getBackgroundColor(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
+export function getBackgroundColor(): { primary: string; inverse: string } {
+  return {
+    primary: Theme.colors.background.primary,
+    inverse: Theme.colors.background.inverse,
+  };
+}
+
+/**
+ * Get background color string with variant support (legacy support)
+ */
+export function getBackgroundColorString(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
   switch (variant) {
     case 'primary':
       return Theme.colors.background.primary;
@@ -87,6 +107,17 @@ export function getNeutralColor(shade: 0 | 50 | 100 | 200 | 300 | 400 | 500 | 60
  */
 export function getStatusColor(status: 'success' | 'warning' | 'error' | 'info'): string {
   return Theme.colors.status[status];
+}
+
+/**
+ * Get border color object with variants
+ */
+export function getBorderColorObject(): { light: string; medium: string; dark: string } {
+  return {
+    light: Theme.colors.border.light,
+    medium: Theme.colors.border.medium,
+    dark: Theme.colors.border.dark,
+  };
 }
 
 // ====== STYLE HELPERS ======
