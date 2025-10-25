@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Animated,
   Image,
@@ -14,8 +14,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { CallData } from "../../services/WebRTCService";
 import { hapticFeedback } from "../../services/HapticFeedbackService";
+import type { CallData } from "../../services/WebRTCService";
+import { useIncomingCallAccessibility } from "./hooks/useIncomingCallAccessibility";
+import { useColors, useTheme } from "../../theme";
+import type { ColorPalette, Theme as ThemeType } from "../../theme";
 
 interface IncomingCallScreenProps {
   callData: CallData;
@@ -40,8 +43,29 @@ export default function IncomingCallScreen({
   onAnswer,
   onReject,
 }: IncomingCallScreenProps) {
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const colors = useColors();
+  const theme = useTheme();
+  const {
+    isReduceMotionEnabled,
+    containerAccessibility,
+    answerButtonAccessibility,
+    rejectButtonAccessibility,
+    messageButtonAccessibility,
+    profileButtonAccessibility,
+  } = useIncomingCallAccessibility(callData);
+
+  const pulseAnim = useMemo(() => new Animated.Value(1), []);
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
+
+  const styles = useMemo(
+    () => createStyles({ colors, theme }),
+    [colors, theme],
+  );
+
+  const backgroundGradient = useMemo(
+    () => theme.gradients.holographic ?? theme.gradients.primary,
+    [theme.gradients.holographic, theme.gradients.primary],
+  );
 
   const headerTranslateY = useMemo(
     () => createNumericInterpolation(slideAnim, [-50, 0] as const),
@@ -96,7 +120,17 @@ export default function IncomingCallScreen({
   );
 
   useEffect(() => {
-    // Start pulsing animation for incoming call
+    if (isReduceMotionEnabled) {
+      pulseAnim.stopAnimation();
+      slideAnim.stopAnimation();
+      pulseAnim.setValue(1);
+      slideAnim.setValue(1);
+
+      return () => {
+        void hapticFeedback.stop();
+      };
+    }
+
     const pulseAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -112,7 +146,6 @@ export default function IncomingCallScreen({
       ]),
     );
 
-    // Slide in animation
     const slideAnimation = Animated.timing(slideAnim, {
       toValue: 1,
       duration: 500,
@@ -122,15 +155,14 @@ export default function IncomingCallScreen({
     pulseAnimation.start();
     slideAnimation.start();
 
-    // Haptic feedback pattern for incoming call
     void hapticFeedback.triggerCustomPattern();
 
     return () => {
       pulseAnimation.stop();
       slideAnimation.stop();
-      hapticFeedback.stop();
+      void hapticFeedback.stop();
     };
-  }, [pulseAnim, slideAnim]);
+  }, [isReduceMotionEnabled, pulseAnim, slideAnim]);
 
   const handleAnswer = () => {
     void hapticFeedback.triggerSuccess();
@@ -147,7 +179,11 @@ export default function IncomingCallScreen({
   };
 
   return (
-    <View style={styles.container} testID="incoming-call-container">
+    <View
+      style={styles.container}
+      testID="incoming-call-container"
+      {...containerAccessibility}
+    >
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
@@ -156,7 +192,7 @@ export default function IncomingCallScreen({
 
       {/* Background Gradient */}
       <LinearGradient
-        colors={["#1a1a2e", "#16213e", "#0f3460"]}
+        colors={backgroundGradient}
         style={styles.backgroundGradient}
       />
 
@@ -201,15 +237,16 @@ export default function IncomingCallScreen({
             onPress={handleReject}
             activeOpacity={0.8}
             testID="reject-button"
+            {...rejectButtonAccessibility}
           >
             <LinearGradient
-              colors={["#ff4757", "#ff3838"]}
+              colors={theme.gradients.error}
               style={styles.buttonGradient}
             >
               <Ionicons
                 name="call"
                 size={32}
-                color="#fff"
+                color={colors.textInverse}
                 style={{ transform: [{ rotate: "135deg" }] }}
               />
             </LinearGradient>
@@ -221,12 +258,13 @@ export default function IncomingCallScreen({
             onPress={handleAnswer}
             activeOpacity={0.8}
             testID="answer-button"
+            {...answerButtonAccessibility}
           >
             <LinearGradient
-              colors={["#2ed573", "#1dd1a1"]}
+              colors={theme.gradients.success}
               style={styles.buttonGradient}
             >
-              <Ionicons name="call" size={32} color="#fff" />
+              <Ionicons name="call" size={32} color={colors.textInverse} />
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
@@ -235,13 +273,19 @@ export default function IncomingCallScreen({
         <Animated.View
           style={[styles.additionalActions, additionalActionsAnimatedStyle]}
         >
-          <TouchableOpacity style={styles.additionalButton}>
-            <Ionicons name="chatbubble" size={24} color="#fff" />
+          <TouchableOpacity
+            style={styles.additionalButton}
+            {...messageButtonAccessibility}
+          >
+            <Ionicons name="chatbubble" size={24} color={colors.textInverse} />
             <Text style={styles.additionalButtonText}>Message</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.additionalButton}>
-            <Ionicons name="person" size={24} color="#fff" />
+          <TouchableOpacity
+            style={styles.additionalButton}
+            {...profileButtonAccessibility}
+          >
+            <Ionicons name="person" size={24} color={colors.textInverse} />
             <Text style={styles.additionalButtonText}>Profile</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -250,118 +294,124 @@ export default function IncomingCallScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  backgroundGradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  blurOverlay: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "space-between",
-    paddingHorizontal: 30,
-  },
-  header: {
-    alignItems: "center",
-    marginTop: 60,
-  },
-  incomingCallText: {
-    fontSize: 18,
-    color: "#fff",
-    opacity: 0.8,
-    marginBottom: 5,
-  },
-  callTypeText: {
-    fontSize: 16,
-    color: "#fff",
-    opacity: 0.6,
-  },
-  callerInfo: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-  avatarContainer: {
-    marginBottom: 30,
-  },
-  avatarRing: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderWidth: 4,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    padding: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  avatar: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 92,
-    backgroundColor: "#ddd",
-  },
-  callerName: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  callerSubtext: {
-    fontSize: 18,
-    color: "#fff",
-    opacity: 0.7,
-  },
-  actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginBottom: 50,
-  },
-  actionButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  rejectButton: {},
-  answerButton: {},
-  buttonGradient: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  additionalActions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 40,
-  },
-  additionalButton: {
-    alignItems: "center",
-    padding: 15,
-  },
-  additionalButtonText: {
-    color: "#fff",
-    fontSize: 12,
-    marginTop: 5,
-    opacity: 0.8,
-  },
-});
+interface CreateStylesParams {
+  colors: ColorPalette;
+  theme: ThemeType;
+}
+
+const createStyles = ({ colors, theme }: CreateStylesParams) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    backgroundGradient: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    },
+    blurOverlay: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    },
+    content: {
+      flex: 1,
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.lg,
+    },
+    header: {
+      alignItems: "center",
+      marginTop: theme.spacing["3xl"],
+    },
+    incomingCallText: {
+      fontSize: theme.typography.fontSize.lg,
+      color: colors.text,
+      opacity: 0.8,
+      marginBottom: theme.spacing.xs,
+    },
+    callTypeText: {
+      fontSize: theme.typography.fontSize.base,
+      color: colors.textSecondary,
+      opacity: 0.8,
+    },
+    callerInfo: {
+      alignItems: "center",
+      flex: 1,
+      justifyContent: "center",
+    },
+    avatarContainer: {
+      marginBottom: theme.spacing.xl,
+    },
+    avatarRing: {
+      width: 200,
+      height: 200,
+      borderRadius: 100,
+      borderWidth: 4,
+      borderColor: colors.borderLight,
+      padding: theme.spacing.sm,
+      backgroundColor: theme.glass.light.backgroundColor,
+    },
+    avatar: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 92,
+      backgroundColor: colors.surface,
+    },
+    callerName: {
+      fontSize: theme.typography.fontSize["3xl"],
+      fontWeight: theme.typography.fontWeight.bold,
+      color: colors.text,
+      marginBottom: theme.spacing.sm,
+      textAlign: "center",
+    },
+    callerSubtext: {
+      fontSize: theme.typography.fontSize.lg,
+      color: colors.textSecondary,
+      opacity: 0.8,
+    },
+    actionsContainer: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      alignItems: "center",
+      marginBottom: theme.spacing["2xl"],
+    },
+    actionButton: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      elevation: theme.shadows.depth.lg.elevation,
+      shadowColor: theme.shadows.depth.lg.shadowColor,
+      shadowOffset: theme.shadows.depth.lg.shadowOffset,
+      shadowOpacity: theme.shadows.depth.lg.shadowOpacity,
+      shadowRadius: theme.shadows.depth.lg.shadowRadius,
+    },
+    rejectButton: {},
+    answerButton: {},
+    buttonGradient: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 40,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    additionalActions: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      marginBottom: theme.spacing.xl,
+    },
+    additionalButton: {
+      alignItems: "center",
+      padding: theme.spacing.sm,
+    },
+    additionalButtonText: {
+      color: colors.textInverse,
+      fontSize: theme.typography.fontSize.sm,
+      marginTop: theme.spacing.xs,
+      opacity: 0.8,
+    },
+  });

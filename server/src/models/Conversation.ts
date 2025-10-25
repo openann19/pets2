@@ -1,22 +1,43 @@
-export {};// Added to mark file as a module
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-const messageSchema = new mongoose.Schema({
-    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+interface IMessage {
+  sender: mongoose.Types.ObjectId;
+  content: string;
+  attachments: string[];
+  sentAt: Date;
+  readBy: Array<{ user: mongoose.Types.ObjectId; readAt: Date }>;
+  reactions: Array<{
+    emoji: string;
+    userId: mongoose.Types.ObjectId;
+    reactedAt: Date;
+  }>;
+}
+
+const messageSchema = new Schema<IMessage>({
+    sender: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     content: { type: String, required: true, maxlength: 1000 },
     attachments: [{ type: String }],
     sentAt: { type: Date, default: Date.now },
-    readBy: [{ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, readAt: { type: Date, default: Date.now } }],
-    // Message reactions (new field)
+    readBy: [{ user: { type: Schema.Types.ObjectId, ref: 'User' }, readAt: { type: Date, default: Date.now } }],
     reactions: [{
         emoji: { type: String, required: true },
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         reactedAt: { type: Date, default: Date.now }
     }],
 }, { _id: true });
 
-const conversationSchema = new mongoose.Schema({
-    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+interface IConversation extends Document {
+  participants: mongoose.Types.ObjectId[];
+  lastMessageAt: Date;
+  messages: IMessage[];
+  findOrCreateOneToOne?(userA: mongoose.Types.ObjectId, userB: mongoose.Types.ObjectId): Promise<IConversation>;
+  addMessage?(senderId: mongoose.Types.ObjectId, content: string, attachments: string[]): Promise<IMessage>;
+  markMessagesAsRead?(userId: mongoose.Types.ObjectId): Promise<boolean>;
+  getMessagesPage?(conversationId: string, options: { before?: string; limit?: number }): Promise<{ messages: IMessage[]; nextCursor: string | null; hasMore: boolean }>;
+}
+
+const conversationSchema = new Schema<IConversation>({
+    participants: [{ type: Schema.Types.ObjectId, ref: 'User', required: true }],
     lastMessageAt: { type: Date, default: Date.now },
     messages: { type: [messageSchema], default: [] },
 }, { timestamps: true });
@@ -26,7 +47,7 @@ conversationSchema.index({ lastMessageAt: -1 });
 // Optional index to speed up message lookups by id (best-effort)
 conversationSchema.index({ 'messages._id': 1 });
 
-conversationSchema.statics.findOrCreateOneToOne = async function (userA, userB) {
+conversationSchema.statics.findOrCreateOneToOne = async function (userA: mongoose.Types.ObjectId, userB: mongoose.Types.ObjectId) {
     const ids = [String(userA), String(userB)].sort();
     let conv = await this.findOne({ participants: { $all: ids, $size: 2 } });
     if (conv) return conv;
@@ -35,7 +56,7 @@ conversationSchema.statics.findOrCreateOneToOne = async function (userA, userB) 
     return conv;
 };
 
-conversationSchema.methods.addMessage = async function (senderId, content, attachments = []) {
+conversationSchema.methods.addMessage = async function (senderId: mongoose.Types.ObjectId, content: string, attachments: string[] = []) {
     const msg = { sender: senderId, content, attachments, sentAt: new Date(), readBy: [{ user: senderId, readAt: new Date() }] };
     this.messages.push(msg);
     this.lastMessageAt = new Date();
@@ -43,7 +64,7 @@ conversationSchema.methods.addMessage = async function (senderId, content, attac
     return this.messages[this.messages.length - 1];
 };
 
-conversationSchema.methods.markMessagesAsRead = async function (userId) {
+conversationSchema.methods.markMessagesAsRead = async function (userId: mongoose.Types.ObjectId) {
     let changed = false;
     for (const msg of this.messages) {
         const isSender = String(msg.sender) === String(userId);
@@ -98,4 +119,4 @@ conversationSchema.statics.getMessagesPage = async function (conversationId, { b
     return { messages, nextCursor, hasMore: Boolean(doc?.hasMore) };
 };
 
-module.exports = mongoose.model('Conversation', conversationSchema);
+export default mongoose.model('Conversation', conversationSchema);

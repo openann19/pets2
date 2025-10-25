@@ -140,22 +140,21 @@ app.use('/api/users', authenticateToken as any, gdprRoutes); // GDPR endpoints
 app.use('/api/pets', authenticateToken as any, petRoutes);
 app.use('/api/matches', authenticateToken as any, matchRoutes);
 app.use('/api/chat', authenticateToken as any, chatRoutes);
-// app.use('/api/ai', authenticateToken as any, aiRoutes);
-// app.use('/api/premium', authenticateToken as any, premiumRoutes);
-// app.use('/api/analytics', authenticateToken as any, analyticsRoutes);
-// app.use('/api/account', authenticateToken as any, accountRoutes);
-// app.use('/api/memories', authenticateToken as any, memoriesRoutes);
+app.use('/api/premium', authenticateToken as any, premiumRoutes);
+app.use('/api/analytics', authenticateToken as any, analyticsRoutes);
+app.use('/api/memories', authenticateToken as any, memoriesRoutes);
 app.use('/api/support', authenticateToken as any, supportRoutes);
-// app.use('/api/adoption', adoptionRoutes);
+app.use('/api/moderation', authenticateToken as any, moderationRoutes);
+app.use('/api/profile', authenticateToken as any, profileRoutes);
+app.use('/api/health', healthRoutes);
 
 // Enhanced 2025 Features Routes
-// app.use('/api/auth/biometric', biometricRoutes);
-// app.use('/api/leaderboard', leaderboardRoutes);
-// app.use('/api/user/notifications', notificationRoutes);
-// app.use('/api/notifications', notificationRoutes);
+app.use('/api/auth/biometric', biometricRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/notifications', notificationRoutes);
 
-// Admin routes
-// app.use('/api/admin', authenticateToken as any, requireAdmin as any, adminRoutes);
+// Admin routes  
+app.use('/api/admin', authenticateToken as any, adminRoutes);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {

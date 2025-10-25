@@ -2,8 +2,8 @@
  * Redis configuration for caching and rate limiting
  */
 
-import { Redis as RedisType, RedisOptions } from 'ioredis';
-import { logger } from '../utils/logger';
+import { Redis as RedisType } from 'ioredis';
+import logger from '../utils/logger';
 
 let Redis: typeof import('ioredis').Redis | null = null;
 const isTestEnv = process.env['NODE_ENV'] === 'test';

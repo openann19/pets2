@@ -12,6 +12,7 @@ interface MessageInputProps {
   onChangeText: (text: string) => void;
   onSend: () => void;
   onTypingChange?: (isTyping: boolean) => void;
+  onAttachMedia?: (type: 'image' | 'video' | 'voice', source: 'camera' | 'library' | 'recorder') => void;
   isSending?: boolean;
   maxLength?: number;
   placeholder?: string;
@@ -25,6 +26,7 @@ export function MessageInput({
   onChangeText,
   onSend,
   onTypingChange,
+  onAttachMedia,
   isSending = false,
   maxLength = MAX_MESSAGE_LENGTH,
   placeholder = "Type a message...",
@@ -72,9 +74,63 @@ export function MessageInput({
     onSend();
   }, [value, isSending, onSend]);
 
-  const handleAttachPress = useCallback(() => {
+  const handleAttachPress = useCallback(async () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Attach Media", "Photo and file sharing coming soon!");
+    
+    Alert.alert(
+      "Attach Media",
+      "Choose what you'd like to attach",
+      [
+        {
+          text: "Photo",
+          onPress: () => handleAttachMedia('image'),
+        },
+        {
+          text: "Video",
+          onPress: () => handleAttachMedia('video'),
+        },
+        {
+          text: "Voice Message",
+          onPress: () => handleAttachMedia('voice'),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+  }, []);
+
+  const handleAttachMedia = useCallback(async (type: 'image' | 'video' | 'voice') => {
+    try {
+      if (type === 'image') {
+        // Show source selection
+        Alert.alert(
+          "Select Photo",
+          "Choose how you want to add a photo",
+          [
+            { text: "Camera", onPress: () => onAttachMedia('image', 'camera') },
+            { text: "Library", onPress: () => onAttachMedia('image', 'library') },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+      } else if (type === 'video') {
+        Alert.alert(
+          "Select Video",
+          "Choose how you want to add a video",
+          [
+            { text: "Camera", onPress: () => onAttachMedia('video', 'camera') },
+            { text: "Library", onPress: () => onAttachMedia('video', 'library') },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+      } else if (type === 'voice') {
+        onAttachMedia('voice', 'recorder');
+      }
+    } catch (error) {
+      logger.error("Failed to attach media:", { error });
+      Alert.alert("Error", "Failed to attach media. Please try again.");
+    }
   }, []);
 
   const handleEmojiPress = useCallback(() => {

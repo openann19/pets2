@@ -1,14 +1,23 @@
-export {};// Added to mark file as a module
 /**
  * Notification Model
  * Stores notification history for users
  */
 
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { INotification } from '../types';
 
-const notificationSchema = new mongoose.Schema({
+interface INotificationDocument extends INotification, Document {
+  markAsRead(): Promise<void>;
+}
+
+interface INotificationModel extends Model<INotificationDocument> {
+  getUnreadCount(userId: mongoose.Types.ObjectId): Promise<number>;
+  markAllAsRead(userId: mongoose.Types.ObjectId): Promise<any>;
+}
+
+const notificationSchema = new Schema<INotification>({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     index: true
@@ -30,7 +39,7 @@ const notificationSchema = new mongoose.Schema({
     maxlength: 500
   },
   data: {
-    type: mongoose.Schema.Types.Mixed,
+    type: Schema.Types.Mixed,
     default: {}
   },
   read: {
@@ -68,23 +77,23 @@ notificationSchema.virtual('isExpired').get(function() {
 });
 
 // Method to mark as read
-notificationSchema.methods.markAsRead = async function() {
+notificationSchema.methods.markAsRead = async function(this: INotificationDocument): Promise<void> {
   this.read = true;
   this.readAt = new Date();
-  return await this.save();
+  await this.save();
 };
 
 // Static method to get unread count
-notificationSchema.statics.getUnreadCount = async function(userId) {
+notificationSchema.statics.getUnreadCount = async function(userId: mongoose.Types.ObjectId): Promise<number> {
   return await this.countDocuments({ userId, read: false });
 };
 
 // Static method to mark all as read
-notificationSchema.statics.markAllAsRead = async function(userId) {
+notificationSchema.statics.markAllAsRead = async function(userId: mongoose.Types.ObjectId): Promise<any> {
   return await this.updateMany(
     { userId, read: false },
     { $set: { read: true, readAt: new Date() } }
   );
 };
 
-module.exports = mongoose.model('Notification', notificationSchema);
+export default mongoose.model<INotificationDocument, INotificationModel>('Notification', notificationSchema);

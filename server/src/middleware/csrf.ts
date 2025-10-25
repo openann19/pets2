@@ -1,16 +1,16 @@
-export {};// Added to mark file as a module
 /**
  * CSRF Protection Middleware
  * Implements double-submit cookie pattern for cookie-based authentication
  */
 
-const crypto = require('crypto');
-const logger = require('../utils/logger');
+import crypto from 'crypto';
+import { Request, Response, NextFunction } from 'express';
+import { logger } from '../utils/logger';
 
 /**
  * Generate CSRF token
  */
-function generateCsrfToken() {
+export function generateCsrfToken(): string {
   return crypto.randomBytes(32).toString('hex');
 }
 
@@ -18,7 +18,7 @@ function generateCsrfToken() {
  * CSRF protection middleware
  * Validates CSRF token for state-changing operations when using cookie auth
  */
-function csrfProtection(req, res, next) {
+export function csrfProtection(req: Request, res: Response, next: NextFunction): void {
   // Skip for safe methods
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
     return next();
@@ -78,11 +78,11 @@ function csrfProtection(req, res, next) {
 
     if (origin) {
       const originUrl = new URL(origin);
-      const isAllowed = allowedOrigins.some(allowed => {
+      const isAllowed = allowedOrigins.some((allowed: string) => {
         try {
           const allowedUrl = new URL(allowed);
           return originUrl.origin === allowedUrl.origin;
-        } catch {
+        } catch (e) {
           return false;
         }
       });
@@ -109,9 +109,9 @@ function csrfProtection(req, res, next) {
 /**
  * Extract CSRF token from cookie header
  */
-function getCsrfTokenFromCookie(cookieHeader) {
+function getCsrfTokenFromCookie(cookieHeader: string): string | null {
   try {
-    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+    const cookies = cookieHeader.split(';').reduce((acc: Record<string, string>, cookie: string) => {
       const [key, value] = cookie.trim().split('=');
       if (key) acc[key] = decodeURIComponent(value || '');
       return acc;
@@ -125,7 +125,7 @@ function getCsrfTokenFromCookie(cookieHeader) {
 /**
  * Middleware to set CSRF token cookie
  */
-function setCsrfToken(req, res, next) {
+export function setCsrfToken(req: Request, res: Response, next: NextFunction): void {
   // Generate token if not present
   const existingToken = getCsrfTokenFromCookie(req.headers.cookie || '');
   const token = existingToken || generateCsrfToken();
@@ -134,7 +134,7 @@ function setCsrfToken(req, res, next) {
     // Set CSRF token cookie
     res.cookie('csrf-token', token, {
       httpOnly: false, // Must be readable by client JS
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env['NODE_ENV'] === 'production',
       sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
@@ -146,8 +146,4 @@ function setCsrfToken(req, res, next) {
   next();
 }
 
-module.exports = {
-  csrfProtection,
-  setCsrfToken,
-  generateCsrfToken
-};
+// Export generateCsrfToken is already exported above

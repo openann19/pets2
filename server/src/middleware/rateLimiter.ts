@@ -1,12 +1,13 @@
-export {};// Added to mark file as a module
 /**
  * Rate Limiting Middleware
  * Prevents abuse of admin endpoints
  */
 
-const rateLimit = require('express-rate-limit');
-const { ipKeyGenerator } = require('express-rate-limit');
-const { logAdminActivity } = require('./adminLogger');
+import rateLimit from 'express-rate-limit';
+import { ipKeyGenerator } from 'express-rate-limit';
+import { logAdminActivity } from './adminLogger';
+import { Request, Response, RequestHandler } from 'express';
+import { AuthenticatedRequest } from '../types';
 
 /**
  * Rate limiter for admin routes
@@ -25,10 +26,10 @@ const adminRateLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 
   // Custom key generator - use user ID instead of IP
-  keyGenerator: (req) => req.user?._id?.toString() || ipKeyGenerator(req),
+  keyGenerator: (req: Request) => (req as AuthenticatedRequest).user?._id?.toString() || ipKeyGenerator(req),
 
   // Custom handler for rate limit exceeded
-  handler: async (req, res) => {
+  handler: async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     // Log rate limit exceeded event
     if (req.user) {
       await logAdminActivity(
@@ -74,9 +75,9 @@ const strictRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  keyGenerator: (req) => req.user?._id?.toString() || ipKeyGenerator(req),
+  keyGenerator: (req: Request) => (req as AuthenticatedRequest).user?._id?.toString() || ipKeyGenerator(req),
 
-  handler: async (req, res) => {
+  handler: async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     if (req.user) {
       await logAdminActivity(
         req,
@@ -115,12 +116,12 @@ const loginRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  keyGenerator: (req) => `${req.body.email || 'unknown'}_${ipKeyGenerator(req)}`,
+  keyGenerator: (req: Request) => `${(req as any).body?.email || 'unknown'}_${ipKeyGenerator(req)}`,
 
   skipSuccessfulRequests: true // Only count failed login attempts
 });
 
-module.exports = {
+export {
   adminRateLimiter,
   strictRateLimiter,
   loginRateLimiter

@@ -1,16 +1,17 @@
-export {};// Added to mark file as a module
-const crypto = require('crypto');
-const speakeasy = require('speakeasy');
-const QRCode = require('qrcode');
-const User = require('../models/User');
-const { generateTokens } = require('../middleware/auth');
-const { sendEmail } = require('../services/emailService');
-const logger = require('../utils/logger');
+import crypto from 'crypto';
+import speakeasy from 'speakeasy';
+import QRCode from 'qrcode';
+import User from '../models/User';
+import { generateTokens } from '../middleware/auth';
+import { sendEmail } from '../services/emailService';
+import { logger } from '../utils/logger';
+import { Request, Response } from 'express';
+import { AuthenticatedRequest } from '../types';
 
 // @desc    Setup 2FA with SMS/Email
 // @route   POST /api/auth/2fa/setup-sms-email
 // @access  Private
-const setup2FASmsEmail = async (req, res) => {
+const setup2FASmsEmail = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { method, phone, email } = req.body; // method: 'sms' or 'email'
     const user = await User.findById(req.userId);
@@ -1034,7 +1035,7 @@ const disable2FA = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   setup2FASmsEmail,
   verify2FASmsEmail,
   send2FACode,

@@ -1,7 +1,7 @@
-export {};// Added to mark file as a module
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document } from 'mongoose';
+import { IAnalyticsEvent } from '../types';
 
-const analyticsEventSchema = new mongoose.Schema({
+const analyticsEventSchema = new Schema<IAnalyticsEvent>({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
   eventType: { type: String, required: true, index: true },
   entityType: { type: String },
@@ -18,4 +18,4 @@ const analyticsEventSchema = new mongoose.Schema({
 analyticsEventSchema.index({ eventType: 1, createdAt: -1 });
 analyticsEventSchema.index({ userId: 1, createdAt: -1 });
 
-module.exports = mongoose.model('AnalyticsEvent', analyticsEventSchema);
+export default mongoose.model<IAnalyticsEvent>('AnalyticsEvent', analyticsEventSchema);
