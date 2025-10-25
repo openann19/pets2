@@ -445,7 +445,7 @@ class PushNotificationService {
     remoteMessage: FCMRemoteMessage,
   ): Promise<NotificationData> {
     // Check rate limiting
-    if (!this.rateLimiter.tryRemoveTokens(1)) {
+    if (!this.rateLimiter.tryConsume(1)) {
       const error = new Error("Rate limit exceeded") as NotificationError;
       error.code = "RATE_LIMIT_EXCEEDED";
       throw error;

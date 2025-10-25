@@ -5,13 +5,27 @@
   "compilerOptions": {
     // Include DOM libs for browser globals
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    
+
     // Include test files for ESLint parsing
     "types": ["jest", "node"],
-    
+
+    "baseUrl": "./",
+    "paths": {
+      "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
+      "@pawfectmatch/core/*": ["../../packages/core/src/*"],
+      "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],
+      "@pawfectmatch/ui/*": ["../../packages/ui/src/*"],
+      "@pawfectmatch/design-tokens": [
+        "../../packages/design-tokens/src/index.ts"
+      ],
+      "@pawfectmatch/design-tokens/*": [
+        "../../packages/design-tokens/src/*"
+      ]
+    },
+
     // Allow JS files for ESLint parsing
     "allowJs": true,
-    
+
     // Relax some strict rules for ESLint parsing
     "noUncheckedIndexedAccess": false,
     "exactOptionalPropertyTypes": false,
