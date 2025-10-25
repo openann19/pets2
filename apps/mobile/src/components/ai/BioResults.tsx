@@ -18,12 +18,14 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { Theme } from "../../theme/unified-theme";
 import {
-  getBackgroundColor,
-  getTextColor,
   getBorderColor,
-  getStatusColor,
   getPrimaryColor,
 } from "../../theme/helpers";
+import {
+  getTextColorString,
+  getBackgroundColorString,
+  getStatusColor,
+} from "../../theme/compatibility";
 import type { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {
@@ -41,12 +43,12 @@ export function BioResults({
 
   const handleCopy = async () => {
     try {
-      await Clipboard.setString(generatedBio.bio);
+      Clipboard.setString(generatedBio.bio);
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       Alert.alert("Error", "Failed to copy bio to clipboard");
     }
   };
@@ -58,13 +60,13 @@ export function BioResults({
     }
   };
 
-  const getSentimentColor = (score: number) => {
+  const getSentimentColor = (score: number): string => {
     if (score >= 0.7) return getStatusColor("success");
     if (score >= 0.4) return getStatusColor("warning");
     return getStatusColor("error");
   };
 
-  const getMatchScoreColor = (score: number) => {
+  const getMatchScoreColor = (score: number): string => {
     if (score >= 80) return getStatusColor("success");
     if (score >= 60) return getStatusColor("warning");
     return getStatusColor("error");
@@ -87,14 +89,14 @@ export function BioResults({
         <View style={styles.actionButtons}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={handleCopy}
+            onPress={() => void handleCopy()}
             accessibilityLabel="Copy bio to clipboard"
           >
             <Ionicons
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
               color={
-                copied ? getStatusColor("success") : getTextColor("primary")
+                copied ? getStatusColor("success") : getTextColorString("primary")
               }
             />
             <Text
@@ -116,7 +118,7 @@ export function BioResults({
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={getTextColor("primary")}
+                color={getTextColorString("primary")}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -131,7 +133,7 @@ export function BioResults({
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={getTextColor("primary")}
+                color={getTextColorString("primary")}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
@@ -160,7 +162,7 @@ export function BioResults({
                 style={[
                   styles.progressFill,
                   {
-                    width: `${generatedBio.matchScore}%`,
+                    width: `${generatedBio.matchScore.toString()}%`,
                     backgroundColor: getMatchScoreColor(
                       generatedBio.matchScore,
                     ),
@@ -212,11 +214,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: getTextColor("primary"),
+          color: getTextColorString("primary"),
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
-    backgroundColor: getBackgroundColor("primary"),
+    backgroundColor: getBackgroundColorString("primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor("primary"),
+          color: getTextColorString("primary"),
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
@@ -250,19 +252,19 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: getTextColor("primary"),
+          color: getTextColorString("primary"),
     marginLeft: Theme.spacing.xs,
     fontWeight: Theme.typography.fontWeight.medium,
   },
   analysisContainer: {
-    backgroundColor: getBackgroundColor("primary"),
+    backgroundColor: getBackgroundColorString("primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
   },
   analysisTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: getTextColor("primary"),
+          color: getTextColorString("primary"),
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -272,14 +274,14 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: getBackgroundColor("primary"),
+    backgroundColor: getBackgroundColorString("primary"),
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
     alignItems: "center",
   },
   metricLabel: {
     fontSize: Theme.typography.fontSize.sm,
-    color: getTextColor("secondary"),
+          color: getTextColorString("secondary"),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -289,7 +291,7 @@ const styles = StyleSheet.create({
   },
   metricSubtext: {
     fontSize: Theme.typography.fontSize.xs,
-    color: getTextColor("secondary"),
+          color: getTextColorString("secondary"),
   },
   progressBar: {
     width: "100%",
@@ -310,7 +312,7 @@ const styles = StyleSheet.create({
   keywordsTitle: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: getTextColor("primary"),
+          color: getTextColorString("primary"),
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
@@ -326,7 +328,7 @@ const styles = StyleSheet.create({
   },
   keywordText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: getTextColor("inverse"),
+    color: getTextColorString("inverse"),
     fontWeight: Theme.typography.fontWeight.medium,
   },
 });

@@ -187,7 +187,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case "secondary":
           return {
             ...baseTextStyles,
-            color: getTextColor("inverse"),
+            color: getTextColor().inverse,
           };
         case "ghost":
         case "outline":
@@ -198,7 +198,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         default:
           return {
             ...baseTextStyles,
-            color: getTextColor("primary"),
+            color: getTextColor().primary,
           };
       }
     };
@@ -208,12 +208,12 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       switch (variant) {
         case "primary":
         case "secondary":
-          return getTextColor("inverse");
+          return getTextColor().inverse;
         case "ghost":
         case "outline":
           return Theme.semantic.interactive.primary;
         default:
-          return getTextColor("primary");
+          return getTextColor().primary;
       }
     };
 
