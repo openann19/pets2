@@ -302,9 +302,9 @@ class AccessibilityService {
       const hex = cleanColor.slice(1);
       if (hex.length === 3) {
         // Short hex format (#RGB)
-        const r = parseInt(hex[0] + hex[0], 16);
-        const g = parseInt(hex[1] + hex[1], 16);
-        const b = parseInt(hex[2] + hex[2], 16);
+        const r = parseInt((hex[0] as string) + (hex[0] as string), 16);
+        const g = parseInt((hex[1] as string) + (hex[1] as string), 16);
+        const b = parseInt((hex[2] as string) + (hex[2] as string), 16);
         return { r, g, b };
       } else if (hex.length === 6) {
         // Full hex format (#RRGGBB)

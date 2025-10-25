@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColorString("secondary"),
     marginBottom: Theme.spacing.xl,
   },
   inputGroup: {
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   characterCount: {
     fontSize: Theme.typography.fontSize.xs,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColorString("secondary"),
     textAlign: "right",
     marginTop: Theme.spacing.xs,
   },

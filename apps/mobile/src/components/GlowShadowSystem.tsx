@@ -269,7 +269,7 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
   }, [animated, speed]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    borderOpacity: borderOpacity.value,
+    opacity: borderOpacity.value,
   }));
 
   const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[color];
@@ -322,8 +322,8 @@ export const GlowingCard: React.FC<GlowingCardProps> = ({
           borderRadius: BorderRadius["2xl"],
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           padding: Spacing.lg,
+          ...GLOW_SHADOW_CONFIGS.depthShadows[shadowDepth],
         },
-        GLOW_SHADOW_CONFIGS.depthShadows[shadowDepth],
         style,
       ]}
       {...props}

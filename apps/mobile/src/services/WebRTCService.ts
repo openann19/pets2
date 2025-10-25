@@ -117,7 +117,9 @@ class WebRTCService extends EventEmitter {
 
     // Call answered
     this.socket.on("call-answered", (data: unknown) => {
-      void this.handleCallAnswered(data as CallAnsweredData);
+      this.handleCallAnswered(data as CallAnsweredData).catch((error) => {
+        logger.error("Error handling call answered:", error);
+      });
     });
 
     // Call rejected/ended
@@ -127,15 +129,21 @@ class WebRTCService extends EventEmitter {
 
     // WebRTC signaling
     this.socket.on("webrtc-offer", (data: unknown) => {
-      void this.handleOffer(data as WebRTCSignalingData);
+      this.handleOffer(data as WebRTCSignalingData).catch((error) => {
+        logger.error("Error handling offer:", error);
+      });
     });
 
     this.socket.on("webrtc-answer", (data: unknown) => {
-      void this.handleAnswer(data as WebRTCSignalingData);
+      this.handleAnswer(data as WebRTCSignalingData).catch((error) => {
+        logger.error("Error handling answer:", error);
+      });
     });
 
     this.socket.on("webrtc-ice-candidate", (data: unknown) => {
-      void this.handleIceCandidate(data as WebRTCSignalingData);
+      this.handleIceCandidate(data as WebRTCSignalingData).catch((error) => {
+        logger.error("Error handling ice candidate:", error);
+      });
     });
   }
 

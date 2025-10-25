@@ -37,7 +37,7 @@ import {
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
-import { getTextColor } from "../../theme/helpers";
+import { getTextColor, getBorderColor } from "../theme/helpers";
 
 type RootStackParamList = {
   CreatePet: undefined;
@@ -59,13 +59,13 @@ interface PhotoItem {
 
 interface FormData {
   name: string;
-  species: string;
+  species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
   breed: string;
   age: string;
-  gender: string;
-  size: string;
+  gender: 'male' | 'female';
+  size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
   description: string;
-  intent: string;
+  intent: 'adoption' | 'mating' | 'playdate' | 'all';
   personalityTags: string[];
   healthInfo: {
     vaccinated: boolean;
@@ -122,17 +122,12 @@ export default function ModernCreatePetScreen({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      6, // Number of form sections
-      150,
-      "gentle",
-    );
+  const { getStaggeredDelay } = useStaggeredAnimation(
+    6, // Number of form sections
+    150,
+  );
 
-  // Start animations
-  React.useEffect(() => {
-    startStaggeredAnimation();
-  }, [startStaggeredAnimation]);
+  // Start animations - removed as useStaggeredAnimation doesn't have a start method
 
   // Form handlers
   const updateFormData = useCallback(

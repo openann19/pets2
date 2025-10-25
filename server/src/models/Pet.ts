@@ -1,6 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { IPet } from '../types';
 
-const petSchema = new mongoose.Schema({
+// Define the schema
+const petSchema = new Schema<IPet>({
   // Owner
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -317,4 +319,11 @@ petSchema.statics.findFeatured = function() {
   }).sort({ 'featured.lastBoosted': -1 });
 };
 
-module.exports = mongoose.model('Pet', petSchema);
+// Define the Pet model interface
+interface IPetModel extends Model<IPet> {
+  findBySpeciesAndIntent(species?: string, intent?: string): Promise<IPet[]>;
+  findFeatured(): Promise<IPet[]>;
+}
+
+// Create and export the model
+export default mongoose.model<IPet, IPetModel>('Pet', petSchema);

@@ -1,6 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { IMatch } from '../types';
 
-const matchSchema = new mongoose.Schema({
+// Define the schema
+const matchSchema = new Schema<IMatch>({
   // Match Participants
   pet1: {
     type: mongoose.Schema.Types.ObjectId,
@@ -326,4 +328,11 @@ matchSchema.statics.findByPets = function(pet1Id, pet2Id) {
   });
 };
 
-module.exports = mongoose.model('Match', matchSchema);
+// Define the Match model interface with static methods
+interface IMatchModel extends Model<IMatch> {
+  findActiveMatchesForUser(userId: mongoose.Types.ObjectId | string): Promise<IMatch[]>;
+  findByPets(pet1Id: mongoose.Types.ObjectId | string, pet2Id: mongoose.Types.ObjectId | string): Promise<IMatch | null>;
+}
+
+// Create and export the model
+export default mongoose.model<IMatch, IMatchModel>('Match', matchSchema);

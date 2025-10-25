@@ -1,7 +1,9 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { IUser } from '../types';
 
-const userSchema = new mongoose.Schema({
+// Define the schema
+const userSchema = new Schema<IUser>({
   // Basic Info
   email: {
     type: String,
@@ -272,4 +274,10 @@ userSchema.statics.findPremiumUsers = function () {
   });
 };
 
-module.exports = mongoose.model('User', userSchema);
+// Create and export the model
+interface IUserModel extends Model<IUser> {
+  findActiveUsers(): Promise<IUser[]>;
+  findPremiumUsers(): Promise<IUser[]>;
+}
+
+export default mongoose.model<IUser, IUserModel>('User', userSchema);

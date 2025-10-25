@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColorString("secondary"),
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   toneDescription: {
     fontSize: Theme.typography.fontSize.sm,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColorString("secondary"),
     textAlign: "center",
     lineHeight: Theme.typography.lineHeight.normal,
   },
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkmark: {
-    color: getBackgroundColor("primary").primary,
+    color: getTextColor().inverse,
     fontSize: Theme.typography.fontSize.sm,
     fontWeight: Theme.typography.fontWeight.bold,
   },
