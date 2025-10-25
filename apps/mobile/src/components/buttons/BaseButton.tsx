@@ -27,8 +27,25 @@ import { Theme } from "../../theme/unified-theme";
 import { getTextColor } from "../../theme/helpers";
 
 // === TYPES ===
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
-export type ButtonSize = "sm" | "md" | "lg" | "xl";
+export type ButtonVariant = 
+  | "primary" 
+  | "secondary" 
+  | "ghost" 
+  | "outline"
+  | "glass"
+  | "holographic"
+  | "neon"
+  | "premium"
+  | "gradient"
+  | "cyber"
+  | "rainbow"
+  | "minimal"
+  | "intense"
+  | "subtle"
+  | "strong"
+  | "medium";
+
+export type ButtonSize = "xs" | "sm" | "md" | "base" | "lg" | "xl";
 
 export interface BaseButtonProps extends TouchableOpacityProps {
   title: string;
@@ -45,6 +62,14 @@ export interface BaseButtonProps extends TouchableOpacityProps {
 
 // === SIZE CONFIGURATIONS ===
 const SIZE_CONFIGS = {
+  xs: {
+    paddingHorizontal: Theme.spacing.md,
+    paddingVertical: Theme.spacing.xs,
+    fontSize: Theme.typography.fontSize.xs,
+    borderRadius: Theme.borderRadius.sm,
+    minHeight: 28,
+    iconSize: 14,
+  },
   sm: {
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.sm,
@@ -52,6 +77,14 @@ const SIZE_CONFIGS = {
     borderRadius: Theme.borderRadius.md,
     minHeight: 36,
     iconSize: 16,
+  },
+  base: {
+    paddingHorizontal: Theme.spacing.xl,
+    paddingVertical: Theme.spacing.md,
+    fontSize: Theme.typography.fontSize.base,
+    borderRadius: Theme.borderRadius.lg,
+    minHeight: 40,
+    iconSize: 18,
   },
   md: {
     paddingHorizontal: Theme.spacing.xl,

@@ -75,7 +75,7 @@ const emailTemplates = {
     `,
   }),
 
-  passwordReset: (data: any) => ({
+  passwordReset: (data: PasswordResetData) => ({
     subject: 'Reset Your PawfectMatch Password',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -103,7 +103,7 @@ const emailTemplates = {
     `,
   }),
 
-  matchNotification: (data: any) => ({
+  matchNotification: (data: MatchNotificationData) => ({
     subject: '🎉 You have a new match on PawfectMatch!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -130,7 +130,7 @@ const emailTemplates = {
     `,
   }),
 
-  welcomeEmail: (data: any) => ({
+  welcomeEmail: (data: WelcomeEmailData) => ({
     subject: 'Welcome to PawfectMatch - Let\'s Get Started!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -261,7 +261,7 @@ export const sendPasswordResetEmail = async (userEmail: string, resetToken: stri
  * @param matchData - Match data
  * @returns Promise<void>
  */
-export const sendMatchNotificationEmail = async (userEmail: string, matchData: any): Promise<void> => {
+export const sendMatchNotificationEmail = async (userEmail: string, matchData: MatchNotificationData): Promise<void> => {
   try {
     const template = emailTemplates.matchNotification({
       firstName: matchData.userName || userEmail.split('@')[0],

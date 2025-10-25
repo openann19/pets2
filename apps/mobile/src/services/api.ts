@@ -216,6 +216,43 @@ interface AdoptionApplication {
   submittedAt: string;
 }
 
+// Support response types
+interface SupportTicketResponse {
+  success: boolean;
+  data: {
+    id: string;
+    userId: string;
+    subject: string;
+    message: string;
+    category: string;
+    priority: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  message: string;
+}
+
+interface BugReportResponse {
+  success: boolean;
+  data: {
+    id: string;
+    userId: string;
+    title: string;
+    description: string;
+    stepsToReproduce?: string;
+    expectedBehavior?: string;
+    actualBehavior?: string;
+    deviceInfo?: string;
+    appVersion?: string;
+    status: string;
+    priority: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  message: string;
+}
+
 // Authentication API methods
 export const authAPI = {
   // Login with email and password
@@ -846,8 +883,8 @@ export const matchesAPI = {
     message: string;
     category: string;
     priority?: string;
-  }): Promise<{ success: boolean; data: any; message: string }> => {
-    return request<{ success: boolean; data: any; message: string }>(
+  }): Promise<SupportTicketResponse> => {
+    return request<SupportTicketResponse>(
       "/support/ticket",
       {
         method: "POST",
@@ -864,8 +901,8 @@ export const matchesAPI = {
     actualBehavior?: string;
     deviceInfo?: string;
     appVersion?: string;
-  }): Promise<{ success: boolean; data: any; message: string }> => {
-    return request<{ success: boolean; data: any; message: string }>(
+  }): Promise<BugReportResponse> => {
+    return request<BugReportResponse>(
       "/support/bug-report",
       {
         method: "POST",
