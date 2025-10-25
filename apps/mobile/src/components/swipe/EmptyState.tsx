@@ -41,7 +41,7 @@ export function EmptyState({
       </GlowContainer>
       <PremiumHeading
         level={2}
-        gradient={isError ? "error" : "primary"}
+        gradient="primary"
         animated={true}
       >
         {title}
@@ -53,10 +53,10 @@ export function EmptyState({
         title={buttonTitle}
         variant={isError ? "primary" : "premium"}
         size="lg"
-        icon="refresh"
-        magnetic={true}
-        ripple={true}
-        glow={true}
+        leftIcon="refresh"
+        magneticEffect={true}
+        rippleEffect={true}
+        glowEffect={true}
         onPress={onButtonPress}
       />
     </View>
