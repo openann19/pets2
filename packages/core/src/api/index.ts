@@ -2,9 +2,14 @@
  * API Client and Types
  */
 
-// Export API client and types
-export * from './client';
-export * from './types';
+// Export API client
+export {
+  apiClient,
+  type ApiClientResponse,
+  type ApiError,
+  type FileUploadConfig,
+} from './client';
+export type { RequestConfig as ApiClientRequestConfig } from './client';
 
 // Export unified API client and infrastructure
 export * from './UnifiedAPIClient';
@@ -13,6 +18,7 @@ export * from './RequestRetryStrategy';
 export * from './OfflineQueueManager';
 export * from './APIErrorClassifier';
 export * from './RecoveryStrategies';
+export * from './RateLimiter';
 
 // Export hooks
 export * from './hooks';

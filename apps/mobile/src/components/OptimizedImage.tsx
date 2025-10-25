@@ -5,8 +5,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Text,
-  ViewStyle,
-  ImageStyle,
+  type StyleProp,
+  type ViewStyle,
+  type ImageStyle,
 } from "react-native";
 import FastImage, {
   FastImageProps,
@@ -18,8 +19,8 @@ import { useTheme } from "../contexts/ThemeContext";
 
 interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
   uri: string;
-  style?: ViewStyle | ImageStyle;
-  containerStyle?: ViewStyle;
+  style?: StyleProp<ImageStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
   showLoadingIndicator?: boolean;
   showErrorState?: boolean;
   fallbackIcon?: keyof typeof Ionicons.glyphMap;
@@ -60,7 +61,7 @@ export function OptimizedImage({
   accessible = true,
   accessibilityLabel,
   ...props
-}) {
+}): React.ReactElement {
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);

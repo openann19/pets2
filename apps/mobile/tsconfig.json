@@ -5,6 +5,19 @@
     "lib": ["ES2023"],
     "types": ["jest", "react-native"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
+      "@pawfectmatch/core/*": ["../../packages/core/src/*"],
+      "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],
+      "@pawfectmatch/ui/*": ["../../packages/ui/src/*"],
+      "@pawfectmatch/design-tokens": [
+        "../../packages/design-tokens/src/index.ts"
+      ],
+      "@pawfectmatch/design-tokens/*": [
+        "../../packages/design-tokens/src/*"
+      ]
+    },
     "jsx": "react-jsx", // Use modern JSX transform
     "allowJs": true,
     "noEmit": true, // Metro handles bundling

@@ -6,7 +6,7 @@
 import { logger } from '../utils/logger';
 import { CircuitBreaker, CircuitState } from './CircuitBreaker';
 import { RequestRetryStrategy } from './RequestRetryStrategy';
-import { OfflineQueueManager, QueueItem, QueuePriority } from './OfflineQueueManager';
+import { OfflineQueueManager, type QueueItem, type QueuePriority } from './OfflineQueueManager';
 import { APIErrorClassifier, ErrorType } from './APIErrorClassifier';
 import { RecoveryStrategies } from './RecoveryStrategies';
 
@@ -29,7 +29,7 @@ export interface APIClientConfig {
   };
 }
 
-export interface RequestConfig {
+export interface UnifiedRequestConfig {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
   body?: unknown;
@@ -39,7 +39,7 @@ export interface RequestConfig {
   requireOnline?: boolean;
 }
 
-export interface Response<T> {
+export interface UnifiedResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
@@ -48,7 +48,7 @@ export interface Response<T> {
 }
 
 export class UnifiedAPIClient extends OfflineQueueManager {
-  private config: APIClientConfig;
+  private readonly clientConfig: APIClientConfig;
   private circuitBreaker: CircuitBreaker;
   private retryStrategy: RequestRetryStrategy;
   private errorClassifier: APIErrorClassifier;
@@ -60,14 +60,12 @@ export class UnifiedAPIClient extends OfflineQueueManager {
   constructor(config: APIClientConfig) {
     super(config.queueConfig);
     
-    this.config = config;
+    this.clientConfig = config;
     this.circuitBreaker = new CircuitBreaker(config.circuitBreakerConfig);
     this.retryStrategy = new RequestRetryStrategy(config.retryConfig);
     this.errorClassifier = new APIErrorClassifier();
     this.recoveryStrategies = new RecoveryStrategies();
 
-    // Set up process item handler
-    this.processItem = this.processQueueItem.bind(this);
   }
 
   /**
@@ -89,8 +87,8 @@ export class UnifiedAPIClient extends OfflineQueueManager {
    */
   async request<T>(
     endpoint: string,
-    config: RequestConfig = {}
-  ): Promise<Response<T>> {
+    config: UnifiedRequestConfig = {}
+  ): Promise<UnifiedResponse<T>> {
     const method = config.method || 'GET';
     const requireOnline = config.requireOnline ?? false;
 
@@ -109,7 +107,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
         data: config.body,
         headers: config.headers,
         priority: config.priority || 'normal',
-        maxRetries: this.config.retryConfig?.maxRetries || 3,
+        maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
         conflictResolution: 'overwrite',
       });
 
@@ -131,52 +129,52 @@ export class UnifiedAPIClient extends OfflineQueueManager {
         data: result,
       };
     } catch (error) {
-      return this.handleError(error, endpoint, config);
+      return this.handleError<T>(error, endpoint, config);
     }
   }
 
   /**
    * GET request
    */
-  async get<T>(endpoint: string, config?: RequestConfig): Promise<Response<T>> {
+  async get<T>(endpoint: string, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'GET' });
   }
 
   /**
    * POST request
    */
-  async post<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<Response<T>> {
+  async post<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'POST', body: data });
   }
 
   /**
    * PUT request
    */
-  async put<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<Response<T>> {
+  async put<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'PUT', body: data });
   }
 
   /**
    * PATCH request
    */
-  async patch<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<Response<T>> {
+  async patch<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'PATCH', body: data });
   }
 
   /**
    * DELETE request
    */
-  async delete<T>(endpoint: string, config?: RequestConfig): Promise<Response<T>> {
+  async delete<T>(endpoint: string, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>> {
     return this.request<T>(endpoint, { ...config, method: 'DELETE' });
   }
 
   /**
    * Make actual HTTP request
    */
-  private async makeRequest<T>(endpoint: string, config: RequestConfig): Promise<T> {
-    const url = `${this.config.baseURL}${endpoint}`;
+  private async makeRequest<T>(endpoint: string, config: UnifiedRequestConfig): Promise<T> {
+    const url = `${this.clientConfig.baseURL}${endpoint}`;
     const method = config.method || 'GET';
-    const timeout = config.timeout || this.config.timeout || 30000;
+    const timeout = config.timeout || this.clientConfig.timeout || 30000;
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -212,7 +210,11 @@ export class UnifiedAPIClient extends OfflineQueueManager {
   /**
    * Handle error with recovery strategies
    */
-  private async handleError(error: unknown, endpoint: string, config: RequestConfig): Promise<Response<never>> {
+  private async handleError<T>(
+    error: unknown,
+    endpoint: string,
+    config: UnifiedRequestConfig,
+  ): Promise<UnifiedResponse<T>> {
     const classification = this.errorClassifier.classify(error, {
       endpoint,
       method: config.method,
@@ -229,30 +231,32 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     if (classification.retryable) {
       try {
         const recoveryResult = await this.recoveryStrategies.combinedRecovery(
-          () => this.makeRequest(endpoint, config),
+          () => this.makeRequest<T>(endpoint, config),
           {
             retry: true,
             refreshToken: this.tokenRefreshFn,
             useCache: () => this.getCache(endpoint),
-            queue: (data) => this.enqueue({
-              endpoint,
-              method: config.method || 'GET',
-              data,
-              headers: config.headers,
-              priority: config.priority || 'normal',
-              maxRetries: this.config.retryConfig?.maxRetries || 3,
-              conflictResolution: 'overwrite',
-            }),
+            queue: async (data) => {
+              await this.enqueue({
+                endpoint,
+                method: config.method || 'GET',
+                data,
+                headers: config.headers,
+                priority: config.priority || 'normal',
+                maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
+                conflictResolution: 'overwrite',
+              });
+            },
           },
           {
-            maxRetries: this.config.retryConfig?.maxRetries || 3,
+            maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
           }
         );
 
         if (recoveryResult.success) {
           return {
             success: true,
-            data: recoveryResult.data,
+            data: recoveryResult.data as T,
           };
         }
       } catch (recoveryError) {
@@ -270,7 +274,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
   /**
    * Process queue item
    */
-  private async processQueueItem(item: QueueItem): Promise<void> {
+  protected override async processItem(item: QueueItem): Promise<void> {
     const result = await this.makeRequest(item.endpoint, {
       method: item.method,
       body: item.data,
@@ -329,7 +333,7 @@ export class UnifiedAPIClient extends OfflineQueueManager {
   /**
    * Cleanup resources
    */
-  destroy(): void {
+  override destroy(): void {
     super.destroy();
     this.circuitBreaker.destroy();
     this.cache.clear();
