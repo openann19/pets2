@@ -21,6 +21,8 @@ import {
   getBackgroundColor,
   getTextColor,
   getBorderColor,
+  getStatusColor,
+  getPrimaryColor,
 } from "../../theme/helpers";
 import type { GeneratedBio } from "../../hooks/useAIBio";
 
@@ -57,15 +59,15 @@ export function BioResults({
   };
 
   const getSentimentColor = (score: number) => {
-    if (score >= 0.7) return Theme.colors.status.success;
-    if (score >= 0.4) return Theme.colors.status.warning;
-    return Theme.colors.status.error;
+    if (score >= 0.7) return getStatusColor("success");
+    if (score >= 0.4) return getStatusColor("warning");
+    return getStatusColor("error");
   };
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return Theme.colors.status.success;
-    if (score >= 60) return Theme.colors.status.warning;
-    return Theme.colors.status.error;
+    if (score >= 80) return getStatusColor("success");
+    if (score >= 60) return getStatusColor("warning");
+    return getStatusColor("error");
   };
 
   return (
@@ -92,13 +94,13 @@ export function BioResults({
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
               color={
-                copied ? Theme.colors.status.success : Theme.colors.textColor
+                copied ? getStatusColor("success") : getTextColor("primary")
               }
             />
             <Text
               style={[
                 styles.actionText,
-                copied && { color: Theme.colors.status.success },
+                copied && { color: getStatusColor("success") },
               ]}
             >
               {copied ? "Copied!" : "Copy"}
@@ -114,7 +116,7 @@ export function BioResults({
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={Theme.colors.textColor}
+                color={getTextColor("primary")}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -129,7 +131,7 @@ export function BioResults({
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={Theme.colors.textColor}
+                color={getTextColor("primary")}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: Theme.typography.fontSize.sm,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColor("secondary"),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -287,12 +289,12 @@ const styles = StyleSheet.create({
   },
   metricSubtext: {
     fontSize: Theme.typography.fontSize.xs,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColor("secondary"),
   },
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: Theme.colors.borderColor.light,
+    backgroundColor: getBorderColor("light"),
     borderRadius: Theme.borderRadius.full,
     overflow: "hidden",
   },
@@ -317,14 +319,14 @@ const styles = StyleSheet.create({
     gap: Theme.spacing.sm,
   },
   keywordChip: {
-    backgroundColor: Theme.colors.primary[500],
+    backgroundColor: getPrimaryColor(500),
     borderRadius: Theme.borderRadius.full,
     paddingHorizontal: Theme.spacing.sm,
     paddingVertical: Theme.spacing.xs,
   },
   keywordText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.backgroundColor.primary,
+    color: getTextColor("inverse"),
     fontWeight: Theme.typography.fontWeight.medium,
   },
 });
