@@ -9,7 +9,13 @@ import { StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native";
 
 import { Theme } from "../../theme/unified-theme";
-import { getTextColor } from "../../theme/helpers";
+import { 
+  getTextColor, 
+  getTextColorString, 
+  getBorderColor, 
+  getBackgroundColor, 
+  getStatusColor 
+} from "../../theme/helpers";
 
 interface PetInfoFormProps {
   petName: string;
@@ -49,7 +55,7 @@ export function PetInfoForm({
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
-          placeholderTextColor={getTextColor("secondary")}
+          placeholderTextColor={getTextColorString("secondary")}
           maxLength={50}
         />
         {validationErrors.petName && (
@@ -65,7 +71,7 @@ export function PetInfoForm({
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
-          placeholderTextColor={getTextColor("secondary")}
+          placeholderTextColor={getTextColorString("secondary")}
           maxLength={100}
         />
         {validationErrors.petBreed && (
@@ -81,7 +87,7 @@ export function PetInfoForm({
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
-          placeholderTextColor={getTextColor("secondary")}
+          placeholderTextColor={getTextColorString("secondary")}
           maxLength={50}
         />
         {validationErrors.petAge && (
@@ -100,7 +106,7 @@ export function PetInfoForm({
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
-          placeholderTextColor={getTextColor("secondary")}
+          placeholderTextColor={getTextColorString("secondary")}
           multiline
           numberOfLines={4}
           maxLength={500}
@@ -126,7 +132,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: getTextColor("primary"),
+    color: getTextColor().primary,
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
@@ -140,28 +146,28 @@ const styles = StyleSheet.create({
   label: {
     fontSize: Theme.typography.fontSize.sm,
     fontWeight: Theme.typography.fontWeight.medium,
-    color: getTextColor("primary"),
+    color: getTextColor().primary,
     marginBottom: Theme.spacing.xs,
   },
   input: {
     borderWidth: 1,
-    borderColor: getBorderColor("light").light,
+    borderColor: getBorderColor("light"),
     borderRadius: Theme.borderRadius.md,
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor("primary"),
-    backgroundColor: getBackgroundColor("primary").primary,
+    color: getTextColor().primary,
+    backgroundColor: getBackgroundColor().primary,
   },
   textarea: {
     borderWidth: 1,
-    borderColor: getBorderColor("light").light,
+    borderColor: getBorderColor("light"),
     borderRadius: Theme.borderRadius.md,
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor("primary"),
-    backgroundColor: getBackgroundColor("primary").primary,
+    color: getTextColor().primary,
+    backgroundColor: getBackgroundColor().primary,
     minHeight: 100,
   },
   inputError: {

@@ -26,19 +26,9 @@ export function getBorderColor(variant: 'light' | 'medium' | 'dark' = 'light'): 
 }
 
 /**
- * Get text color object with primary and inverse properties
+ * Get text color with variant support
  */
-export function getTextColor(): { primary: string; inverse: string } {
-  return {
-    primary: Theme.colors.text.primary,
-    inverse: Theme.colors.text.inverse,
-  };
-}
-
-/**
- * Get text color string with variant support (legacy support)
- */
-export function getTextColorString(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
+export function getTextColor(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
   switch (variant) {
     case 'primary':
       return Theme.colors.text.primary;
@@ -54,19 +44,9 @@ export function getTextColorString(variant: 'primary' | 'secondary' | 'tertiary'
 }
 
 /**
- * Get background color object with primary and inverse properties
+ * Get background color with variant support
  */
-export function getBackgroundColor(): { primary: string; inverse: string } {
-  return {
-    primary: Theme.colors.background.primary,
-    inverse: Theme.colors.background.inverse,
-  };
-}
-
-/**
- * Get background color string with variant support (legacy support)
- */
-export function getBackgroundColorString(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
+export function getBackgroundColor(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
   switch (variant) {
     case 'primary':
       return Theme.colors.background.primary;
@@ -103,10 +83,10 @@ export function getNeutralColor(shade: 0 | 50 | 100 | 200 | 300 | 400 | 500 | 60
 }
 
 /**
- * Get status color
+ * Get status color with variant support
  */
-export function getStatusColor(status: 'success' | 'warning' | 'error' | 'info'): string {
-  return Theme.colors.status[status];
+export function getStatusColor(variant: 'success' | 'warning' | 'error' | 'info'): string {
+  return Theme.colors.status[variant];
 }
 
 /**

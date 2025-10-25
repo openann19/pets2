@@ -12,6 +12,8 @@ import {
   createShadowStyle,
   getBackgroundColor,
   getTextColor,
+  getBorderColor,
+  getStatusColor,
 } from "../../theme/helpers";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
@@ -72,7 +74,7 @@ export function ToneSelector({
                 borderColor:
                   selectedTone === tone.id
                     ? tone.color
-                    : getBorderColor("light").light,
+                    : getBorderColor("light"),
               },
             ]}
             onPress={() => {
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: getTextColor("primary"),
+    color: getTextColor().primary,
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: getBackgroundColor("primary"),
+    backgroundColor: getBackgroundColor().primary,
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
   toneLabel: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: getTextColor("primary"),
+    color: getTextColor().primary,
     marginBottom: Theme.spacing.xs,
     textAlign: "center",
   },

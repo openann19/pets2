@@ -22,13 +22,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
 import { matchesAPI } from "../services/api";
 
-type RootStackParamList = {
-  Profile: undefined;
-  MyPets: undefined;
-  Settings: undefined;
-  CreatePet: undefined;
-  Login: undefined;
-};
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../navigation/types";
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, "Profile">;
 
