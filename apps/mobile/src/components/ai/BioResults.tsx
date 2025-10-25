@@ -162,7 +162,7 @@ export function BioResults({
                 style={[
                   styles.progressFill,
                   {
-                    width: `${generatedBio.matchScore}%` as const,
+                    width: `${generatedBio.matchScore}%`,
                     backgroundColor: getMatchScoreColor(
                       generatedBio.matchScore,
                     ),

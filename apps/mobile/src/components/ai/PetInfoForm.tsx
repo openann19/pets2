@@ -51,7 +51,7 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petName && styles.inputError]}
+          style={[styles.input, validationErrors.petName ? styles.inputError : null]}
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
@@ -67,7 +67,7 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Breed *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petBreed && styles.inputError]}
+          style={[styles.input, validationErrors.petBreed ? styles.inputError : null]}
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
@@ -83,7 +83,7 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Age *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petAge && styles.inputError]}
+          style={[styles.input, validationErrors.petAge ? styles.inputError : null]}
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"

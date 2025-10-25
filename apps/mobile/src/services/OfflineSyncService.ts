@@ -106,7 +106,7 @@ class OfflineSyncService {
 
     // Try to sync immediately if online
     if (this.isOnline) {
-      this.processQueue().catch((error) => {
+      void this.processQueue().catch((error: unknown) => {
         logger.error("Error processing queue:", error);
       });
     }
@@ -145,7 +145,7 @@ class OfflineSyncService {
     });
 
     if (this.isOnline) {
-      this.processQueue().catch((error) => {
+      void this.processQueue().catch((error: unknown) => {
         logger.error("Error processing queue:", error);
       });
     }
@@ -237,7 +237,7 @@ class OfflineSyncService {
 
       if (!wasOnline && this.isOnline) {
         logger.info("Network connection restored, starting sync");
-        this.processQueue().catch((error) => {
+        void this.processQueue().catch((error: unknown) => {
           logger.error("Error processing queue:", error);
         });
       } else if (wasOnline && !this.isOnline) {
@@ -257,7 +257,7 @@ class OfflineSyncService {
   private startBackgroundSync(): void {
     setInterval(() => {
       if (this.isOnline && !this.syncInProgress && this.queue.length > 0) {
-        this.processQueue().catch((error) => {
+        void this.processQueue().catch((error: unknown) => {
           logger.error("Error processing queue:", error);
         });
       }
@@ -332,8 +332,8 @@ class OfflineSyncService {
 
   private async processQueueItem(item: OfflineQueueItem): Promise<void> {
     // Import the API service dynamically to avoid circular dependencies
-    const { api } = await import("./api");
-    const apiService = api;
+    const apiModule = await import("./api");
+    const apiService = apiModule.api;
 
     switch (item.method) {
       case "GET":

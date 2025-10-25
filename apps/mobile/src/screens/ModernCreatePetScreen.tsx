@@ -32,12 +32,11 @@ import {
   Heading2,
   BodySmall,
   Label,
-  useStaggeredAnimation,
 } from "../components";
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
-import { getTextColor, getBorderColor } from "../theme/helpers";
+import { getTextColor, getBorderColor, getTextColorString } from "../theme/helpers";
 
 type RootStackParamList = {
   CreatePet: undefined;
@@ -61,7 +60,7 @@ interface FormData {
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
   breed: string;
-  age: string;
+  age: number;
   gender: 'male' | 'female';
   size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
   description: string;
@@ -91,13 +90,13 @@ export default function ModernCreatePetScreen({
   // Form state
   const [formData, setFormData] = useState<FormData>({
     name: "",
-    species: "",
+    species: "dog" as const,
     breed: "",
-    age: "",
-    gender: "",
-    size: "",
+    age: 1,
+    gender: "male" as const,
+    size: "medium" as const,
     description: "",
-    intent: "",
+    intent: "all" as const,
     personalityTags: [],
     healthInfo: {
       vaccinated: false,
@@ -121,11 +120,7 @@ export default function ModernCreatePetScreen({
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Animation hooks
-  const { getStaggeredDelay } = useStaggeredAnimation(
-    6, // Number of form sections
-    150,
-  );
+  // Animation hooks - removed unused staggered animation
 
   // Start animations - removed as useStaggeredAnimation doesn't have a start method
 
@@ -160,7 +155,7 @@ export default function ModernCreatePetScreen({
     if (!formData.name.trim()) errors.push("Pet name is required");
     if (!formData.species) errors.push("Species is required");
     if (!formData.breed.trim()) errors.push("Breed is required");
-    if (!formData.age) errors.push("Age is required");
+    if (!formData.age || formData.age <= 0) errors.push("Age is required");
     if (!formData.description.trim()) errors.push("Description is required");
     if (photos.length === 0) errors.push("At least one photo is required");
     if (!formData.contactInfo.email.trim()) errors.push("Email is required");
@@ -181,7 +176,11 @@ export default function ModernCreatePetScreen({
       // Call real API to create pet
       const petData = {
         ...formData,
-        photos: photos.map((photo) => photo.uri),
+        photos: photos.map((photo) => ({
+          url: photo.uri,
+          thumbnail: photo.uri,
+          cloudinaryId: photo.id,
+        })),
       };
 
       const response = await petAPI.createPet(petData);
@@ -259,7 +258,8 @@ export default function ModernCreatePetScreen({
   );
   const handleAgeChange = useCallback(
     (value: string) => {
-      updateFormData("age", value);
+      const age = parseInt(value, 10) || 0;
+      updateFormData("age", age);
     },
     [updateFormData],
   );
@@ -318,7 +318,7 @@ export default function ModernCreatePetScreen({
           showsVerticalScrollIndicator={false}
         >
           {/* Photo Upload Section */}
-          <View style={getAnimatedStyle(0)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Pet Photos</Heading2>
               <BodySmall style={styles.sectionSubtitle}>
@@ -333,7 +333,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Basic Information */}
-          <View style={getAnimatedStyle(1)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Basic Information</Heading2>
 
@@ -344,7 +344,7 @@ export default function ModernCreatePetScreen({
                   value={formData.name}
                   onChangeText={handleNameChange}
                   placeholder="Enter your pet's name"
-                  placeholderTextColor={getTextColor(Theme, "tertiary")}
+                  placeholderTextColor={getTextColorString("tertiary")}
                 />
               </View>
 
@@ -374,7 +374,7 @@ export default function ModernCreatePetScreen({
                   value={formData.breed}
                   onChangeText={handleBreedChange}
                   placeholder="Enter breed"
-                  placeholderTextColor={getTextColor(Theme, "tertiary")}
+                  placeholderTextColor={getTextColorString("tertiary")}
                 />
               </View>
 
@@ -382,10 +382,10 @@ export default function ModernCreatePetScreen({
                 <Label>Age *</Label>
                 <TextInput
                   style={styles.input}
-                  value={formData.age}
+                  value={String(formData.age)}
                   onChangeText={handleAgeChange}
                   placeholder="e.g., 2 years, 6 months"
-                  placeholderTextColor={getTextColor(Theme, "tertiary")}
+                  placeholderTextColor={getTextColorString("tertiary")}
                 />
               </View>
 
@@ -428,7 +428,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Description */}
-          <View style={getAnimatedStyle(2)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Description</Heading2>
               <View style={styles.formGroup}>
@@ -438,7 +438,7 @@ export default function ModernCreatePetScreen({
                   value={formData.description}
                   onChangeText={handleDescriptionChange}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
-                  placeholderTextColor={getTextColor(Theme, "tertiary")}
+                  placeholderTextColor={getTextColorString("tertiary")}
                   multiline
                   numberOfLines={4}
                 />
@@ -447,7 +447,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Intent */}
-          <View style={getAnimatedStyle(3)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Intent</Heading2>
               <View style={styles.formGroup}>
@@ -472,7 +472,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Personality Tags */}
-          <View style={getAnimatedStyle(4)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>
                 Personality & Traits
@@ -501,7 +501,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Contact Information */}
-          <View style={getAnimatedStyle(5)}>
+          <View>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>
                 Contact Information
@@ -514,7 +514,7 @@ export default function ModernCreatePetScreen({
                   value={formData.contactInfo.email}
                   onChangeText={handleEmailChange}
                   placeholder="your@email.com"
-                  placeholderTextColor={getTextColor(Theme, "tertiary")}
+                  placeholderTextColor={getTextColorString("tertiary")}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -527,7 +527,7 @@ export default function ModernCreatePetScreen({
                   value={formData.contactInfo.phone}
                   onChangeText={handlePhoneChange}
                   placeholder="(555) 123-4567"
-                  placeholderTextColor={getTextColor(Theme, "tertiary")}
+                  placeholderTextColor={getTextColorString("tertiary")}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: Theme.spacing.lg,
-    color: getTextColor(Theme, "secondary"),
+    color: getTextColorString("secondary"),
   },
   formGroup: {
     marginBottom: Theme.spacing.lg,
@@ -583,9 +583,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor("primary").primary,
+    color: getTextColorString("primary"),
     borderWidth: 1,
-    borderColor: getBorderColor("light").light.default,
+    borderColor: getBorderColor("light"),
     ...Theme.shadows.depth.sm,
   },
   textArea: {

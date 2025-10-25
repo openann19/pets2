@@ -1,15 +1,18 @@
-const User = require('../models/User');
-const Pet = require('../models/Pet');
-const Match = require('../models/Match');
-const { deleteFromCloudinary, uploadToCloudinary } = require('../services/cloudinaryService');
-const logger = require('../utils/logger');
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import UserModel from '../models/User';
+import PetModel from '../models/Pet';
+import MatchModel from '../models/Match';
+import { deleteFromCloudinary, uploadToCloudinary } from '../services/cloudinaryService';
+import logger from '../utils/logger';
+import { AuthenticatedRequest, IUser, IPet, IMatch } from '../types';
 
 // @desc    Get comprehensive user profile with analytics
 // @route   GET /api/users/profile/complete
 // @access  Private
-const getCompleteProfile = async (req, res) => {
+const getCompleteProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.userId)
+    const user = await UserModel.findById(req.userId)
       .populate('pets', 'name species photos breed age')
       .populate('matches', 'compatibilityScore createdAt')
       .lean();
@@ -58,11 +61,11 @@ const getCompleteProfile = async (req, res) => {
 // @desc    Update user profile with advanced validation
 // @route   PUT /api/users/profile/advanced
 // @access  Private
-const updateAdvancedProfile = async (req, res) => {
+const updateAdvancedProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { dateOfBirth, location, preferences } = req.body;
 
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -131,7 +134,7 @@ const updateAdvancedProfile = async (req, res) => {
 // @desc    Update user privacy settings
 // @route   PUT /api/users/privacy-settings
 // @access  Private
-const updatePrivacySettings = async (req, res) => {
+const updatePrivacySettings = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const {
       profileVisibility,
@@ -144,7 +147,7 @@ const updatePrivacySettings = async (req, res) => {
       dataSharing
     } = req.body;
 
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -181,7 +184,7 @@ const updatePrivacySettings = async (req, res) => {
 // @desc    Update user notification preferences
 // @route   PUT /api/users/notification-preferences
 // @access  Private
-const updateNotificationPreferences = async (req, res) => {
+const updateNotificationPreferences = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const {
       email,
@@ -195,7 +198,7 @@ const updateNotificationPreferences = async (req, res) => {
       system
     } = req.body;
 
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -233,9 +236,9 @@ const updateNotificationPreferences = async (req, res) => {
 // @desc    Upload and manage multiple profile photos
 // @route   POST /api/users/photos
 // @access  Private
-const uploadProfilePhotos = async (req, res) => {
+const uploadProfilePhotos = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -299,10 +302,10 @@ const uploadProfilePhotos = async (req, res) => {
 // @desc    Delete profile photo
 // @route   DELETE /api/users/photos/:photoId
 // @access  Private
-const deleteProfilePhoto = async (req, res) => {
+const deleteProfilePhoto = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { photoId } = req.params;
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -355,10 +358,10 @@ const deleteProfilePhoto = async (req, res) => {
 // @desc    Set primary profile photo
 // @route   PUT /api/users/photos/:photoId/primary
 // @access  Private
-const setPrimaryPhoto = async (req, res) => {
+const setPrimaryPhoto = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { photoId } = req.params;
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -400,9 +403,9 @@ const setPrimaryPhoto = async (req, res) => {
 // @desc    Get user profile analytics
 // @route   GET /api/users/analytics
 // @access  Private
-const getUserAnalytics = async (req, res) => {
+const getUserAnalytics = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -417,12 +420,12 @@ const getUserAnalytics = async (req, res) => {
       },
       pets: {
         total: user.pets?.length || 0,
-        active: await Pet.countDocuments({ owner: req.userId, isActive: true }),
-        featured: await Pet.countDocuments({ owner: req.userId, 'featured.isFeatured': true })
+        active: await PetModel.countDocuments({ owner: req.userId, isActive: true }),
+        featured: await PetModel.countDocuments({ owner: req.userId, 'featured.isFeatured': true })
       },
       matches: {
         total: user.matches?.length || 0,
-        active: await Match.countDocuments({
+        active: await MatchModel.countDocuments({
           $or: [{ user1: req.userId }, { user2: req.userId }],
           status: 'active'
         }),
@@ -459,9 +462,9 @@ const getUserAnalytics = async (req, res) => {
 // @desc    Export user data for backup/download
 // @route   GET /api/users/export
 // @access  Private
-const exportUserData = async (req, res) => {
+const exportUserData = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.userId)
+    const user = await UserModel.findById(req.userId)
       .populate('pets')
       .populate('matches', 'compatibilityScore createdAt')
       .populate('swipedPets.petId', 'name species')
@@ -525,10 +528,10 @@ const exportUserData = async (req, res) => {
 // @desc    Deactivate user account (soft delete)
 // @route   POST /api/users/deactivate
 // @access  Private
-const deactivateAccount = async (req, res) => {
+const deactivateAccount = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { reason, feedback } = req.body;
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -542,7 +545,7 @@ const deactivateAccount = async (req, res) => {
     user.deactivationFeedback = feedback;
 
     // Deactivate all pets
-    await Pet.updateMany({ owner: req.userId }, { isActive: false });
+    await PetModel.updateMany({ owner: req.userId }, { isActive: false });
 
     await user.save();
 
@@ -569,9 +572,9 @@ const deactivateAccount = async (req, res) => {
 // @desc    Reactivate user account
 // @route   POST /api/users/reactivate
 // @access  Private
-const reactivateAccount = async (req, res) => {
+const reactivateAccount = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -592,7 +595,7 @@ const reactivateAccount = async (req, res) => {
     user.deactivationReason = null;
 
     // Reactivate pets
-    await Pet.updateMany({ owner: req.userId }, { isActive: true });
+    await PetModel.updateMany({ owner: req.userId }, { isActive: true });
 
     await user.save();
 
@@ -616,7 +619,7 @@ const reactivateAccount = async (req, res) => {
 };
 
 // Helper functions
-function calculateProfileCompleteness(user) {
+function calculateProfileCompleteness(user: any): number {
   const fields = [
     'firstName', 'lastName', 'bio', 'avatar', 'dateOfBirth',
     'phone', 'location', 'preferences'
@@ -641,11 +644,11 @@ function calculateProfileCompleteness(user) {
   return Math.round((completed / (fields.length + 1)) * 100);
 }
 
-async function getUserRecentActivity(userId) {
+async function getUserRecentActivity(userId: string | mongoose.Types.ObjectId): Promise<Array<{ type: string; description: string; timestamp: Date }>> {
   const activities = [];
 
   // Recent pets created
-  const recentPets = await Pet.find({ owner: userId })
+  const recentPets = await PetModel.find({ owner: userId })
     .sort({ createdAt: -1 })
     .limit(3)
     .select('name createdAt');
@@ -659,7 +662,7 @@ async function getUserRecentActivity(userId) {
   });
 
   // Recent matches
-  const recentMatches = await Match.find({
+  const recentMatches = await MatchModel.find({
     $or: [{ user1: userId }, { user2: userId }]
   })
   .sort({ createdAt: -1 })
@@ -677,8 +680,8 @@ async function getUserRecentActivity(userId) {
   return activities.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
 }
 
-async function getUserCompatibilityStats(userId) {
-  const matches = await Match.find({
+async function getUserCompatibilityStats(userId: string | mongoose.Types.ObjectId): Promise<{ average: number; highest: number; lowest: number; total: number } | null> {
+  const matches = await MatchModel.find({
     $or: [{ user1: userId }, { user2: userId }]
   }).select('compatibilityScore');
 
@@ -695,12 +698,12 @@ async function getUserCompatibilityStats(userId) {
   };
 }
 
-async function getUserAvgCompatibility(userId) {
+async function getUserAvgCompatibility(userId: string | mongoose.Types.ObjectId): Promise<number> {
   const stats = await getUserCompatibilityStats(userId);
   return stats?.average || 0;
 }
 
-module.exports = {
+export default {
   getCompleteProfile,
   updateAdvancedProfile,
   updatePrivacySettings,

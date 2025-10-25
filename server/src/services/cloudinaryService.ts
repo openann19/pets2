@@ -1,5 +1,6 @@
-const cloudinary = require('cloudinary').v2;
-const logger = require('../utils/logger');
+import { v2 as cloudinary } from 'cloudinary';
+import logger from '../utils/logger';
+import { CloudinaryUploadResult, CloudinaryUploadOptions } from '../types/services';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,12 +11,12 @@ cloudinary.config({
 
 /**
  * Upload image to Cloudinary
- * @param {Buffer} fileBuffer - Image buffer
- * @param {string} folder - Cloudinary folder
- * @param {Object} options - Additional options
- * @returns {Promise<Object>} Upload result
+ * @param fileBuffer - Image buffer
+ * @param folder - Cloudinary folder
+ * @param options - Additional options
+ * @returns Upload result
  */
-const uploadToCloudinary = (fileBuffer, folder = 'pawfectmatch', options = {}) => {
+const uploadToCloudinary = (fileBuffer: Buffer, folder = 'pawfectmatch', options = {}): Promise<CloudinaryUploadResult> => {
   return new Promise((resolve, reject) => {
     const uploadOptions = {
       folder,
@@ -43,10 +44,10 @@ const uploadToCloudinary = (fileBuffer, folder = 'pawfectmatch', options = {}) =
 
 /**
  * Delete image from Cloudinary
- * @param {string} publicId - Cloudinary public ID
- * @returns {Promise<Object>} Deletion result
+ * @param publicId - Cloudinary public ID
+ * @returns Deletion result
  */
-const deleteFromCloudinary = (publicId) => {
+const deleteFromCloudinary = (publicId: string): Promise<{ result: string }> => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.destroy(publicId, (error, result) => {
       if (error) {
@@ -61,11 +62,11 @@ const deleteFromCloudinary = (publicId) => {
 
 /**
  * Generate optimized image URL
- * @param {string} publicId - Cloudinary public ID
- * @param {Object} transformations - Image transformations
- * @returns {string} Optimized image URL
+ * @param publicId - Cloudinary public ID
+ * @param transformations - Image transformations
+ * @returns Optimized image URL
  */
-const getOptimizedImageUrl = (publicId, transformations = {}) => {
+const getOptimizedImageUrl = (publicId: string, transformations = {}): string => {
   const defaultTransformations = {
     width: 400,
     height: 400,
@@ -83,11 +84,11 @@ const getOptimizedImageUrl = (publicId, transformations = {}) => {
 
 /**
  * Upload multiple images
- * @param {Array<Buffer>} fileBuffers - Array of image buffers
- * @param {string} folder - Cloudinary folder
- * @returns {Promise<Array>} Array of upload results
+ * @param fileBuffers - Array of image buffers
+ * @param folder - Cloudinary folder
+ * @returns Array of upload results
  */
-const uploadMultipleImages = async (fileBuffers, folder = 'pawfectmatch') => {
+const uploadMultipleImages = async (fileBuffers: Buffer[], folder = 'pawfectmatch'): Promise<CloudinaryUploadResult[]> => {
   const uploadPromises = fileBuffers.map(buffer => 
     uploadToCloudinary(buffer, folder)
   );
@@ -102,10 +103,10 @@ const uploadMultipleImages = async (fileBuffers, folder = 'pawfectmatch') => {
 
 /**
  * Create image variants for different use cases
- * @param {string} publicId - Original image public ID
- * @returns {Object} URLs for different variants
+ * @param publicId - Original image public ID
+ * @returns URLs for different variants
  */
-const createImageVariants = (publicId) => {
+const createImageVariants = (publicId: string): Record<string, string> => {
   return {
     thumbnail: getOptimizedImageUrl(publicId, { width: 150, height: 150 }),
     small: getOptimizedImageUrl(publicId, { width: 300, height: 300 }),
@@ -115,7 +116,7 @@ const createImageVariants = (publicId) => {
   };
 };
 
-module.exports = {
+export {
   uploadToCloudinary,
   deleteFromCloudinary,
   getOptimizedImageUrl,

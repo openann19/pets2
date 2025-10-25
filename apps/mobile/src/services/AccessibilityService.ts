@@ -180,7 +180,7 @@ class AccessibilityService {
     try {
       if (Platform.OS === "ios") {
         // iOS specific focus
-        AccessibilityInfo.setAccessibilityFocus(ref);
+        AccessibilityInfo.setAccessibilityFocus(ref as number);
       } else {
         // Android specific focus
         // Would need additional implementation
@@ -241,8 +241,8 @@ class AccessibilityService {
       });
 
       return meetsRequirement;
-    } catch (error) {
-      logger.error("Contrast calculation failed", { error });
+    } catch (error: unknown) {
+      logger.error("Contrast calculation failed", { error: error instanceof Error ? error : new Error(String(error)) });
       // Fallback to true to avoid breaking the UI
       return true;
     }
@@ -318,9 +318,9 @@ class AccessibilityService {
     // Handle rgb() format
     const rgbMatch = cleanColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (rgbMatch) {
-      const r = parseInt(rgbMatch[1], 10);
-      const g = parseInt(rgbMatch[2], 10);
-      const b = parseInt(rgbMatch[3], 10);
+      const r = parseInt(rgbMatch[1] as string, 10);
+      const g = parseInt(rgbMatch[2] as string, 10);
+      const b = parseInt(rgbMatch[3] as string, 10);
       return { r, g, b };
     }
 

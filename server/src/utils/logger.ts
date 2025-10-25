@@ -3,9 +3,20 @@
  * Uses Winston for secure structured logging with compliance features
  */
 
-const winston = require('winston');
-const path = require('path');
-const { createHash } = require('crypto');
+import winston from 'winston';
+import path from 'path';
+import { createHash } from 'crypto';
+import os from 'os';
+import fs from 'fs';
+import { Request } from 'express';
+
+// Define logger interface
+interface EnhancedLogger extends winston.Logger {
+  request: (req: Request, message: string, additionalMeta?: Record<string, any>) => string;
+  apiError: (req: Request, error: Error, statusCode?: number, additionalMeta?: Record<string, any>) => string;
+  security: (event: string, data?: Record<string, any>) => void;
+  performance: (operation: string, durationMs: number, meta?: Record<string, any>) => void;
+}
 
 // Define secured log format
 const logFormat = winston.format.combine(
@@ -33,7 +44,7 @@ const consoleFormat = winston.format.combine(
 );
 
 // Sanitize sensitive data
-function sanitizeLogData(data) {
+function sanitizeLogData(data: any): Record<string, any> {
   if (!data) return {};
   
   // Create a deep copy to avoid modifying the original
@@ -44,7 +55,7 @@ function sanitizeLogData(data) {
     'authorization', 'cookie', 'jwt', 'key', 'auth', 'credentials', 'ccNumber'];
   
   // Recursively sanitize objects
-  function sanitizeObj(obj) {
+  function sanitizeObj(obj: Record<string, any>): void {
     if (!obj || typeof obj !== 'object') return;
     
     Object.keys(obj).forEach(key => {
@@ -71,14 +82,14 @@ function sanitizeLogData(data) {
 }
 
 // Create enhanced logger instance
-const logger = winston.createLogger({
+const logger: EnhancedLogger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: logFormat,
   defaultMeta: { 
     service: 'pawfectmatch-api',
     environment: process.env.NODE_ENV || 'development',
     version: process.env.APP_VERSION || '1.0.0',
-    hostname: require('os').hostname()
+    hostname: os.hostname()
   },
   transports: [
     // Write all logs to combined.log with rotation
@@ -172,7 +183,7 @@ if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
 }
 
 // Enhanced convenience methods with 2025 standardized fields
-logger.request = (req, message, additionalMeta = {}) => {
+logger.request = (req: Request, message: string, additionalMeta: Record<string, any> = {}): string => {
   // Extract basic request data safely
   const meta = {
     method: req?.method,
@@ -190,7 +201,7 @@ logger.request = (req, message, additionalMeta = {}) => {
   return meta.requestId; // Return requestId for correlation
 };
 
-logger.apiError = (req, error, statusCode = 500, additionalMeta = {}) => {
+logger.apiError = (req: Request, error: Error, statusCode = 500, additionalMeta: Record<string, any> = {}): string => {
   const errorMeta = {
     method: req?.method,
     path: req?.path || req?.url,
@@ -208,7 +219,7 @@ logger.apiError = (req, error, statusCode = 500, additionalMeta = {}) => {
 };
 
 // Security event logging
-logger.security = (event, data = {}) => {
+logger.security = (event: string, data: Record<string, any> = {}): void => {
   logger.warn(`Security: ${event}`, {
     securityEvent: true,
     timestamp: new Date().toISOString(),
@@ -218,7 +229,7 @@ logger.security = (event, data = {}) => {
 };
 
 // Performance monitoring
-logger.performance = (operation, durationMs, meta = {}) => {
+logger.performance = (operation: string, durationMs: number, meta: Record<string, any> = {}): void => {
   logger.info(`Performance: ${operation}`, {
     performance: true,
     operation,
@@ -228,15 +239,14 @@ logger.performance = (operation, durationMs, meta = {}) => {
 };
 
 // Generate unique request ID
-function generateRequestId() {
+function generateRequestId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
 }
 
 // Create logs directory if it doesn't exist
-const fs = require('fs');
 const logsDir = path.join(process.cwd(), 'logs');
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir);
 }
 
-module.exports = logger;
+export default logger;

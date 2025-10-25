@@ -14,6 +14,7 @@ import {
   getTextColor,
   getBorderColor,
   getStatusColor,
+  getTextColorString,
 } from "../../theme/helpers";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
