@@ -28,16 +28,18 @@ type ARScentTrailsScreenProps = NativeStackScreenProps<
 
 const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
   const [isScanning, setIsScanning] = useState(false);
-  const [scentTrails, setScentTrails] = useState<Array<{
-    id: string;
-    petName: string;
-    petBreed: string;
-    distance: string;
-    direction: string;
-    intensity: string;
-    lastSeen: string;
-    petPhoto: string;
-  }>>([]);
+  const [scentTrails, setScentTrails] = useState<
+    Array<{
+      id: string;
+      petName: string;
+      petBreed: string;
+      distance: string;
+      direction: string;
+      intensity: string;
+      lastSeen: string;
+      petPhoto: string;
+    }>
+  >([]);
 
   const startScanning = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -46,8 +48,11 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
     try {
       // Get user's current location
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Required', 'Location permission is needed to scan for scent trails.');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "Location permission is needed to scan for scent trails.",
+        );
         setIsScanning(false);
         return;
       }
@@ -56,25 +61,46 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
       const { latitude, longitude } = location.coords;
 
       // Fetch nearby pets using geolocation API
-      const nearbyPets = await matchesAPI.getNearbyPets(latitude, longitude, 1000); // 1km radius
-      
+      const nearbyPets = await matchesAPI.getNearbyPets(
+        latitude,
+        longitude,
+        1000,
+      ); // 1km radius
+
       // Convert pets to scent trail format
       const newScentTrails = nearbyPets.map((pet, index) => ({
         id: pet._id,
         petName: pet.name,
-        petBreed: pet.breed || 'Unknown',
+        petBreed: pet.breed || "Unknown",
         distance: `${Math.floor(Math.random() * 500) + 50}m`, // Mock distance calculation
-        direction: ['north', 'east', 'south', 'west', 'northeast', 'northwest', 'southeast', 'southwest'][index % 8],
-        intensity: ['strong', 'medium', 'weak'][index % 3],
+        direction: [
+          "north",
+          "east",
+          "south",
+          "west",
+          "northeast",
+          "northwest",
+          "southeast",
+          "southwest",
+        ][index % 8],
+        intensity: ["strong", "medium", "weak"][index % 3],
         lastSeen: `${Math.floor(Math.random() * 30) + 1} minutes ago`,
-        petPhoto: pet.photos?.[0] || 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200',
+        petPhoto:
+          pet.photos?.[0] ||
+          "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
       }));
 
       setScentTrails(newScentTrails);
-      Alert.alert("Scan Complete", `Found ${newScentTrails.length} scent trails nearby!`);
+      Alert.alert(
+        "Scan Complete",
+        `Found ${newScentTrails.length} scent trails nearby!`,
+      );
     } catch (error) {
       logger.error("Scent trail scanning failed:", { error });
-      Alert.alert("Scan Failed", "Unable to scan for scent trails. Please try again.");
+      Alert.alert(
+        "Scan Failed",
+        "Unable to scan for scent trails. Please try again.",
+      );
     } finally {
       setIsScanning(false);
     }

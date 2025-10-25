@@ -185,9 +185,9 @@ export default function ModernCreatePetScreen({
       // Call real API to create pet
       const petData = {
         ...formData,
-        photos: photos.map(photo => photo.uri),
+        photos: photos.map((photo) => photo.uri),
       };
-      
+
       const response = await petAPI.createPet(petData);
 
       Alert.alert(
@@ -587,9 +587,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.textColor.primary,
     borderWidth: 1,
-    borderColor: Theme.colors.border.light.default,
+    borderColor: Theme.colors.borderColor.light.default,
     ...Theme.shadows.depth.sm,
   },
   textArea: {

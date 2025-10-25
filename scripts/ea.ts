@@ -91,6 +91,7 @@ function transformFile(file: import("ts-morph").SourceFile) {
   // 2) Theme.semantic.X → Theme.colors.<map>[500]
   //    Matches: Theme.semantic.<id> and Theme.semantic["<id>"]
   const themeMap = EAConfig.themeMap || {};
+  const themePathMap = EAConfig.themePathMap || {};
   file.forEachDescendant(n => {
     try {
       if (Node.isPropertyAccessExpression(n)) {
@@ -131,6 +132,22 @@ function transformFile(file: import("ts-morph").SourceFile) {
       }
     } catch (e) {
       // Skip nodes that can't be safely replaced
+    }
+  });
+
+  // 2b) Direct Theme.colors path rewrites
+  file.forEachDescendant(n => {
+    if (Node.isPropertyAccessExpression(n)) {
+      const fullPath = n.getText();
+      if (fullPath.startsWith("Theme.")) {
+        const rel = fullPath.slice("Theme.".length);
+        const replacement = (themePathMap as any)[rel];
+        if (replacement) {
+          n.replaceWithText(`Theme.${replacement}`);
+          counts.theme_semantic_rewrites++;
+          touched = true;
+        }
+      }
     }
   });
 

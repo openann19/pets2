@@ -32,10 +32,7 @@ const AppNavigator = (): React.ReactElement => (
     <Stack.Screen name="Settings" component={SettingsScreen} />
     <Stack.Screen name="MyPets" component={MyPetsScreen} />
     <Stack.Screen name="CreatePet" component={CreatePetScreen} />
-    <Stack.Screen
-      name="AdoptionManager"
-      component={AdoptionManagerScreen}
-    />
+    <Stack.Screen name="AdoptionManager" component={AdoptionManagerScreen} />
     <Stack.Screen name="MainTabs" component={MainTabsScreen} />
   </Stack.Navigator>
 );

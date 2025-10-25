@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
-import { EliteHeader } from "../EliteHeader";
-import { EliteButton } from "../EliteButton";
+import { EliteHeader } from "../EliteComponents";
+import EliteButton from "../buttons/EliteButton";
 import { tokens } from "@pawfectmatch/design-tokens";
 
 interface ChatHeaderProps {

@@ -484,10 +484,7 @@ export function useShimmerEffect() {
 
   useEffect(() => {
     translateX.value = withSequence(
-      withDelay(
-        500,
-        withTiming(100, { duration: 1500 }),
-      ),
+      withDelay(500, withTiming(100, { duration: 1500 })),
     );
   }, [translateX]);
 
@@ -506,7 +503,10 @@ export function useStaggeredAnimation(index: number = 0, delay: number = 100) {
   useEffect(() => {
     const staggerDelay = index * delay;
     opacity.value = withDelay(staggerDelay, withTiming(1, { duration: 300 }));
-    translateY.value = withDelay(staggerDelay, withTiming(0, { duration: 300 }));
+    translateY.value = withDelay(
+      staggerDelay,
+      withTiming(0, { duration: 300 }),
+    );
   }, [index, delay, opacity, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -521,17 +521,15 @@ export function useStaggeredAnimation(index: number = 0, delay: number = 100) {
 export function useScrollAnimation() {
   const scrollY = useSharedValue(0);
 
-  const scrollHandler = useCallback((event: any) => {
-    scrollY.value = event.nativeEvent.contentOffset.y;
-  }, [scrollY]);
+  const scrollHandler = useCallback(
+    (event: any) => {
+      scrollY.value = event.nativeEvent.contentOffset.y;
+    },
+    [scrollY],
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      scrollY.value,
-      [0, 100],
-      [1, 0],
-      Extrapolate.CLAMP,
-    ),
+    opacity: interpolate(scrollY.value, [0, 100], [1, 0], Extrapolate.CLAMP),
   }));
 
   return { scrollHandler, animatedStyle, scrollY };

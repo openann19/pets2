@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.textColor.primary,
     marginBottom: Theme.spacing.sm,
   },
   subtitle: {
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.textColor.primary,
     marginBottom: Theme.spacing.sm,
   },
   emptySubtitle: {

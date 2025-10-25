@@ -87,7 +87,7 @@ export function BioResults({
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
               color={
-                copied ? Theme.colors.status.success : Theme.colors.text.primary
+                copied ? Theme.colors.status.success : Theme.colors.textColor
               }
             />
             <Text
@@ -109,7 +109,7 @@ export function BioResults({
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={Theme.colors.text.primary}
+                color={Theme.colors.textColor}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -124,7 +124,7 @@ export function BioResults({
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={Theme.colors.text.primary}
+                color={Theme.colors.textColor}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
@@ -205,11 +205,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border.light,
+    borderTopColor: Theme.colors.borderColor.light,
   },
   actionButton: {
     flexDirection: "row",
@@ -243,19 +243,19 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginLeft: Theme.spacing.xs,
     fontWeight: Theme.typography.fontWeight.medium,
   },
   analysisContainer: {
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
   },
   analysisTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
     alignItems: "center",
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: Theme.colors.border.light,
+    backgroundColor: Theme.colors.borderColor.light,
     borderRadius: Theme.borderRadius.full,
     overflow: "hidden",
   },
@@ -297,13 +297,13 @@ const styles = StyleSheet.create({
   },
   keywordsSection: {
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border.light,
+    borderTopColor: Theme.colors.borderColor.light,
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   },
   keywordText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.background.primary,
+    color: Theme.colors.backgroundColor.primary,
     fontWeight: Theme.typography.fontWeight.medium,
   },
 });

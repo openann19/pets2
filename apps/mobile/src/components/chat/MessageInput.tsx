@@ -2,9 +2,8 @@ import React, { useCallback, useRef, useState } from "react";
 import { View, TextInput, StyleSheet, Alert } from "react-native";
 import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
-import { EliteButton } from "../EliteButton";
-import { GlassContainer } from "../GlassContainer";
-import { PremiumBody } from "../PremiumBody";
+import EliteButton from "../buttons/EliteButton";
+import { PremiumBody } from "../PremiumTypography";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../contexts/ThemeContext";
 

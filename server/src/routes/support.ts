@@ -1,16 +1,23 @@
-const express = require('express');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validation');
-const { authenticateToken } = require('../middleware/auth');
-const logger = require('../utils/logger');
+import express, { Router, Response } from 'express';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validation';
+import { authenticateToken } from '../middleware/auth';
+import logger from '../utils/logger';
+import type { 
+  AuthenticatedRequest, 
+  ApiResponse, 
+  FAQ, 
+  SupportTicket, 
+  BugReport 
+} from '../types';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Apply authentication to all routes
 router.use(authenticateToken);
 
 // FAQ data (in a real app, this would come from a database)
-const faqData = [
+const faqData: FAQ[] = [
   {
     id: '1',
     category: 'Account',
@@ -52,30 +59,32 @@ const faqData = [
 // @desc    Get FAQ data
 // @route   GET /api/support/faq
 // @access  Private
-const getFAQ = async (req, res) => {
+const getFAQ = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    res.json({
+    const response: ApiResponse<FAQ[]> = {
       success: true,
       data: faqData,
-    });
+    };
+    res.json(response);
   } catch (error) {
     logger.error('Failed to fetch FAQ data', { error });
-    res.status(500).json({
+    const response: ApiResponse = {
       success: false,
       message: 'Failed to fetch FAQ data',
-    });
+    };
+    res.status(500).json(response);
   }
 };
 
 // @desc    Create support ticket
 // @route   POST /api/support/ticket
 // @access  Private
-const createSupportTicket = async (req, res) => {
+const createSupportTicket = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { subject, message, category, priority = 'normal' } = req.body;
     
     // In a real app, this would save to a database
-    const ticket = {
+    const ticket: SupportTicket = {
       id: `ticket_${Date.now()}`,
       userId: req.userId,
       subject,
@@ -84,28 +93,31 @@ const createSupportTicket = async (req, res) => {
       priority,
       status: 'open',
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     logger.info('Support ticket created', { ticketId: ticket.id, userId: req.userId });
 
-    res.json({
+    const response: ApiResponse<SupportTicket> = {
       success: true,
       data: ticket,
       message: 'Support ticket created successfully. We\'ll get back to you within 24 hours.',
-    });
+    };
+    res.json(response);
   } catch (error) {
     logger.error('Failed to create support ticket', { error });
-    res.status(500).json({
+    const response: ApiResponse = {
       success: false,
       message: 'Failed to create support ticket',
-    });
+    };
+    res.status(500).json(response);
   }
 };
 
 // @desc    Submit bug report
 // @route   POST /api/support/bug-report
 // @access  Private
-const submitBugReport = async (req, res) => {
+const submitBugReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const { 
       title, 
@@ -118,7 +130,7 @@ const submitBugReport = async (req, res) => {
     } = req.body;
     
     // In a real app, this would save to a database
-    const bugReport = {
+    const bugReport: BugReport = {
       id: `bug_${Date.now()}`,
       userId: req.userId,
       title,
@@ -131,21 +143,24 @@ const submitBugReport = async (req, res) => {
       status: 'new',
       priority: 'medium',
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     logger.info('Bug report submitted', { bugId: bugReport.id, userId: req.userId });
 
-    res.json({
+    const response: ApiResponse<BugReport> = {
       success: true,
       data: bugReport,
       message: 'Bug report submitted successfully. Thank you for helping us improve the app!',
-    });
+    };
+    res.json(response);
   } catch (error) {
     logger.error('Failed to submit bug report', { error });
-    res.status(500).json({
+    const response: ApiResponse = {
       success: false,
       message: 'Failed to submit bug report',
-    });
+    };
+    res.status(500).json(response);
   }
 };
 
@@ -170,4 +185,4 @@ router.get('/faq', getFAQ);
 router.post('/ticket', supportTicketValidation, validate, createSupportTicket);
 router.post('/bug-report', bugReportValidation, validate, submitBugReport);
 
-module.exports = router;
+export default router;

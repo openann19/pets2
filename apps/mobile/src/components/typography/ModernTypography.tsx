@@ -163,7 +163,7 @@ function ModernText({
   const variantConfig = VARIANT_CONFIGS[variant];
 
   // Get text color
-  const textColor = Theme.colors.text.primary[color];
+  const textColor = Theme.colors.textColor[color];
 
   // Build text style
   const textStyle: TextStyle = {

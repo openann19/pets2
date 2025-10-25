@@ -9,11 +9,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NavigationProp } from "@react-navigation/native";
 
-import { useAIBio } from "../../hooks/useAIBio";
-import { PetInfoForm } from "../../components/ai/PetInfoForm";
-import { ToneSelector } from "../../components/ai/ToneSelector";
-import { BioResults } from "../../components/ai/BioResults";
-import { Theme } from "../../theme/unified-theme";
+import { useAIBio } from "../hooks/useAIBio";
+import { PetInfoForm } from "../components/ai/PetInfoForm";
+import { ToneSelector } from "../components/ai/ToneSelector";
+import { BioResults } from "../components/ai/BioResults";
+import Theme from "../theme/unified-theme";
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;
@@ -75,7 +75,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={Theme.colors.text.primary}
+            color={Theme.colors.textColor}
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
@@ -193,7 +193,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
   },
   header: {
     flexDirection: "row",
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.border.light,
-    backgroundColor: Theme.colors.background.primary,
+    borderBottomColor: Theme.colors.borderColor.light,
+    backgroundColor: Theme.colors.backgroundColor.primary,
   },
   backButton: {
     padding: Theme.spacing.sm,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
   },
   headerSpacer: {
     flex: 1,
@@ -228,18 +228,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginBottom: Theme.spacing.md,
   },
   photoPicker: {
     borderWidth: 2,
-    borderColor: Theme.colors.border.light,
+    borderColor: Theme.colors.borderColor.light,
     borderStyle: "dashed",
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
   },
   photoPlaceholder: {
     alignItems: "center",
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   generateButtonText: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.background.primary,
+    color: Theme.colors.backgroundColor.primary,
   },
   submitError: {
     fontSize: Theme.typography.fontSize.sm,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Theme.colors.primary[500],
     borderRadius: Theme.borderRadius.lg,
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
   },
   newBioText: {
     fontSize: Theme.typography.fontSize.base,

@@ -224,19 +224,22 @@ class AccessibilityService {
     backgroundColor: string,
   ): boolean {
     try {
-      const contrastRatio = this.calculateContrastRatio(foregroundColor, backgroundColor);
-      
+      const contrastRatio = this.calculateContrastRatio(
+        foregroundColor,
+        backgroundColor,
+      );
+
       // WCAG AA requires 4.5:1 for normal text, 3:1 for large text
       // We'll use 4.5:1 as the standard requirement
       const meetsRequirement = contrastRatio >= 4.5;
-      
+
       logger.debug("Contrast check", {
         foreground: foregroundColor,
         background: backgroundColor,
         ratio: contrastRatio,
         meetsRequirement,
       });
-      
+
       return meetsRequirement;
     } catch (error) {
       logger.error("Contrast calculation failed", { error });
@@ -252,10 +255,10 @@ class AccessibilityService {
   private calculateContrastRatio(color1: string, color2: string): number {
     const luminance1 = this.getRelativeLuminance(color1);
     const luminance2 = this.getRelativeLuminance(color2);
-    
+
     const lighter = Math.max(luminance1, luminance2);
     const darker = Math.min(luminance1, luminance2);
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
@@ -266,18 +269,21 @@ class AccessibilityService {
   private getRelativeLuminance(color: string): number {
     const rgb = this.parseColor(color);
     if (!rgb) return 0;
-    
+
     const { r, g, b } = rgb;
-    
+
     // Convert to relative luminance
     const rsRGB = r / 255;
     const gsRGB = g / 255;
     const bsRGB = b / 255;
-    
-    const rLinear = rsRGB <= 0.03928 ? rsRGB / 12.92 : Math.pow((rsRGB + 0.055) / 1.055, 2.4);
-    const gLinear = gsRGB <= 0.03928 ? gsRGB / 12.92 : Math.pow((gsRGB + 0.055) / 1.055, 2.4);
-    const bLinear = bsRGB <= 0.03928 ? bsRGB / 12.92 : Math.pow((bsRGB + 0.055) / 1.055, 2.4);
-    
+
+    const rLinear =
+      rsRGB <= 0.03928 ? rsRGB / 12.92 : Math.pow((rsRGB + 0.055) / 1.055, 2.4);
+    const gLinear =
+      gsRGB <= 0.03928 ? gsRGB / 12.92 : Math.pow((gsRGB + 0.055) / 1.055, 2.4);
+    const bLinear =
+      bsRGB <= 0.03928 ? bsRGB / 12.92 : Math.pow((bsRGB + 0.055) / 1.055, 2.4);
+
     return 0.2126 * rLinear + 0.7152 * gLinear + 0.0722 * bLinear;
   }
 
@@ -285,12 +291,14 @@ class AccessibilityService {
    * Parse color string to RGB values
    * Supports hex (#RRGGBB), rgb(r,g,b), and named colors
    */
-  private parseColor(color: string): { r: number; g: number; b: number } | null {
+  private parseColor(
+    color: string,
+  ): { r: number; g: number; b: number } | null {
     // Remove whitespace and convert to lowercase
     const cleanColor = color.trim().toLowerCase();
-    
+
     // Handle hex colors
-    if (cleanColor.startsWith('#')) {
+    if (cleanColor.startsWith("#")) {
       const hex = cleanColor.slice(1);
       if (hex.length === 3) {
         // Short hex format (#RGB)
@@ -306,7 +314,7 @@ class AccessibilityService {
         return { r, g, b };
       }
     }
-    
+
     // Handle rgb() format
     const rgbMatch = cleanColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (rgbMatch) {
@@ -315,7 +323,7 @@ class AccessibilityService {
       const b = parseInt(rgbMatch[3], 10);
       return { r, g, b };
     }
-    
+
     // Handle common named colors
     const namedColors: Record<string, { r: number; g: number; b: number }> = {
       black: { r: 0, g: 0, b: 0 },
@@ -329,7 +337,7 @@ class AccessibilityService {
       gray: { r: 128, g: 128, b: 128 },
       grey: { r: 128, g: 128, b: 128 },
     };
-    
+
     return namedColors[cleanColor] || null;
   }
 

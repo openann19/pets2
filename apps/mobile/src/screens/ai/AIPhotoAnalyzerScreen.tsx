@@ -190,9 +190,7 @@ export default function AIPhotoAnalyzerScreen({
             temperament: ["Friendly"],
             features: ["Well-groomed"],
           },
-          suggestions: response.data.suggestions ?? [
-            "Good photo quality",
-          ],
+          suggestions: response.data.suggestions ?? ["Good photo quality"],
           tags: response.data.tags ?? ["cute"],
         };
 

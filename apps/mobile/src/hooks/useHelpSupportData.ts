@@ -27,12 +27,14 @@ export interface UseHelpSupportDataReturn {
 }
 
 export function useHelpSupportData(): UseHelpSupportDataReturn {
-  const [faqData, setFaqData] = useState<Array<{
-    id: string;
-    category: string;
-    question: string;
-    answer: string;
-  }>>([]);
+  const [faqData, setFaqData] = useState<
+    Array<{
+      id: string;
+      category: string;
+      question: string;
+      answer: string;
+    }>
+  >([]);
   const [isLoadingFAQ, setIsLoadingFAQ] = useState(false);
 
   // Load FAQ data
@@ -63,9 +65,9 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       action: () => {
         if (faqData.length > 0) {
           // Show FAQ data
-          const faqText = faqData.map(item => 
-            `${item.question}\n${item.answer}\n`
-          ).join('\n');
+          const faqText = faqData
+            .map((item) => `${item.question}\n${item.answer}\n`)
+            .join("\n");
           Alert.alert("FAQ", faqText);
         } else {
           Alert.alert("FAQ", "Loading FAQ data...");
@@ -94,16 +96,22 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
                       category: "other",
                       priority: "normal",
                     });
-                    Alert.alert("Success", "Your support request has been submitted. We'll get back to you within 24 hours.");
+                    Alert.alert(
+                      "Success",
+                      "Your support request has been submitted. We'll get back to you within 24 hours.",
+                    );
                   } catch (error) {
                     logger.error("Failed to create support ticket", { error });
-                    Alert.alert("Error", "Failed to submit support request. Please try again.");
+                    Alert.alert(
+                      "Error",
+                      "Failed to submit support request. Please try again.",
+                    );
                   }
                 }
               },
             },
           ],
-          "plain-text"
+          "plain-text",
         );
       },
     },
@@ -129,16 +137,22 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
                       deviceInfo: "Mobile App",
                       appVersion: "1.0.0",
                     });
-                    Alert.alert("Success", "Thank you for reporting this bug! We'll investigate and fix it.");
+                    Alert.alert(
+                      "Success",
+                      "Thank you for reporting this bug! We'll investigate and fix it.",
+                    );
                   } catch (error) {
                     logger.error("Failed to submit bug report", { error });
-                    Alert.alert("Error", "Failed to submit bug report. Please try again.");
+                    Alert.alert(
+                      "Error",
+                      "Failed to submit bug report. Please try again.",
+                    );
                   }
                 }
               },
             },
           ],
-          "plain-text"
+          "plain-text",
         );
       },
     },

@@ -393,10 +393,7 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
   }, [navigation, userLocation]);
 
   const sliderPosition = useMemo(() => {
-    const percentage = Math.min(
-      100,
-      Math.max(0, (filters.radius / 50) * 100),
-    );
+    const percentage = Math.min(100, Math.max(0, (filters.radius / 50) * 100));
 
     return `${percentage.toFixed(0)}%`;
   }, [filters.radius]);
@@ -547,12 +544,7 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
             <View style={styles.sliderContainer}>
               {/* Simple slider implementation */}
               <View style={styles.sliderTrack}>
-                <View
-                  style={[
-                    styles.sliderThumb,
-                    { left: sliderPosition },
-                  ]}
-                />
+                <View style={[styles.sliderThumb, { left: sliderPosition }]} />
               </View>
             </View>
           </ScrollView>

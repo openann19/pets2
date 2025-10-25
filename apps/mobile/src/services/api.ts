@@ -219,7 +219,10 @@ interface AdoptionApplication {
 // Authentication API methods
 export const authAPI = {
   // Login with email and password
-  login: async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
+  login: async (credentials: {
+    email: string;
+    password: string;
+  }): Promise<AuthResponse> => {
     return request<AuthResponse>("/auth/login", {
       method: "POST",
       body: credentials,
@@ -259,11 +262,16 @@ export const authAPI = {
   },
 
   // Forgot password
-  forgotPassword: async (email: string): Promise<{ success: boolean; message: string }> => {
-    return request<{ success: boolean; message: string }>("/auth/forgot-password", {
-      method: "POST",
-      body: { email },
-    });
+  forgotPassword: async (
+    email: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>(
+      "/auth/forgot-password",
+      {
+        method: "POST",
+        body: { email },
+      },
+    );
   },
 
   // Reset password
@@ -271,10 +279,13 @@ export const authAPI = {
     token: string;
     password: string;
   }): Promise<{ success: boolean; message: string }> => {
-    return request<{ success: boolean; message: string }>("/auth/reset-password", {
-      method: "POST",
-      body: data,
-    });
+    return request<{ success: boolean; message: string }>(
+      "/auth/reset-password",
+      {
+        method: "POST",
+        body: data,
+      },
+    );
   },
 
   // Get current user
@@ -291,9 +302,13 @@ export const authAPI = {
 // Swipe API methods
 export const swipeAPI = {
   // Get pet recommendations for swiping
-  getRecommendations: async (filters?: PetFilters): Promise<SwipeRecommendationResponse> => {
+  getRecommendations: async (
+    filters?: PetFilters,
+  ): Promise<SwipeRecommendationResponse> => {
     const params = filters ? { ...filters } : {};
-    return request<SwipeRecommendationResponse>("/swipe/recommendations", { params });
+    return request<SwipeRecommendationResponse>("/swipe/recommendations", {
+      params,
+    });
   },
 
   // Like a pet
@@ -349,7 +364,10 @@ export const petAPI = {
   },
 
   // Update pet profile
-  updatePet: async (petId: string, petData: Partial<Pet>): Promise<PetCreateResponse> => {
+  updatePet: async (
+    petId: string,
+    petData: Partial<Pet>,
+  ): Promise<PetCreateResponse> => {
     return request<PetCreateResponse>(`/pets/${petId}`, {
       method: "PUT",
       body: petData,
@@ -362,7 +380,10 @@ export const petAPI = {
   },
 
   // Upload pet photos
-  uploadPhotos: async (petId: string, photos: FormData): Promise<PetCreateResponse> => {
+  uploadPhotos: async (
+    petId: string,
+    photos: FormData,
+  ): Promise<PetCreateResponse> => {
     return request<PetCreateResponse>(`/pets/${petId}/photos`, {
       method: "POST",
       body: photos,
@@ -802,18 +823,22 @@ export const matchesAPI = {
   },
 
   // Support API methods
-  getFAQ: async (): Promise<Array<{
-    id: string;
-    category: string;
-    question: string;
-    answer: string;
-  }>> => {
-    return request<Array<{
+  getFAQ: async (): Promise<
+    Array<{
       id: string;
       category: string;
       question: string;
       answer: string;
-    }>>("/support/faq");
+    }>
+  > => {
+    return request<
+      Array<{
+        id: string;
+        category: string;
+        question: string;
+        answer: string;
+      }>
+    >("/support/faq");
   },
 
   createSupportTicket: async (data: {
@@ -822,10 +847,13 @@ export const matchesAPI = {
     category: string;
     priority?: string;
   }): Promise<{ success: boolean; data: any; message: string }> => {
-    return request<{ success: boolean; data: any; message: string }>("/support/ticket", {
-      method: "POST",
-      body: data,
-    });
+    return request<{ success: boolean; data: any; message: string }>(
+      "/support/ticket",
+      {
+        method: "POST",
+        body: data,
+      },
+    );
   },
 
   submitBugReport: async (data: {
@@ -837,10 +865,13 @@ export const matchesAPI = {
     deviceInfo?: string;
     appVersion?: string;
   }): Promise<{ success: boolean; data: any; message: string }> => {
-    return request<{ success: boolean; data: any; message: string }>("/support/bug-report", {
-      method: "POST",
-      body: data,
-    });
+    return request<{ success: boolean; data: any; message: string }>(
+      "/support/bug-report",
+      {
+        method: "POST",
+        body: data,
+      },
+    );
   },
 
   // Get app version info

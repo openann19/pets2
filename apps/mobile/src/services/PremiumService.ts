@@ -353,7 +353,7 @@ class PremiumService {
         const parsed = JSON.parse(cached);
         const now = Date.now();
         const cacheAge = now - parsed.timestamp;
-        
+
         // Cache is valid for 5 minutes
         if (cacheAge < 5 * 60 * 1000) {
           logger.debug("Premium status cache hit", { cacheAge });
@@ -376,7 +376,10 @@ class PremiumService {
         status,
         timestamp: Date.now(),
       };
-      await AsyncStorage.setItem("premium_status_cache", JSON.stringify(cacheData));
+      await AsyncStorage.setItem(
+        "premium_status_cache",
+        JSON.stringify(cacheData),
+      );
       logger.debug("Premium status cached", { status });
     } catch (error) {
       logger.error("Failed to cache premium status", { error });

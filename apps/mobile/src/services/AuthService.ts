@@ -393,15 +393,17 @@ class AuthService {
       const registerData = {
         email: data.email,
         password: data.password,
-        firstName: data.name.split(' ')[0] || '',
-        lastName: data.name.split(' ').slice(1).join(' ') || '',
+        firstName: data.name.split(" ")[0] || "",
+        lastName: data.name.split(" ").slice(1).join(" ") || "",
       };
       const response = await api.auth.register(registerData);
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User registered successfully", { userId: response.user._id });
+      logger.info("User registered successfully", {
+        userId: response.user._id,
+      });
       return response;
     } catch (error) {
       logger.error("Registration failed", { error, email: data.email });

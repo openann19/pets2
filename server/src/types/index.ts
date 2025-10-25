@@ -281,10 +281,548 @@ export interface SwaggerConfig {
   apis: string[];
 }
 
+// Mongoose Document Types
+export interface IUser extends Document {
+  _id: mongoose.Types.ObjectId;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date;
+  avatar?: string;
+  bio?: string;
+  phone?: string;
+  location: {
+    type: 'Point';
+    coordinates: [number, number];
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      zipCode?: string;
+      country: string;
+    };
+  };
+  preferences: {
+    maxDistance: number;
+    ageRange: { min: number; max: number };
+    species: string[];
+    intents: string[];
+    notifications: {
+      email: boolean;
+      push: boolean;
+      matches: boolean;
+      messages: boolean;
+    };
+  };
+  premium: {
+    isActive: boolean;
+    plan: 'basic' | 'premium' | 'ultimate';
+    expiresAt?: Date;
+    stripeSubscriptionId?: string;
+    cancelAtPeriodEnd: boolean;
+    paymentStatus: 'active' | 'past_due' | 'failed';
+    features: {
+      unlimitedLikes: boolean;
+      boostProfile: boolean;
+      seeWhoLiked: boolean;
+      advancedFilters: boolean;
+      aiMatching: boolean;
+    };
+  };
+  analytics?: {
+    lastActive?: Date;
+    totalPetsCreated?: number;
+    totalLikes?: number;
+    totalMatches?: number;
+    totalMessagesSent?: number;
+    totalSubscriptionsStarted?: number;
+    totalSubscriptionsCancelled?: number;
+    totalPremiumFeaturesUsed?: number;
+    events?: Array<{
+      type: string;
+      timestamp: Date;
+      metadata: any;
+    }>;
+  };
+  isActive: boolean;
+  isVerified: boolean;
+  verificationCode?: string;
+  verificationExpires?: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  twoFactorSecret?: string;
+  twoFactorEnabled: boolean;
+  biometricCredentials?: mongoose.Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
+  lastLoginAt?: Date;
+}
+
+export interface IPet extends Document {
+  _id: mongoose.Types.ObjectId;
+  owner: mongoose.Types.ObjectId;
+  name: string;
+  species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
+  breed: string;
+  age: number;
+  gender: 'male' | 'female';
+  size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
+  weight?: number;
+  color: {
+    primary?: string;
+    secondary?: string;
+    pattern?: 'solid' | 'spotted' | 'striped' | 'mixed' | 'other';
+  };
+  photos: Array<{
+    url: string;
+    publicId?: string;
+    caption?: string;
+    isPrimary: boolean;
+  }>;
+  videos?: Array<{
+    url: string;
+    publicId?: string;
+    caption?: string;
+  }>;
+  description?: string;
+  personalityTags: string[];
+  intent: 'adoption' | 'mating' | 'playdate' | 'other';
+  availability: {
+    isAvailable: boolean;
+    schedule?: any;
+    restrictions?: string[];
+  };
+  healthInfo: {
+    vaccinated: boolean;
+    spayedNeutered: boolean;
+    medicalHistory?: string[];
+    allergies?: string[];
+    medications?: string[];
+  };
+  specialNeeds?: string;
+  location: {
+    type: 'Point';
+    coordinates: [number, number];
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      zipCode?: string;
+      country: string;
+    };
+  };
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IMatch extends Document {
+  _id: mongoose.Types.ObjectId;
+  users: [mongoose.Types.ObjectId, mongoose.Types.ObjectId];
+  pets: [mongoose.Types.ObjectId, mongoose.Types.ObjectId];
+  status: 'pending' | 'matched' | 'unmatched' | 'blocked';
+  compatibilityScore: number;
+  matchedAt?: Date;
+  unmatchedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IAnalyticsEvent extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
+  eventType: string;
+  entityType?: string;
+  entityId?: mongoose.Types.ObjectId;
+  durationMs?: number;
+  success: boolean;
+  errorCode?: string;
+  metadata: any;
+  createdAt: Date;
+}
+
+export interface IAdminActivityLog extends Document {
+  _id: mongoose.Types.ObjectId;
+  adminId: mongoose.Types.ObjectId;
+  action: string;
+  targetType?: string;
+  targetId?: mongoose.Types.ObjectId;
+  details: any;
+  ipAddress?: string;
+  userAgent?: string;
+  success: boolean;
+  errorMessage?: string;
+  timestamp: Date;
+}
+
+export interface IAdminApiKey extends Document {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  key: string;
+  permissions: string[];
+  isActive: boolean;
+  lastUsed?: Date;
+  expiresAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IAuditLog extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
+  action: string;
+  resource: string;
+  resourceId?: mongoose.Types.ObjectId;
+  changes?: any;
+  ipAddress?: string;
+  userAgent?: string;
+  timestamp: Date;
+}
+
+export interface IBiometricCredential extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  type: 'fingerprint' | 'face' | 'voice';
+  credentialId: string;
+  publicKey: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IConfiguration extends Document {
+  _id: mongoose.Types.ObjectId;
+  key: string;
+  value: any;
+  description?: string;
+  isEncrypted: boolean;
+  updatedBy: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IContentModeration extends Document {
+  _id: mongoose.Types.ObjectId;
+  contentId: mongoose.Types.ObjectId;
+  contentType: 'photo' | 'message' | 'profile' | 'story';
+  userId?: mongoose.Types.ObjectId;
+  status: 'pending' | 'approved' | 'rejected' | 'flagged';
+  aiAnalysis?: any;
+  humanReview?: {
+    reviewerId: mongoose.Types.ObjectId;
+    decision: 'approve' | 'reject';
+    reason?: string;
+    reviewedAt: Date;
+  };
+  flags: string[];
+  confidence: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IConversation extends Document {
+  _id: mongoose.Types.ObjectId;
+  participants: mongoose.Types.ObjectId[];
+  matchId: mongoose.Types.ObjectId;
+  lastMessage?: {
+    content: string;
+    senderId: mongoose.Types.ObjectId;
+    timestamp: Date;
+  };
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IEvent extends Document {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  description: string;
+  location: {
+    type: 'Point';
+    coordinates: [number, number];
+    address: string;
+  };
+  organizer: mongoose.Types.ObjectId;
+  participants: mongoose.Types.ObjectId[];
+  startDate: Date;
+  endDate: Date;
+  maxParticipants?: number;
+  isPublic: boolean;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IFavorite extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  petId: mongoose.Types.ObjectId;
+  createdAt: Date;
+}
+
+export interface ILeaderboardScore extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  category: string;
+  score: number;
+  rank: number;
+  period: 'daily' | 'weekly' | 'monthly' | 'all-time';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IModerationSettings extends Document {
+  _id: mongoose.Types.ObjectId;
+  autoModerationEnabled: boolean;
+  aiConfidenceThreshold: number;
+  humanReviewRequired: boolean;
+  blockedKeywords: string[];
+  allowedDomains: string[];
+  maxReportThreshold: number;
+  updatedBy: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface INotification extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  type: 'match' | 'message' | 'like' | 'system' | 'premium';
+  title: string;
+  message: string;
+  data?: any;
+  isRead: boolean;
+  createdAt: Date;
+  readAt?: Date;
+}
+
+export interface INotificationPreference extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  email: boolean;
+  push: boolean;
+  sms: boolean;
+  types: {
+    matches: boolean;
+    messages: boolean;
+    likes: boolean;
+    system: boolean;
+    premium: boolean;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IReport extends Document {
+  _id: mongoose.Types.ObjectId;
+  reporterId: mongoose.Types.ObjectId;
+  reportedUserId?: mongoose.Types.ObjectId;
+  reportedPetId?: mongoose.Types.ObjectId;
+  reportedMessageId?: mongoose.Types.ObjectId;
+  reason: string;
+  description?: string;
+  status: 'pending' | 'investigating' | 'resolved' | 'dismissed';
+  adminNotes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IStory extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  petId?: mongoose.Types.ObjectId;
+  content: string;
+  media?: {
+    type: 'image' | 'video';
+    url: string;
+    publicId?: string;
+  };
+  location?: {
+    type: 'Point';
+    coordinates: [number, number];
+    address?: string;
+  };
+  tags: string[];
+  isPublic: boolean;
+  expiresAt: Date;
+  likes: mongoose.Types.ObjectId[];
+  views: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IUpload extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  filename: string;
+  originalName: string;
+  mimetype: string;
+  size: number;
+  url: string;
+  publicId?: string;
+  metadata?: any;
+  createdAt: Date;
+}
+
+export interface IUserAuditLog extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  action: string;
+  details: any;
+  ipAddress?: string;
+  userAgent?: string;
+  timestamp: Date;
+}
+
+export interface IUserBlock extends Document {
+  _id: mongoose.Types.ObjectId;
+  blockerId: mongoose.Types.ObjectId;
+  blockedId: mongoose.Types.ObjectId;
+  reason?: string;
+  createdAt: Date;
+}
+
+export interface IUserMute extends Document {
+  _id: mongoose.Types.ObjectId;
+  muterId: mongoose.Types.ObjectId;
+  mutedId: mongoose.Types.ObjectId;
+  reason?: string;
+  createdAt: Date;
+  expiresAt?: Date;
+}
+
+export interface IVerification extends Document {
+  _id: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  type: 'email' | 'phone' | 'identity' | 'address';
+  status: 'pending' | 'verified' | 'rejected';
+  verificationCode?: string;
+  verificationData?: any;
+  expiresAt?: Date;
+  verifiedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Service Types
+export interface AnalyticsService {
+  trackUserEvent(userId: string, eventType: string, metadata?: any): Promise<any>;
+  trackPetEvent(petId: string, eventType: string, metadata?: any): Promise<any>;
+  trackMatchEvent(matchId: string, eventType: string, metadata?: any): Promise<any>;
+  getUserAnalytics(userId: string, period?: string): Promise<any>;
+  getPetAnalytics(petId: string, period?: string): Promise<any>;
+  getMatchAnalytics(matchId: string, period?: string): Promise<any>;
+}
+
+export interface AIService {
+  analyzePetPhoto(imageUrl: string): Promise<AIAnalysis>;
+  generatePetBio(petData: any): Promise<string>;
+  getCompatibilityScore(pet1: any, pet2: any): Promise<number>;
+  moderateContent(content: string, type: string): Promise<any>;
+}
+
+export interface CloudinaryService {
+  uploadToCloudinary(buffer: Buffer, folder: string): Promise<any>;
+  deleteFromCloudinary(publicId: string): Promise<any>;
+  generateUploadSignature(folder: string): Promise<any>;
+}
+
+export interface EmailService {
+  sendWelcomeEmail(userEmail: string, userName: string): Promise<void>;
+  sendVerificationEmail(userEmail: string, verificationCode: string): Promise<void>;
+  sendPasswordResetEmail(userEmail: string, resetToken: string): Promise<void>;
+  sendMatchNotificationEmail(userEmail: string, matchData: any): Promise<void>;
+}
+
+export interface StripeService {
+  createCustomer(userData: any): Promise<any>;
+  createSubscription(customerId: string, planId: string): Promise<any>;
+  cancelSubscription(subscriptionId: string): Promise<any>;
+  updateSubscription(subscriptionId: string, planId: string): Promise<any>;
+  handleWebhook(payload: any, signature: string): Promise<any>;
+}
+
+export interface ChatService {
+  sendMessage(matchId: string, senderId: string, content: string, type: string): Promise<any>;
+  getMessages(matchId: string, page?: number, limit?: number): Promise<any>;
+  markAsRead(matchId: string, userId: string): Promise<void>;
+  getConversations(userId: string): Promise<any>;
+}
+
+// Controller Types
+export interface PetController {
+  createPet(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getPets(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getPetById(req: AuthenticatedRequest, res: Response): Promise<void>;
+  updatePet(req: AuthenticatedRequest, res: Response): Promise<void>;
+  deletePet(req: AuthenticatedRequest, res: Response): Promise<void>;
+  uploadPhotos(req: AuthenticatedRequest, res: Response): Promise<void>;
+  deletePhoto(req: AuthenticatedRequest, res: Response): Promise<void>;
+}
+
+export interface MatchController {
+  getMatches(req: AuthenticatedRequest, res: Response): Promise<void>;
+  createMatch(req: AuthenticatedRequest, res: Response): Promise<void>;
+  unmatch(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getMatchById(req: AuthenticatedRequest, res: Response): Promise<void>;
+}
+
+export interface AdminController {
+  getUsers(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getUserById(req: AuthenticatedRequest, res: Response): Promise<void>;
+  updateUser(req: AuthenticatedRequest, res: Response): Promise<void>;
+  deleteUser(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getAnalytics(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getModerationQueue(req: AuthenticatedRequest, res: Response): Promise<void>;
+  moderateContent(req: AuthenticatedRequest, res: Response): Promise<void>;
+}
+
+export interface PremiumController {
+  getPlans(req: AuthenticatedRequest, res: Response): Promise<void>;
+  subscribe(req: AuthenticatedRequest, res: Response): Promise<void>;
+  cancelSubscription(req: AuthenticatedRequest, res: Response): Promise<void>;
+  updateSubscription(req: AuthenticatedRequest, res: Response): Promise<void>;
+  getSubscriptionStatus(req: AuthenticatedRequest, res: Response): Promise<void>;
+}
+
+// Route Types
+export interface AdminRoutes {
+  '/analytics': RouteHandler;
+  '/analytics/export': RouteHandler;
+  '/api-management/stats': RouteHandler;
+  '/api-management/endpoints': RouteHandler;
+  '/kyc-management/stats': RouteHandler;
+  '/kyc-management/verifications': RouteHandler;
+  '/audit-logs': RouteHandler;
+  '/stripe/config': RouteHandler;
+  '/users': RouteHandler;
+  '/users/:id': RouteHandler;
+  '/moderation/queue': RouteHandler;
+  '/moderation/content/:id': RouteHandler;
+}
+
+export interface AnalyticsRoutes {
+  '/user': RouteHandler;
+  '/pet': RouteHandler;
+  '/match': RouteHandler;
+  '/events': RouteHandler;
+  '/performance': RouteHandler;
+  '/users/:userId': RouteHandler;
+  '/pet/:petId': RouteHandler;
+  '/match/:matchId': RouteHandler;
+  '/matches/:userId': RouteHandler;
+}
+
+// Import mongoose for Document type
+import mongoose, { Document } from 'mongoose';
+
 // Export all types
 export type {
   Request,
   Response,
   NextFunction,
   Socket,
+  Document,
 };

@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   },
   buttonGroupTitle: {
     marginBottom: Theme.spacing.sm,
-    color: Theme.colors.text.primary.accent,
+    color: Theme.colors.textColor.accent,
   },
   containerGrid: {
     flexDirection: "row",
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
-    color: Theme.colors.text.primary.accent,
+    color: Theme.colors.textColor.accent,
     fontWeight: Theme.typography.fontWeight.bold,
   },
   benefitsList: {

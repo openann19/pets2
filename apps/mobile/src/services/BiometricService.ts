@@ -242,7 +242,7 @@ class BiometricService {
 
       // Generate a unique key for this encryption session
       const encryptionKey = `biometric_encrypted_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Store the encrypted data in SecureStore (which uses platform keychain)
       await SecureStore.setItemAsync(encryptionKey, data, {
         requireAuthentication: true,

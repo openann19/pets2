@@ -65,7 +65,8 @@ function ForgotPasswordScreen({
 
         Alert.alert(
           "Check Your Email",
-          response.message || "We've sent you a password reset link. Please check your email and follow the instructions.",
+          response.message ||
+            "We've sent you a password reset link. Please check your email and follow the instructions.",
           [
             {
               text: "OK",

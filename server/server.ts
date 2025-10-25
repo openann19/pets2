@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -7,13 +7,11 @@ import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-import path from 'path';
 import dotenv from 'dotenv';
 
 // Import middleware
-import { errorHandler } from './src/middleware/errorHandler';
+import errorHandler from './src/middleware/errorHandler';
 import { authenticateToken, requireAdmin } from './src/middleware/auth';
-import { csrfProtection, setCsrfToken } from './src/middleware/csrf';
 
 // Import routes
 import authRoutes from './src/routes/auth';
@@ -27,7 +25,6 @@ import analyticsRoutes from './src/routes/analytics';
 import adminRoutes from './src/routes/admin';
 import accountRoutes from './src/routes/account';
 import memoriesRoutes from './src/routes/memories';
-import webhookRoutes from './src/routes/webhooks';
 import biometricRoutes from './src/routes/biometric';
 import leaderboardRoutes from './src/routes/leaderboard';
 import notificationRoutes from './src/routes/notifications';
@@ -38,7 +35,7 @@ import adoptionRoutes from './src/routes/adoption';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env['PORT'] || 5001;
 
 // Create HTTP server
 const server = createServer(app);
@@ -46,7 +43,7 @@ const server = createServer(app);
 // Initialize Socket.IO
 const io = new SocketIOServer(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: process.env['CLIENT_URL'] || "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 });
@@ -64,7 +61,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  origin: process.env['CLIENT_URL'] || "http://localhost:3000",
   credentials: true,
 }));
 
@@ -123,12 +120,12 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env['NODE_ENV'] || 'development'
   });
 });
 
@@ -137,16 +134,16 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', authenticateToken, userRoutes);
-app.use('/api/pets', authenticateToken, petRoutes);
-app.use('/api/matches', authenticateToken, matchRoutes);
-app.use('/api/chat', authenticateToken, chatRoutes);
-app.use('/api/ai', authenticateToken, aiRoutes);
-app.use('/api/premium', authenticateToken, premiumRoutes);
-app.use('/api/analytics', authenticateToken, analyticsRoutes);
-app.use('/api/account', authenticateToken, accountRoutes);
-app.use('/api/memories', authenticateToken, memoriesRoutes);
-app.use('/api/support', authenticateToken, supportRoutes);
+app.use('/api/users', authenticateToken as any, userRoutes);
+app.use('/api/pets', authenticateToken as any, petRoutes);
+app.use('/api/matches', authenticateToken as any, matchRoutes);
+app.use('/api/chat', authenticateToken as any, chatRoutes);
+app.use('/api/ai', authenticateToken as any, aiRoutes);
+app.use('/api/premium', authenticateToken as any, premiumRoutes);
+app.use('/api/analytics', authenticateToken as any, analyticsRoutes);
+app.use('/api/account', authenticateToken as any, accountRoutes);
+app.use('/api/memories', authenticateToken as any, memoriesRoutes);
+app.use('/api/support', authenticateToken as any, supportRoutes);
 app.use('/api/adoption', adoptionRoutes);
 
 // Enhanced 2025 Features Routes
@@ -156,7 +153,7 @@ app.use('/api/user/notifications', notificationRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // Admin routes
-app.use('/api/admin', authenticateToken, requireAdmin, adminRoutes);
+app.use('/api/admin', authenticateToken as any, requireAdmin as any, adminRoutes);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {

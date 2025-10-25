@@ -483,18 +483,18 @@ const styles = StyleSheet.create({
   legacyHeading1: {
     fontSize: Theme.typography.fontSize["4xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.textColor.primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyHeading2: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.textColor.primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyBody: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.textColor.primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyBodySmall: {

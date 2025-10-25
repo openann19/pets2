@@ -63,7 +63,8 @@ function DeactivateAccountScreen({
       if (response.success) {
         Alert.alert(
           "Account Deactivated",
-          response.message || "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
+          response.message ||
+            "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
           [
             {
               text: "OK",

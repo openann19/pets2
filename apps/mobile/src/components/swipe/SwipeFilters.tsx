@@ -1,10 +1,12 @@
 import React, { useCallback } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
-import { EliteButton } from "../EliteButton";
-import { GlassContainer } from "../GlassContainer";
-import { PremiumBody } from "../PremiumBody";
-import { FadeInUp } from "../FadeInUp";
+import {
+  EliteButton,
+  GlassContainer,
+  PremiumBody,
+  FadeInUp,
+} from "../PremiumComponents";
 import { SwipeFilters as SwipeFiltersType } from "../../hooks/useSwipeData";
 
 interface SwipeFiltersProps {

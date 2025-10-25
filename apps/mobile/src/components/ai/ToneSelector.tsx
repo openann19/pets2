@@ -65,7 +65,9 @@ export function ToneSelector({
               selectedTone === tone.id && styles.selectedCard,
               {
                 borderColor:
-                  selectedTone === tone.id ? tone.color : Theme.colors.border.light,
+                  selectedTone === tone.id
+                    ? tone.color
+                    : Theme.colors.borderColor.light,
               },
             ]}
             onPress={() => {
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: Theme.colors.backgroundColor.primary,
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   toneLabel: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: Theme.colors.textColor,
     marginBottom: Theme.spacing.xs,
     textAlign: "center",
   },
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkmark: {
-    color: Theme.colors.background.primary,
+    color: Theme.colors.backgroundColor.primary,
     fontSize: Theme.typography.fontSize.sm,
     fontWeight: Theme.typography.fontWeight.bold,
   },
