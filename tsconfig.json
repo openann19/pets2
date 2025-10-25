@@ -8,8 +8,14 @@
     "paths": {
       "@pawfectmatch/ui": ["packages/ui/src/index.ts"],
       "@pawfectmatch/ui/*": ["packages/ui/src/*"],
-      "@pawfectmatch/core": ["packages/core/dist/index.d.ts"],
-      "@pawfectmatch/core/*": ["packages/core/dist/*"]
+      "@pawfectmatch/core": [
+        "packages/core/src/index.ts",
+        "packages/core/dist/index.d.ts"
+      ],
+      "@pawfectmatch/core/*": [
+        "packages/core/src/*",
+        "packages/core/dist/*"
+      ]
     },
     // React JSX defaults for TS tooling
     "jsx": "react-jsx",

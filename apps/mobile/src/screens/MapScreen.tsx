@@ -1,10 +1,16 @@
 import { useAuthStore } from "@pawfectmatch/core";
 import { logger } from "@pawfectmatch/core";
 import Geolocation from "@react-native-community/geolocation";
-import { useNavigation } from "@react-navigation/native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Alert,
   Animated,
@@ -24,7 +30,19 @@ import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
 import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
 
-const { width, height } = Dimensions.get("window");
+import { SOCKET_URL } from "../config/environment";
+import type { RootStackParamList } from "../navigation/types";
+
+type MapScreenProps = NativeStackScreenProps<RootStackParamList, "Map">;
+
+type ArScentTrailsNavigation = {
+  navigate: (
+    screen: "ARScentTrails",
+    params: RootStackParamList["ARScentTrails"],
+  ) => void;
+};
+
+const { width } = Dimensions.get("window");
 
 interface MapFilters {
   showMyPets: boolean;
@@ -62,13 +80,8 @@ interface ActivityType {
   color: string;
 }
 
-interface MapScreenProps {
-  navigation?: any;
-}
-
-function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
+function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
   const { user } = useAuthStore();
-  const navigation = useNavigation();
   const [region, setRegion] = useState<Region>({
     latitude: 40.7589,
     longitude: -73.9851,
@@ -98,46 +111,70 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
   });
   const [filterPanelHeight] = useState(new Animated.Value(0));
   const [statsOpacity] = useState(new Animated.Value(1));
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   // Activity types configuration
-  const activityTypes: ActivityType[] = [
-    {
-      id: "walking",
-      name: "Walking",
-      label: "Walking",
-      emoji: "🚶‍♂️",
-      color: "#4CAF50",
-    },
-    {
-      id: "playing",
-      name: "Playing",
-      label: "Playing",
-      emoji: "🎾",
-      color: "#FF9800",
-    },
-    {
-      id: "feeding",
-      name: "Feeding",
-      label: "Feeding",
-      emoji: "🍽️",
-      color: "#9C27B0",
-    },
-    {
-      id: "resting",
-      name: "Resting",
-      label: "Resting",
-      emoji: "😴",
-      color: "#607D8B",
-    },
-    {
-      id: "training",
-      name: "Training",
-      label: "Training",
-      emoji: "🎯",
-      color: "#E91E63",
-    },
-  ];
+  const activityTypes = useMemo<ActivityType[]>(
+    () => [
+      {
+        id: "walking",
+        name: "Walking",
+        label: "Walking",
+        emoji: "🚶‍♂️",
+        color: "#4CAF50",
+      },
+      {
+        id: "playing",
+        name: "Playing",
+        label: "Playing",
+        emoji: "🎾",
+        color: "#FF9800",
+      },
+      {
+        id: "feeding",
+        name: "Feeding",
+        label: "Feeding",
+        emoji: "🍽️",
+        color: "#9C27B0",
+      },
+      {
+        id: "resting",
+        name: "Resting",
+        label: "Resting",
+        emoji: "😴",
+        color: "#607D8B",
+      },
+      {
+        id: "training",
+        name: "Training",
+        label: "Training",
+        emoji: "🎯",
+        color: "#E91E63",
+      },
+    ],
+    [],
+  );
+
+  // Get current location
+  const getCurrentLocation = useCallback(() => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+        setRegion({
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+      },
+      (error: unknown) => {
+        logger.error("Location error:", { error });
+        Alert.alert("Location Error", "Unable to get your current location.");
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+    );
+  }, []);
 
   // Location permission request
   const requestLocationPermission = useCallback(async () => {
@@ -156,35 +193,36 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
           "Please enable location access to see nearby pets.",
         );
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error("Location permission error:", { error });
     }
-  }, []);
+  }, [getCurrentLocation]);
 
-  // Get current location
-  const getCurrentLocation = useCallback(() => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ latitude, longitude });
-        setRegion({
-          latitude,
-          longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      },
-      (error) => {
-        logger.error("Location error:", { error });
-        Alert.alert("Location Error", "Unable to get your current location.");
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-    );
+  const socketUrl = useMemo(() => {
+    const expoSocketUrl =
+      process.env.EXPO_PUBLIC_SOCKET_URL ??
+      process.env.REACT_NATIVE_SOCKET_URL ??
+      process.env.SOCKET_URL ??
+      process.env.REACT_APP_SOCKET_URL;
+
+    if (expoSocketUrl && expoSocketUrl.trim().length > 0) {
+      return expoSocketUrl;
+    }
+
+    if (SOCKET_URL && SOCKET_URL.trim().length > 0) {
+      return SOCKET_URL;
+    }
+
+    logger.warn("No socket URL configured; falling back to default localhost.");
+    return "http://localhost:5000";
   }, []);
 
   useEffect(() => {
-    const socketUrl =
-      process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
+    if (!socketUrl) {
+      logger.error("Socket URL is undefined; skipping socket initialization.");
+      return undefined;
+    }
+
     const newSocket = io(socketUrl, {
       transports: ["websocket", "polling"],
       upgrade: true,
@@ -217,16 +255,17 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
       setPins(nearbyPins);
     });
 
-    setSocket(newSocket);
+    socketRef.current = newSocket;
 
     return () => {
+      socketRef.current = null;
       newSocket.disconnect();
     };
-  }, [user?._id, filters.radius]);
+  }, [user?._id, filters.radius, socketUrl]);
 
   // Request location permission on mount
   useEffect(() => {
-    requestLocationPermission();
+    void requestLocationPermission();
   }, [requestLocationPermission]);
 
   // Simulate stats updates
@@ -248,6 +287,27 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
   }, [pins.length]);
 
   // Filter pins based on current filters
+  const toRadians = useCallback((degrees: number): number => {
+    return degrees * (Math.PI / 180);
+  }, []);
+
+  const calculateDistance = useCallback(
+    (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const earthRadiusKm = 6371;
+      const dLat = toRadians(lat2 - lat1);
+      const dLon = toRadians(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) *
+          Math.cos(toRadians(lat2)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return earthRadiusKm * c;
+    },
+    [toRadians],
+  );
+
   const filteredPins = useMemo(() => {
     return pins.filter((pin) => {
       if (!filters.activityTypes.includes(pin.activity)) return false;
@@ -263,29 +323,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
       }
       return true;
     });
-  }, [pins, filters, userLocation]);
-
-  // Calculate distance between two points
-  const calculateDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number,
-  ): number => {
-    const R = 6371; // Earth's radius in kilometers
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
-  const toRadians = (degrees: number): number => degrees * (Math.PI / 180);
+  }, [calculateDistance, filters, pins, userLocation]);
 
   // Handle marker press
   const handleMarkerPress = useCallback((pin: PulsePin) => {
@@ -316,23 +354,52 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
   }, []);
 
   // Get marker color based on activity
-  const getMarkerColor = (activity: string, isMatch = false): string => {
-    if (isMatch) return "#EC4899";
-    const activityType = activityTypes.find((a) => a.id === activity);
-    return activityType?.color || "#6B7280";
-  };
+  const getMarkerColor = useCallback(
+    (activity: string, isMatch = false): string => {
+      if (isMatch) return "#EC4899";
+      const activityType = activityTypes.find((a) => a.id === activity);
+      return activityType?.color || "#6B7280";
+    },
+    [activityTypes],
+  );
+
+  const getStableMatchFlag = useCallback((pin: PulsePin): boolean => {
+    let hash = 0;
+    for (const char of pin._id) {
+      hash += char.codePointAt(0) ?? 0;
+    }
+    return hash % 10 >= 7;
+  }, []);
 
   // Update user location
   const updateUserLocation = useCallback(() => {
-    if (userLocation && socket) {
-      socket.emit("location:update", {
+    const socketInstance = socketRef.current;
+    if (userLocation && socketInstance) {
+      socketInstance.emit("location:update", {
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
         activity: "other",
         message: "Updated location",
       });
     }
-  }, [userLocation, socket]);
+  }, [userLocation]);
+
+  const navigateToArScentTrails = useCallback(() => {
+    const typedNavigation = navigation as unknown as ArScentTrailsNavigation;
+
+    typedNavigation.navigate("ARScentTrails", {
+      initialLocation: userLocation ?? null,
+    });
+  }, [navigation, userLocation]);
+
+  const sliderPosition = useMemo(() => {
+    const percentage = Math.min(
+      100,
+      Math.max(0, (filters.radius / 50) * 100),
+    );
+
+    return `${percentage.toFixed(0)}%`;
+  }, [filters.radius]);
 
   return (
     <View style={styles.container}>
@@ -396,7 +463,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
 
         {/* Pet activity markers */}
         {filteredPins.map((pin) => {
-          const isMatch = Math.random() > 0.7; // Simulate matches
+          const isMatch = getStableMatchFlag(pin);
           return (
             <React.Fragment key={pin._id}>
               <Marker
@@ -483,7 +550,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
                 <View
                   style={[
                     styles.sliderThumb,
-                    { left: `${(filters.radius / 50) * 100}%` },
+                    { left: sliderPosition },
                   ]}
                 />
               </View>
@@ -496,12 +563,7 @@ function MapScreen({ navigation: _navProp }: MapScreenProps): JSX.Element {
       <View style={styles.fabContainer}>
         <TouchableOpacity
           style={[styles.fab, styles.arFab]}
-          onPress={() => {
-            // Navigate to AR Scent Trails
-            (navigation as any).navigate("ARScentTrails", {
-              initialLocation: userLocation,
-            });
-          }}
+          onPress={navigateToArScentTrails}
         >
           <Text style={styles.fabIcon}>👁️</Text>
         </TouchableOpacity>
