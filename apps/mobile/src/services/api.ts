@@ -3,6 +3,7 @@ import {
   type ApiClientResponse,
   type Pet,
   type User,
+  type UserPreferences,
   type Match,
   type Message,
   type PetFilters,
@@ -10,8 +11,6 @@ import {
   type AuthResponse,
   type UserProfileResponse,
   type PetCreateResponse,
-  type MatchResponse,
-  type MessageResponse,
   type SubscriptionResponse,
   type CheckoutSessionResponse,
   type SwipeRecommendationResponse,
@@ -342,7 +341,10 @@ export const swipeAPI = {
   getRecommendations: async (
     filters?: PetFilters,
   ): Promise<SwipeRecommendationResponse> => {
-    const params = filters ? { ...filters } : {};
+    const params = filters ? { 
+      ...filters,
+      personalityTags: filters.personalityTags?.join(',')
+    } : {};
     return request<SwipeRecommendationResponse>("/swipe/recommendations", {
       params,
     });
@@ -437,7 +439,7 @@ export const subscriptionAPI = {
   getCurrentSubscription: async (): Promise<SubscriptionResponse | null> => {
     try {
       return await request<SubscriptionResponse>("/subscription/current");
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   },
@@ -485,22 +487,14 @@ export const matchesAPI = {
   },
 
   // Get matches
-
-  // Get liked you (pets that liked current user)
-  getLikedYou: async (): Promise<Match[]> => {
-    return resolveData(
-      apiClient.get<Match[]>("/matches/liked-you"),
-      "Failed to fetch liked you",
-    );
-  },
-
-  // Get user's matches
   getMatches: async (): Promise<Match[]> => {
     return resolveData(
       apiClient.get<Match[]>("/matches"),
       "Failed to fetch matches",
     );
   },
+
+  // Get a specific match
   getMatch: async (matchId: string): Promise<Match> => {
     return resolveData(
       apiClient.get<Match>(`/matches/${matchId}`),
@@ -508,7 +502,7 @@ export const matchesAPI = {
     );
   },
 
-  // Create a new match (like/swipe)
+  // Create a match
   createMatch: async (petId: string, targetPetId: string): Promise<Match> => {
     return resolveData(
       apiClient.post<Match>("/matches", { petId, targetPetId }),
@@ -681,19 +675,19 @@ export const matchesAPI = {
   },
 
   // Get user settings
-  getUserSettings: async (): Promise<User["preferences"]> => {
+  getUserSettings: async (): Promise<UserPreferences> => {
     return resolveData(
-      apiClient.get<User["preferences"]>("/users/settings"),
+      apiClient.get<UserPreferences>("/users/settings"),
       "Failed to fetch user settings",
     );
   },
 
   // Update user settings
   updateUserSettings: async (
-    settings: User["preferences"],
-  ): Promise<User["preferences"]> => {
+    settings: UserPreferences,
+  ): Promise<UserPreferences> => {
     return resolveData(
-      apiClient.put<User["preferences"]>("/users/settings", settings),
+      apiClient.put<UserPreferences>("/users/settings", settings),
       "Failed to update user settings",
     );
   },
