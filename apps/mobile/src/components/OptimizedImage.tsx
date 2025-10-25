@@ -10,9 +10,9 @@ import {
   type ImageStyle,
 } from "react-native";
 import FastImage, {
-  FastImageProps,
-  Priority,
-  ResizeMode,
+  type FastImageProps,
+  type Priority,
+  type ResizeMode,
 } from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../contexts/ThemeContext";
@@ -61,7 +61,7 @@ export function OptimizedImage({
   accessible = true,
   accessibilityLabel,
   ...props
-}): React.ReactElement {
+}): React.JSX.Element {
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);

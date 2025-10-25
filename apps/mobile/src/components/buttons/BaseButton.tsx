@@ -24,6 +24,7 @@ import {
 } from "react-native";
 
 import { Theme } from "../../theme/unified-theme";
+import { getTextColor } from "../../theme/helpers";
 
 // === TYPES ===
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
@@ -153,7 +154,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case "secondary":
           return {
             ...baseTextStyles,
-            color: Theme.colors.textColor.inverse,
+            color: getTextColor("primary").inverse,
           };
         case "ghost":
         case "outline":
@@ -164,7 +165,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         default:
           return {
             ...baseTextStyles,
-            color: Theme.colors.textColor.primary,
+            color: getTextColor("primary").primary,
           };
       }
     };
@@ -174,12 +175,12 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       switch (variant) {
         case "primary":
         case "secondary":
-          return Theme.colors.textColor.inverse;
+          return getTextColor("primary").inverse;
         case "ghost":
         case "outline":
           return Theme.semantic.interactive.primary;
         default:
-          return Theme.colors.textColor.primary;
+          return getTextColor("primary").primary;
       }
     };
 

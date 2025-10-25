@@ -13,50 +13,116 @@ const args = process.argv.slice(2);
 const WRITE = args.includes("--write");
 
 const patterns = [
+  // Text colors
   {
     regex: /Theme\.colors\.text\.primary/g,
-    replacement: "getTextColor(Theme, 'primary')",
+    replacement: "getTextColor('primary')",
     import: "getTextColor",
   },
   {
     regex: /Theme\.colors\.text\.secondary/g,
-    replacement: "getTextColor(Theme, 'secondary')",
+    replacement: "getTextColor('secondary')",
     import: "getTextColor",
   },
   {
     regex: /Theme\.colors\.text\.tertiary/g,
-    replacement: "getTextColor(Theme, 'tertiary')",
+    replacement: "getTextColor('tertiary')",
     import: "getTextColor",
   },
   {
     regex: /Theme\.colors\.text\.inverse/g,
-    replacement: "getTextColor(Theme, 'inverse')",
+    replacement: "getTextColor('inverse')",
     import: "getTextColor",
   },
+  // Background colors
   {
     regex: /Theme\.colors\.background\.primary/g,
-    replacement: "getBackgroundColor(Theme, 'primary')",
+    replacement: "getBackgroundColor('primary')",
     import: "getBackgroundColor",
   },
   {
     regex: /Theme\.colors\.background\.secondary/g,
-    replacement: "getBackgroundColor(Theme, 'secondary')",
+    replacement: "getBackgroundColor('secondary')",
     import: "getBackgroundColor",
   },
   {
+    regex: /Theme\.colors\.background\.tertiary/g,
+    replacement: "getBackgroundColor('tertiary')",
+    import: "getBackgroundColor",
+  },
+  {
+    regex: /Theme\.colors\.background\.inverse/g,
+    replacement: "getBackgroundColor('inverse')",
+    import: "getBackgroundColor",
+  },
+  // Border colors
+  {
     regex: /Theme\.colors\.border\.light/g,
-    replacement: "getBorderColor(Theme, 'light')",
+    replacement: "getBorderColor('light')",
     import: "getBorderColor",
   },
   {
     regex: /Theme\.colors\.border\.medium/g,
-    replacement: "getBorderColor(Theme, 'medium')",
+    replacement: "getBorderColor('medium')",
     import: "getBorderColor",
   },
   {
     regex: /Theme\.colors\.border\.dark/g,
-    replacement: "getBorderColor(Theme, 'dark')",
+    replacement: "getBorderColor('dark')",
     import: "getBorderColor",
+  },
+  // Flat aliases (legacy)
+  {
+    regex: /Theme\.colors\.textColor/g,
+    replacement: "getTextColor('primary')",
+    import: "getTextColor",
+  },
+  {
+    regex: /Theme\.colors\.backgroundColor/g,
+    replacement: "getBackgroundColor('primary')",
+    import: "getBackgroundColor",
+  },
+  {
+    regex: /Theme\.colors\.borderColor/g,
+    replacement: "getBorderColor('light')",
+    import: "getBorderColor",
+  },
+  // Primary color shades
+  {
+    regex: /Theme\.colors\.primary\[500\]/g,
+    replacement: "getPrimaryColor(500)",
+    import: "getPrimaryColor",
+  },
+  {
+    regex: /Theme\.colors\.primary\[600\]/g,
+    replacement: "getPrimaryColor(600)",
+    import: "getPrimaryColor",
+  },
+  {
+    regex: /Theme\.colors\.primary\[700\]/g,
+    replacement: "getPrimaryColor(700)",
+    import: "getPrimaryColor",
+  },
+  // Status colors
+  {
+    regex: /Theme\.colors\.status\.success/g,
+    replacement: "getStatusColor('success')",
+    import: "getStatusColor",
+  },
+  {
+    regex: /Theme\.colors\.status\.error/g,
+    replacement: "getStatusColor('error')",
+    import: "getStatusColor",
+  },
+  {
+    regex: /Theme\.colors\.status\.warning/g,
+    replacement: "getStatusColor('warning')",
+    import: "getStatusColor",
+  },
+  {
+    regex: /Theme\.colors\.status\.info/g,
+    replacement: "getStatusColor('info')",
+    import: "getStatusColor",
   },
 ];
 

@@ -76,7 +76,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={Theme.colors.textColor}
+            color={getTextColor("primary")}
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
@@ -180,7 +180,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               <Ionicons
                 name="add-circle"
                 size={20}
-                color={Theme.colors.primary[500]}
+                color={getPrimaryColor(500)}
               />
               <Text style={styles.newBioText}>Create New Bio</Text>
             </TouchableOpacity>
@@ -194,7 +194,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   header: {
     flexDirection: "row",
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.borderColor.light,
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    borderBottomColor: getBorderColor("light").light,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   backButton: {
     padding: Theme.spacing.sm,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.textColor,
+    color: getTextColor("primary"),
   },
   headerSpacer: {
     flex: 1,
@@ -229,18 +229,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.textColor,
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.md,
   },
   photoPicker: {
     borderWidth: 2,
-    borderColor: Theme.colors.borderColor.light,
+    borderColor: getBorderColor("light").light,
     borderStyle: "dashed",
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   photoPlaceholder: {
     alignItems: "center",
@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.sm,
   },
   generateButton: {
-    backgroundColor: Theme.colors.primary[500],
+    backgroundColor: getPrimaryColor(500),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     margin: Theme.spacing.lg,
     alignItems: "center",
-    shadowColor: Theme.colors.primary[500],
+    shadowColor: getPrimaryColor(500),
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -273,11 +273,11 @@ const styles = StyleSheet.create({
   generateButtonText: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.backgroundColor.primary,
+    color: getBackgroundColor("primary").primary,
   },
   submitError: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.status.error,
+    color: getStatusColor("error"),
     textAlign: "center",
     marginHorizontal: Theme.spacing.lg,
     marginBottom: Theme.spacing.lg,
@@ -300,14 +300,14 @@ const styles = StyleSheet.create({
     padding: Theme.spacing.md,
     margin: Theme.spacing.lg,
     borderWidth: 1,
-    borderColor: Theme.colors.primary[500],
+    borderColor: getPrimaryColor(500),
     borderRadius: Theme.borderRadius.lg,
-    backgroundColor: Theme.colors.backgroundColor.primary,
+    backgroundColor: getBackgroundColor("primary").primary,
   },
   newBioText: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.medium,
-    color: Theme.colors.primary[500],
+    color: getPrimaryColor(500),
     marginLeft: Theme.spacing.sm,
   },
 });

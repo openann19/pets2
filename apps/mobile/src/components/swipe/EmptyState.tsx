@@ -3,7 +3,11 @@ import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import EliteButton from "../buttons/EliteButton";
-import { GlowContainer, PremiumHeading, PremiumBody } from "../PremiumComponents";
+import {
+  GlowContainer,
+  PremiumHeading,
+  PremiumBody,
+} from "../PremiumComponents";
 
 interface EmptyStateProps {
   type: "error" | "empty";

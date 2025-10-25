@@ -6,13 +6,44 @@ import { AIService, AIAnalysis } from '../types';
 
 const AI_SERVICE_URL = process.env['AI_SERVICE_URL'] || 'http://localhost:8000';
 
+// AI Recommendation interfaces
+interface AIRecommendation {
+  petId: string;
+  score: number;
+  reasons: string[];
+}
+
+interface PetData {
+  id: string;
+  name: string;
+  species: string;
+  breed: string;
+  age: number;
+  size: string;
+  personality_tags: string[];
+  photos?: string[];
+}
+
+interface CompatibilityRequest {
+  pet1: PetData;
+  pet2: PetData;
+  interaction_type?: string;
+}
+
+interface ModerationResult {
+  isApproved: boolean;
+  confidence: number;
+  flags: string[];
+  reason?: string;
+}
+
 /**
  * Get AI-powered pet recommendations
  * @param userId - User ID
  * @param petIds - Array of pet IDs to score
  * @returns Sorted recommendations with scores
  */
-export const getAIRecommendations = async (userId: string, petIds: string[]): Promise<any[]> => {
+export const getAIRecommendations = async (userId: string, petIds: string[]): Promise<AIRecommendation[]> => {
   try {
     // Get user and their pets for context
     const user = await User.findById(userId).populate('pets');
@@ -66,7 +97,7 @@ export const getAIRecommendations = async (userId: string, petIds: string[]): Pr
     });
 
     if (response.data && response.data.recommendations) {
-      return response.data.recommendations.map((rec: any) => ({
+      return response.data.recommendations.map((rec: { pet_id: string; score: number; reasons: string[] }) => ({
         petId: rec.pet_id,
         score: rec.score,
         reasons: rec.reasons || [],
@@ -213,7 +244,7 @@ export const analyzePetPhoto = async (imageUrl: string): Promise<AIAnalysis> => 
  * @param petData - Pet data for bio generation
  * @returns Generated bio text
  */
-export const generatePetBio = async (petData: any): Promise<string> => {
+export const generatePetBio = async (petData: PetData): Promise<string> => {
   try {
     const requestData = {
       pet_info: {
@@ -262,7 +293,7 @@ export const generatePetBio = async (petData: any): Promise<string> => {
  * @param pet2 - Second pet data
  * @returns Compatibility score (0-100)
  */
-export const getCompatibilityScore = async (pet1: any, pet2: any): Promise<number> => {
+export const getCompatibilityScore = async (pet1: PetData, pet2: PetData): Promise<number> => {
   try {
     const requestData = {
       pet1: {
@@ -319,7 +350,7 @@ export const getCompatibilityScore = async (pet1: any, pet2: any): Promise<numbe
  * @param type - Type of content (text, image, etc.)
  * @returns Moderation results
  */
-export const moderateContent = async (content: string, type: string): Promise<any> => {
+export const moderateContent = async (content: string, type: string): Promise<ModerationResult> => {
   try {
     const requestData = {
       content,
@@ -371,7 +402,7 @@ export const moderateContent = async (content: string, type: string): Promise<an
  * @param pet2 - Second pet
  * @returns Compatibility score
  */
-function calculateFallbackCompatibility(pet1: any, pet2: any): number {
+function calculateFallbackCompatibility(pet1: PetData, pet2: PetData): number {
   let score = 50; // Base score
 
   // Species compatibility

@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express, { Router, Response } from 'express';
 import { body } from 'express-validator';
 import multer from 'multer';
 import { validate } from '../middleware/validation';

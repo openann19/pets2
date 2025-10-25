@@ -344,11 +344,7 @@ export default function MigrationExampleScreen() {
             <Heading2 style={styles.benefitsTitle}>Migration Benefits</Heading2>
 
             <View style={styles.benefitItem}>
-              <Ionicons
-                name="flash"
-                size={24}
-                color={Theme.colors.primary[500]}
-              />
+              <Ionicons name="flash" size={24} color={getPrimaryColor(500)} />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Performance</Body>
                 <BodySmall style={styles.benefitDescription}>
@@ -361,7 +357,7 @@ export default function MigrationExampleScreen() {
               <Ionicons
                 name="construct"
                 size={24}
-                color={Theme.colors.primary[500]}
+                color={getPrimaryColor(500)}
               />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Maintainability</Body>
@@ -372,11 +368,7 @@ export default function MigrationExampleScreen() {
             </View>
 
             <View style={styles.benefitItem}>
-              <Ionicons
-                name="layers"
-                size={24}
-                color={Theme.colors.primary[500]}
-              />
+              <Ionicons name="layers" size={24} color={getPrimaryColor(500)} />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Composition</Body>
                 <BodySmall style={styles.benefitDescription}>
@@ -389,7 +381,7 @@ export default function MigrationExampleScreen() {
               <Ionicons
                 name="accessibility"
                 size={24}
-                color={Theme.colors.primary[500]}
+                color={getPrimaryColor(500)}
               />
               <View style={styles.benefitContent}>
                 <Body style={styles.benefitTitle}>Accessibility</Body>
@@ -472,7 +464,7 @@ const styles = StyleSheet.create({
   holographicContainer: {
     backgroundColor: "transparent",
     borderWidth: 2,
-    borderColor: Theme.colors.primary[500],
+    borderColor: getPrimaryColor(500),
   },
   glowContainer: {
     backgroundColor: Theme.colors.neutral[0],
@@ -484,18 +476,18 @@ const styles = StyleSheet.create({
   legacyHeading1: {
     fontSize: Theme.typography.fontSize["4xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.textColor.primary,
+    color: getTextColor("primary").primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyHeading2: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.textColor.primary,
+    color: getTextColor("primary").primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyBody: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.textColor.primary,
+    color: getTextColor("primary").primary,
     marginBottom: Theme.spacing.sm,
   },
   legacyBodySmall: {
@@ -505,7 +497,7 @@ const styles = StyleSheet.create({
   },
   legacyGradient: {
     // This would be a complex gradient implementation in legacy
-    color: Theme.colors.primary[500],
+    color: getPrimaryColor(500),
   },
   benefitsSection: {
     marginTop: Theme.spacing.xl,

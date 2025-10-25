@@ -49,12 +49,12 @@ export const generateTokens = (userId: string): TokenPair => {
     iat: Math.floor(Date.now() / 1000)
   };
 
-  const accessOptions: any = {};
+  const accessOptions: jwt.SignOptions = {};
   if (!isTest) {
     accessOptions.expiresIn = process.env['JWT_ACCESS_EXPIRY'] || process.env['JWT_EXPIRE'] || '15m';
   }
 
-  const refreshOptions: any = {
+  const refreshOptions: jwt.SignOptions = {
     expiresIn: process.env['JWT_REFRESH_EXPIRY'] || process.env['JWT_REFRESH_EXPIRE'] || '7d'
   };
 
@@ -179,7 +179,7 @@ export const requireAdmin = async (
 
     // Check if user has admin role
     // Assuming User model has a role field
-    if ((req.user as any).role !== 'admin') {
+    if ((req.user as UserType & { role?: string }).role !== 'admin') {
       res.status(403).json({ 
         success: false, 
         message: 'Admin access required' 
@@ -204,7 +204,7 @@ export const validateRefreshToken = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { refreshToken } = (req as any).body;
+    const { refreshToken } = req.body as { refreshToken: string };
     
     if (!refreshToken) {
       res.status(400).json({ 
@@ -329,8 +329,9 @@ export const requirePremiumFeature = (feature: string) => {
         return;
       }
 
-      const isPremiumActive = (req.user as any).premium?.isActive;
-      const hasFeature = (req.user as any).premium?.features?.[feature];
+      const userWithPremium = req.user as UserType & { premium?: { isActive?: boolean; features?: Record<string, boolean> } };
+      const isPremiumActive = userWithPremium.premium?.isActive;
+      const hasFeature = userWithPremium.premium?.features?.[feature];
 
       if (!isPremiumActive || !hasFeature) {
         res.status(403).json({
@@ -359,7 +360,7 @@ export const refreshAccessToken = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { refreshToken } = (req as any).body;
+    const { refreshToken } = req.body as { refreshToken: string };
 
     if (!refreshToken) {
       res.status(401).json({

@@ -5,6 +5,60 @@ import AnalyticsEvent from '../models/AnalyticsEvent';
 import logger from '../utils/logger';
 import { AnalyticsService } from '../types';
 
+// Event metadata interface
+interface EventMetadata {
+  [key: string]: string | number | boolean | Date | null | undefined;
+}
+
+// Track event result interface
+interface TrackEventResult {
+  success: boolean;
+  userId?: string;
+  petId?: string;
+  matchId?: string;
+  eventType: string;
+  timestamp: Date;
+}
+
+// Analytics metrics interface
+interface AnalyticsMetrics {
+  totalEvents: number;
+  eventsByType: Record<string, number>;
+  dailyActivity: Record<string, number>;
+  weeklyActivity?: Record<string, number>;
+  monthlyActivity?: Record<string, number>;
+  topEvents: Array<{ type: string; count: number }>;
+  engagementScore: number;
+  views?: number;
+  likes?: number;
+  matches?: number;
+  engagementRate?: number;
+  messages?: number;
+  interactions?: number;
+}
+
+// Analytics response interface
+interface AnalyticsResponse {
+  success: boolean;
+  userId?: string;
+  petId?: string;
+  matchId?: string;
+  period: string;
+  metrics: AnalyticsMetrics;
+  userAnalytics?: Record<string, unknown>;
+  pet?: {
+    name: string;
+    species: string;
+    breed: string;
+    photos: number;
+  };
+  match?: {
+    status: string;
+    compatibilityScore: number;
+    createdAt: Date;
+  };
+}
+
 // Event types
 export const EVENT_TYPES = {
   USER_REGISTER: 'user_register',
@@ -23,7 +77,7 @@ export const EVENT_TYPES = {
 } as const;
 
 // Track user event
-export const trackUserEvent = async (userId: string, eventType: string, metadata: any = {}): Promise<any> => {
+export const trackUserEvent = async (userId: string, eventType: string, metadata: EventMetadata = {}): Promise<TrackEventResult | null> => {
   try {
     if (!userId || !eventType) {
       logger.warn('Invalid parameters for trackUserEvent', { userId, eventType });
@@ -104,7 +158,7 @@ export const trackUserEvent = async (userId: string, eventType: string, metadata
 };
 
 // Track pet event
-export const trackPetEvent = async (petId: string, eventType: string, metadata: any = {}): Promise<any> => {
+export const trackPetEvent = async (petId: string, eventType: string, metadata: EventMetadata = {}): Promise<TrackEventResult | null> => {
   try {
     if (!petId || !eventType) {
       logger.warn('Invalid parameters for trackPetEvent', { petId, eventType });
@@ -143,7 +197,7 @@ export const trackPetEvent = async (petId: string, eventType: string, metadata: 
 };
 
 // Track match event
-export const trackMatchEvent = async (matchId: string, eventType: string, metadata: any = {}): Promise<any> => {
+export const trackMatchEvent = async (matchId: string, eventType: string, metadata: EventMetadata = {}): Promise<TrackEventResult | null> => {
   try {
     if (!matchId || !eventType) {
       logger.warn('Invalid parameters for trackMatchEvent', { matchId, eventType });
@@ -182,7 +236,7 @@ export const trackMatchEvent = async (matchId: string, eventType: string, metada
 };
 
 // Get user analytics
-export const getUserAnalytics = async (userId: string, period: string = '30d'): Promise<any> => {
+export const getUserAnalytics = async (userId: string, period: string = '30d'): Promise<AnalyticsResponse> => {
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -274,7 +328,7 @@ export const getUserAnalytics = async (userId: string, period: string = '30d'): 
 };
 
 // Get pet analytics
-export const getPetAnalytics = async (petId: string, period: string = '30d'): Promise<any> => {
+export const getPetAnalytics = async (petId: string, period: string = '30d'): Promise<AnalyticsResponse> => {
   try {
     const pet = await Pet.findById(petId);
     if (!pet) {
@@ -361,7 +415,7 @@ export const getPetAnalytics = async (petId: string, period: string = '30d'): Pr
 };
 
 // Get match analytics
-export const getMatchAnalytics = async (matchId: string, period: string = '30d'): Promise<any> => {
+export const getMatchAnalytics = async (matchId: string, period: string = '30d'): Promise<AnalyticsResponse> => {
   try {
     const match = await Match.findById(matchId);
     if (!match) {
@@ -452,7 +506,7 @@ function getWeekNumber(date: Date): string {
 }
 
 // Helper function to calculate engagement score
-function calculateEngagementScore(metrics: any): number {
+function calculateEngagementScore(metrics: AnalyticsMetrics): number {
   const weights = {
     totalEvents: 0.3,
     eventsByType: 0.4,
@@ -476,7 +530,7 @@ function calculateEngagementScore(metrics: any): number {
 }
 
 // Helper function to calculate match engagement score
-function calculateMatchEngagementScore(metrics: any): number {
+function calculateMatchEngagementScore(metrics: AnalyticsMetrics): number {
   const weights = {
     messages: 0.5,
     interactions: 0.3,

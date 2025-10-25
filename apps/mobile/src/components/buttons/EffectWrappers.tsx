@@ -24,6 +24,7 @@ import {
   usePressAnimation,
 } from "../../hooks/useUnifiedAnimations";
 import { Theme } from "../../theme/unified-theme";
+import { getPrimaryColor } from "../../theme/helpers";
 
 // === TYPES ===
 interface EffectWrapperProps {
@@ -43,7 +44,7 @@ export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
   (
     {
       children,
-      color = Theme.colors.primary[500],
+      color = getPrimaryColor(500),
       intensity = 1,
       duration = 2000,
       style,
@@ -242,7 +243,7 @@ export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
     const gradientConfig = gradient ? Theme.gradients[gradient] : null;
     const gradientColors = colors ||
       gradientConfig?.colors || [
-        Theme.colors.primary[500],
+        getPrimaryColor(500),
         Theme.colors.primary[400],
       ];
 

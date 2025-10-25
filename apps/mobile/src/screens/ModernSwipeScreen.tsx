@@ -243,13 +243,13 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
           <FXContainer
             type="glow"
             hasGlow={true}
-            glowColor={Theme.colors.status.error}
+            glowColor={getStatusColor("error")}
             style={styles.errorCard}
           >
             <Ionicons
               name="alert-circle-outline"
               size={80}
-              color={Theme.colors.status.error}
+              color={getStatusColor("error")}
             />
             <Heading2 style={styles.errorTitle}>Error loading pets</Heading2>
             <Body style={styles.errorMessage}>{error}</Body>
@@ -273,7 +273,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
             <Ionicons
               name="heart-outline"
               size={80}
-              color={Theme.colors.primary[500]}
+              color={getPrimaryColor(500)}
             />
             <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
             <Body style={styles.emptySubtitle}>
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: Theme.spacing.lg,
     marginBottom: Theme.spacing.md,
-    color: Theme.colors.status.error,
+    color: getStatusColor("error"),
   },
   errorMessage: {
     textAlign: "center",

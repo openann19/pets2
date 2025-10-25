@@ -588,9 +588,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.textColor.primary,
+    color: getTextColor("primary").primary,
     borderWidth: 1,
-    borderColor: Theme.colors.borderColor.light.default,
+    borderColor: getBorderColor("light").light.default,
     ...Theme.shadows.depth.sm,
   },
   textArea: {

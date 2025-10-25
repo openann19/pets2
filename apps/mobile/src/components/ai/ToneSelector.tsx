@@ -8,7 +8,11 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Theme } from "../../theme/unified-theme";
-import { createShadowStyle, getBackgroundColor, getTextColor } from "../../theme/helpers";
+import {
+  createShadowStyle,
+  getBackgroundColor,
+  getTextColor,
+} from "../../theme/helpers";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
 interface ToneSelectorProps {
@@ -68,7 +72,7 @@ export function ToneSelector({
                 borderColor:
                   selectedTone === tone.id
                     ? tone.color
-                    : Theme.colors.borderColor.light,
+                    : getBorderColor("light").light,
               },
             ]}
             onPress={() => {
@@ -110,7 +114,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.textColor,
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
@@ -126,12 +130,12 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: getBackgroundColor('primary'),
+    backgroundColor: getBackgroundColor("primary"),
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    ...createShadowStyle('sm'),
+    ...createShadowStyle("sm"),
   },
   selectedCard: {
     shadowOffset: { width: 0, height: 4 },
@@ -153,7 +157,7 @@ const styles = StyleSheet.create({
   toneLabel: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.textColor,
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.xs,
     textAlign: "center",
   },
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkmark: {
-    color: Theme.colors.backgroundColor.primary,
+    color: getBackgroundColor("primary").primary,
     fontSize: Theme.typography.fontSize.sm,
     fontWeight: Theme.typography.fontWeight.bold,
   },

@@ -166,7 +166,7 @@ export interface AuthenticatedRequest extends Request {
   user?: User;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -709,25 +709,25 @@ export interface IVerification extends Document {
 
 // Service Types
 export interface AnalyticsService {
-  trackUserEvent(userId: string, eventType: string, metadata?: any): Promise<any>;
-  trackPetEvent(petId: string, eventType: string, metadata?: any): Promise<any>;
-  trackMatchEvent(matchId: string, eventType: string, metadata?: any): Promise<any>;
-  getUserAnalytics(userId: string, period?: string): Promise<any>;
-  getPetAnalytics(petId: string, period?: string): Promise<any>;
-  getMatchAnalytics(matchId: string, period?: string): Promise<any>;
+  trackUserEvent(userId: string, eventType: string, metadata?: Record<string, unknown>): Promise<{ success: boolean; userId: string; eventType: string; timestamp: Date } | null>;
+  trackPetEvent(petId: string, eventType: string, metadata?: Record<string, unknown>): Promise<{ success: boolean; petId: string; eventType: string; timestamp: Date } | null>;
+  trackMatchEvent(matchId: string, eventType: string, metadata?: Record<string, unknown>): Promise<{ success: boolean; matchId: string; eventType: string; timestamp: Date } | null>;
+  getUserAnalytics(userId: string, period?: string): Promise<{ success: boolean; userId: string; period: string; metrics: Record<string, unknown>; userAnalytics?: Record<string, unknown> }>;
+  getPetAnalytics(petId: string, period?: string): Promise<{ success: boolean; petId: string; period: string; metrics: Record<string, unknown>; pet?: { name: string; species: string; breed: string; photos: number } }>;
+  getMatchAnalytics(matchId: string, period?: string): Promise<{ success: boolean; matchId: string; period: string; metrics: Record<string, unknown>; match?: { status: string; compatibilityScore: number; createdAt: Date } }>;
 }
 
 export interface AIService {
   analyzePetPhoto(imageUrl: string): Promise<AIAnalysis>;
-  generatePetBio(petData: any): Promise<string>;
-  getCompatibilityScore(pet1: any, pet2: any): Promise<number>;
-  moderateContent(content: string, type: string): Promise<any>;
+  generatePetBio(petData: { id: string; name: string; species: string; breed: string; age: number; size: string; personality_tags: string[]; photos?: string[] }): Promise<string>;
+  getCompatibilityScore(pet1: { id: string; name: string; species: string; breed: string; age: number; size: string; personality_tags: string[]; photos?: string[] }, pet2: { id: string; name: string; species: string; breed: string; age: number; size: string; personality_tags: string[]; photos?: string[] }): Promise<number>;
+  moderateContent(content: string, type: string): Promise<{ isApproved: boolean; confidence: number; flags: string[]; reason?: string }>;
 }
 
 export interface CloudinaryService {
-  uploadToCloudinary(buffer: Buffer, folder: string): Promise<any>;
-  deleteFromCloudinary(publicId: string): Promise<any>;
-  generateUploadSignature(folder: string): Promise<any>;
+  uploadToCloudinary(buffer: Buffer, folder: string): Promise<{ public_id: string; version: number; signature: string; width: number; height: number; format: string; resource_type: string; created_at: string; tags: string[]; bytes: number; type: string; etag: string; placeholder: boolean; url: string; secure_url: string; access_mode: string; original_filename: string }>;
+  deleteFromCloudinary(publicId: string): Promise<{ result: string; public_id: string }>;
+  generateUploadSignature(folder: string): Promise<{ signature: string; timestamp: number; cloud_name: string; api_key: string; folder?: string }>;
 }
 
 export interface EmailService {
@@ -737,12 +737,98 @@ export interface EmailService {
   sendMatchNotificationEmail(userEmail: string, matchData: any): Promise<void>;
 }
 
+// Stripe Types
+export interface StripeCustomerData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  _id: string;
+}
+
+export interface StripeCustomer {
+  id: string;
+  email: string;
+  name: string;
+  metadata: {
+    userId: string;
+    platform: string;
+  };
+}
+
+export interface StripeSubscription {
+  id: string;
+  customer: string;
+  status: 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'trialing' | 'unpaid';
+  items: {
+    data: Array<{
+      id: string;
+      price: {
+        id: string;
+        unit_amount: number | null;
+      };
+    }>;
+  };
+  created: number;
+  current_period_end?: number;
+  current_period_start?: number;
+}
+
+export interface StripeInvoice {
+  id: string | undefined;
+  customer: string;
+  subscription?: string;
+  amount_paid: number;
+  amount_due: number;
+  status: 'draft' | 'open' | 'paid' | 'void' | 'uncollectible';
+  created: number;
+}
+
+export interface StripeWebhookEvent {
+  id: string;
+  type: string;
+  data: {
+    object: StripeSubscription | StripeInvoice;
+  };
+  created: number;
+}
+
+export interface StripeCheckoutSession {
+  id: string;
+  url: string | null;
+  customer: string;
+  payment_status: 'paid' | 'unpaid' | 'no_payment_required';
+}
+
+export interface StripeBalance {
+  available: Array<{
+    amount: number;
+    currency: string;
+  }>;
+  pending: Array<{
+    amount: number;
+    currency: string;
+  }>;
+}
+
+export interface StripeCharge {
+  id: string;
+  amount: number;
+  currency: string;
+  status: 'succeeded' | 'pending' | 'failed';
+  created: number;
+}
+
+export interface StripeChargesList {
+  data: StripeCharge[];
+  has_more: boolean;
+}
+
 export interface StripeService {
-  createCustomer(userData: any): Promise<any>;
-  createSubscription(customerId: string, planId: string): Promise<any>;
-  cancelSubscription(subscriptionId: string): Promise<any>;
-  updateSubscription(subscriptionId: string, planId: string): Promise<any>;
-  handleWebhook(payload: any, signature: string): Promise<any>;
+  createCustomer(userData: StripeCustomerData): Promise<StripeCustomer>;
+  createSubscription(customerId: string, planId: string): Promise<StripeSubscription>;
+  cancelSubscription(subscriptionId: string): Promise<StripeSubscription>;
+  updateSubscription(subscriptionId: string, planId: string): Promise<StripeSubscription>;
+  handleWebhook(payload: Buffer | string, signature: string): Promise<StripeWebhookEvent>;
 }
 
 export interface ChatService {

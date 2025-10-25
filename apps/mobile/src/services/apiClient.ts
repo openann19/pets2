@@ -27,6 +27,21 @@ const API_BASE_URL =
     ? envApiBaseUrl
     : "http://localhost:3001/api";
 
+// API Response Types
+interface ApiSuccessResponse<T> {
+  success: true;
+  data: T;
+  message?: string;
+}
+
+interface ApiErrorResponse {
+  success: false;
+  error: string;
+  details?: Record<string, unknown>;
+}
+
+type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
 interface ApiClientConfig {
   baseURL: string;
   timeout?: number;
@@ -192,66 +207,53 @@ class ApiClient {
   /**
    * GET request
    */
-  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.get(url, config);
-    return response.data;
+  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.get(url, config);
+    return this.handleResponse(response);
   }
 
   /**
    * POST request
    */
-  public async post<T>(
-    url: string,
-    data?: unknown,
-    config?: AxiosRequestConfig,
-  ): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.post(
-      url,
-      data,
-      config,
-    );
-    return response.data;
+  public async post<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.post(url, data, config);
+    return this.handleResponse(response);
   }
 
   /**
    * PUT request
    */
-  public async put<T>(
-    url: string,
-    data?: unknown,
-    config?: AxiosRequestConfig,
-  ): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.put(
-      url,
-      data,
-      config,
-    );
-    return response.data;
+  public async put<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.put(url, data, config);
+    return this.handleResponse(response);
   }
 
   /**
    * PATCH request
    */
-  public async patch<T>(
-    url: string,
-    data?: unknown,
-    config?: AxiosRequestConfig,
-  ): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.patch(
-      url,
-      data,
-      config,
-    );
-    return response.data;
+  public async patch<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.patch(url, data, config);
+    return this.handleResponse(response);
   }
 
   /**
    * DELETE request
    */
-  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response: AxiosResponse<T> = await this.instance.delete(url, config);
-    return response.data;
+  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiSuccessResponse<T>> {
+    const response: AxiosResponse<ApiResponse<T>> = await this.instance.delete(url, config);
+    return this.handleResponse(response);
   }
+
+  /**
+   * Handle API response and ensure it matches expected format
+   */
+  private handleResponse<T>(response: AxiosResponse<ApiResponse<T>>): ApiSuccessResponse<T> {
+    if (response.data.success === false) {
+      throw new Error(response.data.error || 'API request failed');
+    }
+    return response.data as ApiSuccessResponse<T>;
+  }
+
 
   /**
    * Get axios instance for advanced usage

@@ -10,7 +10,7 @@ export const validate = (
   const errors = validationResult(req);
   
   if (!errors.isEmpty()) {
-    const errorMessages: ValidationError[] = errors.array().map((error: any) => ({
+    const errorMessages: ValidationError[] = errors.array().map((error: { path?: string; param?: string; msg: string; value?: unknown }) => ({
       field: error.path || error.param || 'unknown',
       message: error.msg,
       value: error.value
@@ -45,7 +45,7 @@ export const asyncValidate = (
     const errors = validationResult(req);
     
     if (!errors.isEmpty()) {
-      const errorMessages: ValidationError[] = errors.array().map((error: any) => ({
+      const errorMessages: ValidationError[] = errors.array().map((error: { path?: string; param?: string; msg: string; value?: unknown }) => ({
         field: error.path || error.param || 'unknown',
         message: error.msg,
         value: error.value

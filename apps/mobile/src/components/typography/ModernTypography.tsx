@@ -20,6 +20,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import { useEntranceAnimation } from "../../hooks/useUnifiedAnimations";
 import { Theme } from "../../theme/unified-theme";
+import { getTextColor, getPrimaryColor } from "../../theme/helpers";
 
 // === TYPES ===
 export type TextVariant =
@@ -163,7 +164,7 @@ function ModernText({
   const variantConfig = VARIANT_CONFIGS[variant];
 
   // Get text color
-  const textColor = Theme.colors.textColor[color];
+  const textColor = getTextColor("primary")[color];
 
   // Build text style
   const textStyle: TextStyle = {
@@ -188,7 +189,7 @@ function ModernText({
     const gradientConfig = gradient ? Theme.gradients[gradient] : null;
     const colors = gradientColors ||
       gradientConfig?.colors || [
-        Theme.colors.primary[500],
+        getPrimaryColor(500),
         Theme.colors.primary[400],
       ];
 
