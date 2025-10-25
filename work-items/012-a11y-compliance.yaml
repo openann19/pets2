@@ -1,0 +1,22 @@
+id: WI-012
+title: Achieve Mobile Accessibility Compliance
+priority: P1
+scope:
+  - apps/mobile/src/components/**/*
+  - apps/mobile/src/screens/**/*
+  - packages/ui/src/components/**/*
+  - docs/a11y/labels.md (new)
+description: |
+  Add accessibility labels, roles, and testIDs to every touch target; verify hit area sizing; and align Premium
+  components with WCAG 2.2 AA requirements. Update shared UI primitives so both mobile and web inherit compliant defaults.
+acceptance_criteria:
+  - All touchables expose descriptive accessibilityLabel/accessibilityRole/testID combinations.
+  - Hit slop or padding adjustments ensure 48x48 dp minimum tap targets.
+  - VoiceOver/TalkBack walkthroughs confirm navigability for swipe, match, chat, premium upgrade, settings, and GDPR flows.
+  - Automated a11y checks pass in CI and issues tracked with screenshots.
+risk: MEDIUM
+estimated_time: 4 days
+rollback: Revert component changes and remove docs/a11y/labels.md.
+verification:
+  - pnpm run test:a11y
+  - Manual assistive technology audit report attached to docs/a11y/labels.md

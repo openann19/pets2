@@ -1,0 +1,25 @@
+id: WI-010
+title: Restore SwipeScreen Critical Actions
+priority: P0
+scope:
+  - apps/mobile/src/screens/SwipeScreen.tsx
+  - apps/mobile/src/components/swipe/SwipeActions.tsx
+  - apps/mobile/src/state/swipe/useSwipeActions.ts
+  - packages/core/src/utils/chatUtils.ts
+  - packages/core/src/types/index.ts
+description: |
+  Audit the SwipeScreen experience to ensure like, pass, super-like, rewind, and undo flows function with
+  deterministic state transitions and analytics. Reconcile missing hooks, register consistent haptic feedback,
+  and patch swipe reducers so premium capabilities (rewind, boosts) resolve instantly even when offline queueing
+  is active.
+acceptance_criteria:
+  - Swipe actions update UI state, queue API calls, and track analytics within 200ms on target devices.
+  - Undo/rewind respects premium entitlements and gracefully handles offline retries.
+  - Automated tests cover double-tap like, drag gestures, and action sheet shortcuts.
+  - No regressions in match creation or chat hand-off flows.
+risk: HIGH
+estimated_time: 4 days
+rollback: Restore prior SwipeScreen version and disable experimental actions via remote config.
+verification:
+  - pnpm run type-check --filter @pawfectmatch/core
+  - pnpm run test --filter "swipe"

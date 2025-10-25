@@ -6,10 +6,15 @@
 // User Model
 export interface User {
   _id: string;
+  id?: string;
   email: string;
   firstName: string;
   lastName: string;
   avatar?: string;
+  bio?: string;
+  dateOfBirth?: string;
+  age?: number;
+  phone?: string;
   location: {
     type: 'Point';
     coordinates: [number, number];
@@ -18,10 +23,38 @@ export interface User {
     isActive: boolean;
     plan: 'basic' | 'premium' | 'gold';
     expiresAt?: string;
+    features?: {
+      unlimitedLikes: boolean;
+      boostProfile: boolean;
+      seeWhoLiked: boolean;
+      advancedFilters: boolean;
+    };
   };
   profileComplete: boolean;
   subscriptionStatus: 'free' | 'premium' | 'premium_plus';
   role: 'user' | 'admin' | 'moderator';
+  isEmailVerified?: boolean;
+  isActive?: boolean;
+  preferences?: {
+    maxDistance: number;
+    ageRange: { min: number; max: number };
+    species: string[];
+    intents: string[];
+    notifications: {
+      email: boolean;
+      push: boolean;
+      matches: boolean;
+      messages: boolean;
+    };
+  };
+  pets?: string[];
+  analytics?: {
+    totalSwipes: number;
+    totalLikes: number;
+    totalMatches: number;
+    profileViews: number;
+    lastActive: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -30,7 +63,7 @@ export interface User {
 export interface Pet {
   _id: string;
   id?: string; // Alias for _id for backward compatibility
-  owner: string;
+  owner: string | { _id: string; [key: string]: unknown };
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
   breed: string;
@@ -39,8 +72,15 @@ export interface Pet {
   size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
   photos: Array<{
     url: string;
-    thumbnail: string;
-    cloudinaryId: string;
+    thumbnail?: string;
+    cloudinaryId?: string;
+    caption?: string;
+    isPrimary?: boolean;
+  }>;
+  videos?: Array<{
+    url: string;
+    thumbnail?: string;
+    duration?: number;
   }>;
   personalityTags: string[];
   intent: 'adoption' | 'mating' | 'playdate' | 'all';
@@ -49,12 +89,34 @@ export interface Pet {
     spayedNeutered: boolean;
     microchipped: boolean;
   };
+  availability?: {
+    isAvailable: boolean;
+    nextAvailableDate?: string | null;
+    reason?: string;
+  };
   location: {
     type: 'Point';
     coordinates: [number, number];
   };
   bio?: string;
+  description?: string;
+  weight?: number;
   compatibilityScore?: number;
+  featured?: {
+    isFeatured: boolean;
+    boostCount: number;
+    expiresAt?: string | null;
+  };
+  analytics?: {
+    views: number;
+    likes: number;
+    matches: number;
+    messages: number;
+  };
+  isActive?: boolean;
+  isVerified?: boolean;
+  status?: 'active' | 'pending' | 'adopted' | 'inactive';
+  listedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -82,12 +144,18 @@ export interface Match {
 export interface Message {
   _id: string;
   match: string;
-  sender: string;
+  sender: string | User;
   content: string;
   timestamp: string;
   read: boolean;
-  type: 'text' | 'image' | 'voice' | 'video';
+  type: 'text' | 'image' | 'voice' | 'video' | 'location' | 'system';
   status: 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
+  attachments?: Array<{
+    type: string;
+    url: string;
+    fileName?: string;
+    fileType?: string;
+  }>;
   metadata?: {
     imageUrl?: string;
     voiceUrl?: string;
@@ -95,8 +163,12 @@ export interface Message {
     duration?: number;
   };
   // Backward compatibility aliases
-  messageType?: 'text' | 'image' | 'voice' | 'video';
+  messageType?: 'text' | 'image' | 'voice' | 'video' | 'location' | 'system';
   sentAt?: string;
+  editedAt?: string;
+  readBy?: Array<{ user: string; readAt: string }>;
+  isEdited?: boolean;
+  isDeleted?: boolean;
 }
 
 // Swipe Model
@@ -106,33 +178,6 @@ export interface Swipe {
   swiped: string;
   action: 'like' | 'pass' | 'superlike';
   createdAt: string;
-}
-
-// Story Model
-export interface Story {
-  _id: string;
-  userId: string;
-  mediaType: 'photo' | 'video';
-  mediaUrl: string;
-  caption?: string;
-  duration: number;
-  viewCount: number;
-  viewers: string[];
-  createdAt: string;
-  expiresAt: string;
-}
-
-// Story Group Model
-export interface StoryGroup {
-  userId: string;
-  user: {
-    _id: string;
-    username: string;
-    profilePhoto?: string;
-  };
-  stories: Story[];
-  storyCount: number;
-  hasViewed: boolean;
 }
 
 // Adoption Listing Model

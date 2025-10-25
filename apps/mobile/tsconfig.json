@@ -12,6 +12,7 @@
     "useUnknownInCatchVariables": true,
 
     // --- Module Resolution ---
+    "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
 

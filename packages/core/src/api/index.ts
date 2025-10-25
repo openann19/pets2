@@ -6,7 +6,7 @@
 export {
   apiClient,
   type ApiClientResponse,
-  type ApiError,
+  type ApiClientError,
   type FileUploadConfig,
 } from './client';
 export type { RequestConfig as ApiClientRequestConfig } from './client';

@@ -1,0 +1,23 @@
+id: WI-011
+title: Define State Matrices for Core Journeys
+priority: P1
+scope:
+  - packages/core/src/types/index.ts
+  - apps/mobile/src/state/**/*
+  - docs/product_model_navigation_api.md
+  - reports/state-matrix.md (new)
+description: |
+  Document and codify state-transition matrices for authentication, swipe/match, chat, and GDPR workflows.
+  Capture preconditions, side-effects, analytics hooks, and failure recovery for each transition so engineers
+  can validate business logic and QA can derive coverage. Deliver artifacts consumable by both mobile and server teams.
+acceptance_criteria:
+  - State diagrams or tables exist for Auth → Swipe → Match → Chat, Premium upgrades, Settings → GDPR, and Profile edits.
+  - Matrices highlight offline, retry, and error-handling branches tied to telemetry events.
+  - Documentation links to source code and testing strategy for each transition.
+  - QA sign-off recorded in reports/state-matrix.md.
+risk: MEDIUM
+estimated_time: 3 days
+rollback: Remove new documentation and revert related type annotations.
+verification:
+  - Manual review of reports/state-matrix.md
+  - pnpm run lint --filter docs

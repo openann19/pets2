@@ -101,15 +101,9 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     // Check if online is required
     if (requireOnline && !this.isOnline) {
       // Queue for offline processing
-      await this.enqueue({
-        endpoint,
-        method,
-        data: config.body,
-        headers: config.headers,
-        priority: config.priority || 'normal',
-        maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
-        conflictResolution: 'overwrite',
-      });
+      await this.enqueue(
+        this.buildQueuePayload(endpoint, config, config.body)
+      );
 
       return {
         success: false,
@@ -215,14 +209,15 @@ export class UnifiedAPIClient extends OfflineQueueManager {
     endpoint: string,
     config: UnifiedRequestConfig,
   ): Promise<UnifiedResponse<T>> {
+    const method = config.method ?? 'GET';
     const classification = this.errorClassifier.classify(error, {
       endpoint,
-      method: config.method,
+      method,
     });
 
     logger.error('API request failed', {
       endpoint,
-      method: config.method,
+      method,
       error: classification.type,
       retryable: classification.retryable,
     });
@@ -237,19 +232,13 @@ export class UnifiedAPIClient extends OfflineQueueManager {
             refreshToken: this.tokenRefreshFn,
             useCache: () => this.getCache(endpoint),
             queue: async (data) => {
-              await this.enqueue({
-                endpoint,
-                method: config.method || 'GET',
-                data,
-                headers: config.headers,
-                priority: config.priority || 'normal',
-                maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
-                conflictResolution: 'overwrite',
-              });
+              await this.enqueue(
+                this.buildQueuePayload(endpoint, config, data)
+              );
             },
           },
           {
-            maxRetries: this.clientConfig.retryConfig?.maxRetries || 3,
+            maxRetries: this.clientConfig.retryConfig?.maxRetries ?? 3,
           }
         );
 
@@ -264,11 +253,16 @@ export class UnifiedAPIClient extends OfflineQueueManager {
       }
     }
 
-    return {
+    const response: UnifiedResponse<T> = {
       success: false,
-      error: this.errorClassifier.getUserMessage(error, { endpoint, method: config.method }),
-      statusCode: classification.statusCode,
+      error: this.errorClassifier.getUserMessage(error, { endpoint, method }),
     };
+
+    if (classification.statusCode !== undefined) {
+      response.statusCode = classification.statusCode;
+    }
+
+    return response;
   }
 
   /**
@@ -314,6 +308,30 @@ export class UnifiedAPIClient extends OfflineQueueManager {
       timestamp: Date.now(),
       ttl,
     });
+  }
+
+  private buildQueuePayload(
+    endpoint: string,
+    config: UnifiedRequestConfig,
+    data?: unknown,
+  ): Omit<QueueItem, 'id' | 'timestamp' | 'retryCount'> {
+    const item: Omit<QueueItem, 'id' | 'timestamp' | 'retryCount'> = {
+      endpoint,
+      method: config.method ?? 'GET',
+      priority: config.priority ?? 'normal',
+      maxRetries: this.clientConfig.retryConfig?.maxRetries ?? 3,
+      conflictResolution: 'overwrite',
+    };
+
+    if (data !== undefined) {
+      item.data = data;
+    }
+
+    if (config.headers !== undefined) {
+      item.headers = config.headers;
+    }
+
+    return item;
   }
 
   /**

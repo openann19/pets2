@@ -3,15 +3,27 @@
  * Tests the AI API service layer without React Native components
  */
 
-import { aiAPI } from "../api";
-
-// Mock the core API client
-jest.mock("@pawfectmatch/core", () => ({
-  apiClient: {
+jest.mock("../apiClient", () => ({
+  __esModule: true,
+  default: {
     post: jest.fn(),
     get: jest.fn(),
+    put: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
   },
 }));
+
+import { aiAPI } from "../api";
+import apiClient from "../apiClient";
+
+const mockedApiClient = apiClient as unknown as {
+  post: jest.Mock;
+  get: jest.Mock;
+  put: jest.Mock;
+  patch: jest.Mock;
+  delete: jest.Mock;
+};
 
 describe("AI API Service", () => {
   beforeEach(() => {
@@ -29,9 +41,7 @@ describe("AI API Service", () => {
           matchScore: 85,
         },
       };
-
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       const result = await aiAPI.generateBio({
         petName: "Buddy",
@@ -43,7 +53,7 @@ describe("AI API Service", () => {
         breed: "Golden Retriever",
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith("/ai/generate-bio", {
+      expect(mockedApiClient.post).toHaveBeenCalledWith("/ai/generate-bio", {
         petName: "Buddy",
         keywords: ["friendly", "energetic", "playful"],
         tone: "playful",
@@ -58,8 +68,7 @@ describe("AI API Service", () => {
 
     it("should throw error when API call fails", async () => {
       const mockError = new Error("API Error");
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockRejectedValue(mockError);
+      mockedApiClient.post.mockRejectedValue(mockError);
 
       await expect(
         aiAPI.generateBio({
@@ -79,9 +88,7 @@ describe("AI API Service", () => {
         success: false,
         error: "Failed to generate bio",
       };
-
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       await expect(
         aiAPI.generateBio({
@@ -122,13 +129,11 @@ describe("AI API Service", () => {
           ai_insights: ["High quality photo", "Good lighting"],
         },
       };
-
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       const result = await aiAPI.analyzePhotos(["photo1-uri", "photo2-uri"]);
 
-      expect(apiClient.post).toHaveBeenCalledWith("/ai/analyze-photos", {
+      expect(mockedApiClient.post).toHaveBeenCalledWith("/ai/analyze-photos", {
         photos: ["photo1-uri", "photo2-uri"],
       });
 
@@ -137,8 +142,7 @@ describe("AI API Service", () => {
 
     it("should throw error when API call fails", async () => {
       const mockError = new Error("Analysis failed");
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockRejectedValue(mockError);
+      mockedApiClient.post.mockRejectedValue(mockError);
 
       await expect(aiAPI.analyzePhotos(["photo1-uri"])).rejects.toThrow(
         "Analysis failed",
@@ -171,16 +175,14 @@ describe("AI API Service", () => {
           },
         },
       };
-
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       const result = await aiAPI.analyzeCompatibility({
         pet1Id: "pet1-id",
         pet2Id: "pet2-id",
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith(
+      expect(mockedApiClient.post).toHaveBeenCalledWith(
         "/ai/enhanced-compatibility",
         {
           pet1Id: "pet1-id",
@@ -193,8 +195,7 @@ describe("AI API Service", () => {
 
     it("should throw error when API call fails", async () => {
       const mockError = new Error("Compatibility analysis failed");
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockRejectedValue(mockError);
+      mockedApiClient.post.mockRejectedValue(mockError);
 
       await expect(
         aiAPI.analyzeCompatibility({
@@ -221,15 +222,14 @@ describe("AI API Service", () => {
         },
       };
 
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       const result = await aiAPI.getCompatibility({
         pet1Id: "pet1-id",
         pet2Id: "pet2-id",
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith("/ai/compatibility", {
+      expect(mockedApiClient.post).toHaveBeenCalledWith("/ai/compatibility", {
         pet1Id: "pet1-id",
         pet2Id: "pet2-id",
       });
@@ -239,8 +239,7 @@ describe("AI API Service", () => {
 
     it("should throw error when API call fails", async () => {
       const mockError = new Error("Legacy compatibility failed");
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockRejectedValue(mockError);
+      mockedApiClient.post.mockRejectedValue(mockError);
 
       await expect(
         aiAPI.getCompatibility({
@@ -256,8 +255,7 @@ describe("AI API Service", () => {
       const timeoutError = new Error("Network timeout");
       timeoutError.name = "TimeoutError";
 
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockRejectedValue(timeoutError);
+      mockedApiClient.post.mockRejectedValue(timeoutError);
 
       await expect(
         aiAPI.generateBio({
@@ -276,8 +274,7 @@ describe("AI API Service", () => {
       const serviceError = new Error("Service Unavailable");
       (serviceError as any).response = { status: 503 };
 
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockRejectedValue(serviceError);
+      mockedApiClient.post.mockRejectedValue(serviceError);
 
       await expect(aiAPI.analyzePhotos(["photo1-uri"])).rejects.toThrow(
         "Service Unavailable",
@@ -290,8 +287,7 @@ describe("AI API Service", () => {
         data: null, // Malformed response
       };
 
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       await expect(
         aiAPI.generateBio({
@@ -319,8 +315,7 @@ describe("AI API Service", () => {
         },
       };
 
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       const result = await aiAPI.generateBio({
         petName: "Buddy",
@@ -346,8 +341,7 @@ describe("AI API Service", () => {
         },
       };
 
-      const { apiClient } = require("@pawfectmatch/core");
-      apiClient.post.mockResolvedValue(mockResponse);
+      mockedApiClient.post.mockResolvedValue(mockResponse);
 
       const result = await aiAPI.generateBio({
         petName: "Buddy",
@@ -355,7 +349,7 @@ describe("AI API Service", () => {
         // Missing optional parameters
       });
 
-      expect(apiClient.post).toHaveBeenCalledWith("/ai/generate-bio", {
+      expect(mockedApiClient.post).toHaveBeenCalledWith("/ai/generate-bio", {
         petName: "Buddy",
         keywords: ["friendly"],
       });

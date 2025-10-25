@@ -3,6 +3,8 @@
  * Strict types for all API responses
  */
 
+import type { Story } from './story';
+
 // Pet API Responses
 export interface PetCreateResponse {
   _id: string;
@@ -236,34 +238,6 @@ export interface AICompatibilityResponse {
   overallRecommendation: 'excellent' | 'good' | 'fair' | 'poor';
 }
 
-// Stories API Responses
-export interface StoryResponse {
-  _id: string;
-  userId: string;
-  mediaType: 'photo' | 'video';
-  mediaUrl: string;
-  caption?: string;
-  duration: number;
-  viewCount: number;
-  createdAt: string;
-}
-
-export interface StoryGroupResponse {
-  userId: string;
-  user: {
-    _id: string;
-    username: string;
-    profilePhoto?: string;
-  };
-  stories: StoryResponse[];
-  storyCount: number;
-}
-
-export interface StoriesFeedResponse {
-  stories: StoryGroupResponse[];
-  success: boolean;
-}
-
 // Adoption API Responses
 export interface AdoptionListingResponse {
   _id: string;
@@ -337,7 +311,7 @@ export interface SocketEvents {
   'match:updated': MatchResponse;
   
   // Story events
-  'story:new': StoryResponse;
+  'story:new': Story;
   'story:viewed': { storyId: string; viewerId: string };
   
   // Call events

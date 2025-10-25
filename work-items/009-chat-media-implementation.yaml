@@ -1,0 +1,25 @@
+id: WI-009
+title: Deliver Cross-Platform Chat Media Support
+priority: P0
+scope:
+  - apps/mobile/src/screens/ChatScreen.tsx
+  - apps/mobile/src/components/chat/MessageComposer.tsx
+  - packages/core/src/mappers/message.ts
+  - server/src/controllers/chatController.ts
+  - server/src/routes/chat.ts
+description: |
+  Implement image, video, and voice message capture, upload, delivery, and rendering across mobile clients
+  and server APIs. Integrate Cloudinary uploads, signed URL validation, optimistic UI state, offline queue
+  support, and message retry semantics. Extend message persistence to track processing status and surface
+  upload progress indicators.
+acceptance_criteria:
+  - Mobile composer supports camera, gallery, and audio recording with size limits and graceful fallbacks.
+  - Server validates media MIME types, generates responsive transformations, and stores metadata required by clients.
+  - Messages render media bubbles with playback controls and download protection on iOS and Android.
+  - Automated tests cover happy paths, network retry flows, and unauthorized uploads.
+risk: HIGH
+estimated_time: 6 days
+rollback: Revert chat media commits and disable new composer actions via feature flag.
+verification:
+  - pnpm run type-check --filter @pawfectmatch/core
+  - pnpm run test:integration --filter "chat media"

@@ -3,8 +3,6 @@
  * Classifies errors and determines retry eligibility
  */
 
-import { logger } from '../utils/logger';
-
 export enum ErrorType {
   NETWORK = 'NETWORK',
   AUTHENTICATION = 'AUTHENTICATION',
@@ -67,7 +65,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.SERVER,
           retryable: true,
-          userMessage: this.ERROR_MESSAGES[ErrorType.SERVER],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.SERVER],
           statusCode,
           severity: 'high',
         };
@@ -76,7 +74,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.AUTHENTICATION,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
           statusCode,
           severity: 'high',
         };
@@ -85,7 +83,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.AUTHORIZATION,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.AUTHORIZATION],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.AUTHORIZATION],
           statusCode,
           severity: 'medium',
         };
@@ -103,7 +101,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.TIMEOUT,
           retryable: true,
-          userMessage: this.ERROR_MESSAGES[ErrorType.TIMEOUT],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.TIMEOUT],
           statusCode,
           severity: 'medium',
         };
@@ -112,7 +110,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.RATE_LIMIT,
           retryable: true,
-          userMessage: this.ERROR_MESSAGES[ErrorType.RATE_LIMIT],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.RATE_LIMIT],
           statusCode,
           severity: 'medium',
         };
@@ -121,7 +119,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.VALIDATION,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.VALIDATION],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.VALIDATION],
           statusCode,
           severity: 'medium',
         };
@@ -130,7 +128,7 @@ export class APIErrorClassifier {
         return {
           type: ErrorType.UNKNOWN,
           retryable: false,
-          userMessage: this.ERROR_MESSAGES[ErrorType.UNKNOWN],
+          userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.UNKNOWN],
           statusCode,
           severity: 'low',
         };
@@ -148,7 +146,7 @@ export class APIErrorClassifier {
       return {
         type: ErrorType.NETWORK,
         retryable: true,
-        userMessage: this.ERROR_MESSAGES[ErrorType.NETWORK],
+        userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.NETWORK],
         severity: 'high',
       };
     }
@@ -158,7 +156,7 @@ export class APIErrorClassifier {
       return {
         type: ErrorType.TIMEOUT,
         retryable: true,
-        userMessage: this.ERROR_MESSAGES[ErrorType.TIMEOUT],
+        userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.TIMEOUT],
         severity: 'medium',
       };
     }
@@ -168,7 +166,7 @@ export class APIErrorClassifier {
       return {
         type: ErrorType.AUTHENTICATION,
         retryable: false,
-        userMessage: this.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
+        userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.AUTHENTICATION],
         severity: 'high',
       };
     }
@@ -177,7 +175,7 @@ export class APIErrorClassifier {
     return {
       type: ErrorType.UNKNOWN,
       retryable: this.isRetryableError(error),
-      userMessage: this.ERROR_MESSAGES[ErrorType.UNKNOWN],
+      userMessage: APIErrorClassifier.ERROR_MESSAGES[ErrorType.UNKNOWN],
       severity: 'medium',
     };
   }

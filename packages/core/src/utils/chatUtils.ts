@@ -5,11 +5,26 @@ import type { User, Pet } from '../types/models';
  */
 export const _getOtherUser = (): User => {
   // Return a mock user
+  const now = new Date().toISOString();
   return {
     _id: 'mock-user-id',
+    id: 'mock-user-id',
     email: 'mock@example.com',
     firstName: 'Mock',
-    lastName: 'User'
+    lastName: 'User',
+    location: {
+      type: 'Point',
+      coordinates: [0, 0],
+    },
+    premium: {
+      isActive: false,
+      plan: 'basic',
+    },
+    profileComplete: false,
+    subscriptionStatus: 'free',
+    role: 'user',
+    createdAt: now,
+    updatedAt: now,
   } as User;
 };
 
@@ -18,14 +33,38 @@ export const _getOtherUser = (): User => {
  */
 export const _getOtherPet = (): Pet => {
   // Return a mock pet
+  const now = new Date().toISOString();
   return {
     _id: 'mock-pet-id',
+    id: 'mock-pet-id',
     name: 'Buddy',
     species: 'dog',
     breed: 'Golden Retriever',
     owner: 'mock-owner-id',
     age: 3,
-    photos: ['https://example.com/pet.jpg']
+    gender: 'male',
+    size: 'large',
+    photos: [
+      {
+        url: 'https://example.com/pet.jpg',
+        thumbnail: 'https://example.com/pet-thumb.jpg',
+        cloudinaryId: '',
+        isPrimary: true,
+      },
+    ],
+    personalityTags: ['friendly', 'playful'],
+    intent: 'adoption',
+    healthInfo: {
+      vaccinated: true,
+      spayedNeutered: true,
+      microchipped: true,
+    },
+    location: {
+      type: 'Point',
+      coordinates: [0, 0],
+    },
+    createdAt: now,
+    updatedAt: now,
   } as Pet;
 };
 
@@ -34,14 +73,38 @@ export const _getOtherPet = (): Pet => {
  */
 export const _getCurrentUserPet = (): Pet => {
   // Return a mock pet for current user
+  const now = new Date().toISOString();
   return {
     _id: 'current-pet-id',
+    id: 'current-pet-id',
     name: 'Max',
     species: 'cat',
     breed: 'Tabby',
     owner: 'current-user-id',
     age: 2,
-    photos: ['https://example.com/max.jpg']
+    gender: 'female',
+    size: 'small',
+    photos: [
+      {
+        url: 'https://example.com/max.jpg',
+        thumbnail: 'https://example.com/max-thumb.jpg',
+        cloudinaryId: '',
+        isPrimary: true,
+      },
+    ],
+    personalityTags: ['curious'],
+    intent: 'playdate',
+    healthInfo: {
+      vaccinated: true,
+      spayedNeutered: true,
+      microchipped: true,
+    },
+    location: {
+      type: 'Point',
+      coordinates: [0, 0],
+    },
+    createdAt: now,
+    updatedAt: now,
   } as Pet;
 };
 

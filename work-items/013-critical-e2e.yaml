@@ -1,0 +1,23 @@
+id: WI-013
+title: Automate Critical Journey End-to-End Tests
+priority: P1
+scope:
+  - apps/mobile/e2e/**/*
+  - apps/web/e2e/**/*
+  - server/src/routes/**/*.ts
+  - docs/testing/critical-journeys.md (new)
+description: |
+  Create deterministic E2E coverage for Auth → Swipe → Match → Chat, Premium upgrade billing, Settings → GDPR flows,
+  and Profile edit scenarios across mobile and web. Share fixtures, seed scripts, and reporting so CI exposes journey health
+  at a glance.
+acceptance_criteria:
+  - Journey specs execute on both platforms within 12 minutes total runtime.
+  - Tests integrate with analytics or logging to assert side effects (emails sent, matches created, subscriptions active).
+  - Failures capture screenshots, videos, and HAR files for debugging.
+  - Documentation explains environment prerequisites and data reset strategy.
+risk: MEDIUM
+estimated_time: 5 days
+rollback: Remove new specs and docs/testing/critical-journeys.md.
+verification:
+  - pnpm run test:e2e --filter "critical"
+  - pnpm run quality:report

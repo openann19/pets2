@@ -5,6 +5,12 @@
 
 import { logger } from '../utils/logger';
 
+interface StorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
 export type QueuePriority = 'critical' | 'high' | 'normal' | 'low';
 export type ConflictResolution = 'overwrite' | 'merge' | 'skip';
 
@@ -21,6 +27,11 @@ export interface QueueItem {
   conflictResolution: ConflictResolution;
   metadata?: Record<string, unknown>;
 }
+
+type PersistedQueueItem = Omit<QueueItem, 'retryCount' | 'timestamp'> & {
+  retryCount?: number;
+  timestamp?: number;
+};
 
 export interface QueueConfig {
   maxSize: number;
@@ -51,15 +62,15 @@ export class OfflineQueueManager {
   private config: QueueConfig;
   private queue: QueueItem[] = [];
   private processing: Set<string> = new Set();
-  private storage: Storage | null = null;
-  private syncIntervalId?: NodeJS.Timeout;
-  private isOnline: boolean = true;
+  private storage: StorageLike | null = null;
+  private syncIntervalId?: ReturnType<typeof setInterval>;
+  protected isOnline = true;
   private listeners: Array<(stats: QueueStats) => void> = [];
 
   constructor(config: Partial<QueueConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.initializeStorage();
-    this.loadQueue();
+    void this.loadQueue();
     this.startSyncInterval();
   }
 
@@ -124,7 +135,7 @@ export class OfflineQueueManager {
 
     // Process items in priority order
     for (const item of processableItems) {
-      if (!this.isOnline) {
+      if (this.shouldPauseProcessing()) {
         break;
       }
 
@@ -134,11 +145,12 @@ export class OfflineQueueManager {
         await this.processItem(item);
         this.removeItem(item.id);
         logger.debug('Item processed successfully', { id: item.id });
-      } catch (error) {
+      } catch (_error) {
         item.retryCount++;
-        
+
         if (item.retryCount >= item.maxRetries) {
           logger.error('Item failed after max retries', {
+            error: _error,
             id: item.id,
             endpoint: item.endpoint,
             retries: item.retryCount,
@@ -146,6 +158,7 @@ export class OfflineQueueManager {
           this.removeItem(item.id);
         } else {
           logger.debug('Item failed, will retry', {
+            error: _error,
             id: item.id,
             retries: item.retryCount,
           });
@@ -162,9 +175,9 @@ export class OfflineQueueManager {
   /**
    * Process individual item
    */
-  private async processItem(item: QueueItem): Promise<void> {
+  protected processItem(_item: QueueItem): Promise<void> {
     // This would be implemented by the actual API client
-    throw new Error('processItem must be implemented by subclass');
+    return Promise.reject(new Error('processItem must be implemented by subclass'));
   }
 
   /**
@@ -172,16 +185,22 @@ export class OfflineQueueManager {
    */
   getStats(): QueueStats {
     const criticalItems = this.queue.filter(item => item.priority === 'critical').length;
-    const oldestItem = this.queue.length > 0 ? this.queue[0].timestamp : undefined;
+    const firstItem = this.queue[0];
+    const oldestItem = firstItem?.timestamp;
 
-    return {
+    const stats: QueueStats = {
       totalItems: this.queue.length,
       pendingItems: this.queue.length - this.processing.size,
       processingItems: this.processing.size,
       failedItems: this.queue.filter(item => item.retryCount >= item.maxRetries).length,
       criticalItems,
-      oldestItemTimestamp: oldestItem,
     };
+
+    if (oldestItem !== undefined) {
+      stats.oldestItemTimestamp = oldestItem;
+    }
+
+    return stats;
   }
 
   /**
@@ -208,7 +227,7 @@ export class OfflineQueueManager {
     const index = this.queue.findIndex(item => item.id === id);
     if (index !== -1) {
       this.queue.splice(index, 1);
-      this.persistQueue();
+      void this.persistQueue();
       this.notifyListeners();
     }
   }
@@ -249,7 +268,8 @@ export class OfflineQueueManager {
     
     let insertIndex = this.queue.length;
     for (let i = 0; i < this.queue.length; i++) {
-      if (this.getPriorityValue(this.queue[i].priority) < priorityValue) {
+      const existingItem = this.queue[i];
+      if (existingItem != null && this.getPriorityValue(existingItem.priority) < priorityValue) {
         insertIndex = i;
         break;
       }
@@ -290,36 +310,62 @@ export class OfflineQueueManager {
   /**
    * Persist queue to storage
    */
-  private async persistQueue(): Promise<void> {
-    if (!this.storage) {
-      return;
+  protected persistQueue(): Promise<void> {
+    const storage = this.storage;
+    if (!storage) {
+      return Promise.resolve();
     }
 
     try {
       const data = JSON.stringify(this.queue);
-      this.storage.setItem('offline_queue', data);
-    } catch (error) {
-      logger.error('Failed to persist queue', { error });
+      storage.setItem('offline_queue', data);
+      return Promise.resolve();
+    } catch (_error) {
+      logger.error('Failed to persist queue', { error: _error });
+      return Promise.resolve();
     }
   }
 
   /**
    * Load queue from storage
    */
-  private async loadQueue(): Promise<void> {
-    if (!this.storage) {
-      return;
+  protected loadQueue(): Promise<void> {
+    const storage = this.storage;
+    if (!storage) {
+      return Promise.resolve();
     }
 
     try {
-      const data = this.storage.getItem('offline_queue');
-      if (data) {
-        this.queue = JSON.parse(data);
-        logger.info('Queue loaded from storage', { itemCount: this.queue.length });
+      const data = storage.getItem('offline_queue');
+      if (!data) {
+        return Promise.resolve();
       }
-    } catch (error) {
-      logger.error('Failed to load queue', { error });
+
+      const parsed: unknown = JSON.parse(data);
+      if (!Array.isArray(parsed)) {
+        logger.warn('Discarding persisted queue due to invalid shape');
+        return Promise.resolve();
+      }
+
+      const restoredQueue: QueueItem[] = [];
+      for (const entry of parsed) {
+        if (this.isValidQueueItem(entry)) {
+          const persisted: PersistedQueueItem = entry;
+          restoredQueue.push({
+            ...persisted,
+            retryCount: persisted.retryCount ?? 0,
+            timestamp: persisted.timestamp ?? Date.now(),
+          });
+        }
+      }
+
+      this.queue = restoredQueue;
+      logger.info('Queue loaded from storage', { itemCount: this.queue.length });
+    } catch (_error) {
+      logger.error('Failed to load queue', { error: _error });
     }
+
+    return Promise.resolve();
   }
 
   /**
@@ -341,8 +387,8 @@ export class OfflineQueueManager {
     this.listeners.forEach(listener => {
       try {
         listener(stats);
-      } catch (error) {
-        logger.error('Listener error', { error });
+      } catch (_error) {
+        logger.error('Listener error', { error: _error });
       }
     });
   }
@@ -351,7 +397,38 @@ export class OfflineQueueManager {
    * Generate unique ID
    */
   private generateId(): string {
-    return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    const timestamp = Date.now().toString(36);
+    const randomSegment = Math.random().toString(36).substring(2, 11);
+    return `${timestamp}_${randomSegment}`;
+  }
+
+  /**
+   * Hook for subclasses to pause queue processing when external state changes
+   */
+  protected shouldPauseProcessing(): boolean {
+    return !this.isOnline;
+  }
+
+  private isValidQueueItem(entry: unknown): entry is PersistedQueueItem {
+    if (typeof entry !== 'object' || entry === null) {
+      return false;
+    }
+
+    const candidate = entry as Partial<PersistedQueueItem>;
+    const hasValidRetryCount =
+      candidate.retryCount === undefined || typeof candidate.retryCount === 'number';
+    const hasValidTimestamp =
+      candidate.timestamp === undefined || typeof candidate.timestamp === 'number';
+
+    return (
+      typeof candidate.id === 'string' &&
+      typeof candidate.endpoint === 'string' &&
+      typeof candidate.method === 'string' &&
+      typeof candidate.priority === 'string' &&
+      typeof candidate.maxRetries === 'number' &&
+      hasValidRetryCount &&
+      hasValidTimestamp
+    );
   }
 
   /**
