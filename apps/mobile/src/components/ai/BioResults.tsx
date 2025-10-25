@@ -210,11 +210,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: getTextColor(Theme, "primary"),
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
-    backgroundColor: getBackgroundColor(Theme, "primary"),
+    backgroundColor: getBackgroundColor("primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: Theme.typography.fontSize.base,
-    color: getTextColor(Theme, "primary"),
+    color: getTextColor("primary"),
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: getBorderColor(Theme, "light"),
+    borderTopColor: getBorderColor("light"),
   },
   actionButton: {
     flexDirection: "row",
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: getTextColor(Theme, "primary"),
+    color: getTextColor("primary"),
     marginLeft: Theme.spacing.xs,
     fontWeight: Theme.typography.fontWeight.medium,
   },
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   analysisTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: getTextColor(Theme, "primary"),
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -302,13 +302,13 @@ const styles = StyleSheet.create({
   },
   keywordsSection: {
     borderTopWidth: 1,
-    borderTopColor: getBorderColor(Theme, "light"),
+    borderTopColor: getBorderColor("light"),
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: getTextColor(Theme, "primary"),
+    color: getTextColor("primary"),
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
