@@ -5,6 +5,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "lib": ["ES2023"],
+    "module": "esnext",
     "types": ["node", "jest"],
     "verbatimModuleSyntax": false // Allow mixed import/export for compatibility
   },

@@ -67,11 +67,23 @@ export function toCorePet(legacy: LegacyWebPet): Pet {
   const species = legacy.species != null && legacy.species.length > 0 ? (speciesMap[legacy.species.toLowerCase()] ?? 'other') : 'dog';
 
   // Convert photos
-  const photos = (legacy.photos != null ? legacy.photos : []).map((photo, index) => ({
-    url: typeof photo === 'string' ? photo : photo.url,
-    isPrimary: typeof photo === 'object' ? (photo.isPrimary != null ? photo.isPrimary : index === 0) : index === 0,
-    caption: '',
-  }));
+  const photos = (legacy.photos ?? []).map((photo, index) => {
+    const photoObject = typeof photo === 'string' ? { url: photo } : photo;
+    const url = photoObject.url ?? '';
+    return {
+      url,
+      thumbnail: 'thumbnail' in photoObject && typeof photoObject.thumbnail === 'string' ? photoObject.thumbnail : url,
+      cloudinaryId:
+        'cloudinaryId' in photoObject && typeof photoObject.cloudinaryId === 'string'
+          ? photoObject.cloudinaryId
+          : '',
+      caption: 'caption' in photoObject && typeof photoObject.caption === 'string' ? photoObject.caption : '',
+      isPrimary:
+        'isPrimary' in photoObject && typeof photoObject.isPrimary === 'boolean'
+          ? photoObject.isPrimary
+          : index === 0,
+    };
+  });
 
   const corePet: Pet = {
     _id: legacy.id,
@@ -153,7 +165,15 @@ export function toLegacyPet(pet: Pet): LegacyWebPet {
   legacy.temperament = pet.personalityTags;
 
   if (pet.photos.length > 0) {
-    legacy.photos = pet.photos.map(p => ({ url: p.url, isPrimary: p.isPrimary }));
+    legacy.photos = pet.photos.map((p) => {
+      const photo: { url: string; isPrimary?: boolean } = { url: p.url };
+
+      if (p.isPrimary !== undefined) {
+        photo.isPrimary = p.isPrimary;
+      }
+
+      return photo;
+    });
   }
 
   legacy.location = {

@@ -94,15 +94,23 @@ export class CircuitBreaker {
    * Get current metrics
    */
   getMetrics(): CircuitBreakerMetrics {
-    return {
+    const metrics: CircuitBreakerMetrics = {
       failures: this.failures,
       successes: this.successes,
       totalRequests: this.totalRequests,
-      lastFailureTime: this.lastFailureTime,
-      lastSuccessTime: this.lastSuccessTime,
       state: this.state,
       stateChangedAt: this.stateChangedAt,
     };
+
+    if (this.lastFailureTime !== undefined) {
+      metrics.lastFailureTime = this.lastFailureTime;
+    }
+
+    if (this.lastSuccessTime !== undefined) {
+      metrics.lastSuccessTime = this.lastSuccessTime;
+    }
+
+    return metrics;
   }
 
   /**

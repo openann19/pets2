@@ -71,6 +71,9 @@ export function toCoreUser(legacy: LegacyWebUser): User {
     },
     isEmailVerified: false,
     isActive: true,
+    profileComplete: false,
+    subscriptionStatus: 'free',
+    role: 'user',
     createdAt: now,
     updatedAt: now,
   };

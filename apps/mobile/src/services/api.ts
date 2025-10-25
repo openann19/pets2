@@ -1,24 +1,22 @@
-import {
-  apiClient,
-  type ApiClientResponse,
-  type Pet,
-  type User,
-  type UserPreferences,
-  type Match,
-  type Message,
-  type PetFilters,
-  // Import new API response types
-  type AuthResponse,
-  type UserProfileResponse,
-  type PetCreateResponse,
-  type SubscriptionResponse,
-  type CheckoutSessionResponse,
-  type SwipeRecommendationResponse,
-  type SwipeActionResponse,
-  type AIBioGenerationResponse,
-  type AIPhotoAnalysisResponse,
-  type AICompatibilityResponse,
+import type {
+  Pet,
+  User,
+  UserPreferences,
+  Match,
+  Message,
+  PetFilters,
+  AuthResponse,
+  UserProfileResponse,
+  PetCreateResponse,
+  SubscriptionResponse,
+  CheckoutSessionResponse,
+  SwipeRecommendationResponse,
+  SwipeActionResponse,
+  AIBioGenerationResponse,
+  AIPhotoAnalysisResponse,
+  AICompatibilityResponse,
 } from "@pawfectmatch/core";
+import apiClient, { type ApiClientResponse } from "./apiClient";
 import { API_TIMEOUT } from "../config/environment";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -86,10 +84,12 @@ const ensureSuccess = <T>(
   response: ApiClientResponse<T>,
   endpoint: string,
 ): T => {
-  if (!response.success) {
-    throw new Error(
-      response.error ?? response.message ?? `Request to ${endpoint} failed`,
-    );
+  if (response.success !== true) {
+    const errorMessage =
+      "error" in response && typeof response.error === "string"
+        ? response.error
+        : `Request to ${endpoint} failed`;
+    throw new Error(errorMessage);
   }
 
   if (response.data === undefined || response.data === null) {
@@ -104,8 +104,12 @@ const resolveData = async <T>(
   errorMessage: string,
 ): Promise<T> => {
   const response = await requestPromise;
-  if (!response.success) {
-    throw new Error(response.error ?? errorMessage);
+  if (response.success !== true) {
+    const message =
+      "error" in response && typeof response.error === "string"
+        ? response.error
+        : errorMessage;
+    throw new Error(message);
   }
   if (response.data === undefined || response.data === null) {
     throw new Error(errorMessage);
@@ -118,8 +122,12 @@ const resolveBoolean = async (
   errorMessage: string,
 ): Promise<boolean> => {
   const response = await requestPromise;
-  if (!response.success) {
-    throw new Error(response.error ?? errorMessage);
+  if (response.success !== true) {
+    const message =
+      "error" in response && typeof response.error === "string"
+        ? response.error
+        : errorMessage;
+    throw new Error(message);
   }
   if (response.data === undefined) {
     return true;
@@ -138,6 +146,24 @@ const buildRequestConfig = (headers: Record<string, string> | undefined) => {
   return { timeout: API_TIMEOUT } as const;
 };
 
+const resolveHeadersForBody = (
+  body: unknown,
+  headers: Record<string, string> | undefined,
+): Record<string, string> | undefined => {
+  if (isFormData(body)) {
+    return headers;
+  }
+
+  if (!hasContentTypeHeader(headers) && body !== undefined && body !== null) {
+    return {
+      ...headers,
+      "Content-Type": "application/json",
+    };
+  }
+
+  return headers;
+};
+
 export const request = async <T = unknown>(
   endpoint: string,
   options: ApiRequestOptions = {},
@@ -145,20 +171,7 @@ export const request = async <T = unknown>(
   const { method = "GET", body, headers, params } = options;
   const normalizedMethod = method.toUpperCase() as HttpMethod;
   const url = appendQueryParams(endpoint, params);
-  const resolvedHeaders: Record<string, string> | undefined = (() => {
-    if (isFormData(body)) {
-      return headers;
-    }
-
-    if (!hasContentTypeHeader(headers) && body !== undefined && body !== null) {
-      return {
-        ...headers,
-        "Content-Type": "application/json",
-      };
-    }
-
-    return headers;
-  })();
+  const resolvedHeaders = resolveHeadersForBody(body, headers);
 
   switch (normalizedMethod) {
     case "GET":
@@ -193,6 +206,52 @@ export const request = async <T = unknown>(
     default:
       throw new Error(`Unsupported HTTP method: ${String(normalizedMethod)}`);
   }
+};
+
+export const get = async <T = unknown>(
+  endpoint: string,
+  options: ApiRequestOptions = {},
+): Promise<ApiClientResponse<T>> => {
+  const url = appendQueryParams(endpoint, options.params);
+  return apiClient.get<T>(url, buildRequestConfig(options.headers));
+};
+
+export const post = async <T = unknown>(
+  endpoint: string,
+  body?: unknown,
+  options: ApiRequestOptions = {},
+): Promise<ApiClientResponse<T>> => {
+  const url = appendQueryParams(endpoint, options.params);
+  const resolvedHeaders = resolveHeadersForBody(body, options.headers);
+  return apiClient.post<T>(url, body, buildRequestConfig(resolvedHeaders));
+};
+
+export const put = async <T = unknown>(
+  endpoint: string,
+  body?: unknown,
+  options: ApiRequestOptions = {},
+): Promise<ApiClientResponse<T>> => {
+  const url = appendQueryParams(endpoint, options.params);
+  const resolvedHeaders = resolveHeadersForBody(body, options.headers);
+  return apiClient.put<T>(url, body, buildRequestConfig(resolvedHeaders));
+};
+
+export const patch = async <T = unknown>(
+  endpoint: string,
+  body?: unknown,
+  options: ApiRequestOptions = {},
+): Promise<ApiClientResponse<T>> => {
+  const url = appendQueryParams(endpoint, options.params);
+  const resolvedHeaders = resolveHeadersForBody(body, options.headers);
+  return apiClient.patch<T>(url, body, buildRequestConfig(resolvedHeaders));
+};
+
+export const deleteRequest = async <T = unknown>(
+  endpoint: string,
+  options: ApiRequestOptions = {},
+): Promise<ApiClientResponse<T>> => {
+  const url = appendQueryParams(endpoint, options.params);
+  return apiClient.delete<T>(url, buildRequestConfig(options.headers));
 };
 
 // Local type definition for adoption application
@@ -955,7 +1014,9 @@ export const matchesAPI = {
   // Remove message reaction
   removeMessageReaction: async (messageId: string, emoji: string): Promise<Message> => {
     return resolveData(
-      apiClient.delete<Message>(`/messages/${messageId}/unreact`, { emoji } as any),
+      apiClient.delete<Message>(`/messages/${messageId}/unreact`, {
+        data: { emoji },
+      }),
       "Failed to remove reaction",
     );
   },
@@ -1069,10 +1130,10 @@ export const aiAPI = {
   },
 
   // Analyze pet photos
-  analyzePhoto: async (photoUrl: string): Promise<AIPhotoAnalysisResponse> => {
-    return request<AIPhotoAnalysisResponse>("/ai/analyze-photo", {
+  analyzePhotos: async (photos: string[]): Promise<AIPhotoAnalysisResponse> => {
+    return request<AIPhotoAnalysisResponse>("/ai/analyze-photos", {
       method: "POST",
-      body: { photoUrl },
+      body: { photos },
     });
   },
 
@@ -1081,7 +1142,26 @@ export const aiAPI = {
     pet1Id: string;
     pet2Id: string;
   }): Promise<AICompatibilityResponse> => {
-    return request<AICompatibilityResponse>("/ai/compatibility", {
+    return request<AICompatibilityResponse>("/ai/enhanced-compatibility", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Legacy compatibility analysis for backwards compatibility
+  getCompatibility: async (data: {
+    pet1Id: string;
+    pet2Id: string;
+  }): Promise<{
+    score: number;
+    analysis: string;
+    factors: Record<string, unknown>;
+  }> => {
+    return request<{
+      score: number;
+      analysis: string;
+      factors: Record<string, unknown>;
+    }>("/ai/compatibility", {
       method: "POST",
       body: data,
     });
@@ -1095,6 +1175,11 @@ export const api = {
   pet: petAPI,
   subscription: subscriptionAPI,
   ai: aiAPI,
+  get,
+  post,
+  put,
+  patch,
+  delete: deleteRequest,
   request,
 };
 

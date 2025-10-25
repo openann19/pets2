@@ -37,19 +37,21 @@ const API_BASE_URL =
     : "http://localhost:3001/api";
 
 // API Response Types
-interface ApiSuccessResponse<T> {
+export interface ApiSuccessResponse<T> {
   success: true;
   data: T;
   message?: string;
 }
 
-interface ApiErrorResponse {
+export interface ApiErrorResponse {
   success: false;
   error: string;
   details?: Record<string, unknown>;
 }
 
-type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+export type ApiClientResponse<T> = ApiResponse<T>;
 
 interface ApiClientConfig {
   baseURL: string;

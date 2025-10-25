@@ -59,7 +59,7 @@ export class AnalyticsService extends BaseService {
   private performanceMetrics: PerformanceMetric[] = [];
   private currentSessionId: string;
   private screenStartTime: number = 0;
-  private config: AnalyticsConfig;
+  private analyticsConfig: AnalyticsConfig;
 
   constructor(
     serviceConfig: ServiceConfig,
@@ -76,18 +76,18 @@ export class AnalyticsService extends BaseService {
     },
   ) {
     super(serviceConfig);
-    this.config = analyticsConfig;
+    this.analyticsConfig = analyticsConfig;
     this.currentSessionId = this.generateSessionId();
     this.initializeAnalytics();
   }
 
   private initializeAnalytics(): void {
-    if (!this.config.enabled) return;
+    if (!this.analyticsConfig.enabled) return;
 
     // Set up automatic flushing
     setInterval(() => {
       this.flushEvents();
-    }, this.config.flushInterval);
+    }, this.analyticsConfig.flushInterval);
 
     // Track app lifecycle events
     this.trackAppLifecycle();
@@ -115,7 +115,7 @@ export class AnalyticsService extends BaseService {
     label?: string,
     properties: Record<string, unknown> = {},
   ): void {
-    if (!this.config.enabled) return;
+    if (!this.analyticsConfig.enabled) return;
 
     const event: AnalyticsEvent = {
       id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -134,12 +134,12 @@ export class AnalyticsService extends BaseService {
 
     this.events.push(event);
 
-    if (this.config.debugMode) {
+    if (this.analyticsConfig.debugMode) {
       logger.info("Analytics event tracked", event);
     }
 
     // Auto-flush if batch size reached
-    if (this.events.length >= this.config.batchSize) {
+    if (this.events.length >= this.analyticsConfig.batchSize) {
       this.flushEvents();
     }
   }
@@ -148,7 +148,7 @@ export class AnalyticsService extends BaseService {
     screenName: string,
     properties: Record<string, unknown> = {},
   ): void {
-    if (!this.config.enabled) return;
+    if (!this.analyticsConfig.enabled) return;
 
     // Track screen end if there was a previous screen
     if (this.screenStartTime > 0) {
@@ -175,7 +175,12 @@ export class AnalyticsService extends BaseService {
     duration: number,
     metadata: Record<string, unknown> = {},
   ): void {
-    if (!this.config.enabled || !this.config.trackPerformance) return;
+    if (
+      !this.analyticsConfig.enabled ||
+      !this.analyticsConfig.trackPerformance
+    ) {
+      return;
+    }
 
     const metric: PerformanceMetric = {
       id: `perf_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -188,7 +193,7 @@ export class AnalyticsService extends BaseService {
 
     this.performanceMetrics.push(metric);
 
-    if (this.config.debugMode) {
+    if (this.analyticsConfig.debugMode) {
       logger.info("Performance metric tracked", metric);
     }
   }
@@ -198,7 +203,12 @@ export class AnalyticsService extends BaseService {
     context: string,
     properties: Record<string, unknown> = {},
   ): void {
-    if (!this.config.enabled || !this.config.trackErrors) return;
+    if (
+      !this.analyticsConfig.enabled ||
+      !this.analyticsConfig.trackErrors
+    ) {
+      return;
+    }
 
     this.trackEvent("error", "error_occurred", context, {
       errorMessage: error.message,
@@ -209,7 +219,12 @@ export class AnalyticsService extends BaseService {
   }
 
   trackCrash(error: Error, properties: Record<string, unknown> = {}): void {
-    if (!this.config.enabled || !this.config.trackCrashes) return;
+    if (
+      !this.analyticsConfig.enabled ||
+      !this.analyticsConfig.trackCrashes
+    ) {
+      return;
+    }
 
     this.trackEvent("crash", "app_crash", "fatal_error", {
       errorMessage: error.message,
@@ -227,7 +242,12 @@ export class AnalyticsService extends BaseService {
     element: string,
     properties: Record<string, unknown> = {},
   ): void {
-    if (!this.config.enabled || !this.config.trackUserBehavior) return;
+    if (
+      !this.analyticsConfig.enabled ||
+      !this.analyticsConfig.trackUserBehavior
+    ) {
+      return;
+    }
 
     this.trackEvent("user_interaction", action, element, {
       ...properties,
@@ -258,7 +278,7 @@ export class AnalyticsService extends BaseService {
   }
 
   setUserProperties(properties: Record<string, unknown>): void {
-    if (!this.config.enabled) return;
+    if (!this.analyticsConfig.enabled) return;
 
     this.trackEvent(
       "user",
@@ -269,7 +289,7 @@ export class AnalyticsService extends BaseService {
   }
 
   setUserId(userId: string): void {
-    if (!this.config.enabled) return;
+    if (!this.analyticsConfig.enabled) return;
 
     this.trackEvent("user", "user_identified", "user_id", { userId });
   }
@@ -283,14 +303,14 @@ export class AnalyticsService extends BaseService {
     try {
       await this.sendEvents(eventsToFlush);
 
-      if (this.config.debugMode) {
+      if (this.analyticsConfig.debugMode) {
         logger.info(`Flushed ${eventsToFlush.length} analytics events`);
       }
     } catch (error) {
       // Re-add events to queue if sending failed
       this.events.unshift(...eventsToFlush);
 
-      if (this.config.debugMode) {
+      if (this.analyticsConfig.debugMode) {
         logger.error("Failed to flush analytics events", { error });
       }
     }

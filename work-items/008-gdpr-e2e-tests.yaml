@@ -1,0 +1,25 @@
+id: WI-008
+title: Implement Detox GDPR End-to-End Coverage
+priority: P0
+scope:
+  - apps/mobile/e2e/gdpr/delete-account.spec.ts
+  - apps/mobile/e2e/gdpr/export-data.spec.ts
+  - apps/mobile/e2e/gdpr/cancel-deletion.spec.ts
+  - server/src/controllers/gdprController.ts
+  - server/src/routes/gdpr.ts
+description: |
+  Build production-grade Detox scenarios that exercise delete-account, export, grace-period confirmation,
+  and deletion cancellation flows end-to-end against the TypeScript GDPR stack. Seed test data, validate
+  API responses, ensure scheduled jobs fire, and capture audit log assertions. Update API handlers with any
+  missing telemetry or hooks required for deterministic testing.
+acceptance_criteria:
+  - Detox suite covers delete, export, confirm, and cancel flows with environment-specific fixtures.
+  - All GDPR APIs emit structured logs and metrics for each test step.
+  - Data teardown restores account state within 30 seconds.
+  - Tests run in CI under `pnpm run test:e2e` without flake across three consecutive executions.
+risk: HIGH
+estimated_time: 5 days
+rollback: Remove new Detox specs and revert controller changes via git revert.
+verification:
+  - pnpm run test:e2e --filter "gdpr"
+  - pnpm run type-check --filter @pawfectmatch/core

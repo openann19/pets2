@@ -4,6 +4,8 @@
  * Comprehensive types migrated from client/src/types
  */
 
+import type { Match, Message } from './models';
+
 // Export account management types
 export * from './account';
 
@@ -15,6 +17,9 @@ export * from './models';
 
 // Export story types
 export * from './story';
+
+// Export moderation types
+export * from './moderation';
 
 // Filter Types
 export interface PetFilters {

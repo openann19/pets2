@@ -5,6 +5,7 @@ export interface LegacyWebMessage {
   id: string;
   _id?: string;
   senderId?: string;
+  matchId?: string;
   sender?: {
     id: string;
     _id?: string;
@@ -53,29 +54,16 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
     const senderId = typeof legacy.sender === 'string' && legacy.sender.length > 0
       ? legacy.sender
       : legacy.senderId ?? messageId;
+    const now = new Date().toISOString();
     sender = {
       _id: senderId,
       id: senderId, // Alias for _id
       email: '',
       firstName: 'User',
       lastName: '',
-      dateOfBirth: '',
-      age: 0,
       location: {
         type: 'Point',
         coordinates: [0, 0],
-      },
-      preferences: {
-        maxDistance: 50,
-        ageRange: { min: 18, max: 100 },
-        species: [],
-        intents: [],
-        notifications: {
-          email: true,
-          push: true,
-          matches: true,
-          messages: true,
-        },
       },
       premium: {
         isActive: false,
@@ -87,18 +75,13 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
           advancedFilters: false,
         },
       },
-      pets: [],
-      analytics: {
-        totalSwipes: 0,
-        totalLikes: 0,
-        totalMatches: 0,
-        profileViews: 0,
-        lastActive: new Date().toISOString(),
-      },
+      profileComplete: false,
+      subscriptionStatus: 'free',
+      role: 'user',
       isEmailVerified: false,
       isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     };
   } else {
     const senderObj = legacy.sender;
@@ -107,30 +90,17 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
     const firstName = nameParts[0] != null && nameParts[0].trim() !== '' ? nameParts[0] : 'User';
     const lastName = nameParts.slice(1).join(' ').trim();
 
+    const now = new Date().toISOString();
     sender = {
       _id: senderObj._id ?? senderObj.id,
       id: senderObj.id,
       email: senderObj.email ?? '',
       firstName,
       lastName,
-      dateOfBirth: '',
-      age: 0,
-  ...(senderObj.avatar != null && senderObj.avatar.trim() !== '' ? { avatar: senderObj.avatar } : {}),
+      ...(senderObj.avatar != null && senderObj.avatar.trim() !== '' ? { avatar: senderObj.avatar } : {}),
       location: {
         type: 'Point',
         coordinates: [0, 0],
-      },
-      preferences: {
-        maxDistance: 50,
-        ageRange: { min: 18, max: 100 },
-        species: [],
-        intents: [],
-        notifications: {
-          email: true,
-          push: true,
-          matches: true,
-          messages: true,
-        },
       },
       premium: {
         isActive: false,
@@ -142,29 +112,22 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
           advancedFilters: false,
         },
       },
-      pets: [],
-      analytics: {
-        totalSwipes: 0,
-        totalLikes: 0,
-        totalMatches: 0,
-        profileViews: 0,
-        lastActive: new Date().toISOString(),
-      },
+      profileComplete: false,
+      subscriptionStatus: 'free',
+      role: 'user',
       isEmailVerified: false,
       isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     };
   }
 
   // Normalize message type
-  const rawType = legacy.messageType ?? legacy.type ?? 'text';
-  const isMessageType = (value: string): value is Message['messageType'] => {
-    return value === 'text' || value === 'image' || value === 'location' || value === 'system';
-  };
-
-  const normalizedType = rawType.toLowerCase();
-  const messageType = isMessageType(normalizedType) ? normalizedType : 'text';
+  const rawType = (legacy.messageType ?? legacy.type ?? 'text').toLowerCase();
+  const validTypes: Array<NonNullable<Message['messageType']>> = ['text', 'image', 'voice', 'video', 'location', 'system'];
+  const messageType = validTypes.includes(rawType as NonNullable<Message['messageType']>)
+    ? (rawType as NonNullable<Message['messageType']>)
+    : 'text';
 
   // Convert attachments
   const attachments = (legacy.attachments ?? []).map(att => {
@@ -179,13 +142,18 @@ export function toCoreMessage(legacy: LegacyWebMessage): Message {
     };
   });
 
-  // Get timestamp
   const sentAt = legacy.sentAt ?? legacy.timestamp ?? legacy.createdAt ?? new Date().toISOString();
+  const matchId = legacy.matchId ?? legacy.senderId ?? messageId;
 
   return {
     _id: messageId,
     sender,
+    match: matchId,
     content,
+    timestamp: sentAt,
+    read: false,
+    type: messageType,
+    status: 'sent',
     messageType,
     ...(attachments.length > 0 ? { attachments } : {}),
     readBy: legacy.readBy ?? [],
