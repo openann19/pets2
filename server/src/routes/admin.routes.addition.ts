@@ -1,16 +1,16 @@
 // User Management Routes (using optimized adminController)
-const express = require('express');
-const { checkPermission } = require('../middleware/rbac');
-const { adminActionLogger } = require('../middleware/adminLogger');
-const {
+import express, { Router } from 'express';
+import { checkPermission } from '../middleware/rbac';
+import { adminActionLogger } from '../middleware/adminLogger';
+import {
   getAllUsers,
   getUserDetails,
   getUserActivity,
   getAllChats,
   getChatDetails
-} = require('../controllers/adminController.optimized');
+} from '../controllers/adminController.optimized';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // User Management Routes
 router.get('/users', checkPermission('users:read'), adminActionLogger('VIEW_USERS'), getAllUsers);
@@ -21,4 +21,4 @@ router.get('/users/:id/activity', checkPermission('users:read'), adminActionLogg
 router.get('/chats', checkPermission('chats:read'), adminActionLogger('VIEW_CHATS'), getAllChats);
 router.get('/chats/:id', checkPermission('chats:read'), adminActionLogger('VIEW_CHAT_DETAILS'), getChatDetails);
 
-module.exports = router;
+export default router;

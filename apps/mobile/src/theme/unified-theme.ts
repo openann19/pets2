@@ -250,6 +250,7 @@ export const Theme = {
     error: ["#ef4444", "#dc2626"],
     glass: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"],
     glow: ["rgba(236, 72, 153, 0.3)", "rgba(236, 72, 153, 0.1)"],
+    holographic: ["#667eea", "#764ba2", "#f093fb"],
   },
 
   // Glass morphism effects

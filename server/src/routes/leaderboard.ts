@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Leaderboard Routes
  * Handles leaderboard functionality and scoring
@@ -12,7 +13,7 @@ const {
   updateScore
 } = require('../controllers/leaderboardController');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Validation rules
 const categoryValidation = param('category').isIn(['overall', 'streak', 'matches', 'engagement'])
@@ -100,4 +101,4 @@ router.post('/update', authenticateToken, updateScoreValidation, async (req, res
   }
 });
 
-module.exports = router;
+export default router;

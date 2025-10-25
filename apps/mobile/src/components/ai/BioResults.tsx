@@ -17,10 +17,7 @@ import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Theme } from "../../theme/unified-theme";
-import {
-  getBorderColor,
-  getPrimaryColor,
-} from "../../theme/helpers";
+import { getBorderColor, getPrimaryColor } from "../../theme/helpers";
 import {
   getTextColorString,
   getBackgroundColorString,
@@ -96,7 +93,9 @@ export function BioResults({
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
               color={
-                copied ? getStatusColor("success") : getTextColorString("primary")
+                copied
+                  ? getStatusColor("success")
+                  : getTextColorString("primary")
               }
             />
             <Text
@@ -162,7 +161,7 @@ export function BioResults({
                 style={[
                   styles.progressFill,
                   {
-                    width: `${generatedBio.matchScore}%`,
+                    width: generatedBio.matchScore,
                     backgroundColor: getMatchScoreColor(
                       generatedBio.matchScore,
                     ),
@@ -214,7 +213,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-          color: getTextColorString("primary"),
+    color: getTextColorString("primary"),
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
-    shadowColor: Theme.colors.shadowColor,
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: Theme.typography.fontSize.base,
-          color: getTextColorString("primary"),
+    color: getTextColorString("primary"),
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
@@ -252,7 +251,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: Theme.typography.fontSize.sm,
-          color: getTextColorString("primary"),
+    color: getTextColorString("primary"),
     marginLeft: Theme.spacing.xs,
     fontWeight: Theme.typography.fontWeight.medium,
   },
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
   analysisTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.semibold,
-          color: getTextColorString("primary"),
+    color: getTextColorString("primary"),
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -281,7 +280,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: Theme.typography.fontSize.sm,
-          color: getTextColorString("secondary"),
+    color: getTextColorString("secondary"),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
   },
   metricSubtext: {
     fontSize: Theme.typography.fontSize.xs,
-          color: getTextColorString("secondary"),
+    color: getTextColorString("secondary"),
   },
   progressBar: {
     width: "100%",
@@ -312,7 +311,7 @@ const styles = StyleSheet.create({
   keywordsTitle: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-          color: getTextColorString("primary"),
+    color: getTextColorString("primary"),
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {

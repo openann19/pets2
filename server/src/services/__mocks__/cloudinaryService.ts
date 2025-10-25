@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const { jest } = require('@jest/globals');
 
 const uploadToCloudinary = jest.fn(() => {

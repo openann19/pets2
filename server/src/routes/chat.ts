@@ -1,8 +1,8 @@
-const express = require('express');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validation');
-const { authenticateToken } = require('../middleware/auth');
-const {
+import express, { Router } from 'express';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validation';
+import { authenticateToken } from '../middleware/auth';
+import {
   getChatHistory,
   markMessagesRead,
   getOnlineUsers,
@@ -13,10 +13,12 @@ const {
   addReaction,
   removeReaction,
   searchMessages,
-  getChatStats
-} = require('../controllers/chatController');
+  getChatStats,
+  exportChat,
+  clearChatHistory
+} from '../controllers/chatController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Apply authentication to all chat routes
 router.use(authenticateToken);
@@ -74,9 +76,17 @@ router.get('/:matchId/search', searchValidation, validate, searchMessages);
 // Chat statistics
 router.get('/stats', getChatStats);
 
+// Chat management (mobile app expected paths)
+router.post('/:matchId/export', exportChat);
+router.delete('/:matchId/clear', clearChatHistory);
+
+// Message reactions (mobile app expected paths)
+router.post('/messages/:messageId/react', reactionValidation, validate, addReaction);
+router.delete('/messages/:messageId/unreact', removeReaction);
+
 // Legacy routes (for backward compatibility)
 router.post('/:matchId/send', messageValidation, validate, sendMessage);
 router.post('/:matchId/read', markMessagesRead);
 router.get('/online', getOnlineUsers);
 
-module.exports = router;
+export default router;

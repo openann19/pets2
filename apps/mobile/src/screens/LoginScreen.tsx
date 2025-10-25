@@ -6,17 +6,27 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
-  TouchableOpacity,
   View,
   Alert,
-  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { authService } from "../services/AuthService";
 import { biometricService } from "../services/BiometricService";
+import { Button } from "../components/Button";
+import Text, {
+  Heading1,
+  Heading2,
+  Body,
+  Label,
+  BodySmall,
+} from "../components/Text";
+import {
+  getTextColorString,
+  getPrimaryColor,
+  getStatusColor,
+} from "../theme/helpers";
 
 // Define the navigation props type
 type RootStackParamList = {
@@ -28,6 +38,11 @@ type RootStackParamList = {
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
+  // Get theme colors using helpers
+  const primaryColor = getPrimaryColor();
+  const textSecondaryColor = getTextColorString("secondary");
+  const errorColor = getStatusColor("error");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
@@ -102,8 +117,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         await authService.storeRememberMe(email);
       }
 
-      logger.info("Login successful", { userId: response.user.id });
-      navigation.navigate("Home");
+      logger.info("Login successful", { userId: response.user._id });
+      navigation.navigate("Home" as never);
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -143,9 +158,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           setTokens(response.accessToken, response.refreshToken);
 
           logger.info("Biometric login successful", {
-            userId: response.user.id,
+            userId: response.user._id,
           });
-          navigation.navigate("Home");
+          navigation.navigate("Home" as never);
         } else {
           throw new Error("No biometric credentials found");
         }
@@ -164,7 +179,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   };
 
   const handleForgotPassword = () => {
-    navigation.navigate("ForgotPassword");
+    navigation.navigate("ForgotPassword" as never);
   };
 
   return (
@@ -175,15 +190,23 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <Text style={styles.logo}>PawfectMatch</Text>
-            <Text style={styles.tagline}>Find your pet's perfect match</Text>
+            <Heading1 color="primary" style={styles.logo}>
+              PawfectMatch
+            </Heading1>
+            <Body color="secondary" style={styles.tagline}>
+              Find your pet&apos;s perfect match
+            </Body>
           </View>
 
           <View style={styles.form}>
-            <Text style={styles.title}>Welcome Back</Text>
+            <Heading2 color="primary" style={styles.title}>
+              Welcome Back
+            </Heading2>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
+              <Label color="primary" style={styles.label}>
+                Email
+              </Label>
               <TextInput
                 style={styles.input}
                 value={email}
@@ -194,12 +217,16 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 autoCorrect={false}
               />
               {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.email}
+                </Text>
               )}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
+              <Label color="primary" style={styles.label}>
+                Password
+              </Label>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={styles.passwordInput}
@@ -209,73 +236,102 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onPress={() => {
+                    setShowPassword(!showPassword);
+                  }}
                   style={styles.passwordToggle}
-                  onPress={() => setShowPassword(!showPassword)}
                 >
                   <Ionicons
                     name={showPassword ? "eye-off" : "eye"}
                     size={20}
-                    color="#666"
+                    color={textSecondaryColor}
                   />
-                </TouchableOpacity>
+                </Button>
               </View>
               {errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.password}
+                </Text>
               )}
             </View>
 
             {/* Remember Me and Forgot Password */}
             <View style={styles.optionsContainer}>
-              <TouchableOpacity
+              <Button
+                variant="ghost"
+                size="sm"
+                onPress={() => {
+                  setRememberMe(!rememberMe);
+                }}
                 style={styles.rememberMeContainer}
-                onPress={() => setRememberMe(!rememberMe)}
               >
                 <View style={styles.checkbox}>
                   {rememberMe && (
-                    <Ionicons name="checkmark" size={16} color="#ec4899" />
+                    <Ionicons name="checkmark" size={16} color={primaryColor} />
                   )}
                 </View>
-                <Text style={styles.rememberMeText}>Remember me</Text>
-              </TouchableOpacity>
+                <BodySmall color="primary" style={styles.rememberMeText}>
+                  Remember me
+                </BodySmall>
+              </Button>
 
-              <TouchableOpacity onPress={handleForgotPassword}>
-                <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-              </TouchableOpacity>
+              <Button variant="ghost" size="sm" onPress={handleForgotPassword}>
+                <BodySmall color="primary" style={styles.forgotPasswordText}>
+                  Forgot password?
+                </BodySmall>
+              </Button>
             </View>
 
             {/* Login Button */}
-            <TouchableOpacity
-              style={[styles.button, isLoading && styles.buttonDisabled]}
-              onPress={handleLogin}
+            <Button
+              title="Sign In"
+              variant="primary"
+              size="lg"
+              loading={isLoading}
               disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Sign In</Text>
-              )}
-            </TouchableOpacity>
+              onPress={handleLogin}
+              style={styles.button}
+              glowEffect
+              rippleEffect
+              pressEffect
+            />
 
             {/* Biometric Login */}
             {biometricAvailable && biometricEnabled && (
-              <TouchableOpacity
-                style={styles.biometricButton}
+              <Button
+                variant="outline"
+                size="lg"
                 onPress={handleBiometricLogin}
                 disabled={isLoading}
+                style={styles.biometricButton}
+                leftIcon="finger-print"
+                glowEffect
+                rippleEffect
               >
-                <Ionicons name="finger-print" size={24} color="#ec4899" />
-                <Text style={styles.biometricButtonText}>
+                <Body color="primary" style={styles.biometricButtonText}>
                   Use {biometricService.getBiometricTypeName()}
-                </Text>
-              </TouchableOpacity>
+                </Body>
+              </Button>
             )}
 
             <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                <Text style={styles.registerLink}>Sign Up</Text>
-              </TouchableOpacity>
+              <Body color="secondary" style={styles.registerText}>
+                Don&apos;t have an account?{" "}
+              </Body>
+              <Button
+                variant="ghost"
+                size="sm"
+                onPress={() => {
+                  navigation.navigate("Register" as never);
+                }}
+              >
+                <Body color="primary" style={styles.registerLink}>
+                  Sign Up
+                </Body>
+              </Button>
             </View>
           </View>
         </ScrollView>
@@ -302,14 +358,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logo: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#ec4899", // pink-600
     marginBottom: 8,
   },
   tagline: {
-    fontSize: 16,
-    color: "#666",
+    textAlign: "center",
   },
   form: {
     backgroundColor: "#fff",
@@ -322,8 +374,6 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 24,
     textAlign: "center",
   },
@@ -331,10 +381,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "600",
     marginBottom: 6,
-    color: "#333",
   },
   input: {
     backgroundColor: "#f9fafb",
@@ -358,11 +405,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   passwordToggle: {
-    padding: 12,
+    padding: 8,
+    minWidth: 40,
   },
   errorText: {
-    color: "#ef4444",
-    fontSize: 12,
     marginTop: 4,
   },
   optionsContainer: {
@@ -374,6 +420,7 @@ const styles = StyleSheet.create({
   rememberMeContainer: {
     flexDirection: "row",
     alignItems: "center",
+    padding: 0,
   },
   checkbox: {
     width: 20,
@@ -386,44 +433,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rememberMeText: {
-    fontSize: 14,
-    color: "#333",
+    // Color handled by ModernTypography
   },
   forgotPasswordText: {
-    color: "#ec4899",
-    fontSize: 14,
+    // Color handled by ModernTypography
   },
   button: {
-    backgroundColor: "#ec4899",
-    borderRadius: 8,
-    padding: 15,
-    alignItems: "center",
     marginVertical: 16,
   },
   buttonDisabled: {
-    backgroundColor: "#d1d5db",
+    opacity: 0.6,
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    // Color handled by Button component
   },
   biometricButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f9fafb",
-    borderWidth: 1,
-    borderColor: "#ec4899",
-    borderRadius: 8,
-    padding: 15,
     marginBottom: 16,
   },
   biometricButtonText: {
-    color: "#ec4899",
-    fontSize: 16,
-    fontWeight: "600",
     marginLeft: 8,
+    fontWeight: "600",
   },
   registerContainer: {
     flexDirection: "row",
@@ -431,10 +460,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   registerText: {
-    color: "#666",
+    // Color handled by ModernTypography
   },
   registerLink: {
-    color: "#ec4899",
     fontWeight: "bold",
   },
 });

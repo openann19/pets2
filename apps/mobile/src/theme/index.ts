@@ -31,6 +31,18 @@ export {
 // Theme Creation
 export { createTheme, lightTheme, darkTheme } from "./tokens";
 
+// Helper Functions
+export {
+  getTextColor,
+  getTextColorString,
+  getBackgroundColor,
+  getBackgroundColorString,
+  getPrimaryColor,
+  getSecondaryColor,
+  getStatusColor,
+  getBorderColor,
+} from "./helpers";
+
 // Types
 export type {
   Theme,

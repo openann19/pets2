@@ -1,5 +1,6 @@
+export {};// Added to mark file as a module
 const express = require('express');
-const router = express.Router();
+const router: Router = express.Router();
 const { requireAuth } = require('../middleware/adminAuth');
 const logger = require('../utils/logger');
 
@@ -266,4 +267,4 @@ router.get('/posts/:id/comments', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -45,9 +45,14 @@ const matchSchema = new Schema<IMatch>({
   // Match Status
   status: {
     type: String,
-    enum: ['active', 'archived', 'blocked', 'deleted', 'completed'],
+    enum: ['active', 'archived', 'blocked', 'deleted', 'completed', 'unmatched'],
     default: 'active'
   },
+  
+  // Unmatch fields
+  unmatchedAt: { type: Date },
+  unmatchedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  gracePeriodEndsAt: { type: Date },
   
   // Communication
   messages: [{
@@ -93,6 +98,26 @@ const matchSchema = new Schema<IMatch>({
     isDeleted: {
       type: Boolean,
       default: false
+    },
+    reactions: [{
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      emoji: {
+        type: String,
+        required: true,
+        maxlength: 10
+      },
+      reactedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    replyTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message'
     }
   }],
   

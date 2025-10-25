@@ -15,6 +15,7 @@
       "backgroundColor": "#ec4899"
     },
     "assetBundlePatterns": [
+      "src/assets/fonts/*",
       "**/*"
     ],
     "packagerOpts": {

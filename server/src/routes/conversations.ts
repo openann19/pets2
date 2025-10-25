@@ -1,5 +1,6 @@
+export {};// Added to mark file as a module
 const express = require('express');
-const router = express.Router();
+const router: Router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { strictRateLimiter } = require('../middleware/globalRateLimit');
 const conversationController = require('../controllers/conversationController');
@@ -16,4 +17,4 @@ router.post('/:conversationId/messages', strictRateLimiter, conversationControll
 // Mark messages as read
 router.post('/:conversationId/read', conversationController.markRead);
 
-module.exports = router;
+export default router;

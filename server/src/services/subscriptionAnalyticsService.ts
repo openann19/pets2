@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Subscription Analytics Service for PawfectMatch
  * Advanced analytics and reporting for subscription metrics

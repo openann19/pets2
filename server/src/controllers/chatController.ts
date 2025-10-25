@@ -607,6 +607,109 @@ const getChatStats = async (req, res) => {
   }
 };
 
+// @desc    Export chat history
+// @route   POST /api/chat/:matchId/export
+// @access  Private
+const exportChat = async (req, res) => {
+  try {
+    const { matchId } = req.params;
+    const userId = req.userId;
+
+    const match = await Match.findOne({
+      _id: matchId,
+      $or: [{ user1: userId }, { user2: userId }]
+    });
+
+    if (!match) {
+      return res.status(404).json({
+        success: false,
+        message: 'Match not found'
+      });
+    }
+
+    // Export chat data
+    const chatData = {
+      matchId: match._id,
+      exportedAt: new Date(),
+      messages: match.messages.map(msg => ({
+        sender: msg.sender,
+        content: msg.content,
+        messageType: msg.messageType,
+        attachments: msg.attachments,
+        sentAt: msg.sentAt,
+        reactions: msg.reactions
+      }))
+    };
+
+    // In production, save to cloud storage and email link
+    // For now, return JSON
+    res.json({
+      success: true,
+      data: {
+        chatData,
+        downloadUrl: `/api/chat/${matchId}/export/download?token=TOKEN`
+      }
+    });
+
+    logger.info('Chat exported', { userId, matchId });
+
+  } catch (error) {
+    logger.error('Export chat error', { error, userId: req.userId, matchId: req.params.matchId });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to export chat'
+    });
+  }
+};
+
+// @desc    Clear chat history
+// @route   DELETE /api/chat/:matchId/clear
+// @access  Private
+const clearChatHistory = async (req, res) => {
+  try {
+    const { matchId } = req.params;
+    const userId = req.userId;
+
+    const match = await Match.findOne({
+      _id: matchId,
+      $or: [{ user1: userId }, { user2: userId }]
+    });
+
+    if (!match) {
+      return res.status(404).json({
+        success: false,
+        message: 'Match not found'
+      });
+    }
+
+    // Keep messages for moderation (soft delete)
+    match.messages.forEach(msg => {
+      msg.isDeleted = true;
+      msg.deletedAt = new Date();
+      msg.content = 'This message was deleted';
+    });
+
+    match.lastMessageAt = undefined;
+    match.messageCount = 0;
+
+    await match.save();
+
+    logger.info('Chat history cleared', { userId, matchId });
+
+    res.json({
+      success: true,
+      message: 'Chat history cleared successfully'
+    });
+
+  } catch (error) {
+    logger.error('Clear chat error', { error, userId: req.userId, matchId: req.params.matchId });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to clear chat history'
+    });
+  }
+};
+
 module.exports = {
   getMessages,
   sendMessage,
@@ -615,5 +718,7 @@ module.exports = {
   addReaction,
   removeReaction,
   searchMessages,
-  getChatStats
+  getChatStats,
+  exportChat,
+  clearChatHistory
 };

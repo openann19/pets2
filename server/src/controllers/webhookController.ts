@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
 const logger = require('../utils/logger');

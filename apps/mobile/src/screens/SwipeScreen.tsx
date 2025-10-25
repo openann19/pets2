@@ -17,8 +17,11 @@ import { SwipeCard } from "../components/swipe/SwipeCard";
 import { SwipeActions } from "../components/swipe/SwipeActions";
 import { MatchModal } from "../components/swipe/MatchModal";
 import { EmptyState } from "../components/swipe/EmptyState";
-import { EliteContainer, EliteLoading } from "../components/EliteComponents";
+import { BoostModal } from "../components/Premium/BoostButton";
+import { EliteContainer } from "../components/EliteComponents";
+import { PremiumGate, UsageLimitIndicator } from "../components/Premium/PremiumGate";
 import { useSwipeData } from "../hooks/useSwipeData";
+import { usePremium, useSwipeLimits } from "../hooks/usePremium";
 import { useAuthStore } from "@pawfectmatch/core";
 import { logger } from "@pawfectmatch/core";
 import type { Pet } from "@pawfectmatch/core";
@@ -35,8 +38,10 @@ type RootStackParamList = {
 type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
 
 export default function SwipeScreen({ navigation }: SwipeScreenProps) {
-  const { data, actions } = useSwipeData();
+  const swipeData = useSwipeData();
   const { user } = useAuthStore();
+  const { canUseFeature, trackUsage, isActive: isPremium } = usePremium();
+  const { canSwipe, canLike, canSuperLike, trackSwipe, counts } = useSwipeLimits();
 
   // Animation values
   const position = useRef(new Animated.ValueXY()).current;
@@ -61,10 +66,9 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   // State for premium features
   const [lastSwipedPet, setLastSwipedPet] = useState<Pet | null>(null);
   const [canUndo, setCanUndo] = useState(false);
-  const [isPremium] = useState(
-    user?.subscriptionStatus === "premium" ||
-      user?.subscriptionStatus === "premium_plus",
-  );
+  const [showBoostModal, setShowBoostModal] = useState(false);
+  const [boostActive, setBoostActive] = useState(false);
+  const [boostExpiresAt, setBoostExpiresAt] = useState<string | undefined>(undefined);
 
   // Gesture handling with react-native-gesture-handler
   const panGesture = Gesture.Pan()
@@ -158,7 +162,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
   // Handle undo functionality
   const handleUndo = useCallback(() => {
-    if (!isPremium) {
+    if (!canUseFeature("canUndoSwipes")) {
       Alert.alert(
         "Premium Feature",
         "Undo swipe is a premium feature. Upgrade to PawfectMatch Premium to unlock this feature.",
@@ -178,9 +182,12 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
       setCanUndo(false);
       setLastSwipedPet(null);
 
+      // Track usage
+      void trackUsage("undo_swipe");
+
       logger.info("Undo swipe successful", { petId: lastSwipedPet.id });
     }
-  }, [isPremium, lastSwipedPet, canUndo, actions, navigation]);
+  }, [canUseFeature, lastSwipedPet, canUndo, actions, navigation, trackUsage]);
 
   // Handle button swipe
   const handleButtonSwipe = useCallback(
@@ -192,8 +199,8 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
   // Handle filter toggle
   const handleFilterToggle = useCallback(() => {
-    actions.setShowFilters(!data.showFilters);
-  }, [data.showFilters, actions]);
+    swipeData.setShowFilters(!swipeData.showFilters);
+  }, [swipeData.showFilters, swipeData.setShowFilters]);
 
   // Handle matches navigation
   const handleMatchesPress = useCallback(() => {
@@ -207,24 +214,31 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
   // Handle match modal actions
   const handleKeepSwiping = useCallback(() => {
-    actions.setShowMatchModal(false);
-  }, [actions]);
+    swipeData.setShowMatchModal(false);
+  }, [swipeData.setShowMatchModal]);
 
   const handleSendMessage = useCallback(() => {
-    actions.setShowMatchModal(false);
-    if (data.matchedPet) {
+    swipeData.setShowMatchModal(false);
+    if (swipeData.matchedPet) {
       navigation.navigate("Chat", {
-        matchId: data.matchedPet._id,
-        petName: data.matchedPet.name,
+        matchId: swipeData.matchedPet._id,
+        petName: swipeData.matchedPet.name,
       });
     }
-  }, [actions, data.matchedPet, navigation]);
+  }, [swipeData.setShowMatchModal, swipeData.matchedPet, navigation]);
 
   // Handle filter application
   const handleApplyFilters = useCallback(() => {
-    actions.loadPets();
-    actions.setShowFilters(false);
-  }, [actions]);
+    swipeData.loadPets();
+    swipeData.setShowFilters(false);
+  }, [swipeData.loadPets, swipeData.setShowFilters]);
+
+  // Handle boost activation
+  const handleBoostActivated = useCallback((expiresAt: string) => {
+    setBoostActive(true);
+    setBoostExpiresAt(expiresAt);
+    logger.info("Boost activated in SwipeScreen", { expiresAt });
+  }, []);
 
   // Load pets on mount
   useEffect(() => {
@@ -254,7 +268,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   }
 
   // Show empty state
-  if (data.pets.length === 0) {
+  if (swipeData.pets.length === 0) {
     return (
       <EliteContainer gradient="primary">
         <StatusBar barStyle="light-content" />
@@ -262,15 +276,15 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
           onBack={handleBack}
           onMatches={handleMatchesPress}
           onFilter={handleFilterToggle}
-          showFilters={data.showFilters}
+          showFilters={swipeData.showFilters}
         />
-        <EmptyState onRefresh={() => actions.loadPets()} />
+        <EmptyState />
       </EliteContainer>
     );
   }
 
-  const currentPet = data.pets[0];
-  const nextPet = data.pets[1];
+  const currentPet = swipeData.pets[0];
+  const nextPet = swipeData.pets[1];
 
   return (
     <EliteContainer gradient="primary">
@@ -281,17 +295,22 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         onBack={handleBack}
         onMatches={handleMatchesPress}
         onFilter={handleFilterToggle}
-        showFilters={data.showFilters}
+        onBoost={() => {
+          setShowBoostModal(true);
+        }}
+        showFilters={swipeData.showFilters}
         canUndo={canUndo && isPremium}
         onUndo={handleUndo}
+        isPremium={isPremium}
+        boostActive={boostActive}
+        boostExpiresAt={boostExpiresAt || ""}
       />
 
       {/* Filters */}
-      {data.showFilters && (
+      {swipeData.showFilters && (
         <SwipeFilters
-          filters={data.filters}
+          filters={swipeData.filters}
           onApplyFilters={handleApplyFilters}
-          onClose={() => actions.setShowFilters(false)}
         />
       )}
 
@@ -307,7 +326,6 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
                 rotate={new Animated.Value(0)}
                 likeOpacity={new Animated.Value(0)}
                 nopeOpacity={new Animated.Value(0)}
-                panHandlers={{}}
                 isPremium={isPremium}
                 showCompatibility={true}
               />
@@ -320,7 +338,6 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
               rotate={rotate}
               likeOpacity={likeOpacity}
               nopeOpacity={nopeOpacity}
-              panHandlers={{}}
               onLike={() => handleButtonSwipe("like")}
               onPass={() => handleButtonSwipe("pass")}
               onSuperLike={() => handleButtonSwipe("superlike")}
@@ -342,12 +359,29 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         isPremium={isPremium}
       />
 
+      {/* Usage Limit Indicators */}
+      <View style={styles.usageContainer}>
+        <UsageLimitIndicator feature="likesPerDay" currentUsage={counts.likes} />
+        <UsageLimitIndicator feature="superLikesPerDay" currentUsage={counts.superLikes} />
+        <UsageLimitIndicator feature="swipesPerDay" currentUsage={counts.swipes} />
+      </View>
+
       {/* Match Modal */}
       <MatchModal
-        visible={data.showMatchModal}
-        pet={data.matchedPet}
+        isVisible={swipeData.showMatchModal}
+        pet={swipeData.matchedPet}
         onKeepSwiping={handleKeepSwiping}
         onSendMessage={handleSendMessage}
+      />
+
+      {/* Boost Modal */}
+      <BoostModal
+        visible={showBoostModal}
+        onClose={() => {
+          setShowBoostModal(false);
+        }}
+        isPremium={isPremium}
+        onBoostActivated={handleBoostActivated}
       />
     </EliteContainer>
   );
@@ -365,5 +399,14 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.7,
     justifyContent: "center",
     alignItems: "center",
+  },
+  usageContainer: {
+    position: "absolute",
+    bottom: 120,
+    left: 20,
+    right: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    borderRadius: 8,
+    padding: 12,
   },
 });

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Email Template System for PawfectMatch
  * Provides responsive HTML email templates with inline CSS

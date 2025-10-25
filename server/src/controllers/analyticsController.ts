@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 // Defer requiring analyticsService until inside handlers to play nicely with jest.mock
 // This ensures tests that mock ../services/analyticsService capture the references used here.
 const getAnalyticsService = () => require('../services/analyticsService');

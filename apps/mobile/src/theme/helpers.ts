@@ -5,21 +5,23 @@
  */
 
 // Import the actual Theme object, not the types
-import { Theme } from './unified-theme';
+import { Theme } from "./unified-theme";
 
 // ====== COLOR HELPERS ======
 
 /**
  * Get border color with variant support
  */
-export function getBorderColor(variant: 'light' | 'medium' | 'dark' = 'light'): string {
+export function getBorderColor(
+  variant: "light" | "medium" | "dark" = "light",
+): string {
   switch (variant) {
-    case 'light':
-      return Theme.colors.border.light;
-    case 'medium':
-      return Theme.colors.border.medium;
-    case 'dark':
-      return Theme.colors.border.dark;
+    case "light":
+      return Theme.colors.borderColor.light;
+    case "medium":
+      return Theme.colors.borderColor.medium;
+    case "dark":
+      return Theme.colors.borderColor.dark;
     default:
       return Theme.colors.borderColor; // Fallback to flat alias
   }
@@ -30,7 +32,7 @@ export function getBorderColor(variant: 'light' | 'medium' | 'dark' = 'light'): 
  */
 export function getTextColor(): { primary: string; inverse: string } {
   return {
-    primary: Theme.colors.text.primary,
+    primary: Theme.colors.textColor,
     inverse: Theme.colors.text.inverse,
   };
 }
@@ -38,15 +40,17 @@ export function getTextColor(): { primary: string; inverse: string } {
 /**
  * Get text color string with variant support (legacy support)
  */
-export function getTextColorString(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
+export function getTextColorString(
+  variant: "primary" | "secondary" | "tertiary" | "inverse" = "primary",
+): string {
   switch (variant) {
-    case 'primary':
-      return Theme.colors.text.primary;
-    case 'secondary':
+    case "primary":
+      return Theme.colors.textColor;
+    case "secondary":
       return Theme.colors.text.secondary;
-    case 'tertiary':
+    case "tertiary":
       return Theme.colors.text.tertiary;
-    case 'inverse':
+    case "inverse":
       return Theme.colors.text.inverse;
     default:
       return Theme.colors.textColor; // Fallback to flat alias
@@ -58,24 +62,26 @@ export function getTextColorString(variant: 'primary' | 'secondary' | 'tertiary'
  */
 export function getBackgroundColor(): { primary: string; inverse: string } {
   return {
-    primary: Theme.colors.background.primary,
-    inverse: Theme.colors.background.inverse,
+    primary: Theme.colors.backgroundColor.primary,
+    inverse: Theme.colors.backgroundColor.inverse,
   };
 }
 
 /**
  * Get background color string with variant support (legacy support)
  */
-export function getBackgroundColorString(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary'): string {
+export function getBackgroundColorString(
+  variant: "primary" | "secondary" | "tertiary" | "inverse" = "primary",
+): string {
   switch (variant) {
-    case 'primary':
-      return Theme.colors.background.primary;
-    case 'secondary':
-      return Theme.colors.background.secondary;
-    case 'tertiary':
-      return Theme.colors.background.tertiary;
-    case 'inverse':
-      return Theme.colors.background.inverse;
+    case "primary":
+      return Theme.colors.backgroundColor.primary;
+    case "secondary":
+      return Theme.colors.backgroundColor.secondary;
+    case "tertiary":
+      return Theme.colors.backgroundColor.tertiary;
+    case "inverse":
+      return Theme.colors.backgroundColor.inverse;
     default:
       return Theme.colors.backgroundColor; // Fallback to flat alias
   }
@@ -84,39 +90,51 @@ export function getBackgroundColorString(variant: 'primary' | 'secondary' | 'ter
 /**
  * Get primary color with shade support
  */
-export function getPrimaryColor(shade: 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 = 500): string {
+export function getPrimaryColor(
+  shade: 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 = 500,
+): string {
   return Theme.colors.primary[shade];
 }
 
 /**
  * Get secondary color with shade support
  */
-export function getSecondaryColor(shade: 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 = 500): string {
+export function getSecondaryColor(
+  shade: 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 = 500,
+): string {
   return Theme.colors.secondary[shade];
 }
 
 /**
  * Get neutral color with shade support
  */
-export function getNeutralColor(shade: 0 | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 = 500): string {
+export function getNeutralColor(
+  shade: 0 | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 = 500,
+): string {
   return Theme.colors.neutral[shade];
 }
 
 /**
  * Get status color
  */
-export function getStatusColor(status: 'success' | 'warning' | 'error' | 'info'): string {
+export function getStatusColor(
+  status: "success" | "warning" | "error" | "info",
+): string {
   return Theme.colors.status[status];
 }
 
 /**
  * Get border color object with variants
  */
-export function getBorderColorObject(): { light: string; medium: string; dark: string } {
+export function getBorderColorObject(): {
+  light: string;
+  medium: string;
+  dark: string;
+} {
   return {
-    light: Theme.colors.border.light,
-    medium: Theme.colors.border.medium,
-    dark: Theme.colors.border.dark,
+    light: Theme.colors.borderColor.light,
+    medium: Theme.colors.borderColor.medium,
+    dark: Theme.colors.borderColor.dark,
   };
 }
 
@@ -125,7 +143,10 @@ export function getBorderColorObject(): { light: string; medium: string; dark: s
 /**
  * Create a border style object
  */
-export function createBorderStyle(variant: 'light' | 'medium' | 'dark' = 'light', width: number = 1) {
+export function createBorderStyle(
+  variant: "light" | "medium" | "dark" = "light",
+  width: number = 1,
+) {
   return {
     borderColor: getBorderColor(variant),
     borderWidth: width,
@@ -135,7 +156,9 @@ export function createBorderStyle(variant: 'light' | 'medium' | 'dark' = 'light'
 /**
  * Create a text style object
  */
-export function createTextStyle(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary') {
+export function createTextStyle(
+  variant: "primary" | "secondary" | "tertiary" | "inverse" = "primary",
+) {
   return {
     color: getTextColorString(variant),
   };
@@ -144,7 +167,9 @@ export function createTextStyle(variant: 'primary' | 'secondary' | 'tertiary' | 
 /**
  * Create a background style object
  */
-export function createBackgroundStyle(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary') {
+export function createBackgroundStyle(
+  variant: "primary" | "secondary" | "tertiary" | "inverse" = "primary",
+) {
   return {
     backgroundColor: getBackgroundColorString(variant),
   };
@@ -153,7 +178,7 @@ export function createBackgroundStyle(variant: 'primary' | 'secondary' | 'tertia
 /**
  * Create a shadow style object
  */
-export function createShadowStyle(shadow: 'sm' | 'md' | 'lg' | 'xl' = 'sm') {
+export function createShadowStyle(shadow: "sm" | "md" | "lg" | "xl" = "sm") {
   return Theme.shadows.depth[shadow];
 }
 
@@ -165,15 +190,15 @@ export function createShadowStyle(shadow: 'sm' | 'md' | 'lg' | 'xl' = 'sm') {
  */
 export function legacyThemeAccess(path: string): string {
   const pathMap: Record<string, string> = {
-    'colors.primary.500': Theme.colors.primary[500],
-    'colors.primary.600': Theme.colors.primary[600],
-    'colors.secondary.500': Theme.colors.secondary[500],
-    'colors.text.primary': Theme.colors.text.primary,
-    'colors.text.secondary': Theme.colors.text.secondary,
-    'colors.background.primary': Theme.colors.background.primary,
-    'colors.border.light': Theme.colors.border.light,
-    'colors.border.medium': Theme.colors.border.medium,
-    'colors.border.dark': Theme.colors.border.dark,
+    "colors.primary.500": Theme.colors.primary[500],
+    "colors.primary.600": Theme.colors.primary[600],
+    "colors.secondary.500": Theme.colors.secondary[500],
+    "colors.text.primary": Theme.colors.textColor,
+    "colors.text.secondary": Theme.colors.text.secondary,
+    "colors.background.primary": Theme.colors.backgroundColor.primary,
+    "colors.border.light": Theme.colors.borderColor.light,
+    "colors.border.medium": Theme.colors.borderColor.medium,
+    "colors.border.dark": Theme.colors.borderColor.dark,
   };
 
   return pathMap[path] || Theme.colors.textColor; // Fallback
@@ -185,13 +210,16 @@ export function legacyThemeAccess(path: string): string {
  * Check if a color value is valid
  */
 export function isValidColor(color: unknown): color is string {
-  return typeof color === 'string' && color.length > 0;
+  return typeof color === "string" && color.length > 0;
 }
 
 /**
  * Safely get a color with fallback
  */
-export function safeGetColor(getter: () => string, fallback: string = '#000000'): string {
+export function safeGetColor(
+  getter: () => string,
+  fallback: string = "#000000",
+): string {
   try {
     const color = getter();
     return isValidColor(color) ? color : fallback;

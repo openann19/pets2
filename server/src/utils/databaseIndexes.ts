@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Database Indexes for Optimized Performance
  * Creates indexes for all frequently queried fields to eliminate N+1 queries

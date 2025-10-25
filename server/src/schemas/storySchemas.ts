@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const { z } = require('zod');
 
 const createStorySchema = z.object({

@@ -1,53 +1,60 @@
 /**
  * Type definitions for animation hooks
- * Adds missing properties to fix TypeScript errors
+ * Matches the actual hook implementations in useUnifiedAnimations
  */
 
-import { ViewStyle } from 'react-native';
-import Animated from 'react-native-reanimated';
+import type { ViewStyle } from "react-native";
+import type Animated from "react-native-reanimated";
 
 // Ripple effect hook return type
-interface RippleEffectResult {
-  rippleStyle: Animated.AnimatedStyleProp<ViewStyle>;
-  triggerRipple: () => void;
-  // Alias for backward compatibility
-  startRipple: () => void;
-  animatedStyle: {
-    transform: { scale: number }[];
-    opacity: number;
-  };
+export interface RippleEffectResult {
+  trigger: () => void;
+  animatedStyle: Animated.AnimatedStyleProp<ViewStyle>;
 }
 
 // Magnetic effect hook return type
-interface MagneticEffectResult {
-  magneticStyle: Animated.AnimatedStyleProp<ViewStyle>;
-  onTouchMove: (event: any) => void;
-  onTouchEnd: () => void;
-  resetMagnetic: () => void;
+export interface MagneticEffectResult {
+  handleTouchStart: (
+    touchX: number,
+    touchY: number,
+    centerX: number,
+    centerY: number,
+  ) => void;
+  handleTouchEnd: () => void;
+  animatedStyle: Animated.AnimatedStyleProp<ViewStyle>;
 }
 
 // Glow effect hook return type
-interface GlowEffectResult {
-  glowStyle: Animated.AnimatedStyleProp<ViewStyle>;
-  glowOpacity: Animated.SharedValue<number>;
-  pulseGlow: () => void;
+export interface GlowEffectResult {
+  animatedStyle: Animated.AnimatedStyleProp<ViewStyle>;
+}
+
+// Shimmer effect hook return type
+export interface ShimmerEffectResult {
+  animatedStyle: Animated.AnimatedStyleProp<ViewStyle>;
+}
+
+// Press animation hook return type
+export interface PressAnimationResult {
+  handlePressIn: () => void;
+  handlePressOut: () => void;
+  animatedStyle: Animated.AnimatedStyleProp<ViewStyle>;
 }
 
 // Extend the module declarations
-declare module '../hooks/useUnifiedAnimations' {
+declare module "../hooks/useUnifiedAnimations" {
   export function useRippleEffect(): RippleEffectResult;
-  export function useMagneticEffect(strength?: number, maxDistance?: number): MagneticEffectResult;
-  export function useGlowEffect(intensity?: number): GlowEffectResult;
-}
-
-declare module '../hooks/usePremiumAnimations' {
-  export function useRippleEffect(): RippleEffectResult;
-  export function useMagneticEffect(strength?: number, maxDistance?: number): MagneticEffectResult;
-  export function useGlowEffect(intensity?: number): GlowEffectResult;
-}
-
-declare module '../hooks/useMotionSystem' {
-  export function useRippleEffect(duration?: number): RippleEffectResult;
-  export function useMagneticEffect(strength?: number, maxDistance?: number): MagneticEffectResult;
-  export function useGlowEffect(intensity?: number): GlowEffectResult;
+  export function useMagneticEffect(
+    sensitivity?: number,
+    maxDistance?: number,
+  ): MagneticEffectResult;
+  export function useGlowAnimation(
+    color?: string,
+    intensity?: number,
+    duration?: number,
+  ): GlowEffectResult;
+  export function useShimmerEffect(duration?: number): ShimmerEffectResult;
+  export function usePressAnimation(
+    config?: "gentle" | "standard" | "bouncy" | "snappy",
+  ): PressAnimationResult;
 }

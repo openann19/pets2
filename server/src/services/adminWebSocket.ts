@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Admin WebSocket Service
  * Provides real-time synchronization for admin panel across web and mobile

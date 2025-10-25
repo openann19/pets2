@@ -1,6 +1,6 @@
-const express = require('express');
-const { authenticateToken, requirePremium } = require('../middleware/auth');
-const {
+import express, { Router } from 'express';
+import { authenticateToken, requirePremium } from '../middleware/auth';
+import {
   subscribeToPremium,
   cancelSubscription,
   getPremiumFeatures,
@@ -11,9 +11,9 @@ const {
   reactivateSubscription,
   getPremiumStatus,
   checkPremiumFeature,
-} = require('../controllers/premiumController');
+} from '../controllers/premiumController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Apply authentication to all premium routes
 router.use(authenticateToken);
@@ -36,4 +36,4 @@ router.get('/super-likes', requirePremium, getSuperLikes);
 // Usage tracking
 router.get('/usage', requirePremium, getUsage);
 
-module.exports = router;
+export default router;

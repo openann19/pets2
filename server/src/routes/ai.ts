@@ -1,10 +1,11 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const axios = require('axios');
 const { authenticateToken, requirePremiumFeature } = require('../middleware/auth');
 const { body, validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Enhanced AI Service Configuration
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
@@ -670,4 +671,4 @@ router.get('/health', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

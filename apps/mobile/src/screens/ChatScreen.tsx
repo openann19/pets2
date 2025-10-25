@@ -24,8 +24,13 @@ import { ChatHeader } from "../components/chat/ChatHeader";
 import { MessageList } from "../components/chat/MessageList";
 import { MessageInput } from "../components/chat/MessageInput";
 import { QuickReplies } from "../components/chat/QuickReplies";
+import { ChatActionSheet } from "../components/chat/ChatActionSheet";
+import { ReportModal } from "../components/moderation/ReportModal";
+import { MessageReactions } from "../components/chat/MessageReactions";
 import { useChatData } from "../hooks/useChatData";
 import { useTheme } from "../contexts/ThemeContext";
+import { matchesAPI } from "../services/api";
+import { logger } from "@pawfectmatch/core";
 
 // Enable LayoutAnimation on Android (removed UIManager dependency)
 if (Platform.OS === "android") {
@@ -49,6 +54,11 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
 
   // UI state
   const [inputText, setInputText] = useState("");
+  const [showActionSheet, setShowActionSheet] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showReactionPicker, setShowReactionPicker] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const [reactionPosition, setReactionPosition] = useState({ x: 0, y: 0 });
 
   // Refs
   const flatListRef = useRef<FlatList | null>(null);
@@ -157,6 +167,136 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     // Integrate your real-time typing pub/sub here (Socket, Ably, Pusher, etc.)
   }, []);
 
+  // Chat actions handlers
+  const handleExportChat = useCallback(async () => {
+    try {
+      const result = await matchesAPI.exportChat(matchId);
+      Alert.alert(
+        "Chat Export Started",
+        `Your chat export has been initiated. Download link will be sent to your email.\n\nExpires: ${new Date(result.expiresAt).toLocaleDateString()}`,
+        [{ text: "OK" }],
+      );
+      logger.info("Chat export initiated", { matchId, expiresAt: result.expiresAt });
+    } catch (error) {
+      logger.error("Failed to export chat:", { error, matchId });
+      Alert.alert(
+        "Export Failed",
+        "Failed to export chat. Please try again or contact support.",
+      );
+    }
+  }, [matchId]);
+
+  const handleClearChat = useCallback(async () => {
+    try {
+      await matchesAPI.clearChatHistory(matchId);
+      Alert.alert("Chat Cleared", "All messages have been deleted.");
+      await actions.loadMessages();
+      logger.info("Chat history cleared", { matchId });
+    } catch (error) {
+      logger.error("Failed to clear chat:", { error, matchId });
+      Alert.alert("Clear Failed", "Failed to clear chat. Please try again.");
+    }
+  }, [matchId, actions]);
+
+  const handleUnmatch = useCallback(async () => {
+    try {
+      const result = await matchesAPI.unmatchUser(matchId);
+      Alert.alert(
+        "Unmatched",
+        `You've been unmatched with ${petName}. You have until ${new Date(result.gracePeriodEndsAt).toLocaleDateString()} to reverse this.`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Matches");
+            },
+          },
+        ],
+      );
+      logger.info("User unmatched", { matchId, gracePeriodEndsAt: result.gracePeriodEndsAt });
+    } catch (error) {
+      logger.error("Failed to unmatch:", { error, matchId });
+      Alert.alert("Unmatch Failed", "Failed to unmatch. Please try again.");
+    }
+  }, [matchId, petName, navigation]);
+
+  const handleBlock = useCallback(async () => {
+    try {
+      await matchesAPI.blockUser(matchId);
+      Alert.alert(
+        "User Blocked",
+        `${petName} has been blocked. They can no longer message you.`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Matches");
+            },
+          },
+        ],
+      );
+      logger.info("User blocked", { matchId });
+    } catch (error) {
+      logger.error("Failed to block user:", { error, matchId });
+      Alert.alert("Block Failed", "Failed to block user. Please try again.");
+    }
+  }, [matchId, petName, navigation]);
+
+  const handleReport = useCallback(() => {
+    setShowReportModal(true);
+    logger.info("Report modal opened", { matchId });
+  }, [matchId]);
+
+  // Message reaction handlers
+  const handleMessageLongPress = useCallback((message: any, event?: any) => {
+    setSelectedMessage(message);
+    
+    // Capture touch position for reaction picker placement
+    if (event?.nativeEvent) {
+      setReactionPosition({
+        x: event.nativeEvent.pageX,
+        y: event.nativeEvent.pageY,
+      });
+    } else {
+      // Fallback position
+      setReactionPosition({ x: 200, y: 300 });
+    }
+    
+    setShowReactionPicker(true);
+    logger.info("Message long press", { messageId: message._id });
+  }, []);
+
+  const handleReactionSelect = useCallback(async (emoji: string) => {
+    if (!selectedMessage) return;
+    
+    try {
+      await actions.addReaction(selectedMessage._id, emoji);
+      logger.info("Reaction added", { messageId: selectedMessage._id, emoji });
+    } catch (error) {
+      logger.error("Failed to add reaction:", { error, messageId: selectedMessage._id, emoji });
+    }
+    
+    setShowReactionPicker(false);
+    setSelectedMessage(null);
+  }, [selectedMessage, actions]);
+
+  const handleReactionPress = useCallback(async (messageId: string, emoji: string) => {
+    try {
+      await actions.removeReaction(messageId, emoji);
+      logger.info("Reaction removed", { messageId, emoji });
+    } catch (error) {
+      logger.error("Failed to remove reaction:", { error, messageId, emoji });
+    }
+  }, [actions]);
+
+  const handleAddReaction = useCallback((messageId: string) => {
+    const message = data.messages.find(m => m._id === messageId);
+    if (message) {
+      setSelectedMessage(message);
+      setShowReactionPicker(true);
+    }
+  }, [data.messages]);
+
   // Persist scroll offset (throttled naturally by RN event cadence)
   const handleScroll = useCallback(
     (event: { nativeEvent: { contentOffset: { x: number; y: number } } }) => {
@@ -211,7 +351,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           ]);
         }}
         onMoreOptions={() => {
-          Alert.alert("More Options", "Additional options are coming soon.");
+          setShowActionSheet(true);
         }}
       />
 
@@ -231,6 +371,9 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           onRetryMessage={(messageId: string) => {
             void actions.retryMessage(messageId);
           }}
+          onMessageLongPress={handleMessageLongPress}
+          onReactionPress={handleReactionPress}
+          onAddReaction={handleAddReaction}
           flatListRef={flatListRef}
           onScroll={handleScroll}
         />
@@ -255,6 +398,44 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           inputRef={inputRef}
         />
       </KeyboardAvoidingView>
+
+      {/* Chat Actions Sheet */}
+      <ChatActionSheet
+        visible={showActionSheet}
+        onClose={() => {
+          setShowActionSheet(false);
+        }}
+        petName={petName}
+        matchId={matchId}
+        isPremium={false}
+        onExport={handleExportChat}
+        onClear={handleClearChat}
+        onUnmatch={handleUnmatch}
+        onBlock={handleBlock}
+        onReport={handleReport}
+      />
+
+      {/* Report Modal */}
+      <ReportModal
+        visible={showReportModal}
+        onClose={() => {
+          setShowReportModal(false);
+        }}
+        targetId={matchId}
+        targetType="user"
+        targetName={petName}
+      />
+
+      {/* Message Reactions Picker */}
+      <MessageReactions
+        visible={showReactionPicker}
+        onClose={() => {
+          setShowReactionPicker(false);
+          setSelectedMessage(null);
+        }}
+        onReactionSelect={handleReactionSelect}
+        position={reactionPosition}
+      />
     </EliteContainer>
   );
 }

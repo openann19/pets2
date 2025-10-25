@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router: Router = express.Router();
 const stripe = require('stripe');
 const Configuration = require('../models/Configuration');
 const { encrypt } = require('../utils/encryption');
@@ -2197,4 +2197,4 @@ router.get('/security/alerts/download', checkPermission('security:read'), async 
   }
 });
 
-module.exports = router;
+export default router;

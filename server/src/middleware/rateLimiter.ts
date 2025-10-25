@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Rate Limiting Middleware
  * Prevents abuse of admin endpoints

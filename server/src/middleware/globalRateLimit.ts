@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Global rate limiting middleware
  * Protects all API endpoints from abuse

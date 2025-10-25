@@ -1,9 +1,9 @@
-const express = require('express');
-const { body } = require('express-validator');
-const multer = require('multer');
-const { validate } = require('../middleware/validation');
-const { authenticateToken, requirePremiumFeature } = require('../middleware/auth');
-const {
+import express, { Router } from 'express';
+import { body } from 'express-validator';
+import multer from 'multer';
+import { validate } from '../middleware/validation';
+import { authenticateToken, requirePremiumFeature } from '../middleware/auth';
+import {
   getCompletePetProfile,
   createPet,
   createPetAdvanced,
@@ -17,9 +17,9 @@ const {
   duplicatePet,
   togglePetArchive,
   deletePet
-} = require('../controllers/petController');
+} from '../controllers/petController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Configure multer for memory storage (Cloudinary upload)
 const upload = multer({
@@ -72,4 +72,4 @@ router.delete('/:id', deletePet);
 // Premium features
 router.get('/discover/premium', requirePremiumFeature('advancedFilters'), discoverPets);
 
-module.exports = router;
+export default router;

@@ -30,7 +30,7 @@ import {
 // Legacy components (to be migrated)
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import { EliteButton as LegacyEliteButton } from "../components/EliteComponents";
-import { getTextColor } from "../../theme/helpers";
+import { getTextColorString } from "../theme/helpers";
 
 export default function MigrationExampleScreen() {
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
@@ -40,10 +40,10 @@ export default function MigrationExampleScreen() {
 
   // Animation hooks
   const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(3, 100, "gentle");
+    useStaggeredAnimation(3, 100);
 
   const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "standard");
+    useEntranceAnimation("fadeInUp", 0);
 
   React.useEffect(() => {
     startStaggeredAnimation();
@@ -97,10 +97,10 @@ export default function MigrationExampleScreen() {
               title="Premium Button"
               variant="primary"
               size="md"
-              icon="star"
-              magnetic={true}
-              ripple={true}
-              glow={true}
+              leftIcon="star"
+              magneticEffect={true}
+              rippleEffect={true}
+              glowEffect={true}
               onPress={() => {
                 logger.info("Legacy premium pressed");
               }}
@@ -112,11 +112,11 @@ export default function MigrationExampleScreen() {
               title="Holographic"
               variant="holographic"
               size="md"
-              icon="sparkles"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              shimmer={true}
+              leftIcon="sparkles"
+              magneticEffect={true}
+              rippleEffect={true}
+              glowEffect={true}
+              shimmerEffect={true}
               onPress={() => {
                 logger.info("Legacy holographic pressed");
               }}
@@ -128,10 +128,10 @@ export default function MigrationExampleScreen() {
               title="Magnetic"
               variant="primary"
               size="md"
-              icon="magnet"
-              magnetic={true}
-              ripple={true}
-              glow={true}
+              leftIcon="magnet"
+              magneticEffect={true}
+              rippleEffect={true}
+              glowEffect={true}
               onPress={() => {
                 logger.info("Legacy magnetic pressed");
               }}

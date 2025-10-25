@@ -23,10 +23,9 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 interface SwipeCardProps {
   pet: Pet;
   position: Animated.ValueXY;
-  rotate: Animated.AnimatedInterpolation;
-  likeOpacity: Animated.AnimatedInterpolation;
-  nopeOpacity: Animated.AnimatedInterpolation;
-  panHandlers: any;
+  rotate: Animated.AnimatedInterpolation<string>;
+  likeOpacity: Animated.AnimatedInterpolation<number>;
+  nopeOpacity: Animated.AnimatedInterpolation<number>;
   onLike?: () => void;
   onPass?: () => void;
   onSuperLike?: () => void;
@@ -41,15 +40,15 @@ export function SwipeCard({
   rotate,
   likeOpacity,
   nopeOpacity,
-  panHandlers,
   onLike,
   onPass,
   onSuperLike,
   onUndo,
   isPremium = false,
-  showCompatibility = true,
+  showCompatibility,
 }: SwipeCardProps) {
-  const primaryPhoto = pet.photos?.find((p) => p.isPrimary) || pet.photos?.[0];
+  // Use first photo as display photo
+  const displayPhoto = pet.photos[0]?.url || "";
   const ageText =
     pet.age < 1 ? `${Math.round(pet.age * 12)} months` : `${pet.age} years`;
 
@@ -151,7 +150,7 @@ export function SwipeCard({
       return;
     }
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     logger.info("Swipe action: Undo", { petId: pet.id, petName: pet.name });
     onUndo?.();
   }, [onUndo, pet.id, pet.name, isPremium]);
@@ -200,7 +199,6 @@ export function SwipeCard({
         },
         pet.featured?.isFeatured && pulseStyle,
       ]}
-      {...panHandlers}
     >
       {/* Premium Shimmer Effect */}
       {isPremium && (
@@ -254,18 +252,8 @@ export function SwipeCard({
           <BlurView intensity={20} tint="light" style={styles.glassOverlay} />
         )}
 
-        {/* Featured Badge with Premium Effects */}
-        {pet.featured?.isFeatured && (
-          <Animated.View style={[styles.featuredBadge, glowStyle]}>
-            <LinearGradient
-              colors={["#fbbf24", "#f59e0b"]}
-              style={styles.featuredGradient}
-            >
-              <Ionicons name="star" size={16} color="#fff" />
-              <Text style={styles.featuredText}>Featured</Text>
-            </LinearGradient>
-          </Animated.View>
-        )}
+        {/* Featured Badge */}
+        {/* Featured badge temporarily disabled - property not in Pet type */}
 
         {/* Premium Badge */}
         {isPremium && (
@@ -274,7 +262,7 @@ export function SwipeCard({
               colors={["#ec4899", "#be185d"]}
               style={styles.premiumGradient}
             >
-              <Ionicons name="diamond" size={12} color="#fff" />
+              <Ionicons name="star" size={12} color="#fff" />
               <Text style={styles.premiumText}>Premium</Text>
             </LinearGradient>
           </View>

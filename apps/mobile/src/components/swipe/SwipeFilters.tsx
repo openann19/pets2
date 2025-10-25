@@ -67,9 +67,9 @@ export function SwipeFilters({
                   title={breed}
                   variant={filters.breed === breed ? "primary" : "glass"}
                   size="sm"
-                  magnetic={true}
-                  ripple={true}
-                  glow={filters.breed === breed}
+                  magneticEffect={true}
+                  rippleEffect={true}
+                  glowEffect={filters.breed === breed}
                   onPress={() => {
                     handleBreedPress(breed);
                   }}
@@ -90,9 +90,9 @@ export function SwipeFilters({
                       : "glass"
                   }
                   size="sm"
-                  magnetic={true}
-                  ripple={true}
-                  glow={
+                  magneticEffect={true}
+                  rippleEffect={true}
+                  glowEffect={
                     (species === "All" ? "" : species.toLowerCase()) ===
                     filters.species
                   }
@@ -108,11 +108,11 @@ export function SwipeFilters({
               title="Apply Filters"
               variant="holographic"
               size="md"
-              icon="checkmark"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              shimmer={true}
+              leftIcon="checkmark"
+              magneticEffect={true}
+              rippleEffect={true}
+              glowEffect={true}
+              shimmerEffect={true}
               onPress={onApplyFilters}
             />
           </View>

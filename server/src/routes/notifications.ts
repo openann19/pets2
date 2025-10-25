@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Smart Notifications Routes
  * Handles notification preferences and delivery
@@ -14,7 +15,7 @@ const {
   markNotificationRead
 } = require('../controllers/notificationController');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Validation rules
 const updatePreferencesValidation = [
@@ -142,4 +143,4 @@ router.put('/:notificationId/read', authenticateToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

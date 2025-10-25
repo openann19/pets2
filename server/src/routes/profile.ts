@@ -4,7 +4,7 @@
  */
 
 const express = require('express');
-const router = express.Router();
+const router: Router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const {
   updatePetProfile,
@@ -36,4 +36,4 @@ router.put('/privacy', updatePrivacySettings);
 router.get('/export', exportUserData);
 router.delete('/account', deleteAccount);
 
-module.exports = router;
+export default router;

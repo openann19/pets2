@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Session Management Middleware
  * Handles admin session timeout and tracking

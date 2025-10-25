@@ -4,21 +4,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "@pawfectmatch/core";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  Dimensions,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Dimensions, RefreshControl, StyleSheet, View } from "react-native";
 
 // Import new architecture components
+import { EliteButton } from "../components/NewComponents";
 import {
-  EliteButton,
+  Body,
+  BodySmall,
+  Caption,
+  GradientText,
+  HolographicText,
   Heading2,
-  useStaggeredAnimation,
-  useEntranceAnimation,
-} from "../components/NewComponents";
+} from "../components/typography/HyperTextSkia";
 
 // Import legacy components for backward compatibility
 import {
@@ -30,8 +27,6 @@ import {
 
 // Import premium components
 import {
-  PremiumBody,
-  PremiumHeading,
   HolographicCard,
   GlowContainer,
   ParticleEffect,
@@ -65,22 +60,12 @@ export default function HomeScreen() {
     pets: 0,
   });
 
-  // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      6, // Number of sections
-      150,
-      "gentle",
-    );
-
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "bouncy");
+  // Animation hooks - simplified for ModernTypography
 
   // Start animations
   React.useEffect(() => {
-    startStaggeredAnimation();
-    startEntranceAnimation();
-  }, [startStaggeredAnimation, startEntranceAnimation]);
+    // ModernTypography handles its own animations
+  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -158,7 +143,7 @@ export default function HomeScreen() {
   const handleMessagesPress = () => {
     handleQuickAction("messages");
   };
-  const handleAdoptionPress = () => {
+  const _handleAdoptionPress = () => {
     handleQuickAction("adoption");
   };
 
@@ -226,13 +211,9 @@ export default function HomeScreen() {
                       >
                         <Ionicons name="heart" size={24} color="#fff" />
                       </View>
-                      <PremiumBody
-                        size="sm"
-                        weight="semibold"
-                        gradient="primary"
-                      >
+                      <GradientText variant="bodySmall" weight="semibold">
                         Swipe
-                      </PremiumBody>
+                      </GradientText>
                     </View>
                   </GlowContainer>
                 </EliteCard>
@@ -258,16 +239,14 @@ export default function HomeScreen() {
                       >
                         <Ionicons name="people" size={24} color="#fff" />
                       </View>
-                      <PremiumBody
-                        size="sm"
-                        weight="semibold"
-                        gradient="secondary"
-                      >
+                      <GradientText variant="bodySmall" weight="semibold">
                         Matches
-                      </PremiumBody>
+                      </GradientText>
                       {stats.matches > 0 && (
                         <View style={styles.badge}>
-                          <Text style={styles.badgeText}>{stats.matches}</Text>
+                          <Caption color="inverse" weight="bold">
+                            {stats.matches}
+                          </Caption>
                         </View>
                       )}
                     </View>
@@ -295,16 +274,14 @@ export default function HomeScreen() {
                       >
                         <Ionicons name="chatbubbles" size={24} color="#fff" />
                       </View>
-                      <PremiumBody
-                        size="sm"
-                        weight="semibold"
-                        gradient="secondary"
-                      >
+                      <GradientText variant="bodySmall" weight="semibold">
                         Messages
-                      </PremiumBody>
+                      </GradientText>
                       {stats.messages > 0 && (
                         <View style={styles.badge}>
-                          <Text style={styles.badgeText}>{stats.messages}</Text>
+                          <Caption color="inverse" weight="bold">
+                            {stats.messages}
+                          </Caption>
                         </View>
                       )}
                     </View>
@@ -334,13 +311,9 @@ export default function HomeScreen() {
                       >
                         <Ionicons name="person" size={24} color="#fff" />
                       </View>
-                      <PremiumBody
-                        size="sm"
-                        weight="semibold"
-                        gradient="premium"
-                      >
+                      <GradientText variant="bodySmall" weight="semibold">
                         Profile
-                      </PremiumBody>
+                      </GradientText>
                     </View>
                   </GlowContainer>
                 </EliteCard>
@@ -352,9 +325,9 @@ export default function HomeScreen() {
         {/* Recent Activity with Holographic Effects */}
         <FadeInUp delay={400}>
           <View style={styles.recentActivity}>
-            <PremiumHeading level={2} gradient="secondary" animated={true}>
+            <HolographicText variant="h2" animated={true}>
               Recent Activity
-            </PremiumHeading>
+            </HolographicText>
             <HolographicCard
               variant="cyber"
               size="md"
@@ -375,20 +348,14 @@ export default function HomeScreen() {
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
-                      <PremiumBody
-                        size="base"
-                        weight="semibold"
-                        gradient="primary"
-                      >
+                      <GradientText variant="body" weight="semibold">
                         New Match!
-                      </PremiumBody>
-                      <PremiumBody size="sm" weight="regular">
+                      </GradientText>
+                      <Body weight="normal">
                         You and Buddy liked each other
-                      </PremiumBody>
+                      </Body>
                     </View>
-                    <PremiumBody size="sm" weight="regular">
-                      2m ago
-                    </PremiumBody>
+                    <BodySmall weight="normal">2m ago</BodySmall>
                   </View>
                 </FadeInUp>
 
@@ -404,20 +371,14 @@ export default function HomeScreen() {
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
-                      <PremiumBody
-                        size="base"
-                        weight="semibold"
-                        gradient="secondary"
-                      >
+                      <GradientText variant="body" weight="semibold">
                         New Message
-                      </PremiumBody>
-                      <PremiumBody size="sm" weight="regular">
+                      </GradientText>
+                      <Body weight="normal">
                         From Luna: &quot;Hey there! 🐾&quot;
-                      </PremiumBody>
+                      </Body>
                     </View>
-                    <PremiumBody size="sm" weight="regular">
-                      5m ago
-                    </PremiumBody>
+                    <BodySmall weight="normal">5m ago</BodySmall>
                   </View>
                 </FadeInUp>
               </StaggeredContainer>
@@ -428,14 +389,9 @@ export default function HomeScreen() {
         {/* Premium Features with Particle Effects */}
         <FadeInUp delay={600}>
           <View style={styles.premiumSection}>
-            <PremiumHeading
-              level={2}
-              gradient="holographic"
-              animated={true}
-              glow={true}
-            >
+            <HolographicText variant="h2" animated={true}>
               Premium Features
-            </PremiumHeading>
+            </HolographicText>
             <View style={{ position: "relative" }}>
               <ParticleEffect count={15} variant="neon" speed="normal" />
               <HolographicCard
@@ -452,21 +408,16 @@ export default function HomeScreen() {
                       intensity="heavy"
                       animated={true}
                     >
-                      <Ionicons name="diamond" size={32} color="#fbbf24" />
+                      <Ionicons name="star" size={32} color="#fbbf24" />
                     </GlowContainer>
-                    <PremiumHeading
-                      level={3}
-                      gradient="holographic"
-                      animated={true}
-                      glow={true}
-                    >
+                    <HolographicText variant="h3" animated={true}>
                       PawfectMatch Premium
-                    </PremiumHeading>
+                    </HolographicText>
                   </View>
-                  <PremiumBody size="base" weight="regular" gradient="primary">
+                  <GradientText variant="body" weight="normal">
                     Unlock unlimited swipes, see who liked you, and get priority
                     in search results.
-                  </PremiumBody>
+                  </GradientText>
                   <View style={styles.premiumActions}>
                     <EliteButton
                       title="Upgrade Now"
@@ -511,16 +462,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
-  greeting: {
-    fontSize: 16,
-    color: "#6c757d",
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 4,
-  },
   profileButton: {
     padding: 4,
   },
@@ -559,11 +500,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  actionText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
   badge: {
     position: "absolute",
     top: -8,
@@ -575,11 +511,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 6,
-  },
-  badgeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
   },
   recentActivity: {
     padding: 20,
@@ -613,20 +544,6 @@ const styles = StyleSheet.create({
   activityContent: {
     flex: 1,
   },
-  activityTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-  activitySubtitle: {
-    fontSize: 14,
-    color: "#6c757d",
-    marginTop: 2,
-  },
-  activityTime: {
-    fontSize: 12,
-    color: "#9ca3af",
-  },
   premiumSection: {
     padding: 20,
   },
@@ -648,19 +565,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-  premiumTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginLeft: 8,
-  },
-  premiumDescription: {
-    fontSize: 14,
-    color: "#6c757d",
-    lineHeight: 20,
-    marginBottom: 16,
-    textAlign: "center",
-  },
   premiumActions: {
     marginTop: 16,
   },
@@ -670,10 +574,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     alignItems: "center",
-  },
-  premiumButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

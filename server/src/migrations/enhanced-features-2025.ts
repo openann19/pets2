@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Enhanced Features 2025 Database Migration
  * Creates tables for biometric auth, leaderboard, and smart notifications

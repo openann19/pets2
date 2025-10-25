@@ -3,10 +3,9 @@
  * Handles adoption listings, applications, and reviews
  */
 
-const express = require('express');
-const router = express.Router();
-const { authenticateToken, optionalAuth } = require('../middleware/auth');
-const {
+import express, { Router } from 'express';
+import { authenticateToken, optionalAuth } from '../middleware/auth';
+import {
   getPetDetails,
   submitApplication,
   reviewApplication,
@@ -14,7 +13,9 @@ const {
   getMyApplications,
   getApplicationsForMyPets,
   getApplicationById
-} = require('../controllers/adoptionController');
+} from '../controllers/adoptionController';
+
+const router: Router = express.Router();
 
 // Public routes (with optional auth)
 router.get('/pets/:petId', optionalAuth, getPetDetails);
@@ -32,4 +33,4 @@ router.post('/applications/:applicationId/review', reviewApplication);
 // Listing routes
 router.post('/listings', createListing);
 
-module.exports = router;
+export default router;

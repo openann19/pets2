@@ -89,7 +89,7 @@ export default function AICompatibilityScreen({
     try {
       setIsLoadingPets(true);
       // Fetch real pets from API
-      const petsData = await matchesAPI.getPets();
+      const petsData = await api.getPets();
       setAvailablePets(petsData);
     } catch (err: any) {
       logger.error("Error loading pets:", { error: err });

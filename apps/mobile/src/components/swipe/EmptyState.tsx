@@ -39,11 +39,7 @@ export function EmptyState({
           color={isError ? "#ff6b6b" : "#ec4899"}
         />
       </GlowContainer>
-      <PremiumHeading
-        level={2}
-        gradient="primary"
-        animated={true}
-      >
+      <PremiumHeading level={2} gradient="primary" animated={true}>
         {title}
       </PremiumHeading>
       <PremiumBody size="base" weight="regular">

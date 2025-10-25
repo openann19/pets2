@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Analytics and Monitoring Service for PawfectMatch
  * Provides comprehensive tracking, error monitoring, and performance analytics

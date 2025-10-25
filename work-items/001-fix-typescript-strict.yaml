@@ -1,0 +1,29 @@
+id: WI-001
+title: Fix TypeScript Strict Errors in New Components
+priority: CRITICAL
+scope:
+  - apps/mobile/src/screens/DeleteAccountScreen.tsx
+  - apps/mobile/src/components/chat/ChatActionSheet.tsx
+  - apps/mobile/src/components/moderation/ReportModal.tsx
+  - apps/mobile/src/components/premium/BoostButton.tsx
+  - apps/mobile/src/components/chat/MessageReactions.tsx
+
+description: |
+  Fix all TypeScript strict mode violations in newly created components.
+  Must achieve zero errors for changed files.
+
+acceptance_criteria:
+  - Remove unused imports (Text, Caption, etc.)
+  - Fix 'any' type usage (cast Ionicons properly)
+  - Fix navigation type errors (add proper types)
+  - Fix optional chaining warnings
+  - Fix arrow function return type issues
+  - Remove ts-ignore/ts-expect-error
+
+risk: LOW
+estimated_time: 30 minutes
+rollback: Git revert if breaks compilation
+
+verification:
+  - pnpm --dir apps/mobile exec tsc --noEmit (0 errors for new files)
+  - pnpm --dir apps/mobile lint (0 errors for new files)

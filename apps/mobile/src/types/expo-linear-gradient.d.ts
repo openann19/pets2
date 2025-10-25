@@ -3,9 +3,9 @@
  * Adds missing properties to fix TypeScript errors
  */
 
-declare module 'expo-linear-gradient' {
-  import { Component } from 'react';
-  import { ViewProps } from 'react-native';
+declare module "expo-linear-gradient" {
+  import { Component } from "react";
+  import { ViewProps } from "react-native";
 
   export interface LinearGradientPoint {
     x: number;

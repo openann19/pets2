@@ -372,7 +372,7 @@ export function AdvancedInteractionTest() {
         {/* Run Tests Button */}
         <AdvancedButton
           title={isRunning ? "Running Tests..." : "Run All Tests"}
-          icon={isRunning ? "sync" : "play"}
+          leftIcon={isRunning ? "sync" : "play"}
           variant="gradient"
           size="lg"
           interactions={["hover", "press", "glow", "bounce"]}

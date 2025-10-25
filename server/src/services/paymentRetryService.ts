@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Smart Payment Retry Service for PawfectMatch
  * Intelligent retry logic for failed payments with exponential backoff

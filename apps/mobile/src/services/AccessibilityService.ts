@@ -242,7 +242,9 @@ class AccessibilityService {
 
       return meetsRequirement;
     } catch (error: unknown) {
-      logger.error("Contrast calculation failed", { error: error instanceof Error ? error : new Error(String(error)) });
+      logger.error("Contrast calculation failed", {
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
       // Fallback to true to avoid breaking the UI
       return true;
     }

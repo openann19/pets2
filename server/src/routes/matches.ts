@@ -1,8 +1,8 @@
-const express = require('express');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validation');
-const { requirePremiumFeature } = require('../middleware/auth');
-const {
+import express, { Router } from 'express';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validation';
+import { requirePremiumFeature } from '../middleware/auth';
+import {
   getRecommendations,
   recordSwipe,
   getMatches,
@@ -12,10 +12,11 @@ const {
   archiveMatch,
   blockMatch,
   favoriteMatch,
-  getMatchStats
-} = require('../controllers/matchController');
+  getMatchStats,
+  unmatchUser
+} from '../controllers/matchController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Validation rules
 const messageValidation = [
@@ -40,9 +41,10 @@ router.post('/:matchId/messages', messageValidation, validate, sendMessage);
 router.patch('/:matchId/archive', archiveMatch);
 router.patch('/:matchId/block', blockMatch);
 router.patch('/:matchId/favorite', favoriteMatch);
+router.delete('/:matchId/unmatch', unmatchUser);
 
 // Premium features
 router.get('/recommendations/ai', requirePremiumFeature('aiMatching'), getRecommendations);
 router.get('/who-liked-me', requirePremiumFeature('seeWhoLiked'), getMatches); // Show who liked the user
 
-module.exports = router;
+export default router;

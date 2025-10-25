@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const router = express.Router();
 const aiModerationController = require('../controllers/aiModerationController');

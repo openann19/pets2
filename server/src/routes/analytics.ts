@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const mongoose = require('mongoose');
 const AnalyticsEvent = require('../models/AnalyticsEvent');
@@ -11,7 +12,7 @@ const {
   getMatchAnalyticsController
 } = require('../controllers/analyticsController');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // @desc    Track user event
 // @route   POST /api/analytics/user
@@ -139,4 +140,4 @@ router.get('/performance', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

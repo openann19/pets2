@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const Pet = require('../models/Pet');
 const User = require('../models/User');
 const Match = require('../models/Match');

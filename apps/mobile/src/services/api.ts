@@ -341,10 +341,12 @@ export const swipeAPI = {
   getRecommendations: async (
     filters?: PetFilters,
   ): Promise<SwipeRecommendationResponse> => {
-    const params = filters ? { 
-      ...filters,
-      personalityTags: filters.personalityTags?.join(',')
-    } : {};
+    const params = filters
+      ? {
+          ...filters,
+          personalityTags: filters.personalityTags?.join(","),
+        }
+      : {};
     return request<SwipeRecommendationResponse>("/swipe/recommendations", {
       params,
     });
@@ -841,6 +843,139 @@ export const matchesAPI = {
     });
   },
 
+  // Delete account (GDPR Article 17 - Right to erasure)
+  deleteAccount: async (data: {
+    password: string;
+    reason?: string;
+    feedback?: string;
+  }): Promise<{
+    success: boolean;
+    message: string;
+    gracePeriodEndsAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      message: string;
+      gracePeriodEndsAt: string;
+    }>("/users/delete-account", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Export user data (GDPR Article 20 - Right to data portability)
+  exportUserData: async (): Promise<{
+    success: boolean;
+    downloadUrl: string;
+    expiresAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      downloadUrl: string;
+      expiresAt: string;
+    }>("/users/export-data", {
+      method: "POST",
+    });
+  },
+
+  // Confirm account deletion (after grace period)
+  confirmDeleteAccount: async (
+    token: string,
+  ): Promise<{ success: boolean }> => {
+    return request<{ success: boolean }>("/users/confirm-deletion", {
+      method: "POST",
+      body: { token },
+    });
+  },
+
+  // Cancel account deletion (during grace period)
+  cancelDeleteAccount: async (): Promise<{
+    success: boolean;
+    message: string;
+  }> => {
+    return request<{ success: boolean; message: string }>(
+      "/users/cancel-deletion",
+      {
+        method: "POST",
+      },
+    );
+  },
+
+  // Export chat history (GDPR)
+  exportChat: async (matchId: string): Promise<{
+    success: boolean;
+    downloadUrl: string;
+    expiresAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      downloadUrl: string;
+      expiresAt: string;
+    }>(`/chat/${matchId}/export`, {
+      method: "POST",
+    });
+  },
+
+  // Clear chat history
+  clearChatHistory: async (matchId: string): Promise<{
+    success: boolean;
+    message: string;
+  }> => {
+    return request<{ success: boolean; message: string }>(
+      `/chat/${matchId}/clear`,
+      {
+        method: "DELETE",
+      },
+    );
+  },
+
+  // Unmatch user
+  unmatchUser: async (matchId: string): Promise<{
+    success: boolean;
+    message: string;
+    gracePeriodEndsAt: string;
+  }> => {
+    return request<{
+      success: boolean;
+      message: string;
+      gracePeriodEndsAt: string;
+    }>(`/matches/${matchId}/unmatch`, {
+      method: "DELETE",
+    });
+  },
+
+  // Add message reaction
+  addMessageReaction: async (messageId: string, emoji: string): Promise<Message> => {
+    return resolveData(
+      apiClient.post<Message>(`/messages/${messageId}/react`, { emoji }),
+      "Failed to add reaction",
+    );
+  },
+
+  // Remove message reaction
+  removeMessageReaction: async (messageId: string, emoji: string): Promise<Message> => {
+    return resolveData(
+      apiClient.delete<Message>(`/messages/${messageId}/unreact`, { emoji } as any),
+      "Failed to remove reaction",
+    );
+  },
+
+  // Boost profile (Premium feature)
+  boostProfile: async (duration: "30m" | "1h" | "3h"): Promise<{
+    success: boolean;
+    expiresAt: string;
+    visibilityIncrease: number;
+  }> => {
+    return request<{
+      success: boolean;
+      expiresAt: string;
+      visibilityIncrease: number;
+    }>("/profile/boost", {
+      method: "POST",
+      body: { duration },
+    });
+  },
+
   // Get user activity
   getUserActivity: async (): Promise<
     Array<{ type: string; description: string; timestamp: string }>
@@ -878,13 +1013,10 @@ export const matchesAPI = {
     category: string;
     priority?: string;
   }): Promise<SupportTicketResponse> => {
-    return request<SupportTicketResponse>(
-      "/support/ticket",
-      {
-        method: "POST",
-        body: data,
-      },
-    );
+    return request<SupportTicketResponse>("/support/ticket", {
+      method: "POST",
+      body: data,
+    });
   },
 
   submitBugReport: async (data: {
@@ -896,13 +1028,10 @@ export const matchesAPI = {
     deviceInfo?: string;
     appVersion?: string;
   }): Promise<BugReportResponse> => {
-    return request<BugReportResponse>(
-      "/support/bug-report",
-      {
-        method: "POST",
-        body: data,
-      },
-    );
+    return request<BugReportResponse>("/support/bug-report", {
+      method: "POST",
+      body: data,
+    });
   },
 
   // Get app version info

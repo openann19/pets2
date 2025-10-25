@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * AI Content Moderation Controller
  * Analyzes text and images using OpenAI and DeepSeek AI

@@ -1,0 +1,78 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "close": "Close"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "forgotPassword": "Forgot Password?",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "createAccount": "Create Account",
+    "welcome": "Welcome to PawfectMatch",
+    "welcomeBack": "Welcome back!"
+  },
+  "navigation": {
+    "home": "Home",
+    "swipe": "Swipe",
+    "matches": "Matches",
+    "messages": "Messages",
+    "profile": "Profile",
+    "settings": "Settings",
+    "premium": "Premium"
+  },
+  "swipe": {
+    "like": "Like",
+    "pass": "Pass",
+    "superLike": "Super Like",
+    "undo": "Undo",
+    "noMorePets": "No more pets nearby",
+    "checkBackLater": "Check back later for new matches!"
+  },
+  "matches": {
+    "newMatches": "New Matches",
+    "messages": "Messages",
+    "sendMessage": "Send Message",
+    "typeMessage": "Type a message...",
+    "online": "Online",
+    "lastSeen": "Last seen {{time}} ago"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "photos": "Photos",
+    "about": "About",
+    "interests": "Interests",
+    "preferences": "Preferences"
+  },
+  "premium": {
+    "upgrade": "Upgrade to Premium",
+    "premiumFeatures": "Premium Features",
+    "unlimitedSwipes": "Unlimited Swipes",
+    "seeWhoLikedYou": "See Who Liked You",
+    "advancedFilters": "Advanced Filters",
+    "prioritySupport": "Priority Support"
+  },
+  "errors": {
+    "networkError": "Network Error",
+    "serverError": "Server Error",
+    "validationError": "Validation Error",
+    "genericError": "Something went wrong. Please try again."
+  }
+}

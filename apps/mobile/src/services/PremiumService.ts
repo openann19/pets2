@@ -52,14 +52,20 @@ export interface PaymentMethod {
 class PremiumService {
   private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-  // Available subscription plans
+  // Available subscription plans - Standardized with Web App
   private static readonly PLANS: SubscriptionPlan[] = [
     {
       id: "basic",
       name: "Basic",
-      price: 4.99,
+      price: 0,
       interval: "month",
-      features: ["5 Super Likes/day", "See who liked you", "Advanced filters"],
+      features: [
+        "5 daily swipes",
+        "Basic matching",
+        "Standard chat",
+        "Weather updates",
+        "Community support",
+      ],
       stripePriceId:
         process.env["EXPO_PUBLIC_STRIPE_BASIC_PRICE_ID"] ??
         "price_1P1234567890abcdefghijklmn",
@@ -70,10 +76,19 @@ class PremiumService {
       price: 9.99,
       interval: "month",
       features: [
-        "Unlimited Super Likes",
-        "Priority matching",
-        "Profile boost",
-        "Undo swipes",
+        "Unlimited swipes",
+        "AI-powered matching",
+        "Priority chat features",
+        "Advanced photo analysis",
+        "AI bio generation",
+        "Compatibility scoring",
+        "See who liked you",
+        "Boost your profile",
+        "5 Super Likes per day",
+        "Unlimited rewinds",
+        "Advanced analytics",
+        "Premium badge",
+        "Priority support",
       ],
       stripePriceId:
         process.env["EXPO_PUBLIC_STRIPE_PREMIUM_PRICE_ID"] ??
@@ -87,9 +102,19 @@ class PremiumService {
       interval: "month",
       features: [
         "Everything in Premium",
-        "Video calls",
-        "Advanced analytics",
-        "VIP support",
+        "VIP status",
+        "Unlimited Super Likes",
+        "Global passport",
+        "Priority AI matching",
+        "Early feature access",
+        "Custom AI training",
+        "Video chat features",
+        "Exclusive events",
+        "Monthly surprises",
+        "Identity verification",
+        "Concierge support",
+        "Profile verification",
+        "Custom themes",
       ],
       stripePriceId:
         process.env["EXPO_PUBLIC_STRIPE_ULTIMATE_PRICE_ID"] ??
@@ -341,6 +366,80 @@ class PremiumService {
     }
   }
 
+  /**
+   * Get current usage statistics
+   */
+  async getUsageStats(): Promise<{
+    swipesToday: number;
+    likesToday: number;
+    superLikesToday: number;
+    lastResetDate: string;
+  }> {
+    try {
+      const response = await api.request<{
+        swipesToday: number;
+        likesToday: number;
+        superLikesToday: number;
+        lastResetDate: string;
+      }>("/premium/usage-stats");
+
+      return response;
+    } catch (error) {
+      logger.error("Failed to get usage stats", { error });
+      return {
+        swipesToday: 0,
+        likesToday: 0,
+        superLikesToday: 0,
+        lastResetDate: new Date().toISOString(),
+      };
+    }
+  }
+
+  /**
+   * Check if user has reached daily limits
+   */
+  async hasReachedLimit(feature: keyof PremiumLimits): Promise<boolean> {
+    try {
+      const limits = await this.getPremiumLimits();
+      const usage = await this.getUsageStats();
+
+      switch (feature) {
+        case "swipesPerDay":
+          return usage.swipesToday >= limits.swipesPerDay && limits.swipesPerDay !== -1;
+        case "likesPerDay":
+          return usage.likesToday >= limits.likesPerDay && limits.likesPerDay !== -1;
+        case "superLikesPerDay":
+          return usage.superLikesToday >= limits.superLikesPerDay && limits.superLikesPerDay !== -1;
+        default:
+          return !limits[feature] as boolean;
+      }
+    } catch (error) {
+      logger.error("Failed to check limit", { error, feature });
+      return true; // Default to blocked on error
+    }
+  }
+
+  /**
+   * Restore purchases (for iOS/Android)
+   */
+  async restorePurchases(): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await api.request<{ success: boolean; message: string }>(
+        "/premium/restore-purchases",
+        { method: "POST" },
+      );
+
+      // Clear cache to force refresh
+      await this.clearCache();
+
+      logger.info("Purchases restored", response);
+      return response;
+    } catch (error) {
+      logger.error("Failed to restore purchases", { error });
+      throw error;
+    }
+  }
+
   // Private helper methods
 
   private async getCachedStatus(): Promise<{
@@ -391,7 +490,12 @@ class PremiumService {
   }
 
   private async clearCache(): Promise<void> {
-    // Clear cache implementation would go here
+    try {
+      await AsyncStorage.removeItem("premium_status_cache");
+      logger.debug("Premium status cache cleared");
+    } catch (error) {
+      logger.error("Failed to clear premium cache", { error });
+    }
   }
 }
 

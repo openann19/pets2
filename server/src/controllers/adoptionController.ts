@@ -3,9 +3,17 @@
  * Handles adoption listings, applications, and reviews
  */
 
-const Pet = require('../models/Pet');
-const User = require('../models/User');
-const logger = require('../utils/logger');
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import { Pet } from '../models/Pet';
+import { User } from '../models/User';
+import logger from '../utils/logger';
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+  };
+}
 
 // Define AdoptionApplication schema inline if model doesn't exist
 let AdoptionApplication;
@@ -13,8 +21,6 @@ try {
   AdoptionApplication = require('../models/AdoptionApplication');
 } catch {
   // Create a simple in-memory model if not exists
-  const mongoose = require('mongoose');
-  
   const adoptionApplicationSchema = new mongoose.Schema({
     petId: { type: mongoose.Schema.Types.ObjectId, ref: 'Pet', required: true },
     applicantId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -44,7 +50,7 @@ try {
 /**
  * Get pet details for adoption
  */
-exports.getPetDetails = async (req, res) => {
+export const getPetDetails = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { petId } = req.params;
 
@@ -76,7 +82,7 @@ exports.getPetDetails = async (req, res) => {
         hasApplied
       }
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to get pet details', { error: error.message });
     res.status(500).json({
       success: false,
@@ -89,10 +95,18 @@ exports.getPetDetails = async (req, res) => {
 /**
  * Submit adoption application
  */
-exports.submitApplication = async (req, res) => {
+export const submitApplication = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { petId } = req.params;
-    const applicantId = req.user.id;
+    const applicantId = req.user?.id;
+    
+    if (!applicantId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
     const applicationData = req.body;
 
     // Check if pet exists and is available for adoption
@@ -141,7 +155,7 @@ exports.submitApplication = async (req, res) => {
       data: application,
       message: 'Application submitted successfully'
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to submit application', { error: error.message });
     res.status(500).json({
       success: false,
@@ -154,11 +168,18 @@ exports.submitApplication = async (req, res) => {
 /**
  * Review adoption application (for pet owners)
  */
-exports.reviewApplication = async (req, res) => {
+export const reviewApplication = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { applicationId } = req.params;
     const { status, notes } = req.body;
-    const reviewerId = req.user.id;
+    const reviewerId = req.user?.id;
+
+    if (!reviewerId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
 
     const application = await AdoptionApplication.findById(applicationId)
       .populate('petId');
@@ -171,6 +192,7 @@ exports.reviewApplication = async (req, res) => {
     }
 
     // Verify the reviewer owns the pet
+    // @ts-ignore - petId might be populated
     if (application.petId.owner.toString() !== reviewerId) {
       return res.status(403).json({
         success: false,
@@ -193,7 +215,7 @@ exports.reviewApplication = async (req, res) => {
       data: application,
       message: 'Application reviewed successfully'
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to review application', { error: error.message });
     res.status(500).json({
       success: false,
@@ -206,9 +228,17 @@ exports.reviewApplication = async (req, res) => {
 /**
  * Create adoption listing
  */
-exports.createListing = async (req, res) => {
+export const createListing = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
     const listingData = {
       ...req.body,
       owner: userId,
@@ -231,7 +261,7 @@ exports.createListing = async (req, res) => {
       data: pet,
       message: 'Adoption listing created successfully'
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to create adoption listing', { error: error.message });
     res.status(500).json({
       success: false,
@@ -244,9 +274,16 @@ exports.createListing = async (req, res) => {
 /**
  * Get user's adoption applications
  */
-exports.getMyApplications = async (req, res) => {
+export const getMyApplications = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const applicantId = req.user.id;
+    const applicantId = req.user?.id;
+
+    if (!applicantId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
 
     const applications = await AdoptionApplication.find({ applicantId })
       .populate('petId', 'name breed species photos')
@@ -257,7 +294,7 @@ exports.getMyApplications = async (req, res) => {
       success: true,
       data: applications
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to get applications', { error: error.message });
     res.status(500).json({
       success: false,
@@ -270,10 +307,17 @@ exports.getMyApplications = async (req, res) => {
 /**
  * Get single adoption application by ID
  */
-exports.getApplicationById = async (req, res) => {
+export const getApplicationById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { applicationId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
 
     const application = await AdoptionApplication.findById(applicationId)
       .populate('petId', 'name breed species photos')
@@ -287,8 +331,9 @@ exports.getApplicationById = async (req, res) => {
     }
 
     // Verify the user has access to this application (either applicant or pet owner)
-    const pet = await Pet.findById(application.petId._id);
-    if (pet.owner.toString() !== userId && application.applicantId._id.toString() !== userId) {
+    const pet = await Pet.findById((application.petId as any)._id);
+    // @ts-ignore
+    if (pet?.owner.toString() !== userId && (application.applicantId as any)._id?.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to view this application'
@@ -299,7 +344,7 @@ exports.getApplicationById = async (req, res) => {
       success: true,
       data: application
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to get application', { error: error.message });
     res.status(500).json({
       success: false,
@@ -312,9 +357,16 @@ exports.getApplicationById = async (req, res) => {
 /**
  * Get applications for user's pets (for pet owners)
  */
-exports.getApplicationsForMyPets = async (req, res) => {
+export const getApplicationsForMyPets = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
 
     // Find all user's pets
     const userPets = await Pet.find({ owner: userId }).select('_id');
@@ -333,7 +385,7 @@ exports.getApplicationsForMyPets = async (req, res) => {
       success: true,
       data: applications
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to get applications for pets', { error: error.message });
     res.status(500).json({
       success: false,
@@ -341,4 +393,14 @@ exports.getApplicationsForMyPets = async (req, res) => {
       error: error.message
     });
   }
+};
+
+export default {
+  getPetDetails,
+  submitApplication,
+  reviewApplication,
+  createListing,
+  getMyApplications,
+  getApplicationById,
+  getApplicationsForMyPets
 };

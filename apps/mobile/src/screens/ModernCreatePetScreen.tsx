@@ -36,7 +36,7 @@ import {
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
-import { getTextColor, getBorderColor, getTextColorString } from "../theme/helpers";
+import { getBorderColor, getTextColorString } from "../theme/helpers";
 
 type RootStackParamList = {
   CreatePet: undefined;
@@ -58,13 +58,13 @@ interface PhotoItem {
 
 interface FormData {
   name: string;
-  species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
+  species: "dog" | "cat" | "bird" | "rabbit" | "other";
   breed: string;
   age: number;
-  gender: 'male' | 'female';
-  size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
+  gender: "male" | "female";
+  size: "tiny" | "small" | "medium" | "large" | "extra-large";
   description: string;
-  intent: 'adoption' | 'mating' | 'playdate' | 'all';
+  intent: "adoption" | "mating" | "playdate" | "all";
   personalityTags: string[];
   healthInfo: {
     vaccinated: boolean;
@@ -86,7 +86,7 @@ interface FormData {
 
 export default function ModernCreatePetScreen({
   navigation,
-}: CreatePetScreenProps) {
+}: CreatePetScreenProps): React.JSX.Element {
   // Form state
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -126,7 +126,7 @@ export default function ModernCreatePetScreen({
 
   // Form handlers
   const updateFormData = useCallback(
-    (field: keyof FormData, value: string | boolean | string[]) => {
+    (field: keyof FormData, value: string | boolean | string[] | number) => {
       setFormData((prev) => ({
         ...prev,
         [field]: value,
@@ -153,7 +153,7 @@ export default function ModernCreatePetScreen({
     const errors: string[] = [];
 
     if (!formData.name.trim()) errors.push("Pet name is required");
-    if (!formData.species) errors.push("Species is required");
+    // Species is always set (default: "dog"), so no validation needed
     if (!formData.breed.trim()) errors.push("Breed is required");
     if (!formData.age || formData.age <= 0) errors.push("Age is required");
     if (!formData.description.trim()) errors.push("Description is required");
@@ -181,9 +181,13 @@ export default function ModernCreatePetScreen({
           thumbnail: photo.uri,
           cloudinaryId: photo.id,
         })),
+        location: {
+          type: "Point" as const,
+          coordinates: [0, 0] as [number, number], // TODO: Get actual coordinates
+        },
       };
 
-      const response = await petAPI.createPet(petData);
+      await petAPI.createPet(petData);
 
       Alert.alert(
         "Success!",
@@ -191,16 +195,18 @@ export default function ModernCreatePetScreen({
         [
           {
             text: "OK",
-            onPress: () => navigation.navigate("MyPets"),
+            onPress: () => {
+              navigation.navigate("MyPets");
+            },
           },
         ],
       );
-    } catch (error) {
+    } catch (_error) {
       Alert.alert("Error", "Failed to create pet profile. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
-  }, [validateForm, navigation]);
+  }, [validateForm, navigation, formData, photos]);
 
   // Species options
   const speciesOptions = ["Dog", "Cat", "Bird", "Rabbit", "Other"];
@@ -305,7 +311,9 @@ export default function ModernCreatePetScreen({
       <EliteHeader
         title="Create Pet Profile"
         subtitle="Share your pet with the community"
-        onBack={() => navigation.goBack()}
+        onBack={() => {
+          navigation.goBack();
+        }}
       />
 
       <KeyboardAvoidingView
@@ -542,7 +550,9 @@ export default function ModernCreatePetScreen({
               }
               size="lg"
               loading={isSubmitting}
-              onPress={handleSubmit}
+              onPress={(): void => {
+                void handleSubmit();
+              }}
               style={styles.submitButton}
             />
           </View>

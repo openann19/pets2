@@ -3,8 +3,8 @@
  * Adds missing properties to fix TypeScript errors
  */
 
-import { ComponentType } from 'react';
-import { TextStyle } from 'react-native';
+import { ComponentType } from "react";
+import { TextStyle } from "react-native";
 
 // Original IconProps interface from @expo/vector-icons
 interface IconProps {
@@ -15,21 +15,21 @@ interface IconProps {
 }
 
 // Extend the Ionicons type to include glyphMap
-declare module '@expo/vector-icons' {
+declare module "@expo/vector-icons" {
   export const Ionicons: ComponentType<IconProps> & {
     glyphMap: Record<string, number>;
     font: string;
     getFontFamily: () => string;
   };
-  
+
   export const MaterialIcons: ComponentType<IconProps> & {
     glyphMap: Record<string, number>;
   };
-  
+
   export const FontAwesome: ComponentType<IconProps> & {
     glyphMap: Record<string, number>;
   };
-  
+
   export const MaterialCommunityIcons: ComponentType<IconProps> & {
     glyphMap: Record<string, number>;
   };

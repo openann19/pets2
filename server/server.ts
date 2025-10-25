@@ -19,19 +19,18 @@ import userRoutes from './src/routes/users';
 import petRoutes from './src/routes/pets';
 import matchRoutes from './src/routes/matches';
 import chatRoutes from './src/routes/chat';
-// Note: These routes are currently .js files and need to be migrated to TypeScript
-// For now, we'll comment them out to fix TypeScript errors
-// import aiRoutes from './src/routes/ai';
-// import premiumRoutes from './src/routes/premium';
-// import analyticsRoutes from './src/routes/analytics';
-// import adminRoutes from './src/routes/admin';
-// import accountRoutes from './src/routes/account';
-// import memoriesRoutes from './src/routes/memories';
-// import biometricRoutes from './src/routes/biometric';
-// import leaderboardRoutes from './src/routes/leaderboard';
-// import notificationRoutes from './src/routes/notifications';
+import gdprRoutes from './src/routes/gdpr';
+import premiumRoutes from './src/routes/premium';
+import analyticsRoutes from './src/routes/analytics';
+import adminRoutes from './src/routes/admin';
+import memoriesRoutes from './src/routes/memories';
+import biometricRoutes from './src/routes/biometric';
+import leaderboardRoutes from './src/routes/leaderboard';
+import notificationRoutes from './src/routes/notifications';
 import supportRoutes from './src/routes/support';
-// import adoptionRoutes from './src/routes/adoption';
+import moderationRoutes from './src/routes/moderation';
+import profileRoutes from './src/routes/profile';
+import healthRoutes from './src/routes/health';
 
 // Load environment variables
 dotenv.config();
@@ -137,6 +136,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticateToken as any, userRoutes);
+app.use('/api/users', authenticateToken as any, gdprRoutes); // GDPR endpoints
 app.use('/api/pets', authenticateToken as any, petRoutes);
 app.use('/api/matches', authenticateToken as any, matchRoutes);
 app.use('/api/chat', authenticateToken as any, chatRoutes);

@@ -1,21 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
-  Dimensions,
   Image,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  Vibration,
   View,
+  type ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { CallData } from "../../services/WebRTCService";
+import { hapticFeedback } from "../../services/HapticFeedbackService";
 
 interface IncomingCallScreenProps {
   callData: CallData;
@@ -23,14 +23,77 @@ interface IncomingCallScreenProps {
   onReject: () => void;
 }
 
+const DEFAULT_ANIMATION_RANGE = [0, 1] as const;
+
+const createNumericInterpolation = (
+  value: Animated.Value,
+  outputRange: readonly [number, number],
+  inputRange: readonly [number, number] = DEFAULT_ANIMATION_RANGE,
+): Animated.AnimatedInterpolation<number> =>
+  value.interpolate({
+    inputRange: [...inputRange],
+    outputRange: [...outputRange],
+  });
+
 export default function IncomingCallScreen({
   callData,
   onAnswer,
   onReject,
 }: IncomingCallScreenProps) {
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-  const [pulseAnim] = useState(new Animated.Value(1));
-  const [slideAnim] = useState(new Animated.Value(0));
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
+
+  const headerTranslateY = useMemo(
+    () => createNumericInterpolation(slideAnim, [-50, 0] as const),
+    [slideAnim],
+  );
+
+  const callerInfoScale = useMemo(
+    () => createNumericInterpolation(slideAnim, [0.8, 1] as const),
+    [slideAnim],
+  );
+
+  const actionsTranslateY = useMemo(
+    () => createNumericInterpolation(slideAnim, [100, 0] as const),
+    [slideAnim],
+  );
+
+  const headerAnimatedStyle = useMemo<Animated.WithAnimatedObject<ViewStyle>>(
+    () => ({
+      transform: [{ translateY: headerTranslateY }],
+    }),
+    [headerTranslateY],
+  );
+
+  const callerInfoAnimatedStyle = useMemo<Animated.WithAnimatedObject<ViewStyle>>(
+    () => ({
+      transform: [{ scale: callerInfoScale }],
+    }),
+    [callerInfoScale],
+  );
+
+  const avatarPulseStyle = useMemo<Animated.WithAnimatedObject<ViewStyle>>(
+    () => ({
+      transform: [{ scale: pulseAnim }],
+    }),
+    [pulseAnim],
+  );
+
+  const actionsAnimatedStyle = useMemo<Animated.WithAnimatedObject<ViewStyle>>(
+    () => ({
+      transform: [{ translateY: actionsTranslateY }],
+    }),
+    [actionsTranslateY],
+  );
+
+  const additionalActionsAnimatedStyle = useMemo<
+    Animated.WithAnimatedObject<ViewStyle>
+  >(
+    () => ({
+      opacity: slideAnim,
+    }),
+    [slideAnim],
+  );
 
   useEffect(() => {
     // Start pulsing animation for incoming call
@@ -59,27 +122,27 @@ export default function IncomingCallScreen({
     pulseAnimation.start();
     slideAnimation.start();
 
-    // Vibration pattern for incoming call
-    const vibrationPattern = [0, 1000, 500, 1000, 500];
-    Vibration.vibrate(vibrationPattern, true);
+    // Haptic feedback pattern for incoming call
+    void hapticFeedback.triggerCustomPattern();
 
     return () => {
       pulseAnimation.stop();
-      Vibration.cancel();
+      slideAnimation.stop();
+      hapticFeedback.stop();
     };
-  }, []);
+  }, [pulseAnim, slideAnim]);
 
   const handleAnswer = () => {
-    Vibration.cancel();
+    void hapticFeedback.triggerSuccess();
     onAnswer();
   };
 
   const handleReject = () => {
-    Vibration.cancel();
+    void hapticFeedback.triggerError();
     onReject();
   };
 
-  const formatCallType = (type: string) => {
+  const formatCallType = (type: CallData["callType"]) => {
     return type === "video" ? "Video Call" : "Voice Call";
   };
 
@@ -102,21 +165,7 @@ export default function IncomingCallScreen({
 
       <SafeAreaView style={styles.content}>
         {/* Header */}
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              transform: [
-                {
-                  translateY: slideAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-50, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
+        <Animated.View style={[styles.header, headerAnimatedStyle]}>
           <Text style={styles.incomingCallText}>Incoming Call</Text>
           <Text style={styles.callTypeText}>
             {formatCallType(callData.callType)}
@@ -124,30 +173,9 @@ export default function IncomingCallScreen({
         </Animated.View>
 
         {/* Caller Info */}
-        <Animated.View
-          style={[
-            styles.callerInfo,
-            {
-              transform: [
-                {
-                  scale: slideAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.8, 1],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
+        <Animated.View style={[styles.callerInfo, callerInfoAnimatedStyle]}>
           {/* Avatar with pulsing effect */}
-          <Animated.View
-            style={[
-              styles.avatarContainer,
-              {
-                transform: [{ scale: pulseAnim }],
-              },
-            ]}
-          >
+          <Animated.View style={[styles.avatarContainer, avatarPulseStyle]}>
             <View style={styles.avatarRing}>
               <Image
                 source={
@@ -166,21 +194,7 @@ export default function IncomingCallScreen({
         </Animated.View>
 
         {/* Call Actions */}
-        <Animated.View
-          style={[
-            styles.actionsContainer,
-            {
-              transform: [
-                {
-                  translateY: slideAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [100, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
+        <Animated.View style={[styles.actionsContainer, actionsAnimatedStyle]}>
           {/* Reject Button */}
           <TouchableOpacity
             style={[styles.actionButton, styles.rejectButton]}
@@ -219,12 +233,7 @@ export default function IncomingCallScreen({
 
         {/* Additional Actions */}
         <Animated.View
-          style={[
-            styles.additionalActions,
-            {
-              opacity: slideAnim,
-            },
-          ]}
+          style={[styles.additionalActions, additionalActionsAnimatedStyle]}
         >
           <TouchableOpacity style={styles.additionalButton}>
             <Ionicons name="chatbubble" size={24} color="#fff" />

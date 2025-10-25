@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { Message } from "../../hooks/useChatData";
+import type { Message } from "../../hooks/useChatData";
+import { ReactionBubble } from "./MessageReactions";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -12,8 +13,10 @@ interface MessageItemProps {
   messages: Message[];
   isOnline: boolean;
   onPress?: (message: Message) => void;
-  onLongPress?: (message: Message) => void;
+  onLongPress?: (message: Message, event?: any) => void;
   onRetry?: (messageId: string) => void;
+  onReactionPress?: (messageId: string, emoji: string) => void;
+  onAddReaction?: (messageId: string) => void;
 }
 
 export function MessageItem({
@@ -24,6 +27,8 @@ export function MessageItem({
   onPress,
   onLongPress,
   onRetry,
+  onReactionPress,
+  onAddReaction,
 }: MessageItemProps): React.JSX.Element {
   const { colors } = useTheme();
 
@@ -31,11 +36,11 @@ export function MessageItem({
     message.senderId === "me" || message.senderId === "current-user";
   const showAvatar =
     !isMyMessage &&
-    (index === 0 || messages[index - 1].senderId !== message.senderId);
+    (index === 0 || messages[index - 1]?.senderId !== message.senderId);
   const showTime =
     index === messages.length - 1 ||
-    messages[index + 1].senderId !== message.senderId ||
-    new Date(messages[index + 1].timestamp).getTime() -
+    messages[index + 1]?.senderId !== message.senderId ||
+    new Date(messages[index + 1]?.timestamp || message.timestamp).getTime() -
       new Date(message.timestamp).getTime() >
       300000;
   const showDateHeader = shouldShowDateHeader(message, messages[index - 1]);
@@ -83,13 +88,21 @@ export function MessageItem({
     onPress?.(message);
   }, [message, onPress]);
 
-  const handleLongPress = useCallback(() => {
-    onLongPress?.(message);
+  const handleLongPress = useCallback((event: any) => {
+    onLongPress?.(message, event);
   }, [message, onLongPress]);
 
   const handleRetry = useCallback(() => {
     onRetry?.(message._id);
   }, [message._id, onRetry]);
+
+  const handleReactionPress = useCallback((emoji: string) => {
+    onReactionPress?.(message._id, emoji);
+  }, [message._id, onReactionPress]);
+
+  const handleAddReaction = useCallback(() => {
+    onAddReaction?.(message._id);
+  }, [message._id, onAddReaction]);
 
   return (
     <View>
@@ -135,8 +148,8 @@ export function MessageItem({
         {/* Message Bubble */}
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={handlePress}
-          onLongPress={handleLongPress}
+          onPress={onPress ? handlePress : undefined}
+          onLongPress={onLongPress ? handleLongPress : undefined}
           style={[
             styles.messageBubble,
             isMyMessage
@@ -208,6 +221,15 @@ export function MessageItem({
           )}
         </TouchableOpacity>
 
+        {/* Reactions */}
+        {message.reactions && message.reactions.length > 0 && onReactionPress && onAddReaction && (
+          <ReactionBubble
+            reactions={message.reactions}
+            onReactionPress={handleReactionPress}
+            onAddReaction={handleAddReaction}
+          />
+        )}
+
         {/* Time and Read Receipt */}
         {showTime && (
           <View
@@ -263,8 +285,8 @@ const styles = StyleSheet.create({
     paddingVertical: tokens.spacing.xs,
   },
   dateHeaderText: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontWeight: tokens.typography.caption.fontWeight,
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
     textAlign: "center",
   },
   messageContainer: {
@@ -352,8 +374,8 @@ const styles = StyleSheet.create({
     gap: tokens.spacing.xs,
   },
   retryText: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontWeight: tokens.typography.caption.fontWeight,
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
   },
   errorIndicator: {
     marginLeft: tokens.spacing.xs,
@@ -366,8 +388,8 @@ const styles = StyleSheet.create({
     marginBottom: tokens.spacing.xs,
   },
   messageTime: {
-    fontSize: tokens.typography.caption.fontSize,
-    fontWeight: tokens.typography.caption.fontWeight,
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
   },
   readReceiptContainer: {
     marginLeft: tokens.spacing.xs,

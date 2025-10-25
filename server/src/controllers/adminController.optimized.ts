@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 // Optimized Admin Controller - Fixed N+1 Query Issues
 // This replaces the original 46KB adminController.js with optimized queries
 

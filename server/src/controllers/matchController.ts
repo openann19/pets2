@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const Match = require('../models/Match');
 const User = require('../models/User');
 const Pet = require('../models/Pet');
@@ -586,6 +587,67 @@ const blockMatch = async (req, res) => {
   }
 };
 
+// @desc    Unmatch user
+// @route   DELETE /api/matches/:matchId/unmatch
+// @access  Private
+const unmatchUser = async (req, res) => {
+  try {
+    const { matchId } = req.params;
+
+    const match = await Match.findOne({
+      _id: matchId,
+      $or: [{ user1: req.userId }, { user2: req.userId }]
+    });
+
+    if (!match) {
+      return res.status(404).json({
+        success: false,
+        message: 'Match not found'
+      });
+    }
+
+    // Set grace period (30 days for potential reversal)
+    const gracePeriodEndsAt = new Date();
+    gracePeriodEndsAt.setDate(gracePeriodEndsAt.getDate() + 30);
+
+    // Update match status and set grace period
+    match.status = 'unmatched';
+    match.unmatchedAt = new Date();
+    match.unmatchedBy = req.userId;
+    match.gracePeriodEndsAt = gracePeriodEndsAt;
+
+    // Archive for current user
+    const userKey = match.user1.toString() === req.userId.toString() ? 'user1' : 'user2';
+    match.userActions[userKey].isArchived = true;
+
+    await match.save();
+
+    // Log unmatch action
+    logger.info('User unmatched', {
+      userId: req.userId,
+      matchId,
+      gracePeriodEndsAt
+    });
+
+    res.json({
+      success: true,
+      message: 'Match removed successfully',
+      data: {
+        gracePeriodEndsAt,
+        canReverse: true
+      }
+    });
+
+  } catch (error) {
+    logger.error('Unmatch error', { error, userId: req.userId, matchId: req.params.matchId });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to unmatch user',
+      error: error.message
+    });
+  }
+};
+
 // @desc    Toggle favorite match
 // @route   PATCH /api/matches/:matchId/favorite
 // @access  Private
@@ -688,5 +750,6 @@ module.exports = {
   archiveMatch,
   blockMatch,
   favoriteMatch,
-  getMatchStats
+  getMatchStats,
+  unmatchUser
 };

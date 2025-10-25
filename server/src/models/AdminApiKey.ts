@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const crypto = require('crypto');

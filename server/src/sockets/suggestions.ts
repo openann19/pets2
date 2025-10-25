@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 // Socket.io namespace for proactive chat suggestions
 const logger = require('../utils/logger');
 

@@ -21,16 +21,22 @@ import {
   type TouchableOpacityProps,
   type TextStyle,
   type ViewStyle,
+  type StyleProp,
 } from "react-native";
 
 import { Theme } from "../../theme/unified-theme";
-import { getTextColor } from "../../theme/helpers";
+import {
+  getTextColor,
+  getPrimaryColor,
+  getSecondaryColor,
+} from "../../theme/helpers";
+import { getButtonAccessibilityProps } from "../../utils/AccessibilityUtils";
 
 // === TYPES ===
-export type ButtonVariant = 
-  | "primary" 
-  | "secondary" 
-  | "ghost" 
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "ghost"
   | "outline"
   | "glass"
   | "holographic"
@@ -55,8 +61,8 @@ export interface BaseButtonProps extends TouchableOpacityProps {
   disabled?: boolean;
   leftIcon?: keyof typeof Ionicons.glyphMap;
   rightIcon?: keyof typeof Ionicons.glyphMap;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   onPress?: () => void;
 }
 
@@ -148,13 +154,13 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case "primary":
           return {
             ...baseStyles,
-            backgroundColor: Theme.semantic.interactive.primary,
+            backgroundColor: getPrimaryColor(600), // Previously Theme.semantic.interactive.primary
             ...Theme.shadows.depth.sm,
           };
         case "secondary":
           return {
             ...baseStyles,
-            backgroundColor: Theme.semantic.interactive.secondary,
+            backgroundColor: getSecondaryColor(600), // Previously Theme.semantic.interactive.secondary
             ...Theme.shadows.depth.sm,
           };
         case "ghost":
@@ -167,7 +173,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
             ...baseStyles,
             backgroundColor: "transparent",
             borderWidth: 2,
-            borderColor: Theme.semantic.interactive.primary,
+            borderColor: getPrimaryColor(600), // Previously Theme.semantic.interactive.primary
           };
         default:
           return baseStyles;
@@ -193,7 +199,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case "outline":
           return {
             ...baseTextStyles,
-            color: Theme.semantic.interactive.primary,
+            color: getPrimaryColor(600), // Previously Theme.semantic.interactive.primary
           };
         default:
           return {
@@ -211,7 +217,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
           return getTextColor().inverse;
         case "ghost":
         case "outline":
-          return Theme.semantic.interactive.primary;
+          return getPrimaryColor(600); // Previously Theme.semantic.interactive.primary
         default:
           return getTextColor().primary;
       }
@@ -259,6 +265,21 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       );
     };
 
+    // Get accessibility props
+    const accessibilityProps = getButtonAccessibilityProps(
+      title,
+      disabled ? "Button is disabled" : undefined,
+      disabled,
+      false,
+      [
+        {
+          name: "activate",
+          label: `Activate ${title}`,
+          handler: handlePress,
+        },
+      ],
+    );
+
     return (
       <TouchableOpacity
         ref={ref}
@@ -274,9 +295,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         onPress={handlePress}
         disabled={isDisabled}
         activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel={title}
-        accessibilityState={{ disabled: isDisabled, busy: loading }}
+        {...accessibilityProps}
         {...props}
       >
         {renderContent()}

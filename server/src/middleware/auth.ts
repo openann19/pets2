@@ -1,35 +1,48 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const User = require('../models/User');
-const logger = require('../utils/logger');
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import { Request, Response, NextFunction } from 'express';
+import User from '../models/User';
+import { logger } from '../utils/logger';
+import { AuthenticatedRequest } from '../types';
+
+interface TokenPayload {
+  userId: string;
+  jti: string;
+  typ?: string;
+}
+
+interface TokenPair {
+  accessToken: string;
+  refreshToken: string;
+}
 
 // Generate JWT tokens
 // Includes per-token jti to ensure uniqueness across rapid successive logins.
-const generateTokens = (userId) => {
-  const isTest = process.env.NODE_ENV === 'test';
-  const accessSecret = process.env.JWT_SECRET || (isTest ? 'test-secret' : undefined);
-  const refreshSecret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || (isTest ? 'test-refresh-secret' : undefined);
+export const generateTokens = (userId: string): TokenPair => {
+  const isTest = process.env['NODE_ENV'] === 'test';
+  const accessSecret = process.env['JWT_SECRET'] || (isTest ? 'test-secret' : undefined);
+  const refreshSecret = process.env['JWT_REFRESH_SECRET'] || process.env['JWT_SECRET'] || (isTest ? 'test-refresh-secret' : undefined);
 
-  const accessPayload = { userId, jti: crypto.randomUUID() };
-  const refreshPayload = { userId, jti: crypto.randomUUID(), typ: 'refresh' };
+  const accessPayload: TokenPayload = { userId, jti: crypto.randomUUID() };
+  const refreshPayload: TokenPayload = { userId, jti: crypto.randomUUID(), typ: 'refresh' };
 
-  const accessOptions = {};
+  const accessOptions: jwt.SignOptions = {};
   if (!isTest) {
-    accessOptions.expiresIn = process.env.JWT_ACCESS_EXPIRY || process.env.JWT_EXPIRE || '15m';
+    accessOptions.expiresIn = process.env['JWT_ACCESS_EXPIRY'] || process.env['JWT_EXPIRE'] || '15m';
   }
 
-  const refreshOptions = {
-    expiresIn: process.env.JWT_REFRESH_EXPIRY || process.env.JWT_REFRESH_EXPIRE || '7d'
+  const refreshOptions: jwt.SignOptions = {
+    expiresIn: process.env['JWT_REFRESH_EXPIRY'] || process.env['JWT_REFRESH_EXPIRE'] || '7d'
   };
 
-  const accessToken = jwt.sign(accessPayload, accessSecret, accessOptions);
-  const refreshToken = jwt.sign(refreshPayload, refreshSecret, refreshOptions);
+  const accessToken = jwt.sign(accessPayload, accessSecret!, accessOptions);
+  const refreshToken = jwt.sign(refreshPayload, refreshSecret!, refreshOptions);
 
   return { accessToken, refreshToken };
 };
 
 // Helper: parse cookies from header (no cookie-parser dependency)
-const getTokenFromCookies = (req) => {
+const getTokenFromCookies = (req: Request): string | null => {
   try {
     const cookieHeader = req.headers.cookie;
     if (!cookieHeader) return null;
@@ -46,7 +59,11 @@ const getTokenFromCookies = (req) => {
 };
 
 // Middleware to authenticate JWT tokens
-const authenticateToken = async (req, res, next) => {
+export const authenticateToken = async (
+  req: AuthenticatedRequest, 
+  res: Response, 
+  next: NextFunction
+): Promise<void> => {
   try {
     // Get token from header
     const authHeader = req.headers.authorization;
@@ -284,7 +301,7 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   generateTokens,
   authenticateToken,
   requirePremium,

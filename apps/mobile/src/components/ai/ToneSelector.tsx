@@ -13,7 +13,6 @@ import {
   getBackgroundColor,
   getTextColor,
   getBorderColor,
-  getStatusColor,
   getTextColorString,
 } from "../../theme/helpers";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
@@ -61,7 +60,7 @@ export function ToneSelector({
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Bio Tone</Text>
       <Text style={styles.sectionSubtitle}>
-        Choose the personality for your pet's bio
+        Choose the personality for your pet&apos;s bio
       </Text>
 
       <View style={styles.grid}>

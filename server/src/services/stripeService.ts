@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const stripe = require('stripe');
 const Configuration = require('../models/Configuration');
 const { decrypt } = require('../utils/encryption');

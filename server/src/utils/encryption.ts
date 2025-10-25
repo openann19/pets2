@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Enhanced Encryption Utilities (2025 Standards)
  * - Secure key derivation with scrypt

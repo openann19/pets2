@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Leaderboard Score Model
  * Stores user scores for different leaderboard categories

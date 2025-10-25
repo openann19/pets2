@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/adminAuth');
 const Report = require('../models/Report');

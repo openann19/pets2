@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Health Check Endpoint
  * Comprehensive system health monitoring
@@ -5,7 +6,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const router = express.Router();
+const router: Router = express.Router();
 const logger = require('../utils/logger');
 
 /**
@@ -177,4 +178,4 @@ router.get('/live', (req, res) => {
   res.status(200).send('OK');
 });
 
-module.exports = router;
+export default router;

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Biometric Credential Model
  * Stores WebAuthn biometric authentication credentials

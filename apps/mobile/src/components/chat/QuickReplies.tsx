@@ -30,8 +30,8 @@ export function QuickReplies({
         title={item}
         variant="glass"
         size="sm"
-        magnetic={true}
-        ripple={true}
+        magneticEffect={true}
+        rippleEffect={true}
         onPress={() => {
           onReplySelect(item);
         }}

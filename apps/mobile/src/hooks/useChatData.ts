@@ -15,6 +15,11 @@ export interface Message {
   type: "text" | "image" | "emoji";
   status?: "sending" | "sent" | "failed";
   error?: boolean;
+  reactions?: Array<{
+    emoji: string;
+    count: number;
+    userReacted: boolean;
+  }>;
 }
 
 export interface ChatData {
@@ -33,6 +38,8 @@ export interface ChatActions {
   retryMessage: (messageId: string) => Promise<void>;
   markAsRead: () => Promise<void>;
   clearError: () => void;
+  addReaction: (messageId: string, emoji: string) => Promise<void>;
+  removeReaction: (messageId: string, emoji: string) => Promise<void>;
 }
 
 export interface UseChatDataReturn {
@@ -57,7 +64,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
   const [error, setError] = useState<string | null>(null);
 
   // Refs
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const socket = useSocket();
 
   // Setup socket connection and event listeners
@@ -137,7 +144,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
     } catch (err) {
       const errorMessage =
         "Failed to load messages. Please check your connection and try again.";
-      logger.error("Failed to load messages", { error: err, matchId });
+      logger.error("Failed to load messages", { error: err as Error, matchId });
       setError(errorMessage);
       Alert.alert("Connection Error", errorMessage);
     } finally {
@@ -192,7 +199,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
         }
       } catch (err) {
         logger.error("Failed to send message", {
-          error: err,
+          error: err as Error,
           matchId,
           content,
         });
@@ -241,7 +248,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
           ),
         );
       } catch (err) {
-        logger.error("Failed to retry message", { error: err, messageId });
+        logger.error("Failed to retry message", { error: err as Error, messageId });
         setMessages((prev) =>
           prev.map((msg) =>
             msg._id === retryMessage._id
@@ -261,7 +268,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
       logger.debug("Messages marked as read", { matchId });
       setMessages((prev) => prev.map((msg) => ({ ...msg, read: true })));
     } catch (err) {
-      logger.error("Failed to mark messages as read", { error: err, matchId });
+      logger.error("Failed to mark messages as read", { error: err as Error, matchId });
     }
   }, [matchId]);
 
@@ -269,6 +276,77 @@ export function useChatData(matchId: string): UseChatDataReturn {
   const clearError = useCallback((): void => {
     setError(null);
   }, []);
+
+  // Add reaction to message
+  const addReaction = useCallback(
+    async (messageId: string, emoji: string): Promise<void> => {
+      try {
+        await matchesAPI.addMessageReaction(messageId, emoji);
+        
+        // Update local state optimistically
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg._id === messageId) {
+              const existingReaction = msg.reactions?.find(r => r.emoji === emoji);
+              if (existingReaction) {
+                return {
+                  ...msg,
+                  reactions: msg.reactions?.map(r =>
+                    r.emoji === emoji
+                      ? { ...r, count: r.count + 1, userReacted: true }
+                      : r
+                  ) || []
+                };
+              } else {
+                return {
+                  ...msg,
+                  reactions: [
+                    ...(msg.reactions || []),
+                    { emoji, count: 1, userReacted: true }
+                  ]
+                };
+              }
+            }
+            return msg;
+          })
+        );
+      } catch (err) {
+        logger.error("Failed to add reaction", { error: err as Error, messageId, emoji });
+        Alert.alert("Error", "Failed to add reaction. Please try again.");
+      }
+    },
+    []
+  );
+
+  // Remove reaction from message
+  const removeReaction = useCallback(
+    async (messageId: string, emoji: string): Promise<void> => {
+      try {
+        await matchesAPI.removeMessageReaction(messageId, emoji);
+        
+        // Update local state optimistically
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg._id === messageId) {
+              return {
+                ...msg,
+                reactions: msg.reactions?.map(r =>
+                  r.emoji === emoji
+                    ? { ...r, count: Math.max(0, r.count - 1), userReacted: false }
+                    : r
+                ).filter(r => r.count > 0) || []
+              };
+            }
+            return msg;
+          })
+        );
+      } catch (err) {
+        logger.error("Failed to remove reaction", { error: err as Error, messageId, emoji });
+        Alert.alert("Error", "Failed to remove reaction. Please try again.");
+      }
+    },
+    []
+  );
 
   // Load messages on mount
   useEffect(() => {
@@ -300,6 +378,8 @@ export function useChatData(matchId: string): UseChatDataReturn {
       retryMessage,
       markAsRead,
       clearError,
+      addReaction,
+      removeReaction,
     },
   };
 }

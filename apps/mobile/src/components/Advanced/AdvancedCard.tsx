@@ -569,7 +569,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
             {actions.map((action, index) => (
               <AdvancedButton
                 key={index}
-                icon={action.icon}
+                leftIcon={action.icon}
                 title={action.title}
                 variant={action.variant || "secondary"}
                 size="sm"

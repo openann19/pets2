@@ -1,6 +1,7 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { handleStripeWebhook } = require('../controllers/webhookController');
-const router = express.Router();
+const router: Router = express.Router();
 
 /**
  * Middleware to process raw body for Stripe signature verification
@@ -14,4 +15,4 @@ const rawBodyMiddleware = express.raw({
 // Stripe webhook endpoint
 router.post('/stripe', rawBodyMiddleware, handleStripeWebhook);
 
-module.exports = router;
+export default router;

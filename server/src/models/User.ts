@@ -173,6 +173,28 @@ const userSchema = new Schema<IUser>({
     default: 'active'
   },
 
+  // GDPR & Account Deletion
+  deletionScheduledAt: { type: Date },
+  gracePeriodEndsAt: { type: Date },
+  accountStatus: {
+    type: String,
+    enum: ['active', 'deletion_pending', 'deleted', 'suspended', 'banned'],
+    default: 'active'
+  },
+  deletionReason: { type: String },
+  deletedAt: { type: Date },
+
+  // Data Export
+  dataExportToken: { type: String },
+  dataExportExpiresAt: { type: Date },
+  dataExportStatus: {
+    type: String,
+    enum: ['pending', 'processing', 'completed', 'failed'],
+    default: null
+  },
+  dataExportUrl: { type: String },
+  dataExportCompletedAt: { type: Date },
+
   // Admin & Roles
   role: {
     type: String,

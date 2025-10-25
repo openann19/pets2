@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
@@ -6,6 +7,12 @@ const messageSchema = new mongoose.Schema({
     attachments: [{ type: String }],
     sentAt: { type: Date, default: Date.now },
     readBy: [{ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, readAt: { type: Date, default: Date.now } }],
+    // Message reactions (new field)
+    reactions: [{
+        emoji: { type: String, required: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        reactedAt: { type: Date, default: Date.now }
+    }],
 }, { _id: true });
 
 const conversationSchema = new mongoose.Schema({

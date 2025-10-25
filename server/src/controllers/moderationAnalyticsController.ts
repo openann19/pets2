@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const Report = require('../models/Report');
 const UserBlock = require('../models/UserBlock');
 const UserMute = require('../models/UserMute');

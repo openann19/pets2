@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Smart Notifications Controller
  * Handles notification preferences and delivery

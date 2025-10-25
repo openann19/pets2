@@ -17,6 +17,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { authService } from "../services/AuthService";
 import { biometricService } from "../services/BiometricService";
+import { ModernText } from "../components/typography/HyperTextSkia";
+import {
+  getTextColorString,
+  getPrimaryColor,
+  getStatusColor,
+} from "../theme/helpers";
 
 // Define the navigation props type
 type RootStackParamList = {
@@ -31,6 +37,12 @@ type RegisterScreenProps = NativeStackScreenProps<
 >;
 
 const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
+  // Get theme colors using helpers
+  const primaryColor = getPrimaryColor();
+  const textSecondaryColor = getTextColorString("secondary");
+  const textInverseColor = getTextColorString("inverse");
+  const errorColor = getStatusColor("error");
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -232,19 +244,33 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             style={styles.backButton}
             onPress={() => navigation.navigate("Login")}
           >
-            <Text style={styles.backButtonText}>← Back to Login</Text>
+            <ModernText
+              variant="body"
+              color="primary"
+              style={styles.backButtonText}
+            >
+              ← Back to Login
+            </ModernText>
           </TouchableOpacity>
 
           <View style={styles.header}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>
+            <ModernText variant="h1" color="primary" style={styles.title}>
+              Create Account
+            </ModernText>
+            <ModernText
+              variant="body"
+              color="secondary"
+              style={styles.subtitle}
+            >
               Join PawfectMatch to find matches for your pets
-            </Text>
+            </ModernText>
           </View>
 
           <View style={styles.form}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
+              <ModernText variant="label" color="primary" style={styles.label}>
+                Email
+              </ModernText>
               <TextInput
                 style={styles.input}
                 value={formData.email}
@@ -257,12 +283,16 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 autoCorrect={false}
               />
               {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.email}
+                </Text>
               )}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>First Name</Text>
+              <ModernText variant="label" color="primary" style={styles.label}>
+                First Name
+              </ModernText>
               <TextInput
                 style={styles.input}
                 value={formData.firstName}
@@ -272,12 +302,16 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 placeholder="John"
               />
               {errors.firstName && (
-                <Text style={styles.errorText}>{errors.firstName}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.firstName}
+                </Text>
               )}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Last Name</Text>
+              <ModernText variant="label" color="primary" style={styles.label}>
+                Last Name
+              </ModernText>
               <TextInput
                 style={styles.input}
                 value={formData.lastName}
@@ -287,12 +321,16 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 placeholder="Doe"
               />
               {errors.lastName && (
-                <Text style={styles.errorText}>{errors.lastName}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.lastName}
+                </Text>
               )}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Date of Birth (YYYY-MM-DD)</Text>
+              <ModernText variant="label" color="primary" style={styles.label}>
+                Date of Birth (YYYY-MM-DD)
+              </ModernText>
               <TextInput
                 style={styles.input}
                 value={formData.dateOfBirth}
@@ -303,12 +341,16 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 keyboardType="numbers-and-punctuation"
               />
               {errors.dateOfBirth && (
-                <Text style={styles.errorText}>{errors.dateOfBirth}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.dateOfBirth}
+                </Text>
               )}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
+              <ModernText variant="label" color="primary" style={styles.label}>
+                Password
+              </ModernText>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={styles.passwordInput}
@@ -327,18 +369,24 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                   <Ionicons
                     name={showPassword ? "eye-off" : "eye"}
                     size={20}
-                    color="#666"
+                    color={textSecondaryColor}
                   />
                 </TouchableOpacity>
               </View>
               {errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.password}
+                </Text>
               )}
               {formData.password && (
                 <View style={styles.passwordStrength}>
-                  <Text style={styles.passwordStrengthText}>
+                  <ModernText
+                    variant="caption"
+                    color="secondary"
+                    style={styles.passwordStrengthText}
+                  >
                     Password strength:
-                  </Text>
+                  </ModernText>
                   <View style={styles.strengthBar}>
                     <View
                       style={[
@@ -358,7 +406,9 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Confirm Password</Text>
+              <ModernText variant="label" color="primary" style={styles.label}>
+                Confirm Password
+              </ModernText>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={styles.passwordInput}
@@ -377,12 +427,14 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                   <Ionicons
                     name={showConfirmPassword ? "eye-off" : "eye"}
                     size={20}
-                    color="#666"
+                    color={textSecondaryColor}
                   />
                 </TouchableOpacity>
               </View>
               {errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+                <Text style={[styles.errorText, { color: errorColor }]}>
+                  {errors.confirmPassword}
+                </Text>
               )}
             </View>
 
@@ -394,14 +446,31 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               >
                 <View style={styles.checkbox}>
                   {acceptTerms && (
-                    <Ionicons name="checkmark" size={16} color="#ec4899" />
+                    <Ionicons name="checkmark" size={16} color={primaryColor} />
                   )}
                 </View>
-                <Text style={styles.termsText}>
+                <ModernText
+                  variant="bodySmall"
+                  color="primary"
+                  style={styles.termsText}
+                >
                   I agree to the{" "}
-                  <Text style={styles.termsLink}>Terms of Service</Text> and{" "}
-                  <Text style={styles.termsLink}>Privacy Policy</Text>
-                </Text>
+                  <ModernText
+                    variant="bodySmall"
+                    color="primary"
+                    style={styles.termsLink}
+                  >
+                    Terms of Service
+                  </ModernText>{" "}
+                  and{" "}
+                  <ModernText
+                    variant="bodySmall"
+                    color="primary"
+                    style={styles.termsLink}
+                  >
+                    Privacy Policy
+                  </ModernText>
+                </ModernText>
               </TouchableOpacity>
             </View>
 
@@ -411,9 +480,15 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={textInverseColor} />
               ) : (
-                <Text style={styles.buttonText}>Create Account</Text>
+                <ModernText
+                  variant="button"
+                  color="inverse"
+                  style={styles.buttonText}
+                >
+                  Create Account
+                </ModernText>
               )}
             </TouchableOpacity>
           </View>

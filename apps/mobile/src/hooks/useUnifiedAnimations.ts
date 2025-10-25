@@ -382,7 +382,7 @@ export function useGlowAnimation(
   };
 }
 
-interface UseMagneticEffectReturn {
+export interface UseMagneticEffectReturn {
   handleTouchStart: (
     touchX: number,
     touchY: number,

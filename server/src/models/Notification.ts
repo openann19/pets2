@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Notification Model
  * Stores notification history for users

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * CSRF Protection Middleware
  * Implements double-submit cookie pattern for cookie-based authentication

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');

@@ -44,6 +44,13 @@ export type RootStackParamList = {
   AdminAnalytics: undefined;
   AdminBilling: undefined;
   AdminSecurity: undefined;
+  AdminEnhancedFeatures: undefined;
+  AdminBiometric: undefined;
+  AdminLeaderboard: undefined;
+  AdminNotifications: undefined;
+  AdminAIServices: undefined;
+  AdminExternalServices: undefined;
+  AdminReports: undefined;
   MainTabs: undefined;
   Settings: undefined;
   MyPets: undefined;
@@ -96,6 +103,13 @@ export type AdminStackParamList = {
   AdminAnalytics: undefined;
   AdminBilling: undefined;
   AdminSecurity: undefined;
+  AdminEnhancedFeatures: undefined;
+  AdminBiometric: undefined;
+  AdminLeaderboard: undefined;
+  AdminNotifications: undefined;
+  AdminAIServices: undefined;
+  AdminExternalServices: undefined;
+  AdminReports: undefined;
   AdminChats: undefined;
   AdminUploads: undefined;
   AdminVerifications: undefined;

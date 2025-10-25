@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Biometric Authentication Routes
  * Handles WebAuthn-based biometric authentication endpoints
@@ -15,7 +16,7 @@ const {
   getBiometricStatus
 } = require('../controllers/biometricController');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Validation rules
 const verifyRegistrationValidation = [
@@ -159,4 +160,4 @@ router.get('/status', authenticateToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

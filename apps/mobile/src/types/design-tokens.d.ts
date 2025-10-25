@@ -3,7 +3,7 @@
  * Adds missing properties to fix TypeScript errors
  */
 
-declare module '@pawfectmatch/design-tokens' {
+declare module "@pawfectmatch/design-tokens" {
   export const tokens: {
     colors: {
       primary: Record<string | number, string>;
@@ -27,12 +27,31 @@ declare module '@pawfectmatch/design-tokens' {
     };
     spacing: Record<string, number>;
     borderRadius: Record<string, number>;
-    shadows: Record<string, any>;
-    transitions: Record<string, any>;
+    shadows: Record<
+      string,
+      {
+        shadowColor: string;
+        shadowOffset: { width: number; height: number };
+        shadowOpacity: number;
+        shadowRadius: number;
+        elevation?: number;
+      }
+    >;
+    transitions: Record<
+      string,
+      {
+        duration: number;
+        easing: string;
+        properties?: string[];
+      }
+    >;
     zIndex: Record<string, number | string>;
     utils: {
       withOpacity: (color: string, opacity: number) => string;
-      getResponsiveValue: <T>(values: { sm?: T; md?: T; lg?: T }, screenWidth: number) => T | undefined;
+      getResponsiveValue: <T>(
+        values: { sm?: T; md?: T; lg?: T },
+        screenWidth: number,
+      ) => T | undefined;
       getRandomGradient: () => string;
       hexToRgb: (hex: string) => { r: number; g: number; b: number } | null;
       getContrastColor: (hexColor: string) => string;
@@ -40,9 +59,49 @@ declare module '@pawfectmatch/design-tokens' {
   };
 
   export const VARIANTS: {
-    button: Record<string, any>;
-    card: Record<string, any>;
-    input: Record<string, any>;
+    button: Record<
+      string,
+      {
+        backgroundColor: string;
+        textColor: string;
+        borderColor?: string;
+        borderWidth?: number;
+        borderRadius?: number | string;
+        padding?: Record<string, number | string>;
+        states?: {
+          hover?: Record<string, string | number>;
+          active?: Record<string, string | number>;
+          disabled?: Record<string, string | number>;
+        };
+      }
+    >;
+    card: Record<
+      string,
+      {
+        backgroundColor: string;
+        borderColor?: string;
+        borderWidth?: number;
+        borderRadius?: number | string;
+        padding?: Record<string, number | string>;
+        shadow?: Record<string, string | number>;
+      }
+    >;
+    input: Record<
+      string,
+      {
+        backgroundColor: string;
+        textColor: string;
+        borderColor?: string;
+        borderWidth?: number;
+        borderRadius?: number | string;
+        padding?: Record<string, number | string>;
+        states?: {
+          focus?: Record<string, string | number>;
+          error?: Record<string, string | number>;
+          disabled?: Record<string, string | number>;
+        };
+      }
+    >;
   };
 
   export type ColorScale = string;

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Admin Notification Service
  * Sends notifications to administrators for critical system events

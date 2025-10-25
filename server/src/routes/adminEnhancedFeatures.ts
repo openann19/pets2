@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Admin Enhanced Features Routes
  * Handles admin management of biometric auth, leaderboard, and smart notifications

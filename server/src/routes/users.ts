@@ -1,9 +1,9 @@
-const express = require('express');
-const multer = require('multer');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validation');
-const { authenticateToken } = require('../middleware/auth');
-const {
+import express, { Router } from 'express';
+import multer from 'multer';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validation';
+import { authenticateToken } from '../middleware/auth';
+import {
   getCompleteProfile,
   updateAdvancedProfile,
   updatePrivacySettings,
@@ -24,9 +24,9 @@ const {
   deleteAccount,
   updatePrivacy,
   updateFilters
-} = require('../controllers/userController');
+} from '../controllers/userController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Configure multer for memory storage (Cloudinary upload)
 const upload = multer({
@@ -98,4 +98,4 @@ router.delete('/account', deleteAccount);
 router.put('/privacy', updatePrivacy);
 router.put('/filters', updateFilters);
 
-module.exports = router;
+export default router;

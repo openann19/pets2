@@ -78,19 +78,19 @@ export function MatchModal({
               title="Keep Swiping"
               variant="glass"
               size="lg"
-              magnetic={true}
-              ripple={true}
+              magneticEffect={true}
+              rippleEffect={true}
               onPress={onKeepSwiping}
             />
             <EliteButton
               title="Send Message"
               variant="holographic"
               size="lg"
-              icon="chatbubble"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              shimmer={true}
+              leftIcon="chatbubble"
+              magneticEffect={true}
+              rippleEffect={true}
+              glowEffect={true}
+              shimmerEffect={true}
               onPress={onSendMessage}
             />
           </View>

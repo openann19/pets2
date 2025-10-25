@@ -1,7 +1,25 @@
-const logger = require('../utils/logger');
-const { sendAdminNotification } = require('../services/adminNotificationService');
+import { Request, Response, NextFunction } from 'express';
+import { logger } from '../utils/logger';
+import { sendAdminNotification } from '../services/adminNotificationService';
+import { AuthenticatedRequest } from '../types';
 
-const errorHandler = (err, req, res, _next) => {
+interface ErrorWithStatusCode extends Error {
+  statusCode?: number;
+  code?: number;
+  keyValue?: Record<string, any>;
+  errors?: Record<string, any>;
+  name: string;
+  type?: string;
+  retryAfter?: number;
+  status?: number;
+}
+
+const errorHandler = (
+  err: ErrorWithStatusCode, 
+  req: AuthenticatedRequest, 
+  res: Response, 
+  _next: NextFunction
+): void => {
   void _next;
   let error = { ...err };
   error.message = err.message;
@@ -173,4 +191,4 @@ const errorHandler = (err, req, res, _next) => {
   res.status(statusCode).json(response);
 };
 
-module.exports = errorHandler;
+export default errorHandler;

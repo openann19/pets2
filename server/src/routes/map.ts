@@ -1,10 +1,11 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const Pet = require('../models/Pet');
 const Match = require('../models/Match');
 const logger = require('../utils/logger');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // @desc    Get map statistics
 // @route   GET /api/map/stats
@@ -214,4 +215,4 @@ function toRadians(degrees) {
   return degrees * (Math.PI / 180);
 }
 
-module.exports = router;
+export default router;

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const {
@@ -9,7 +10,7 @@ const {
     getMyModerationState
 } = require('../controllers/moderationController');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All routes require authentication
 router.use(authenticateToken);
@@ -28,4 +29,4 @@ router.delete('/mute/:mutedUserId', unmuteUser);
 // Get current user's blocks and mutes
 router.get('/me', getMyModerationState);
 
-module.exports = router;
+export default router;

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const User = require('../models/User');
 const logger = require('../utils/logger');
 

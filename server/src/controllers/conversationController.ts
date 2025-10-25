@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 'use strict';
 
 const mongoose = require('mongoose');

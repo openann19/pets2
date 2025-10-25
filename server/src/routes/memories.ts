@@ -1,8 +1,9 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const { getMemories } = require('../controllers/memoriesController');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All memory routes require authentication
 router.use(authenticateToken);
@@ -10,4 +11,4 @@ router.use(authenticateToken);
 // Routes
 router.get('/:matchId', getMemories);
 
-module.exports = router;
+export default router;

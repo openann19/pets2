@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 // WebRTC signaling socket handler for PawfectMatch calling
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');

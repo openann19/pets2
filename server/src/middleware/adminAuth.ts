@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Admin Authentication Middleware
  * Ensures only authenticated admin users can access admin routes

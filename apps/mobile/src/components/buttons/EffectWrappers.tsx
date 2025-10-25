@@ -13,8 +13,8 @@
 
 import type { ReactNode } from "react";
 import React, { forwardRef } from "react";
-import { View, type ViewStyle } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { View, type ViewStyle, type StyleProp } from "react-native";
+import Animated from "react-native-reanimated";
 
 import {
   useGlowAnimation,
@@ -29,7 +29,7 @@ import { getPrimaryColor } from "../../theme/helpers";
 // === TYPES ===
 interface EffectWrapperProps {
   children: ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   disabled?: boolean;
 }
 
@@ -40,7 +40,7 @@ interface WithGlowFXProps extends EffectWrapperProps {
   duration?: number;
 }
 
-export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
+export const WithGlowFX = forwardRef<Animated.View, WithGlowFXProps>(
   (
     {
       children,
@@ -74,16 +74,20 @@ interface WithMagneticFXProps extends EffectWrapperProps {
   maxDistance?: number;
 }
 
-export const WithMagneticFX = forwardRef<View, WithMagneticFXProps>(
+export const WithMagneticFX = forwardRef<Animated.View, WithMagneticFXProps>(
   (
     { children, sensitivity = 0.3, maxDistance = 30, style, disabled = false },
     ref,
   ) => {
+    const magneticEffect = useMagneticEffect(
+      disabled ? 0 : sensitivity,
+      maxDistance,
+    );
     const {
       handleTouchStart,
       handleTouchEnd,
       animatedStyle: magneticStyle,
-    } = useMagneticEffect(disabled ? 0 : sensitivity, maxDistance);
+    } = magneticEffect;
 
     return (
       <Animated.View
@@ -113,40 +117,12 @@ interface WithRippleFXProps extends EffectWrapperProps {
 }
 
 export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
-  (
-    { children, color = "rgba(255, 255, 255, 0.3)", style, disabled = false },
-    ref,
-  ) => {
-    const { startRipple, animatedStyle: rippleStyle } = useRippleEffect();
-
-    const handlePressIn = () => {
-      if (!disabled) {
-        startRipple();
-      }
-    };
+  ({ children, style }, ref) => {
+    const { animatedStyle } = useRippleEffect();
 
     return (
       <View ref={ref} style={style}>
-        {children}
-        {!disabled && (
-          <Animated.View
-            style={[
-              {
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                backgroundColor: color,
-                marginTop: -50,
-                marginLeft: -50,
-              },
-              rippleStyle,
-            ]}
-            pointerEvents="none"
-          />
-        )}
+        <Animated.View style={animatedStyle}>{children}</Animated.View>
       </View>
     );
   },
@@ -161,39 +137,12 @@ interface WithShimmerFXProps extends EffectWrapperProps {
 }
 
 export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
-  (
-    {
-      children,
-      duration = 2000,
-      color = "rgba(255, 255, 255, 0.1)",
-      style,
-      disabled = false,
-    },
-    ref,
-  ) => {
-    const { animatedStyle: shimmerStyle } = useShimmerEffect(
-      disabled ? 0 : duration,
-    );
+  ({ children, style }, ref) => {
+    const { animatedStyle: shimmerStyle } = useShimmerEffect();
 
     return (
       <View ref={ref} style={style}>
-        {children}
-        {!disabled && (
-          <Animated.View
-            style={[
-              {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: color,
-              },
-              shimmerStyle,
-            ]}
-            pointerEvents="none"
-          />
-        )}
+        <Animated.View style={shimmerStyle}>{children}</Animated.View>
       </View>
     );
   },
@@ -206,7 +155,7 @@ interface WithPressFXProps extends EffectWrapperProps {
   config?: "gentle" | "standard" | "bouncy" | "snappy";
 }
 
-export const WithPressFX = forwardRef<View, WithPressFXProps>(
+export const WithPressFX = forwardRef<Animated.View, WithPressFXProps>(
   ({ children, config = "snappy", style, disabled = false }, ref) => {
     const {
       handlePressIn,
@@ -216,7 +165,7 @@ export const WithPressFX = forwardRef<View, WithPressFXProps>(
 
     return (
       <Animated.View
-        ref={ref}
+        ref={ref as any}
         style={[pressStyle, style]}
         onTouchStart={disabled ? undefined : handlePressIn}
         onTouchEnd={disabled ? undefined : handlePressOut}
@@ -237,19 +186,20 @@ interface WithGradientFXProps extends EffectWrapperProps {
 }
 
 export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
-  ({ children, gradient, colors, angle = 135, style }, ref) => {
-    const { LinearGradient } = require("expo-linear-gradient");
+  ({ children, gradient, colors, style }, ref) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { LinearGradient } = require("expo-linear-gradient") as any;
 
-    const gradientConfig = gradient ? Theme.gradients[gradient] : null;
-    const gradientColors = colors ||
-      gradientConfig?.colors || [
+    const gradientConfig = gradient ? Theme.gradients[gradient] : undefined;
+    const gradientColors: string[] = colors ||
+      (Array.isArray(gradientConfig) ? gradientConfig : []) || [
         getPrimaryColor(500),
-        Theme.colors.primary[400],
+        Theme.colors.primary[400] || Theme.colors.primary[400],
       ];
 
     return (
       <LinearGradient
-        ref={ref}
+        ref={ref as any}
         colors={gradientColors}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

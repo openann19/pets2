@@ -1,10 +1,10 @@
-const express = require('express');
-const { body } = require('express-validator');
-const rateLimit = require('express-rate-limit');
-const { validate } = require('../middleware/validation');
-const { authenticateToken, refreshAccessToken } = require('../middleware/auth');
-const { changePassword, logoutAll } = require('../controllers/sessionController');
-const {
+import express, { Router } from 'express';
+import { body } from 'express-validator';
+import rateLimit from 'express-rate-limit';
+import { validate } from '../middleware/validation';
+import { authenticateToken, refreshAccessToken } from '../middleware/auth';
+import { changePassword, logoutAll } from '../controllers/sessionController';
+import {
   setup2FASmsEmail,
   verify2FASmsEmail,
   send2FACode,
@@ -23,9 +23,9 @@ const {
   verify2FA,
   validate2FA,
   disable2FA
-} = require('../controllers/authController');
+} from '../controllers/authController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Rate limiting for auth endpoints
 const authLimiter = rateLimit({
@@ -101,4 +101,4 @@ router.post('/biometric/setup', authenticateToken, setupBiometric);
 router.post('/biometric/disable', authenticateToken, disableBiometric);
 router.post('/biometric/refresh', authenticateToken, refreshBiometricToken);
 
-module.exports = router;
+export default router;

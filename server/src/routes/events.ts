@@ -1,9 +1,10 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const Event = require('../models/Event');
 const logger = require('../utils/logger');
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // @desc    Get nearby events
 // @route   POST /api/events/nearby
@@ -131,4 +132,4 @@ function toRadians(degrees) {
   return degrees * (Math.PI / 180);
 }
 
-module.exports = router;
+export default router;

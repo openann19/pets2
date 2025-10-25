@@ -7,18 +7,26 @@ interface SwipeHeaderProps {
   onBack: () => void;
   onMatches: () => void;
   onFilter: () => void;
+  onBoost?: () => void;
   showFilters?: boolean;
   canUndo?: boolean;
   onUndo?: () => void;
+  isPremium?: boolean;
+  boostActive?: boolean;
+  boostExpiresAt?: string;
 }
 
 export function SwipeHeader({
   onBack,
   onMatches,
   onFilter,
+  onBoost,
   showFilters = false,
   canUndo = false,
   onUndo,
+  isPremium = false,
+  boostActive = false,
+  boostExpiresAt,
 }: SwipeHeaderProps) {
   return (
     <View style={styles.container}>
@@ -47,6 +55,30 @@ export function SwipeHeader({
               style={styles.undoGradient}
             >
               <Ionicons name="arrow-undo" size={16} color="#fff" />
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+
+        {/* Boost Button */}
+        {onBoost && (
+          <TouchableOpacity
+            style={[styles.actionButton, boostActive && styles.boostActive]}
+            onPress={onBoost}
+            activeOpacity={0.7}
+          >
+            <LinearGradient
+              colors={
+                boostActive
+                  ? ["#f59e0b", "#d97706"]
+                  : ["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]
+              }
+              style={styles.actionButtonGradient}
+            >
+              <Ionicons
+                name={boostActive ? "flash" : "flash-outline"}
+                size={20}
+                color="#fff"
+              />
             </LinearGradient>
           </TouchableOpacity>
         )}
@@ -146,6 +178,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 4,
+  },
+  boostActive: {
+    shadowColor: "#f59e0b",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 6,
   },
   actionButtonGradient: {
     flex: 1,

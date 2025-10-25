@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Notification Preference Model
  * Stores user notification preferences and settings

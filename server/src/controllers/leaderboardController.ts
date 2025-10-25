@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Leaderboard Controller
  * Handles leaderboard functionality and scoring

@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const Joi = require('joi');
 
 // Custom validation middleware using Joi

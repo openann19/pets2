@@ -106,12 +106,12 @@ class OfflineSyncService {
 
     // Try to sync immediately if online
     if (this.isOnline) {
-      void this.processQueue().catch((error: unknown) => {
+      this.processQueue().catch((error: unknown) => {
         logger.error("Error processing queue:", error);
       });
     }
 
-    this.notifyListeners();
+    void this.notifyListeners();
     return queueItem.id;
   }
 
@@ -145,12 +145,12 @@ class OfflineSyncService {
     });
 
     if (this.isOnline) {
-      void this.processQueue().catch((error: unknown) => {
+      this.processQueue().catch((error: unknown) => {
         logger.error("Error processing queue:", error);
       });
     }
 
-    this.notifyListeners();
+    void this.notifyListeners();
     return queueItem.id;
   }
 
@@ -188,7 +188,7 @@ class OfflineSyncService {
       (item) => item.retryCount < this.MAX_RETRY_COUNT,
     );
     await this.persistQueue();
-    this.notifyListeners();
+    void this.notifyListeners();
     logger.info("Failed items cleared from offline queue");
   }
 
@@ -237,27 +237,27 @@ class OfflineSyncService {
 
       if (!wasOnline && this.isOnline) {
         logger.info("Network connection restored, starting sync");
-        void this.processQueue().catch((error: unknown) => {
+        this.processQueue().catch((error: unknown) => {
           logger.error("Error processing queue:", error);
         });
       } else if (wasOnline && !this.isOnline) {
         logger.info("Network connection lost");
       }
 
-      this.notifyListeners();
+      void this.notifyListeners();
     });
 
     // Get initial state
     void NetInfo.fetch().then((state: NetInfoState) => {
       this.isOnline = state.isConnected ?? false;
-      this.notifyListeners();
+      void this.notifyListeners();
     });
   }
 
   private startBackgroundSync(): void {
     setInterval(() => {
       if (this.isOnline && !this.syncInProgress && this.queue.length > 0) {
-        void this.processQueue().catch((error: unknown) => {
+        this.processQueue().catch((error: unknown) => {
           logger.error("Error processing queue:", error);
         });
       }
@@ -270,7 +270,7 @@ class OfflineSyncService {
     }
 
     this.syncInProgress = true;
-    this.notifyListeners();
+    void this.notifyListeners();
 
     try {
       // Sort queue by priority (critical > high > normal > low)
@@ -326,14 +326,21 @@ class OfflineSyncService {
       logger.error("Queue processing failed", { error });
     } finally {
       this.syncInProgress = false;
-      this.notifyListeners();
+      void this.notifyListeners();
     }
   }
 
   private async processQueueItem(item: OfflineQueueItem): Promise<void> {
     // Import the API service dynamically to avoid circular dependencies
-    const apiModule = await import("./api");
-    const apiService = apiModule.api;
+    // This is safe as the api module is stable and well-defined
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const apiModule = require("./api") as unknown as { api: unknown };
+    const apiService = apiModule.api as {
+      request: (
+        url: string,
+        options?: { method: string; body?: string },
+      ) => Promise<unknown>;
+    };
 
     switch (item.method) {
       case "GET":

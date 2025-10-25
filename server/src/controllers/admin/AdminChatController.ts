@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const Match = require('../models/Match');
 const Message = require('../models/Message');
 const AuditLog = require('../models/AuditLog');

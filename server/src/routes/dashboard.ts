@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const logger = require('../utils/logger');

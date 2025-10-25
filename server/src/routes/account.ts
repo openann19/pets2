@@ -1,16 +1,16 @@
-const express = require('express');
-const { body } = require('express-validator');
-const { authenticateToken } = require('../middleware/auth');
-const { validate } = require('../middleware/validation');
-const {
+import express, { Router } from 'express';
+import { body } from 'express-validator';
+import { authenticateToken } from '../middleware/auth';
+import { validate } from '../middleware/validation';
+import {
   getAccountStatus,
   requestDataExport,
   cancelAccountDeletion,
   initiateAccountDeletion,
   getProfileStats
-} = require('../controllers/accountController');
+} from '../controllers/accountController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // All account routes require authentication
 router.use(authenticateToken);
@@ -40,4 +40,4 @@ router.post('/delete', [
 // Profile stats (different from user stats - includes pets, matches, messages counts)
 router.get('/profile-stats', getProfileStats);
 
-module.exports = router;
+export default router;

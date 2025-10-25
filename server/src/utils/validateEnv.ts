@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Enhanced Environment Variable Validation (2025 Standards)
  * - Comprehensive validation with schema-based approach

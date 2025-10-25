@@ -16,7 +16,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -24,6 +23,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // Removed gradients for a more refined, solid-color design
 
 import { useTheme } from "../contexts/ThemeContext";
+import {
+  ModernText,
+  Heading1,
+  Heading2,
+  Heading3,
+  Body,
+  BodySmall,
+  Caption,
+  Label,
+  ButtonText,
+  GradientHeading,
+  GradientText,
+  HolographicText,
+} from "../components/typography/HyperTextSkia";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -229,17 +242,21 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
             ]}
           >
             <Ionicons name="star" size={80} color="#fff" />
-            <Text style={styles.premiumActiveTitle}>You're Premium!</Text>
-            <Text style={styles.premiumActiveSubtitle}>
+            <Heading1 style={styles.premiumActiveTitle}>
+              You're Premium!
+            </Heading1>
+            <Body style={styles.premiumActiveSubtitle}>
               Enjoy all the premium features
-            </Text>
+            </Body>
             <TouchableOpacity
               style={styles.manageButton}
               onPress={() => {
                 navigation.navigate("ManageSubscription");
               }}
             >
-              <Text style={styles.manageButtonText}>Manage Subscription</Text>
+              <ButtonText style={styles.manageButtonText}>
+                Manage Subscription
+              </ButtonText>
             </TouchableOpacity>
           </View>
         </View>
@@ -273,13 +290,13 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
         >
           <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.white }]}>
+        <Heading2 style={[styles.headerTitle, { color: colors.white }]}>
           Go Premium
-        </Text>
+        </Heading2>
         <TouchableOpacity onPress={handleRestorePurchases}>
-          <Text style={[styles.restoreText, { color: colors.primary }]}>
+          <Body style={[styles.restoreText, { color: colors.primary }]}>
             Restore
-          </Text>
+          </Body>
         </TouchableOpacity>
       </View>
 
@@ -287,19 +304,19 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
         {/* Holographic Hero */}
         <View style={[styles.heroSection, styles.holographicBg]}>
           <Ionicons name="star" size={60} color="#fff" />
-          <Text style={[styles.heroTitle, styles.holoText]}>
+          <HolographicText style={[styles.heroTitle, styles.holoText]}>
             Unlock Premium Features
-          </Text>
-          <Text style={[styles.heroSubtitle, styles.holoTextSoft]}>
+          </HolographicText>
+          <HolographicText style={[styles.heroSubtitle, styles.holoTextSoft]}>
             Find your pet's perfect match faster with premium features
-          </Text>
+          </HolographicText>
         </View>
 
         {/* Features Grid */}
         <View style={styles.featuresSection}>
-          <Text style={[styles.sectionTitle, { color: colors.white }]}>
+          <Heading2 style={[styles.sectionTitle, { color: colors.white }]}>
             What You'll Get
-          </Text>
+          </Heading2>
           <View style={styles.featuresGrid}>
             {premiumFeatures.map((feature, index) => (
               <View
@@ -321,14 +338,14 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                     color={feature.color}
                   />
                 </View>
-                <Text style={[styles.featureTitle, { color: colors.white }]}>
+                <Label style={[styles.featureTitle, { color: colors.white }]}>
                   {feature.title}
-                </Text>
-                <Text
+                </Label>
+                <BodySmall
                   style={[styles.featureDescription, { color: colors.gray300 }]}
                 >
                   {feature.description}
-                </Text>
+                </BodySmall>
               </View>
             ))}
           </View>
@@ -336,9 +353,9 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Pricing Plans */}
         <View style={styles.pricingSection}>
-          <Text style={[styles.sectionTitle, { color: colors.white }]}>
+          <Heading2 style={[styles.sectionTitle, { color: colors.white }]}>
             Choose Your Plan
-          </Text>
+          </Heading2>
           {premiumPlans.map((plan) => (
             <TouchableOpacity
               key={plan.id}
@@ -363,7 +380,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                     { backgroundColor: colors.primary },
                   ]}
                 >
-                  <Text style={styles.popularText}>Most Popular</Text>
+                  <Caption style={styles.popularText}>Most Popular</Caption>
                 </View>
               )}
               {plan.savings && (
@@ -373,22 +390,22 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                     { backgroundColor: colors.success },
                   ]}
                 >
-                  <Text style={styles.savingsText}>{plan.savings}</Text>
+                  <Caption style={styles.savingsText}>{plan.savings}</Caption>
                 </View>
               )}
               <View style={styles.planHeader}>
-                <Text style={[styles.planName, { color: colors.white }]}>
+                <Heading3 style={[styles.planName, { color: colors.white }]}>
                   {plan.name}
-                </Text>
+                </Heading3>
                 <View style={styles.planPricing}>
-                  <Text style={[styles.planPrice, { color: colors.white }]}>
+                  <Heading2 style={[styles.planPrice, { color: colors.white }]}>
                     ${plan.price}
-                  </Text>
-                  <Text
+                  </Heading2>
+                  <Body
                     style={[styles.planDuration, { color: colors.gray400 }]}
                   >
                     /{plan.duration}
-                  </Text>
+                  </Body>
                 </View>
               </View>
               <View style={styles.planFeatures}>
@@ -399,14 +416,14 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                       size={16}
                       color={colors.success}
                     />
-                    <Text
+                    <BodySmall
                       style={[
                         styles.planFeatureText,
                         { color: colors.gray300 },
                       ]}
                     >
                       {feature}
-                    </Text>
+                    </BodySmall>
                   </View>
                 ))}
               </View>
@@ -445,34 +462,36 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
             ) : (
               <Ionicons name="star" size={20} color="#fff" />
             )}
-            <Text style={styles.subscribeButtonText}>
+            <ButtonText style={styles.subscribeButtonText}>
               {isLoading
                 ? "Processing..."
                 : `Start ${premiumPlans.find((p) => p.id === selectedPlan)?.name} Plan`}
-            </Text>
+            </ButtonText>
           </Animated.View>
         </TouchableOpacity>
 
         {/* Terms */}
         <View style={styles.termsSection}>
-          <Text style={[styles.termsText, { color: colors.gray500 }]}>
+          <BodySmall style={[styles.termsText, { color: colors.gray500 }]}>
             Subscription automatically renews unless cancelled at least 24 hours
             before the end of the current period.
-          </Text>
+          </BodySmall>
           <View style={styles.termsLinks}>
             <TouchableOpacity>
-              <Text style={[styles.termsLink, { color: colors.primary }]}>
+              <BodySmall style={[styles.termsLink, { color: colors.primary }]}>
                 Terms of Service
-              </Text>
+              </BodySmall>
             </TouchableOpacity>
-            <Text style={[styles.termsSeparator, { color: colors.gray500 }]}>
+            <BodySmall
+              style={[styles.termsSeparator, { color: colors.gray500 }]}
+            >
               {" "}
               •{" "}
-            </Text>
+            </BodySmall>
             <TouchableOpacity>
-              <Text style={[styles.termsLink, { color: colors.primary }]}>
+              <BodySmall style={[styles.termsLink, { color: colors.primary }]}>
                 Privacy Policy
-              </Text>
+              </BodySmall>
             </TouchableOpacity>
           </View>
         </View>

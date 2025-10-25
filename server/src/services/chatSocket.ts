@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 const jwt = require('jsonwebtoken');
 const Match = require('../models/Match');
 const User = require('../models/User');

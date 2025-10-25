@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Admin Enhanced Features Controller
  * Manages biometric auth, leaderboard, and smart notifications from admin console

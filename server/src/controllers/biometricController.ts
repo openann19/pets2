@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Biometric Authentication Controller
  * Handles WebAuthn-based biometric authentication

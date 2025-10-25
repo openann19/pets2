@@ -1,3 +1,4 @@
+export {};// Added to mark file as a module
 /**
  * Admin KYC Management Controller
  * Handles identity verification and compliance management

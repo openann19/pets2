@@ -15,6 +15,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useTheme } from "../contexts/ThemeContext";
+import { api } from "../services/api";
 
 interface BlockedUser {
   id: string;
@@ -45,7 +46,7 @@ function BlockedUsersScreen({
       else setLoading(true);
 
       // Fetch real blocked users from API
-      const blockedUsersData = await matchesAPI.getBlockedUsers();
+      const blockedUsersData = await api.getBlockedUsers();
       setBlockedUsers(blockedUsersData);
     } catch (error) {
       logger.error("Failed to load blocked users:", { error });
@@ -75,7 +76,7 @@ function BlockedUsersScreen({
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
                 // Call real API to unblock user
-                await matchesAPI.unblockUser(userId);
+                await api.unblockUser(userId);
 
                 setBlockedUsers((prev) =>
                   prev.filter((user) => user.id !== userId),
