@@ -93,6 +93,9 @@ export interface Message {
     videoUrl?: string;
     duration?: number;
   };
+  // Backward compatibility aliases
+  messageType?: 'text' | 'image' | 'voice' | 'video';
+  sentAt?: string;
 }
 
 // Swipe Model
