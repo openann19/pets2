@@ -186,3 +186,4 @@ const response: AuthResponse = await api.auth.login(credentials);
 **Duration**: Day 1-2 of Week 1
 **Next**: Week 1 Days 3-4 - Swipe Screen Fixes
 
+

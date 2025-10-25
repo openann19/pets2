@@ -224,6 +224,17 @@ export const SPACING = {
   72: '18rem',
   80: '20rem',
   96: '24rem',
+  // Semantic aliases for backward compatibility
+  xs: '0.25rem',    // 1
+  sm: '0.5rem',     // 2
+  md: '0.75rem',    // 3
+  lg: '1rem',       // 4
+  xl: '1.25rem',    // 5
+  '2xl': '1.5rem',  // 6
+  '3xl': '2rem',    // 8
+  '4xl': '3rem',    // 12
+  '5xl': '4rem',    // 16
+  '6xl': '5rem',    // 20
 } as const;
 
 // ====== TYPOGRAPHY ======

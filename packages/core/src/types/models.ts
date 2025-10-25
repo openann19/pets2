@@ -29,6 +29,7 @@ export interface User {
 // Pet Model
 export interface Pet {
   _id: string;
+  id?: string; // Alias for _id for backward compatibility
   owner: string;
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
