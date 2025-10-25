@@ -123,7 +123,7 @@ export function createBackgroundStyle(variant: 'primary' | 'secondary' | 'tertia
  * Create a shadow style object
  */
 export function createShadowStyle(shadow: 'sm' | 'md' | 'lg' | 'xl' = 'sm') {
-  return Theme.shadows[shadow];
+  return Theme.shadows.depth[shadow];
 }
 
 // ====== LEGACY COMPATIBILITY ======

@@ -126,12 +126,12 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: getBackgroundColor(Theme, 'primary'),
+    backgroundColor: getBackgroundColor('primary'),
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    ...createShadowStyle(Theme, 'sm'),
+    ...createShadowStyle('sm'),
   },
   selectedCard: {
     shadowOffset: { width: 0, height: 4 },

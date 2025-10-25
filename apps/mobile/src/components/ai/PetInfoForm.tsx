@@ -49,7 +49,7 @@ export function PetInfoForm({
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
-          placeholderTextColor={getTextColor(Theme, "secondary")}
+          placeholderTextColor={getTextColor("secondary")}
           maxLength={50}
         />
         {validationErrors.petName && (
@@ -65,7 +65,7 @@ export function PetInfoForm({
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
-          placeholderTextColor={getTextColor(Theme, "secondary")}
+          placeholderTextColor={getTextColor("secondary")}
           maxLength={100}
         />
         {validationErrors.petBreed && (
@@ -81,7 +81,7 @@ export function PetInfoForm({
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
-          placeholderTextColor={getTextColor(Theme, "secondary")}
+          placeholderTextColor={getTextColor("secondary")}
           maxLength={50}
         />
         {validationErrors.petAge && (
@@ -100,7 +100,7 @@ export function PetInfoForm({
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
-          placeholderTextColor={getTextColor(Theme, "secondary")}
+          placeholderTextColor={getTextColor("secondary")}
           multiline
           numberOfLines={4}
           maxLength={500}
