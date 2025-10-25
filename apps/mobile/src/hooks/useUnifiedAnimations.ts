@@ -454,6 +454,89 @@ export function useMagneticEffect(
   };
 }
 
+// === 7. RIPPLE EFFECT HOOK (STUB) ===
+export function useRippleEffect() {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  const trigger = useCallback(() => {
+    scale.value = withSequence(
+      withTiming(1.2, { duration: 200 }),
+      withTiming(1, { duration: 200 }),
+    );
+    opacity.value = withSequence(
+      withTiming(0.7, { duration: 200 }),
+      withTiming(1, { duration: 200 }),
+    );
+  }, [scale, opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+  return { trigger, animatedStyle };
+}
+
+// === 8. SHIMMER EFFECT HOOK (STUB) ===
+export function useShimmerEffect() {
+  const translateX = useSharedValue(-100);
+
+  useEffect(() => {
+    translateX.value = withSequence(
+      withDelay(
+        500,
+        withTiming(100, { duration: 1500 }),
+      ),
+    );
+  }, [translateX]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  return { animatedStyle };
+}
+
+// === 9. STAGGERED ANIMATION HOOK (STUB) ===
+export function useStaggeredAnimation(index: number = 0, delay: number = 100) {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+
+  useEffect(() => {
+    const staggerDelay = index * delay;
+    opacity.value = withDelay(staggerDelay, withTiming(1, { duration: 300 }));
+    translateY.value = withDelay(staggerDelay, withTiming(0, { duration: 300 }));
+  }, [index, delay, opacity, translateY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return { animatedStyle };
+}
+
+// === 10. SCROLL ANIMATION HOOK (STUB) ===
+export function useScrollAnimation() {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useCallback((event: any) => {
+    scrollY.value = event.nativeEvent.contentOffset.y;
+  }, [scrollY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      scrollY.value,
+      [0, 100],
+      [1, 0],
+      Extrapolate.CLAMP,
+    ),
+  }));
+
+  return { scrollHandler, animatedStyle, scrollY };
+}
+
 // === EXPORT ALL HOOKS ===
 export const UnifiedAnimations = {
   useSpringAnimation,
@@ -462,6 +545,10 @@ export const UnifiedAnimations = {
   usePressAnimation,
   useGlowAnimation,
   useMagneticEffect,
+  useRippleEffect,
+  useShimmerEffect,
+  useStaggeredAnimation,
+  useScrollAnimation,
 };
 
 export default UnifiedAnimations;

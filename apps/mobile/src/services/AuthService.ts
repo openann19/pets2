@@ -6,6 +6,7 @@ import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 import { logger } from "@pawfectmatch/core";
 import { api } from "./api";
+import type { AuthResponse, UserProfileResponse } from "@pawfectmatch/core";
 
 // Types for authentication
 export interface LoginCredentials {
@@ -13,19 +14,7 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    profileComplete: boolean;
-    subscriptionStatus: string;
-    createdAt: string;
-  };
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
+// Use the imported AuthResponse type from core
 
 export interface RegisterData {
   email: string;
@@ -40,14 +29,8 @@ export interface ResetPasswordData {
   confirmPassword: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  profileComplete: boolean;
-  subscriptionStatus: string;
-  createdAt: string;
-}
+// Use the imported UserProfileResponse type from core
+export type User = UserProfileResponse;
 
 export interface BiometricCredentials {
   email: string;
@@ -195,10 +178,7 @@ class AuthService {
       }
 
       // Call refresh endpoint to get new tokens
-      const response = await api.request<AuthResponse>("/auth/refresh-token", {
-        method: "POST",
-        body: JSON.stringify({ refreshToken }),
-      });
+      const response = await api.auth.refreshToken(refreshToken);
 
       // Store new tokens
       await this.storeAuthData(response);
@@ -358,22 +338,16 @@ class AuthService {
       const credentials: BiometricCredentials = JSON.parse(storedCredentials);
 
       // Perform login with stored email and a special biometric flag
-      const response = await api.request<AuthResponse>(
-        "/auth/biometric-login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: credentials.email,
-            biometricToken: credentials.biometricToken,
-          }),
-        },
-      );
+      const response = await api.auth.biometricLogin({
+        email: credentials.email,
+        biometricToken: credentials.biometricToken,
+      });
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
       logger.info("User logged in with biometrics", {
-        userId: response.user.id,
+        userId: response.user._id,
       });
       return response;
     } catch (error) {
@@ -390,15 +364,12 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await api.request<AuthResponse>("/auth/login", {
-        method: "POST",
-        body: JSON.stringify(credentials),
-      });
+      const response = await api.auth.login(credentials);
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User logged in successfully", { userId: response.user.id });
+      logger.info("User logged in successfully", { userId: response.user._id });
       return response;
     } catch (error) {
       logger.error("Login failed", { error, email: credentials.email });
@@ -422,17 +393,15 @@ class AuthService {
       const registerData = {
         email: data.email,
         password: data.password,
-        name: data.name,
+        firstName: data.name.split(' ')[0] || '',
+        lastName: data.name.split(' ').slice(1).join(' ') || '',
       };
-      const response = await api.request<AuthResponse>("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(registerData),
-      });
+      const response = await api.auth.register(registerData);
 
       // Store authentication data securely
       await this.storeAuthData(response);
 
-      logger.info("User registered successfully", { userId: response.user.id });
+      logger.info("User registered successfully", { userId: response.user._id });
       return response;
     } catch (error) {
       logger.error("Registration failed", { error, email: data.email });
@@ -445,20 +414,14 @@ class AuthService {
    */
   async logout(): Promise<void> {
     try {
-      const refreshToken = await this.getRefreshToken();
-      if (refreshToken) {
-        // Notify server about logout (optional)
-        try {
-          await api.request("/auth/logout", {
-            method: "POST",
-            body: JSON.stringify({ refreshToken }),
-          });
-        } catch (error) {
-          // Ignore server logout errors
-          logger.warn("Server logout failed, continuing with local logout", {
-            error,
-          });
-        }
+      // Notify server about logout (optional)
+      try {
+        await api.auth.logout();
+      } catch (error) {
+        // Ignore server logout errors
+        logger.warn("Server logout failed, continuing with local logout", {
+          error,
+        });
       }
 
       // Clear all stored auth data
@@ -481,10 +444,7 @@ class AuthService {
         return null;
       }
 
-      const response = await api.request<AuthResponse>("/auth/refresh", {
-        method: "POST",
-        body: JSON.stringify({ refreshToken }),
-      });
+      const response = await api.auth.refreshToken(refreshToken);
 
       // Store new tokens
       await this.storeAuthData(response);
@@ -504,13 +464,7 @@ class AuthService {
     email: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.request<{ success: boolean; message: string }>(
-        "/auth/forgot-password",
-        {
-          method: "POST",
-          body: JSON.stringify({ email }),
-        },
-      );
+      const response = await api.auth.forgotPassword(email);
 
       logger.info("Password reset requested", { email });
       return response;
@@ -538,13 +492,7 @@ class AuthService {
         token: data.token,
         password: data.password,
       };
-      const response = await api.request<{ success: boolean; message: string }>(
-        "/auth/reset-password",
-        {
-          method: "POST",
-          body: JSON.stringify(resetData),
-        },
-      );
+      const response = await api.auth.resetPassword(resetData);
 
       logger.info("Password reset successful");
       return response;

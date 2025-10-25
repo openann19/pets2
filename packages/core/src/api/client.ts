@@ -11,7 +11,7 @@ export interface ApiClientResponse<T = unknown> {
 }
 
 // Error response structure
-export interface ApiError {
+export interface ApiClientError {
   message: string;
   code?: string;
   details?: Record<string, unknown>;

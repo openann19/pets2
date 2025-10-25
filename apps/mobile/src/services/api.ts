@@ -6,6 +6,19 @@ import {
   type Match,
   type Message,
   type PetFilters,
+  // Import new API response types
+  type AuthResponse,
+  type UserProfileResponse,
+  type PetCreateResponse,
+  type MatchResponse,
+  type MessageResponse,
+  type SubscriptionResponse,
+  type CheckoutSessionResponse,
+  type SwipeRecommendationResponse,
+  type SwipeActionResponse,
+  type AIBioGenerationResponse,
+  type AIPhotoAnalysisResponse,
+  type AICompatibilityResponse,
 } from "@pawfectmatch/core";
 import { API_TIMEOUT } from "../config/environment";
 
@@ -202,6 +215,206 @@ interface AdoptionApplication {
   };
   submittedAt: string;
 }
+
+// Authentication API methods
+export const authAPI = {
+  // Login with email and password
+  login: async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/login", {
+      method: "POST",
+      body: credentials,
+    });
+  },
+
+  // Register new user
+  register: async (data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/register", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Refresh access token
+  refreshToken: async (refreshToken: string): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/refresh", {
+      method: "POST",
+      body: { refreshToken },
+    });
+  },
+
+  // Biometric login
+  biometricLogin: async (data: {
+    email: string;
+    biometricToken: string;
+  }): Promise<AuthResponse> => {
+    return request<AuthResponse>("/auth/biometric-login", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Forgot password
+  forgotPassword: async (email: string): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>("/auth/forgot-password", {
+      method: "POST",
+      body: { email },
+    });
+  },
+
+  // Reset password
+  resetPassword: async (data: {
+    token: string;
+    password: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    return request<{ success: boolean; message: string }>("/auth/reset-password", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Get current user
+  getCurrentUser: async (): Promise<UserProfileResponse> => {
+    return request<UserProfileResponse>("/auth/me");
+  },
+
+  // Logout
+  logout: async (): Promise<void> => {
+    await request("/auth/logout", { method: "POST" });
+  },
+};
+
+// Swipe API methods
+export const swipeAPI = {
+  // Get pet recommendations for swiping
+  getRecommendations: async (filters?: PetFilters): Promise<SwipeRecommendationResponse> => {
+    const params = filters ? { ...filters } : {};
+    return request<SwipeRecommendationResponse>("/swipe/recommendations", { params });
+  },
+
+  // Like a pet
+  like: async (petId: string): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/like", {
+      method: "POST",
+      body: { petId },
+    });
+  },
+
+  // Pass on a pet
+  pass: async (petId: string): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/pass", {
+      method: "POST",
+      body: { petId },
+    });
+  },
+
+  // Super like a pet (premium)
+  superLike: async (petId: string): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/superlike", {
+      method: "POST",
+      body: { petId },
+    });
+  },
+
+  // Undo last swipe (premium)
+  undo: async (): Promise<SwipeActionResponse> => {
+    return request<SwipeActionResponse>("/swipe/undo", {
+      method: "POST",
+    });
+  },
+};
+
+// Pet API methods
+export const petAPI = {
+  // Create pet profile
+  createPet: async (petData: Partial<Pet>): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>("/pets", {
+      method: "POST",
+      body: petData,
+    });
+  },
+
+  // Get user's pets
+  getUserPets: async (): Promise<PetCreateResponse[]> => {
+    return request<PetCreateResponse[]>("/pets/my-pets");
+  },
+
+  // Get pet by ID
+  getPet: async (petId: string): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>(`/pets/${petId}`);
+  },
+
+  // Update pet profile
+  updatePet: async (petId: string, petData: Partial<Pet>): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>(`/pets/${petId}`, {
+      method: "PUT",
+      body: petData,
+    });
+  },
+
+  // Delete pet profile
+  deletePet: async (petId: string): Promise<boolean> => {
+    return request<boolean>(`/pets/${petId}`, { method: "DELETE" });
+  },
+
+  // Upload pet photos
+  uploadPhotos: async (petId: string, photos: FormData): Promise<PetCreateResponse> => {
+    return request<PetCreateResponse>(`/pets/${petId}/photos`, {
+      method: "POST",
+      body: photos,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+};
+
+// Subscription API methods
+export const subscriptionAPI = {
+  // Get current subscription
+  getCurrentSubscription: async (): Promise<SubscriptionResponse | null> => {
+    try {
+      return await request<SubscriptionResponse>("/subscription/current");
+    } catch (error) {
+      return null;
+    }
+  },
+
+  // Create checkout session
+  createCheckoutSession: async (data: {
+    priceId: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<CheckoutSessionResponse> => {
+    return request<CheckoutSessionResponse>("/subscription/create-checkout", {
+      method: "POST",
+      body: data,
+    });
+  },
+
+  // Cancel subscription
+  cancelSubscription: async (): Promise<boolean> => {
+    return request<boolean>("/subscription/cancel", { method: "POST" });
+  },
+
+  // Reactivate subscription
+  reactivateSubscription: async (): Promise<boolean> => {
+    return request<boolean>("/subscription/reactivate", { method: "POST" });
+  },
+
+  // Update payment method
+  updatePaymentMethod: async (paymentMethodId: string): Promise<boolean> => {
+    return request<boolean>("/subscription/payment-method", {
+      method: "PUT",
+      body: { paymentMethodId },
+    });
+  },
+};
 
 // API service for mobile app with proper typing
 export const matchesAPI = {
@@ -604,44 +817,18 @@ export const aiAPI = {
     petType?: string;
     age?: number;
     breed?: string;
-  }): Promise<{
-    bio: string;
-    keywords: string[];
-    sentiment: { score: number; label: string };
-    matchScore: number;
-  }> => {
-    return request("/ai/generate-bio", {
+  }): Promise<AIBioGenerationResponse> => {
+    return request<AIBioGenerationResponse>("/ai/generate-bio", {
       method: "POST",
       body: data,
     });
   },
 
   // Analyze pet photos
-  analyzePhotos: async (
-    photos: string[],
-  ): Promise<{
-    breed_analysis: {
-      primary_breed: string;
-      confidence: number;
-      secondary_breeds?: Array<{ breed: string; confidence: number }>;
-    };
-    health_assessment: {
-      age_estimate: number;
-      health_score: number;
-      recommendations: string[];
-    };
-    photo_quality: {
-      overall_score: number;
-      lighting_score: number;
-      composition_score: number;
-      clarity_score: number;
-    };
-    matchability_score: number;
-    ai_insights: string[];
-  }> => {
-    return request("/ai/analyze-photos", {
+  analyzePhoto: async (photoUrl: string): Promise<AIPhotoAnalysisResponse> => {
+    return request<AIPhotoAnalysisResponse>("/ai/analyze-photo", {
       method: "POST",
-      body: { photos },
+      body: { photoUrl },
     });
   },
 
@@ -649,66 +836,20 @@ export const aiAPI = {
   analyzeCompatibility: async (data: {
     pet1Id: string;
     pet2Id: string;
-  }): Promise<{
-    compatibility_score: number;
-    ai_analysis: string;
-    breakdown: {
-      personality_compatibility: number;
-      lifestyle_compatibility: number;
-      activity_compatibility: number;
-      social_compatibility: number;
-      environment_compatibility: number;
-    };
-    recommendations: {
-      meeting_suggestions: string[];
-      activity_recommendations: string[];
-      supervision_requirements: string[];
-      success_probability: number;
-    };
-  }> => {
-    return request("/ai/enhanced-compatibility", {
+  }): Promise<AICompatibilityResponse> => {
+    return request<AICompatibilityResponse>("/ai/compatibility", {
       method: "POST",
       body: data,
     });
-  },
-
-  // Legacy compatibility (simpler version)
-  getCompatibility: async (data: {
-    pet1Id: string;
-    pet2Id: string;
-  }): Promise<{
-    score: number;
-    analysis: string;
-    factors: {
-      age_compatibility: boolean;
-      size_compatibility: boolean;
-      breed_compatibility: boolean;
-      personality_match: boolean;
-    };
-  }> => {
-    return request("/ai/compatibility", {
-      method: "POST",
-      body: data,
-    });
-  },
-
-  // Auth methods
-  auth: {
-    logout: async (): Promise<void> => {
-      await apiClient.post("/auth/logout");
-    },
-  },
-
-  // User methods
-  user: {
-    deleteAccount: async (): Promise<void> => {
-      await apiClient.delete("/users/me");
-    },
   },
 };
 
 export const api = {
   ...matchesAPI,
+  auth: authAPI,
+  swipe: swipeAPI,
+  pet: petAPI,
+  subscription: subscriptionAPI,
   ai: aiAPI,
   request,
 };
