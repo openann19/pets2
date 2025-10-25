@@ -323,7 +323,7 @@ class OfflineSyncService {
   }
 
   private async processQueueItem(item: OfflineQueueItem): Promise<void> {
-    const { api } = await import("./api");
+    const { api } = require("./api");
 
     // Import the API service dynamically to avoid circular dependencies
     const apiService = api;

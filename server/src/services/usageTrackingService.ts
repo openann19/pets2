@@ -1,250 +1,175 @@
-/**
- * Usage Tracking Service for PawfectMatch
- * Tracks user behavior and feature usage for analytics
- */
-
-import User from '../models/User';
-import logger from '../utils/logger';
+const User = require('../models/User');
+const logger = require('../utils/logger');
 
 class UsageTrackingService {
   /**
-   * Track feature usage
+   * Track a swipe action for a user
    */
-  async trackFeatureUsage(userId: string, feature: string, metadata: any = {}): Promise<void> {
+  async trackSwipe(userId, petId, action) {
     try {
       const user = await User.findById(userId);
       if (!user) {
-        logger.warn('User not found for usage tracking', { userId, feature });
-        return;
+        throw new Error('User not found');
       }
-
-      // Initialize analytics if not exists
-      if (!user.analytics) {
-        user.analytics = {
-          events: []
-        };
-      }
-
-      // Add usage event
-      user.analytics.events.push({
-        type: `feature_${feature}`,
-        timestamp: new Date(),
-        metadata: {
-          feature,
-          ...metadata
-        }
-      });
-
-      // Update feature-specific counters
-      this.updateFeatureCounters(user, feature);
-
-      await user.save();
       
-      logger.debug('Feature usage tracked', { userId, feature, metadata });
-    } catch (error) {
-      logger.error('Error tracking feature usage', { error, userId, feature });
-    }
-  }
-
-  /**
-   * Track user action
-   */
-  async trackUserAction(userId: string, action: string, metadata: any = {}): Promise<void> {
-    try {
-      const user = await User.findById(userId);
-      if (!user) {
-        logger.warn('User not found for action tracking', { userId, action });
-        return;
-      }
-
-      // Initialize analytics if not exists
-      if (!user.analytics) {
-        user.analytics = {
-          events: []
-        };
-      }
-
-      // Add action event
-      user.analytics.events.push({
-        type: `action_${action}`,
-        timestamp: new Date(),
-        metadata: {
-          action,
-          ...metadata
-        }
-      });
-
-      // Update action-specific counters
-      this.updateActionCounters(user, action);
-
-      await user.save();
+      // Increment swipe count
+      user.premium.usage.swipesUsed = (user.premium.usage.swipesUsed || 0) + 1;
       
-      logger.debug('User action tracked', { userId, action, metadata });
-    } catch (error) {
-      logger.error('Error tracking user action', { error, userId, action });
-    }
-  }
-
-  /**
-   * Get usage statistics
-   */
-  async getUsageStats(userId: string, timeframe: string = '30d'): Promise<any> {
-    try {
-      const user = await User.findById(userId);
-      if (!user || !user.analytics) {
-        return {
-          totalEvents: 0,
-          featureUsage: {},
-          actionCounts: {},
-          timeframe
-        };
-      }
-
-      const startDate = this.getStartDate(timeframe);
-      const recentEvents = user.analytics.events.filter(
-        event => event.timestamp >= startDate
-      );
-
-      const stats = {
-        totalEvents: recentEvents.length,
-        featureUsage: this.calculateFeatureUsage(recentEvents),
-        actionCounts: this.calculateActionCounts(recentEvents),
-        timeframe,
-        lastActive: user.analytics.lastActive
-      };
-
-      return stats;
-    } catch (error) {
-      logger.error('Error getting usage stats', { error, userId, timeframe });
-      return {
-        totalEvents: 0,
-        featureUsage: {},
-        actionCounts: {},
-        timeframe
-      };
-    }
-  }
-
-  /**
-   * Update feature counters
-   */
-  private updateFeatureCounters(user: any, feature: string): void {
-    if (!user.analytics) {
-      user.analytics = {};
-    }
-
-    switch (feature) {
-      case 'like':
+      // Track in analytics
+      user.analytics.totalSwipes = (user.analytics.totalSwipes || 0) + 1;
+      
+      if (action === 'like') {
         user.analytics.totalLikes = (user.analytics.totalLikes || 0) + 1;
-        break;
-      case 'match':
-        user.analytics.totalMatches = (user.analytics.totalMatches || 0) + 1;
-        break;
-      case 'message':
-        user.analytics.totalMessagesSent = (user.analytics.totalMessagesSent || 0) + 1;
-        break;
-      case 'pet_create':
-        user.analytics.totalPetsCreated = (user.analytics.totalPetsCreated || 0) + 1;
-        break;
-      case 'subscription_start':
-        user.analytics.totalSubscriptionsStarted = (user.analytics.totalSubscriptionsStarted || 0) + 1;
-        break;
-      case 'subscription_cancel':
-        user.analytics.totalSubscriptionsCancelled = (user.analytics.totalSubscriptionsCancelled || 0) + 1;
-        break;
-      case 'premium_feature':
-        user.analytics.totalPremiumFeaturesUsed = (user.analytics.totalPremiumFeaturesUsed || 0) + 1;
-        break;
-    }
-
-    user.analytics.lastActive = new Date();
-  }
-
-  /**
-   * Update action counters
-   */
-  private updateActionCounters(user: any, action: string): void {
-    if (!user.analytics) {
-      user.analytics = {};
-    }
-
-    // Update last active timestamp
-    user.analytics.lastActive = new Date();
-  }
-
-  /**
-   * Calculate feature usage
-   */
-  private calculateFeatureUsage(events: any[]): any {
-    const featureUsage: any = {};
-    
-    events.forEach(event => {
-      if (event.type.startsWith('feature_')) {
-        const feature = event.type.replace('feature_', '');
-        featureUsage[feature] = (featureUsage[feature] || 0) + 1;
       }
-    });
-
-    return featureUsage;
+      
+      // Add swipe event to user history
+      user.analytics.events.push({
+        type: 'swipe',
+        timestamp: new Date(),
+        metadata: { petId, action }
+      });
+      
+      await user.save();
+      
+      logger.info('Swipe tracked', { 
+        userId, 
+        petId,
+        action,
+        swipesUsed: user.premium.usage.swipesUsed,
+        plan: user.premium.plan
+      });
+      
+      return { success: true };
+    } catch (error) {
+      logger.error('Error tracking swipe', { error: error.message, userId, petId, action });
+      throw error;
+    }
   }
-
+  
   /**
-   * Calculate action counts
+   * Track a super like action for a user
    */
-  private calculateActionCounts(events: any[]): any {
-    const actionCounts: any = {};
-    
-    events.forEach(event => {
-      if (event.type.startsWith('action_')) {
-        const action = event.type.replace('action_', '');
-        actionCounts[action] = (actionCounts[action] || 0) + 1;
-      }
-    });
-
-    return actionCounts;
-  }
-
-  /**
-   * Get start date based on timeframe
-   */
-  private getStartDate(timeframe: string): Date {
-    const now = new Date();
-    const days = parseInt(timeframe.replace('d', ''));
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - days);
-    return startDate;
-  }
-
-  /**
-   * Clean old events
-   */
-  async cleanOldEvents(userId: string, daysToKeep: number = 90): Promise<void> {
+  async trackSuperLike(userId) {
     try {
       const user = await User.findById(userId);
-      if (!user || !user.analytics || !user.analytics.events) {
-        return;
+      if (!user) {
+        throw new Error('User not found');
       }
-
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
-
-      const originalCount = user.analytics.events.length;
-      user.analytics.events = user.analytics.events.filter(
-        event => event.timestamp >= cutoffDate
-      );
-
-      if (user.analytics.events.length < originalCount) {
-        await user.save();
-        logger.info('Old events cleaned', { 
-          userId, 
-          originalCount, 
-          remainingCount: user.analytics.events.length 
-        });
-      }
+      
+      // Increment super like count
+      user.premium.usage.superLikesUsed = (user.premium.usage.superLikesUsed || 0) + 1;
+      
+      // Add super like event to user history
+      user.analytics.events.push({
+        type: 'superlike',
+        timestamp: new Date(),
+        metadata: { count: user.premium.usage.superLikesUsed }
+      });
+      
+      await user.save();
+      
+      logger.info('Super like tracked', { 
+        userId,
+        superLikesUsed: user.premium.usage.superLikesUsed,
+        plan: user.premium.plan
+      });
+      
+      return { success: true };
     } catch (error) {
-      logger.error('Error cleaning old events', { error, userId, daysToKeep });
+      logger.error('Error tracking super like', { error: error.message, userId });
+      throw error;
+    }
+  }
+  
+  /**
+   * Track a boost action for a user
+   */
+  async trackBoost(userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      
+      // Increment boost count
+      user.premium.usage.boostsUsed = (user.premium.usage.boostsUsed || 0) + 1;
+      
+      // Add boost event to user history
+      user.analytics.events.push({
+        type: 'boost',
+        timestamp: new Date(),
+        metadata: { count: user.premium.usage.boostsUsed }
+      });
+      
+      await user.save();
+      
+      logger.info('Boost tracked', { 
+        userId,
+        boostsUsed: user.premium.usage.boostsUsed,
+        plan: user.premium.plan
+      });
+      
+      return { success: true };
+    } catch (error) {
+      logger.error('Error tracking boost', { error: error.message, userId });
+      throw error;
+    }
+  }
+  
+  /**
+   * Get usage stats for a user
+   */
+  async getUsageStats(userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      
+      const usageStats = {
+        swipesUsed: user.premium.usage?.swipesUsed || 0,
+        swipesLimit: user.premium.usage?.swipesLimit || 50,
+        superLikesUsed: user.premium.usage?.superLikesUsed || 0,
+        superLikesLimit: user.premium.usage?.superLikesLimit || 0,
+        boostsUsed: user.premium.usage?.boostsUsed || 0,
+        boostsLimit: user.premium.usage?.boostsLimit || 0,
+        profileViews: user.analytics?.profileViews || 0,
+        messagesSent: user.analytics?.totalMessagesSent || 0,
+        matchRate: user.analytics?.totalMatches ? 
+          Math.round((user.analytics.totalMatches / user.analytics.totalSwipes) * 100) || 0 : 0
+      };
+      
+      return { success: true, data: usageStats };
+    } catch (error) {
+      logger.error('Error getting usage stats', { error: error.message, userId });
+      throw error;
+    }
+  }
+  
+  /**
+   * Reset usage stats for a user (typically at the start of a new billing period)
+   */
+  async resetUsageStats(userId) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      
+      user.premium.usage.swipesUsed = 0;
+      user.premium.usage.superLikesUsed = 0;
+      user.premium.usage.boostsUsed = 0;
+      
+      await user.save();
+      
+      logger.info('Usage stats reset', { userId });
+      
+      return { success: true };
+    } catch (error) {
+      logger.error('Error resetting usage stats', { error: error.message, userId });
+      throw error;
     }
   }
 }
 
-export default new UsageTrackingService();
+module.exports = new UsageTrackingService();

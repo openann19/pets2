@@ -1,55 +1,23 @@
-import axios from 'axios';
-import User from '../models/User';
-import Pet from '../models/Pet';
-import logger from '../utils/logger';
-import { AIService, AIAnalysis } from '../types';
+const axios = require('axios');
+const User = require('../models/User');
+const Pet = require('../models/Pet');
+const logger = require('../utils/logger');
 
-const AI_SERVICE_URL = process.env['AI_SERVICE_URL'] || 'http://localhost:8000';
-
-// AI Recommendation interfaces
-interface AIRecommendation {
-  petId: string;
-  score: number;
-  reasons: string[];
-}
-
-interface PetData {
-  id: string;
-  name: string;
-  species: string;
-  breed: string;
-  age: number;
-  size: string;
-  personality_tags: string[];
-  photos?: string[];
-}
-
-interface CompatibilityRequest {
-  pet1: PetData;
-  pet2: PetData;
-  interaction_type?: string;
-}
-
-interface ModerationResult {
-  isApproved: boolean;
-  confidence: number;
-  flags: string[];
-  reason?: string;
-}
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 /**
  * Get AI-powered pet recommendations
- * @param userId - User ID
- * @param petIds - Array of pet IDs to score
- * @returns Sorted recommendations with scores
+ * @param {string} userId - User ID
+ * @param {Array<string>} petIds - Array of pet IDs to score
+ * @returns {Promise<Array>} Sorted recommendations with scores
  */
-export const getAIRecommendations = async (userId: string, petIds: string[]): Promise<AIRecommendation[]> => {
+const getAIRecommendations = async (userId, petIds) => {
   try {
     // Get user and their pets for context
     const user = await User.findById(userId).populate('pets');
     const candidatePets = await Pet.find({ _id: { $in: petIds } });
 
-    if (!user?.pets || user.pets.length === 0) {
+    if (!user.pets || user.pets.length === 0) {
       // No pets to base recommendations on, return random order
       return candidatePets.map(pet => ({
         petId: pet._id,
@@ -80,370 +48,265 @@ export const getAIRecommendations = async (userId: string, petIds: string[]): Pr
         breed: pet.breed,
         age: pet.age,
         size: pet.size,
-        gender: pet.gender,
         personality_tags: pet.personalityTags,
         intent: pet.intent,
         location: pet.location,
-        photos: pet.photos.length
+        owner_id: pet.owner
       }))
     };
 
     // Call AI service
-    const response = await axios.post(`${AI_SERVICE_URL}/recommendations`, requestData, {
-      timeout: 10000,
+    const response = await axios.post(`${AI_SERVICE_URL}/api/recommend`, requestData, {
+      timeout: 5000,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       }
     });
 
-    if (response.data && response.data.recommendations) {
-      return response.data.recommendations.map((rec: { pet_id: string; score: number; reasons: string[] }) => ({
-        petId: rec.pet_id,
-        score: rec.score,
-        reasons: rec.reasons || [],
-        compatibility_factors: rec.compatibility_factors || {}
-      }));
-    }
-
-    // Fallback to random scoring if AI service fails
-    return candidatePets.map(pet => ({
-      petId: pet._id,
-      score: Math.random() * 100,
-      reasons: ['AI service unavailable - using fallback scoring']
-    }));
+    return response.data.recommendations || [];
 
   } catch (error) {
-    logger.error('Error getting AI recommendations', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      userId,
-      petIds
-    });
-
-    // Fallback to random scoring
-    const candidatePets = await Pet.find({ _id: { $in: petIds } });
-    return candidatePets.map(pet => ({
-      petId: pet._id,
-      score: Math.random() * 100,
-      reasons: ['AI service error - using fallback scoring']
-    }));
+    logger.error('AI Service Error:', { error: error.message });
+    
+    // Fallback to rule-based matching
+    return await getRuleBasedRecommendations(userId, petIds);
   }
 };
 
 /**
- * Analyze pet photo using AI
- * @param imageUrl - URL of the image to analyze
- * @returns AI analysis results
+ * Fallback rule-based matching system
+ * @param {string} userId - User ID
+ * @param {Array<string>} petIds - Array of pet IDs to score
+ * @returns {Promise<Array>} Rule-based recommendations
  */
-export const analyzePetPhoto = async (imageUrl: string): Promise<AIAnalysis> => {
+const getRuleBasedRecommendations = async (userId, petIds) => {
   try {
-    const requestData = {
-      image_url: imageUrl,
-      analysis_type: 'comprehensive'
-    };
+    const user = await User.findById(userId).populate('pets');
+    const candidatePets = await Pet.find({ _id: { $in: petIds } }).populate('owner');
 
-    const response = await axios.post(`${AI_SERVICE_URL}/analyze-photo`, requestData, {
-      timeout: 15000,
-      headers: {
-        'Content-Type': 'application/json',
+    const recommendations = candidatePets.map(pet => {
+      let score = 50; // Base score
+      const reasons = [];
+
+      // Species preference
+      if (user.preferences.species.includes(pet.species)) {
+        score += 20;
+        reasons.push(`Matches your ${pet.species} preference`);
       }
-    });
 
-    if (response.data) {
+      // Intent matching
+      if (user.pets.some(userPet => 
+        userPet.intent === pet.intent || 
+        userPet.intent === 'all' || 
+        pet.intent === 'all'
+      )) {
+        score += 15;
+        reasons.push('Compatible intentions');
+      }
+
+      // Age preference
+      if (pet.age >= user.preferences.ageRange.min && 
+          pet.age <= user.preferences.ageRange.max) {
+        score += 10;
+        reasons.push('Age matches preferences');
+      }
+
+      // Size compatibility (for playdates)
+      if (pet.intent === 'playdate') {
+        const userPetSizes = user.pets.map(p => p.size);
+        if (userPetSizes.includes(pet.size)) {
+          score += 10;
+          reasons.push('Similar size for safe play');
+        }
+      }
+
+      // Personality compatibility
+      if (user.pets.some(userPet => {
+        const commonTags = userPet.personalityTags.filter(tag => 
+          pet.personalityTags.includes(tag)
+        );
+        return commonTags.length > 0;
+      })) {
+        score += 15;
+        reasons.push('Compatible personalities');
+      }
+
+      // Premium user bonus
+      if (pet.owner.premium && pet.owner.premium.isActive) {
+        score += 5;
+        reasons.push('Verified premium user');
+      }
+
+      // Featured pet bonus
+      if (pet.featured && pet.featured.isFeatured) {
+        score += 8;
+        reasons.push('Featured pet');
+      }
+
+      // Recently active bonus
+      const daysSinceActive = (new Date() - pet.owner.analytics.lastActive) / (1000 * 60 * 60 * 24);
+      if (daysSinceActive < 7) {
+        score += 5;
+        reasons.push('Active user');
+      }
+
       return {
-        breed: {
-          primary: response.data.breed?.primary || 'Unknown',
-          confidence: response.data.breed?.confidence || 0
-        },
-        health: {
-          overall: response.data.health?.overall || 'good',
-          score: response.data.health?.score || 75,
-          indicators: {
-            coat: response.data.health?.indicators?.coat || 'Good condition',
-            eyes: response.data.health?.indicators?.eyes || 'Clear and bright',
-            posture: response.data.health?.indicators?.posture || 'Normal',
-            energy: response.data.health?.indicators?.energy || 'Active'
-          }
-        },
-        quality: {
-          score: response.data.quality?.score || 80,
-          factors: {
-            lighting: response.data.quality?.factors?.lighting || 8,
-            clarity: response.data.quality?.factors?.clarity || 8,
-            composition: response.data.quality?.factors?.composition || 7,
-            expression: response.data.quality?.factors?.expression || 8
-          }
-        },
-        characteristics: {
-          age: response.data.characteristics?.age || 'Adult',
-          size: response.data.characteristics?.size || 'Medium',
-          temperament: response.data.characteristics?.temperament || ['friendly', 'energetic'],
-          features: response.data.characteristics?.features || ['well-groomed', 'healthy']
-        },
-        suggestions: response.data.suggestions || [
-          'Consider adding more photos from different angles',
-          'Include photos showing the pet in different activities',
-          'Ensure good lighting for better photo quality'
-        ],
-        tags: response.data.tags || ['cute', 'friendly', 'healthy']
+        petId: pet._id,
+        score: Math.min(100, Math.max(0, score)),
+        reasons: reasons.slice(0, 3) // Top 3 reasons
       };
-    }
-
-    throw new Error('Invalid response from AI service');
-
-  } catch (error) {
-    logger.error('Error analyzing pet photo', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      imageUrl
     });
 
-    // Return default analysis on error
+    // Sort by score descending
+    return recommendations.sort((a, b) => b.score - a.score);
+
+  } catch (error) {
+    logger.error('Rule-based matching error:', { error });
+    return [];
+  }
+};
+
+/**
+ * Update pet's AI data based on interactions
+ * @param {string} petId - Pet ID
+ * @param {Object} interactionData - Interaction data
+ */
+const updatePetAIData = async (petId, interactionData) => {
+  try {
+    const response = await axios.post(`${AI_SERVICE_URL}/api/update-pet-data`, {
+      pet_id: petId,
+      interaction_data: interactionData
+    }, {
+      timeout: 3000
+    });
+
+    if (response.data.success) {
+      // Update pet's AI data in database
+      await Pet.findByIdAndUpdate(petId, {
+        'aiData.personalityScore': response.data.personality_score,
+        'aiData.compatibilityTags': response.data.compatibility_tags,
+        'aiData.lastUpdated': new Date()
+      });
+    }
+
+  } catch (error) {
+    logger.error('AI data update error:', { error });
+    // Fail silently - this is not critical
+  }
+};
+
+/**
+ * Get breed characteristics from AI service
+ * @param {string} breed - Breed name
+ * @param {string} species - Species (dog, cat, etc.)
+ * @returns {Promise<Object>} Breed characteristics
+ */
+const getBreedCharacteristics = async (breed, species) => {
+  try {
+    const response = await axios.get(`${AI_SERVICE_URL}/api/breed-info`, {
+      params: { breed, species },
+      timeout: 3000
+    });
+
+    return response.data.characteristics || {};
+
+  } catch (error) {
+    logger.error('Breed characteristics error:', { error });
+    
+    // Return basic fallback data
     return {
-      breed: {
-        primary: 'Unknown',
-        confidence: 0
-      },
-      health: {
-        overall: 'good',
-        score: 75,
-        indicators: {
-          coat: 'Unable to analyze',
-          eyes: 'Unable to analyze',
-          posture: 'Unable to analyze',
-          energy: 'Unable to analyze'
-        }
-      },
-      quality: {
-        score: 50,
-        factors: {
-          lighting: 5,
-          clarity: 5,
-          composition: 5,
-          expression: 5
-        }
-      },
-      characteristics: {
-        age: 'Unknown',
-        size: 'Unknown',
-        temperament: ['unknown'],
-        features: ['unable to analyze']
-      },
-      suggestions: [
-        'AI analysis unavailable - please try again later',
-        'Consider uploading a clearer photo',
-        'Ensure the pet is clearly visible in the image'
-      ],
-      tags: ['unable to analyze']
+      temperament: [],
+      energyLevel: 'medium',
+      groomingNeeds: 'medium',
+      healthConcerns: []
     };
   }
 };
 
 /**
- * Generate pet bio using AI
- * @param petData - Pet data for bio generation
- * @returns Generated bio text
+ * Analyze pet compatibility
+ * @param {string} pet1Id - First pet ID
+ * @param {string} pet2Id - Second pet ID
+ * @returns {Promise<Object>} Compatibility analysis
  */
-export const generatePetBio = async (petData: PetData): Promise<string> => {
+const analyzePetCompatibility = async (pet1Id, pet2Id) => {
   try {
-    const requestData = {
-      pet_info: {
-        name: petData.name,
-        species: petData.species,
-        breed: petData.breed,
-        age: petData.age,
-        gender: petData.gender,
-        size: petData.size,
-        personality_tags: petData.personalityTags || [],
-        intent: petData.intent,
-        special_needs: petData.specialNeeds,
-        health_info: petData.healthInfo
-      },
-      bio_style: 'engaging_and_friendly'
-    };
+    const [pet1, pet2] = await Promise.all([
+      Pet.findById(pet1Id),
+      Pet.findById(pet2Id)
+    ]);
 
-    const response = await axios.post(`${AI_SERVICE_URL}/generate-bio`, requestData, {
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    if (response.data && response.data.bio) {
-      return response.data.bio;
+    if (!pet1 || !pet2) {
+      throw new Error('One or both pets not found');
     }
 
-    throw new Error('Invalid response from AI service');
-
-  } catch (error) {
-    logger.error('Error generating pet bio', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      petData
-    });
-
-    // Return fallback bio
-    return `Meet ${petData.name}! This adorable ${petData.age}-year-old ${petData.breed} is looking for ${petData.intent === 'adoption' ? 'a loving forever home' : petData.intent === 'mating' ? 'a compatible mate' : 'new friends'}. ${petData.gender === 'male' ? 'He' : 'She'} is ${petData.size} sized and has a wonderful personality. ${petData.specialNeeds ? `Special needs: ${petData.specialNeeds}. ` : ''}Contact us to learn more about this amazing pet!`;
-  }
-};
-
-/**
- * Get compatibility score between two pets
- * @param pet1 - First pet data
- * @param pet2 - Second pet data
- * @returns Compatibility score (0-100)
- */
-export const getCompatibilityScore = async (pet1: PetData, pet2: PetData): Promise<number> => {
-  try {
-    const requestData = {
+    const response = await axios.post(`${AI_SERVICE_URL}/api/compatibility`, {
       pet1: {
+        id: pet1._id,
         species: pet1.species,
         breed: pet1.breed,
         age: pet1.age,
-        gender: pet1.gender,
         size: pet1.size,
-        personality_tags: pet1.personalityTags || [],
-        intent: pet1.intent,
-        health_info: pet1.healthInfo
+        personality_tags: pet1.personalityTags,
+        intent: pet1.intent
       },
       pet2: {
+        id: pet2._id,
         species: pet2.species,
         breed: pet2.breed,
         age: pet2.age,
-        gender: pet2.gender,
         size: pet2.size,
-        personality_tags: pet2.personalityTags || [],
-        intent: pet2.intent,
-        health_info: pet2.healthInfo
+        personality_tags: pet2.personalityTags,
+        intent: pet2.intent
       }
-    };
-
-    const response = await axios.post(`${AI_SERVICE_URL}/compatibility`, requestData, {
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      }
+    }, {
+      timeout: 3000
     });
 
-    if (response.data && typeof response.data.score === 'number') {
-      return Math.max(0, Math.min(100, response.data.score));
-    }
-
-    throw new Error('Invalid response from AI service');
+    return response.data;
 
   } catch (error) {
-    logger.error('Error getting compatibility score', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      pet1: pet1._id,
-      pet2: pet2._id
-    });
-
-    // Return fallback compatibility score
-    return calculateFallbackCompatibility(pet1, pet2);
-  }
-};
-
-/**
- * Moderate content using AI
- * @param content - Content to moderate
- * @param type - Type of content (text, image, etc.)
- * @returns Moderation results
- */
-export const moderateContent = async (content: string, type: string): Promise<ModerationResult> => {
-  try {
-    const requestData = {
-      content,
-      content_type: type,
-      moderation_level: 'standard'
-    };
-
-    const response = await axios.post(`${AI_SERVICE_URL}/moderate`, requestData, {
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    if (response.data) {
-      return {
-        safe: response.data.safe || true,
-        confidence: response.data.confidence || 0.8,
-        flags: response.data.flags || [],
-        categories: response.data.categories || [],
-        suggestions: response.data.suggestions || []
-      };
+    logger.error('Compatibility analysis error:', { error });
+    
+    // Fallback compatibility check
+    const pet1 = await Pet.findById(pet1Id);
+    const pet2 = await Pet.findById(pet2Id);
+    
+    let score = 50;
+    const factors = [];
+    
+    if (pet1.species === pet2.species) {
+      score += 20;
+      factors.push('Same species');
+    }
+    
+    if (pet1.size === pet2.size) {
+      score += 10;
+      factors.push('Similar size');
+    }
+    
+    const commonTraits = pet1.personalityTags.filter(tag => 
+      pet2.personalityTags.includes(tag)
+    );
+    score += commonTraits.length * 5;
+    
+    if (commonTraits.length > 0) {
+      factors.push(`${commonTraits.length} shared traits`);
     }
 
-    throw new Error('Invalid response from AI service');
-
-  } catch (error) {
-    logger.error('Error moderating content', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      content: content.substring(0, 100),
-      type
-    });
-
-    // Return safe default on error
     return {
-      safe: true,
-      confidence: 0.5,
-      flags: [],
-      categories: [],
-      suggestions: ['AI moderation unavailable - manual review recommended']
+      compatibility_score: Math.min(100, score),
+      factors,
+      recommendation: score > 70 ? 'Highly Compatible' : 
+                     score > 50 ? 'Moderately Compatible' : 'May Need Supervision'
     };
   }
 };
 
-/**
- * Calculate fallback compatibility score
- * @param pet1 - First pet
- * @param pet2 - Second pet
- * @returns Compatibility score
- */
-function calculateFallbackCompatibility(pet1: PetData, pet2: PetData): number {
-  let score = 50; // Base score
-
-  // Species compatibility
-  if (pet1.species === pet2.species) {
-    score += 20;
-  }
-
-  // Age compatibility
-  const ageDiff = Math.abs(pet1.age - pet2.age);
-  if (ageDiff <= 2) {
-    score += 15;
-  } else if (ageDiff <= 5) {
-    score += 10;
-  }
-
-  // Size compatibility
-  const sizeOrder = ['tiny', 'small', 'medium', 'large', 'extra-large'];
-  const size1Index = sizeOrder.indexOf(pet1.size);
-  const size2Index = sizeOrder.indexOf(pet2.size);
-  const sizeDiff = Math.abs(size1Index - size2Index);
-
-  if (sizeDiff <= 1) {
-    score += 10;
-  } else if (sizeDiff <= 2) {
-    score += 5;
-  }
-
-  // Intent compatibility
-  if (pet1.intent === pet2.intent) {
-    score += 5;
-  }
-
-  return Math.max(0, Math.min(100, score));
-}
-
-// Export the service interface
-const aiService: AIService = {
-  analyzePetPhoto,
-  generatePetBio,
-  getCompatibilityScore,
-  moderateContent,
+module.exports = {
+  getAIRecommendations,
+  getRuleBasedRecommendations,
+  updatePetAIData,
+  getBreedCharacteristics,
+  analyzePetCompatibility
 };
-
-export default aiService;

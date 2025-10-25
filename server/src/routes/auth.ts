@@ -1,13 +1,9 @@
-import express, { Router } from 'express';
-import { body } from 'express-validator';
-import rateLimit from 'express-rate-limit';
-import { validate } from '../middleware/validation';
-import { authenticateToken, refreshAccessToken } from '../middleware/auth';
-
-// Import controllers from CommonJS modules
-const authController = require('../controllers/authController');
-const sessionController = require('../controllers/sessionController');
-
+const express = require('express');
+const { body } = require('express-validator');
+const rateLimit = require('express-rate-limit');
+const { validate } = require('../middleware/validation');
+const { authenticateToken, refreshAccessToken } = require('../middleware/auth');
+const { changePassword, logoutAll } = require('../controllers/sessionController');
 const {
   setup2FASmsEmail,
   verify2FASmsEmail,
@@ -27,11 +23,9 @@ const {
   verify2FA,
   validate2FA,
   disable2FA
-} = authController;
+} = require('../controllers/authController');
 
-const { changePassword, logoutAll } = sessionController;
-
-const router: Router = express.Router();
+const router = express.Router();
 
 // Rate limiting for auth endpoints
 const authLimiter = rateLimit({
@@ -40,7 +34,7 @@ const authLimiter = rateLimit({
   message: 'Too many authentication attempts, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
-  skip: () => process.env['NODE_ENV'] === 'test' // Skip in test environment
+  skip: () => process.env.NODE_ENV === 'test' // Skip in test environment
 });
 
 const passwordResetLimiter = rateLimit({
@@ -55,64 +49,56 @@ const registerValidation = [
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   body('firstName').trim().isLength({ min: 1 }).withMessage('First name is required'),
   body('lastName').trim().isLength({ min: 1 }).withMessage('Last name is required'),
+  body('dateOfBirth').isISO8601().withMessage('Valid date of birth is required'),
+  body('phone').optional().isMobilePhone().withMessage('Valid phone number required')
 ];
 
 const loginValidation = [
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
-  body('password').notEmpty().withMessage('Password is required'),
+  body('password').notEmpty().withMessage('Password is required')
 ];
 
-const forgotPasswordValidation = [
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+const emailValidation = [
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required')
 ];
 
-const resetPasswordValidation = [
-  body('token').notEmpty().withMessage('Reset token is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-];
-
-const changePasswordValidation = [
-  body('currentPassword').notEmpty().withMessage('Current password is required'),
-  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
+const passwordValidation = [
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
 ];
 
 const twoFactorValidation = [
-  body('code').isLength({ min: 6, max: 6 }).withMessage('2FA code must be 6 digits'),
+  body('code').isLength({ min: 6, max: 6 }).isNumeric().withMessage('Valid 6-digit code is required')
 ];
 
-const biometricValidation = [
-  body('biometricToken').notEmpty().withMessage('Biometric token is required'),
-];
-
-// Public routes (no authentication required)
+// Routes with rate limiting
 router.post('/register', authLimiter, registerValidation, validate, register);
 router.post('/login', authLimiter, loginValidation, validate, login);
-router.post('/forgot-password', passwordResetLimiter, forgotPasswordValidation, validate, forgotPassword);
-router.post('/reset-password', passwordResetLimiter, resetPasswordValidation, validate, resetPassword);
-router.post('/verify-email', verifyEmail);
-router.post('/refresh-token', refreshAccessToken);
-
-// Biometric authentication routes
-router.post('/biometric/login', authLimiter, biometricValidation, validate, biometricLogin as any);
-router.post('/biometric/setup', authenticateToken as any, setupBiometric);
-router.post('/biometric/disable', authenticateToken as any, disableBiometric);
-router.post('/biometric/refresh', authenticateToken as any, refreshBiometricToken);
-
-// 2FA routes
-router.post('/2fa/setup', authenticateToken, setup2FA);
-router.post('/2fa/verify', authenticateToken, twoFactorValidation, validate, verify2FA);
-router.post('/2fa/validate', authenticateToken, twoFactorValidation, validate, validate2FA);
-router.post('/2fa/disable', authenticateToken, disable2FA);
-
-// SMS/Email 2FA routes
-router.post('/2fa/sms-email/setup', authenticateToken, setup2FASmsEmail);
-router.post('/2fa/sms-email/verify', authenticateToken, twoFactorValidation, validate, verify2FASmsEmail);
-router.post('/2fa/sms-email/send-code', authenticateToken, send2FACode);
-
-// Protected routes (authentication required)
-router.get('/me', authenticateToken, getMe);
+router.post('/biometric-login', authLimiter, biometricLogin);
 router.post('/logout', authenticateToken, logout);
 router.post('/logout-all', authenticateToken, logoutAll);
-router.post('/change-password', authenticateToken, changePasswordValidation, validate, changePassword);
+router.get('/me', authenticateToken, getMe);
+router.post('/refresh-token', authLimiter, refreshAccessToken);
+router.post('/verify-email/:token', verifyEmail);
+router.post('/forgot-password', passwordResetLimiter, emailValidation, validate, forgotPassword);
+// Support both legacy param-based and body-based reset password
+router.post('/reset-password/:token', passwordResetLimiter, passwordValidation, validate, resetPassword);
+router.post('/reset-password', passwordResetLimiter, passwordValidation, validate, resetPassword);
+router.post('/change-password', authenticateToken, changePassword);
 
-export default router;
+// SMS/Email 2FA Routes
+router.post('/2fa/setup-sms-email', authenticateToken, setup2FASmsEmail);
+router.post('/2fa/verify-sms-email', authenticateToken, verify2FASmsEmail);
+router.post('/2fa/send-code', authenticateToken, send2FACode);
+
+// 2FA Routes
+router.post('/2fa/setup', authenticateToken, setup2FA);
+router.post('/2fa/verify', authenticateToken, twoFactorValidation, validate, verify2FA);
+router.post('/2fa/validate', twoFactorValidation, validate, validate2FA);
+router.post('/2fa/disable', authenticateToken, twoFactorValidation, validate, disable2FA);
+
+// Biometric Routes
+router.post('/biometric/setup', authenticateToken, setupBiometric);
+router.post('/biometric/disable', authenticateToken, disableBiometric);
+router.post('/biometric/refresh', authenticateToken, refreshBiometricToken);
+
+module.exports = router;

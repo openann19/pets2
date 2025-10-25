@@ -137,7 +137,7 @@ export function createBorderStyle(variant: 'light' | 'medium' | 'dark' = 'light'
  */
 export function createTextStyle(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary') {
   return {
-    color: getTextColor(variant),
+    color: getTextColorString(variant),
   };
 }
 
@@ -146,7 +146,7 @@ export function createTextStyle(variant: 'primary' | 'secondary' | 'tertiary' | 
  */
 export function createBackgroundStyle(variant: 'primary' | 'secondary' | 'tertiary' | 'inverse' = 'primary') {
   return {
-    backgroundColor: getBackgroundColor(variant),
+    backgroundColor: getBackgroundColorString(variant),
   };
 }
 

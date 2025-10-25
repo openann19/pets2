@@ -3,36 +3,11 @@
  * Intelligent retry logic for failed payments with exponential backoff
  */
 
-import stripe from 'stripe';
-import User from '../models/User';
-import logger from '../utils/logger';
-
-// Payment Retry Types
-interface RetryConfig {
-  maxRetries?: number;
-  retryIntervals?: number[];
-  notificationDelays?: number[];
-}
-
-interface RetryStats {
-  totalRetries: number;
-  successfulRetries: number;
-  failedRetries: number;
-  averageRetryAttempts: number;
-  retrySuccessRate: number;
-  timeframe: string;
-}
-
-interface StripeCustomer {
-  id: string;
-  email: string | null;
-}
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const User = require('../models/User');
+const logger = require('../utils/logger');
 
 class PaymentRetryService {
-  private maxRetries: number;
-  private retryIntervals: number[];
-  private notificationDelays: number[];
-
   constructor() {
     this.maxRetries = 3;
     this.retryIntervals = [1, 3, 8]; // Days to wait before retry
@@ -42,11 +17,10 @@ class PaymentRetryService {
   /**
    * Handle failed payment with smart retry logic
    */
-  async handleFailedPayment(subscriptionId: string): Promise<void> {
+  async handleFailedPayment(subscriptionId) {
     try {
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
-      const subscription = await stripeClient.subscriptions.retrieve(subscriptionId);
-      const customer = await stripeClient.customers.retrieve(subscription.customer as string) as stripe.Customer;
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const customer = await stripe.customers.retrieve(subscription.customer);
       const user = await User.findOne({ email: customer.email });
 
       if (!user) {
@@ -74,76 +48,127 @@ class PaymentRetryService {
 
       await this.scheduleRetry(subscriptionId, retryDate, failureCount + 1);
       
-      // Schedule user notification
+      // Schedule notification
       const notificationDate = new Date();
       notificationDate.setDate(notificationDate.getDate() + this.notificationDelays[failureCount]);
       
-      await this.scheduleUserNotification(user._id.toString(), subscriptionId, notificationDate, failureCount + 1);
+      await this.scheduleNotification(user, notificationDate, failureCount + 1, retryDate);
+
+      logger.info('Payment retry scheduled', {
+        subscriptionId,
+        userId: user._id,
+        retryDate: retryDate.toISOString(),
+        failureCount: failureCount + 1
+      });
 
     } catch (error) {
       logger.error('Error handling failed payment', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        subscriptionId
+        subscriptionId,
+        error: error.message,
+        stack: error.stack
       });
-      throw error;
     }
   }
 
   /**
-   * Execute payment retry
+   * Execute scheduled retry
    */
-  async executeRetry(subscriptionId: string): Promise<boolean> {
+  async executeRetry(subscriptionId) {
     try {
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
-      const subscription = await stripeClient.subscriptions.retrieve(subscriptionId);
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       
       if (subscription.status === 'active') {
         logger.info('Subscription already active, skipping retry', { subscriptionId });
-        return true;
+        return;
       }
 
-      const invoice = await stripeClient.invoices.create({
-        customer: subscription.customer as string,
+      // Attempt to collect payment
+      const invoice = await stripe.invoices.create({
+        customer: subscription.customer,
         subscription: subscriptionId,
         collection_method: 'charge_automatically'
       });
 
-      if (invoice.id) {
-        await stripeClient.invoices.pay(invoice.id);
+      const paidInvoice = await stripe.invoices.pay(invoice.id);
+
+      if (paidInvoice.status === 'paid') {
+        await this.handleSuccessfulRetry(subscriptionId);
+        logger.info('Payment retry successful', { subscriptionId });
+      } else {
+        // Payment still failed, increment failure count
+        await this.incrementFailureCount(subscriptionId);
+        await this.handleFailedPayment(subscriptionId);
       }
-      
-      logger.info('Payment retry successful', { subscriptionId, invoiceId: invoice.id });
-      return true;
 
     } catch (error) {
-      logger.error('Payment retry failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        subscriptionId
+      logger.error('Error executing payment retry', {
+        subscriptionId,
+        error: error.message
       });
-      return false;
+
+      // Increment failure count and schedule next retry
+      await this.incrementFailureCount(subscriptionId);
+      await this.handleFailedPayment(subscriptionId);
+    }
+  }
+
+  /**
+   * Handle successful retry
+   */
+  async handleSuccessfulRetry(subscriptionId) {
+    try {
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const customer = await stripe.customers.retrieve(subscription.customer);
+      const user = await User.findOne({ email: customer.email });
+
+      if (user) {
+        // Update user subscription status
+        user.premium.isActive = true;
+        user.premium.stripeSubscriptionId = subscriptionId;
+        user.premium.retryCount = 0;
+        await user.save();
+
+        // Clear any scheduled retries
+        await this.clearScheduledRetries(subscriptionId);
+
+        // Send success notification
+        await this.sendSuccessNotification(user);
+
+        logger.info('Subscription reactivated successfully', {
+          subscriptionId,
+          userId: user._id
+        });
+      }
+    } catch (error) {
+      logger.error('Error handling successful retry', {
+        subscriptionId,
+        error: error.message
+      });
     }
   }
 
   /**
    * Handle final failure after max retries
    */
-  private async handleFinalFailure(subscriptionId: string, user: any, customer: StripeCustomer): Promise<void> {
+  async handleFinalFailure(subscriptionId, user, customer) {
     try {
       // Cancel subscription
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
-      await stripeClient.subscriptions.update(subscriptionId, {
-        cancel_at_period_end: true
-      });
+      await stripe.subscriptions.cancel(subscriptionId);
 
       // Update user status
       user.premium.isActive = false;
-      user.premium.paymentStatus = 'failed';
+      user.premium.stripeSubscriptionId = null;
+      user.premium.cancellationReason = 'payment_failed';
+      user.premium.cancelledAt = new Date();
       await user.save();
 
-      // Send final notification
-      await this.sendFinalFailureNotification(user, subscriptionId);
+      // Send final failure notification
+      await this.sendFinalFailureNotification(user, customer);
 
-      logger.info('Final failure handled', {
+      // Clear scheduled retries
+      await this.clearScheduledRetries(subscriptionId);
+
+      logger.info('Subscription cancelled due to payment failures', {
         subscriptionId,
         userId: user._id,
         customerEmail: customer.email
@@ -151,174 +176,393 @@ class PaymentRetryService {
 
     } catch (error) {
       logger.error('Error handling final failure', {
-        error: error instanceof Error ? error.message : 'Unknown error',
         subscriptionId,
-        userId: user._id
+        userId: user._id,
+        error: error.message
       });
     }
   }
 
   /**
-   * Schedule retry
+   * Schedule retry for later execution
    */
-  private async scheduleRetry(subscriptionId: string, retryDate: Date, attemptNumber: number): Promise<void> {
-    try {
-      // In a real implementation, this would use a job queue like Bull or Agenda
-      // For now, we'll just log the scheduled retry
-      logger.info('Payment retry scheduled', {
-        subscriptionId,
-        retryDate: retryDate.toISOString(),
-        attemptNumber
-      });
+  async scheduleRetry(subscriptionId, retryDate, attemptNumber) {
+    // Use Bull job queue for real implementation
+    const Queue = require('bull');
+    const retryQueue = new Queue('payment retry', process.env.REDIS_URL || 'redis://localhost:6379');
+    
+    const retryJob = {
+      subscriptionId,
+      retryDate,
+      attemptNumber,
+      status: 'scheduled',
+      createdAt: new Date()
+    };
 
-      // Store retry information in database or cache
-      // This would typically be stored in a retry queue table
-      
-    } catch (error) {
-      logger.error('Error scheduling retry', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        subscriptionId,
-        retryDate
-      });
-    }
+    // Store in database with MongoDB
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+    await client.connect();
+    
+    const db = client.db();
+    const retryJobs = db.collection('retryJobs');
+    
+    await retryJobs.insertOne(retryJob);
+    await client.close();
+    
+    // Schedule job in Bull queue
+    await retryQueue.add('process-retry', {
+      subscriptionId,
+      attemptNumber
+    }, {
+      delay: retryDate.getTime() - Date.now()
+    });
+    
+    logger.info('Retry job scheduled', retryJob);
   }
 
   /**
    * Schedule user notification
    */
-  private async scheduleUserNotification(userId: string, subscriptionId: string, notificationDate: Date, attemptNumber: number): Promise<void> {
+  async scheduleNotification(user, notificationDate, attemptNumber, retryDate) {
+    const notification = {
+      userId: user._id,
+      type: 'payment_retry_scheduled',
+      scheduledDate: notificationDate,
+      data: {
+        attemptNumber,
+        retryDate: retryDate.toISOString(),
+        subscriptionId: user.premium.stripeSubscriptionId
+      },
+      status: 'scheduled',
+      createdAt: new Date()
+    };
+
+    // Store in database with MongoDB
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+    await client.connect();
+    
+    const db = client.db();
+    const notifications = db.collection('notifications');
+    
+    await notifications.insertOne(notification);
+    await client.close();
+    
+    logger.info('Notification scheduled', notification);
+  }
+
+  /**
+   * Get failure count for subscription
+   */
+  async getFailureCount(subscriptionId) {
+    // Query database for failure count
     try {
-      logger.info('User notification scheduled', {
-        userId,
-        subscriptionId,
-        notificationDate: notificationDate.toISOString(),
-        attemptNumber
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+      await client.connect();
+      
+      const db = client.db();
+      const failureCounts = db.collection('failureCounts');
+      
+      const result = await failureCounts.findOne({ subscriptionId });
+      await client.close();
+      
+      return result ? result.count : 0;
+    } catch (error) {
+      logger.error('Error getting failure count', { subscriptionId, error: error.message });
+      return 0;
+    }
+  }
+
+  /**
+   * Increment failure count
+   */
+  async incrementFailureCount(subscriptionId) {
+    // Update database record for failure count
+    try {
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+      await client.connect();
+      
+      const db = client.db();
+      const failureCounts = db.collection('failureCounts');
+      
+      await failureCounts.updateOne(
+        { subscriptionId },
+        { 
+          $inc: { count: 1 },
+          $set: { lastUpdated: new Date() }
+        },
+        { upsert: true }
+      );
+      
+      await client.close();
+      logger.info('Failure count incremented', { subscriptionId });
+    } catch (error) {
+      logger.error('Error incrementing failure count', { subscriptionId, error: error.message });
+    }
+  }
+
+  /**
+   * Clear scheduled retries
+   */
+  async clearScheduledRetries(subscriptionId) {
+    // Cancel jobs in the Bull queue
+    try {
+      const Queue = require('bull');
+      const retryQueue = new Queue('payment retry', process.env.REDIS_URL || 'redis://localhost:6379');
+      
+      // Remove all jobs for this subscription
+      const jobs = await retryQueue.getJobs(['waiting', 'delayed']);
+      for (const job of jobs) {
+        if (job.data.subscriptionId === subscriptionId) {
+          await job.remove();
+        }
+      }
+      
+      // Also remove from database
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+      await client.connect();
+      
+      const db = client.db();
+      const retryJobs = db.collection('retryJobs');
+      
+      await retryJobs.deleteMany({ subscriptionId });
+      await client.close();
+      
+      logger.info('Scheduled retries cleared', { subscriptionId });
+    } catch (error) {
+      logger.error('Error clearing scheduled retries', { subscriptionId, error: error.message });
+    }
+  }
+
+  /**
+   * Send success notification
+   */
+  async sendSuccessNotification(user) {
+    // Send email/push notification with real implementation
+    try {
+      // Send email notification
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
       });
 
-      // In a real implementation, this would schedule an email notification
-      // For now, we'll just log it
-      
-    } catch (error) {
-      logger.error('Error scheduling user notification', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        userId,
-        subscriptionId
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: 'Payment Successful - PawfectMatch Premium',
+        html: `
+          <h2>Payment Successful!</h2>
+          <p>Your premium subscription payment has been processed successfully.</p>
+          <p>Thank you for being a premium member!</p>
+        `
       });
+
+      // Send push notification if user has push tokens
+      if (user.pushTokens && user.pushTokens.length > 0) {
+        const admin = require('firebase-admin');
+        const message = {
+          notification: {
+            title: 'Payment Successful',
+            body: 'Your premium subscription payment has been processed successfully.'
+          },
+          tokens: user.pushTokens
+        };
+        
+        await admin.messaging().sendMulticast(message);
+      }
+
+      logger.info('Success notification sent', { userId: user._id });
+    } catch (error) {
+      logger.error('Error sending success notification', { userId: user._id, error: error.message });
     }
   }
 
   /**
    * Send final failure notification
    */
-  private async sendFinalFailureNotification(user: any, subscriptionId: string): Promise<void> {
+  async sendFinalFailureNotification(user, customer) {
+    // Send email/push notification with real implementation
     try {
-      // This would send an email to the user about subscription cancellation
-      logger.info('Final failure notification sent', {
-        userId: user._id,
-        subscriptionId,
-        userEmail: user.email
+      // Send email notification
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
       });
 
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: customer.email,
+        subject: 'Payment Failed - PawfectMatch Premium',
+        html: `
+          <h2>Payment Failed</h2>
+          <p>We were unable to process your premium subscription payment after multiple attempts.</p>
+          <p>Please update your payment method to continue your premium membership.</p>
+          <a href="${process.env.FRONTEND_URL}/premium/manage">Update Payment Method</a>
+        `
+      });
+
+      // Send push notification if user has push tokens
+      if (user.pushTokens && user.pushTokens.length > 0) {
+        const admin = require('firebase-admin');
+        const message = {
+          notification: {
+            title: 'Payment Failed',
+            body: 'Please update your payment method to continue your premium membership.'
+          },
+          tokens: user.pushTokens
+        };
+        
+        await admin.messaging().sendMulticast(message);
+      }
+
+      logger.info('Final failure notification sent', { 
+        userId: user._id, 
+        customerEmail: customer.email 
+      });
     } catch (error) {
-      logger.error('Error sending final failure notification', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        userId: user._id,
-        subscriptionId
+      logger.error('Error sending final failure notification', { 
+        userId: user._id, 
+        customerEmail: customer.email,
+        error: error.message 
       });
     }
   }
 
   /**
-   * Get failure count for subscription
+   * Process scheduled retries (called by cron job)
    */
-  private async getFailureCount(subscriptionId: string): Promise<number> {
+  async processScheduledRetries() {
     try {
-      // In a real implementation, this would query a retry tracking table
-      // For now, return 0 as default
-      return 0;
-    } catch (error) {
-      logger.error('Error getting failure count', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        subscriptionId
+      const now = new Date();
+      
+      // Query scheduled jobs from database
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+      await client.connect();
+      
+      const db = client.db();
+      const retryJobs = db.collection('retryJobs');
+      
+      const scheduledRetries = await retryJobs.find({
+        status: 'scheduled',
+        retryDate: { $lte: now }
+      }).toArray();
+
+      for (const retry of scheduledRetries) {
+        await this.executeRetry(retry.subscriptionId);
+        await retryJobs.updateOne(
+          { _id: retry._id },
+          { $set: { status: 'completed', completedAt: new Date() } }
+        );
+      }
+
+      await client.close();
+      logger.info('Processed scheduled retries', { 
+        processedAt: now.toISOString(),
+        count: scheduledRetries.length 
       });
-      return 0;
+    } catch (error) {
+      logger.error('Error processing scheduled retries', { error: error.message });
+    }
+  }
+
+  /**
+   * Process scheduled notifications (called by cron job)
+   */
+  async processScheduledNotifications() {
+    try {
+      const now = new Date();
+      
+      // Query scheduled notifications from database
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+      await client.connect();
+      
+      const db = client.db();
+      const notifications = db.collection('notifications');
+      
+      const scheduledNotifications = await notifications.find({
+        status: 'scheduled',
+        scheduledDate: { $lte: now }
+      }).toArray();
+
+      for (const notification of scheduledNotifications) {
+        await this.sendNotification(notification);
+        await notifications.updateOne(
+          { _id: notification._id },
+          { $set: { status: 'sent', sentAt: new Date() } }
+        );
+      }
+
+      await client.close();
+      logger.info('Processed scheduled notifications', { 
+        processedAt: now.toISOString(),
+        count: scheduledNotifications.length 
+      });
+    } catch (error) {
+      logger.error('Error processing scheduled notifications', { error: error.message });
     }
   }
 
   /**
    * Get retry statistics
    */
-  async getRetryStats(timeframe: string = '30d'): Promise<RetryStats> {
+  async getRetryStatistics() {
     try {
-      const startDate = new Date();
-      const days = parseInt(timeframe.replace('d', ''));
-      startDate.setDate(startDate.getDate() - days);
-
-      // In a real implementation, this would query retry statistics from database
-      const stats = {
-        totalRetries: 0,
-        successfulRetries: 0,
-        failedRetries: 0,
-        averageRetryAttempts: 0,
-        retrySuccessRate: 0,
-        timeframe
-      };
-
-      logger.info('Retry statistics retrieved', { stats, timeframe });
-      return stats;
-
-    } catch (error) {
-      logger.error('Error getting retry stats', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timeframe
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * Process scheduled retries
-   */
-  async processScheduledRetries(): Promise<void> {
-    try {
-      const now = new Date();
+      // Query database for statistics
+      const { MongoClient } = require('mongodb');
+      const client = new MongoClient(process.env.MONGODB_URI || 'mongodb://localhost:27017/pawfectmatch');
+      await client.connect();
       
-      // In a real implementation, this would query scheduled retries from database
-      // For now, just log the processing
-      logger.info('Processing scheduled retries', { timestamp: now.toISOString() });
-
+      const db = client.db();
+      const retryJobs = db.collection('retryJobs');
+      
+      const totalRetries = await retryJobs.countDocuments();
+      const successfulRetries = await retryJobs.countDocuments({ status: 'completed' });
+      const failedRetries = await retryJobs.countDocuments({ status: 'failed' });
+      
+      // Calculate average retry time
+      const completedRetries = await retryJobs.find({ 
+        status: 'completed',
+        completedAt: { $exists: true },
+        createdAt: { $exists: true }
+      }).toArray();
+      
+      const averageRetryTime = completedRetries.length > 0 
+        ? completedRetries.reduce((sum, retry) => {
+            const retryTime = retry.completedAt.getTime() - retry.createdAt.getTime();
+            return sum + retryTime;
+          }, 0) / completedRetries.length
+        : 0;
+      
+      const retrySuccessRate = totalRetries > 0 ? (successfulRetries / totalRetries) * 100 : 0;
+      
+      await client.close();
+      
+      return {
+        totalRetries,
+        successfulRetries,
+        failedRetries,
+        averageRetryTime,
+        retrySuccessRate
+      };
     } catch (error) {
-      logger.error('Error processing scheduled retries', {
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  }
-
-  /**
-   * Update retry configuration
-   */
-  updateRetryConfig(config: RetryConfig): void {
-    try {
-      if (config.maxRetries !== undefined) {
-        this.maxRetries = config.maxRetries;
-      }
-      if (config.retryIntervals !== undefined) {
-        this.retryIntervals = config.retryIntervals;
-      }
-      if (config.notificationDelays !== undefined) {
-        this.notificationDelays = config.notificationDelays;
-      }
-
-      logger.info('Retry configuration updated', { config });
-    } catch (error) {
-      logger.error('Error updating retry config', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        config
-      });
+      logger.error('Error getting retry statistics', { error: error.message });
+      return null;
     }
   }
 }
 
-// Export singleton instance
-const paymentRetryService = new PaymentRetryService();
-export default paymentRetryService;
+module.exports = new PaymentRetryService();

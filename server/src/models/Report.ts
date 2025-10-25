@@ -1,31 +1,29 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IReport } from '../types';
+const mongoose = require('mongoose');
 
-const reportSchema = new Schema<IReport>({
+const reportSchema = new mongoose.Schema({
   reporterId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-    index: true,
+    required: true
   },
   reportedUserId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    index: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   reportedPetId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Pet',
-    index: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Pet'
+  },
+  reportedMatchId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Match'
   },
   reportedMessageId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Message',
-    index: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message'
   },
-  reason: {
+  type: {
     type: String,
-    required: true,
     enum: [
       'inappropriate_content',
       'harassment',
@@ -38,276 +36,336 @@ const reportSchema = new Schema<IReport>({
       'copyright_violation',
       'other'
     ],
+    required: true
+  },
+  category: {
+    type: String,
+    enum: ['user', 'pet', 'chat', 'message', 'other'],
+    required: true
+  },
+  reason: {
+    type: String,
+    required: true,
+    maxlength: 1000
   },
   description: {
     type: String,
-    maxlength: 1000,
+    maxlength: 2000
   },
   evidence: [{
     type: {
       type: String,
-      enum: ['image', 'video', 'text', 'url'],
+      enum: ['screenshot', 'message', 'photo', 'video', 'other'],
+      required: true
     },
     url: String,
-    content: String,
+    description: String,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
   }],
   status: {
     type: String,
-    enum: ['pending', 'investigating', 'resolved', 'dismissed'],
-    default: 'pending',
-    index: true,
+    enum: ['pending', 'under_review', 'resolved', 'dismissed', 'escalated'],
+    default: 'pending'
   },
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'urgent'],
-    default: 'medium',
-    index: true,
+    default: 'medium'
   },
-  assignedTo: {
-    type: Schema.Types.ObjectId,
-    ref: 'User', // Admin user
+  submittedAt: {
+    type: Date,
+    default: Date.now
   },
-  adminNotes: {
-    type: String,
-    maxlength: 2000,
+  reviewedAt: Date,
+  reviewedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  resolvedAt: Date,
+  resolvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   resolution: {
-    action: {
-      type: String,
-      enum: ['warning', 'suspension', 'ban', 'content_removal', 'no_action'],
-    },
-    details: String,
-    resolvedAt: Date,
-    resolvedBy: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    type: String,
+    enum: ['action_taken', 'no_violation', 'warning_issued', 'account_suspended', 'account_banned', 'content_removed', 'other']
   },
+  resolutionNotes: String,
+  actionTaken: {
+    type: String,
+    enum: ['none', 'warning', 'suspension', 'ban', 'content_removal', 'account_restriction', 'other']
+  },
+  actionDetails: String,
+  escalatedAt: Date,
+  escalatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  escalationReason: String,
+  moderatedAt: Date,
+  moderatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  moderationReason: String,
+  moderationNotes: String,
+  isAnonymous: {
+    type: Boolean,
+    default: false
+  },
+  metadata: {
+    ipAddress: String,
+    userAgent: String,
+    reportSource: {
+      type: String,
+      enum: ['web', 'mobile'],
+      default: 'web'
+    },
+    deviceInfo: {
+      type: String,
+      browser: String,
+      os: String
+    }
+  },
+  tags: [String],
+  relatedReports: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Report'
+  }],
   followUpRequired: {
     type: Boolean,
-    default: false,
+    default: false
   },
-  followUpDate: Date,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: true,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  followUpNotes: String,
+  followUpDate: Date
 }, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
+  timestamps: true
 });
 
-// Indexes
-reportSchema.index({ reporterId: 1, createdAt: -1 });
+// Indexes for performance
+reportSchema.index({ reporterId: 1 });
+reportSchema.index({ reportedUserId: 1 });
+reportSchema.index({ reportedPetId: 1 });
+reportSchema.index({ reportedMatchId: 1 });
+reportSchema.index({ reportedMessageId: 1 });
+reportSchema.index({ status: 1 });
+reportSchema.index({ type: 1 });
+reportSchema.index({ category: 1 });
+reportSchema.index({ priority: 1 });
+reportSchema.index({ submittedAt: -1 });
+reportSchema.index({ reviewedAt: -1 });
+reportSchema.index({ resolvedAt: -1 });
+
+// Compound indexes
 reportSchema.index({ status: 1, priority: 1 });
-reportSchema.index({ assignedTo: 1 });
-reportSchema.index({ createdAt: -1 });
+reportSchema.index({ category: 1, status: 1 });
+reportSchema.index({ reportedUserId: 1, status: 1 });
 
-// Virtual for time since creation
-reportSchema.virtual('timeAgo').get(function() {
-  const now = new Date();
-  const diffMs = now.getTime() - this.createdAt.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  return `${diffDays}d ago`;
+// Virtual for report age in days
+reportSchema.virtual('ageInDays').get(function() {
+  return Math.floor((Date.now() - this.submittedAt) / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for is overdue
-reportSchema.virtual('isOverdue').get(function() {
-  if (this.status === 'resolved' || this.status === 'dismissed') return false;
-  
-  const now = new Date();
-  const hoursSinceCreation = (now.getTime() - this.createdAt.getTime()) / (1000 * 60 * 60);
-  
-  // Different thresholds based on priority
-  const thresholds = {
-    urgent: 2,    // 2 hours
-    high: 24,     // 24 hours
-    medium: 72,   // 72 hours
-    low: 168,     // 1 week
-  };
-  
-  return hoursSinceCreation > thresholds[this.priority as keyof typeof thresholds];
-});
-
-// Instance method to assign to admin
-reportSchema.methods.assignToAdmin = function(adminId: string) {
-  this.assignedTo = adminId;
-  this.status = 'investigating';
-  return this.save();
-};
-
-// Instance method to add admin note
-reportSchema.methods.addAdminNote = function(note: string, adminId: string) {
-  this.adminNotes = (this.adminNotes || '') + `\n[${new Date().toISOString()}] ${note}`;
-  return this.save();
-};
-
-// Instance method to resolve report
-reportSchema.methods.resolve = function(action: string, details: string, resolvedBy: string) {
-  this.status = 'resolved';
-  this.resolution = {
-    action: action as any,
-    details,
-    resolvedAt: new Date(),
-    resolvedBy: resolvedBy as any,
-  };
-  return this.save();
-};
-
-// Instance method to dismiss report
-reportSchema.methods.dismiss = function(reason: string, dismissedBy: string) {
-  this.status = 'dismissed';
-  this.resolution = {
-    action: 'no_action',
-    details: reason,
-    resolvedAt: new Date(),
-    resolvedBy: dismissedBy as any,
-  };
-  return this.save();
-};
-
-// Instance method to escalate priority
-reportSchema.methods.escalatePriority = function(newPriority: string) {
-  const priorityOrder = ['low', 'medium', 'high', 'urgent'];
-  const currentIndex = priorityOrder.indexOf(this.priority);
-  const newIndex = priorityOrder.indexOf(newPriority);
-  
-  if (newIndex > currentIndex) {
-    this.priority = newPriority;
-    return this.save();
+// Virtual for time to resolution in hours
+reportSchema.virtual('timeToResolution').get(function() {
+  if (this.resolvedAt) {
+    return Math.floor((this.resolvedAt - this.submittedAt) / (1000 * 60 * 60));
   }
-  
-  return Promise.resolve(this);
+  return null;
+});
+
+// Method to check if report is overdue
+reportSchema.methods.isOverdue = function() {
+  const ageInDays = this.ageInDays;
+  const overdueThresholds = {
+    urgent: 1,
+    high: 3,
+    medium: 7,
+    low: 14
+  };
+  return ageInDays > (overdueThresholds[this.priority] || 7);
 };
 
-// Static method to create report
-reportSchema.statics.createReport = function(reportData: {
-  reporterId: string;
-  reportedUserId?: string;
-  reportedPetId?: string;
-  reportedMessageId?: string;
-  reason: string;
-  description?: string;
-  evidence?: any[];
-}) {
-  return this.create({
-    ...reportData,
-    createdAt: new Date(),
-  });
+// Method to check if report needs follow-up
+reportSchema.methods.needsFollowUp = function() {
+  return this.followUpRequired && 
+         this.followUpDate && 
+         this.followUpDate <= new Date() &&
+         this.status !== 'resolved';
 };
 
 // Static method to get reports by status
-reportSchema.statics.getReportsByStatus = function(status: string, limit: number = 50) {
+reportSchema.statics.getReportsByStatus = function(status, limit = 20, skip = 0) {
   return this.find({ status })
     .populate('reporterId', 'firstName lastName email')
     .populate('reportedUserId', 'firstName lastName email')
-    .populate('reportedPetId', 'name species breed')
-    .populate('assignedTo', 'firstName lastName email')
-    .sort({ createdAt: -1 })
+    .populate('reportedPetId', 'name species')
+    .populate('reviewedBy', 'firstName lastName')
+    .populate('resolvedBy', 'firstName lastName')
+    .sort({ submittedAt: -1 })
+    .skip(skip)
     .limit(limit);
 };
 
 // Static method to get reports by priority
-reportSchema.statics.getReportsByPriority = function(priority: string, limit: number = 50) {
-  return this.find({ 
-    priority,
-    status: { $in: ['pending', 'investigating'] }
-  })
+reportSchema.statics.getReportsByPriority = function(priority, limit = 20, skip = 0) {
+  return this.find({ priority })
     .populate('reporterId', 'firstName lastName email')
     .populate('reportedUserId', 'firstName lastName email')
-    .populate('reportedPetId', 'name species breed')
-    .sort({ createdAt: -1 })
+    .populate('reportedPetId', 'name species')
+    .sort({ submittedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get pending reports
+reportSchema.statics.getPendingReports = function(limit = 20, skip = 0) {
+  return this.find({ status: 'pending' })
+    .populate('reporterId', 'firstName lastName email')
+    .populate('reportedUserId', 'firstName lastName email')
+    .populate('reportedPetId', 'name species')
+    .sort({ priority: -1, submittedAt: -1 })
+    .skip(skip)
     .limit(limit);
 };
 
 // Static method to get overdue reports
-reportSchema.statics.getOverdueReports = function() {
-  const now = new Date();
-  const urgentThreshold = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours
-  const highThreshold = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours
-  const mediumThreshold = new Date(now.getTime() - 72 * 60 * 60 * 1000); // 72 hours
+reportSchema.statics.getOverdueReports = function(limit = 20, skip = 0) {
+  const overdueThresholds = {
+    urgent: 1,
+    high: 3,
+    medium: 7,
+    low: 14
+  };
+  
+  const cutoffDates = {};
+  Object.keys(overdueThresholds).forEach(priority => {
+    cutoffDates[priority] = new Date(Date.now() - overdueThresholds[priority] * 24 * 60 * 60 * 1000);
+  });
   
   return this.find({
-    status: { $in: ['pending', 'investigating'] },
+    status: { $in: ['pending', 'under_review'] },
     $or: [
-      { priority: 'urgent', createdAt: { $lt: urgentThreshold } },
-      { priority: 'high', createdAt: { $lt: highThreshold } },
-      { priority: 'medium', createdAt: { $lt: mediumThreshold } },
-    ],
+      { priority: 'urgent', submittedAt: { $lt: cutoffDates.urgent } },
+      { priority: 'high', submittedAt: { $lt: cutoffDates.high } },
+      { priority: 'medium', submittedAt: { $lt: cutoffDates.medium } },
+      { priority: 'low', submittedAt: { $lt: cutoffDates.low } }
+    ]
   })
     .populate('reporterId', 'firstName lastName email')
     .populate('reportedUserId', 'firstName lastName email')
-    .populate('assignedTo', 'firstName lastName email')
-    .sort({ priority: -1, createdAt: 1 });
+    .populate('reportedPetId', 'name species')
+    .sort({ priority: -1, submittedAt: -1 })
+    .skip(skip)
+    .limit(limit);
 };
 
 // Static method to get report statistics
-reportSchema.statics.getReportStats = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
+reportSchema.statics.getReportStats = function() {
   return this.aggregate([
-    { $match: { createdAt: { $gte: startDate } } },
     {
       $group: {
-        _id: null,
-        totalReports: { $sum: 1 },
-        pendingReports: {
-          $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] }
-        },
-        investigatingReports: {
-          $sum: { $cond: [{ $eq: ['$status', 'investigating'] }, 1, 0] }
-        },
-        resolvedReports: {
-          $sum: { $cond: [{ $eq: ['$status', 'resolved'] }, 1, 0] }
-        },
-        dismissedReports: {
-          $sum: { $cond: [{ $eq: ['$status', 'dismissed'] }, 1, 0] }
-        },
-        urgentReports: {
-          $sum: { $cond: [{ $eq: ['$priority', 'urgent'] }, 1, 0] }
-        },
-        highPriorityReports: {
-          $sum: { $cond: [{ $eq: ['$priority', 'high'] }, 1, 0] }
-        },
-      },
-    },
+        _id: '$status',
+        count: { $sum: 1 }
+      }
+    }
   ]);
 };
 
-// Static method to get reports by reason
-reportSchema.statics.getReportsByReason = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
-  return this.aggregate([
-    { $match: { createdAt: { $gte: startDate } } },
-    {
-      $group: {
-        _id: '$reason',
-        count: { $sum: 1 },
-        pending: {
-          $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] }
-        },
-        resolved: {
-          $sum: { $cond: [{ $eq: ['$status', 'resolved'] }, 1, 0] }
-        },
-      },
-    },
-    { $sort: { count: -1 } },
-  ]);
+// Static method to get reports by type
+reportSchema.statics.getReportsByType = function(type, limit = 20, skip = 0) {
+  return this.find({ type })
+    .populate('reporterId', 'firstName lastName email')
+    .populate('reportedUserId', 'firstName lastName email')
+    .populate('reportedPetId', 'name species')
+    .sort({ submittedAt: -1 })
+    .skip(skip)
+    .limit(limit);
 };
 
-export default mongoose.model<IReport>('Report', reportSchema);
+// Static method to get reports by category
+reportSchema.statics.getReportsByCategory = function(category, limit = 20, skip = 0) {
+  return this.find({ category })
+    .populate('reporterId', 'firstName lastName email')
+    .populate('reportedUserId', 'firstName lastName email')
+    .populate('reportedPetId', 'name species')
+    .sort({ submittedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get reports requiring follow-up
+reportSchema.statics.getReportsRequiringFollowUp = function(limit = 20, skip = 0) {
+  return this.find({
+    followUpRequired: true,
+    followUpDate: { $lte: new Date() },
+    status: { $ne: 'resolved' }
+  })
+    .populate('reporterId', 'firstName lastName email')
+    .populate('reportedUserId', 'firstName lastName email')
+    .populate('reportedPetId', 'name species')
+    .sort({ followUpDate: 1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Pre-save middleware to update timestamps
+reportSchema.pre('save', function(next) {
+  if (this.isModified('status')) {
+    if (this.status === 'under_review') {
+      this.reviewedAt = new Date();
+    } else if (this.status === 'resolved') {
+      this.resolvedAt = new Date();
+    }
+  }
+  
+  next();
+});
+
+// Pre-save middleware to validate required fields based on category
+reportSchema.pre('save', function(next) {
+  if (this.category === 'user' && !this.reportedUserId) {
+    return next(new Error('Reported user ID is required for user reports'));
+  }
+  
+  if (this.category === 'pet' && !this.reportedPetId) {
+    return next(new Error('Reported pet ID is required for pet reports'));
+  }
+  
+  if (this.category === 'chat' && !this.reportedMatchId) {
+    return next(new Error('Reported match ID is required for chat reports'));
+  }
+  
+  if (this.category === 'message' && !this.reportedMessageId) {
+    return next(new Error('Reported message ID is required for message reports'));
+  }
+  
+  next();
+});
+
+// Pre-save middleware to auto-assign priority based on type
+reportSchema.pre('save', function(next) {
+  if (this.isNew) {
+    const priorityMap = {
+      'animal_abuse': 'urgent',
+      'underage': 'urgent',
+      'scam': 'high',
+      'harassment': 'high',
+      'inappropriate_content': 'medium',
+      'fake_profile': 'medium',
+      'spam': 'low',
+      'other': 'medium'
+    };
+    
+    if (!this.priority || this.priority === 'medium') {
+      this.priority = priorityMap[this.type] || 'medium';
+    }
+  }
+  
+  next();
+});
+
+module.exports = mongoose.model('Report', reportSchema);

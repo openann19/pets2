@@ -1,13 +1,8 @@
-import express, { Router, Response } from 'express';
-import { body } from 'express-validator';
-import multer from 'multer';
-import { validate } from '../middleware/validation';
-import { authenticateToken, requirePremiumFeature } from '../middleware/auth';
-import type { AuthenticatedRequest, ApiResponse } from '../types';
-
-// Import controllers from CommonJS modules
-const petController = require('../controllers/petController');
-
+const express = require('express');
+const { body } = require('express-validator');
+const multer = require('multer');
+const { validate } = require('../middleware/validation');
+const { authenticateToken, requirePremiumFeature } = require('../middleware/auth');
 const {
   getCompletePetProfile,
   createPet,
@@ -22,9 +17,9 @@ const {
   duplicatePet,
   togglePetArchive,
   deletePet
-} = petController;
+} = require('../controllers/petController');
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // Configure multer for memory storage (Cloudinary upload)
 const upload = multer({
@@ -33,11 +28,11 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
     files: 10 // Max 10 files
   },
-  fileFilter: (req: AuthenticatedRequest, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error('Only image files are allowed'), false);
     }
   }
 });
@@ -52,59 +47,29 @@ const createPetValidation = [
   body('age').isInt({ min: 0, max: 30 }).withMessage('Age must be 0-30'),
   body('gender').optional().isIn(['male', 'female']).withMessage('Invalid gender'),
   body('size').optional().isIn(['small', 'medium', 'large', 'extra-large']).withMessage('Invalid size'),
-  body('description').optional().trim().isLength({ max: 1000 }).withMessage('Description too long'),
-  body('breed').optional().trim().isLength({ max: 100 }).withMessage('Breed name too long'),
-  body('personality').optional().isArray().withMessage('Personality must be an array'),
-  body('activityLevel').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid activity level'),
-  body('location').optional().isObject().withMessage('Location must be an object'),
-  body('location.coordinates').optional().isArray({ min: 2, max: 2 }).withMessage('Coordinates must be [longitude, latitude]'),
-  body('location.address').optional().isString().withMessage('Address must be a string')
-];
-
-const updatePetValidation = [
-  body('name').optional().trim().isLength({ min: 2, max: 50 }).withMessage('Name must be 2-50 characters'),
-  body('species').optional().isIn(['dog', 'cat', 'bird', 'rabbit', 'other']).withMessage('Invalid species'),
-  body('age').optional().isInt({ min: 0, max: 30 }).withMessage('Age must be 0-30'),
-  body('gender').optional().isIn(['male', 'female']).withMessage('Invalid gender'),
-  body('size').optional().isIn(['small', 'medium', 'large', 'extra-large']).withMessage('Invalid size'),
-  body('description').optional().trim().isLength({ max: 1000 }).withMessage('Description too long'),
-  body('breed').optional().trim().isLength({ max: 100 }).withMessage('Breed name too long'),
-  body('personality').optional().isArray().withMessage('Personality must be an array'),
-  body('activityLevel').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid activity level')
+  body('description').optional().trim().isLength({ max: 1000 }).withMessage('Description too long')
 ];
 
 const swipeValidation = [
-  body('petId').isMongoId().withMessage('Valid pet ID required'),
-  body('action').isIn(['like', 'pass', 'superlike']).withMessage('Action must be like, pass, or superlike')
+  body('action').isIn(['like', 'pass', 'superlike']).withMessage('Invalid swipe action')
 ];
 
-// Pet discovery and swiping
+// Pet management routes
 router.get('/discover', discoverPets);
-router.post('/swipe', swipeValidation, validate, swipePet);
-
-// Pet management
 router.get('/my-pets', getMyPets);
-router.get('/:petId', getPet);
-router.get('/:petId/complete', getCompletePetProfile);
-router.get('/:petId/analytics', getPetAnalytics);
+router.post('/', upload.array('photos', 10), createPetValidation, validate, createPet);
+router.post('/advanced', upload.array('photos', 10), createPetAdvanced);
+router.get('/:id', getPet);
+router.get('/:id/complete', getCompletePetProfile);
+router.get('/:id/analytics', getPetAnalytics);
+router.put('/:id', upload.array('photos', 5), updatePet);
+router.put('/:id/advanced', upload.array('photos', 5), updatePetAdvanced);
+router.post('/:id/archive', togglePetArchive);
+router.post('/:id/duplicate', duplicatePet);
+router.post('/:id/swipe', swipeValidation, validate, swipePet);
+router.delete('/:id', deletePet);
 
-// Pet creation
-router.post('/', createPetValidation, validate, createPet);
-router.post('/advanced', requirePremiumFeature('advanced_pet_profiles'), createPetValidation, validate, createPetAdvanced);
+// Premium features
+router.get('/discover/premium', requirePremiumFeature('advancedFilters'), discoverPets);
 
-// Pet updates
-router.put('/:petId', updatePetValidation, validate, updatePet);
-router.put('/:petId/advanced', requirePremiumFeature('advanced_pet_profiles'), updatePetValidation, validate, updatePetAdvanced);
-
-// Pet photos
-router.post('/:petId/photos', upload.array('photos', 10), (req: AuthenticatedRequest, res, next) => {
-  // Photo upload logic would go here
-  next();
-});
-
-// Pet actions
-router.post('/:petId/duplicate', duplicatePet);
-router.patch('/:petId/archive', togglePetArchive);
-router.delete('/:petId', deletePet);
-
-export default router;
+module.exports = router;

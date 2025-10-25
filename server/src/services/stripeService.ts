@@ -1,21 +1,20 @@
-import stripe from 'stripe';
-import Configuration from '../models/Configuration';
-import { decrypt } from '../utils/encryption';
-import logger from '../utils/logger';
-import { sendAdminNotification } from './adminNotificationService';
-import { StripeService, StripeCustomerData, StripeCustomer, StripeSubscription, StripeWebhookEvent, StripeCheckoutSession, StripeBalance, StripeChargesList, StripeInvoice } from '../types';
+const stripe = require('stripe');
+const Configuration = require('../models/Configuration');
+const { decrypt } = require('../utils/encryption');
+const logger = require('../utils/logger');
+const { sendAdminNotification } = require('./adminNotificationService');
 
 /**
  * Get a configured Stripe client instance
  * 
- * @returns Stripe client instance
- * @throws Error If Stripe is not configured
+ * @returns {Promise<Object>} Stripe client instance
+ * @throws {Error} If Stripe is not configured
  */
-const getStripeClient = async (): Promise<stripe> => {
+const getStripeClient = async () => {
   try {
     // In test mode, ALWAYS return a mock client to avoid real API calls
     // This ensures tests are fast, isolated, and don't require valid Stripe keys
-    if (process.env['NODE_ENV'] === 'test') {
+    if (process.env.NODE_ENV === 'test') {
       logger.warn('Stripe service disabled in test mode - returning mock client');
       return {
         account: { retrieve: async () => ({ id: 'acct_test_mock' }) },
@@ -41,393 +40,241 @@ const getStripeClient = async (): Promise<stripe> => {
         charges: {
           list: async () => ({ data: [], has_more: false })
         }
-      } as unknown as stripe;
+      };
     }
 
     // First try to get from database
-    const configDoc = await Configuration.findOne({ key: 'stripe' });
-    let secretKey: string | null = null;
+    const configDoc = await Configuration.findOne({ type: 'stripe' });
+    let secretKey = null;
 
     // Enhanced null checking and validation
-    if (configDoc && configDoc.value && configDoc.value.secretKey) {
+    if (configDoc?.data?.secretKey) {
       try {
-        secretKey = configDoc.isEncrypted ? decrypt(configDoc.value.secretKey) : configDoc.value.secretKey;
+        secretKey = decrypt(configDoc.data.secretKey);
       } catch (decryptError) {
-        logger.error('Failed to decrypt Stripe secret key from database', { error: decryptError });
+        logger.error('Failed to decrypt Stripe secret key from database', {
+          error: decryptError.message,
+          configId: configDoc._id
+        });
+        // Fall through to environment variable
       }
     }
 
-    // Fallback to environment variable
-    if (!secretKey) {
-      secretKey = process.env['STRIPE_SECRET_KEY'] || null;
+    // Fall back to environment variable if database key is not available
+    if (!secretKey && process.env.STRIPE_SECRET_KEY) {
+      secretKey = process.env.STRIPE_SECRET_KEY;
     }
 
-    if (!secretKey) {
-      throw new Error('Stripe secret key not found in database or environment variables');
+    // Validate that we have a secret key
+    if (!secretKey || typeof secretKey !== 'string' || secretKey.trim().length === 0) {
+      const error = new Error('Stripe is not configured - missing or invalid secret key');
+      logger.error('Stripe configuration error', {
+        error: error.message,
+        hasConfigDoc: !!configDoc,
+        hasConfigData: !!(configDoc?.data),
+        hasConfigSecretKey: !!(configDoc?.data?.secretKey),
+        hasEnvVar: !!process.env.STRIPE_SECRET_KEY,
+        envVarLength: process.env.STRIPE_SECRET_KEY?.length || 0
+      });
+
+      // Send admin notification for critical configuration error
+      await sendAdminNotification({
+        type: 'error',
+        severity: 'critical',
+        title: 'Stripe Configuration Error',
+        message: 'Stripe payment processing is not configured properly. Payment functionality will not work.',
+        metadata: {
+          hasConfigDoc: !!configDoc,
+          hasEnvVar: !!process.env.STRIPE_SECRET_KEY,
+        }
+      }).catch(notificationError => {
+        logger.error('Failed to send admin notification for Stripe config error', {
+          notificationError: notificationError.message
+        });
+      });
+
+      throw error;
     }
 
-    // Validate key format
-    if (!secretKey.startsWith('sk_')) {
-      throw new Error('Invalid Stripe secret key format');
+    // Validate the secret key format (relaxed in test mode)
+    if (!secretKey.startsWith('sk_') && process.env.NODE_ENV !== 'test') {
+      const error = new Error('Invalid Stripe secret key format');
+      logger.error('Stripe secret key validation failed', {
+        error: error.message,
+        keyPrefix: secretKey.substring(0, Math.min(10, secretKey.length)) + '...',
+        keyLength: secretKey.length
+      });
+      throw error;
     }
 
-    const stripeClient = new stripe(secretKey, {
-      apiVersion: '2025-08-27.basil',
+    // In test mode with a test key, skip API connectivity test
+    if (process.env.NODE_ENV === 'test') {
+      logger.info('Stripe client initialized in test mode - skipping API connectivity test');
+      return stripe(secretKey);
+    }
+
+    // Initialize and return Stripe client
+    const client = stripe(secretKey);
+
+    // Test the client with a simple API call
+    try {
+      await client.account.retrieve();
+      logger.info('Stripe client initialized successfully');
+    } catch (testError) {
+      logger.warn('Stripe client test failed', {
+        error: testError.message,
+        type: testError.type,
+        code: testError.code
+      });
+
+      // Send admin notification for Stripe connectivity issues
+      await sendAdminNotification({
+        type: 'warning',
+        severity: 'high',
+        title: 'Stripe Connectivity Issue',
+        message: 'Stripe client test failed. Payment processing may be affected.',
+        metadata: {
+          error: testError.message,
+          type: testError.type,
+          code: testError.code
+        }
+      }).catch(notificationError => {
+        logger.error('Failed to send admin notification for Stripe connectivity issue', {
+          notificationError: notificationError.message
+        });
+      });
+
+      // Don't throw here - the client might still work for other operations
+    }
+
+    return client;
+  } catch (error) {
+    logger.error('Failed to initialize Stripe client', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name
     });
 
-    // Test the connection
-    await stripeClient.accounts.retrieve();
-    
-    logger.info('Stripe client initialized successfully');
-    return stripeClient;
-  } catch (error) {
-    logger.error('Failed to initialize Stripe client', { error });
-    throw new Error(`Stripe initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-};
-
-/**
- * Create a Stripe customer
- * @param userData - User data
- * @returns Stripe customer
- */
-export const createCustomer = async (userData: StripeCustomerData): Promise<StripeCustomer> => {
-  try {
-    const stripe = await getStripeClient();
-    
-    const customer = await stripe.customers.create({
-      email: userData.email,
-      name: `${userData.firstName} ${userData.lastName}`,
+    // Send admin notification for critical Stripe initialization failure
+    await sendAdminNotification({
+      type: 'error',
+      severity: 'critical',
+      title: 'Stripe Initialization Failed',
+      message: 'Failed to initialize Stripe client. Payment processing is completely unavailable.',
       metadata: {
-        userId: userData._id,
-        platform: 'pawfectmatch'
+        error: error.message,
+        name: error.name
       }
+    }).catch(notificationError => {
+      logger.error('Failed to send admin notification for Stripe initialization failure', {
+        notificationError: notificationError.message
+      });
     });
 
-    logger.info('Stripe customer created', { customerId: customer.id, userId: userData._id });
-    return customer as StripeCustomer;
-  } catch (error) {
-    logger.error('Error creating Stripe customer', { error, userData });
-    throw error;
+    throw new Error('Failed to initialize Stripe client: ' + error.message);
   }
 };
 
 /**
- * Create a Stripe subscription
- * @param customerId - Stripe customer ID
- * @param planId - Stripe plan ID
- * @returns Stripe subscription
+ * Get Stripe publishable key
+ * 
+ * @returns {Promise<string>} Stripe publishable key
  */
-export const createSubscription = async (customerId: string, planId: string): Promise<StripeSubscription> => {
+const getPublishableKey = async () => {
   try {
-    const stripe = await getStripeClient();
-    
-    const subscription = await stripe.subscriptions.create({
-      customer: customerId,
-      items: [{ price: planId }],
-      payment_behavior: 'default_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'],
-    });
+    // First try to get from database
+    const configDoc = await Configuration.findOne({ type: 'stripe' });
+    let publishableKey = null;
 
-    logger.info('Stripe subscription created', { subscriptionId: subscription.id, customerId, planId });
-    return subscription as StripeSubscription;
-  } catch (error) {
-    logger.error('Error creating Stripe subscription', { error, customerId, planId });
-    throw error;
-  }
-};
-
-/**
- * Cancel a Stripe subscription
- * @param subscriptionId - Stripe subscription ID
- * @returns Cancelled subscription
- */
-export const cancelSubscription = async (subscriptionId: string): Promise<StripeSubscription> => {
-  try {
-    const stripe = await getStripeClient();
-    
-    const subscription = await stripe.subscriptions.update(subscriptionId, {
-      cancel_at_period_end: true,
-    });
-
-    logger.info('Stripe subscription cancelled', { subscriptionId });
-    return subscription as StripeSubscription;
-  } catch (error) {
-    logger.error('Error cancelling Stripe subscription', { error, subscriptionId });
-    throw error;
-  }
-};
-
-/**
- * Update a Stripe subscription
- * @param subscriptionId - Stripe subscription ID
- * @param planId - New plan ID
- * @returns Updated subscription
- */
-export const updateSubscription = async (subscriptionId: string, planId: string): Promise<StripeSubscription> => {
-  try {
-    const stripe = await getStripeClient();
-    
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    
-    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
-      items: [{
-        id: subscription.items.data[0]?.id || '',
-        price: planId,
-      }],
-      proration_behavior: 'create_prorations',
-    });
-
-    logger.info('Stripe subscription updated', { subscriptionId, planId });
-    return updatedSubscription as StripeSubscription;
-  } catch (error) {
-    logger.error('Error updating Stripe subscription', { error, subscriptionId, planId });
-    throw error;
-  }
-};
-
-/**
- * Handle Stripe webhook
- * @param payload - Webhook payload
- * @param signature - Webhook signature
- * @returns Processed event
- */
-export const handleWebhook = async (payload: Buffer | string, signature: string): Promise<StripeWebhookEvent> => {
-  try {
-    const stripe = await getStripeClient();
-    const webhookSecret = process.env['STRIPE_WEBHOOK_SECRET'];
-    
-    if (!webhookSecret) {
-      throw new Error('Stripe webhook secret not configured');
+    // Enhanced null checking
+    if (configDoc?.data?.publishableKey) {
+      publishableKey = configDoc.data.publishableKey;
+    } else if (process.env.STRIPE_PUBLISHABLE_KEY) {
+      // Fall back to environment variable
+      publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
     }
 
-    const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
-    
-    logger.info('Stripe webhook received', { type: event.type, id: event.id });
-
-    // Handle different event types
-    switch (event.type) {
-      case 'customer.subscription.created':
-        await handleSubscriptionCreated(event.data.object as StripeSubscription);
-        break;
-      case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object as StripeSubscription);
-        break;
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object as StripeSubscription);
-        break;
-      case 'invoice.payment_succeeded':
-        await handlePaymentSucceeded(event.data.object as StripeInvoice);
-        break;
-      case 'invoice.payment_failed':
-        await handlePaymentFailed(event.data.object as StripeInvoice);
-        break;
-      default:
-        logger.info('Unhandled Stripe webhook event', { type: event.type });
+    // Validate the publishable key format
+    if (publishableKey && typeof publishableKey === 'string' && publishableKey.trim().length > 0) {
+      if (!publishableKey.startsWith('pk_')) {
+        logger.warn('Invalid Stripe publishable key format', {
+          keyPrefix: publishableKey.substring(0, 10) + '...',
+          keyLength: publishableKey.length
+        });
+        return null;
+      }
+      return publishableKey;
     }
 
-    return event as StripeWebhookEvent;
-  } catch (error) {
-    logger.error('Error handling Stripe webhook', { error, signature });
-    throw error;
-  }
-};
-
-/**
- * Handle subscription created event
- * @param subscription - Stripe subscription object
- */
-const handleSubscriptionCreated = async (subscription: StripeSubscription): Promise<void> => {
-  try {
-    logger.info('Subscription created', { subscriptionId: subscription.id, customerId: subscription.customer });
-    
-    // Update user's premium status in database
-    // This would typically update the User model
-    await sendAdminNotification('subscription_created', {
-      subscriptionId: subscription.id,
-      customerId: subscription.customer,
-      planId: subscription.items.data[0]?.price?.id || '',
-    });
-  } catch (error) {
-    logger.error('Error handling subscription created', { error, subscription });
-  }
-};
-
-/**
- * Handle subscription updated event
- * @param subscription - Stripe subscription object
- */
-const handleSubscriptionUpdated = async (subscription: StripeSubscription): Promise<void> => {
-  try {
-    logger.info('Subscription updated', { subscriptionId: subscription.id, status: subscription.status });
-    
-    await sendAdminNotification('subscription_updated', {
-      subscriptionId: subscription.id,
-      status: subscription.status,
-      customerId: subscription.customer,
-    });
-  } catch (error) {
-    logger.error('Error handling subscription updated', { error, subscription });
-  }
-};
-
-/**
- * Handle subscription deleted event
- * @param subscription - Stripe subscription object
- */
-const handleSubscriptionDeleted = async (subscription: StripeSubscription): Promise<void> => {
-  try {
-    logger.info('Subscription deleted', { subscriptionId: subscription.id });
-    
-    await sendAdminNotification('subscription_deleted', {
-      subscriptionId: subscription.id,
-      customerId: subscription.customer,
-    });
-  } catch (error) {
-    logger.error('Error handling subscription deleted', { error, subscription });
-  }
-};
-
-/**
- * Handle payment succeeded event
- * @param invoice - Stripe invoice object
- */
-const handlePaymentSucceeded = async (invoice: StripeInvoice): Promise<void> => {
-  try {
-    logger.info('Payment succeeded', { invoiceId: invoice.id, subscriptionId: invoice.subscription });
-    
-    await sendAdminNotification('payment_succeeded', {
-      invoiceId: invoice.id,
-      subscriptionId: invoice.subscription,
-      amount: invoice.amount_paid,
-    });
-  } catch (error) {
-    logger.error('Error handling payment succeeded', { error, invoice });
-  }
-};
-
-/**
- * Handle payment failed event
- * @param invoice - Stripe invoice object
- */
-const handlePaymentFailed = async (invoice: StripeInvoice): Promise<void> => {
-  try {
-    logger.info('Payment failed', { invoiceId: invoice.id, subscriptionId: invoice.subscription });
-    
-    await sendAdminNotification('payment_failed', {
-      invoiceId: invoice.id,
-      subscriptionId: invoice.subscription,
-      amount: invoice.amount_due,
-    });
-  } catch (error) {
-    logger.error('Error handling payment failed', { error, invoice });
-  }
-};
-
-/**
- * Get Stripe customer
- * @param customerId - Stripe customer ID
- * @returns Stripe customer
- */
-export const getCustomer = async (customerId: string): Promise<StripeCustomer> => {
-  try {
-    const stripe = await getStripeClient();
-    return await stripe.customers.retrieve(customerId) as StripeCustomer;
-  } catch (error) {
-    logger.error('Error getting Stripe customer', { error, customerId });
-    throw error;
-  }
-};
-
-/**
- * Get Stripe subscription
- * @param subscriptionId - Stripe subscription ID
- * @returns Stripe subscription
- */
-export const getSubscription = async (subscriptionId: string): Promise<StripeSubscription> => {
-  try {
-    const stripe = await getStripeClient();
-    return await stripe.subscriptions.retrieve(subscriptionId) as StripeSubscription;
-  } catch (error) {
-    logger.error('Error getting Stripe subscription', { error, subscriptionId });
-    throw error;
-  }
-};
-
-/**
- * Create checkout session
- * @param customerId - Stripe customer ID
- * @param priceId - Stripe price ID
- * @param successUrl - Success URL
- * @param cancelUrl - Cancel URL
- * @returns Checkout session
- */
-export const createCheckoutSession = async (
-  customerId: string, 
-  priceId: string, 
-  successUrl: string, 
-  cancelUrl: string
-): Promise<StripeCheckoutSession> => {
-  try {
-    const stripe = await getStripeClient();
-    
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-      line_items: [{
-        price: priceId,
-        quantity: 1,
-      }],
-      mode: 'subscription',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+    logger.warn('Stripe publishable key not found', {
+      hasConfigDoc: !!configDoc,
+      hasConfigData: !!(configDoc?.data),
+      hasConfigPublishableKey: !!(configDoc?.data?.publishableKey),
+      hasEnvVar: !!process.env.STRIPE_PUBLISHABLE_KEY
     });
 
-    logger.info('Checkout session created', { sessionId: session.id, customerId, priceId });
-    return session as StripeCheckoutSession;
+    return null;
   } catch (error) {
-    logger.error('Error creating checkout session', { error, customerId, priceId });
-    throw error;
+    logger.error('Failed to get Stripe publishable key', {
+      error: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    return null;
   }
 };
 
 /**
- * Get Stripe balance
- * @returns Stripe balance
+ * Get Stripe webhook secret
+ * 
+ * @returns {Promise<string>} Stripe webhook secret
  */
-export const getBalance = async (): Promise<StripeBalance> => {
+const getWebhookSecret = async () => {
   try {
-    const stripe = await getStripeClient();
-    return await stripe.balance.retrieve();
+    // First try to get from database
+    const configDoc = await Configuration.findOne({ type: 'stripe' });
+
+    if (configDoc && configDoc.data && configDoc.data.webhookSecret) {
+      return decrypt(configDoc.data.webhookSecret);
+    } else if (process.env.STRIPE_WEBHOOK_SECRET) {
+      // Fall back to environment variable
+      return process.env.STRIPE_WEBHOOK_SECRET;
+    }
+
+    return null;
   } catch (error) {
-    logger.error('Error getting Stripe balance', { error });
-    throw error;
+    logger.error('Failed to get Stripe webhook secret:', { error });
+    return null;
   }
 };
 
 /**
- * Get Stripe charges
- * @param limit - Number of charges to retrieve
- * @returns Stripe charges
+ * Check if Stripe is in live mode
+ * 
+ * @returns {Promise<boolean>} True if Stripe is in live mode
  */
-export const getCharges = async (limit: number = 10): Promise<StripeChargesList> => {
+const isLiveMode = async () => {
   try {
-    const stripe = await getStripeClient();
-    return await stripe.charges.list({ limit });
+    // First try to get from database
+    const configDoc = await Configuration.findOne({ type: 'stripe' });
+
+    if (configDoc && configDoc.data && configDoc.data.isLiveMode !== undefined) {
+      return configDoc.data.isLiveMode;
+    } else if (process.env.STRIPE_SECRET_KEY) {
+      // Fall back to environment variable
+      return process.env.STRIPE_SECRET_KEY.startsWith('sk_live_');
+    }
+
+    return false;
   } catch (error) {
-    logger.error('Error getting Stripe charges', { error, limit });
-    throw error;
+    logger.error('Failed to check Stripe mode:', { error });
+    return false;
   }
 };
 
-// Export the service interface
-const stripeService: StripeService = {
-  createCustomer,
-  createSubscription,
-  cancelSubscription,
-  updateSubscription,
-  handleWebhook,
+module.exports = {
+  getStripeClient,
+  getPublishableKey,
+  getWebhookSecret,
+  isLiveMode
 };
-
-export default stripeService;

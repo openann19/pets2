@@ -1,18 +1,27 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IMatch } from '../types';
+const mongoose = require('mongoose');
 
-const matchSchema = new Schema<IMatch>({
+const matchSchema = new mongoose.Schema({
   // Match Participants
-  users: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  }],
-  pets: [{
-    type: Schema.Types.ObjectId,
+  pet1: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Pet',
-    required: true
-  }],
+    required: [true, 'First pet is required']
+  },
+  pet2: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Pet',
+    required: [true, 'Second pet is required']
+  },
+  user1: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'First user is required']
+  },
+  user2: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Second user is required']
+  },
   
   // Match Details
   matchType: {
@@ -34,14 +43,14 @@ const matchSchema = new Schema<IMatch>({
   // Match Status
   status: {
     type: String,
-    enum: ['pending', 'matched', 'unmatched', 'blocked'],
-    default: 'pending'
+    enum: ['active', 'archived', 'blocked', 'deleted', 'completed'],
+    default: 'active'
   },
   
   // Communication
   messages: [{
     sender: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
     },
@@ -62,7 +71,7 @@ const matchSchema = new Schema<IMatch>({
     }],
     readBy: [{
       user: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       },
       readAt: {
@@ -70,250 +79,251 @@ const matchSchema = new Schema<IMatch>({
         default: Date.now
       }
     }],
+    sentAt: {
+      type: Date,
+      default: Date.now
+    },
+    editedAt: Date,
+    isEdited: {
+      type: Boolean,
+      default: false
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  
+  // Meeting Planning
+  meetings: [{
+    proposedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    title: {
+      type: String,
+      required: true,
+      maxlength: [100, 'Meeting title cannot exceed 100 characters']
+    },
+    description: {
+      type: String,
+      maxlength: [500, 'Meeting description cannot exceed 500 characters']
+    },
+    proposedDate: {
+      type: Date,
+      required: true
+    },
+    location: {
+      name: String,
+      address: String,
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        index: '2dsphere'
+      }
+    },
+    status: {
+      type: String,
+      enum: ['proposed', 'accepted', 'declined', 'completed', 'cancelled'],
+      default: 'proposed'
+    },
+    responses: [{
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      response: {
+        type: String,
+        enum: ['accepted', 'declined', 'maybe']
+      },
+      respondedAt: {
+        type: Date,
+        default: Date.now
+      },
+      note: String
+    }],
     createdAt: {
       type: Date,
       default: Date.now
     }
   }],
   
-  // Match Timeline
-  matchedAt: {
+  // Activity Tracking
+  lastActivity: {
     type: Date,
-    default: null
+    default: Date.now
   },
-  unmatchedAt: {
-    type: Date,
-    default: null
-  },
-  lastMessageAt: {
-    type: Date,
-    default: null
+  lastMessageAt: Date,
+  messageCount: {
+    type: Number,
+    default: 0
   },
   
-  // Preferences & Settings
-  preferences: {
-    allowMessages: { type: Boolean, default: true },
-    allowPhotos: { type: Boolean, default: true },
-    allowLocation: { type: Boolean, default: false },
-    notificationSettings: {
-      newMessage: { type: Boolean, default: true },
-      matchUpdate: { type: Boolean, default: true }
+  // User Actions
+  userActions: {
+    user1: {
+      isArchived: { type: Boolean, default: false },
+      isBlocked: { type: Boolean, default: false },
+      isFavorite: { type: Boolean, default: false },
+      muteNotifications: { type: Boolean, default: false },
+      lastSeen: Date
+    },
+    user2: {
+      isArchived: { type: Boolean, default: false },
+      isBlocked: { type: Boolean, default: false },
+      isFavorite: { type: Boolean, default: false },
+      muteNotifications: { type: Boolean, default: false },
+      lastSeen: Date
     }
   },
   
-  // Analytics
-  analytics: {
-    messageCount: { type: Number, default: 0 },
-    photoCount: { type: Number, default: 0 },
-    lastActivityAt: Date,
-    totalInteractionTime: { type: Number, default: 0 }, // in minutes
-    user1Engagement: { type: Number, default: 0 },
-    user2Engagement: { type: Number, default: 0 }
-  },
+  // Outcome Tracking (for analytics)
+  outcome: {
+    result: {
+      type: String,
+      enum: ['pending', 'met', 'adopted', 'mated', 'no-show', 'incompatible']
+    },
+    completedAt: Date,
+    rating: {
+      user1Rating: { type: Number, min: 1, max: 5 },
+      user2Rating: { type: Number, min: 1, max: 5 }
+    },
+    feedback: {
+      user1Feedback: String,
+      user2Feedback: String
+    }
+  }
   
-  // Moderation
-  moderation: {
-    isFlagged: { type: Boolean, default: false },
-    flaggedBy: [{
-      user: { type: Schema.Types.ObjectId, ref: 'User' },
-      reason: String,
-      flaggedAt: { type: Date, default: Date.now }
-    }],
-    adminNotes: String,
-    isBlocked: { type: Boolean, default: false },
-    blockedAt: Date,
-    blockedBy: { type: Schema.Types.ObjectId, ref: 'User' }
-  },
-  
-  // Timestamps
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-// Indexes
-matchSchema.index({ users: 1 });
-matchSchema.index({ pets: 1 });
+// Indexes for performance
+matchSchema.index({ user1: 1, user2: 1 });
+matchSchema.index({ pet1: 1, pet2: 1 }, { unique: true });
 matchSchema.index({ status: 1 });
-matchSchema.index({ createdAt: -1 });
-matchSchema.index({ matchedAt: -1 });
-matchSchema.index({ lastMessageAt: -1 });
-matchSchema.index({ 'moderation.isFlagged': 1 });
+matchSchema.index({ lastActivity: -1 });
+matchSchema.index({ matchType: 1 });
+matchSchema.index({ compatibilityScore: -1 });
 
-// Virtual for unread message count per user
-matchSchema.virtual('unreadCount').get(function() {
-  return (userId: string) => {
-    if (!this.messages || this.messages.length === 0) return 0;
-    
-    const userMessages = this.messages.filter(msg => 
-      msg.sender.toString() !== userId
-    );
-    
-    return userMessages.filter(msg => 
-      !msg.readBy.some(read => read.user.toString() === userId)
+// Virtual for getting the other user
+matchSchema.virtual('getOtherUser').get(function() {
+  return function(currentUserId) {
+    return this.user1.toString() === currentUserId.toString() ? this.user2 : this.user1;
+  };
+});
+
+// Virtual for getting the other pet
+matchSchema.virtual('getOtherPet').get(function() {
+  return function(currentUserId) {
+    return this.user1.toString() === currentUserId.toString() ? this.pet2 : this.pet1;
+  };
+});
+
+// Virtual for unread message count
+matchSchema.virtual('getUnreadCount').get(function() {
+  return function(userId) {
+    return this.messages.filter(message => 
+      message.sender.toString() !== userId.toString() &&
+      !message.readBy.some(read => read.user.toString() === userId.toString())
     ).length;
   };
 });
 
-// Virtual for last message
-matchSchema.virtual('lastMessage').get(function() {
-  if (!this.messages || this.messages.length === 0) return null;
-  return this.messages[this.messages.length - 1];
-});
-
-// Virtual for is active (has recent activity)
-matchSchema.virtual('isActive').get(function() {
-  if (!this.lastMessageAt) return false;
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  return this.lastMessageAt > thirtyDaysAgo;
-});
-
-// Pre-save middleware to update timestamps
+// Pre-save middleware
 matchSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
+  // Update message count
+  this.messageCount = this.messages.length;
   
-  // Update lastMessageAt when messages are added
-  if (this.messages && this.messages.length > 0) {
-    const lastMessage = this.messages[this.messages.length - 1];
-    this.lastMessageAt = lastMessage.createdAt;
+  // Update last message timestamp
+  if (this.messages.length > 0) {
+    this.lastMessageAt = this.messages[this.messages.length - 1].sentAt;
+  }
+  
+  // Update last activity
+  if (this.isModified() && !this.isNew) {
+    this.lastActivity = new Date();
   }
   
   next();
 });
 
-// Pre-save middleware to set matchedAt when status changes to matched
-matchSchema.pre('save', function(next) {
-  if (this.isModified('status') && this.status === 'matched' && !this.matchedAt) {
-    this.matchedAt = new Date();
-  }
-  
-  if (this.isModified('status') && this.status === 'unmatched' && !this.unmatchedAt) {
-    this.unmatchedAt = new Date();
-  }
-  
-  next();
-});
-
-// Instance method to add message
-matchSchema.methods.addMessage = function(senderId: string, content: string, messageType: string = 'text', attachments?: any[]) {
+// Instance methods
+matchSchema.methods.addMessage = function(senderId, content, messageType = 'text', attachments = []) {
   const message = {
     sender: senderId,
     content,
     messageType,
-    attachments: attachments || [],
-    readBy: [],
-    createdAt: new Date()
+    attachments,
+    sentAt: new Date()
   };
   
   this.messages.push(message);
-  this.analytics.messageCount = (this.analytics.messageCount || 0) + 1;
+  this.lastActivity = new Date();
+  this.lastMessageAt = new Date();
   
   return this.save();
 };
 
-// Instance method to mark message as read
-matchSchema.methods.markAsRead = function(userId: string, messageId?: string) {
-  if (messageId) {
-    // Mark specific message as read
-    const message = this.messages.id(messageId);
-    if (message) {
-      const existingRead = message.readBy.find(read => read.user.toString() === userId);
-      if (!existingRead) {
-        message.readBy.push({
-          user: userId,
-          readAt: new Date()
-        });
-      }
-    }
-  } else {
-    // Mark all messages as read for this user
-    this.messages.forEach(message => {
-      if (message.sender.toString() !== userId) {
-        const existingRead = message.readBy.find(read => read.user.toString() === userId);
-        if (!existingRead) {
-          message.readBy.push({
-            user: userId,
-            readAt: new Date()
-          });
-        }
-      }
+matchSchema.methods.markMessagesAsRead = function(userId) {
+  const unreadMessages = this.messages.filter(message => 
+    message.sender.toString() !== userId.toString() &&
+    !message.readBy.some(read => read.user.toString() === userId.toString())
+  );
+  
+  unreadMessages.forEach(message => {
+    message.readBy.push({
+      user: userId,
+      readAt: new Date()
     });
-  }
+  });
+  
+  // Update user's last seen
+  const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
+  this.userActions[userKey].lastSeen = new Date();
   
   return this.save();
 };
 
-// Instance method to unmatch
-matchSchema.methods.unmatch = function(userId: string, reason?: string) {
-  this.status = 'unmatched';
-  this.unmatchedAt = new Date();
+matchSchema.methods.isUserBlocked = function(userId) {
+  const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
+  const otherUserKey = userKey === 'user1' ? 'user2' : 'user1';
   
-  // Add system message about unmatch
-  this.addMessage('system', `Match ended${reason ? `: ${reason}` : ''}`, 'system');
-  
+  return this.userActions[userKey].isBlocked || this.userActions[otherUserKey].isBlocked;
+};
+
+matchSchema.methods.toggleArchive = function(userId) {
+  const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
+  this.userActions[userKey].isArchived = !this.userActions[userKey].isArchived;
   return this.save();
 };
 
-// Instance method to block match
-matchSchema.methods.block = function(userId: string, reason?: string) {
-  this.status = 'blocked';
-  this.moderation.isBlocked = true;
-  this.moderation.blockedAt = new Date();
-  this.moderation.blockedBy = userId;
-  
-  // Add system message about block
-  this.addMessage('system', `Match blocked${reason ? `: ${reason}` : ''}`, 'system');
-  
+matchSchema.methods.toggleFavorite = function(userId) {
+  const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
+  this.userActions[userKey].isFavorite = !this.userActions[userKey].isFavorite;
   return this.save();
 };
 
-// Instance method to calculate engagement score
-matchSchema.methods.calculateEngagement = function() {
-  if (!this.messages || this.messages.length === 0) {
-    this.analytics.user1Engagement = 0;
-    this.analytics.user2Engagement = 0;
-    return;
-  }
-  
-  const user1Id = this.users[0].toString();
-  const user2Id = this.users[1].toString();
-  
-  const user1Messages = this.messages.filter(msg => msg.sender.toString() === user1Id).length;
-  const user2Messages = this.messages.filter(msg => msg.sender.toString() === user2Id).length;
-  
-  this.analytics.user1Engagement = user1Messages;
-  this.analytics.user2Engagement = user2Messages;
-  
-  return this.save();
+// Static methods
+matchSchema.statics.findActiveMatchesForUser = function(userId) {
+  return this.find({
+    status: 'active',
+    $or: [
+      { user1: userId, 'userActions.user1.isArchived': false },
+      { user2: userId, 'userActions.user2.isArchived': false }
+    ]
+  }).populate('pet1 pet2 user1 user2', '-password -refreshTokens');
 };
 
-// Static method to find matches for user
-matchSchema.statics.findByUser = function(userId: string, status?: string) {
-  const query: any = { users: userId };
-  if (status) {
-    query.status = status;
-  }
-  return this.find(query).populate('users pets');
-};
-
-// Static method to find active matches
-matchSchema.statics.findActive = function() {
-  return this.find({ 
-    status: { $in: ['pending', 'matched'] },
-    'moderation.isBlocked': false 
+matchSchema.statics.findByPets = function(pet1Id, pet2Id) {
+  return this.findOne({
+    $or: [
+      { pet1: pet1Id, pet2: pet2Id },
+      { pet1: pet2Id, pet2: pet1Id }
+    ]
   });
 };
 
-// Static method to find matches with unread messages
-matchSchema.statics.findWithUnreadMessages = function(userId: string) {
-  return this.find({
-    users: userId,
-    status: { $in: ['pending', 'matched'] },
-    'moderation.isBlocked': false
-  }).populate('users pets');
-};
-
-export default mongoose.model<IMatch>('Match', matchSchema);
+module.exports = mongoose.model('Match', matchSchema);

@@ -1,44 +1,22 @@
-import nodemailer from 'nodemailer';
-import logger from '../utils/logger';
-import { EmailService } from '../types';
-
-// Email template data types
-interface EmailVerificationData {
-  firstName: string;
-  verificationCode: string;
-}
-
-interface PasswordResetData {
-  firstName: string;
-  resetToken: string;
-}
-
-interface MatchNotificationData {
-  firstName: string;
-  matchName: string;
-  matchPhoto?: string;
-}
-
-interface WelcomeEmailData {
-  firstName: string;
-}
+const nodemailer = require('nodemailer');
+const logger = require('../utils/logger');
 
 // Create transporter
 const createTransporter = () => {
-  return nodemailer.createTransporter({
-    host: process.env['EMAIL_HOST'] || 'smtp.gmail.com',
-    port: Number(process.env['EMAIL_PORT'] || 587),
+  return nodemailer.createTransport({
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: Number(process.env.EMAIL_PORT || 587),
     secure: false,
     auth: {
-      user: process.env['EMAIL_USER'],
-      pass: process.env['EMAIL_PASS'],
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 };
 
 // Email templates
 const emailTemplates = {
-  emailVerification: (data: EmailVerificationData) => ({
+  emailVerification: (data) => ({
     subject: 'Welcome to PawfectMatch - Verify Your Email',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -72,38 +50,47 @@ const emailTemplates = {
           <p>© 2024 PawfectMatch. All rights reserved.</p>
         </div>
       </div>
-    `,
+    `
   }),
 
-  passwordReset: (data: PasswordResetData) => ({
-    subject: 'Reset Your PawfectMatch Password',
+  passwordReset: (data) => ({
+    subject: 'PawfectMatch - Password Reset Request',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #ff69b4, #8a2be2); padding: 30px; text-align: center;">
           <h1 style="color: white; margin: 0;">🔐 Password Reset</h1>
         </div>
         <div style="padding: 30px; background: white;">
-          <h2>Hi ${data.firstName}! 👋</h2>
-          <p>We received a request to reset your password for your PawfectMatch account.</p>
-          <p>Click the button below to reset your password:</p>
+          <h2>Hi ${data.firstName},</h2>
+          <p>We received a request to reset your PawfectMatch password.</p>
+          <p>Click the button below to create a new password:</p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="${data.resetUrl}" 
-               style="background: #ff69b4; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
+               style="background: #dc3545; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
               Reset Password 🔑
             </a>
           </div>
-          <p>If you didn't request this password reset, please ignore this email.</p>
-          <p>For security reasons, this link will expire in 1 hour.</p>
-          <p>Best regards,<br><strong>The PawfectMatch Team</strong></p>
+          <p><strong>This link will expire in 10 minutes</strong> for security reasons.</p>
+          <p>If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
+          <p>For security tips:</p>
+          <ul>
+            <li>Use a strong, unique password</li>
+            <li>Don't share your password with anyone</li>
+            <li>Consider using a password manager</li>
+          </ul>
+          <p>Stay safe! 🛡️</p>
+          <p><strong>The PawfectMatch Team</strong></p>
         </div>
         <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #6c757d; font-size: 12px;">
+          <p>If you're having trouble clicking the button, copy and paste this URL into your browser:</p>
+          <p style="word-break: break-all;">${data.resetUrl}</p>
           <p>© 2024 PawfectMatch. All rights reserved.</p>
         </div>
       </div>
-    `,
+    `
   }),
 
-  matchNotification: (data: MatchNotificationData) => ({
+  newMatch: (data) => ({
     subject: '🎉 You have a new match on PawfectMatch!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -111,241 +98,204 @@ const emailTemplates = {
           <h1 style="color: white; margin: 0;">🎉 It's a Match!</h1>
         </div>
         <div style="padding: 30px; background: white;">
-          <h2>Congratulations ${data.firstName}! 🎊</h2>
-          <p>Great news! ${data.matchedPetName} and your pet ${data.yourPetName} are a perfect match!</p>
+          <h2>Congratulations ${data.userName}! 🎊</h2>
+          <p><strong>${data.yourPetName}</strong> and <strong>${data.matchedPetName}</strong> liked each other!</p>
+          <div style="display: flex; justify-content: center; margin: 20px 0;">
+            <div style="text-align: center; margin: 0 20px;">
+              <img src="${data.yourPetPhoto}" alt="${data.yourPetName}" 
+                   style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+              <p><strong>${data.yourPetName}</strong></p>
+            </div>
+            <div style="font-size: 30px; align-self: center;">❤️</div>
+            <div style="text-align: center; margin: 0 20px;">
+              <img src="${data.matchedPetPhoto}" alt="${data.matchedPetName}" 
+                   style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+              <p><strong>${data.matchedPetName}</strong></p>
+            </div>
+          </div>
+          <p>Start a conversation with <strong>${data.matchedOwnerName}</strong> and plan your pets' first meetup!</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${data.matchUrl}" 
-               style="background: #ff69b4; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
-              View Match 💕
+            <a href="${data.chatUrl}" 
+               style="background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
+              Start Chatting 💬
             </a>
           </div>
-          <p>Start chatting and plan your pets' first meeting!</p>
-          <p>Happy matching! 🐾</p>
+          <p>Tips for a successful meetup:</p>
+          <ul>
+            <li>Meet in a public, neutral location</li>
+            <li>Bring water and treats</li>
+            <li>Keep the first meeting short and positive</li>
+            <li>Watch for signs of stress in both pets</li>
+          </ul>
+          <p>Have fun! 🐾</p>
           <p><strong>The PawfectMatch Team</strong></p>
         </div>
-        <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #6c757d; font-size: 12px;">
-          <p>© 2024 PawfectMatch. All rights reserved.</p>
-        </div>
       </div>
-    `,
+    `
   }),
 
-  welcomeEmail: (data: WelcomeEmailData) => ({
-    subject: 'Welcome to PawfectMatch - Let\'s Get Started!',
+  premiumWelcome: (data) => ({
+    subject: '🌟 Welcome to PawfectMatch Premium!',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #ff69b4, #8a2be2); padding: 30px; text-align: center;">
-          <h1 style="color: white; margin: 0;">🐾 Welcome to PawfectMatch!</h1>
+        <div style="background: linear-gradient(135deg, #ffd700, #ff69b4); padding: 30px; text-align: center;">
+          <h1 style="color: white; margin: 0;">🌟 Premium Activated!</h1>
         </div>
         <div style="padding: 30px; background: white;">
-          <h2>Hi ${data.firstName}! 👋</h2>
-          <p>Welcome to PawfectMatch, where pets find their perfect matches!</p>
-          <p>Your account is now active and ready to use. Here's what you can do next:</p>
-          <ul>
-            <li>🐕 <strong>Create Pet Profiles:</strong> Add photos and details about your pets</li>
-            <li>🎯 <strong>Set Preferences:</strong> Tell us what you're looking for</li>
-            <li>❤️ <strong>Start Swiping:</strong> Discover compatible pets nearby</li>
-            <li>💬 <strong>Chat & Connect:</strong> Message with other pet owners</li>
-            <li>📍 <strong>Find Local Events:</strong> Join pet meetups in your area</li>
-          </ul>
+          <h2>Welcome to Premium, ${data.firstName}! 🎉</h2>
+          <p>Your premium subscription is now active! Here's what you can do:</p>
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3>✨ Premium Features Unlocked:</h3>
+            <ul>
+              <li>🚀 <strong>Unlimited Likes</strong> - No daily limits</li>
+              <li>⭐ <strong>Super Likes</strong> - Stand out from the crowd</li>
+              <li>👁️ <strong>See Who Liked You</strong> - Browse your admirers</li>
+              <li>🎯 <strong>Advanced Filters</strong> - Find exactly what you're looking for</li>
+              <li>📈 <strong>Boost Your Pets</strong> - Get more visibility</li>
+              <li>🤖 <strong>AI Recommendations</strong> - Smart matching technology</li>
+            </ul>
+          </div>
           <div style="text-align: center; margin: 30px 0;">
             <a href="${data.appUrl}" 
-               style="background: #ff69b4; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
-              Get Started 🚀
+               style="background: #ffd700; color: #333; padding: 15px 30px; text-decoration: none; border-radius: 25px; display: inline-block; font-weight: bold;">
+              Explore Premium Features 🚀
             </a>
           </div>
-          <p>Need help getting started? Check out our <a href="${data.helpUrl}">help center</a> or reply to this email.</p>
-          <p>Happy matching! 🎉</p>
+          <p>Thank you for supporting PawfectMatch! Your subscription helps us:</p>
+          <ul>
+            <li>💡 Develop new features</li>
+            <li>🛡️ Keep the platform safe and secure</li>
+            <li>🤝 Support animal welfare organizations</li>
+            <li>🆕 Continuously improve the matching experience</li>
+          </ul>
+          <p>Happy premium matching! 🎊</p>
           <p><strong>The PawfectMatch Team</strong></p>
         </div>
-        <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #6c757d; font-size: 12px;">
-          <p>© 2024 PawfectMatch. All rights reserved.</p>
-        </div>
       </div>
-    `,
-  }),
+    `
+  })
 };
 
 /**
- * Send email using nodemailer
- * @param to - Recipient email
- * @param subject - Email subject
- * @param html - Email HTML content
- * @param text - Email text content (optional)
- * @returns Promise<void>
+ * Send email using configured template
+ * @param {Object} options - Email options
+ * @param {string} options.email - Recipient email
+ * @param {string} options.template - Template name
+ * @param {Object} options.data - Template data
+ * @returns {Promise} Email sending promise
  */
-export const sendEmail = async (to: string, subject: string, html: string, text?: string): Promise<void> => {
+const sendEmail = async ({ email, template, data }) => {
   try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      logger.warn('Email service not configured. Skipping email send.');
+      return { success: false, message: 'Email service not configured' };
+    }
+
     const transporter = createTransporter();
+    const templateFunc = emailTemplates[template];
     
+    if (!templateFunc) {
+      throw new Error(`Email template '${template}' not found`);
+    }
+
+    const { subject, html } = templateFunc(data);
+
     const mailOptions = {
-      from: `"PawfectMatch" <${process.env['EMAIL_USER']}>`,
-      to,
+      from: {
+        name: 'PawfectMatch',
+        address: process.env.EMAIL_USER
+      },
+      to: email,
       subject,
-      html,
-      text: text || html.replace(/<[^>]*>/g, ''), // Strip HTML for text version
+      html
     };
 
     const result = await transporter.sendMail(mailOptions);
-    logger.info('Email sent successfully:', { to, subject, messageId: result.messageId });
-  } catch (error) {
-    logger.error('Error sending email:', { error, to, subject });
-    throw error;
-  }
-};
-
-/**
- * Send welcome email
- * @param userEmail - User email
- * @param userName - User name
- * @returns Promise<void>
- */
-export const sendWelcomeEmail = async (userEmail: string, userName: string): Promise<void> => {
-  try {
-    const template = emailTemplates.welcomeEmail({
-      firstName: userName,
-      appUrl: process.env['CLIENT_URL'] || 'https://pawfectmatch.com',
-      helpUrl: `${process.env['CLIENT_URL'] || 'https://pawfectmatch.com'}/help`,
-    });
-
-    await sendEmail(userEmail, template.subject, template.html);
-  } catch (error) {
-    logger.error('Error sending welcome email:', { error, userEmail, userName });
-    throw error;
-  }
-};
-
-/**
- * Send verification email
- * @param userEmail - User email
- * @param verificationCode - Verification code
- * @returns Promise<void>
- */
-export const sendVerificationEmail = async (userEmail: string, verificationCode: string): Promise<void> => {
-  try {
-    const template = emailTemplates.emailVerification({
-      firstName: userEmail.split('@')[0], // Use email prefix as name
-      verificationUrl: `${process.env['CLIENT_URL'] || 'https://pawfectmatch.com'}/verify?code=${verificationCode}`,
-    });
-
-    await sendEmail(userEmail, template.subject, template.html);
-  } catch (error) {
-    logger.error('Error sending verification email:', { error, userEmail });
-    throw error;
-  }
-};
-
-/**
- * Send password reset email
- * @param userEmail - User email
- * @param resetToken - Reset token
- * @returns Promise<void>
- */
-export const sendPasswordResetEmail = async (userEmail: string, resetToken: string): Promise<void> => {
-  try {
-    const template = emailTemplates.passwordReset({
-      firstName: userEmail.split('@')[0], // Use email prefix as name
-      resetUrl: `${process.env['CLIENT_URL'] || 'https://pawfectmatch.com'}/reset-password?token=${resetToken}`,
-    });
-
-    await sendEmail(userEmail, template.subject, template.html);
-  } catch (error) {
-    logger.error('Error sending password reset email:', { error, userEmail });
-    throw error;
-  }
-};
-
-/**
- * Send match notification email
- * @param userEmail - User email
- * @param matchData - Match data
- * @returns Promise<void>
- */
-export const sendMatchNotificationEmail = async (userEmail: string, matchData: MatchNotificationData): Promise<void> => {
-  try {
-    const template = emailTemplates.matchNotification({
-      firstName: matchData.userName || userEmail.split('@')[0],
-      matchedPetName: matchData.matchedPetName,
-      yourPetName: matchData.yourPetName,
-      matchUrl: `${process.env['CLIENT_URL'] || 'https://pawfectmatch.com'}/matches/${matchData.matchId}`,
-    });
-
-    await sendEmail(userEmail, template.subject, template.html);
-  } catch (error) {
-    logger.error('Error sending match notification email:', { error, userEmail, matchData });
-    throw error;
-  }
-};
-
-/**
- * Send custom email
- * @param to - Recipient email
- * @param subject - Email subject
- * @param content - Email content
- * @param isHtml - Whether content is HTML
- * @returns Promise<void>
- */
-export const sendCustomEmail = async (to: string, subject: string, content: string, isHtml: boolean = true): Promise<void> => {
-  try {
-    if (isHtml) {
-      await sendEmail(to, subject, content);
-    } else {
-      await sendEmail(to, subject, `<p>${content}</p>`, content);
-    }
-  } catch (error) {
-    logger.error('Error sending custom email:', { error, to, subject });
-    throw error;
-  }
-};
-
-/**
- * Send bulk emails
- * @param recipients - Array of recipient emails
- * @param subject - Email subject
- * @param content - Email content
- * @param isHtml - Whether content is HTML
- * @returns Promise<void>
- */
-export const sendBulkEmails = async (recipients: string[], subject: string, content: string, isHtml: boolean = true): Promise<void> => {
-  try {
-    const promises = recipients.map(email => 
-      sendCustomEmail(email, subject, content, isHtml)
-    );
-
-    await Promise.allSettled(promises);
     
-    logger.info('Bulk emails sent:', { 
-      total: recipients.length, 
-      subject 
-    });
+    logger.info('Email sent successfully', { messageId: result.messageId, to: email });
+    return { success: true, messageId: result.messageId };
+
   } catch (error) {
-    logger.error('Error sending bulk emails:', { error, recipients: recipients.length, subject });
+    logger.error('Email sending error:', { error });
     throw error;
   }
 };
 
 /**
- * Test email configuration
- * @returns Promise<boolean>
+ * Send bulk emails (for newsletters, announcements)
+ * @param {Array} recipients - Array of recipient objects
+ * @param {string} template - Template name
+ * @param {Object} commonData - Common data for all recipients
+ * @returns {Promise<Array>} Results array
  */
-export const testEmailConfiguration = async (): Promise<boolean> => {
+const sendBulkEmails = async (recipients, template, commonData = {}) => {
+  const results = [];
+  
+  for (const recipient of recipients) {
+    try {
+      const result = await sendEmail({
+        email: recipient.email,
+        template,
+        data: { ...commonData, ...recipient.data }
+      });
+      results.push({ email: recipient.email, success: true, result });
+      
+      // Small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+    } catch (error) {
+      logger.error('Failed to send email', { email: recipient.email, error });
+      results.push({ email: recipient.email, success: false, error: error.message });
+    }
+  }
+  
+  return results;
+};
+
+/**
+ * Send notification email
+ * @param {string} email - Recipient email
+ * @param {string} subject - Email subject
+ * @param {string} message - Email message
+ * @returns {Promise} Email sending promise
+ */
+const sendNotificationEmail = async (email, subject, message) => {
   try {
     const transporter = createTransporter();
-    await transporter.verify();
-    logger.info('Email configuration test successful');
-    return true;
+
+    const mailOptions = {
+      from: {
+        name: 'PawfectMatch',
+        address: process.env.EMAIL_USER
+      },
+      to: email,
+      subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #ff69b4, #8a2be2); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">🐾 PawfectMatch</h1>
+          </div>
+          <div style="padding: 20px; background: white;">
+            ${message}
+          </div>
+          <div style="background: #f8f9fa; padding: 15px; text-align: center; color: #6c757d; font-size: 12px;">
+            <p>© 2024 PawfectMatch. All rights reserved.</p>
+          </div>
+        </div>
+      `
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: result.messageId };
+
   } catch (error) {
-    logger.error('Email configuration test failed:', { error });
-    return false;
+    logger.error('Notification email error:', { error });
+    throw error;
   }
 };
 
-// Export the service interface
-const emailService: EmailService = {
-  sendWelcomeEmail,
-  sendVerificationEmail,
-  sendPasswordResetEmail,
-  sendMatchNotificationEmail,
+module.exports = {
+  sendEmail,
+  sendBulkEmails,
+  sendNotificationEmail
 };
-
-export default emailService;

@@ -1,28 +1,9 @@
-import { Response, NextFunction } from 'express';
-import logger from '../utils/logger';
-import type { AuthenticatedRequest, ApiResponse } from '../types';
+const logger = require('../utils/logger');
+const { sendAdminNotification } = require('../services/adminNotificationService');
 
-// Import adminNotificationService - it's a CommonJS module
-const adminNotificationService = require('../services/adminNotificationService');
-const { sendAdminNotification } = adminNotificationService;
-
-interface ErrorWithStatus {
-  statusCode?: number;
-  name?: string;
-  type?: string;
-  code?: string | number;
-  message: string;
-  stack?: string;
-}
-
-const errorHandler = (
-  err: ErrorWithStatus, 
-  req: AuthenticatedRequest, 
-  res: Response, 
-  _next: NextFunction
-): void => {
+const errorHandler = (err, req, res, _next) => {
   void _next;
-  let error: ErrorWithStatus = { ...err };
+  let error = { ...err };
   error.message = err.message;
 
   // Generate unique error ID for tracking
@@ -37,14 +18,14 @@ const errorHandler = (
     url: req.url,
     ip: req.ip,
     userAgent: req.get('User-Agent'),
-    userId: (req.user as any)?._id || (req.user as any)?.id,
+    userId: req.user?.id,
     body: req.method === 'POST' ? req.body : undefined,
     query: req.query,
     params: req.params,
   });
 
   // Send admin notification for critical errors
-  const shouldNotifyAdmin = (err.statusCode ?? 500) >= 500 || 
+  const shouldNotifyAdmin = err.statusCode >= 500 || 
                            err.name === 'MongoNetworkError' || 
                            err.name === 'MongoTimeoutError' ||
                            err.type === 'StripeCardError' ||
@@ -53,139 +34,143 @@ const errorHandler = (
   if (shouldNotifyAdmin) {
     sendAdminNotification({
       type: 'error',
-      severity: (err.statusCode ?? 500) >= 500 ? 'critical' : 'high',
+      severity: err.statusCode >= 500 ? 'critical' : 'high',
       title: 'Server Error Alert',
       message: `Error ${errorId}: ${err.message}`,
       metadata: {
         errorId,
         method: req.method,
         url: req.url,
-        userId: (req.user as any)?._id || (req.user as any)?.id,
+        userId: req.user?.id,
         stack: err.stack,
       },
-    }).catch((notificationError: any) => {
+    }).catch(notificationError => {
       logger.error('Failed to send admin notification', {
         originalError: err.message,
-        notificationError: notificationError?.message,
+        notificationError: notificationError.message,
       });
     });
   }
 
-  // Mongoose bad ObjectId
+  // Enhanced error type handling
   if (err.name === 'CastError') {
-    const message = 'Resource not found';
-    error = { ...error, message, statusCode: 404 };
+    const message = 'Invalid ID format provided';
+    error = { message, statusCode: 400 };
   }
 
-  // Mongoose duplicate key
-  if (err.code === 11000 || err.code === '11000') {
-    const field = Object.keys((err as any).keyValue || {})[0] || 'field';
-    const message = `${field} already exists`;
-    error = { ...error, message, statusCode: 400 };
+  if (err.code === 11000) {
+    let message = 'Duplicate entry detected';
+    
+    const field = Object.keys(err.keyValue)[0];
+    const fieldMessages = {
+      email: 'An account with this email already exists',
+      username: 'This username is already taken',
+      phone: 'This phone number is already registered',
+    };
+    
+    message = fieldMessages[field] || message;
+    error = { message, statusCode: 409 }; // Conflict
   }
 
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
-    const message = Object.values((err as any).errors).map((val: any) => val.message).join(', ');
-    error = { ...error, message, statusCode: 400 };
+    const messages = Object.values(err.errors).map(val => val.message);
+    error = { 
+      message: 'Validation failed', 
+      statusCode: 422,
+      details: messages,
+    };
   }
 
-  // JWT errors
+  // Enhanced JWT error handling
   if (err.name === 'JsonWebTokenError') {
-    const message = 'Invalid token';
-    error = { ...error, message, statusCode: 401 };
+    error = { message: 'Authentication token is invalid', statusCode: 401 };
   }
 
   if (err.name === 'TokenExpiredError') {
-    const message = 'Token expired';
-    error = { ...error, message, statusCode: 401 };
+    error = { message: 'Authentication token has expired', statusCode: 401 };
   }
 
-  // Stripe errors
-  if (err.type === 'StripeCardError') {
-    const message = 'Payment failed';
-    error = { ...error, message, statusCode: 400 };
+  // Enhanced file upload errors
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    error = { 
+      message: `File size exceeds the maximum limit of ${process.env.MAX_FILE_SIZE || '5MB'}`, 
+      statusCode: 413 
+    };
+  }
+
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+    error = { 
+      message: 'Too many files uploaded. Maximum allowed is 10', 
+      statusCode: 413 
+    };
   }
 
   // Rate limiting errors
-  if (err.message?.includes('Too many requests')) {
-    error = { ...error, message: 'Too many requests, please try again later', statusCode: 429 };
-  }
-
-  // File upload errors
-  if (err.message?.includes('File too large')) {
-    error = { ...error, message: 'File size exceeds limit', statusCode: 413 };
-  }
-
-  // AI service errors
-  if (err.message?.includes('AI service')) {
-    error = { ...error, message: 'AI service temporarily unavailable', statusCode: 503 };
+  if (err.status === 429) {
+    error = {
+      message: 'Too many requests. Please slow down and try again later',
+      statusCode: 429,
+      retryAfter: err.retryAfter || 60,
+    };
   }
 
   // Database connection errors
   if (err.name === 'MongoNetworkError' || err.name === 'MongoTimeoutError') {
-    error = { ...error, message: 'Database connection failed', statusCode: 503 };
+    error = {
+      message: 'Database temporarily unavailable. Please try again shortly',
+      statusCode: 503,
+    };
   }
 
-  // Default to 500 server error
-  const statusCode = error.statusCode ?? 500;
-  const message = error.message ?? 'Internal Server Error';
+  // AI Service errors
+  if (err.message?.includes('AI service')) {
+    error = {
+      message: 'AI service is temporarily unavailable. Please try again later',
+      statusCode: 503,
+    };
+  }
 
-  // Don't expose internal errors in production
-  const isDevelopment = process.env['NODE_ENV'] === 'development';
-  const response: ApiResponse = {
+  // Payment processing errors
+  if (err.type === 'StripeCardError') {
+    error = {
+      message: 'Payment failed. Please check your card details',
+      statusCode: 402,
+    };
+  }
+
+  // Default to 500 for unhandled errors
+  const statusCode = error.statusCode || 500;
+  const message = error.message || 'An unexpected error occurred';
+
+  // Enhanced response with more context
+  const response = {
     success: false,
-    message: isDevelopment ? message : 'Something went wrong',
-    error: isDevelopment ? JSON.stringify({
-      errorId,
-      message,
+    message,
+    errorId,
+    timestamp: new Date().toISOString(),
+    ...(error.details && { details: error.details }),
+    ...(error.retryAfter && { retryAfter: error.retryAfter }),
+    ...(process.env.NODE_ENV === 'development' && { 
       stack: err.stack,
-      details: {
-        method: req.method,
-        url: req.url,
-        timestamp: new Date().toISOString(),
-      }
-    }) : errorId
+      originalError: err.message,
+      errorType: err.name,
+    }),
   };
+
+  // Set appropriate headers
+  if (statusCode === 429 && error.retryAfter) {
+    res.set('Retry-After', error.retryAfter.toString());
+  }
+
+  // CORS headers for error responses
+  const allowedOrigin = process.env.CLIENT_URL || process.env.FRONTEND_URL;
+  if (allowedOrigin) {
+    res.set('Access-Control-Allow-Origin', allowedOrigin);
+    res.set('Vary', 'Origin');
+  }
+  res.set('Access-Control-Allow-Credentials', 'true');
 
   res.status(statusCode).json(response);
 };
 
-// Async error wrapper for route handlers
-export const asyncHandler = (fn: Function) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
-
-// Custom error class
-export class CustomAppError extends Error {
-  public statusCode: number;
-  public isOperational: boolean;
-
-  constructor(message: string, statusCode: number = 500, isOperational: boolean = true) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = isOperational;
-
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-// Error types
-export const ErrorTypes = {
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
-  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
-  AUTHORIZATION_ERROR: 'AUTHORIZATION_ERROR',
-  NOT_FOUND_ERROR: 'NOT_FOUND_ERROR',
-  CONFLICT_ERROR: 'CONFLICT_ERROR',
-  RATE_LIMIT_ERROR: 'RATE_LIMIT_ERROR',
-  EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
-  DATABASE_ERROR: 'DATABASE_ERROR',
-  FILE_UPLOAD_ERROR: 'FILE_UPLOAD_ERROR',
-  PAYMENT_ERROR: 'PAYMENT_ERROR',
-} as const;
-
-export type ErrorType = typeof ErrorTypes[keyof typeof ErrorTypes];
-
-export default errorHandler;
+module.exports = errorHandler;

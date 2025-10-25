@@ -1,24 +1,8 @@
-import User from '../models/User';
-import Pet from '../models/Pet';
-import Story from '../models/Story';
-import ContentModeration from '../models/ContentModeration';
-import logger from '../utils/logger';
-
-// Moderation result types
-interface ModerationResult {
-  approved: boolean;
-  confidence: number;
-  flags: string[];
-  reason?: string;
-  action: 'approve' | 'flag' | 'quarantine' | 'escalate';
-}
-
-interface UserBehaviorMetadata {
-  ipAddress?: string;
-  userAgent?: string;
-  timestamp?: string;
-  additionalData?: Record<string, unknown>;
-}
+const User = require('../models/User');
+const Pet = require('../models/Pet');
+const Story = require('../models/Story');
+const ContentModeration = require('../models/ContentModeration');
+const logger = require('../utils/logger');
 
 // Automated moderation rules configuration
 const moderationRules = {
@@ -65,381 +49,405 @@ const moderationRules = {
       action: 'escalate'
     },
     {
-      name: 'violence_content',
-      labels: ['violence', 'weapon', 'blood', 'gore'],
+      name: 'violence',
+      labels: ['violence', 'blood', 'injury', 'weapon'],
       severity: 'high',
       action: 'quarantine'
     },
     {
-      name: 'animal_abuse',
-      labels: ['animal_cruelty', 'animal_abuse', 'neglect'],
+      name: 'animal_cruelty_images',
+      labels: ['animal_abuse', 'animal_cruelty', 'animal_suffering'],
       severity: 'critical',
       action: 'escalate'
     }
   ],
 
   // User behavior rules
-  behaviorRules: [
+  userRules: [
     {
       name: 'rapid_posting',
-      threshold: 10, // posts per minute
+      condition: (user) => user.postsLast24h > 20,
       severity: 'medium',
       action: 'flag'
     },
     {
-      name: 'repeated_violations',
-      threshold: 3, // violations in 24 hours
+      name: 'high_report_rate',
+      condition: (user) => user.reportsReceived > 5,
       severity: 'high',
       action: 'quarantine'
     },
     {
-      name: 'suspicious_patterns',
-      patterns: ['same_content_repeated', 'bot_like_behavior'],
+      name: 'suspicious_account',
+      condition: (user) => user.accountAgeDays < 7 && user.postsCount > 10,
       severity: 'medium',
       action: 'flag'
     }
   ]
 };
 
-/**
- * Moderate text content
- * @param content - Text content to moderate
- * @param userId - User ID
- * @param contentType - Type of content
- * @returns Moderation result
- */
-export const moderateTextContent = async (content: string, userId: string, contentType: string): Promise<any> => {
-  try {
-    if (!content || typeof content !== 'string') {
-      return { safe: true, confidence: 1.0, flags: [], action: 'approve' };
+class AutomatedModerationService {
+  /**
+   * Analyze content and apply automated moderation rules
+   * @param {Object} contentData - Content to analyze
+   * @param {string} contentData.contentId - Content ID
+   * @param {string} contentData.contentType - Type of content
+   * @param {Object} contentData.content - The actual content object
+   * @param {Object} contentData.user - User who created the content
+   */
+  async analyzeContent({ contentId, contentType, content, user }) {
+    const flags = [];
+
+    try {
+      // Text analysis
+      if (content.description || content.bio || content.content) {
+        const text = [content.description, content.bio, content.content]
+          .filter(Boolean)
+          .join(' ');
+
+        if (text) {
+          const textFlags = await this.analyzeText(text);
+          flags.push(...textFlags);
+        }
+      }
+
+      // Image analysis (placeholder for AI vision service)
+      if (content.photos || content.media) {
+        const images = content.photos || content.media || [];
+        const imageFlags = await this.analyzeImages(images);
+        flags.push(...imageFlags);
+      }
+
+      // User behavior analysis
+      const userFlags = await this.analyzeUserBehavior(user);
+      flags.push(...userFlags);
+
+      // Apply moderation based on flags
+      if (flags.length > 0) {
+        await this.applyModeration(contentId, contentType, flags, content, user);
+      }
+
+      logger.info(`Automated moderation completed for ${contentType}:${contentId}`, {
+        flagsCount: flags.length,
+        highestSeverity: Math.max(...flags.map(f => this.getSeverityScore(f.severity)))
+      });
+
+      return { flags, actionTaken: flags.length > 0 };
+
+    } catch (error) {
+      logger.error('Automated moderation analysis failed', { error, contentId, contentType });
+      return { flags: [], actionTaken: false };
     }
+  }
 
-    const flags: string[] = [];
-    let maxSeverity = 'low';
-    let recommendedAction = 'approve';
+  /**
+   * Analyze text content for violations
+   */
+  async analyzeText(text) {
+    const flags = [];
 
-    // Apply text rules
     for (const rule of moderationRules.textRules) {
-      if (rule.pattern.test(content)) {
-        flags.push(rule.name);
-        
-        // Update severity and action based on rule
-        if (rule.severity === 'critical') {
-          maxSeverity = 'critical';
-          recommendedAction = 'escalate';
-        } else if (rule.severity === 'high' && maxSeverity !== 'critical') {
-          maxSeverity = 'high';
-          recommendedAction = 'quarantine';
-        } else if (rule.severity === 'medium' && maxSeverity === 'low') {
-          maxSeverity = 'medium';
-          recommendedAction = 'flag';
-        }
+      const matches = text.match(rule.pattern);
+      if (matches) {
+        flags.push({
+          ruleName: rule.name,
+          severity: rule.severity,
+          action: rule.action,
+          confidence: Math.min(1.0, matches.length * 0.3), // Higher confidence for multiple matches
+          matches: matches.length,
+          flaggedAt: new Date()
+        });
       }
     }
 
-    // Calculate confidence based on flags
-    const confidence = flags.length === 0 ? 1.0 : Math.max(0.1, 1.0 - (flags.length * 0.2));
-
-    const result = {
-      safe: flags.length === 0,
-      confidence,
-      flags,
-      severity: maxSeverity,
-      action: recommendedAction,
-      contentType,
-      userId,
-      moderatedAt: new Date()
-    };
-
-    // Log moderation result
-    await logModerationResult(contentType, userId, result);
-
-    return result;
-  } catch (error) {
-    logger.error('Error moderating text content', { 
-      error: error instanceof Error ? error.message : 'Unknown error',
-      userId, 
-      contentType 
-    });
-    
-    // Return safe default on error
-    return { 
-      safe: true, 
-      confidence: 0.5, 
-      flags: [], 
-      action: 'approve',
-      error: 'Moderation failed'
-    };
+    return flags;
   }
-};
 
-/**
- * Moderate image content (placeholder for AI integration)
- * @param imageUrl - Image URL
- * @param userId - User ID
- * @param contentType - Type of content
- * @returns Moderation result
- */
-export const moderateImageContent = async (imageUrl: string, userId: string, contentType: string): Promise<any> => {
-  try {
-    if (!imageUrl) {
-      return { safe: true, confidence: 1.0, flags: [], action: 'approve' };
-    }
+  /**
+   * Analyze images for violations (placeholder for AI vision service)
+   */
+  async analyzeImages(images) {
+    const flags = [];
 
-    // This would integrate with AI vision service
-    // For now, return a placeholder result
-    const result = {
-      safe: true,
-      confidence: 0.8,
-      flags: [],
-      severity: 'low',
-      action: 'approve',
-      contentType,
-      userId,
-      imageUrl,
-      moderatedAt: new Date()
-    };
-
-    // Log moderation result
-    await logModerationResult(contentType, userId, result);
-
-    return result;
-  } catch (error) {
-    logger.error('Error moderating image content', { 
-      error: error instanceof Error ? error.message : 'Unknown error',
-      userId, 
-      contentType,
-      imageUrl 
-    });
-    
-    return { 
-      safe: true, 
-      confidence: 0.5, 
-      flags: [], 
-      action: 'approve',
-      error: 'Image moderation failed'
-    };
-  }
-};
-
-/**
- * Moderate user behavior
- * @param userId - User ID
- * @param action - User action
- * @param metadata - Additional metadata
- * @returns Moderation result
- */
-export const moderateUserBehavior = async (userId: string, action: string, metadata: UserBehaviorMetadata = {}): Promise<ModerationResult> => {
-  try {
-    if (!userId || !action) {
-      return { safe: true, confidence: 1.0, flags: [], action: 'approve' };
-    }
-
-    const flags: string[] = [];
-    let maxSeverity = 'low';
-    let recommendedAction = 'approve';
-
-    // Check rapid posting
-    if (action === 'post_content') {
-      const recentPosts = await getRecentUserActivity(userId, 'post_content', 1); // Last minute
-      if (recentPosts.length >= moderationRules.behaviorRules[0].threshold) {
-        flags.push('rapid_posting');
-        maxSeverity = 'medium';
-        recommendedAction = 'flag';
+    // This would integrate with services like Google Vision AI, AWS Rekognition, etc.
+    // For now, we'll use placeholder logic
+    for (const image of images) {
+      // Placeholder: Check for suspicious file names or patterns
+      if (image.url && /\b(nude|naked|sex|porn)\b/i.test(image.url)) {
+        flags.push({
+          ruleName: 'suspicious_image_url',
+          severity: 'high',
+          action: 'quarantine',
+          confidence: 0.8,
+          flaggedAt: new Date()
+        });
       }
     }
 
-    // Check repeated violations
-    const recentViolations = await getRecentUserViolations(userId, 24); // Last 24 hours
-    if (recentViolations.length >= moderationRules.behaviorRules[1].threshold) {
-      flags.push('repeated_violations');
-      maxSeverity = 'high';
-      recommendedAction = 'quarantine';
+    return flags;
+  }
+
+  /**
+   * Analyze user behavior for suspicious patterns
+   */
+  async analyzeUserBehavior(user) {
+    const flags = [];
+
+    // Calculate user metrics (this would be cached in a real implementation)
+    const postsLast24h = await this.getUserPostsLast24h(user._id);
+    const reportsReceived = await this.getUserReportsReceived(user._id);
+    const accountAgeDays = Math.floor((Date.now() - user.createdAt) / (1000 * 60 * 60 * 24));
+
+    const userData = {
+      ...user.toObject(),
+      postsLast24h,
+      reportsReceived,
+      accountAgeDays
+    };
+
+    for (const rule of moderationRules.userRules) {
+      if (rule.condition(userData)) {
+        flags.push({
+          ruleName: rule.name,
+          severity: rule.severity,
+          action: rule.action,
+          confidence: 0.9,
+          flaggedAt: new Date()
+        });
+      }
     }
 
-    const result = {
-      safe: flags.length === 0,
-      confidence: flags.length === 0 ? 1.0 : Math.max(0.1, 1.0 - (flags.length * 0.3)),
-      flags,
-      severity: maxSeverity,
-      action: recommendedAction,
-      userId,
-      actionType: action,
-      moderatedAt: new Date()
-    };
-
-    // Log moderation result
-    await logModerationResult('behavior', userId, result);
-
-    return result;
-  } catch (error) {
-    logger.error('Error moderating user behavior', { 
-      error: error instanceof Error ? error.message : 'Unknown error',
-      userId, 
-      action 
-    });
-    
-    return { 
-      safe: true, 
-      confidence: 0.5, 
-      flags: [], 
-      action: 'approve',
-      error: 'Behavior moderation failed'
-    };
+    return flags;
   }
-};
 
-/**
- * Get recent user activity
- * @param userId - User ID
- * @param action - Action type
- * @param minutes - Time window in minutes
- * @returns Recent activity
- */
-const getRecentUserActivity = async (userId: string, action: string, minutes: number): Promise<any[]> => {
-  try {
-    const cutoffTime = new Date(Date.now() - minutes * 60 * 1000);
-    
-    // This would query the appropriate model based on action type
-    // For now, return empty array as placeholder
-    return [];
-  } catch (error) {
-    logger.error('Error getting recent user activity', { error, userId, action, minutes });
-    return [];
-  }
-};
+  /**
+   * Apply moderation based on flags
+   */
+  async applyModeration(contentId, contentType, flags, content, user) {
+    // Determine the highest severity action
+    const severityOrder = { low: 1, medium: 2, high: 3, critical: 4 };
+    const actionOrder = { flag: 1, quarantine: 2, escalate: 3 };
 
-/**
- * Get recent user violations
- * @param userId - User ID
- * @param hours - Time window in hours
- * @returns Recent violations
- */
-const getRecentUserViolations = async (userId: string, hours: number): Promise<any[]> => {
-  try {
-    const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
-    
-    return await ContentModeration.find({
-      userId,
-      status: { $in: ['flagged', 'rejected'] },
-      createdAt: { $gte: cutoffTime }
-    });
-  } catch (error) {
-    logger.error('Error getting recent user violations', { error, userId, hours });
-    return [];
-  }
-};
+    let highestSeverity = 'low';
+    let recommendedAction = 'flag';
 
-/**
- * Log moderation result
- * @param contentType - Type of content
- * @param userId - User ID
- * @param result - Moderation result
- */
-const logModerationResult = async (contentType: string, userId: string, result: ModerationResult): Promise<void> => {
-  try {
-    await ContentModeration.create({
-      contentType,
-      userId,
-      status: result.safe ? 'approved' : 'flagged',
-      aiAnalysis: {
-        confidence: result.confidence,
-        flags: result.flags,
-        safe: result.safe
-      },
-      flags: result.flags,
-      confidence: result.confidence,
-      priority: result.severity === 'critical' ? 'urgent' : 
-                result.severity === 'high' ? 'high' : 
-                result.severity === 'medium' ? 'medium' : 'low',
-      createdAt: new Date()
-    });
-  } catch (error) {
-    logger.error('Error logging moderation result', { error, contentType, userId });
-  }
-};
-
-/**
- * Get moderation statistics
- * @param days - Number of days to analyze
- * @returns Moderation statistics
- */
-export const getModerationStats = async (days: number = 7): Promise<any> => {
-  try {
-    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-    
-    const stats = await ContentModeration.aggregate([
-      { $match: { createdAt: { $gte: startDate } } },
-      {
-        $group: {
-          _id: null,
-          totalModerations: { $sum: 1 },
-          approved: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } },
-          flagged: { $sum: { $cond: [{ $eq: ['$status', 'flagged'] }, 1, 0] } },
-          rejected: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } },
-          avgConfidence: { $avg: '$confidence' },
-          highPriority: { $sum: { $cond: [{ $eq: ['$priority', 'high'] }, 1, 0] } },
-          urgentPriority: { $sum: { $cond: [{ $eq: ['$priority', 'urgent'] }, 1, 0] } }
-        }
+    for (const flag of flags) {
+      if (severityOrder[flag.severity] > severityOrder[highestSeverity]) {
+        highestSeverity = flag.severity;
       }
+      if (actionOrder[flag.action] > actionOrder[recommendedAction]) {
+        recommendedAction = flag.action;
+      }
+    }
+
+    // Create or update moderation record
+    let moderationRecord = await ContentModeration.findOne({
+      contentId,
+      contentType
+    });
+
+    if (!moderationRecord) {
+      moderationRecord = new ContentModeration({
+        contentId,
+        contentType,
+        moderationStatus: 'pending',
+        moderationLevel: highestSeverity === 'critical' ? 'senior_review' : 'human_review',
+        priority: highestSeverity === 'critical' ? 'urgent' : highestSeverity === 'high' ? 'high' : 'medium',
+        automatedFlags: flags,
+        contentSnapshot: this.createContentSnapshot(content, contentType)
+      });
+    } else {
+      // Update existing record with new flags
+      moderationRecord.automatedFlags.push(...flags);
+      moderationRecord.priority = highestSeverity === 'critical' ? 'urgent' :
+                                  highestSeverity === 'high' ? 'high' : 'medium';
+      moderationRecord.moderationLevel = highestSeverity === 'critical' ? 'senior_review' : 'human_review';
+    }
+
+    // Auto-apply actions for high-confidence critical flags
+    const criticalFlags = flags.filter(f => f.severity === 'critical' && f.confidence > 0.8);
+    if (criticalFlags.length > 0) {
+      moderationRecord.moderationStatus = 'escalated';
+      moderationRecord.escalatedAt = new Date();
+      moderationRecord.escalationReason = `Automated detection: ${criticalFlags.map(f => f.ruleName).join(', ')}`;
+      moderationRecord.escalationLevel = 'legal';
+    }
+
+    await moderationRecord.save();
+
+    // Update content status if auto-escalated
+    if (moderationRecord.moderationStatus === 'escalated') {
+      await this.updateContentStatus(contentId, contentType, 'escalated');
+    }
+
+    logger.info(`Moderation applied to ${contentType}:${contentId}`, {
+      flagsCount: flags.length,
+      highestSeverity,
+      recommendedAction,
+      autoEscalated: criticalFlags.length > 0,
+      userId: user?._id?.toString?.(),
+      userRole: user?.role
+    });
+  }
+
+  /**
+   * Create a snapshot of content for review
+   */
+  createContentSnapshot(content, contentType) {
+    const snapshot = {
+      title: '',
+      description: '',
+      mediaUrls: [],
+      textContent: '',
+      metadata: {}
+    };
+
+    switch (contentType) {
+      case 'pet':
+        snapshot.title = content.name || '';
+        snapshot.description = content.description || '';
+        snapshot.mediaUrls = content.photos ? content.photos.map(p => p.url) : [];
+        snapshot.metadata = {
+          species: content.species,
+          breed: content.breed,
+          age: content.age,
+          location: content.location
+        };
+        break;
+
+      case 'story':
+        snapshot.title = content.title || '';
+        snapshot.description = content.excerpt || content.content?.substring(0, 200) || '';
+        snapshot.mediaUrls = content.media ? content.media.map(m => m.url) : [];
+        snapshot.textContent = content.content || '';
+        break;
+
+      case 'user_profile':
+        snapshot.title = `${content.firstName} ${content.lastName}`;
+        snapshot.description = content.bio || '';
+        snapshot.mediaUrls = content.avatar ? [content.avatar] : [];
+        break;
+    }
+
+    return snapshot;
+  }
+
+  /**
+   * Update content status based on moderation decision
+   */
+  async updateContentStatus(contentId, contentType, status) {
+    let Model;
+    switch (contentType) {
+      case 'pet':
+        Model = Pet;
+        break;
+      case 'story':
+        Model = Story;
+        break;
+      case 'user_profile':
+        Model = User;
+        break;
+      default:
+        return;
+    }
+
+    const updateData = { moderationStatus: status };
+
+    // Set specific timestamps and flags
+    if (status === 'quarantined') {
+      updateData.isActive = false;
+      updateData.quarantinedAt = new Date();
+    } else if (status === 'rejected') {
+      updateData.isActive = false;
+      updateData.rejectedAt = new Date();
+    } else if (status === 'approved') {
+      updateData.isActive = true;
+      updateData.approvedAt = new Date();
+    }
+
+    await Model.findByIdAndUpdate(contentId, updateData);
+  }
+
+  /**
+   * Get user's posts in last 24 hours
+   */
+  async getUserPostsLast24h(userId) {
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const [petCount, storyCount] = await Promise.all([
+      Pet.countDocuments({ owner: userId, createdAt: { $gte: yesterday } }),
+      Story.countDocuments({ author: userId, createdAt: { $gte: yesterday } })
     ]);
 
-    return stats[0] || {
-      totalModerations: 0,
-      approved: 0,
-      flagged: 0,
-      rejected: 0,
-      avgConfidence: 0,
-      highPriority: 0,
-      urgentPriority: 0
-    };
-  } catch (error) {
-    logger.error('Error getting moderation stats', { error, days });
-    throw error;
+    return petCount + storyCount;
   }
-};
 
-/**
- * Get flagged content for review
- * @param limit - Number of items to retrieve
- * @returns Flagged content
- */
-export const getFlaggedContent = async (limit: number = 50): Promise<any[]> => {
-  try {
-    return await ContentModeration.find({
-      status: { $in: ['flagged', 'pending'] },
-      priority: { $in: ['high', 'urgent'] }
-    })
-      .populate('userId', 'firstName lastName email')
-      .sort({ createdAt: -1 })
-      .limit(limit);
-  } catch (error) {
-    logger.error('Error getting flagged content', { error, limit });
-    throw error;
+  /**
+   * Get reports received by user
+   */
+  async getUserReportsReceived(userId) {
+    const Report = require('../models/Report');
+    return Report.countDocuments({ reportedUserId: userId });
   }
-};
 
-/**
- * Update moderation rules
- * @param rules - New rules configuration
- * @returns Success status
- */
-export const updateModerationRules = async (rules: Record<string, unknown>): Promise<void> => {
-  try {
-    // This would update the rules configuration in the database
-    // For now, just log the update
-    logger.info('Moderation rules updated', { rules });
-  } catch (error) {
-    logger.error('Error updating moderation rules', { error, rules });
-    throw error;
+  /**
+   * Get severity score for sorting
+   */
+  getSeverityScore(severity) {
+    const scores = { low: 1, medium: 2, high: 3, critical: 4 };
+    return scores[severity] || 1;
   }
-};
 
-export default {
-  moderateTextContent,
-  moderateImageContent,
-  moderateUserBehavior,
-  getModerationStats,
-  getFlaggedContent,
-  updateModerationRules,
-};
+  /**
+   * Process content for moderation (called from content creation/update hooks)
+   */
+  async moderateContent(contentId, contentType, content, user) {
+    return this.analyzeContent({ contentId, contentType, content, user });
+  }
+
+  /**
+   * Bulk re-analyze content with updated rules
+   */
+  async reanalyzeContentBatch(contentIds, contentType) {
+    const results = [];
+
+    for (const contentId of contentIds) {
+      try {
+        let content, user;
+
+        // Fetch content and user based on type
+        switch (contentType) {
+          case 'pet':
+            content = await Pet.findById(contentId).populate('owner');
+            user = content?.owner;
+            break;
+          case 'story':
+            content = await Story.findById(contentId).populate('author');
+            user = content?.author;
+            break;
+          case 'user_profile':
+            content = await User.findById(contentId);
+            user = content;
+            break;
+        }
+
+        if (content && user) {
+          const result = await this.analyzeContent({
+            contentId,
+            contentType,
+            content,
+            user
+          });
+          results.push({ contentId, success: true, result });
+        } else {
+          results.push({ contentId, success: false, error: 'Content not found' });
+        }
+      } catch (error) {
+        results.push({ contentId, success: false, error: error.message });
+      }
+    }
+
+    return results;
+  }
+}
+
+module.exports = new AutomatedModerationService();

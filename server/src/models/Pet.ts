@@ -1,10 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IPet } from '../types';
+const mongoose = require('mongoose');
 
-const petSchema = new Schema<IPet>({
+const petSchema = new mongoose.Schema({
   // Owner
   owner: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Pet must have an owner']
   },
@@ -103,34 +102,40 @@ const petSchema = new Schema<IPet>({
     type: String,
     required: [true, 'Intent is required'],
     enum: {
-      values: ['adoption', 'mating', 'playdate', 'other'],
-      message: 'Intent must be one of: adoption, mating, playdate, other'
+      values: ['adoption', 'mating', 'playdate', 'all'],
+      message: 'Intent must be one of: adoption, mating, playdate, all'
     }
   },
   availability: {
     isAvailable: { type: Boolean, default: true },
-    schedule: Schema.Types.Mixed, // Flexible schedule object
-    restrictions: [String] // Array of restriction strings
+    schedule: {
+      monday: { available: Boolean, times: [String] },
+      tuesday: { available: Boolean, times: [String] },
+      wednesday: { available: Boolean, times: [String] },
+      thursday: { available: Boolean, times: [String] },
+      friday: { available: Boolean, times: [String] },
+      saturday: { available: Boolean, times: [String] },
+      sunday: { available: Boolean, times: [String] }
+    }
   },
   
-  // Health Information
+  // Health & Care
   healthInfo: {
     vaccinated: { type: Boolean, default: false },
     spayedNeutered: { type: Boolean, default: false },
-    medicalHistory: [String],
-    allergies: [String],
+    microchipped: { type: Boolean, default: false },
+    healthConditions: [String],
     medications: [String],
+    specialNeeds: {
+      type: String,
+      maxlength: [500, 'Special needs cannot exceed 500 characters']
+    },
+    lastVetVisit: Date,
     vetContact: {
       name: String,
       phone: String,
       clinic: String
     }
-  },
-  
-  // Special Needs
-  specialNeeds: {
-    type: String,
-    maxlength: [500, 'Special needs description cannot exceed 500 characters']
   },
   
   // Location
@@ -142,7 +147,7 @@ const petSchema = new Schema<IPet>({
     },
     coordinates: {
       type: [Number], // [longitude, latitude]
-      default: [0, 0]
+      required: [true, 'Pet location is required']
     },
     address: {
       street: String,
@@ -153,210 +158,163 @@ const petSchema = new Schema<IPet>({
     }
   },
   
-  // AI Analysis
-  aiAnalysis: {
-    breedConfidence: Number,
-    healthScore: Number,
-    qualityScore: Number,
-    characteristics: Schema.Types.Mixed,
-    suggestions: [String],
-    tags: [String],
-    analyzedAt: Date
+  // AI Enhancement
+  aiData: {
+    personalityArchetype: {
+      primary: String,
+      secondary: String,
+      confidence: Number
+    },
+    personalityScore: {
+      friendliness: { type: Number, min: 0, max: 10 },
+      energy: { type: Number, min: 0, max: 10 },
+      trainability: { type: Number, min: 0, max: 10 },
+      socialness: { type: Number, min: 0, max: 10 },
+      aggression: { type: Number, min: 0, max: 10 },
+      independence: { type: Number, min: 0, max: 10 }
+    },
+    compatibilityTags: [String],
+    breedCharacteristics: {
+      temperament: [String],
+      energyLevel: String,
+      groomingNeeds: String,
+      healthConcerns: [String]
+    },
+    lastUpdated: { type: Date, default: Date.now }
   },
   
-  // Social Stats
-  likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  views: { type: Number, default: 0 },
-  matches: [{ type: Schema.Types.ObjectId, ref: 'Match' }],
+  // Premium Features
+  featured: {
+    isFeatured: { type: Boolean, default: false },
+    featuredUntil: Date,
+    boostCount: { type: Number, default: 0 },
+    lastBoosted: Date
+  },
+  
+  // Activity & Analytics
+  analytics: {
+    views: { type: Number, default: 0 },
+    likes: { type: Number, default: 0 },
+    superLikes: { type: Number, default: 0 },
+    matches: { type: Number, default: 0 },
+    messages: { type: Number, default: 0 },
+    lastViewed: Date,
+    events: [{
+      type: String,
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      timestamp: { type: Date, default: Date.now },
+      metadata: Object
+    }]
+  },
   
   // Status
   isActive: { type: Boolean, default: true },
   isVerified: { type: Boolean, default: false },
-  verificationNotes: String,
+  status: {
+    type: String,
+    enum: ['active', 'paused', 'adopted', 'unavailable'],
+    default: 'active'
+  },
   
   // Timestamps
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  adoptedAt: Date,
+  listedAt: { type: Date, default: Date.now }
+  
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-// Indexes
-petSchema.index({ owner: 1 });
-petSchema.index({ species: 1, breed: 1 });
+// Indexes for performance
 petSchema.index({ location: '2dsphere' });
-petSchema.index({ isActive: 1, isVerified: 1 });
+petSchema.index({ owner: 1 });
+petSchema.index({ species: 1, intent: 1 });
+petSchema.index({ breed: 1 });
+petSchema.index({ isActive: 1, status: 1 });
+petSchema.index({ 'featured.isFeatured': 1, 'featured.featuredUntil': 1 });
 petSchema.index({ createdAt: -1 });
-petSchema.index({ 'photos.isPrimary': 1 });
+
+// Virtual for age in months for more precise filtering
+petSchema.virtual('ageInMonths').get(function() {
+  return this.age * 12;
+});
 
 // Virtual for primary photo
 petSchema.virtual('primaryPhoto').get(function() {
-  const primaryPhoto = this.photos.find(photo => photo.isPrimary);
-  return primaryPhoto ? primaryPhoto.url : (this.photos[0] ? this.photos[0].url : null);
+  const primary = this.photos.find(photo => photo.isPrimary);
+  return primary || this.photos[0] || null;
 });
 
-// Virtual for age in human years (for display)
-petSchema.virtual('ageInHumanYears').get(function() {
-  if (!this.age) return null;
-  
-  // Rough conversion based on species
-  const conversionRates: { [key: string]: number } = {
-    dog: 7,
-    cat: 5,
-    bird: 2,
-    rabbit: 3,
-    other: 4
-  };
-  
-  const rate = conversionRates[this.species] || 4;
-  return Math.round(this.age * rate);
-});
-
-// Virtual for compatibility score with another pet
-petSchema.virtual('compatibilityScore').get(function() {
-  // This would be calculated based on various factors
-  // For now, return a placeholder
-  return 0;
-});
-
-// Pre-save middleware to ensure at least one photo is primary
+// Pre-save middleware
 petSchema.pre('save', function(next) {
+  // Ensure only one primary photo
   if (this.photos && this.photos.length > 0) {
-    const primaryCount = this.photos.filter(photo => photo.isPrimary).length;
-    if (primaryCount === 0) {
+    const primaryPhotos = this.photos.filter(photo => photo.isPrimary);
+    if (primaryPhotos.length === 0) {
       this.photos[0].isPrimary = true;
-    } else if (primaryCount > 1) {
-      // If multiple photos are marked as primary, keep only the first one
-      let foundPrimary = false;
-      this.photos.forEach(photo => {
-        if (photo.isPrimary && !foundPrimary) {
-          foundPrimary = true;
-        } else if (photo.isPrimary) {
-          photo.isPrimary = false;
-        }
+    } else if (primaryPhotos.length > 1) {
+      this.photos.forEach((photo, index) => {
+        photo.isPrimary = index === 0;
       });
     }
   }
+  
+  // Update AI data timestamp if personality or breed info changed
+  if (this.isModified('personalityTags') || this.isModified('breed')) {
+    this.aiData.lastUpdated = new Date();
+  }
+  
   next();
 });
 
-// Pre-save middleware to update timestamps
-petSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
-
-// Instance method to add photo
-petSchema.methods.addPhoto = function(photoData: { url: string; publicId?: string; caption?: string }) {
-  this.photos.push({
-    ...photoData,
-    isPrimary: this.photos.length === 0 // First photo is primary
-  });
+// Instance methods
+petSchema.methods.updateAnalytics = function(action) {
+  switch (action) {
+    case 'view':
+      this.analytics.views += 1;
+      this.analytics.lastViewed = new Date();
+      break;
+    case 'like':
+      this.analytics.likes += 1;
+      break;
+    case 'match':
+      this.analytics.matches += 1;
+      break;
+    case 'message':
+      this.analytics.messages += 1;
+      break;
+  }
   return this.save();
 };
 
-// Instance method to set primary photo
-petSchema.methods.setPrimaryPhoto = function(photoIndex: number) {
-  if (photoIndex >= 0 && photoIndex < this.photos.length) {
-    this.photos.forEach((photo, index) => {
-      photo.isPrimary = index === photoIndex;
-    });
-    return this.save();
+petSchema.methods.isCompatibleWith = function(otherPet) {
+  // Basic compatibility check
+  if (this.species !== otherPet.species) return false;
+  if (this.intent === 'mating' && otherPet.intent === 'mating') {
+    return this.gender !== otherPet.gender;
   }
-  throw new Error('Invalid photo index');
+  return true;
 };
 
-// Instance method to remove photo
-petSchema.methods.removePhoto = function(photoIndex: number) {
-  if (photoIndex >= 0 && photoIndex < this.photos.length) {
-    const removedPhoto = this.photos.splice(photoIndex, 1)[0];
-    
-    // If we removed the primary photo, set the first remaining photo as primary
-    if (removedPhoto.isPrimary && this.photos.length > 0) {
-      this.photos[0].isPrimary = true;
-    }
-    
-    return this.save();
-  }
-  throw new Error('Invalid photo index');
-};
-
-// Instance method to calculate compatibility with another pet
-petSchema.methods.calculateCompatibility = function(otherPet: IPet): number {
-  let score = 0;
-  let factors = 0;
-  
-  // Species compatibility
-  if (this.species === otherPet.species) {
-    score += 30;
-  }
-  factors++;
-  
-  // Age compatibility (within reasonable range)
-  const ageDiff = Math.abs(this.age - otherPet.age);
-  if (ageDiff <= 2) {
-    score += 20;
-  } else if (ageDiff <= 5) {
-    score += 10;
-  }
-  factors++;
-  
-  // Size compatibility
-  const sizeOrder = ['tiny', 'small', 'medium', 'large', 'extra-large'];
-  const thisSizeIndex = sizeOrder.indexOf(this.size);
-  const otherSizeIndex = sizeOrder.indexOf(otherPet.size);
-  const sizeDiff = Math.abs(thisSizeIndex - otherSizeIndex);
-  
-  if (sizeDiff <= 1) {
-    score += 20;
-  } else if (sizeDiff <= 2) {
-    score += 10;
-  }
-  factors++;
-  
-  // Personality compatibility
-  const commonPersonalities = this.personalityTags.filter(tag => 
-    otherPet.personalityTags.includes(tag)
-  );
-  score += (commonPersonalities.length / Math.max(this.personalityTags.length, otherPet.personalityTags.length)) * 30;
-  factors++;
-  
-  return Math.round(score / factors);
-};
-
-// Static method to find pets by location
-petSchema.statics.findByLocation = function(coordinates: [number, number], maxDistance: number = 50) {
-  return this.find({
-    location: {
-      $near: {
-        $geometry: {
-          type: 'Point',
-          coordinates
-        },
-        $maxDistance: maxDistance * 1000 // Convert km to meters
-      }
-    },
-    isActive: true
-  });
-};
-
-// Static method to find pets by species and breed
-petSchema.statics.findBySpeciesAndBreed = function(species: string, breed?: string) {
-  const query: any = { species, isActive: true };
-  if (breed) {
-    query.breed = new RegExp(breed, 'i');
-  }
+// Static methods
+petSchema.statics.findBySpeciesAndIntent = function(species, intent) {
+  const query = { isActive: true, status: 'active' };
+  if (species) query.species = species;
+  if (intent) query.intent = { $in: [intent, 'all'] };
   return this.find(query);
 };
 
-// Static method to find available pets
-petSchema.statics.findAvailable = function() {
-  return this.find({ 
-    'availability.isAvailable': true, 
-    isActive: true 
-  });
+petSchema.statics.findFeatured = function() {
+  return this.find({
+    'featured.isFeatured': true,
+    'featured.featuredUntil': { $gt: new Date() },
+    isActive: true,
+    status: 'active'
+  }).sort({ 'featured.lastBoosted': -1 });
 };
 
-export default mongoose.model<IPet>('Pet', petSchema);
+module.exports = mongoose.model('Pet', petSchema);

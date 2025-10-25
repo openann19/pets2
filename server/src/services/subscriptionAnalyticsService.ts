@@ -3,81 +3,11 @@
  * Advanced analytics and reporting for subscription metrics
  */
 
-import stripe from 'stripe';
-import User from '../models/User';
-import logger from '../utils/logger';
-
-// Analytics Types
-interface RevenueMetrics {
-  totalRevenue: number;
-  recurringRevenue: number;
-  oneTimeRevenue: number;
-  refunds: number;
-  netRevenue: number;
-  averageRevenuePerUser: number;
-  revenueGrowth: number;
-  monthlyRecurringRevenue: number;
-}
-
-interface SubscriptionMetrics {
-  totalSubscriptions: number;
-  activeSubscriptions: number;
-  cancelledSubscriptions: number;
-  pastDueSubscriptions: number;
-  newSubscriptions: number;
-  averageSubscriptionValue: number;
-  subscriptionGrowth: number;
-}
-
-interface ChurnMetrics {
-  totalChurned: number;
-  churnRate: number;
-  revenueChurn: number;
-  customerChurn: number;
-  averageChurnRate: number;
-}
-
-interface UserMetrics {
-  totalUsers: number;
-  premiumUsers: number;
-  freeUsers: number;
-  newUsers: number;
-  premiumConversionRate: number;
-  userGrowth: number;
-  averageLifetimeValue: number;
-}
-
-interface SubscriptionAnalytics {
-  timeframe: string;
-  revenue: RevenueMetrics;
-  subscriptions: SubscriptionMetrics;
-  churn: ChurnMetrics;
-  users: UserMetrics;
-  calculatedAt: string;
-}
-
-interface SubscriptionTrends {
-  daily: Array<{ date: string; value: number }>;
-  weekly: Array<{ week: string; value: number }>;
-  monthly: Array<{ month: string; value: number }>;
-  timeframe: string;
-}
-
-interface CohortAnalysis {
-  monthly: Array<{ cohort: string; retention: number[] }>;
-  quarterly: Array<{ cohort: string; retention: number[] }>;
-  yearly: Array<{ cohort: string; retention: number[] }>;
-}
-
-interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-}
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const User = require('../models/User');
+const logger = require('../utils/logger');
 
 class SubscriptionAnalyticsService {
-  private metricsCache: Map<string, CacheEntry<SubscriptionAnalytics>>;
-  private cacheExpiry: number;
-
   constructor() {
     this.metricsCache = new Map();
     this.cacheExpiry = 5 * 60 * 1000; // 5 minutes
@@ -86,7 +16,7 @@ class SubscriptionAnalyticsService {
   /**
    * Get comprehensive subscription analytics
    */
-  async getSubscriptionAnalytics(timeframe: string = '30d'): Promise<SubscriptionAnalytics> {
+  async getSubscriptionAnalytics(timeframe = '30d') {
     try {
       const cacheKey = `analytics_${timeframe}`;
       const cached = this.metricsCache.get(cacheKey);
@@ -104,9 +34,7 @@ class SubscriptionAnalyticsService {
 
       return analytics;
     } catch (error) {
-      logger.error('Error getting subscription analytics', { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      });
+      logger.error('Error getting subscription analytics', { error: error.message });
       throw error;
     }
   }
@@ -114,7 +42,7 @@ class SubscriptionAnalyticsService {
   /**
    * Calculate comprehensive analytics
    */
-  private async calculateAnalytics(timeframe: string): Promise<SubscriptionAnalytics> {
+  async calculateAnalytics(timeframe) {
     const [revenueMetrics, subscriptionMetrics, churnMetrics, userMetrics] = await Promise.all([
       this.getRevenueMetrics(timeframe),
       this.getSubscriptionMetrics(timeframe),
@@ -123,11 +51,11 @@ class SubscriptionAnalyticsService {
     ]);
 
     return {
-      timeframe,
       revenue: revenueMetrics,
       subscriptions: subscriptionMetrics,
       churn: churnMetrics,
       users: userMetrics,
+      timeframe,
       calculatedAt: new Date().toISOString()
     };
   }
@@ -135,279 +63,520 @@ class SubscriptionAnalyticsService {
   /**
    * Get revenue metrics
    */
-  private async getRevenueMetrics(timeframe: string): Promise<RevenueMetrics> {
+  async getRevenueMetrics(timeframe) {
     try {
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
       const startDate = this.getStartDate(timeframe);
       
-      // Get balance transactions
-      const balanceTransactions = await stripeClient.balanceTransactions.list({
+      // Get Stripe revenue data
+      const invoices = await stripe.invoices.list({
+        created: { gte: Math.floor(startDate.getTime() / 1000) },
+        status: 'paid',
+        limit: 100
+      });
+
+      let totalRevenue = 0;
+      let monthlyRecurringRevenue = 0;
+      let annualRecurringRevenue = 0;
+      const revenueByMonth = {};
+      const revenueByPlan = {};
+
+      for (const invoice of invoices.data) {
+        const amount = invoice.amount_paid / 100; // Convert from cents
+        totalRevenue += amount;
+
+        const month = new Date(invoice.created * 1000).toISOString().substring(0, 7);
+        revenueByMonth[month] = (revenueByMonth[month] || 0) + amount;
+
+        // Calculate MRR/ARR
+        if (invoice.subscription) {
+          const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
+          const interval = subscription.items.data[0].price.recurring.interval;
+          
+          if (interval === 'month') {
+            monthlyRecurringRevenue += amount;
+          } else if (interval === 'year') {
+            annualRecurringRevenue += amount / 12;
+          }
+
+          // Group by plan
+          const planName = this.getPlanName(subscription.items.data[0].price.id);
+          revenueByPlan[planName] = (revenueByPlan[planName] || 0) + amount;
+        }
+      }
+
+      // Calculate churn rate from subscription data
+      const subscriptions = await stripe.subscriptions.list({
         created: { gte: Math.floor(startDate.getTime() / 1000) },
         limit: 100
       });
 
-      const revenue = {
-        totalRevenue: 0,
-        recurringRevenue: 0,
-        oneTimeRevenue: 0,
-        refunds: 0,
-        netRevenue: 0,
-        averageRevenuePerUser: 0,
-        revenueGrowth: 0,
-        monthlyRecurringRevenue: 0
-      };
+      const activeSubscriptions = subscriptions.data.filter(sub => sub.status === 'active').length;
+      const canceledSubscriptions = subscriptions.data.filter(sub => sub.status === 'canceled').length;
+      const churnRate = subscriptions.data.length > 0 ? (canceledSubscriptions / subscriptions.data.length) * 100 : 0;
 
-      // Calculate revenue metrics
-      balanceTransactions.data.forEach(transaction => {
-        if (transaction.type === 'charge') {
-          revenue.totalRevenue += transaction.amount;
-          revenue.recurringRevenue += transaction.amount; // Simplified
-        } else if (transaction.type === 'refund') {
-          revenue.refunds += transaction.amount;
-        }
-      });
-
-      revenue.netRevenue = revenue.totalRevenue - revenue.refunds;
-      revenue.monthlyRecurringRevenue = revenue.recurringRevenue;
-
-      return revenue;
-    } catch (error) {
-      logger.error('Error getting revenue metrics', { error, timeframe });
       return {
-        totalRevenue: 0,
-        recurringRevenue: 0,
-        oneTimeRevenue: 0,
-        refunds: 0,
-        netRevenue: 0,
-        averageRevenuePerUser: 0,
-        revenueGrowth: 0,
-        monthlyRecurringRevenue: 0
+        totalRevenue,
+        monthlyRecurringRevenue: Math.round(monthlyRecurringRevenue),
+        annualRecurringRevenue: Math.round(annualRecurringRevenue * 12),
+        revenueByMonth,
+        revenueByPlan,
+        churnRate: Math.round(churnRate * 100) / 100,
+        activeSubscriptions,
+        canceledSubscriptions,
+        averageRevenuePerUser: await this.calculateARPU(timeframe),
+        revenueGrowth: await this.calculateRevenueGrowth(timeframe)
       };
+    } catch (error) {
+      logger.error('Error calculating revenue metrics', { error: error.message });
+      return this.getDefaultRevenueMetrics();
     }
   }
 
   /**
    * Get subscription metrics
    */
-  private async getSubscriptionMetrics(timeframe: string): Promise<SubscriptionMetrics> {
+  async getSubscriptionMetrics(timeframe) {
     try {
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
       const startDate = this.getStartDate(timeframe);
       
-      // Get subscriptions
-      const subscriptions = await stripeClient.subscriptions.list({
+      const subscriptions = await stripe.subscriptions.list({
         created: { gte: Math.floor(startDate.getTime() / 1000) },
         limit: 100
       });
 
-      const metrics = {
-        totalSubscriptions: subscriptions.data.length,
-        activeSubscriptions: subscriptions.data.filter(sub => sub.status === 'active').length,
-        cancelledSubscriptions: subscriptions.data.filter(sub => sub.status === 'canceled').length,
-        pastDueSubscriptions: subscriptions.data.filter(sub => sub.status === 'past_due').length,
-        newSubscriptions: subscriptions.data.filter(sub => 
-          new Date(sub.created * 1000) >= startDate
-        ).length,
-        averageSubscriptionValue: 0,
-        subscriptionGrowth: 0
-      };
+      let totalSubscriptions = 0;
+      let activeSubscriptions = 0;
+      let cancelledSubscriptions = 0;
+      const subscriptionsByPlan = {};
+      const subscriptionsByStatus = {};
+      const subscriptionsByInterval = {};
 
-      // Calculate average subscription value
-      const activeSubs = subscriptions.data.filter(sub => sub.status === 'active');
-      if (activeSubs.length > 0) {
-        const totalValue = activeSubs.reduce((sum, sub) => sum + (sub.items.data[0]?.price?.unit_amount || 0), 0);
-        metrics.averageSubscriptionValue = totalValue / activeSubs.length;
+      for (const subscription of subscriptions.data) {
+        totalSubscriptions++;
+        
+        if (subscription.status === 'active') {
+          activeSubscriptions++;
+        } else if (subscription.status === 'canceled') {
+          cancelledSubscriptions++;
+        }
+
+        // Group by plan
+        const planName = this.getPlanName(subscription.items.data[0].price.id);
+        subscriptionsByPlan[planName] = (subscriptionsByPlan[planName] || 0) + 1;
+
+        // Group by status
+        subscriptionsByStatus[subscription.status] = (subscriptionsByStatus[subscription.status] || 0) + 1;
+
+        // Group by interval
+        const interval = subscription.items.data[0].price.recurring.interval;
+        subscriptionsByInterval[interval] = (subscriptionsByInterval[interval] || 0) + 1;
       }
 
-      return metrics;
-    } catch (error) {
-      logger.error('Error getting subscription metrics', { error, timeframe });
+      // Calculate conversion rate from user data
+      const users = await User.countDocuments({
+        createdAt: { $gte: startDate }
+      });
+
+      const premiumUsers = await User.countDocuments({
+        'premium.isActive': true,
+        createdAt: { $gte: startDate }
+      });
+
+      const conversionRate = users > 0 ? (premiumUsers / users) * 100 : 0;
+
       return {
-        totalSubscriptions: 0,
-        activeSubscriptions: 0,
-        cancelledSubscriptions: 0,
-        pastDueSubscriptions: 0,
-        newSubscriptions: 0,
-        averageSubscriptionValue: 0,
-        subscriptionGrowth: 0
+        totalSubscriptions,
+        activeSubscriptions,
+        cancelledSubscriptions,
+        subscriptionsByPlan,
+        subscriptionsByStatus,
+        subscriptionsByInterval,
+        conversionRate: Math.round(conversionRate * 100) / 100,
+        averageSubscriptionValue: await this.calculateAverageSubscriptionValue(timeframe)
       };
+    } catch (error) {
+      logger.error('Error calculating subscription metrics', { error: error.message });
+      return this.getDefaultSubscriptionMetrics();
     }
   }
 
   /**
    * Get churn metrics
    */
-  private async getChurnMetrics(timeframe: string): Promise<ChurnMetrics> {
+  async getChurnMetrics(timeframe) {
     try {
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
       const startDate = this.getStartDate(timeframe);
       
-      // Get cancelled subscriptions
-      const cancelledSubscriptions = await stripeClient.subscriptions.list({
+      const cancelledSubscriptions = await stripe.subscriptions.list({
+        created: { gte: Math.floor(startDate.getTime() / 1000) },
         status: 'canceled',
+        limit: 100
+      });
+
+      const totalSubscriptions = await stripe.subscriptions.list({
         created: { gte: Math.floor(startDate.getTime() / 1000) },
         limit: 100
       });
 
-      // Get total active subscriptions at start of period
-      const totalActiveAtStart = await this.getActiveSubscriptionsAtDate(startDate);
-      
-      const churn = {
-        totalChurned: cancelledSubscriptions.data.length,
-        churnRate: 0,
-        revenueChurn: 0,
-        customerChurn: 0,
-        averageChurnRate: 0
-      };
+      const churnRate = totalSubscriptions.data.length > 0 
+        ? (cancelledSubscriptions.data.length / totalSubscriptions.data.length) * 100 
+        : 0;
 
-      if (totalActiveAtStart > 0) {
-        churn.churnRate = (cancelledSubscriptions.data.length / totalActiveAtStart) * 100;
+      const churnReasons = {};
+      const churnByPlan = {};
+
+      for (const subscription of cancelledSubscriptions.data) {
+        // Group by cancellation reason
+        const reason = subscription.cancellation_details?.reason || 'unknown';
+        churnReasons[reason] = (churnReasons[reason] || 0) + 1;
+
+        // Group by plan
+        const planName = this.getPlanName(subscription.items.data[0].price.id);
+        churnByPlan[planName] = (churnByPlan[planName] || 0) + 1;
       }
 
-      return churn;
-    } catch (error) {
-      logger.error('Error getting churn metrics', { error, timeframe });
       return {
-        totalChurned: 0,
-        churnRate: 0,
-        revenueChurn: 0,
-        customerChurn: 0,
-        averageChurnRate: 0
+        churnRate: Math.round(churnRate * 100) / 100,
+        totalChurned: cancelledSubscriptions.data.length,
+        churnReasons,
+        churnByPlan,
+        averageLifetimeValue: await this.calculateAverageLifetimeValue(timeframe),
+        retentionRate: Math.round((100 - churnRate) * 100) / 100
       };
+    } catch (error) {
+      logger.error('Error calculating churn metrics', { error: error.message });
+      return this.getDefaultChurnMetrics();
     }
   }
 
   /**
    * Get user metrics
    */
-  private async getUserMetrics(timeframe: string): Promise<UserMetrics> {
+  async getUserMetrics(timeframe) {
     try {
       const startDate = this.getStartDate(timeframe);
       
-      // Get user statistics from database
-      const totalUsers = await User.countDocuments();
-      const premiumUsers = await User.countDocuments({ 'premium.isActive': true });
-      const newUsers = await User.countDocuments({ createdAt: { $gte: startDate } });
-      
-      const metrics = {
-        totalUsers,
-        premiumUsers,
-        freeUsers: totalUsers - premiumUsers,
-        newUsers,
-        premiumConversionRate: totalUsers > 0 ? (premiumUsers / totalUsers) * 100 : 0,
-        userGrowth: 0,
-        averageLifetimeValue: 0
-      };
+      const users = await User.find({
+        createdAt: { $gte: startDate }
+      });
 
-      return metrics;
-    } catch (error) {
-      logger.error('Error getting user metrics', { error, timeframe });
+      const premiumUsers = await User.find({
+        'premium.isActive': true,
+        createdAt: { $gte: startDate }
+      });
+
+      const newUsers = users.length;
+      const newPremiumUsers = premiumUsers.length;
+      const conversionRate = newUsers > 0 ? (newPremiumUsers / newUsers) * 100 : 0;
+
+      // Get usage metrics for premium users
+      const usageMetrics = await this.getUsageMetrics(premiumUsers);
+
       return {
-        totalUsers: 0,
-        premiumUsers: 0,
-        freeUsers: 0,
-        newUsers: 0,
-        premiumConversionRate: 0,
-        userGrowth: 0,
-        averageLifetimeValue: 0
+        newUsers,
+        newPremiumUsers,
+        conversionRate: Math.round(conversionRate * 100) / 100,
+        totalUsers: await User.countDocuments(),
+        totalPremiumUsers: await User.countDocuments({ 'premium.isActive': true }),
+        userGrowth: await this.calculateUserGrowth(timeframe),
+        usage: usageMetrics
       };
+    } catch (error) {
+      logger.error('Error calculating user metrics', { error: error.message });
+      return this.getDefaultUserMetrics();
     }
   }
 
   /**
-   * Get active subscriptions at a specific date
+   * Calculate Average Revenue Per User (ARPU)
    */
-  private async getActiveSubscriptionsAtDate(date: Date): Promise<number> {
+  async calculateARPU(timeframe) {
     try {
-      const stripeClient = new stripe(process.env['STRIPE_SECRET_KEY'] || '');
+      const revenueMetrics = await this.getRevenueMetrics(timeframe);
+      const userMetrics = await this.getUserMetrics(timeframe);
       
-      const subscriptions = await stripeClient.subscriptions.list({
-        status: 'active',
-        limit: 100
-      });
-
-      return subscriptions.data.filter(sub => 
-        new Date(sub.created * 1000) <= date
-      ).length;
+      return userMetrics.totalPremiumUsers > 0 
+        ? Math.round((revenueMetrics.totalRevenue / userMetrics.totalPremiumUsers) * 100) / 100
+        : 0;
     } catch (error) {
-      logger.error('Error getting active subscriptions at date', { error, date });
+      logger.error('Error calculating ARPU', { error: error.message });
       return 0;
     }
   }
 
   /**
-   * Get start date based on timeframe
+   * Calculate revenue growth
    */
-  private getStartDate(timeframe: string): Date {
+  async calculateRevenueGrowth(timeframe) {
+    try {
+      const currentRevenue = await this.getRevenueMetrics(timeframe);
+      const previousRevenue = await this.getRevenueMetrics(this.getPreviousTimeframe(timeframe));
+      
+      if (previousRevenue.totalRevenue === 0) {
+        return 0;
+      }
+
+      const growth = ((currentRevenue.totalRevenue - previousRevenue.totalRevenue) / previousRevenue.totalRevenue) * 100;
+      return Math.round(growth * 100) / 100;
+    } catch (error) {
+      logger.error('Error calculating revenue growth', { error: error.message });
+      return 0;
+    }
+  }
+
+  /**
+   * Calculate conversion rate
+   */
+  async calculateConversionRate(timeframe) {
+    try {
+      const userMetrics = await this.getUserMetrics(timeframe);
+      return userMetrics.conversionRate;
+    } catch (error) {
+      logger.error('Error calculating conversion rate', { error: error.message });
+      return 0;
+    }
+  }
+
+  /**
+   * Calculate average subscription value
+   */
+  async calculateAverageSubscriptionValue(timeframe) {
+    try {
+      const revenueMetrics = await this.getRevenueMetrics(timeframe);
+      const subscriptionMetrics = await this.getSubscriptionMetrics(timeframe);
+      
+      return subscriptionMetrics.totalSubscriptions > 0 
+        ? Math.round((revenueMetrics.totalRevenue / subscriptionMetrics.totalSubscriptions) * 100) / 100
+        : 0;
+    } catch (error) {
+      logger.error('Error calculating average subscription value', { error: error.message });
+      return 0;
+    }
+  }
+
+  /**
+   * Calculate average lifetime value
+   */
+  async calculateAverageLifetimeValue(timeframe) {
+    try {
+      // This would require more complex calculation involving user lifetime
+      // For now, return a simplified calculation
+      const revenueMetrics = await this.getRevenueMetrics(timeframe);
+      const churnMetrics = await this.getChurnMetrics(timeframe);
+      
+      if (churnMetrics.churnRate === 0) {
+        return 0;
+      }
+
+      const averageLifetime = 100 / churnMetrics.churnRate; // months
+      const averageMonthlyValue = revenueMetrics.monthlyRecurringRevenue / 100; // Simplified
+      
+      return Math.round(averageLifetime * averageMonthlyValue * 100) / 100;
+    } catch (error) {
+      logger.error('Error calculating average lifetime value', { error: error.message });
+      return 0;
+    }
+  }
+
+  /**
+   * Calculate user growth
+   */
+  async calculateUserGrowth(timeframe) {
+    try {
+      const currentUsers = await this.getUserMetrics(timeframe);
+      const previousUsers = await this.getUserMetrics(this.getPreviousTimeframe(timeframe));
+      
+      if (previousUsers.newUsers === 0) {
+        return 0;
+      }
+
+      const growth = ((currentUsers.newUsers - previousUsers.newUsers) / previousUsers.newUsers) * 100;
+      return Math.round(growth * 100) / 100;
+    } catch (error) {
+      logger.error('Error calculating user growth', { error: error.message });
+      return 0;
+    }
+  }
+
+  /**
+   * Get plan name from price ID
+   */
+  getPlanName(priceId) {
+    // Map Stripe price IDs to plan names
+    const planMap = {
+      [process.env.STRIPE_BASIC_MONTHLY_PRICE_ID]: 'Basic',
+      [process.env.STRIPE_BASIC_YEARLY_PRICE_ID]: 'Basic',
+      [process.env.STRIPE_PREMIUM_MONTHLY_PRICE_ID]: 'Premium',
+      [process.env.STRIPE_PREMIUM_YEARLY_PRICE_ID]: 'Premium',
+      [process.env.STRIPE_ULTIMATE_MONTHLY_PRICE_ID]: 'Ultimate',
+      [process.env.STRIPE_ULTIMATE_YEARLY_PRICE_ID]: 'Ultimate'
+    };
+
+    return planMap[priceId] || 'Unknown';
+  }
+
+  /**
+   * Get start date for timeframe
+   */
+  getStartDate(timeframe) {
     const now = new Date();
     const days = parseInt(timeframe.replace('d', ''));
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - days);
-    return startDate;
+    return new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
   }
 
   /**
-   * Get subscription trends
+   * Get previous timeframe for comparison
    */
-  async getSubscriptionTrends(timeframe: string = '30d'): Promise<SubscriptionTrends> {
+  getPreviousTimeframe(timeframe) {
+    const days = parseInt(timeframe.replace('d', ''));
+    return `${days}d`;
+  }
+
+  /**
+   * Get usage metrics for premium users
+   */
+  async getUsageMetrics(premiumUsers) {
     try {
-      const trends = {
-        daily: [],
-        weekly: [],
-        monthly: [],
-        timeframe
+      const usageStats = {
+        totalSwipesUsed: 0,
+        totalSuperLikesUsed: 0,
+        totalBoostsUsed: 0,
+        totalMessagesSent: 0,
+        totalProfileViews: 0,
+        swipesByPlan: {},
+        superLikesByPlan: {},
+        boostsByPlan: {},
+        messagesByPlan: {},
+        profileViewsByPlan: {}
       };
 
-      // In a real implementation, this would calculate trends from historical data
-      // For now, return empty trends
-      
-      logger.info('Subscription trends retrieved', { trends, timeframe });
-      return trends;
+      for (const user of premiumUsers) {
+        const plan = user.premium.plan;
+        
+        // Aggregate usage metrics
+        usageStats.totalSwipesUsed += user.premium.usage?.swipesUsed || 0;
+        usageStats.totalSuperLikesUsed += user.premium.usage?.superLikesUsed || 0;
+        usageStats.totalBoostsUsed += user.premium.usage?.boostsUsed || 0;
+        usageStats.totalMessagesSent += user.analytics?.totalMessagesSent || 0;
+        usageStats.totalProfileViews += user.analytics?.profileViews || 0;
+
+        // Group by plan
+        if (!usageStats.swipesByPlan[plan]) {
+          usageStats.swipesByPlan[plan] = 0;
+          usageStats.superLikesByPlan[plan] = 0;
+          usageStats.boostsByPlan[plan] = 0;
+          usageStats.messagesByPlan[plan] = 0;
+          usageStats.profileViewsByPlan[plan] = 0;
+        }
+
+        usageStats.swipesByPlan[plan] += user.premium.usage?.swipesUsed || 0;
+        usageStats.superLikesByPlan[plan] += user.premium.usage?.superLikesUsed || 0;
+        usageStats.boostsByPlan[plan] += user.premium.usage?.boostsUsed || 0;
+        usageStats.messagesByPlan[plan] += user.analytics?.totalMessagesSent || 0;
+        usageStats.profileViewsByPlan[plan] += user.analytics?.profileViews || 0;
+      }
+
+      return usageStats;
     } catch (error) {
-      logger.error('Error getting subscription trends', { error, timeframe });
-      throw error;
+      logger.error('Error calculating usage metrics', { error: error.message });
+      return this.getDefaultUsageMetrics();
     }
   }
 
   /**
-   * Get cohort analysis
+   * Default metrics when calculation fails
    */
-  async getCohortAnalysis(): Promise<CohortAnalysis> {
-    try {
-      const cohorts = {
-        monthly: [],
-        quarterly: [],
-        yearly: []
-      };
+  getDefaultRevenueMetrics() {
+    return {
+      totalRevenue: 0,
+      monthlyRecurringRevenue: 0,
+      annualRecurringRevenue: 0,
+      revenueByMonth: {},
+      revenueByPlan: {},
+      averageRevenuePerUser: 0,
+      revenueGrowth: 0
+    };
+  }
 
-      // In a real implementation, this would calculate cohort retention
-      // For now, return empty cohorts
-      
-      logger.info('Cohort analysis retrieved', { cohorts });
-      return cohorts;
-    } catch (error) {
-      logger.error('Error getting cohort analysis', { error });
-      throw error;
-    }
+  getDefaultSubscriptionMetrics() {
+    return {
+      totalSubscriptions: 0,
+      activeSubscriptions: 0,
+      cancelledSubscriptions: 0,
+      subscriptionsByPlan: {},
+      subscriptionsByStatus: {},
+      conversionRate: 0,
+      averageSubscriptionValue: 0
+    };
+  }
+
+  getDefaultChurnMetrics() {
+    return {
+      churnRate: 0,
+      totalChurned: 0,
+      churnReasons: {},
+      churnByPlan: {},
+      averageLifetimeValue: 0,
+      retentionRate: 100
+    };
+  }
+
+  getDefaultUserMetrics() {
+    return {
+      newUsers: 0,
+      newPremiumUsers: 0,
+      conversionRate: 0,
+      totalUsers: 0,
+      totalPremiumUsers: 0,
+      userGrowth: 0
+    };
+  }
+
+  getDefaultUsageMetrics() {
+    return {
+      totalSwipesUsed: 0,
+      totalSuperLikesUsed: 0,
+      totalBoostsUsed: 0,
+      totalMessagesSent: 0,
+      totalProfileViews: 0,
+      swipesByPlan: {},
+      superLikesByPlan: {},
+      boostsByPlan: {},
+      messagesByPlan: {},
+      profileViewsByPlan: {}
+    };
   }
 
   /**
    * Clear cache
    */
-  clearCache(): void {
+  clearCache() {
     this.metricsCache.clear();
     logger.info('Analytics cache cleared');
   }
 
   /**
-   * Update cache expiry
+   * Get real-time metrics
    */
-  updateCacheExpiry(expiryMs: number): void {
-    this.cacheExpiry = expiryMs;
-    logger.info('Cache expiry updated', { expiryMs });
+  async getRealTimeMetrics() {
+    try {
+      const [activeSubscriptions, recentRevenue, newUsers] = await Promise.all([
+        stripe.subscriptions.list({ status: 'active', limit: 1 }),
+        stripe.invoices.list({ status: 'paid', limit: 10 }),
+        User.countDocuments({ createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } })
+      ]);
+
+      return {
+        activeSubscriptions: activeSubscriptions.data.length,
+        recentRevenue: recentRevenue.data.reduce((sum, invoice) => sum + invoice.amount_paid, 0) / 100,
+        newUsers24h: newUsers,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      logger.error('Error getting real-time metrics', { error: error.message });
+      return null;
+    }
   }
 }
 
-// Export singleton instance
-const subscriptionAnalyticsService = new SubscriptionAnalyticsService();
-export default subscriptionAnalyticsService;
+module.exports = new SubscriptionAnalyticsService();

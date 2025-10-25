@@ -1,8 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
-import bcrypt from 'bcryptjs';
-import { IUser } from '../types';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-const userSchema = new Schema<IUser>({
+const userSchema = new mongoose.Schema({
   // Basic Info
   email: {
     type: String,
@@ -98,131 +97,179 @@ const userSchema = new Schema<IUser>({
       boostProfile: { type: Boolean, default: false },
       seeWhoLiked: { type: Boolean, default: false },
       advancedFilters: { type: Boolean, default: false },
-      aiMatching: { type: Boolean, default: false }
+      aiMatching: { type: Boolean, default: false },
+      prioritySupport: { type: Boolean, default: false },
+      globalPassport: { type: Boolean, default: false }
+    },
+    usage: {
+      swipesUsed: { type: Number, default: 0 },
+      swipesLimit: { type: Number, default: 50 },
+      superLikesUsed: { type: Number, default: 0 },
+      superLikesLimit: { type: Number, default: 0 },
+      boostsUsed: { type: Number, default: 0 },
+      boostsLimit: { type: Number, default: 0 },
+      messagesSent: { type: Number, default: 0 },
+      profileViews: { type: Number, default: 0 }
     }
   },
 
+  // Activity
+  pets: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Pet'
+  }],
+
+  swipedPets: [{
+    petId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Pet',
+      required: true
+    },
+    action: {
+      type: String,
+      enum: ['like', 'pass', 'superlike'],
+      required: true
+    },
+    swipedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+
+  matches: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Match'
+  }],
+
   // Analytics
   analytics: {
-    lastActive: Date,
-    totalPetsCreated: { type: Number, default: 0 },
+    totalSwipes: { type: Number, default: 0 },
     totalLikes: { type: Number, default: 0 },
     totalMatches: { type: Number, default: 0 },
+    profileViews: { type: Number, default: 0 },
+    lastActive: { type: Date, default: Date.now },
+    totalPetsCreated: { type: Number, default: 0 },
     totalMessagesSent: { type: Number, default: 0 },
     totalSubscriptionsStarted: { type: Number, default: 0 },
     totalSubscriptionsCancelled: { type: Number, default: 0 },
     totalPremiumFeaturesUsed: { type: Number, default: 0 },
     events: [{
       type: String,
-      timestamp: Date,
-      metadata: Schema.Types.Mixed
+      timestamp: { type: Date, default: Date.now },
+      metadata: Object
     }]
   },
 
   // Account Status
+  isEmailVerified: { type: Boolean, default: false },
+  isPhoneVerified: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
-  isVerified: { type: Boolean, default: false },
-  verificationCode: String,
-  verificationExpires: Date,
+  isBlocked: { type: Boolean, default: false },
+  status: {
+    type: String,
+    enum: ['active', 'suspended', 'banned', 'pending'],
+    default: 'active'
+  },
 
-  // Password Reset
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
+  // Admin & Roles
+  role: {
+    type: String,
+    enum: ['user', 'premium', 'administrator', 'moderator', 'support', 'analyst', 'billing_admin'],
+    default: 'user',
+    // select: false // Temporarily disabled for testing
+  },
 
+  // Security
+  refreshTokens: [String],
+  tokensInvalidatedAt: { type: Date, default: null },
+  revokedJtis: [String], // Array of revoked JWT jtis for individual session logout
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  emailVerificationToken: String,
+  emailVerificationExpires: Date,
+  lastLoginAt: { type: Date },
+  lastLoginIP: { type: String },
   // Two-Factor Authentication
-  twoFactorSecret: String,
   twoFactorEnabled: { type: Boolean, default: false },
+  twoFactorSecret: String, // For TOTP
+  twoFactorMethod: { type: String, enum: ['sms', 'email', 'totp'], default: null },
+  twoFactorCode: String, // Temporary code for SMS/Email
+  twoFactorCodeExpiry: Date, // Expiry for SMS/Email codes
+  // Biometric authentication
+  biometricEnabled: { type: Boolean, default: false },
+  biometricToken: String,
+  biometricTokenExpiry: Date,
+  // WebAuthn challenge (temporary storage during registration)
+  webauthnChallenge: { type: String, default: null }
 
-  // Biometric Credentials
-  biometricCredentials: [{ type: Schema.Types.ObjectId, ref: 'BiometricCredential' }],
-
-  // Timestamps
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-  lastLoginAt: Date
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-// Indexes
-userSchema.index({ email: 1 });
+// Indexes for performance
 userSchema.index({ location: '2dsphere' });
-userSchema.index({ createdAt: -1 });
-userSchema.index({ isActive: 1, isVerified: 1 });
+userSchema.index({ 'analytics.lastActive': -1 });
+userSchema.index({ 'premium.isActive': 1, 'premium.expiresAt': 1 });
+
+// Virtual for age
+userSchema.virtual('age').get(function () {
+  return Math.floor((new Date() - this.dateOfBirth) / (365.25 * 24 * 60 * 60 * 1000));
+});
 
 // Virtual for full name
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
-// Virtual for age
-userSchema.virtual('age').get(function() {
-  if (!this.dateOfBirth) return null;
-  const today = new Date();
-  const birthDate = new Date(this.dateOfBirth);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  
-  return age;
-});
-
-// Pre-save middleware to hash password
-userSchema.pre('save', async function(next) {
+// Hash password before saving
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  
+
   try {
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
-    next(error as Error);
+    next(error);
   }
 });
 
-// Pre-save middleware to update timestamps
-userSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
+// Update lastActive on any update
+userSchema.pre('save', function (next) {
+  if (this.isModified() && !this.isNew) {
+    this.analytics.lastActive = new Date();
+  }
   next();
 });
 
-// Instance method to check password
-userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
-  try {
-    return await bcrypt.compare(candidatePassword, this['password']);
-  } catch (error) {
-    throw new Error('Password comparison failed');
-  }
+// Instance methods
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Instance method to generate verification code
-userSchema.methods.generateVerificationCode = function(): string {
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  this.verificationCode = code;
-  this.verificationExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-  return code;
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  delete user.refreshTokens;
+  delete user.passwordResetToken;
+  delete user.passwordResetExpires;
+  delete user.emailVerificationToken;
+  delete user.emailVerificationExpires;
+  return user;
 };
 
-// Instance method to check if verification code is valid
-userSchema.methods.isVerificationCodeValid = function(code: string): boolean {
-  return this.verificationCode === code && 
-         this.verificationExpires && 
-         this.verificationExpires > new Date();
+// Static methods
+userSchema.statics.findActiveUsers = function () {
+  return this.find({ isActive: true, isBlocked: false });
 };
 
-// Static method to find by email
-userSchema.statics.findByEmail = function(email: string) {
-  return this.findOne({ email: email.toLowerCase() });
+userSchema.statics.findPremiumUsers = function () {
+  return this.find({
+    'premium.isActive': true,
+    'premium.expiresAt': { $gt: new Date() }
+  });
 };
 
-// Static method to find active users
-userSchema.statics.findActiveUsers = function() {
-  return this.find({ isActive: true, isVerified: true });
-};
-
-export default mongoose.model<IUser>('User', userSchema);
+module.exports = mongoose.model('User', userSchema);

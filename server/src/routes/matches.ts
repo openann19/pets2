@@ -1,12 +1,7 @@
-import express, { Router, Response } from 'express';
-import { body } from 'express-validator';
-import { validate } from '../middleware/validation';
-import { requirePremiumFeature } from '../middleware/auth';
-import type { AuthenticatedRequest, ApiResponse } from '../types';
-
-// Import controllers from CommonJS modules
-const matchController = require('../controllers/matchController');
-
+const express = require('express');
+const { body } = require('express-validator');
+const { validate } = require('../middleware/validation');
+const { requirePremiumFeature } = require('../middleware/auth');
 const {
   getRecommendations,
   recordSwipe,
@@ -18,9 +13,9 @@ const {
   blockMatch,
   favoriteMatch,
   getMatchStats
-} = matchController;
+} = require('../controllers/matchController');
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // Validation rules
 const messageValidation = [
@@ -34,15 +29,9 @@ const messageValidation = [
     .withMessage('Invalid message type')
 ];
 
-const swipeValidation = [
-  body('petId').isMongoId().withMessage('Valid pet ID required'),
-  body('action').isIn(['like', 'pass', 'superlike']).withMessage('Action must be like, pass, or superlike'),
-  body('targetPetId').optional().isMongoId().withMessage('Valid target pet ID required')
-];
-
 // Routes
 router.get('/recommendations', requirePremiumFeature('aiMatching'), getRecommendations);
-router.post('/swipe', swipeValidation, validate, recordSwipe);
+router.post('/swipe', recordSwipe);
 router.get('/', getMatches);
 router.get('/stats', getMatchStats);
 router.get('/:matchId', getMatch);
@@ -56,4 +45,4 @@ router.patch('/:matchId/favorite', favoriteMatch);
 router.get('/recommendations/ai', requirePremiumFeature('aiMatching'), getRecommendations);
 router.get('/who-liked-me', requirePremiumFeature('seeWhoLiked'), getMatches); // Show who liked the user
 
-export default router;
+module.exports = router;

@@ -1,6 +1,3 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IStory } from '../types';
-
 /**
  * Story Model
  * 
@@ -12,322 +9,347 @@ import { IStory } from '../types';
  * - Photo and video support
  */
 
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+
 const StoryViewSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  viewedAt: {
-    type: Date,
-    default: Date.now,
-  },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    viewedAt: {
+        type: Date,
+        default: Date.now,
+    },
 }, { _id: false });
 
 const StoryReplySchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  message: {
-    type: String,
-    required: true,
-    maxlength: 500,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, { _id: false });
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    message: {
+        type: String,
+        required: true,
+        maxlength: 500,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+}, { _id: true });
 
-const storySchema = new Schema<IStory>({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true,
-  },
-  petId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Pet',
-    index: true,
-  },
-  content: {
-    type: String,
-    required: true,
-    maxlength: 2000,
-  },
-  media: {
-    type: {
-      type: String,
-      enum: ['image', 'video'],
+const StorySchema = new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index: true,
     },
-    url: {
-      type: String,
-      required: true,
+    mediaType: {
+        type: String,
+        enum: ['photo', 'video'],
+        required: true,
     },
-    publicId: String, // Cloudinary public ID
-    thumbnailUrl: String, // For videos
-    duration: Number, // For videos in seconds
-  },
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point',
+    mediaUrl: {
+        type: String,
+        required: true,
     },
-    coordinates: {
-      type: [Number], // [longitude, latitude]
+    thumbnailUrl: {
+        type: String,
     },
-    address: String,
-  },
-  tags: [{
-    type: String,
-    maxlength: 50,
-  }],
-  isPublic: {
-    type: Boolean,
-    default: true,
-    index: true,
-  },
-  expiresAt: {
-    type: Date,
-    required: true,
-    index: { expireAfterSeconds: 0 }, // TTL index
-  },
-  likes: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  views: [StoryViewSchema],
-  replies: [StoryReplySchema],
-  analytics: {
-    viewCount: { type: Number, default: 0 },
-    likeCount: { type: Number, default: 0 },
-    replyCount: { type: Number, default: 0 },
-    shareCount: { type: Number, default: 0 },
-  },
-  moderation: {
-    isFlagged: { type: Boolean, default: false },
-    flaggedBy: [{
-      user: { type: Schema.Types.ObjectId, ref: 'User' },
-      reason: String,
-      flaggedAt: { type: Date, default: Date.now },
-    }],
-    aiAnalysis: {
-      confidence: Number,
-      flags: [String],
-      safe: { type: Boolean, default: true },
+    caption: {
+        type: String,
+        // Align with shared schema: allow up to Instagram-like caption length
+        maxlength: 2200,
     },
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: true,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+    duration: {
+        type: Number,
+        default: 5, // seconds for photos, actual duration for videos
+        min: 1,
+        max: 60,
+    },
+    views: {
+        type: [StoryViewSchema],
+        default: [],
+    },
+    viewCount: {
+        type: Number,
+        default: 0,
+    },
+    replies: {
+        type: [StoryReplySchema],
+        default: [],
+    },
+    replyCount: {
+        type: Number,
+        default: 0,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        index: true,
+    },
+    expiresAt: {
+        type: Date,
+        required: true,
+        index: true,
+    },
 }, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
+    timestamps: true,
 });
 
+// ============================================================================
 // Indexes
-storySchema.index({ userId: 1, createdAt: -1 });
-storySchema.index({ petId: 1, createdAt: -1 });
-storySchema.index({ isPublic: 1, createdAt: -1 });
-storySchema.index({ tags: 1 });
-storySchema.index({ location: '2dsphere' });
+// ============================================================================
 
-// Virtual for time remaining
-storySchema.virtual('timeRemaining').get(function() {
-  const now = new Date();
-  const remaining = this.expiresAt.getTime() - now.getTime();
-  
-  if (remaining <= 0) return 'Expired';
-  
-  const hours = Math.floor(remaining / (1000 * 60 * 60));
-  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-  
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  return `${minutes}m`;
-});
+// Compound index for user's stories sorted by creation time
+StorySchema.index({ userId: 1, createdAt: -1 });
 
-// Virtual for is expired
-storySchema.virtual('isExpired').get(function() {
-  return new Date() > this.expiresAt;
-});
+// TTL index for automatic expiry (also supports lookups by expiresAt)
+StorySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-// Virtual for has user viewed
-storySchema.virtual('hasUserViewed').get(function() {
-  return (userId: string) => {
-    return this.views.some((view: any) => view.userId.toString() === userId);
-  };
-});
+// ============================================================================
+// Methods
+// ============================================================================
 
-// Virtual for has user liked
-storySchema.virtual('hasUserLiked').get(function() {
-  return (userId: string) => {
-    return this.likes.some((like: any) => like.toString() === userId);
-  };
-});
+/**
+ * Add a view to the story (deduplicated by userId)
+ */
+StorySchema.methods.addView = function (userId) {
+    // Check if user already viewed
+    const existingView = this.views.find(
+        view => view.userId.toString() === userId.toString()
+    );
 
-// Pre-save middleware to set expiration
-storySchema.pre('save', function(next) {
-  if (this.isNew && !this.expiresAt) {
-    this.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-  }
-  next();
-});
+    if (existingView) {
+        return false; // Already viewed
+    }
 
-// Pre-save middleware to update analytics
-storySchema.pre('save', function(next) {
-  this.analytics.viewCount = this.views.length;
-  this.analytics.likeCount = this.likes.length;
-  this.analytics.replyCount = this.replies.length;
-  next();
-});
-
-// Instance method to add view
-storySchema.methods.addView = function(userId: string) {
-  const existingView = this.views.find((view: any) => view.userId.toString() === userId);
-  
-  if (!existingView) {
     this.views.push({
-      userId,
-      viewedAt: new Date(),
+        userId,
+        viewedAt: new Date(),
     });
-    return this.save();
-  }
-  
-  return Promise.resolve(this);
+
+    this.viewCount = this.views.length;
+    return true; // New view added
 };
 
-// Instance method to add like
-storySchema.methods.addLike = function(userId: string) {
-  const existingLike = this.likes.find((like: any) => like.toString() === userId);
-  
-  if (!existingLike) {
-    this.likes.push(userId);
-    return this.save();
-  }
-  
-  return Promise.resolve(this);
-};
-
-// Instance method to remove like
-storySchema.methods.removeLike = function(userId: string) {
-  this.likes = this.likes.filter((like: any) => like.toString() !== userId);
-  return this.save();
-};
-
-// Instance method to add reply
-storySchema.methods.addReply = function(userId: string, message: string) {
-  this.replies.push({
-    userId,
-    message,
-    createdAt: new Date(),
-  });
-  return this.save();
-};
-
-// Instance method to flag story
-storySchema.methods.flagStory = function(userId: string, reason: string) {
-  const existingFlag = this.moderation.flaggedBy.find((flag: any) => 
-    flag.user.toString() === userId
-  );
-  
-  if (!existingFlag) {
-    this.moderation.flaggedBy.push({
-      user: userId,
-      reason,
-      flaggedAt: new Date(),
+/**
+ * Add a reply to the story
+ */
+StorySchema.methods.addReply = function (userId, message) {
+    this.replies.push({
+        userId,
+        message,
+        createdAt: new Date(),
     });
-    this.moderation.isFlagged = true;
-    return this.save();
-  }
-  
-  return Promise.resolve(this);
+
+    this.replyCount = this.replies.length;
 };
 
-// Static method to get active stories
-storySchema.statics.getActiveStories = function(userId?: string, limit: number = 50) {
-  const query: any = {
-    isPublic: true,
-    expiresAt: { $gt: new Date() },
-    'moderation.isFlagged': false,
-  };
-  
-  if (userId) {
-    query.userId = userId;
-  }
-  
-  return this.find(query)
-    .populate('userId', 'firstName lastName avatar')
-    .populate('petId', 'name photos')
-    .sort({ createdAt: -1 })
-    .limit(limit);
+/**
+ * Check if story is expired
+ */
+StorySchema.methods.isExpired = function () {
+    return new Date() > this.expiresAt;
 };
 
-// Static method to get stories by location
-storySchema.statics.getStoriesByLocation = function(coordinates: [number, number], maxDistance: number = 10) {
-  return this.find({
-    location: {
-      $near: {
-        $geometry: {
-          type: 'Point',
-          coordinates,
+/**
+ * Check if user has viewed this story
+ */
+StorySchema.methods.hasUserViewed = function (userId) {
+    return this.views.some(
+        view => view.userId.toString() === userId.toString()
+    );
+};
+
+// ============================================================================
+// Statics
+// ============================================================================
+
+/**
+ * Get active stories for a user's feed (following + own)
+ */
+StorySchema.statics.getActiveFeedStories = async function (userId, followingIds = [], options = {}) {
+    const interpretedAsOptions = followingIds && !Array.isArray(followingIds) && typeof followingIds === 'object';
+    const normalizedFollowingIds = interpretedAsOptions ? [] : followingIds;
+    const optionsConfig = interpretedAsOptions ? followingIds : options;
+
+    const now = new Date();
+    const userIds = [userId, ...normalizedFollowingIds];
+
+    const query = {
+        userId: { $in: userIds },
+        expiresAt: { $gt: now },
+    };
+
+    if (optionsConfig && optionsConfig.cursor) {
+        const cursorDate = new Date(optionsConfig.cursor);
+        if (!isNaN(cursorDate.getTime())) {
+            query.createdAt = { $lt: cursorDate };
+        }
+    }
+
+    const limit = optionsConfig && Number.isInteger(optionsConfig.limit)
+        ? Math.max(1, Math.min(optionsConfig.limit, 100))
+        : undefined;
+
+    return this.find(query)
+        .populate('userId', 'name profilePhoto username')
+        .sort({ createdAt: -1 })
+        .limit(limit || 0)
+        .lean();
+};
+
+/**
+ * Get user's active stories
+ */
+StorySchema.statics.getUserActiveStories = async function (userId, options = {}) {
+    const now = new Date();
+    const query = {
+        userId,
+        expiresAt: { $gt: now },
+    };
+
+    if (options && options.cursor) {
+        const cursorDate = new Date(options.cursor);
+        if (!isNaN(cursorDate.getTime())) {
+            query.createdAt = { $lt: cursorDate };
+        }
+    }
+
+    const limit = options && Number.isInteger(options.limit) ? Math.max(1, Math.min(options.limit, 100)) : undefined;
+
+    return this.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit || 0)
+        .lean();
+};
+
+/**
+ * Get stories grouped by user (for stories bar)
+ */
+StorySchema.statics.getStoriesGroupedByUser = async function (userId, followingIds = [], options = {}) {
+    const interpretedAsOptions = followingIds && !Array.isArray(followingIds) && typeof followingIds === 'object';
+    const normalizedFollowingIds = interpretedAsOptions ? [] : followingIds;
+    const optionsConfig = interpretedAsOptions ? followingIds : options;
+    const now = new Date();
+    const userIds = [userId, ...normalizedFollowingIds];
+
+    const match = {
+        userId: { $in: userIds.map(id => mongoose.Types.ObjectId(id)) },
+        expiresAt: { $gt: now },
+    };
+    if (optionsConfig && optionsConfig.cursor) {
+        const cursorDate = new Date(optionsConfig.cursor);
+        if (!isNaN(cursorDate.getTime())) {
+            match.createdAt = { $lt: cursorDate };
+        }
+    }
+
+    const pipeline = [
+        { $match: match },
+        { $sort: { createdAt: -1 } },
+        {
+            $group: {
+                _id: '$userId',
+                stories: { $push: '$$ROOT' },
+                latestStory: { $first: '$$ROOT' },
+                storyCount: { $sum: 1 },
+                hasUnseen: {
+                    $sum: {
+                        $cond: [
+                            {
+                                $not: {
+                                    $in: [mongoose.Types.ObjectId(userId), '$views.userId'],
+                                },
+                            },
+                            1,
+                            0,
+                        ],
+                    },
+                },
+            },
         },
-        $maxDistance: maxDistance * 1000, // Convert km to meters
-      },
-    },
-    isPublic: true,
-    expiresAt: { $gt: new Date() },
-    'moderation.isFlagged': false,
-  })
-    .populate('userId', 'firstName lastName avatar')
-    .populate('petId', 'name photos')
-    .sort({ createdAt: -1 });
+        {
+            $lookup: {
+                from: 'users',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'user',
+            },
+        },
+        { $unwind: '$user' },
+        {
+            $project: {
+                userId: '$_id',
+                user: {
+                    _id: '$user._id',
+                    name: '$user.name',
+                    username: '$user.username',
+                    profilePhoto: '$user.profilePhoto',
+                },
+                stories: 1,
+                storyCount: 1,
+                hasUnseen: { $gt: ['$hasUnseen', 0] },
+                latestStoryTime: '$latestStory.createdAt',
+            },
+        },
+        { $sort: { hasUnseen: -1, latestStoryTime: -1 } },
+    ];
+
+    if (optionsConfig && Number.isInteger(optionsConfig.limit)) {
+        const limit = Math.max(1, Math.min(optionsConfig.limit, 100));
+        pipeline.push({ $limit: limit });
+    }
+
+    return this.aggregate(pipeline);
 };
 
-// Static method to cleanup expired stories
-storySchema.statics.cleanupExpiredStories = function() {
-  return this.deleteMany({
-    expiresAt: { $lt: new Date() },
-  });
+/**
+ * Delete expired stories (manual cleanup, TTL is primary)
+ */
+StorySchema.statics.deleteExpiredStories = async function () {
+    const now = new Date();
+
+    const result = await this.deleteMany({
+        expiresAt: { $lt: now },
+    });
+
+    return result.deletedCount;
 };
 
-// Static method to get story analytics
-storySchema.statics.getStoryAnalytics = function(userId?: string, days: number = 7) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
-  const matchStage: any = {
-    createdAt: { $gte: startDate },
-  };
-  
-  if (userId) {
-    matchStage.userId = userId;
-  }
-  
-  return this.aggregate([
-    { $match: matchStage },
-    {
-      $group: {
-        _id: null,
-        totalStories: { $sum: 1 },
-        totalViews: { $sum: '$analytics.viewCount' },
-        totalLikes: { $sum: '$analytics.likeCount' },
-        totalReplies: { $sum: '$analytics.replyCount' },
-        avgViews: { $avg: '$analytics.viewCount' },
-        avgLikes: { $avg: '$analytics.likeCount' },
-      },
-    },
-  ]);
-};
+// ============================================================================
+// Pre-save Hook
+// ============================================================================
 
-export default mongoose.model<IStory>('Story', storySchema);
+StorySchema.pre('save', function (next) {
+    // Set expiresAt if not already set (24 hours from creation)
+    if (!this.expiresAt) {
+        const baseDate = this.createdAt instanceof Date ? this.createdAt : new Date();
+        this.expiresAt = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
+    }
+    next();
+});
+
+// ============================================================================
+// Virtual Properties
+// ============================================================================
+
+StorySchema.virtual('isActive').get(function () {
+    return new Date() < this.expiresAt;
+});
+
+StorySchema.virtual('timeRemaining').get(function () {
+    const now = new Date();
+    return Math.max(0, this.expiresAt - now);
+});
+
+// Ensure virtuals are included in JSON
+StorySchema.set('toJSON', { virtuals: true });
+StorySchema.set('toObject', { virtuals: true });
+
+module.exports = mongoose.model('Story', StorySchema);

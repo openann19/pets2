@@ -1,318 +1,198 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IVerification } from '../types';
+const mongoose = require('mongoose');
 
-const verificationSchema = new Schema<IVerification>({
+const verificationSchema = new mongoose.Schema({
   userId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-    index: true,
+    required: true
   },
   type: {
     type: String,
-    enum: ['email', 'phone', 'identity', 'address'],
-    required: true,
-    index: true,
+    enum: ['identity', 'pet_ownership', 'veterinary', 'rescue_organization'],
+    required: true
   },
   status: {
     type: String,
-    enum: ['pending', 'verified', 'rejected'],
-    default: 'pending',
-    index: true,
-  },
-  verificationCode: {
-    type: String,
-    maxlength: 10,
-  },
-  verificationData: {
-    type: Schema.Types.Mixed,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
   },
   documents: [{
     type: {
       type: String,
-      enum: ['id_front', 'id_back', 'pet_photo', 'vet_certificate', 'adoption_papers', 'rescue_document', 'utility_bill', 'bank_statement'],
-      required: true,
+      enum: ['id_front', 'id_back', 'pet_photo', 'vet_certificate', 'adoption_papers', 'rescue_document'],
+      required: true
     },
     url: {
       type: String,
-      required: true,
+      required: true
     },
     publicId: {
       type: String,
+      required: true
     },
     uploadedAt: {
       type: Date,
-      default: Date.now,
-    },
-    verified: {
-      type: Boolean,
-      default: false,
-    },
+      default: Date.now
+    }
   }],
+  personalInfo: {
+    firstName: String,
+    lastName: String,
+    dateOfBirth: Date,
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+      country: String
+    },
+    phone: String
+  },
+  petInfo: {
+    petId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Pet'
+    },
+    petName: String,
+    species: String,
+    breed: String,
+    age: Number,
+    microchipNumber: String,
+    vetName: String,
+    vetPhone: String,
+    vetAddress: String
+  },
+  organizationInfo: {
+    name: String,
+    registrationNumber: String,
+    address: String,
+    contactPerson: String,
+    phone: String,
+    email: String,
+    website: String
+  },
+  submittedAt: {
+    type: Date,
+    default: Date.now
+  },
+  reviewedAt: Date,
+  reviewedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvedAt: Date,
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvalNotes: String,
+  rejectedAt: Date,
+  rejectedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  rejectionReason: String,
+  rejectionNotes: String,
   expiresAt: {
     type: Date,
-    index: { expireAfterSeconds: 0 }, // TTL index
+    default: function() {
+      return new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year from now
+    }
   },
-  verifiedAt: {
-    type: Date,
+  isActive: {
+    type: Boolean,
+    default: true
   },
-  verifiedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  rejectionReason: {
-    type: String,
-    maxlength: 500,
-  },
-  notes: {
-    type: String,
-    maxlength: 1000,
-  },
-  attempts: {
-    type: Number,
-    default: 0,
-    max: 5,
-  },
-  maxAttempts: {
-    type: Number,
-    default: 3,
-    min: 1,
-    max: 10,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: true,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+  metadata: {
+    ipAddress: String,
+    userAgent: String,
+    submissionSource: {
+      type: String,
+      enum: ['web', 'mobile'],
+      default: 'web'
+    }
+  }
 }, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
+  timestamps: true
 });
 
-// Indexes
-verificationSchema.index({ userId: 1, type: 1 });
+// Indexes for performance
+verificationSchema.index({ userId: 1 });
 verificationSchema.index({ status: 1 });
-verificationSchema.index({ verificationCode: 1 });
-verificationSchema.index({ createdAt: -1 });
+verificationSchema.index({ type: 1 });
+verificationSchema.index({ submittedAt: -1 });
+verificationSchema.index({ reviewedAt: -1 });
+verificationSchema.index({ expiresAt: 1 });
 
-// Virtual for is expired
-verificationSchema.virtual('isExpired').get(function() {
-  if (!this.expiresAt) return false;
-  return new Date() > this.expiresAt;
+// Virtual for verification age
+verificationSchema.virtual('age').get(function() {
+  return Math.floor((Date.now() - this.submittedAt) / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for can retry
-verificationSchema.virtual('canRetry').get(function() {
-  return this.attempts < this.maxAttempts && this.status === 'pending';
+// Virtual for days until expiration
+verificationSchema.virtual('daysUntilExpiration').get(function() {
+  return Math.floor((this.expiresAt - Date.now()) / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for time remaining
-verificationSchema.virtual('timeRemaining').get(function() {
-  if (!this.expiresAt) return null;
-  
-  const now = new Date();
-  const remaining = this.expiresAt.getTime() - now.getTime();
-  
-  if (remaining <= 0) return 'Expired';
-  
-  const minutes = Math.floor(remaining / (1000 * 60));
-  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-  
-  return `${minutes}m ${seconds}s`;
-});
+// Method to check if verification is expired
+verificationSchema.methods.isExpired = function() {
+  return this.expiresAt < new Date();
+};
 
-// Pre-save middleware to set expiration
+// Method to check if verification needs renewal
+verificationSchema.methods.needsRenewal = function() {
+  const daysUntilExpiration = this.daysUntilExpiration;
+  return daysUntilExpiration <= 30 && daysUntilExpiration > 0;
+};
+
+// Static method to get pending verifications
+verificationSchema.statics.getPendingVerifications = function(limit = 20, skip = 0) {
+  return this.find({ status: 'pending' })
+    .populate('userId', 'firstName lastName email')
+    .sort({ submittedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get verification statistics
+verificationSchema.statics.getVerificationStats = function() {
+  return this.aggregate([
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+};
+
+// Pre-save middleware to update timestamps
 verificationSchema.pre('save', function(next) {
-  if (this.isNew && !this.expiresAt) {
-    // Set expiration based on verification type
-    const expirationMinutes = {
-      email: 10,    // 10 minutes
-      phone: 10,    // 10 minutes
-      identity: 7 * 24 * 60,  // 7 days
-      address: 7 * 24 * 60,   // 7 days
-    };
-    
-    this.expiresAt = new Date(Date.now() + (expirationMinutes[this.type as keyof typeof expirationMinutes] || 10) * 60 * 1000);
+  if (this.isModified('status')) {
+    if (this.status === 'approved') {
+      this.approvedAt = new Date();
+    } else if (this.status === 'rejected') {
+      this.rejectedAt = new Date();
+    }
   }
   next();
 });
 
-// Instance method to generate verification code
-verificationSchema.methods.generateVerificationCode = function() {
-  if (this.type === 'email' || this.type === 'phone') {
-    this.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    this.expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    return this.verificationCode;
+// Pre-save middleware to validate required fields based on type
+verificationSchema.pre('save', function(next) {
+  if (this.type === 'identity' && !this.personalInfo.firstName) {
+    return next(new Error('Personal information is required for identity verification'));
   }
-  return null;
-};
-
-// Instance method to verify
-verificationSchema.methods.verify = function(verifiedBy: string, notes?: string) {
-  this.status = 'verified';
-  this.verifiedAt = new Date();
-  this.verifiedBy = verifiedBy as any;
-  this.notes = notes;
-  return this.save();
-};
-
-// Instance method to reject
-verificationSchema.methods.reject = function(reason: string, rejectedBy: string, notes?: string) {
-  this.status = 'rejected';
-  this.rejectionReason = reason;
-  this.verifiedBy = rejectedBy as any;
-  this.notes = notes;
-  return this.save();
-};
-
-// Instance method to increment attempts
-verificationSchema.methods.incrementAttempts = function() {
-  this.attempts = (this.attempts || 0) + 1;
-  return this.save();
-};
-
-// Instance method to add document
-verificationSchema.methods.addDocument = function(documentData: {
-  type: string;
-  url: string;
-  publicId?: string;
-}) {
-  this.documents.push({
-    ...documentData,
-    uploadedAt: new Date(),
-  });
-  return this.save();
-};
-
-// Instance method to verify document
-verificationSchema.methods.verifyDocument = function(documentIndex: number) {
-  if (documentIndex >= 0 && documentIndex < this.documents.length) {
-    this.documents[documentIndex].verified = true;
-    return this.save();
+  
+  if (this.type === 'pet_ownership' && !this.petInfo.petName) {
+    return next(new Error('Pet information is required for pet ownership verification'));
   }
-  throw new Error('Invalid document index');
-};
-
-// Static method to create verification
-verificationSchema.statics.createVerification = function(verificationData: {
-  userId: string;
-  type: string;
-  verificationData?: any;
-  maxAttempts?: number;
-}) {
-  return this.create({
-    ...verificationData,
-    createdAt: new Date(),
-  });
-};
-
-// Static method to get user verifications
-verificationSchema.statics.getUserVerifications = function(userId: string) {
-  return this.find({ userId })
-    .populate('verifiedBy', 'firstName lastName email')
-    .sort({ createdAt: -1 });
-};
-
-// Static method to get pending verifications
-verificationSchema.statics.getPendingVerifications = function(limit: number = 50) {
-  return this.find({ 
-    status: 'pending',
-    expiresAt: { $gt: new Date() },
-  })
-    .populate('userId', 'firstName lastName email')
-    .populate('verifiedBy', 'firstName lastName email')
-    .sort({ createdAt: 1 })
-    .limit(limit);
-};
-
-// Static method to get verification by code
-verificationSchema.statics.getVerificationByCode = function(code: string) {
-  return this.findOne({ 
-    verificationCode: code,
-    status: 'pending',
-    expiresAt: { $gt: new Date() },
-  });
-};
-
-// Static method to get verification statistics
-verificationSchema.statics.getVerificationStats = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
   
-  return this.aggregate([
-    { $match: { createdAt: { $gte: startDate } } },
-    {
-      $group: {
-        _id: null,
-        totalVerifications: { $sum: 1 },
-        pendingVerifications: {
-          $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] }
-        },
-        verifiedVerifications: {
-          $sum: { $cond: [{ $eq: ['$status', 'verified'] }, 1, 0] }
-        },
-        rejectedVerifications: {
-          $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] }
-        },
-        emailVerifications: {
-          $sum: { $cond: [{ $eq: ['$type', 'email'] }, 1, 0] }
-        },
-        phoneVerifications: {
-          $sum: { $cond: [{ $eq: ['$type', 'phone'] }, 1, 0] }
-        },
-        identityVerifications: {
-          $sum: { $cond: [{ $eq: ['$type', 'identity'] }, 1, 0] }
-        },
-        addressVerifications: {
-          $sum: { $cond: [{ $eq: ['$type', 'address'] }, 1, 0] }
-        },
-        avgAttempts: { $avg: '$attempts' },
-      },
-    },
-  ]);
-};
-
-// Static method to get verifications by type
-verificationSchema.statics.getVerificationsByType = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
+  if (this.type === 'rescue_organization' && !this.organizationInfo.name) {
+    return next(new Error('Organization information is required for rescue organization verification'));
+  }
   
-  return this.aggregate([
-    { $match: { createdAt: { $gte: startDate } } },
-    {
-      $group: {
-        _id: '$type',
-        count: { $sum: 1 },
-        pending: {
-          $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] }
-        },
-        verified: {
-          $sum: { $cond: [{ $eq: ['$status', 'verified'] }, 1, 0] }
-        },
-        rejected: {
-          $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] }
-        },
-        avgAttempts: { $avg: '$attempts' },
-        successRate: {
-          $avg: { $cond: [{ $eq: ['$status', 'verified'] }, 1, 0] }
-        },
-      },
-    },
-    { $sort: { count: -1 } },
-  ]);
-};
+  next();
+});
 
-// Static method to cleanup expired verifications
-verificationSchema.statics.cleanupExpiredVerifications = function() {
-  return this.deleteMany({
-    expiresAt: { $lt: new Date() },
-    status: 'pending',
-  });
-};
-
-export default mongoose.model<IVerification>('Verification', verificationSchema);
+module.exports = mongoose.model('Verification', verificationSchema);

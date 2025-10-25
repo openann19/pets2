@@ -1,12 +1,7 @@
-import express, { Router } from 'express';
-import { body } from 'express-validator';
-import { validate } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
-import type { AuthenticatedRequest, ApiResponse } from '../types';
-
-// Import controllers from CommonJS modules
-const chatController = require('../controllers/chatController');
-
+const express = require('express');
+const { body } = require('express-validator');
+const { validate } = require('../middleware/validation');
+const { authenticateToken } = require('../middleware/auth');
 const {
   getChatHistory,
   markMessagesRead,
@@ -19,9 +14,9 @@ const {
   removeReaction,
   searchMessages,
   getChatStats
-} = chatController;
+} = require('../controllers/chatController');
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // Apply authentication to all chat routes
 router.use(authenticateToken);
@@ -56,27 +51,32 @@ const reactionValidation = [
 ];
 
 const searchValidation = [
-  body('query')
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .withMessage('Search query is required and must be less than 100 characters'),
-  body('matchId')
+  body('q')
     .optional()
-    .isMongoId()
-    .withMessage('Valid match ID required')
+    .isLength({ min: 2 })
+    .withMessage('Search query must be at least 2 characters')
 ];
 
-// Chat routes
-router.get('/history', getChatHistory);
-router.get('/online-users', getOnlineUsers);
-router.get('/stats', getChatStats);
-router.get('/messages/:matchId', getMessages);
-router.post('/messages/:matchId', messageValidation, validate, sendMessage);
+// Message management routes
+router.get('/history/:matchId', getChatHistory);
+router.get('/:matchId/messages', getMessages);
+router.post('/:matchId/messages', messageValidation, validate, sendMessage);
 router.put('/messages/:messageId', editMessageValidation, validate, editMessage);
 router.delete('/messages/:messageId', deleteMessage);
-router.post('/messages/:messageId/reactions', reactionValidation, validate, addReaction);
-router.delete('/messages/:messageId/reactions/:reactionId', removeReaction);
-router.post('/search', searchValidation, validate, searchMessages);
-router.patch('/messages/read', markMessagesRead);
 
-export default router;
+// Message reactions
+router.post('/messages/:messageId/reactions', reactionValidation, validate, addReaction);
+router.delete('/messages/:messageId/reactions/:emoji', removeReaction);
+
+// Message search
+router.get('/:matchId/search', searchValidation, validate, searchMessages);
+
+// Chat statistics
+router.get('/stats', getChatStats);
+
+// Legacy routes (for backward compatibility)
+router.post('/:matchId/send', messageValidation, validate, sendMessage);
+router.post('/:matchId/read', markMessagesRead);
+router.get('/online', getOnlineUsers);
+
+module.exports = router;

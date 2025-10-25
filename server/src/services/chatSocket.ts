@@ -1,66 +1,31 @@
-/**
- * Chat Socket Service for PawfectMatch
- * Real-time chat functionality with Socket.IO
- */
+const jwt = require('jsonwebtoken');
+const Match = require('../models/Match');
+const User = require('../models/User');
+const logger = require('../utils/logger');
 
-import jwt from 'jsonwebtoken';
-import { Server as SocketIOServer, Socket } from 'socket.io';
-import Match from '../models/Match';
-import User from '../models/User';
-import logger from '../utils/logger';
+// In-memory storage for presence and typing (in production, use Redis)
+const onlineUsers = new Map(); // userId -> { socketId, lastSeen, isOnline }
+const typingUsers = new Map(); // matchId -> Map of userId -> { timestamp, timeout }
 
-interface OnlineUser {
-  socketId: string;
-  lastSeen: Date;
-  isOnline: boolean;
-}
-
-interface TypingUser {
-  timestamp: number;
-  userName: string;
-  timeout: NodeJS.Timeout;
-}
-
-interface ChatSocketData {
-  matchId: string;
-  content?: string;
-  messageType?: string;
-  attachments?: any[];
-  replyTo?: string;
-  messageId?: string;
-  emoji?: string;
-  isTyping?: boolean;
-  action?: string;
-}
-
-interface AuthenticatedSocket extends Socket {
-  userId: string;
-  user: any;
-}
-
-const chatSocket = (io: SocketIOServer) => {
-  // In-memory storage for presence and typing (in production, use Redis)
-  const onlineUsers = new Map<string, OnlineUser>();
-  const typingUsers = new Map<string, Map<string, TypingUser>>();
-
+const chatSocket = (io) => {
   // Middleware to authenticate socket connections
-  io.use(async (socket: Socket, next) => {
+  io.use(async (socket, next) => {
     try {
-      const token = (socket.handshake.auth as any).token;
+      const token = socket.handshake.auth.token;
 
       if (!token) {
         return next(new Error('Authentication error: No token provided'));
       }
 
-      const decoded = jwt.verify(token, process.env['JWT_SECRET'] || '') as any;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findById(decoded.userId).select('-password -refreshTokens');
 
       if (!user || !user.isActive || user.isBlocked) {
         return next(new Error('Authentication error: Invalid user'));
       }
 
-      (socket as AuthenticatedSocket).userId = user._id.toString();
-      (socket as AuthenticatedSocket).user = user;
+      socket.userId = user._id.toString();
+      socket.user = user;
       next();
     } catch (error) {
       logger.error('Socket authentication error:', { error });
@@ -68,7 +33,7 @@ const chatSocket = (io: SocketIOServer) => {
     }
   });
 
-  io.on('connection', (socket: AuthenticatedSocket) => {
+  io.on('connection', (socket) => {
     logger.info(`User ${socket.user.firstName} connected`, { socketId: socket.id, userId: socket.userId });
 
     // Update user presence
@@ -78,7 +43,7 @@ const chatSocket = (io: SocketIOServer) => {
     socket.join(`user_${socket.userId}`);
 
     // Handle joining match rooms
-    socket.on('join_match', async (matchId: string) => {
+    socket.on('join_match', async (matchId) => {
       try {
         // Verify user is part of this match
         const match = await Match.findOne({
@@ -136,7 +101,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle leaving match rooms
-    socket.on('leave_match', (matchId: string) => {
+    socket.on('leave_match', (matchId) => {
       socket.leave(`match_${matchId}`);
 
       // Notify other user that this user went offline
@@ -149,7 +114,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle sending messages
-    socket.on('send_message', async (data: ChatSocketData) => {
+    socket.on('send_message', async (data) => {
       try {
         const { matchId, content, messageType = 'text', attachments = [], replyTo = null } = data;
 
@@ -277,7 +242,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle editing messages
-    socket.on('edit_message', async (data: ChatSocketData) => {
+    socket.on('edit_message', async (data) => {
       try {
         const { matchId, messageId, content } = data;
 
@@ -333,7 +298,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle deleting messages
-    socket.on('delete_message', async (data: ChatSocketData) => {
+    socket.on('delete_message', async (data) => {
       try {
         const { matchId, messageId } = data;
 
@@ -381,7 +346,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle adding reactions
-    socket.on('add_reaction', async (data: ChatSocketData) => {
+    socket.on('add_reaction', async (data) => {
       try {
         const { matchId, messageId, emoji } = data;
 
@@ -402,7 +367,7 @@ const chatSocket = (io: SocketIOServer) => {
         }
 
         // Check if user already reacted with this emoji
-        const existingReaction = message.reactions.find((r: any) =>
+        const existingReaction = message.reactions.find(r =>
           r.user.toString() === socket.userId && r.emoji === emoji
         );
 
@@ -438,7 +403,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle removing reactions
-    socket.on('remove_reaction', async (data: ChatSocketData) => {
+    socket.on('remove_reaction', async (data) => {
       try {
         const { matchId, messageId, emoji } = data;
 
@@ -459,7 +424,7 @@ const chatSocket = (io: SocketIOServer) => {
         }
 
         // Find and remove reaction
-        const reactionIndex = message.reactions.findIndex((r: any) =>
+        const reactionIndex = message.reactions.findIndex(r =>
           r.user.toString() === socket.userId && r.emoji === emoji
         );
 
@@ -486,7 +451,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle typing indicators with timeout
-    socket.on('typing', (data: ChatSocketData) => {
+    socket.on('typing', (data) => {
       const { matchId, isTyping } = data;
 
       if (isTyping) {
@@ -515,7 +480,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle message read receipts
-    socket.on('mark_messages_read', async (data: ChatSocketData) => {
+    socket.on('mark_messages_read', async (data) => {
       try {
         const { matchId } = data;
 
@@ -543,7 +508,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle match actions (archive, block, favorite, etc.)
-    socket.on('match_action', async (data: ChatSocketData) => {
+    socket.on('match_action', async (data) => {
       try {
         const { matchId, action } = data;
 
@@ -609,7 +574,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle disconnect
-    socket.on('disconnect', (reason: string) => {
+    socket.on('disconnect', (reason) => {
       logger.info(`User disconnected`, { userId: socket.userId, reason, userName: socket.user?.firstName });
 
       // Update user presence
@@ -632,7 +597,7 @@ const chatSocket = (io: SocketIOServer) => {
     });
 
     // Handle connection errors
-    socket.on('error', (error: Error) => {
+    socket.on('error', (error) => {
       logger.error('Socket error for user', { userId: socket.userId, error });
     });
   });
@@ -641,7 +606,7 @@ const chatSocket = (io: SocketIOServer) => {
 };
 
 // Helper functions for presence and typing management
-function updateUserPresence(userId: string, socketId: string, isOnline: boolean): void {
+function updateUserPresence(userId, socketId, isOnline) {
   if (isOnline) {
     onlineUsers.set(userId, {
       socketId,
@@ -657,16 +622,16 @@ function updateUserPresence(userId: string, socketId: string, isOnline: boolean)
   }
 }
 
-function setTypingStatus(matchId: string, userId: string, userName: string): void {
+function setTypingStatus(matchId, userId, userName) {
   if (!typingUsers.has(matchId)) {
     typingUsers.set(matchId, new Map());
   }
 
-  const matchTyping = typingUsers.get(matchId)!;
+  const matchTyping = typingUsers.get(matchId);
 
   // Clear existing timeout if any
   if (matchTyping.has(userId)) {
-    clearTimeout(matchTyping.get(userId)!.timeout);
+    clearTimeout(matchTyping.get(userId).timeout);
   }
 
   // Set typing with 5-second timeout
@@ -681,10 +646,10 @@ function setTypingStatus(matchId: string, userId: string, userName: string): voi
   });
 }
 
-function clearTypingStatus(matchId: string, userId: string): void {
+function clearTypingStatus(matchId, userId) {
   const matchTyping = typingUsers.get(matchId);
   if (matchTyping && matchTyping.has(userId)) {
-    clearTimeout(matchTyping.get(userId)!.timeout);
+    clearTimeout(matchTyping.get(userId).timeout);
     matchTyping.delete(userId);
 
     // Clean up empty match typing maps
@@ -695,7 +660,7 @@ function clearTypingStatus(matchId: string, userId: string): void {
 }
 
 // Export helper functions for external use
-(chatSocket as any).getOnlineUsers = () => {
+chatSocket.getOnlineUsers = () => {
   return Array.from(onlineUsers.entries())
     .filter(([, presence]) => presence.isOnline)
     .map(([userId, presence]) => ({
@@ -704,7 +669,7 @@ function clearTypingStatus(matchId: string, userId: string): void {
     }));
 };
 
-(chatSocket as any).getTypingUsers = (matchId: string) => {
+chatSocket.getTypingUsers = (matchId) => {
   const matchTyping = typingUsers.get(matchId);
   if (!matchTyping) return [];
 
@@ -717,4 +682,4 @@ function clearTypingStatus(matchId: string, userId: string): void {
     }));
 };
 
-export default chatSocket;
+module.exports = chatSocket;

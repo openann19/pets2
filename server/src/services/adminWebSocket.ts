@@ -1,38 +1,22 @@
 /**
- * Admin WebSocket Service for PawfectMatch
- * Real-time synchronization for admin panel across web and mobile
+ * Admin WebSocket Service
+ * Provides real-time synchronization for admin panel across web and mobile
  */
 
-import WebSocket from 'ws';
-import jwt from 'jsonwebtoken';
-import { URL } from 'url';
-import User from '../models/User';
-import logger from '../utils/logger';
-
-interface WebSocketClient {
-  ws: WebSocket;
-  role: string;
-}
-
-interface WebSocketMessage {
-  type: string;
-  events?: string[];
-  [key: string]: any;
-}
+const WebSocket = require('ws');
+const jwt = require('jsonwebtoken');
+const url = require('url');
+const logger = require('../utils/logger');
 
 class AdminWebSocketService {
-  private wss: WebSocket.Server;
-  private clients: Map<string, WebSocketClient>;
-  private adminRoles: string[];
-
-  constructor(server: any) {
+  constructor(server) {
     this.wss = new WebSocket.Server({ 
       server, 
       path: '/admin/ws',
       verifyClient: this.verifyClient.bind(this)
     });
     
-    this.clients = new Map();
+    this.clients = new Map(); // userId -> WebSocket connection
     this.adminRoles = ['administrator', 'moderator', 'support', 'analyst', 'billing_admin'];
 
     this.wss.on('connection', this.handleConnection.bind(this));
@@ -43,10 +27,10 @@ class AdminWebSocketService {
   /**
    * Verify client connection (authentication)
    */
-  private verifyClient(info: any, callback: (result: boolean, code?: number, reason?: string) => void): void {
+  verifyClient(info, callback) {
     try {
-      const params = new URL(info.req.url!, `http://${info.req.headers.host}`).searchParams;
-      const token = params.get('token');
+      const params = url.parse(info.req.url, true).query;
+      const token = params.token;
 
       if (!token) {
         callback(false, 401, 'Unauthorized');
@@ -54,7 +38,7 @@ class AdminWebSocketService {
       }
 
       // Verify JWT token
-      const decoded = jwt.verify(token, process.env['JWT_SECRET'] || '') as any;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
       if (!decoded || !decoded.userId) {
         callback(false, 401, 'Invalid token');
@@ -73,7 +57,7 @@ class AdminWebSocketService {
   /**
    * Handle new WebSocket connection
    */
-  private async handleConnection(ws: WebSocket, req: any): Promise<void> {
+  async handleConnection(ws, req) {
     const userId = req.userId;
     
     if (!userId) {
@@ -83,6 +67,7 @@ class AdminWebSocketService {
 
     // Verify user has admin role
     try {
+      const User = require('../models/User');
       const user = await User.findById(userId).select('role');
       
       if (!user || !this.adminRoles.includes(user.role)) {
@@ -127,9 +112,9 @@ class AdminWebSocketService {
   /**
    * Handle incoming message from client
    */
-  private handleMessage(userId: string, message: Buffer): void {
+  handleMessage(userId, message) {
     try {
-      const data: WebSocketMessage = JSON.parse(message.toString());
+      const data = JSON.parse(message);
       
       switch (data.type) {
         case 'ping':
@@ -152,7 +137,7 @@ class AdminWebSocketService {
   /**
    * Send message to specific client
    */
-  sendToClient(userId: string, data: any): void {
+  sendToClient(userId, data) {
     const client = this.clients.get(userId);
     
     if (client && client.ws.readyState === WebSocket.OPEN) {
@@ -163,7 +148,7 @@ class AdminWebSocketService {
   /**
    * Broadcast message to all connected admin clients
    */
-  broadcast(event: string, data: any): void {
+  broadcast(event, data) {
     const message = JSON.stringify({
       event,
       data,
@@ -182,7 +167,7 @@ class AdminWebSocketService {
   /**
    * Broadcast to clients with specific role
    */
-  broadcastToRole(roles: string | string[], event: string, data: any): void {
+  broadcastToRole(roles, event, data) {
     const allowedRoles = Array.isArray(roles) ? roles : [roles];
     const message = JSON.stringify({
       event,
@@ -200,7 +185,7 @@ class AdminWebSocketService {
   /**
    * Notify about user update
    */
-  notifyUserUpdate(userId: string, action: string, userData: any): void {
+  notifyUserUpdate(userId, action, userData) {
     this.broadcast('user_update', {
       userId,
       action,
@@ -211,21 +196,21 @@ class AdminWebSocketService {
   /**
    * Notify about new match
    */
-  notifyNewMatch(matchData: any): void {
+  notifyNewMatch(matchData) {
     this.broadcast('new_match', matchData);
   }
 
   /**
    * Notify about new message
    */
-  notifyNewMessage(messageData: any): void {
+  notifyNewMessage(messageData) {
     this.broadcast('new_message', messageData);
   }
 
   /**
    * Notify about security alert
    */
-  notifySecurityAlert(alert: any): void {
+  notifySecurityAlert(alert) {
     // Only send to administrators and moderators
     this.broadcastToRole(['administrator', 'moderator'], 'security_alert', alert);
   }
@@ -233,7 +218,7 @@ class AdminWebSocketService {
   /**
    * Notify about system event
    */
-  notifySystemEvent(eventType: string, eventData: any): void {
+  notifySystemEvent(eventType, eventData) {
     this.broadcast('system_event', {
       type: eventType,
       data: eventData
@@ -243,14 +228,14 @@ class AdminWebSocketService {
   /**
    * Notify about analytics update
    */
-  notifyAnalyticsUpdate(analyticsData: any): void {
+  notifyAnalyticsUpdate(analyticsData) {
     this.broadcast('analytics_update', analyticsData);
   }
 
   /**
    * Notify about billing event
    */
-  notifyBillingEvent(eventType: string, eventData: any): void {
+  notifyBillingEvent(eventType, eventData) {
     // Only send to administrators and billing admins
     this.broadcastToRole(['administrator', 'billing_admin'], 'billing_event', {
       type: eventType,
@@ -261,15 +246,15 @@ class AdminWebSocketService {
   /**
    * Get connected clients count
    */
-  getConnectedCount(): number {
+  getConnectedCount() {
     return this.clients.size;
   }
 
   /**
    * Get connected clients by role
    */
-  getConnectedByRole(): Record<string, number> {
-    const roleCount: Record<string, number> = {};
+  getConnectedByRole() {
+    const roleCount = {};
     
     this.clients.forEach((client) => {
       roleCount[client.role] = (roleCount[client.role] || 0) + 1;
@@ -281,7 +266,7 @@ class AdminWebSocketService {
   /**
    * Close all connections
    */
-  closeAll(): void {
+  closeAll() {
     this.clients.forEach((client) => {
       client.ws.close(1000, 'Server shutting down');
     });
@@ -291,4 +276,4 @@ class AdminWebSocketService {
   }
 }
 
-export default AdminWebSocketService;
+module.exports = AdminWebSocketService;

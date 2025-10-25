@@ -1,13 +1,8 @@
-import express, { Router, Response } from 'express';
-import multer from 'multer';
-import { body } from 'express-validator';
-import { validate } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
-import type { AuthenticatedRequest, ApiResponse } from '../types';
-
-// Import controllers from CommonJS modules
-const userController = require('../controllers/userController');
-
+const express = require('express');
+const multer = require('multer');
+const { body } = require('express-validator');
+const { validate } = require('../middleware/validation');
+const { authenticateToken } = require('../middleware/auth');
 const {
   getCompleteProfile,
   updateAdvancedProfile,
@@ -29,9 +24,9 @@ const {
   deleteAccount,
   updatePrivacy,
   updateFilters
-} = userController;
+} = require('../controllers/userController');
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // Configure multer for memory storage (Cloudinary upload)
 const upload = multer({
@@ -39,11 +34,11 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
-  fileFilter: (req: AuthenticatedRequest, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error('Only image files are allowed'), false);
     }
   }
 });
@@ -57,19 +52,19 @@ const profileUpdateValidation = [
   body('lastName').optional().trim().isLength({ min: 1, max: 50 }).withMessage('Last name must be 1-50 characters'),
   body('bio').optional().trim().isLength({ max: 500 }).withMessage('Bio cannot exceed 500 characters'),
   body('dateOfBirth').optional().isISO8601().withMessage('Valid date of birth required'),
-  body('phone').optional().isMobilePhone('any').withMessage('Valid phone number required')
+  body('phone').optional().isMobilePhone().withMessage('Valid phone number required')
 ];
 
 const profileValidation = [
   body('firstName').optional().trim().isLength({ min: 1, max: 50 }).withMessage('First name must be 1-50 characters'),
   body('lastName').optional().trim().isLength({ min: 1, max: 50 }).withMessage('Last name must be 1-50 characters'),
   body('bio').optional().isLength({ max: 500 }).withMessage('Bio cannot exceed 500 characters'),
-  body('phone').optional().isMobilePhone('any').withMessage('Valid phone number required')
+  body('phone').optional().isMobilePhone().withMessage('Valid phone number required')
 ];
 
 const locationValidation = [
   body('coordinates').isArray({ min: 2, max: 2 }).withMessage('Coordinates must be [longitude, latitude]'),
-  body('coordinates.*').isFloat({}).withMessage('Coordinates must be numbers'),
+  body('coordinates.*').isFloat().withMessage('Coordinates must be numbers'),
   body('address').optional().isObject().withMessage('Address must be an object')
 ];
 
@@ -80,7 +75,7 @@ router.put('/privacy-settings', updatePrivacySettings);
 router.put('/notification-preferences', updateNotificationPreferences);
 
 // Photo management routes
-router.post('/photos', upload.array('photos', 6) as any, uploadProfilePhotos);
+router.post('/photos', upload.array('photos', 6), uploadProfilePhotos);
 router.delete('/photos/:photoId', deleteProfilePhoto);
 router.put('/photos/:photoId/primary', setPrimaryPhoto);
 
@@ -92,15 +87,15 @@ router.get('/export', exportUserData);
 router.post('/deactivate', deactivateAccount);
 router.post('/reactivate', reactivateAccount);
 
-// Legacy routes (for backward compatibility)
+// Old routes
 router.get('/profile', getProfile);
 router.put('/profile', profileValidation, validate, updateProfile);
 router.put('/preferences', updatePreferences);
 router.put('/location', locationValidation, validate, updateLocation);
 router.get('/stats', getUserStats);
-router.post('/avatar', upload.single('avatar') as any, uploadAvatar);
+router.post('/avatar', upload.single('avatar'), uploadAvatar);
 router.delete('/account', deleteAccount);
 router.put('/privacy', updatePrivacy);
 router.put('/filters', updateFilters);
 
-export default router;
+module.exports = router;

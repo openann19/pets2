@@ -41,7 +41,7 @@ export function BioResults({
 }: BioResultsProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = () => {
     try {
       Clipboard.setString(generatedBio.bio);
       setCopied(true);
@@ -89,7 +89,7 @@ export function BioResults({
         <View style={styles.actionButtons}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => void handleCopy()}
+            onPress={handleCopy}
             accessibilityLabel="Copy bio to clipboard"
           >
             <Ionicons
@@ -162,7 +162,7 @@ export function BioResults({
                 style={[
                   styles.progressFill,
                   {
-                    width: `${generatedBio.matchScore.toString()}%`,
+                    width: `${generatedBio.matchScore}%` as const,
                     backgroundColor: getMatchScoreColor(
                       generatedBio.matchScore,
                     ),

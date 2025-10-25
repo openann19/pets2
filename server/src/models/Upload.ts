@@ -1,324 +1,263 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IUpload } from '../types';
+const mongoose = require('mongoose');
 
-const uploadSchema = new Schema<IUpload>({
+const uploadSchema = new mongoose.Schema({
   userId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-    index: true,
+    required: true
   },
-  filename: {
+  type: {
     type: String,
-    required: true,
-    unique: true,
+    enum: ['pet_photo', 'profile_photo', 'verification_document', 'chat_image', 'other'],
+    required: true
   },
   originalName: {
     type: String,
-    required: true,
+    required: true
   },
-  mimetype: {
+  filename: {
     type: String,
-    required: true,
-  },
-  size: {
-    type: Number,
-    required: true,
-    min: 0,
+    required: true
   },
   url: {
     type: String,
-    required: true,
+    required: true
   },
   publicId: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
-  metadata: {
-    width: Number,
-    height: Number,
-    duration: Number, // For videos
-    format: String,
-    quality: String,
-    compression: String,
-  },
-  category: {
+  mimeType: {
     type: String,
-    enum: ['pet_photo', 'profile_photo', 'verification_document', 'chat_image', 'story_media', 'other'],
-    required: true,
-    index: true,
+    required: true
+  },
+  size: {
+    type: Number,
+    required: true
+  },
+  dimensions: {
+    width: Number,
+    height: Number
   },
   status: {
     type: String,
-    enum: ['uploading', 'processing', 'completed', 'failed', 'deleted'],
-    default: 'uploading',
-    index: true,
+    enum: ['pending', 'approved', 'rejected', 'deleted'],
+    default: 'pending'
   },
-  errorMessage: {
-    type: String,
+  uploadedAt: {
+    type: Date,
+    default: Date.now
   },
-  tags: [{
-    type: String,
-    maxlength: 50,
-  }],
-  isPublic: {
+  reviewedAt: Date,
+  reviewedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvedAt: Date,
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  approvalNotes: String,
+  rejectedAt: Date,
+  rejectedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  rejectionReason: String,
+  rejectionNotes: String,
+  deletedAt: Date,
+  deletedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  deletionReason: String,
+  isDeleted: {
     type: Boolean,
-    default: false,
-    index: true,
+    default: false
   },
-  accessCount: {
-    type: Number,
-    default: 0,
+  metadata: {
+    ipAddress: String,
+    userAgent: String,
+    uploadSource: {
+      type: String,
+      enum: ['web', 'mobile'],
+      default: 'web'
+    },
+    deviceInfo: {
+      type: String,
+      browser: String,
+      os: String
+    }
   },
-  lastAccessedAt: {
-    type: Date,
+  tags: [String],
+  description: String,
+  associatedPet: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Pet'
   },
-  expiresAt: {
-    type: Date,
-    index: { expireAfterSeconds: 0 }, // TTL index
+  associatedMatch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Match'
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: true,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
-});
-
-// Indexes
-uploadSchema.index({ userId: 1, category: 1 });
-uploadSchema.index({ userId: 1, createdAt: -1 });
-uploadSchema.index({ status: 1 });
-uploadSchema.index({ isPublic: 1, createdAt: -1 });
-
-// Virtual for file size in human readable format
-uploadSchema.virtual('sizeFormatted').get(function() {
-  const bytes = this.size;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  
-  if (bytes === 0) return '0 Bytes';
-  
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-});
-
-// Virtual for is image
-uploadSchema.virtual('isImage').get(function() {
-  return this.mimetype.startsWith('image/');
-});
-
-// Virtual for is video
-uploadSchema.virtual('isVideo').get(function() {
-  return this.mimetype.startsWith('video/');
-});
-
-// Virtual for is document
-uploadSchema.virtual('isDocument').get(function() {
-  return this.mimetype.startsWith('application/') || this.mimetype.includes('pdf');
-});
-
-// Virtual for time since upload
-uploadSchema.virtual('timeAgo').get(function() {
-  const now = new Date();
-  const diffMs = now.getTime() - this.createdAt.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  return `${diffDays}d ago`;
-});
-
-// Pre-save middleware to update timestamps
-uploadSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
-
-// Instance method to mark as completed
-uploadSchema.methods.markAsCompleted = function() {
-  this.status = 'completed';
-  return this.save();
-};
-
-// Instance method to mark as failed
-uploadSchema.methods.markAsFailed = function(errorMessage: string) {
-  this.status = 'failed';
-  this.errorMessage = errorMessage;
-  return this.save();
-};
-
-// Instance method to mark as processing
-uploadSchema.methods.markAsProcessing = function() {
-  this.status = 'processing';
-  return this.save();
-};
-
-// Instance method to increment access count
-uploadSchema.methods.incrementAccess = function() {
-  this.accessCount = (this.accessCount || 0) + 1;
-  this.lastAccessedAt = new Date();
-  return this.save();
-};
-
-// Instance method to set expiration
-uploadSchema.methods.setExpiration = function(hours: number) {
-  this.expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
-  return this.save();
-};
-
-// Instance method to make public
-uploadSchema.methods.makePublic = function() {
-  this.isPublic = true;
-  return this.save();
-};
-
-// Instance method to make private
-uploadSchema.methods.makePrivate = function() {
-  this.isPublic = false;
-  return this.save();
-};
-
-// Static method to create upload record
-uploadSchema.statics.createUpload = function(uploadData: {
-  userId: string;
-  filename: string;
-  originalName: string;
-  mimetype: string;
-  size: number;
-  url: string;
-  publicId: string;
-  category: string;
-  metadata?: any;
-  tags?: string[];
-}) {
-  return this.create({
-    ...uploadData,
-    createdAt: new Date(),
-  });
-};
-
-// Static method to get user uploads
-uploadSchema.statics.getUserUploads = function(userId: string, category?: string, limit: number = 50) {
-  const query: any = { userId };
-  if (category) {
-    query.category = category;
+  associatedVerification: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Verification'
   }
-  
-  return this.find(query)
-    .sort({ createdAt: -1 })
+}, {
+  timestamps: true
+});
+
+// Indexes for performance
+uploadSchema.index({ userId: 1 });
+uploadSchema.index({ status: 1 });
+uploadSchema.index({ type: 1 });
+uploadSchema.index({ uploadedAt: -1 });
+uploadSchema.index({ reviewedAt: -1 });
+uploadSchema.index({ publicId: 1 });
+uploadSchema.index({ associatedPet: 1 });
+uploadSchema.index({ associatedMatch: 1 });
+uploadSchema.index({ associatedVerification: 1 });
+
+// Virtual for file size in MB
+uploadSchema.virtual('sizeInMB').get(function() {
+  return (this.size / (1024 * 1024)).toFixed(2);
+});
+
+// Virtual for upload age in days
+uploadSchema.virtual('ageInDays').get(function() {
+  return Math.floor((Date.now() - this.uploadedAt) / (1000 * 60 * 60 * 24));
+});
+
+// Virtual for aspect ratio
+uploadSchema.virtual('aspectRatio').get(function() {
+  if (this.dimensions.width && this.dimensions.height) {
+    return (this.dimensions.width / this.dimensions.height).toFixed(2);
+  }
+  return null;
+});
+
+// Method to check if upload is image
+uploadSchema.methods.isImage = function() {
+  return this.mimeType.startsWith('image/');
+};
+
+// Method to check if upload is video
+uploadSchema.methods.isVideo = function() {
+  return this.mimeType.startsWith('video/');
+};
+
+// Method to check if upload is document
+uploadSchema.methods.isDocument = function() {
+  return this.mimeType.includes('pdf') || 
+         this.mimeType.includes('document') || 
+         this.mimeType.includes('text');
+};
+
+// Static method to get uploads by status
+uploadSchema.statics.getUploadsByStatus = function(status, limit = 20, skip = 0) {
+  return this.find({ status })
+    .populate('userId', 'firstName lastName email')
+    .populate('associatedPet', 'name species')
+    .sort({ uploadedAt: -1 })
+    .skip(skip)
     .limit(limit);
-};
-
-// Static method to get uploads by category
-uploadSchema.statics.getUploadsByCategory = function(category: string, limit: number = 50) {
-  return this.find({ 
-    category,
-    status: 'completed',
-    isPublic: true,
-  })
-    .populate('userId', 'firstName lastName avatar')
-    .sort({ createdAt: -1 })
-    .limit(limit);
-};
-
-// Static method to get public uploads
-uploadSchema.statics.getPublicUploads = function(limit: number = 50) {
-  return this.find({ 
-    isPublic: true,
-    status: 'completed',
-  })
-    .populate('userId', 'firstName lastName avatar')
-    .sort({ createdAt: -1 })
-    .limit(limit);
-};
-
-// Static method to cleanup failed uploads
-uploadSchema.statics.cleanupFailedUploads = function(hoursOld: number = 24) {
-  const cutoffDate = new Date();
-  cutoffDate.setHours(cutoffDate.getHours() - hoursOld);
-  
-  return this.deleteMany({
-    status: 'failed',
-    createdAt: { $lt: cutoffDate },
-  });
-};
-
-// Static method to cleanup expired uploads
-uploadSchema.statics.cleanupExpiredUploads = function() {
-  return this.deleteMany({
-    expiresAt: { $lt: new Date() },
-  });
 };
 
 // Static method to get upload statistics
-uploadSchema.statics.getUploadStats = function(userId?: string, days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
-  const matchStage: any = {
-    createdAt: { $gte: startDate },
-  };
-  
-  if (userId) {
-    matchStage.userId = userId;
+uploadSchema.statics.getUploadStats = function() {
+  return this.aggregate([
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 },
+        totalSize: { $sum: '$size' }
+      }
+    }
+  ]);
+};
+
+// Static method to get uploads by type
+uploadSchema.statics.getUploadsByType = function(type, limit = 20, skip = 0) {
+  return this.find({ type })
+    .populate('userId', 'firstName lastName email')
+    .sort({ uploadedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get pending uploads for moderation
+uploadSchema.statics.getPendingUploads = function(limit = 20, skip = 0) {
+  return this.find({ status: 'pending' })
+    .populate('userId', 'firstName lastName email')
+    .populate('associatedPet', 'name species')
+    .sort({ uploadedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get uploads by user
+uploadSchema.statics.getUploadsByUser = function(userId, limit = 20, skip = 0) {
+  return this.find({ userId })
+    .populate('associatedPet', 'name species')
+    .sort({ uploadedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Pre-save middleware to update timestamps
+uploadSchema.pre('save', function(next) {
+  if (this.isModified('status')) {
+    if (this.status === 'approved') {
+      this.approvedAt = new Date();
+    } else if (this.status === 'rejected') {
+      this.rejectedAt = new Date();
+    }
   }
   
-  return this.aggregate([
-    { $match: matchStage },
-    {
-      $group: {
-        _id: null,
-        totalUploads: { $sum: 1 },
-        completedUploads: {
-          $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] }
-        },
-        failedUploads: {
-          $sum: { $cond: [{ $eq: ['$status', 'failed'] }, 1, 0] }
-        },
-        totalSize: { $sum: '$size' },
-        avgSize: { $avg: '$size' },
-        imageUploads: {
-          $sum: { $cond: [{ $eq: ['$category', 'pet_photo'] }, 1, 0] }
-        },
-        profileUploads: {
-          $sum: { $cond: [{ $eq: ['$category', 'profile_photo'] }, 1, 0] }
-        },
-        documentUploads: {
-          $sum: { $cond: [{ $eq: ['$category', 'verification_document'] }, 1, 0] }
-        },
-      },
-    },
-  ]);
-};
-
-// Static method to get uploads by file type
-uploadSchema.statics.getUploadsByFileType = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
+  if (this.isModified('isDeleted') && this.isDeleted) {
+    this.deletedAt = new Date();
+  }
   
-  return this.aggregate([
-    { $match: { createdAt: { $gte: startDate } } },
-    {
-      $group: {
-        _id: '$mimetype',
-        count: { $sum: 1 },
-        totalSize: { $sum: '$size' },
-        avgSize: { $avg: '$size' },
-      },
-    },
-    { $sort: { count: -1 } },
-  ]);
-};
+  next();
+});
 
-export default mongoose.model<IUpload>('Upload', uploadSchema);
+// Pre-save middleware to validate file size limits
+uploadSchema.pre('save', function(next) {
+  const maxSizes = {
+    pet_photo: 5 * 1024 * 1024, // 5MB
+    profile_photo: 2 * 1024 * 1024, // 2MB
+    verification_document: 10 * 1024 * 1024, // 10MB
+    chat_image: 5 * 1024 * 1024, // 5MB
+    other: 5 * 1024 * 1024 // 5MB
+  };
+  
+  const maxSize = maxSizes[this.type] || 5 * 1024 * 1024;
+  
+  if (this.size > maxSize) {
+    return next(new Error(`File size exceeds maximum allowed size for ${this.type} uploads`));
+  }
+  
+  next();
+});
+
+// Pre-save middleware to validate MIME types
+uploadSchema.pre('save', function(next) {
+  const allowedTypes = {
+    pet_photo: ['image/jpeg', 'image/png', 'image/webp'],
+    profile_photo: ['image/jpeg', 'image/png', 'image/webp'],
+    verification_document: ['image/jpeg', 'image/png', 'application/pdf'],
+    chat_image: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+    other: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf']
+  };
+  
+  const allowedMimeTypes = allowedTypes[this.type] || ['image/jpeg', 'image/png'];
+  
+  if (!allowedMimeTypes.includes(this.mimeType)) {
+    return next(new Error(`Invalid file type for ${this.type} uploads`));
+  }
+  
+  next();
+});
+
+module.exports = mongoose.model('Upload', uploadSchema);

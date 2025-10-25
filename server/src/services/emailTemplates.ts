@@ -3,36 +3,9 @@
  * Provides responsive HTML email templates with inline CSS
  */
 
-interface UserData {
-  firstName: string;
-  email: string;
-}
-
-interface MatchData {
-  pet1Name: string;
-  pet2Name: string;
-  compatibilityScore: number;
-  matchType: string;
-  matchId: string;
-}
-
-interface ResetData {
-  token: string;
-}
-
-interface VerificationData {
-  token: string;
-}
-
-interface EmailTemplate {
-  subject: string;
-  html: string;
-  text: string;
-}
-
 const emailTemplates = {
   // Welcome email for new users
-  welcome: (userData: UserData): EmailTemplate => ({
+  welcome: (userData) => ({
     subject: 'Welcome to PawfectMatch! 🐾',
     html: `
       <!DOCTYPE html>
@@ -42,6 +15,7 @@ const emailTemplates = {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Welcome to PawfectMatch</title>
         <style>
+          /* Reset styles */
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -75,7 +49,7 @@ const emailTemplates = {
             </div>
 
             <div style="text-align: center;">
-              <a href="${process.env['CLIENT_URL']}/dashboard" class="button">Get Started</a>
+              <a href="${process.env.CLIENT_URL}/dashboard" class="button">Get Started</a>
             </div>
 
             <p>If you have any questions, feel free to reply to this email or contact our support team.</p>
@@ -86,8 +60,8 @@ const emailTemplates = {
           <div class="footer">
             <p>&copy; 2024 PawfectMatch. All rights reserved.</p>
             <p>
-              <a href="${process.env['CLIENT_URL']}/privacy" style="color: #667eea;">Privacy Policy</a> |
-              <a href="${process.env['CLIENT_URL']}/terms" style="color: #667eea;">Terms of Service</a>
+              <a href="${process.env.CLIENT_URL}/privacy" style="color: #667eea;">Privacy Policy</a> |
+              <a href="${process.env.CLIENT_URL}/terms" style="color: #667eea;">Terms of Service</a>
             </p>
           </div>
         </div>
@@ -107,7 +81,7 @@ const emailTemplates = {
       - Start swiping to find matches
       - Chat with potential matches
 
-      Get started here: ${process.env['CLIENT_URL']}/dashboard
+      Get started here: ${process.env.CLIENT_URL}/dashboard
 
       If you have any questions, feel free to reply to this email.
 
@@ -117,7 +91,7 @@ const emailTemplates = {
   }),
 
   // Match notification email
-  matchFound: (matchData: MatchData): EmailTemplate => ({
+  matchFound: (matchData) => ({
     subject: '🎉 You have a new match on PawfectMatch!',
     html: `
       <!DOCTYPE html>
@@ -157,7 +131,7 @@ const emailTemplates = {
             </div>
 
             <div style="text-align: center;">
-              <a href="${process.env['CLIENT_URL']}/chat/${matchData.matchId}" class="button">Start Chatting</a>
+              <a href="${process.env.CLIENT_URL}/chat/${matchData.matchId}" class="button">Start Chatting</a>
             </div>
 
             <p>Don't forget to be respectful and follow our community guidelines when meeting new people and their pets.</p>
@@ -179,14 +153,14 @@ const emailTemplates = {
       Compatibility Score: ${matchData.compatibilityScore}%
       Match Type: ${matchData.matchType}
 
-      Start chatting here: ${process.env['CLIENT_URL']}/chat/${matchData.matchId}
+      Start chatting here: ${process.env.CLIENT_URL}/chat/${matchData.matchId}
 
       Remember to be respectful and follow our community guidelines!
     `
   }),
 
   // Password reset email
-  passwordReset: (resetData: ResetData): EmailTemplate => ({
+  passwordReset: (resetData) => ({
     subject: '🔐 Password Reset Request - PawfectMatch',
     html: `
       <!DOCTYPE html>
@@ -223,13 +197,13 @@ const emailTemplates = {
             </div>
 
             <div style="text-align: center;">
-              <a href="${process.env['CLIENT_URL']}/reset-password?token=${resetData.token}" class="button">Reset Password</a>
+              <a href="${process.env.CLIENT_URL}/reset-password?token=${resetData.token}" class="button">Reset Password</a>
             </div>
 
             <p>If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
 
             <p>If you're having trouble clicking the button, copy and paste this URL into your browser:</p>
-            <p style="word-break: break-all; background: #e9ecef; padding: 10px; border-radius: 5px;">${process.env['CLIENT_URL']}/reset-password?token=${resetData.token}</p>
+            <p style="word-break: break-all; background: #e9ecef; padding: 10px; border-radius: 5px;">${process.env.CLIENT_URL}/reset-password?token=${resetData.token}</p>
           </div>
 
           <div class="footer">
@@ -245,7 +219,7 @@ const emailTemplates = {
 
       We received a request to reset your password for your PawfectMatch account.
 
-      Reset your password here: ${process.env['CLIENT_URL']}/reset-password?token=${resetData.token}
+      Reset your password here: ${process.env.CLIENT_URL}/reset-password?token=${resetData.token}
 
       Security Note: This link will expire in 1 hour.
 
@@ -256,7 +230,7 @@ const emailTemplates = {
   }),
 
   // Email verification
-  emailVerification: (verificationData: VerificationData): EmailTemplate => ({
+  emailVerification: (verificationData) => ({
     subject: '✅ Verify Your Email - PawfectMatch',
     html: `
       <!DOCTYPE html>
@@ -293,11 +267,11 @@ const emailTemplates = {
             </div>
 
             <div style="text-align: center;">
-              <a href="${process.env['CLIENT_URL']}/verify-email?token=${verificationData.token}" class="button">Verify Email</a>
+              <a href="${process.env.CLIENT_URL}/verify-email?token=${verificationData.token}" class="button">Verify Email</a>
             </div>
 
             <p>If you're having trouble clicking the button, copy and paste this URL into your browser:</p>
-            <p style="word-break: break-all; background: #e9ecef; padding: 10px; border-radius: 5px;">${process.env['CLIENT_URL']}/verify-email?token=${verificationData.token}</p>
+            <p style="word-break: break-all; background: #e9ecef; padding: 10px; border-radius: 5px;">${process.env.CLIENT_URL}/verify-email?token=${verificationData.token}</p>
 
             <p>This link will expire in 24 hours.</p>
           </div>
@@ -317,7 +291,7 @@ const emailTemplates = {
 
       Why verify? Email verification helps us keep your account secure and ensures you receive important notifications.
 
-      Verify here: ${process.env['CLIENT_URL']}/verify-email?token=${verificationData.token}
+      Verify here: ${process.env.CLIENT_URL}/verify-email?token=${verificationData.token}
 
       This link will expire in 24 hours.
 
@@ -326,7 +300,7 @@ const emailTemplates = {
   }),
 
   // Premium upgrade notification
-  premiumUpgrade: (userData: UserData): EmailTemplate => ({
+  premiumUpgrade: (userData) => ({
     subject: '⭐ Welcome to PawfectMatch Premium!',
     html: `
       <!DOCTYPE html>
@@ -389,7 +363,7 @@ const emailTemplates = {
             </div>
 
             <div style="text-align: center;">
-              <a href="${process.env['CLIENT_URL']}/dashboard" class="button">Start Exploring</a>
+              <a href="${process.env.CLIENT_URL}/dashboard" class="button">Start Exploring</a>
             </div>
 
             <p>Thank you for choosing Premium! If you have any questions about your subscription, please don't hesitate to contact us.</p>
@@ -397,7 +371,7 @@ const emailTemplates = {
 
           <div class="footer">
             <p>&copy; 2024 PawfectMatch. All rights reserved.</p>
-            <p>Manage subscription: <a href="${process.env['CLIENT_URL']}/premium" style="color: #f093fb;">Premium Settings</a></p>
+            <p>Manage subscription: <a href="${process.env.CLIENT_URL}/premium" style="color: #f093fb;">Premium Settings</a></p>
           </div>
         </div>
       </body>
@@ -416,7 +390,7 @@ const emailTemplates = {
       🎯 AI-powered premium recommendations
       💬 Priority customer support
 
-      Start exploring: ${process.env['CLIENT_URL']}/dashboard
+      Start exploring: ${process.env.CLIENT_URL}/dashboard
 
       Thank you for choosing Premium!
     `
@@ -424,16 +398,16 @@ const emailTemplates = {
 };
 
 // Email template utility functions
-export const emailUtils = {
+const emailUtils = {
   // Generate email options for nodemailer
-  generateEmailOptions: (templateName: keyof typeof emailTemplates, data: any) => {
+  generateEmailOptions: (templateName, data) => {
     const template = emailTemplates[templateName];
     if (!template) {
       throw new Error(`Email template '${templateName}' not found`);
     }
 
     return {
-      from: process.env['EMAIL_FROM'] || 'noreply@pawfectmatch.com',
+      from: process.env.EMAIL_FROM || 'noreply@pawfectmatch.com',
       to: data.email,
       subject: template(data).subject,
       html: template(data).html,
@@ -442,7 +416,7 @@ export const emailUtils = {
   },
 
   // Preview email template (for development)
-  previewTemplate: (templateName: keyof typeof emailTemplates, data: any) => {
+  previewTemplate: (templateName, data) => {
     const template = emailTemplates[templateName];
     if (!template) {
       throw new Error(`Email template '${templateName}' not found`);
@@ -452,8 +426,8 @@ export const emailUtils = {
   },
 
   // Validate email data
-  validateEmailData: (templateName: string, data: any): boolean => {
-    const requiredFields: Record<string, string[]> = {
+  validateEmailData: (templateName, data) => {
+    const requiredFields = {
       welcome: ['firstName'],
       matchFound: ['pet1Name', 'pet2Name', 'compatibilityScore', 'matchId'],
       passwordReset: ['token'],
@@ -476,5 +450,7 @@ export const emailUtils = {
   }
 };
 
-export { emailTemplates };
-export default { emailTemplates, emailUtils };
+module.exports = {
+  emailTemplates,
+  emailUtils
+};

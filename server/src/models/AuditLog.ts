@@ -1,354 +1,399 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IAuditLog } from '../types';
+const mongoose = require('mongoose');
 
-const auditLogSchema = new Schema<IAuditLog>({
-  userId: {
-    type: Schema.Types.ObjectId,
+const auditLogSchema = new mongoose.Schema({
+  adminId: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    index: true,
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   action: {
     type: String,
     required: true,
     enum: [
       // User Management
-      'get_all_users', 'get_user_details', 'suspend_user', 'ban_user', 'activate_user', 'update_user_role', 'get_user_activity',
-      // Pet Management
-      'get_all_pets', 'get_pet_details', 'delete_pet', 'moderate_pet',
-      // Match Management
-      'get_all_matches', 'get_match_details', 'delete_match', 'moderate_match',
-      // Message Management
-      'get_all_messages', 'get_message_details', 'delete_message', 'moderate_message',
-      // Analytics
-      'get_analytics', 'export_analytics', 'get_user_analytics',
-      // Moderation
-      'get_moderation_queue', 'moderate_content', 'approve_content', 'reject_content',
-      // Reports
-      'get_all_reports', 'get_report_details', 'resolve_report', 'dismiss_report',
-      // System
-      'update_settings', 'get_system_status', 'backup_data', 'restore_data',
-      // API Management
-      'create_api_key', 'update_api_key', 'delete_api_key', 'get_api_keys',
-      // Other
-      'other'
-    ],
-    index: true,
+      'get_all_users',
+      'get_user_details',
+      'suspend_user',
+      'ban_user',
+      'activate_user',
+      'update_user_role',
+      'get_user_activity',
+      
+      // Chat Moderation
+      'get_all_chats',
+      'get_chat_details',
+      'delete_message',
+      'block_chat',
+      'unblock_chat',
+      'get_chat_analytics',
+      
+      // Upload Management
+      'get_all_uploads',
+      'approve_upload',
+      'reject_upload',
+      'delete_upload',
+      'get_upload_analytics',
+      
+      // Verification Management
+      'get_pending_verifications',
+      'approve_verification',
+      'reject_verification',
+      'get_verification_history',
+      
+      // System Analytics
+      'get_admin_analytics',
+      'get_system_health',
+      'get_error_logs',
+      'get_performance_metrics',
+      
+      // Content Moderation
+      'get_reported_content',
+      'moderate_content',
+      'get_moderation_queue',
+      
+      // Security & Monitoring
+      'get_security_alerts',
+      'get_suspicious_activity',
+      'get_audit_logs',
+      
+      // User Actions (for tracking)
+      'user_login',
+      'user_logout',
+      'user_register',
+      'user_profile_update',
+      'pet_create',
+      'pet_update',
+      'pet_delete',
+      'match_create',
+      'message_send',
+      'message_delete',
+      'subscription_start',
+      'subscription_cancel',
+      'payment_success',
+      'payment_failed',
+      'login_failed',
+      'password_reset_request',
+      'email_verification_sent',
+      'verification_submit',
+      'upload_file',
+      'report_content',
+      'block_user',
+      'unblock_user',
+      'report_user'
+    ]
   },
-  resource: {
+  resourceType: {
     type: String,
-    required: true,
-    enum: ['user', 'pet', 'match', 'message', 'report', 'analytics', 'system', 'api_key', 'other'],
-    index: true,
+    enum: ['user', 'pet', 'match', 'message', 'upload', 'verification', 'report', 'system', 'payment', 'subscription']
   },
   resourceId: {
-    type: Schema.Types.ObjectId,
-    index: true,
+    type: mongoose.Schema.Types.ObjectId
   },
-  changes: {
-    type: Schema.Types.Mixed,
-    default: {},
+  details: {
+    type: mongoose.Schema.Types.Mixed
   },
+  result: {
+    type: String,
+    enum: ['success', 'failure', 'error'],
+    default: 'success'
+  },
+  errorMessage: String,
   ipAddress: {
     type: String,
-    maxlength: 45, // IPv6 max length
+    required: true
   },
   userAgent: {
     type: String,
-    maxlength: 500,
+    required: true
   },
-  success: {
-    type: Boolean,
-    default: true,
-    index: true,
-  },
-  errorMessage: {
-    type: String,
-    maxlength: 1000,
+  sessionId: String,
+  requestId: String,
+  duration: {
+    type: Number, // in milliseconds
+    default: 0
   },
   metadata: {
-    type: Schema.Types.Mixed,
-    default: {},
+    type: mongoose.Schema.Types.Mixed
   },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-    index: true,
+  severity: {
+    type: String,
+    enum: ['low', 'medium', 'high', 'critical'],
+    default: 'low'
   },
+  tags: [String],
+  isSensitive: {
+    type: Boolean,
+    default: false
+  }
 }, {
-  timestamps: false,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
+  timestamps: true
 });
 
-// Indexes
-auditLogSchema.index({ userId: 1, timestamp: -1 });
-auditLogSchema.index({ action: 1, timestamp: -1 });
-auditLogSchema.index({ resource: 1, resourceId: 1 });
-auditLogSchema.index({ success: 1, timestamp: -1 });
+// Indexes for performance
+auditLogSchema.index({ adminId: 1 });
+auditLogSchema.index({ userId: 1 });
+auditLogSchema.index({ action: 1 });
+auditLogSchema.index({ resourceType: 1 });
+auditLogSchema.index({ resourceId: 1 });
+auditLogSchema.index({ createdAt: -1 });
+auditLogSchema.index({ result: 1 });
+auditLogSchema.index({ severity: 1 });
 auditLogSchema.index({ ipAddress: 1 });
+auditLogSchema.index({ sessionId: 1 });
 
-// TTL index: keep logs for 1 year
-auditLogSchema.index({ timestamp: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
+// Compound indexes
+auditLogSchema.index({ adminId: 1, createdAt: -1 });
+auditLogSchema.index({ action: 1, createdAt: -1 });
+auditLogSchema.index({ resourceType: 1, resourceId: 1 });
+auditLogSchema.index({ result: 1, severity: 1 });
 
-// Virtual for time ago
-auditLogSchema.virtual('timeAgo').get(function() {
-  const now = new Date();
-  const diffMs = now.getTime() - this.timestamp.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  return `${diffDays}d ago`;
+// TTL index for automatic cleanup (keep logs for 1 year)
+auditLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
+
+// Virtual for log age in days
+auditLogSchema.virtual('ageInDays').get(function() {
+  return Math.floor((Date.now() - this.createdAt) / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for is recent
-auditLogSchema.virtual('isRecent').get(function() {
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-  return this.timestamp > oneHourAgo;
+// Virtual for formatted duration
+auditLogSchema.virtual('formattedDuration').get(function() {
+  if (this.duration < 1000) {
+    return `${this.duration}ms`;
+  } else if (this.duration < 60000) {
+    return `${(this.duration / 1000).toFixed(2)}s`;
+  } else {
+    return `${(this.duration / 60000).toFixed(2)}m`;
+  }
 });
 
-// Static method to log action
-auditLogSchema.statics.logAction = function(logData: {
-  userId?: string;
-  action: string;
-  resource: string;
-  resourceId?: string;
-  changes?: any;
-  ipAddress?: string;
-  userAgent?: string;
-  success?: boolean;
-  errorMessage?: string;
-  metadata?: any;
-}) {
-  return this.create({
-    ...logData,
-    timestamp: new Date(),
-  });
+// Method to check if action is sensitive
+auditLogSchema.methods.isSensitiveAction = function() {
+  const sensitiveActions = [
+    'suspend_user',
+    'ban_user',
+    'delete_message',
+    'block_chat',
+    'reject_upload',
+    'delete_upload',
+    'reject_verification',
+    'moderate_content'
+  ];
+  return sensitiveActions.includes(this.action);
 };
 
-// Static method to get audit trail
-auditLogSchema.statics.getAuditTrail = function(userId?: string, limit: number = 100) {
-  const query: any = {};
-  if (userId) {
-    query.userId = userId;
-  }
-  
-  return this.find(query)
+// Method to check if action requires immediate attention
+auditLogSchema.methods.requiresAttention = function() {
+  return this.severity === 'critical' || 
+         this.result === 'error' || 
+         this.isSensitiveAction();
+};
+
+// Static method to get logs by admin
+auditLogSchema.statics.getLogsByAdmin = function(adminId, limit = 50, skip = 0) {
+  return this.find({ adminId })
     .populate('userId', 'firstName lastName email')
-    .sort({ timestamp: -1 })
+    .sort({ createdAt: -1 })
+    .skip(skip)
     .limit(limit);
 };
 
-// Static method to get actions by resource
-auditLogSchema.statics.getActionsByResource = function(resource: string, resourceId?: string, limit: number = 100) {
-  const query: any = { resource };
-  if (resourceId) {
-    query.resourceId = resourceId;
-  }
-  
-  return this.find(query)
-    .populate('userId', 'firstName lastName email')
-    .sort({ timestamp: -1 })
+// Static method to get logs by user
+auditLogSchema.statics.getLogsByUser = function(userId, limit = 50, skip = 0) {
+  return this.find({ userId })
+    .populate('adminId', 'firstName lastName email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
     .limit(limit);
 };
 
-// Static method to get failed actions
-auditLogSchema.statics.getFailedActions = function(limit: number = 100) {
-  return this.find({ success: false })
+// Static method to get logs by action
+auditLogSchema.statics.getLogsByAction = function(action, limit = 50, skip = 0) {
+  return this.find({ action })
+    .populate('adminId', 'firstName lastName email')
     .populate('userId', 'firstName lastName email')
-    .sort({ timestamp: -1 })
+    .sort({ createdAt: -1 })
+    .skip(skip)
     .limit(limit);
 };
 
-// Static method to get actions by IP
-auditLogSchema.statics.getActionsByIP = function(ipAddress: string, limit: number = 100) {
-  return this.find({ ipAddress })
+// Static method to get error logs
+auditLogSchema.statics.getErrorLogs = function(limit = 50, skip = 0) {
+  return this.find({ result: 'error' })
+    .populate('adminId', 'firstName lastName email')
     .populate('userId', 'firstName lastName email')
-    .sort({ timestamp: -1 })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get critical logs
+auditLogSchema.statics.getCriticalLogs = function(limit = 50, skip = 0) {
+  return this.find({ severity: 'critical' })
+    .populate('adminId', 'firstName lastName email')
+    .populate('userId', 'firstName lastName email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get sensitive logs
+auditLogSchema.statics.getSensitiveLogs = function(limit = 50, skip = 0) {
+  return this.find({ isSensitive: true })
+    .populate('adminId', 'firstName lastName email')
+    .populate('userId', 'firstName lastName email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Static method to get logs by resource
+auditLogSchema.statics.getLogsByResource = function(resourceType, resourceId, limit = 50, skip = 0) {
+  return this.find({ resourceType, resourceId })
+    .populate('adminId', 'firstName lastName email')
+    .populate('userId', 'firstName lastName email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
     .limit(limit);
 };
 
 // Static method to get audit statistics
-auditLogSchema.statics.getAuditStats = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
+auditLogSchema.statics.getAuditStats = function() {
   return this.aggregate([
-    { $match: { timestamp: { $gte: startDate } } },
     {
       $group: {
-        _id: null,
-        totalActions: { $sum: 1 },
-        successfulActions: {
-          $sum: { $cond: ['$success', 1, 0] }
-        },
-        failedActions: {
-          $sum: { $cond: ['$success', 0, 1] }
-        },
-        uniqueUsers: { $addToSet: '$userId' },
-        uniqueIPs: { $addToSet: '$ipAddress' },
-        actionsByType: {
-          $push: {
-            action: '$action',
-            count: 1,
-          },
-        },
-        resourcesByType: {
-          $push: {
-            resource: '$resource',
-            count: 1,
-          },
-        },
-      },
+        _id: '$action',
+        count: { $sum: 1 },
+        avgDuration: { $avg: '$duration' },
+        errorCount: {
+          $sum: { $cond: [{ $eq: ['$result', 'error'] }, 1, 0] }
+        }
+      }
     },
     {
-      $project: {
-        totalActions: 1,
-        successfulActions: 1,
-        failedActions: 1,
-        uniqueUsers: { $size: '$uniqueUsers' },
-        uniqueIPs: { $size: '$uniqueIPs' },
-        successRate: {
-          $divide: ['$successfulActions', '$totalActions']
-        },
-        actionsByType: 1,
-        resourcesByType: 1,
-      },
-    },
+      $sort: { count: -1 }
+    }
   ]);
 };
 
-// Static method to get actions by user
-auditLogSchema.statics.getActionsByUser = function(days: number = 30) {
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
+// Static method to get admin activity statistics
+auditLogSchema.statics.getAdminActivityStats = function(adminId, days = 30) {
+  const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   
   return this.aggregate([
-    { $match: { timestamp: { $gte: startDate } } },
     {
-      $group: {
-        _id: '$userId',
-        actionCount: { $sum: 1 },
-        lastAction: { $max: '$timestamp' },
-        successfulActions: {
-          $sum: { $cond: ['$success', 1, 0] }
-        },
-        failedActions: {
-          $sum: { $cond: ['$success', 0, 1] }
-        },
-        uniqueIPs: { $addToSet: '$ipAddress' },
-        actions: { $push: '$action' },
-      },
+      $match: {
+        adminId: mongoose.Types.ObjectId(adminId),
+        createdAt: { $gte: startDate }
+      }
     },
-    {
-      $lookup: {
-        from: 'users',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'user',
-      },
-    },
-    {
-      $unwind: '$user',
-    },
-    {
-      $project: {
-        userId: '$_id',
-        user: { firstName: 1, lastName: 1, email: 1 },
-        actionCount: 1,
-        lastAction: 1,
-        successfulActions: 1,
-        failedActions: 1,
-        uniqueIPs: { $size: '$uniqueIPs' },
-        successRate: {
-          $divide: ['$successfulActions', '$actionCount']
-        },
-        mostCommonAction: {
-          $arrayElemAt: [
-            {
-              $map: {
-                input: { $slice: ['$actions', 1] },
-                as: 'action',
-                in: '$$action',
-              },
-            },
-            0,
-          ],
-        },
-      },
-    },
-    { $sort: { actionCount: -1 } },
-  ]);
-};
-
-// Static method to get suspicious activity
-auditLogSchema.statics.getSuspiciousActivity = function(hours: number = 24) {
-  const cutoffDate = new Date(Date.now() - hours * 60 * 60 * 1000);
-  
-  return this.aggregate([
-    { $match: { timestamp: { $gte: cutoffDate } } },
     {
       $group: {
         _id: {
-          userId: '$userId',
-          ipAddress: '$ipAddress',
+          $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }
         },
-        actionCount: { $sum: 1 },
-        failedActions: {
-          $sum: { $cond: ['$success', 0, 1] }
-        },
-        actions: { $push: '$action' },
-        lastAction: { $max: '$timestamp' },
-      },
+        count: { $sum: 1 },
+        avgDuration: { $avg: '$duration' },
+        errorCount: {
+          $sum: { $cond: [{ $eq: ['$result', 'error'] }, 1, 0] }
+        }
+      }
     },
     {
-      $match: {
-        $or: [
-          { actionCount: { $gte: 20 } }, // More than 20 actions
-          { failedActions: { $gte: 5 } }, // More than 5 failed actions
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: '_id.userId',
-        foreignField: '_id',
-        as: 'user',
-      },
-    },
-    {
-      $unwind: '$user',
-    },
-    {
-      $project: {
-        userId: '$_id.userId',
-        ipAddress: '$_id.ipAddress',
-        user: { firstName: 1, lastName: 1, email: 1 },
-        actionCount: 1,
-        failedActions: 1,
-        lastAction: 1,
-        actions: 1,
-        failureRate: {
-          $divide: ['$failedActions', '$actionCount']
-        },
-      },
-    },
-    { $sort: { actionCount: -1 } },
+      $sort: { _id: 1 }
+    }
   ]);
 };
 
-// Static method to cleanup old logs
-auditLogSchema.statics.cleanupOldLogs = function(daysOld: number = 365) {
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - daysOld);
+// Static method to get security alerts
+auditLogSchema.statics.getSecurityAlerts = function(limit = 50, skip = 0) {
+  const securityActions = [
+    'ban_user',
+    'suspend_user',
+    'block_chat',
+    'delete_message',
+    'reject_upload',
+    'delete_upload',
+    'reject_verification',
+    'moderate_content'
+  ];
   
-  return this.deleteMany({
-    timestamp: { $lt: cutoffDate },
-  });
+  return this.find({ action: { $in: securityActions } })
+    .populate('adminId', 'firstName lastName email')
+    .populate('userId', 'firstName lastName email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
 };
 
-export default mongoose.model<IAuditLog>('AuditLog', auditLogSchema);
+// Static method to get suspicious activity
+auditLogSchema.statics.getSuspiciousActivity = function(limit = 50, skip = 0) {
+  return this.find({
+    $or: [
+      { result: 'error' },
+      { severity: 'critical' },
+      { isSensitive: true },
+      { action: { $regex: /failed|error|exception/i } }
+    ]
+  })
+    .populate('adminId', 'firstName lastName email')
+    .populate('userId', 'firstName lastName email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+};
+
+// Pre-save middleware to set severity based on action
+auditLogSchema.pre('save', function(next) {
+  if (this.isNew) {
+    const severityMap = {
+      'ban_user': 'critical',
+      'suspend_user': 'high',
+      'delete_message': 'high',
+      'block_chat': 'medium',
+      'reject_upload': 'medium',
+      'delete_upload': 'high',
+      'reject_verification': 'medium',
+      'moderate_content': 'medium',
+      'update_user_role': 'high'
+    };
+    
+    this.severity = severityMap[this.action] || 'low';
+    this.isSensitive = this.isSensitiveAction();
+  }
+  
+  next();
+});
+
+// Pre-save middleware to sanitize sensitive data
+auditLogSchema.pre('save', function(next) {
+  if (this.isSensitive && this.details) {
+    // Remove sensitive information from details
+    const sanitizedDetails = { ...this.details };
+    
+    // Remove password-related fields
+    delete sanitizedDetails.password;
+    delete sanitizedDetails.newPassword;
+    delete sanitizedDetails.confirmPassword;
+    
+    // Remove token-related fields
+    delete sanitizedDetails.token;
+    delete sanitizedDetails.accessToken;
+    delete sanitizedDetails.refreshToken;
+    
+    // Remove personal information
+    delete sanitizedDetails.ssn;
+    delete sanitizedDetails.socialSecurityNumber;
+    delete sanitizedDetails.creditCard;
+    delete sanitizedDetails.bankAccount;
+    
+    this.details = sanitizedDetails;
+  }
+  
+  next();
+});
+
+module.exports = mongoose.model('AuditLog', auditLogSchema);

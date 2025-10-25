@@ -3,30 +3,27 @@
  * Sends notifications to administrators for critical system events
  */
 
-import logger from '../utils/logger';
-import { sendEmail } from './emailService';
-
-interface AdminNotification {
-  type?: 'error' | 'warning' | 'info' | 'success';
-  severity?: 'low' | 'medium' | 'high' | 'critical';
-  title: string;
-  message: string;
-  metadata?: Record<string, unknown>;
-}
+const logger = require('../utils/logger');
+const { sendEmail } = require('./emailService');
 
 /**
  * Send admin notification
- * @param notification - Notification object
+ * @param {Object} notification - Notification object
+ * @param {string} notification.type - Type of notification (error, warning, info)
+ * @param {string} notification.severity - Severity level (low, medium, high, critical)
+ * @param {string} notification.title - Notification title
+ * @param {string} notification.message - Notification message
+ * @param {Object} notification.metadata - Additional metadata
  */
-export async function sendAdminNotification(type: string, metadata: Record<string, unknown> = {}): Promise<void> {
+async function sendAdminNotification(notification) {
   try {
-    const notification: AdminNotification = {
-      type: 'info',
-      severity: 'medium',
-      title: `System Event: ${type}`,
-      message: `A system event occurred: ${type}`,
-      metadata
-    };
+    const {
+      type = 'info',
+      severity = 'medium',
+      title,
+      message,
+      metadata = {}
+    } = notification;
 
     // Get admin email addresses from environment
     const adminEmails = getAdminEmails();
@@ -37,11 +34,11 @@ export async function sendAdminNotification(type: string, metadata: Record<strin
     }
 
     // Determine if notification should be sent based on severity
-    if (!shouldSendNotification(notification.severity!)) {
+    if (!shouldSendNotification(severity)) {
       logger.debug('Notification filtered by severity level', {
-        severity: notification.severity,
-        title: notification.title,
-        type: notification.type
+        severity,
+        title,
+        type
       });
       return;
     }
@@ -49,203 +46,85 @@ export async function sendAdminNotification(type: string, metadata: Record<strin
     // Prepare email content
     const emailContent = {
       to: adminEmails,
-      subject: `[${notification.severity!.toUpperCase()}] ${notification.title}`,
+      subject: `[${severity.toUpperCase()}] ${title}`,
       html: generateEmailTemplate(notification),
       text: generateTextTemplate(notification)
     };
 
-    // Send email
-    await sendEmail(
-      emailContent.to.join(', '),
-      emailContent.subject,
-      emailContent.html,
-      emailContent.text
-    );
+    // Send email notification
+    await sendEmail(emailContent);
 
-    logger.info('Admin notification sent successfully', {
-      type: notification.type,
-      severity: notification.severity,
-      title: notification.title,
-      recipientCount: adminEmails.length
-    });
-
-  } catch (error) {
-    logger.error('Error sending admin notification', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    // Log notification sent
+    logger.info('Admin notification sent', {
       type,
+      severity,
+      title,
+      message,
+      recipientCount: adminEmails.length,
       metadata
     });
-    throw error;
-  }
-}
 
-/**
- * Send critical system alert
- * @param alert - Alert details
- */
-export async function sendCriticalAlert(alert: {
-  title: string;
-  message: string;
-  component?: string;
-  error?: any;
-  metadata?: any;
-}): Promise<void> {
-  try {
-    const notification: AdminNotification = {
-      type: 'error',
-      severity: 'critical',
-      title: `🚨 CRITICAL ALERT: ${alert.title}`,
-      message: alert.message,
-      metadata: {
-        component: alert.component,
-        error: alert.error,
-        timestamp: new Date().toISOString(),
-        ...alert.metadata
-      }
-    };
+    // Store notification in database for audit trail
+    await storeNotification(notification);
 
-    await sendAdminNotification('critical_alert', notification);
   } catch (error) {
-    logger.error('Error sending critical alert', { error, alert });
-    throw error;
-  }
-}
-
-/**
- * Send system health notification
- * @param health - Health status
- */
-export async function sendHealthNotification(health: {
-  status: 'healthy' | 'degraded' | 'critical';
-  message: string;
-  metrics?: any;
-}): Promise<void> {
-  try {
-    const severity = health.status === 'critical' ? 'critical' : 
-                    health.status === 'degraded' ? 'high' : 'medium';
-    
-    const notification: AdminNotification = {
-      type: health.status === 'healthy' ? 'success' : 'warning',
-      severity,
-      title: `System Health: ${health.status.toUpperCase()}`,
-      message: health.message,
-      metadata: {
-        status: health.status,
-        metrics: health.metrics,
-        timestamp: new Date().toISOString()
+    logger.error('Failed to send admin notification', {
+      error: error.message,
+      stack: error.stack,
+      notification: {
+        type: notification.type,
+        severity: notification.severity,
+        title: notification.title
       }
-    };
-
-    await sendAdminNotification('health_check', notification);
-  } catch (error) {
-    logger.error('Error sending health notification', { error, health });
+    });
     throw error;
   }
 }
 
 /**
- * Send security alert
- * @param security - Security alert details
+ * Get admin email addresses from environment
  */
-export async function sendSecurityAlert(security: {
-  type: string;
-  description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  ipAddress?: string;
-  userAgent?: string;
-  userId?: string;
-  metadata?: any;
-}): Promise<void> {
-  try {
-    const notification: AdminNotification = {
-      type: 'error',
-      severity: security.severity,
-      title: `🔒 SECURITY ALERT: ${security.type}`,
-      message: security.description,
-      metadata: {
-        securityType: security.type,
-        ipAddress: security.ipAddress,
-        userAgent: security.userAgent,
-        userId: security.userId,
-        timestamp: new Date().toISOString(),
-        ...security.metadata
-      }
-    };
-
-    await sendAdminNotification('security_alert', notification);
-  } catch (error) {
-    logger.error('Error sending security alert', { error, security });
-    throw error;
-  }
-}
-
-/**
- * Send performance alert
- * @param performance - Performance alert details
- */
-export async function sendPerformanceAlert(performance: {
-  metric: string;
-  value: number;
-  threshold: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description?: string;
-}): Promise<void> {
-  try {
-    const notification: AdminNotification = {
-      type: 'warning',
-      severity: performance.severity,
-      title: `⚡ PERFORMANCE ALERT: ${performance.metric}`,
-      message: performance.description || `Performance metric ${performance.metric} exceeded threshold`,
-      metadata: {
-        metric: performance.metric,
-        value: performance.value,
-        threshold: performance.threshold,
-        timestamp: new Date().toISOString()
-      }
-    };
-
-    await sendAdminNotification('performance_alert', notification);
-  } catch (error) {
-    logger.error('Error sending performance alert', { error, performance });
-    throw error;
-  }
-}
-
-/**
- * Get admin email addresses
- * @returns Array of admin email addresses
- */
-function getAdminEmails(): string[] {
-  const adminEmails = process.env['ADMIN_EMAILS'];
+function getAdminEmails() {
+  const adminEmails = process.env.ADMIN_EMAILS;
   
   if (!adminEmails) {
     return [];
   }
 
-  return adminEmails.split(',').map(email => email.trim()).filter(email => email);
+  return adminEmails
+    .split(',')
+    .map(email => email.trim())
+    .filter(email => email.length > 0);
 }
 
 /**
  * Determine if notification should be sent based on severity
- * @param severity - Notification severity
- * @returns Whether to send notification
  */
-function shouldSendNotification(severity: string): boolean {
-  const minSeverity = process.env['ADMIN_NOTIFICATION_MIN_SEVERITY'] || 'medium';
-  const severityLevels = ['low', 'medium', 'high', 'critical'];
+function shouldSendNotification(severity) {
+  const minSeverity = process.env.ADMIN_NOTIFICATION_MIN_SEVERITY || 'high';
   
-  const minLevel = severityLevels.indexOf(minSeverity);
-  const currentLevel = severityLevels.indexOf(severity);
-  
-  return currentLevel >= minLevel;
+  const severityLevels = {
+    low: 1,
+    medium: 2,
+    high: 3,
+    critical: 4
+  };
+
+  return severityLevels[severity] >= severityLevels[minSeverity];
 }
 
 /**
  * Generate HTML email template
- * @param notification - Notification object
- * @returns HTML content
  */
-function generateEmailTemplate(notification: AdminNotification): string {
+function generateEmailTemplate(notification) {
+  const {
+    type,
+    severity,
+    title,
+    message,
+    metadata
+  } = notification;
+
   const severityColors = {
     low: '#28a745',
     medium: '#ffc107',
@@ -253,114 +132,175 @@ function generateEmailTemplate(notification: AdminNotification): string {
     critical: '#dc3545'
   };
 
-  const typeIcons = {
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️',
-    success: '✅'
-  };
-
-  const color = severityColors[notification.severity as keyof typeof severityColors] || '#6c757d';
-  const icon = typeIcons[notification.type as keyof typeof typeIcons] || 'ℹ️';
+  const color = severityColors[severity] || '#6c757d';
 
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: ${color}; padding: 20px; text-align: center;">
-        <h1 style="color: white; margin: 0;">${icon} ${notification.title}</h1>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>${title}</title>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: ${color}; color: white; padding: 20px; text-align: center; }
+        .content { background: #f8f9fa; padding: 20px; }
+        .metadata { background: #e9ecef; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .footer { text-align: center; padding: 20px; color: #6c757d; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>${title}</h1>
+          <p>Severity: ${severity.toUpperCase()} | Type: ${type.toUpperCase()}</p>
+        </div>
+        <div class="content">
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+          
+          ${Object.keys(metadata).length > 0 ? `
+            <div class="metadata">
+              <h3>Additional Information:</h3>
+              <pre>${JSON.stringify(metadata, null, 2)}</pre>
+            </div>
+          ` : ''}
+        </div>
+        <div class="footer">
+          <p>This is an automated notification from PawfectMatch Admin System</p>
+          <p>Timestamp: ${new Date().toISOString()}</p>
+        </div>
       </div>
-      <div style="padding: 30px; background: white;">
-        <h2>System Notification</h2>
-        <p><strong>Type:</strong> ${notification.type}</p>
-        <p><strong>Severity:</strong> ${notification.severity}</p>
-        <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-        <hr>
-        <h3>Message:</h3>
-        <p>${notification.message}</p>
-        ${notification.metadata ? `
-          <h3>Additional Information:</h3>
-          <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
-            ${JSON.stringify(notification.metadata, null, 2)}
-          </pre>
-        ` : ''}
-      </div>
-      <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #6c757d; font-size: 12px;">
-        <p>This is an automated notification from PawfectMatch Admin System</p>
-        <p>© 2024 PawfectMatch. All rights reserved.</p>
-      </div>
-    </div>
+    </body>
+    </html>
   `;
 }
 
 /**
  * Generate text email template
- * @param notification - Notification object
- * @returns Text content
  */
-function generateTextTemplate(notification: AdminNotification): string {
-  return `
-    ${notification.title}
-    
-    Type: ${notification.type}
-    Severity: ${notification.severity}
-    Time: ${new Date().toISOString()}
-    
-    Message:
-    ${notification.message}
-    
-    ${notification.metadata ? `
-    Additional Information:
-    ${JSON.stringify(notification.metadata, null, 2)}
-    ` : ''}
-    
-    ---
-    This is an automated notification from PawfectMatch Admin System
-  `;
-}
+function generateTextTemplate(notification) {
+  const {
+    type,
+    severity,
+    title,
+    message,
+    metadata
+  } = notification;
 
-/**
- * Send bulk notifications
- * @param notifications - Array of notifications
- */
-export async function sendBulkNotifications(notifications: AdminNotification[]): Promise<void> {
-  try {
-    const promises = notifications.map(notification => 
-      sendAdminNotification('bulk_notification', notification)
-    );
+  let text = `
+${title}
+Severity: ${severity.toUpperCase()}
+Type: ${type.toUpperCase()}
 
-    await Promise.allSettled(promises);
-    
-    logger.info('Bulk notifications sent', { count: notifications.length });
-  } catch (error) {
-    logger.error('Error sending bulk notifications', { error, count: notifications.length });
-    throw error;
+Message:
+${message}
+`;
+
+  if (Object.keys(metadata).length > 0) {
+    text += `
+Additional Information:
+${JSON.stringify(metadata, null, 2)}
+`;
   }
+
+  text += `
+---
+This is an automated notification from PawfectMatch Admin System
+Timestamp: ${new Date().toISOString()}
+`;
+
+  return text;
 }
 
 /**
- * Test admin notification system
- * @returns Success status
+ * Store notification in database for audit trail
  */
-export async function testAdminNotifications(): Promise<boolean> {
+async function storeNotification(notification) {
   try {
-    await sendAdminNotification('test_notification', {
-      message: 'This is a test notification to verify the admin notification system is working correctly.',
-      timestamp: new Date().toISOString()
+    // Import here to avoid circular dependencies
+    const AuditLog = require('../models/AuditLog');
+    
+    await AuditLog.create({
+      action: 'admin_notification',
+      userId: null, // System action
+      metadata: {
+        type: notification.type,
+        severity: notification.severity,
+        title: notification.title,
+        message: notification.message,
+        metadata: notification.metadata
+      },
+      ip: 'system',
+      userAgent: 'admin-notification-service'
     });
-    
-    logger.info('Admin notification test completed successfully');
-    return true;
   } catch (error) {
-    logger.error('Admin notification test failed', { error });
-    return false;
+    logger.error('Failed to store notification in database', {
+      error: error.message,
+      notification: notification.title
+    });
+    // Don't throw error here as notification was already sent
   }
 }
 
-export default {
+/**
+ * Send system health notification
+ */
+async function sendSystemHealthNotification(healthData) {
+  const isHealthy = healthData.status === 'healthy';
+  
+  await sendAdminNotification({
+    type: 'info',
+    severity: isHealthy ? 'low' : 'high',
+    title: `System Health ${isHealthy ? 'OK' : 'Issues Detected'}`,
+    message: isHealthy 
+      ? 'System is running normally'
+      : 'System health issues detected. Please check the dashboard.',
+    metadata: healthData
+  });
+}
+
+/**
+ * Send security alert notification
+ */
+async function sendSecurityAlert(alert) {
+  await sendAdminNotification({
+    type: 'security',
+    severity: 'critical',
+    title: 'Security Alert',
+    message: alert.message,
+    metadata: {
+      alertType: alert.type,
+      userId: alert.userId,
+      ip: alert.ip,
+      userAgent: alert.userAgent,
+      timestamp: alert.timestamp
+    }
+  });
+}
+
+/**
+ * Send payment failure notification
+ */
+async function sendPaymentFailureNotification(paymentData) {
+  await sendAdminNotification({
+    type: 'error',
+    severity: 'high',
+    title: 'Payment Processing Failure',
+    message: `Payment failed for user ${paymentData.userId}`,
+    metadata: {
+      userId: paymentData.userId,
+      amount: paymentData.amount,
+      currency: paymentData.currency,
+      error: paymentData.error,
+      paymentMethod: paymentData.paymentMethod
+    }
+  });
+}
+
+module.exports = {
   sendAdminNotification,
-  sendCriticalAlert,
-  sendHealthNotification,
+  sendSystemHealthNotification,
   sendSecurityAlert,
-  sendPerformanceAlert,
-  sendBulkNotifications,
-  testAdminNotifications,
+  sendPaymentFailureNotification
 };

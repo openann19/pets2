@@ -1,66 +1,10 @@
-import User from '../models/User';
-import Pet from '../models/Pet';
-import Match from '../models/Match';
-import AnalyticsEvent from '../models/AnalyticsEvent';
-import logger from '../utils/logger';
-import { AnalyticsService } from '../types';
-
-// Event metadata interface
-interface EventMetadata {
-  [key: string]: string | number | boolean | Date | null | undefined;
-}
-
-// Track event result interface
-interface TrackEventResult {
-  success: boolean;
-  userId?: string;
-  petId?: string;
-  matchId?: string;
-  eventType: string;
-  timestamp: Date;
-}
-
-// Analytics metrics interface
-interface AnalyticsMetrics {
-  totalEvents: number;
-  eventsByType: Record<string, number>;
-  dailyActivity: Record<string, number>;
-  weeklyActivity?: Record<string, number>;
-  monthlyActivity?: Record<string, number>;
-  topEvents: Array<{ type: string; count: number }>;
-  engagementScore: number;
-  views?: number;
-  likes?: number;
-  matches?: number;
-  engagementRate?: number;
-  messages?: number;
-  interactions?: number;
-}
-
-// Analytics response interface
-interface AnalyticsResponse {
-  success: boolean;
-  userId?: string;
-  petId?: string;
-  matchId?: string;
-  period: string;
-  metrics: AnalyticsMetrics;
-  userAnalytics?: Record<string, unknown>;
-  pet?: {
-    name: string;
-    species: string;
-    breed: string;
-    photos: number;
-  };
-  match?: {
-    status: string;
-    compatibilityScore: number;
-    createdAt: Date;
-  };
-}
+const User = require('../models/User');
+const Pet = require('../models/Pet');
+const Match = require('../models/Match');
+const logger = require('../utils/logger');
 
 // Event types
-export const EVENT_TYPES = {
+const EVENT_TYPES = {
   USER_REGISTER: 'user_register',
   USER_LOGIN: 'user_login',
   PET_CREATE: 'pet_create',
@@ -74,10 +18,10 @@ export const EVENT_TYPES = {
   SUBSCRIPTION_START: 'subscription_start',
   SUBSCRIPTION_CANCEL: 'subscription_cancel',
   PREMIUM_FEATURE_USE: 'premium_feature_use',
-} as const;
+};
 
 // Track user event
-export const trackUserEvent = async (userId: string, eventType: string, metadata: EventMetadata = {}): Promise<TrackEventResult | null> => {
+const trackUserEvent = async (userId, eventType, metadata = {}) => {
   try {
     if (!userId || !eventType) {
       logger.warn('Invalid parameters for trackUserEvent', { userId, eventType });
@@ -145,8 +89,8 @@ export const trackUserEvent = async (userId: string, eventType: string, metadata
     return { success: true, userId, eventType };
   } catch (error) {
     logger.error('Error tracking user event', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       userId,
       eventType,
       metadata
@@ -158,401 +102,263 @@ export const trackUserEvent = async (userId: string, eventType: string, metadata
 };
 
 // Track pet event
-export const trackPetEvent = async (petId: string, eventType: string, metadata: EventMetadata = {}): Promise<TrackEventResult | null> => {
+const trackPetEvent = async (petId, eventType, userId, metadata = {}) => {
   try {
-    if (!petId || !eventType) {
-      logger.warn('Invalid parameters for trackPetEvent', { petId, eventType });
-      return null;
-    }
-
     const pet = await Pet.findById(petId);
-    if (!pet) {
-      logger.warn('Pet not found for analytics tracking', { petId, eventType });
-      return null;
+    if (!pet) return;
+
+    // Update pet analytics based on event type
+    switch (eventType) {
+      case EVENT_TYPES.PET_VIEW:
+        pet.analytics.views = (pet.analytics.views || 0) + 1;
+        pet.analytics.lastViewed = new Date();
+        break;
+      case EVENT_TYPES.PET_LIKE:
+        pet.analytics.likes = (pet.analytics.likes || 0) + 1;
+        break;
+      case EVENT_TYPES.PET_SUPERLIKE:
+        pet.analytics.superLikes = (pet.analytics.superLikes || 0) + 1;
+        break;
+      case EVENT_TYPES.MATCH_CREATE:
+        pet.analytics.matches = (pet.analytics.matches || 0) + 1;
+        break;
+      case EVENT_TYPES.MESSAGE_SEND:
+        pet.analytics.messages = (pet.analytics.messages || 0) + 1;
+        break;
     }
 
-    // Create analytics event record
-    await AnalyticsEvent.create({
-      entityType: 'pet',
-      entityId: petId,
-      eventType,
+    // Add event to pet's event log
+    pet.analytics.events = pet.analytics.events || [];
+    pet.analytics.events.push({
+      type: eventType,
+      userId,
+      timestamp: new Date(),
       metadata,
-      success: true,
-      createdAt: new Date(),
     });
 
-    logger.info('Pet event tracked successfully', { petId, eventType });
-    return { success: true, petId, eventType };
+    // Keep only last 50 events
+    if (pet.analytics.events.length > 50) {
+      pet.analytics.events = pet.analytics.events.slice(-50);
+    }
+
+    await pet.save();
   } catch (error) {
     logger.error('Error tracking pet event', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       petId,
       eventType,
+      userId,
       metadata
     });
-    
-    return null;
   }
 };
 
 // Track match event
-export const trackMatchEvent = async (matchId: string, eventType: string, metadata: EventMetadata = {}): Promise<TrackEventResult | null> => {
+const trackMatchEvent = async (matchId, eventType, userId, metadata = {}) => {
   try {
-    if (!matchId || !eventType) {
-      logger.warn('Invalid parameters for trackMatchEvent', { matchId, eventType });
-      return null;
-    }
-
     const match = await Match.findById(matchId);
-    if (!match) {
-      logger.warn('Match not found for analytics tracking', { matchId, eventType });
-      return null;
-    }
+    if (!match) return;
 
-    // Create analytics event record
-    await AnalyticsEvent.create({
-      entityType: 'match',
-      entityId: matchId,
-      eventType,
+    // Add event to match's event log
+    match.analytics.events = match.analytics.events || [];
+    match.analytics.events.push({
+      type: eventType,
+      userId,
+      timestamp: new Date(),
       metadata,
-      success: true,
-      createdAt: new Date(),
     });
 
-    logger.info('Match event tracked successfully', { matchId, eventType });
-    return { success: true, matchId, eventType };
+    // Keep only last 20 events
+    if (match.analytics.events.length > 20) {
+      match.analytics.events = match.analytics.events.slice(-20);
+    }
+
+    await match.save();
   } catch (error) {
     logger.error('Error tracking match event', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       matchId,
       eventType,
+      userId,
       metadata
     });
-    
-    return null;
   }
 };
 
 // Get user analytics
-export const getUserAnalytics = async (userId: string, period: string = '30d'): Promise<AnalyticsResponse> => {
+const getUserAnalytics = async (userId, period = 'week') => {
   try {
     const user = await User.findById(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) return null;
 
     // Calculate date range based on period
     const now = new Date();
-    let startDate: Date;
-    
+    let startDate;
     switch (period) {
-      case '7d':
+      case 'day':
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        break;
+      case 'week':
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
-      case '30d':
+      case 'month':
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
-      case '90d':
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      case '1y':
+      case 'year':
         startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
         break;
       default:
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     }
 
-    // Get analytics events for the period
-    const events = await AnalyticsEvent.find({
-      userId,
-      createdAt: { $gte: startDate }
-    }).sort({ createdAt: -1 });
-
-    // Calculate metrics
-    const metrics = {
-      totalEvents: events.length,
-      eventsByType: {},
-      dailyActivity: {},
-      weeklyActivity: {},
-      monthlyActivity: {},
-      topEvents: [],
-      engagementScore: 0,
-    };
-
-    // Process events
-    events.forEach(event => {
-      // Count events by type
-      metrics.eventsByType[event.eventType] = (metrics.eventsByType[event.eventType] || 0) + 1;
-      
-      // Daily activity
-      const day = event.createdAt.toISOString().split('T')[0];
-      metrics.dailyActivity[day] = (metrics.dailyActivity[day] || 0) + 1;
-      
-      // Weekly activity
-      const week = getWeekNumber(event.createdAt);
-      metrics.weeklyActivity[week] = (metrics.weeklyActivity[week] || 0) + 1;
-      
-      // Monthly activity
-      const month = event.createdAt.toISOString().substring(0, 7);
-      metrics.monthlyActivity[month] = (metrics.monthlyActivity[month] || 0) + 1;
-    });
-
-    // Calculate top events
-    metrics.topEvents = Object.entries(metrics.eventsByType)
-      .sort(([,a], [,b]) => (b as number) - (a as number))
-      .slice(0, 10)
-      .map(([type, count]) => ({ type, count }));
-
-    // Calculate engagement score
-    metrics.engagementScore = calculateEngagementScore(metrics);
+    // Filter events by period
+    const recentEvents = (user.analytics.events || []).filter(event => 
+      new Date(event.timestamp) >= startDate
+    );
 
     return {
-      success: true,
-      userId,
-      period,
-      metrics,
-      userAnalytics: user.analytics,
+      totalSwipes: user.analytics.totalSwipes || 0,
+      totalLikes: user.analytics.totalLikes || 0,
+      totalMatches: user.analytics.totalMatches || 0,
+      profileViews: user.analytics.profileViews || 0,
+      lastActive: user.analytics.lastActive,
+      totalPetsCreated: user.analytics.totalPetsCreated || 0,
+      totalMessagesSent: user.analytics.totalMessagesSent || 0,
+      totalSubscriptionsStarted: user.analytics.totalSubscriptionsStarted || 0,
+      totalSubscriptionsCancelled: user.analytics.totalSubscriptionsCancelled || 0,
+      totalPremiumFeaturesUsed: user.analytics.totalPremiumFeaturesUsed || 0,
+      events: recentEvents,
+      period: period,
+      periodStart: startDate,
+      periodEnd: now,
     };
   } catch (error) {
     logger.error('Error getting user analytics', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       userId,
       period
     });
-    
-    throw error;
+    return null;
   }
 };
 
 // Get pet analytics
-export const getPetAnalytics = async (petId: string, period: string = '30d'): Promise<AnalyticsResponse> => {
+const getPetAnalytics = async (petId) => {
   try {
     const pet = await Pet.findById(petId);
-    if (!pet) {
-      throw new Error('Pet not found');
-    }
-
-    // Calculate date range based on period
-    const now = new Date();
-    let startDate: Date;
-    
-    switch (period) {
-      case '7d':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '30d':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case '90d':
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      case '1y':
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-        break;
-      default:
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    }
-
-    // Get analytics events for the pet
-    const events = await AnalyticsEvent.find({
-      entityType: 'pet',
-      entityId: petId,
-      createdAt: { $gte: startDate }
-    }).sort({ createdAt: -1 });
-
-    // Calculate metrics
-    const metrics = {
-      totalEvents: events.length,
-      eventsByType: {},
-      dailyActivity: {},
-      views: 0,
-      likes: 0,
-      matches: 0,
-      engagementRate: 0,
-    };
-
-    // Process events
-    events.forEach(event => {
-      metrics.eventsByType[event.eventType] = (metrics.eventsByType[event.eventType] || 0) + 1;
-      
-      if (event.eventType === 'pet_view') metrics.views++;
-      if (event.eventType === 'pet_like' || event.eventType === 'pet_superlike') metrics.likes++;
-      if (event.eventType === 'match_create') metrics.matches++;
-      
-      // Daily activity
-      const day = event.createdAt.toISOString().split('T')[0];
-      metrics.dailyActivity[day] = (metrics.dailyActivity[day] || 0) + 1;
-    });
-
-    // Calculate engagement rate
-    metrics.engagementRate = metrics.views > 0 ? (metrics.likes / metrics.views) * 100 : 0;
+    if (!pet) return null;
 
     return {
-      success: true,
-      petId,
-      period,
-      metrics,
-      pet: {
-        name: pet.name,
-        species: pet.species,
-        breed: pet.breed,
-        photos: pet.photos.length,
-      },
+      views: pet.analytics.views || 0,
+      likes: pet.analytics.likes || 0,
+      superLikes: pet.analytics.superLikes || 0,
+      matches: pet.analytics.matches || 0,
+      messages: pet.analytics.messages || 0,
+      lastViewed: pet.analytics.lastViewed,
+      events: pet.analytics.events || [],
     };
   } catch (error) {
     logger.error('Error getting pet analytics', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      petId,
-      period
+      error: error.message,
+      stack: error.stack,
+      petId
     });
-    
-    throw error;
+    return null;
   }
 };
 
 // Get match analytics
-export const getMatchAnalytics = async (matchId: string, period: string = '30d'): Promise<AnalyticsResponse> => {
+const getMatchAnalytics = async (matchIdOrUserId, period = 'week') => {
   try {
-    const match = await Match.findById(matchId);
-    if (!match) {
-      throw new Error('Match not found');
-    }
+    // If it's a user ID, get match analytics for that user
+    if (matchIdOrUserId.length === 24) { // MongoDB ObjectId length
+      const user = await User.findById(matchIdOrUserId);
+      if (!user) return null;
 
-    // Calculate date range based on period
-    const now = new Date();
-    let startDate: Date;
-    
-    switch (period) {
-      case '7d':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '30d':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case '90d':
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      case '1y':
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-        break;
-      default:
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    }
+      // Get all matches for this user
+      const matches = await Match.find({
+        $or: [
+          { 'pet1.owner': matchIdOrUserId },
+          { 'pet2.owner': matchIdOrUserId }
+        ]
+      });
 
-    // Get analytics events for the match
-    const events = await AnalyticsEvent.find({
-      entityType: 'match',
-      entityId: matchId,
-      createdAt: { $gte: startDate }
-    }).sort({ createdAt: -1 });
+      // Calculate date range based on period
+      const now = new Date();
+      let startDate;
+      switch (period) {
+        case 'day':
+          startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case 'week':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'month':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case 'year':
+          startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      }
 
-    // Calculate metrics
-    const metrics = {
-      totalEvents: events.length,
-      eventsByType: {},
-      dailyActivity: {},
-      messages: 0,
-      interactions: 0,
-      engagementScore: 0,
-    };
+      // Aggregate match analytics
+      const totalMatches = matches.length;
+      const activeMatches = matches.filter(match => 
+        match.lastMessage && new Date(match.lastMessage.timestamp) >= startDate
+      ).length;
 
-    // Process events
-    events.forEach(event => {
-      metrics.eventsByType[event.eventType] = (metrics.eventsByType[event.eventType] || 0) + 1;
-      
-      if (event.eventType === 'message_send') metrics.messages++;
-      if (event.eventType === 'match_interaction') metrics.interactions++;
-      
-      // Daily activity
-      const day = event.createdAt.toISOString().split('T')[0];
-      metrics.dailyActivity[day] = (metrics.dailyActivity[day] || 0) + 1;
-    });
+      const totalMessages = matches.reduce((sum, match) => 
+        sum + (match.analytics?.events?.filter(event => 
+          event.type === 'message_send' && new Date(event.timestamp) >= startDate
+        ).length || 0), 0
+      );
 
-    // Calculate engagement score
-    metrics.engagementScore = calculateMatchEngagementScore(metrics);
+      return {
+        totalMatches,
+        activeMatches,
+        totalMessages,
+        period: period,
+        periodStart: startDate,
+        periodEnd: now,
+        matches: matches.map(match => ({
+          id: match._id,
+          pet1Name: match.pet1.name,
+          pet2Name: match.pet2.name,
+          lastMessage: match.lastMessage,
+          createdAt: match.createdAt,
+        }))
+      };
+    } else {
+      // If it's a match ID, get analytics for that specific match
+      const match = await Match.findById(matchIdOrUserId);
+      if (!match) return null;
 
-    return {
-      success: true,
-      matchId,
-      period,
-      metrics,
-      match: {
-        status: match.status,
-        compatibilityScore: match.compatibilityScore,
+      return {
+        events: match.analytics.events || [],
+        pet1Name: match.pet1.name,
+        pet2Name: match.pet2.name,
         createdAt: match.createdAt,
-      },
-    };
+        lastMessage: match.lastMessage,
+      };
+    }
   } catch (error) {
     logger.error('Error getting match analytics', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      matchId,
+      error: error.message,
+      stack: error.stack,
+      matchIdOrUserId,
       period
     });
-    
-    throw error;
+    return null;
   }
 };
 
-// Helper function to get week number
-function getWeekNumber(date: Date): string {
-  const year = date.getFullYear();
-  const week = Math.ceil((date.getTime() - new Date(year, 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
-  return `${year}-W${week}`;
-}
-
-// Helper function to calculate engagement score
-function calculateEngagementScore(metrics: AnalyticsMetrics): number {
-  const weights = {
-    totalEvents: 0.3,
-    eventsByType: 0.4,
-    dailyActivity: 0.3,
-  };
-  
-  let score = 0;
-  
-  // Base score from total events
-  score += Math.min(metrics.totalEvents / 100, 1) * weights.totalEvents;
-  
-  // Score from event diversity
-  const eventTypes = Object.keys(metrics.eventsByType).length;
-  score += Math.min(eventTypes / 10, 1) * weights.eventsByType;
-  
-  // Score from daily activity consistency
-  const activeDays = Object.keys(metrics.dailyActivity).length;
-  score += Math.min(activeDays / 30, 1) * weights.dailyActivity;
-  
-  return Math.round(score * 100);
-}
-
-// Helper function to calculate match engagement score
-function calculateMatchEngagementScore(metrics: AnalyticsMetrics): number {
-  const weights = {
-    messages: 0.5,
-    interactions: 0.3,
-    totalEvents: 0.2,
-  };
-  
-  let score = 0;
-  
-  // Score from messages
-  score += Math.min(metrics.messages / 50, 1) * weights.messages;
-  
-  // Score from interactions
-  score += Math.min(metrics.interactions / 20, 1) * weights.interactions;
-  
-  // Score from total events
-  score += Math.min(metrics.totalEvents / 100, 1) * weights.totalEvents;
-  
-  return Math.round(score * 100);
-}
-
-// Export the service interface
-const analyticsService: AnalyticsService = {
+module.exports = {
+  EVENT_TYPES,
   trackUserEvent,
   trackPetEvent,
   trackMatchEvent,
@@ -560,5 +366,3 @@ const analyticsService: AnalyticsService = {
   getPetAnalytics,
   getMatchAnalytics,
 };
-
-export default analyticsService;
