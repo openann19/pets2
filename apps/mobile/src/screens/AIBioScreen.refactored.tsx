@@ -193,7 +193,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.background.primary,
   },
   header: {
     flexDirection: "row",
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.border,
+    borderBottomColor: Theme.colors.border.light,
     backgroundColor: Theme.colors.background.primary,
   },
   backButton: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   },
   photoPicker: {
     borderWidth: 2,
-    borderColor: Theme.colors.border,
+    borderColor: Theme.colors.border.light,
     borderStyle: "dashed",
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.xl,

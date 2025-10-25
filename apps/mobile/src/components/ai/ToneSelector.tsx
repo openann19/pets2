@@ -65,7 +65,7 @@ export function ToneSelector({
               selectedTone === tone.id && styles.selectedCard,
               {
                 borderColor:
-                  selectedTone === tone.id ? tone.color : Theme.colors.border,
+                  selectedTone === tone.id ? tone.color : Theme.colors.border.light,
               },
             ]}
             onPress={() => {

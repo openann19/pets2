@@ -79,6 +79,11 @@ export const Theme = {
 
     // Shadow color for backward compatibility
     shadowColor: "#000000",
+    
+    // Flat aliases for common usage (backward compatibility)
+    borderColor: "#e5e7eb",
+    backgroundColor: "#ffffff",
+    textColor: "#111827",
   },
 
   // Typography system
