@@ -28,7 +28,14 @@ export type RootStackParamList = {
   AIPhotoAnalyzer: undefined;
   AICompatibility: { petAId?: string; petBId?: string };
   MemoryWeave: undefined;
-  ARScentTrails: undefined;
+  ARScentTrails:
+    | undefined
+    | {
+        initialLocation?: {
+          latitude: number;
+          longitude: number;
+        } | null;
+      };
   AdoptionApplication: { petId: string; petName: string };
   PetProfileSetup: undefined;
   ManageSubscription: undefined;

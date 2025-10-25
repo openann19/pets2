@@ -8,9 +8,6 @@ import * as Keychain from "react-native-keychain";
 import * as Aes from "react-native-aes-crypto";
 import EncryptedStorage from "react-native-encrypted-storage";
 
-// Declare global __DEV__ variable
-declare const __DEV__: boolean;
-
 // Type assertion for Sentry to avoid unsafe call errors
 const sentry = Sentry as {
   captureException: (error: Error, context?: Record<string, unknown>) => void;
@@ -31,7 +28,7 @@ export enum LogLevel {
 
 export type LogLevelType = `${LogLevel}`;
 
-export interface ErrorMetadata {
+export interface ErrorDetails {
   message: string;
   stack?: string;
   name: string;
@@ -52,7 +49,7 @@ export interface LogMetadata {
   version?: string;
   timestamp?: string;
   level?: LogLevel;
-  errorMetadata?: ErrorMetadata;
+  errorDetails?: ErrorDetails;
   isEncrypted?: boolean;
   encryptedAt?: string;
   encryptedData?: EncryptedData;
@@ -90,37 +87,6 @@ interface AuditLogExport {
   metrics?: LogBufferMetrics;
   exportMetadata: ExportMetadata;
 }
-export interface ErrorMetadata {
-  [key: string]: unknown;
-  error?: Error;
-  userId?: string;
-  sessionId?: string;
-  correlationId?: string;
-  requestId?: string;
-  component?: string;
-  action?: string;
-  duration?: number;
-  tags?: string[];
-  version?: string;
-  timestamp?: string;
-  level?: LogLevel;
-  errorMetadata?: ErrorMetadata;
-}
-
-/**
- * Storage key type
- */
-type StorageKey = string;
-
-/**
- * Interface for encrypted log storage item
- */
-interface EncryptedLogStorageItem {
-  data: EncryptedData;
-  timestamp: string;
-  level: LogLevel;
-  hash: string;
-}
 
 /**
  * Type for working with storage keys
@@ -146,15 +112,6 @@ interface EncryptedLogStorageItem {
 interface KeychainOptions {
   accessible?: Keychain.ACCESSIBLE;
   accessControl?: Keychain.ACCESS_CONTROL;
-}
-
-/**
- * Interface for encryption keys
- * @private
- */
-interface EncryptionKeys {
-  key: string;
-  salt: string;
 }
 
 /**

@@ -73,8 +73,10 @@ class AccessibilityService {
 
       // Set up change listeners
       this.setupAccessibilityListeners();
-    } catch (error) {
-      logger.warn("Failed to initialize accessibility", { error });
+    } catch (error: unknown) {
+      logger.warn("Failed to initialize accessibility", {
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
     }
   }
 
@@ -164,8 +166,10 @@ class AccessibilityService {
   announceForAccessibility(message: string): void {
     try {
       AccessibilityInfo.announceForAccessibility(message);
-    } catch (error) {
-      logger.warn("Failed to announce for accessibility", { error });
+    } catch (error: unknown) {
+      logger.warn("Failed to announce for accessibility", {
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
     }
   }
 
@@ -181,8 +185,10 @@ class AccessibilityService {
         // Android specific focus
         // Would need additional implementation
       }
-    } catch (error) {
-      logger.warn("Failed to set accessibility focus", { error });
+    } catch (error: unknown) {
+      logger.warn("Failed to set accessibility focus", {
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
     }
   }
 
@@ -292,8 +298,10 @@ class AccessibilityService {
     this.listeners.forEach((listener) => {
       try {
         listener(config);
-      } catch (error) {
-        logger.warn("Error notifying accessibility listener", { error });
+      } catch (error: unknown) {
+        logger.warn("Error notifying accessibility listener", {
+          error: error instanceof Error ? error : new Error(String(error)),
+        });
       }
     });
   }

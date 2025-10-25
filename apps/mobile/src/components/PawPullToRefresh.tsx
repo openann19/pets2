@@ -6,6 +6,8 @@ import {
   Animated,
   StyleSheet,
   Dimensions,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -17,7 +19,7 @@ interface PawPullToRefreshProps {
   children: React.ReactNode;
   onRefresh: () => Promise<void>;
   refreshing: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 /**
