@@ -1,5 +1,5 @@
 import * as Haptics from "expo-haptics";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Linking } from "react-native";
 import {
   interpolate,
@@ -8,6 +8,8 @@ import {
   withDelay,
   withSpring,
 } from "react-native-reanimated";
+import { matchesAPI } from "../services/api";
+import { logger } from "@pawfectmatch/core";
 
 export interface HelpOption {
   id: string;
@@ -25,7 +27,35 @@ export interface UseHelpSupportDataReturn {
 }
 
 export function useHelpSupportData(): UseHelpSupportDataReturn {
-  // Create help options with navigation action
+  const [faqData, setFaqData] = useState<
+    Array<{
+      id: string;
+      category: string;
+      question: string;
+      answer: string;
+    }>
+  >([]);
+  const [isLoadingFAQ, setIsLoadingFAQ] = useState(false);
+
+  // Load FAQ data
+  const loadFAQ = useCallback(async () => {
+    setIsLoadingFAQ(true);
+    try {
+      const faq = await matchesAPI.getFAQ();
+      setFaqData(faq);
+    } catch (error) {
+      logger.error("Failed to load FAQ", { error });
+    } finally {
+      setIsLoadingFAQ(false);
+    }
+  }, []);
+
+  // Load FAQ on mount
+  useEffect(() => {
+    loadFAQ();
+  }, [loadFAQ]);
+
+  // Create help options with real functionality
   const helpOptions: HelpOption[] = [
     {
       id: "faq",
@@ -33,7 +63,15 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       description: "Frequently asked questions",
       icon: "help-circle-outline",
       action: () => {
-        Alert.alert("FAQ", "FAQ section coming soon!");
+        if (faqData.length > 0) {
+          // Show FAQ data
+          const faqText = faqData
+            .map((item) => `${item.question}\n${item.answer}\n`)
+            .join("\n");
+          Alert.alert("FAQ", faqText);
+        } else {
+          Alert.alert("FAQ", "Loading FAQ data...");
+        }
       },
     },
     {
@@ -42,7 +80,39 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       description: "Get help from our support team",
       icon: "chatbubble-outline",
       action: () => {
-        Alert.alert("Contact Support", "Support chat coming soon!");
+        Alert.prompt(
+          "Contact Support",
+          "Please describe your issue:",
+          [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Send",
+              onPress: async (message) => {
+                if (message && message.trim()) {
+                  try {
+                    await matchesAPI.createSupportTicket({
+                      subject: "Support Request",
+                      message: message.trim(),
+                      category: "other",
+                      priority: "normal",
+                    });
+                    Alert.alert(
+                      "Success",
+                      "Your support request has been submitted. We'll get back to you within 24 hours.",
+                    );
+                  } catch (error) {
+                    logger.error("Failed to create support ticket", { error });
+                    Alert.alert(
+                      "Error",
+                      "Failed to submit support request. Please try again.",
+                    );
+                  }
+                }
+              },
+            },
+          ],
+          "plain-text",
+        );
       },
     },
     {
@@ -51,7 +121,39 @@ export function useHelpSupportData(): UseHelpSupportDataReturn {
       description: "Help us improve by reporting issues",
       icon: "bug-outline",
       action: () => {
-        Alert.alert("Report Bug", "Bug reporting feature coming soon!");
+        Alert.prompt(
+          "Report Bug",
+          "Please describe the bug:",
+          [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Report",
+              onPress: async (description) => {
+                if (description && description.trim()) {
+                  try {
+                    await matchesAPI.submitBugReport({
+                      title: "Bug Report",
+                      description: description.trim(),
+                      deviceInfo: "Mobile App",
+                      appVersion: "1.0.0",
+                    });
+                    Alert.alert(
+                      "Success",
+                      "Thank you for reporting this bug! We'll investigate and fix it.",
+                    );
+                  } catch (error) {
+                    logger.error("Failed to submit bug report", { error });
+                    Alert.alert(
+                      "Error",
+                      "Failed to submit bug report. Please try again.",
+                    );
+                  }
+                }
+              },
+            },
+          ],
+          "plain-text",
+        );
       },
     },
     {

@@ -14,7 +14,7 @@ import type {
   DataExportStatus,
 } from '../types/account';
 
-interface ApiError {
+interface AccountApiError {
   message?: string;
 }
 
@@ -42,7 +42,7 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to request account deletion');
     }
 
@@ -66,7 +66,7 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to cancel account deletion');
     }
 
@@ -90,7 +90,7 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to deactivate account');
     }
 
@@ -112,7 +112,7 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to reactivate account');
     }
 
@@ -136,7 +136,7 @@ export class AccountService {
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to request data export');
     }
 
@@ -160,7 +160,7 @@ export class AccountService {
     );
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to get export status');
     }
 
@@ -184,7 +184,7 @@ export class AccountService {
     );
 
     if (!response.ok) {
-      const error: ApiError = await response.json() as ApiError;
+      const error: AccountApiError = await response.json() as AccountApiError;
       throw new Error(error.message ?? 'Failed to download data export');
     }
 

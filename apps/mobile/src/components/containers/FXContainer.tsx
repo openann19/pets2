@@ -26,6 +26,7 @@ import {
   useEntranceAnimation,
 } from "../../hooks/useUnifiedAnimations";
 import { Theme } from "../../theme/unified-theme";
+import { getPrimaryColor } from "../../theme/helpers";
 
 // === TYPES ===
 export type FXContainerType =
@@ -130,7 +131,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
 
   // Glow animation
   const { animatedStyle: glowStyle } = useGlowAnimation(
-    disabled ? "transparent" : glowColor || Theme.colors.primary[500],
+    disabled ? "transparent" : glowColor || getPrimaryColor(500),
     disabled ? 0 : glowIntensity,
     2000,
   );
@@ -193,10 +194,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
     if (type === "gradient" || type === "holographic") {
       const gradient = gradientName ? Theme.gradients[gradientName] : null;
       const colors = gradientColors ||
-        gradient?.colors || [
-          Theme.colors.primary[500],
-          Theme.colors.primary[400],
-        ];
+        gradient?.colors || [getPrimaryColor(500), Theme.colors.primary[400]];
 
       content = (
         <LinearGradient

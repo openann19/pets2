@@ -11,6 +11,16 @@ import { logger } from "@pawfectmatch/core";
 export { default as Theme } from "../theme/unified-theme";
 export type { ThemeType } from "../theme/unified-theme";
 
+// === UNIFIED BUTTON SYSTEM ===
+export { default as Button, ButtonPresets } from "./Button";
+export type {
+  ButtonProps,
+  ButtonVariant,
+  ButtonSize,
+  InteractionType,
+  HapticType,
+} from "./Button";
+
 // === ANIMATION HOOKS ===
 export { default as UnifiedAnimations } from "../hooks/useUnifiedAnimations";
 export {
@@ -48,15 +58,18 @@ export {
   FXContainerPresets,
 } from "./containers/FXContainer";
 
-// === TYPOGRAPHY SYSTEM ===
-export { default as ModernText } from "./typography/ModernTypography";
+// === UNIFIED TEXT SYSTEM ===
 export {
+  default as Text,
   Heading1,
   Heading2,
   Heading3,
   Heading4,
   Heading5,
   Heading6,
+  Display,
+  Title,
+  Subtitle,
   Body,
   BodyLarge,
   BodySmall,
@@ -69,11 +82,28 @@ export {
   HolographicText,
   AnimatedHeading,
   AnimatedText,
-} from "./typography/ModernTypography";
+} from "./Text";
+export type {
+  TextProps,
+  TextVariant,
+  TextWeight,
+  TextColor,
+  AnimationType,
+  GradientType,
+  ShadowType,
+} from "./Text";
 
-// === MODERNIZED COMPONENTS ===
-export { default as ModernSwipeCard } from "./ModernSwipeCard";
-export { default as ModernPhotoUpload } from "./ModernPhotoUpload";
+// === UNIFIED CARD SYSTEM ===
+export { default as Card, CardPresets, SwipeCard, MatchCard } from "./Card";
+export type {
+  CardProps,
+  CardVariant,
+  CardSize,
+  InteractionType,
+  HapticType,
+  AnimationType,
+  GradientType,
+} from "./Card";
 
 // === PERFORMANCE TESTING ===
 export { default as PerformanceTestSuite } from "./PerformanceTestSuite";

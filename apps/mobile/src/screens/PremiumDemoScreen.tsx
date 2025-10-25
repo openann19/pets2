@@ -11,6 +11,13 @@ import {
   StatusBar,
 } from "react-native";
 
+// Design Tokens
+import {
+  DynamicColors,
+  SemanticColors,
+  EnhancedTypography,
+} from "../styles/EnhancedDesignTokens";
+
 // Project Hyperion Components
 import ImmersiveCard from "../components/ImmersiveCard";
 import InteractiveButton from "../components/InteractiveButton";

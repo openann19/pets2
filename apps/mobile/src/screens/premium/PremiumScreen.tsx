@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import Footer from "../../components/Footer";
+import { subscriptionAPI } from "../../services/api";
 
 type BillingPeriod = "monthly" | "yearly";
 
@@ -52,45 +53,56 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
   {
     id: "premium",
     name: "Premium",
-    price: { monthly: 9.99, yearly: 99.99 },
+    price: { monthly: 9.99, yearly: 89.99 },
     stripePriceId: {
       monthly: "price_premium_monthly",
       yearly: "price_premium_yearly",
     },
     features: [
       "Unlimited swipes",
+      "AI-powered matching",
+      "Priority chat features",
+      "Advanced photo analysis",
+      "AI bio generation",
+      "Compatibility scoring",
       "See who liked you",
-      "Advanced filters",
-      "Ad-free experience",
-      "Advanced matching algorithm",
-      "Priority in search results",
-      "Read receipts",
-      "Video calls",
+      "Boost your profile",
+      "5 Super Likes per day",
+      "Unlimited rewinds",
+      "Advanced analytics",
+      "Premium badge",
+      "Priority support",
     ],
     popular: true,
   },
   {
     id: "ultimate",
     name: "Ultimate",
-    price: { monthly: 19.99, yearly: 199.99 },
+    price: { monthly: 19.99, yearly: 179.99 },
     stripePriceId: {
       monthly: "price_ultimate_monthly",
       yearly: "price_ultimate_yearly",
     },
     features: [
-      "All Premium features",
-      "AI-powered recommendations",
-      "Exclusive events access",
-      "Priority support",
-      "Profile boost",
-      "Unlimited Super Likes",
-      "Advanced analytics",
+      "Everything in Premium",
       "VIP status",
+      "Unlimited Super Likes",
+      "Global passport",
+      "Priority AI matching",
+      "Early feature access",
+      "Custom AI training",
+      "Video chat features",
+      "Exclusive events",
+      "Monthly surprises",
+      "Identity verification",
+      "Concierge support",
+      "Profile verification",
+      "Custom themes",
     ],
   },
 ];
 
-export function PremiumScreen(): JSX.Element {
+export function PremiumScreen(): React.JSX.Element {
   const navigation = useNavigation();
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
   const [selectedTier, setSelectedTier] = useState<string>("premium");
@@ -108,8 +120,7 @@ export function PremiumScreen(): JSX.Element {
       const priceId = tier.stripePriceId[billingPeriod];
 
       // Create checkout session
-      const { _subscriptionAPI } = await import("../../services/api");
-      const session = await _subscriptionAPI.createCheckoutSession({
+      const session = await subscriptionAPI.createCheckoutSession({
         priceId,
         successUrl: "pawfectmatch://subscription/success",
         cancelUrl: "pawfectmatch://subscription/cancel",
@@ -120,7 +131,7 @@ export function PremiumScreen(): JSX.Element {
       });
 
       // Open Stripe checkout in browser
-      if (session?.url) {
+      if (session.url) {
         await Linking.openURL(session.url);
       }
     } catch (error) {
@@ -139,9 +150,11 @@ export function PremiumScreen(): JSX.Element {
   const renderTierCard = (tier: SubscriptionTier) => {
     const isSelected = selectedTier === tier.id;
     const price = tier.price[billingPeriod];
+    const monthlyPrice = tier.price.monthly;
+    const yearlyPrice = tier.price.yearly;
     const yearlyDiscount =
-      billingPeriod === "yearly"
-        ? Math.round((1 - tier.price.yearly / 12 / tier.price.monthly) * 100)
+      billingPeriod === "yearly" && monthlyPrice > 0
+        ? Math.round((1 - yearlyPrice / 12 / monthlyPrice) * 100)
         : 0;
 
     return (
@@ -193,7 +206,9 @@ export function PremiumScreen(): JSX.Element {
             styles.subscribeButton,
             isSelected && styles.subscribeButtonSelected,
           ]}
-          onPress={() => handleSubscribe(tier.id)}
+          onPress={() => {
+            void handleSubscribe(tier.id);
+          }}
           disabled={isLoading}
         >
           {isLoading && selectedTier === tier.id ? (

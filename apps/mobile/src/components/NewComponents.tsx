@@ -13,14 +13,10 @@ export type { ThemeType } from "../theme/unified-theme";
 export {
   useSpringAnimation,
   useEntranceAnimation,
-  useStaggeredAnimation,
   usePressAnimation,
   useGlowAnimation,
   useMagneticEffect,
   useSwipeGesture,
-  useRippleEffect,
-  useShimmerEffect,
-  useScrollAnimation,
 } from "../hooks/useUnifiedAnimations";
 
 // === BUTTON SYSTEM ===
@@ -33,7 +29,6 @@ export {
   WithGlowFX,
   WithMagneticFX,
   WithRippleFX,
-  WithShimmerFX,
   WithPressFX,
   WithGradientFX,
 } from "./buttons/EffectWrappers";
@@ -46,25 +41,11 @@ export {
 
 // === TYPOGRAPHY SYSTEM ===
 export {
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Body,
-  BodyLarge,
-  BodySmall,
-  Caption,
-  Overline,
-  ButtonText,
-  Label,
-  GradientHeading,
   GradientText,
-  HolographicText,
-  AnimatedHeading,
   AnimatedText,
-} from "./typography/ModernTypography";
+  PremiumHeading,
+  PremiumBody,
+} from "./PremiumTypography";
 
 // === MODERNIZED COMPONENTS ===
 export { default as ModernSwipeCard } from "./ModernSwipeCard";

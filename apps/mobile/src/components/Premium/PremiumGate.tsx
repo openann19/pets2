@@ -1,394 +1,253 @@
 /**
- * Premium Gate Component
- * Controls access to premium features with elegant upgrade prompts
+ * Premium Feature Gate Component
+ * Blocks premium features behind subscription verification
+ * 
+ * WI-005: Premium Subscription Gating
  */
+import React, { type ReactNode } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { usePremium } from "../hooks/usePremium";
+import { logger } from "@pawfectmatch/core";
 
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import {
-  Dimensions,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-interface PremiumGateProps {
-  feature: string;
-  description: string;
-  icon: string;
-  visible: boolean;
-  onClose: () => void;
-  onUpgrade?: () => void;
+export interface PremiumGateProps {
+  feature: keyof import("../services/PremiumService").PremiumLimits;
+  children: ReactNode;
+  fallback?: ReactNode;
+  onUpgradePress?: () => void;
+  showUpgradePrompt?: boolean;
+  upgradeMessage?: string;
 }
 
-const PremiumGate: React.FC<PremiumGateProps> = ({
+/**
+ * Premium Feature Gate - Blocks access to premium features
+ */
+export const PremiumGate: React.FC<PremiumGateProps> = ({
   feature,
-  description,
-  icon,
-  visible,
-  onClose,
-  onUpgrade,
+  children,
+  fallback,
+  onUpgradePress,
+  showUpgradePrompt = true,
+  upgradeMessage,
 }) => {
-  const { colors } = useTheme();
-  const navigation = useNavigation();
+  const { canUseFeature, isLoading, isActive } = usePremium();
+  const canUse = canUseFeature(feature);
 
-  const handleUpgrade = (): void => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onClose();
-    if (onUpgrade) {
-      onUpgrade();
-    } else {
-      // Navigate to premium screen
-      (navigation as any).navigate?.("Premium");
-    }
+  // Show loading state
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  // If user can use the feature, render children
+  if (canUse) {
+    return <>{children}</>;
+  }
+
+  // If custom fallback provided, use it
+  if (fallback) {
+    return <>{fallback}</>;
+  }
+
+  // Default upgrade prompt
+  if (showUpgradePrompt) {
+    return (
+      <View style={styles.upgradeContainer}>
+        <View style={styles.upgradeContent}>
+          <Text style={styles.upgradeTitle}>Premium Feature</Text>
+          <Text style={styles.upgradeMessage}>
+            {upgradeMessage || `This feature requires a premium subscription.`}
+          </Text>
+          <TouchableOpacity
+            style={styles.upgradeButton}
+            onPress={() => {
+              logger.info("Premium upgrade prompt tapped", { feature });
+              onUpgradePress?.();
+            }}
+          >
+            <Text style={styles.upgradeButtonText}>Upgrade Now</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // Hide feature if no upgrade prompt
+  return null;
+};
+
+/**
+ * Hook for premium feature gating
+ */
+export const usePremiumGate = (feature: keyof import("../services/PremiumService").PremiumLimits) => {
+  const { canUseFeature, isLoading, isActive } = usePremium();
+  
+  return {
+    canUse: canUseFeature(feature),
+    isLoading,
+    isActive,
+    feature,
   };
+};
 
-  const handleClose = (): void => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onClose();
+/**
+ * Premium Badge Component
+ */
+export const PremiumBadge: React.FC<{ size?: "small" | "medium" | "large" }> = ({ 
+  size = "medium" 
+}) => {
+  const { isActive } = usePremium();
+  
+  if (!isActive) {
+    return null;
+  }
+
+  const sizeStyles = {
+    small: { fontSize: 10, paddingHorizontal: 6, paddingVertical: 2 },
+    medium: { fontSize: 12, paddingHorizontal: 8, paddingVertical: 4 },
+    large: { fontSize: 14, paddingHorizontal: 10, paddingVertical: 6 },
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={handleClose}
-    >
-      <BlurView intensity={20} style={styles.overlay}>
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.backdrop}
-            activeOpacity={1}
-            onPress={handleClose}
-          />
-
-          <View
-            style={[
-              styles.modal,
-              { backgroundColor: (colors as any).surface ?? colors.background },
-            ]}
-          >
-            {/* Header */}
-            <View style={styles.header}>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={handleClose}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                <Ionicons name="close" size={24} color={colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
-            {/* Content */}
-            <View style={styles.content}>
-              {/* Premium Icon */}
-              <LinearGradient
-                colors={["#FFD700", "#FFA000"]}
-                style={styles.iconContainer}
-              >
-                <Ionicons name="star" size={30} color="#fff" />
-              </LinearGradient>
-
-              {/* Feature Icon */}
-              <View
-                style={[
-                  styles.featureIcon,
-                  { backgroundColor: `${colors.primary}20` },
-                ]}
-              >
-                <Ionicons name={icon as any} size={40} color={colors.primary} />
-              </View>
-
-              {/* Text Content */}
-              <Text style={[styles.title, { color: colors.text }]}>
-                Unlock {feature}
-              </Text>
-
-              <Text
-                style={[styles.description, { color: colors.textSecondary }]}
-              >
-                {description}
-              </Text>
-
-              {/* Premium Features List */}
-              <View style={styles.featuresList}>
-                <View style={styles.featureItem}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={colors.success}
-                  />
-                  <Text
-                    style={[
-                      styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Unlimited access to all features
-                  </Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={colors.success}
-                  />
-                  <Text
-                    style={[
-                      styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Priority customer support
-                  </Text>
-                </View>
-                <View style={styles.featureItem}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={colors.success}
-                  />
-                  <Text
-                    style={[
-                      styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Advanced AI matching
-                  </Text>
-                </View>
-              </View>
-
-              {/* Action Buttons */}
-              <View style={styles.actions}>
-                <TouchableOpacity
-                  style={styles.upgradeButton}
-                  onPress={handleUpgrade}
-                  activeOpacity={0.8}
-                >
-                  <LinearGradient
-                    colors={["#FF6B6B", "#FF8E8E"]}
-                    style={styles.upgradeButtonGradient}
-                  >
-                    <Ionicons name="star" size={20} color="#fff" />
-                    <Text style={styles.upgradeButtonText}>
-                      Upgrade to Premium
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[
-                    styles.laterButton,
-                    { backgroundColor: colors.background },
-                  ]}
-                  onPress={handleClose}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={[
-                      styles.laterButtonText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Maybe Later
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-      </BlurView>
-    </Modal>
+    <View style={[styles.badge, sizeStyles[size]]}>
+      <Text style={[styles.badgeText, { fontSize: sizeStyles[size].fontSize }]}>
+        PREMIUM
+      </Text>
+    </View>
   );
 };
 
-// Hook for easy premium gate usage
-export const usePremiumGate = (): {
-  showPremiumGate: (config: {
-    feature: string;
-    description: string;
-    icon?: string;
-  }) => void;
-  hidePremiumGate: () => void;
-  PremiumGateComponent: React.FC;
-} => {
-  const [gateConfig, setGateConfig] = React.useState<{
-    visible: boolean;
-    feature: string;
-    description: string;
-    icon: string;
-  }>({
-    visible: false,
-    feature: "",
-    description: "",
-    icon: "star",
-  });
+/**
+ * Usage Limit Indicator
+ */
+export const UsageLimitIndicator: React.FC<{
+  feature: keyof import("../services/PremiumService").PremiumLimits;
+  currentUsage?: number;
+}> = ({ feature, currentUsage = 0 }) => {
+  const { limits, getRemainingUsage } = usePremium();
+  const limit = limits[feature];
+  const remaining = getRemainingUsage(feature);
 
-  const showPremiumGate = (config: {
-    feature: string;
-    description: string;
-    icon?: string;
-  }): void => {
-    setGateConfig((prev) => ({
-      ...prev,
-      visible: true,
-      feature: config.feature,
-      description: config.description,
-      icon: config.icon ?? "star",
-    }));
-  };
+  if (typeof limit !== "number" || limit === -1) {
+    return null; // No limit or boolean feature
+  }
 
-  const hidePremiumGate = (): void => {
-    setGateConfig((prev) => ({ ...prev, visible: false }));
-  };
+  const usagePercentage = (currentUsage / limit) * 100;
+  const isNearLimit = usagePercentage >= 80;
+  const isAtLimit = usagePercentage >= 100;
 
-  const PremiumGateComponent: React.FC = () => (
-    <PremiumGate
-      visible={gateConfig.visible}
-      feature={gateConfig.feature}
-      description={gateConfig.description}
-      icon={gateConfig.icon}
-      onClose={hidePremiumGate}
-    />
+  return (
+    <View style={styles.usageContainer}>
+      <View style={styles.usageBar}>
+        <View 
+          style={[
+            styles.usageFill, 
+            { 
+              width: `${Math.min(usagePercentage, 100)}%`,
+              backgroundColor: isAtLimit ? "#ef4444" : isNearLimit ? "#f59e0b" : "#10b981"
+            }
+          ]} 
+        />
+      </View>
+      <Text style={[
+        styles.usageText,
+        { color: isAtLimit ? "#ef4444" : isNearLimit ? "#f59e0b" : "#6b7280" }
+      ]}>
+        {currentUsage} / {limit === -1 ? "∞" : limit}
+      </Text>
+    </View>
   );
-
-  return {
-    showPremiumGate,
-    hidePremiumGate,
-    PremiumGateComponent,
-  };
 };
 
 const styles = StyleSheet.create({
-  overlay: {
+  loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  modal: {
-    width: SCREEN_WIDTH - 40,
-    maxWidth: 400,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
     padding: 20,
-    paddingBottom: 0,
   },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.1)",
-  },
-  content: {
-    padding: 20,
-    paddingTop: 0,
-    alignItems: "center",
-  },
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  featureIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  description: {
+  loadingText: {
     fontSize: 16,
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 30,
+    color: "#6b7280",
   },
-  featuresList: {
-    width: "100%",
-    marginBottom: 30,
-  },
-  featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    gap: 12,
-  },
-  featureText: {
-    fontSize: 14,
+  upgradeContainer: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#f9fafb",
   },
-  actions: {
-    width: "100%",
-    gap: 12,
+  upgradeContent: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 24,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    maxWidth: 300,
+  },
+  upgradeTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1f2937",
+    marginBottom: 8,
+  },
+  upgradeMessage: {
+    fontSize: 16,
+    color: "#6b7280",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 24,
   },
   upgradeButton: {
-    borderRadius: 25,
-    overflow: "hidden",
-  },
-  upgradeButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 16,
-    gap: 8,
+    backgroundColor: "#ec4899",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    minWidth: 120,
   },
   upgradeButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  laterButton: {
-    paddingVertical: 16,
-    borderRadius: 25,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.1)",
-  },
-  laterButtonText: {
+    color: "white",
     fontSize: 16,
     fontWeight: "600",
+    textAlign: "center",
+  },
+  badge: {
+    backgroundColor: "#ec4899",
+    borderRadius: 4,
+    alignSelf: "flex-start",
+  },
+  badgeText: {
+    color: "white",
+    fontWeight: "bold",
+    letterSpacing: 0.5,
+  },
+  usageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  usageBar: {
+    flex: 1,
+    height: 4,
+    backgroundColor: "#e5e7eb",
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  usageFill: {
+    height: "100%",
+    borderRadius: 2,
+  },
+  usageText: {
+    fontSize: 12,
+    fontWeight: "500",
+    minWidth: 60,
+    textAlign: "right",
   },
 });
 

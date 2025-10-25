@@ -1,6 +1,5 @@
 Priority,Category,Feature,Description,Effort (Days),Dependencies,Risk Level,Business Impact,Technical Debt Reduction,Success Criteria
 P0,Critical,Real Authentication APIs,Replace mock login with JWT token management and secure storage,3,"API service, AuthService, SecureStore",High,Blocker,High,"Working login/register/reset flow with secure token storage"
-P0,Critical,Core Matching Engine,Replace setTimeout mocks with real ML-powered compatibility scoring,5,"MatchingService, API integration",High,Blocker,High,"Real-time pet recommendations with swipe functionality"
 P0,Critical,Premium Subscription Gating,Block premium features behind payment verification,4,"Stripe integration, PremiumService",High,Blocker,High,"Working subscription purchase and feature gating"
 P0,Critical,Admin Dashboard MVP,Complete moderation dashboard with approval workflow,4,"Admin screens, API integration",Medium,Blocker,Medium,"Functional content moderation system"
 P0,Critical,Type Safety Fixes,Remove all @ts-ignore comments and fix type errors,2,"TypeScript strict mode",Low,Blocker,High,"Zero TypeScript errors, strict type checking"

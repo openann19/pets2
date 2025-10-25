@@ -19,7 +19,7 @@ const getScreenDimensions = () => {
 const { width: screenWidth, height: screenHeight } = getScreenDimensions();
 
 // Legacy color mappings for backward compatibility
-const Colors = {
+export const Colors = {
   // Primary Palette
   primary: COLORS.primary[500],
   primaryLight: COLORS.primary[400],

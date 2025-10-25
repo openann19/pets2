@@ -563,7 +563,7 @@ class AdminAPIService {
       queryParams.append("page", String(params.page));
     if (params.limit !== undefined)
       queryParams.append("limit", String(params.limit));
-    if (params.filter !== undefined && params.filter !== "")
+    if (params.filter !== undefined && params.filter !== "all")
       queryParams.append("filter", params.filter);
     if (params.search !== undefined && params.search !== "")
       queryParams.append("search", params.search);

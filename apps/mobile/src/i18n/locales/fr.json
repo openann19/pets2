@@ -1,0 +1,78 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "save": "Sauvegarder",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "retry": "Réessayer",
+    "close": "Fermer"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "forgotPassword": "Mot de passe oublié ?",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "createAccount": "Créer un compte",
+    "welcome": "Bienvenue sur PawfectMatch",
+    "welcomeBack": "Bienvenue !"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "swipe": "Swiper",
+    "matches": "Matches",
+    "messages": "Messages",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "premium": "Premium"
+  },
+  "swipe": {
+    "like": "J'aime",
+    "pass": "Passer",
+    "superLike": "Super Like",
+    "undo": "Annuler",
+    "noMorePets": "Plus d'animaux à proximité",
+    "checkBackLater": "Revenez plus tard pour de nouveaux matches !"
+  },
+  "matches": {
+    "newMatches": "Nouveaux Matches",
+    "messages": "Messages",
+    "sendMessage": "Envoyer un message",
+    "typeMessage": "Tapez un message...",
+    "online": "En ligne",
+    "lastSeen": "Vu il y a {{time}}"
+  },
+  "profile": {
+    "editProfile": "Modifier le profil",
+    "photos": "Photos",
+    "about": "À propos",
+    "interests": "Intérêts",
+    "preferences": "Préférences"
+  },
+  "premium": {
+    "upgrade": "Passer en Premium",
+    "premiumFeatures": "Fonctionnalités Premium",
+    "unlimitedSwipes": "Swipes Illimités",
+    "seeWhoLikedYou": "Voir qui vous a aimé",
+    "advancedFilters": "Filtres Avancés",
+    "prioritySupport": "Support Prioritaire"
+  },
+  "errors": {
+    "networkError": "Erreur réseau",
+    "serverError": "Erreur serveur",
+    "validationError": "Erreur de validation",
+    "genericError": "Quelque chose s'est mal passé. Veuillez réessayer."
+  }
+}

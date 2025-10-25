@@ -1,0 +1,142 @@
+{
+  "gdpr": {
+    "deleteAccount": {
+      "method": "POST",
+      "path": "/users/delete-account",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "exportUserData": {
+      "method": "POST",
+      "path": "/users/export-data",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "confirmDeleteAccount": {
+      "method": "POST",
+      "path": "/users/confirm-deletion",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "cancelDeleteAccount": {
+      "method": "POST",
+      "path": "/users/cancel-deletion",
+      "implemented": true,
+      "mockServerImplemented": false
+    }
+  },
+  "chat": {
+    "sendMessage": {
+      "method": "POST",
+      "path": "/matches/:matchId/messages",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "sendImage": {
+      "method": "POST",
+      "path": "/messages/image",
+      "implemented": false,
+      "mockServerImplemented": false
+    },
+    "sendVideo": {
+      "method": "POST",
+      "path": "/messages/video",
+      "implemented": false,
+      "mockServerImplemented": false
+    },
+    "sendVoice": {
+      "method": "POST",
+      "path": "/messages/voice",
+      "implemented": false,
+      "mockServerImplemented": false
+    },
+    "exportChat": {
+      "method": "POST",
+      "path": "/chat/:matchId/export",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "clearChatHistory": {
+      "method": "DELETE",
+      "path": "/chat/:matchId/clear",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "unmatchUser": {
+      "method": "DELETE",
+      "path": "/matches/:matchId/unmatch",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "addReaction": {
+      "method": "POST",
+      "path": "/messages/:messageId/react",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "removeReaction": {
+      "method": "DELETE",
+      "path": "/messages/:messageId/unreact",
+      "implemented": true,
+      "mockServerImplemented": false
+    }
+  },
+  "swipe": {
+    "like": {
+      "method": "POST",
+      "path": "/swipe/:petId/like",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "pass": {
+      "method": "POST",
+      "path": "/swipe/:petId/pass",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "superLike": {
+      "method": "POST",
+      "path": "/swipe/:petId/superlike",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "report": {
+      "method": "POST",
+      "path": "/swipe/:petId/report",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "boostProfile": {
+      "method": "POST",
+      "path": "/profile/boost",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "getRecommendations": {
+      "method": "GET",
+      "path": "/pets/recommendations",
+      "implemented": true,
+      "mockServerImplemented": false
+    }
+  },
+  "premium": {
+    "getSubscriptionStatus": {
+      "method": "GET",
+      "path": "/subscription/status",
+      "implemented": true,
+      "mockServerImplemented": true
+    },
+    "getPremiumLimits": {
+      "method": "GET",
+      "path": "/subscription/limits",
+      "implemented": true,
+      "mockServerImplemented": false
+    },
+    "cancelSubscription": {
+      "method": "POST",
+      "path": "/subscription/cancel",
+      "implemented": true,
+      "mockServerImplemented": true
+    }
+  }
+}

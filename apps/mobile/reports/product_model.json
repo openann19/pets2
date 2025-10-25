@@ -1,0 +1,1485 @@
+{
+  "entities": [
+    {
+      "name": "User",
+      "fields": [
+        "id",
+        "email",
+        "role",
+        "premium",
+        "name",
+        "avatar"
+      ],
+      "relations": [
+        {
+          "type": "hasMany",
+          "to": "Pet"
+        },
+        {
+          "type": "hasMany",
+          "to": "Match"
+        },
+        {
+          "type": "hasOne",
+          "to": "Subscription"
+        }
+      ]
+    },
+    {
+      "name": "Pet",
+      "fields": [
+        "id",
+        "ownerId",
+        "breed",
+        "age",
+        "photos",
+        "name",
+        "species",
+        "bio"
+      ],
+      "relations": [
+        {
+          "type": "belongsTo",
+          "to": "User"
+        },
+        {
+          "type": "hasMany",
+          "to": "Match"
+        },
+        {
+          "type": "hasMany",
+          "to": "Swipe"
+        }
+      ]
+    },
+    {
+      "name": "Match",
+      "fields": [
+        "id",
+        "userA",
+        "userB",
+        "createdAt",
+        "matchedAt"
+      ],
+      "relations": [
+        {
+          "type": "hasMany",
+          "to": "Message"
+        },
+        {
+          "type": "belongsTo",
+          "to": "Pet",
+          "as": "petA"
+        },
+        {
+          "type": "belongsTo",
+          "to": "Pet",
+          "as": "petB"
+        }
+      ]
+    },
+    {
+      "name": "Message",
+      "fields": [
+        "id",
+        "matchId",
+        "senderId",
+        "type",
+        "content",
+        "createdAt",
+        "status"
+      ],
+      "relations": [
+        {
+          "type": "belongsTo",
+          "to": "Match"
+        },
+        {
+          "type": "belongsTo",
+          "to": "User",
+          "as": "sender"
+        }
+      ]
+    },
+    {
+      "name": "Subscription",
+      "fields": [
+        "userId",
+        "plan",
+        "status",
+        "renewsAt",
+        "priceId"
+      ],
+      "relations": [
+        {
+          "type": "belongsTo",
+          "to": "User"
+        }
+      ]
+    },
+    {
+      "name": "Adoption",
+      "fields": [
+        "listingId",
+        "applicantId",
+        "status",
+        "createdAt"
+      ],
+      "relations": [
+        {
+          "type": "belongsTo",
+          "to": "Pet",
+          "as": "listing"
+        }
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "name": "AIBioScreen.refactored",
+      "file": "AIBioScreen.refactored.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "AIBioScreen",
+      "file": "AIBioScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "AICompatibilityScreen",
+      "file": "AICompatibilityScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "AIPhotoAnalyzerScreen",
+      "file": "AIPhotoAnalyzerScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ARScentTrailsScreen",
+      "file": "ARScentTrailsScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": true,
+        "success": false,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "AboutTermsPrivacyScreen",
+      "file": "AboutTermsPrivacyScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "AdvancedFiltersScreen",
+      "file": "AdvancedFiltersScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "BlockedUsersScreen",
+      "file": "BlockedUsersScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ChatScreen",
+      "file": "ChatScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "report",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ComponentShowcaseScreen",
+      "file": "ComponentShowcaseScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ComponentTestScreen",
+      "file": "ComponentTestScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "CreatePetScreen",
+      "file": "CreatePetScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "DeactivateAccountScreen",
+      "file": "DeactivateAccountScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "DeleteAccountScreen",
+      "file": "DeleteAccountScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "EditProfileScreen",
+      "file": "EditProfileScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ForgotPasswordScreen",
+      "file": "ForgotPasswordScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "HelpSupportScreen",
+      "file": "HelpSupportScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "HomeScreen",
+      "file": "HomeScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "like"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "LoginScreen",
+      "file": "LoginScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ManageSubscriptionScreen",
+      "file": "ManageSubscriptionScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "MapScreen",
+      "file": "MapScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "MatchesScreen",
+      "file": "MatchesScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [
+        "report"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "MemoryWeaveScreen",
+      "file": "MemoryWeaveScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ModerationToolsScreen",
+      "file": "ModerationToolsScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "report",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ModernCreatePetScreen",
+      "file": "ModernCreatePetScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ModernSwipeScreen",
+      "file": "ModernSwipeScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": false,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "like",
+        "pass",
+        "superlike",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "MyPetsScreen",
+      "file": "MyPetsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "undo",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "NewComponentsTestScreen",
+      "file": "NewComponentsTestScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "NotificationPreferencesScreen",
+      "file": "NotificationPreferencesScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "PremiumCancelScreen",
+      "file": "PremiumCancelScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "PremiumDemoScreen",
+      "file": "PremiumDemoScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "PremiumScreen",
+      "file": "PremiumScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "like",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "PremiumSuccessScreen",
+      "file": "PremiumSuccessScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "PrivacySettingsScreen",
+      "file": "PrivacySettingsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ProShowcaseScreen",
+      "file": "ProShowcaseScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ProTextShowcaseScreen",
+      "file": "ProTextShowcaseScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ProfileScreen",
+      "file": "ProfileScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "RegisterScreen",
+      "file": "RegisterScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ResetPasswordScreen",
+      "file": "ResetPasswordScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "SafetyCenterScreen",
+      "file": "SafetyCenterScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "report",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "SettingsScreen",
+      "file": "SettingsScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "StoriesScreen",
+      "file": "StoriesScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "SwipeScreen",
+      "file": "SwipeScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": false,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [
+        "like",
+        "pass",
+        "superlike",
+        "boost",
+        "undo",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminAIServicesScreen",
+      "file": "admin/AdminAIServicesScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminAnalyticsScreen",
+      "file": "admin/AdminAnalyticsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "report",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminBillingScreen",
+      "file": "admin/AdminBillingScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminBiometricScreen",
+      "file": "admin/AdminBiometricScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminChatsScreen",
+      "file": "admin/AdminChatsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminDashboardScreen",
+      "file": "admin/AdminDashboardScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "report"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminEnhancedFeaturesScreen",
+      "file": "admin/AdminEnhancedFeaturesScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminExternalServicesScreen",
+      "file": "admin/AdminExternalServicesScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminLeaderboardScreen",
+      "file": "admin/AdminLeaderboardScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "undo",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminNotificationsScreen",
+      "file": "admin/AdminNotificationsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminReportsScreen",
+      "file": "admin/AdminReportsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "report",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminSecurityScreen",
+      "file": "admin/AdminSecurityScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "report",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminUploadsScreen",
+      "file": "admin/AdminUploadsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminUsersScreen",
+      "file": "admin/AdminUsersScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": false,
+        "skeleton": true
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "admin-AdminVerificationsScreen",
+      "file": "admin/AdminVerificationsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "adoption-AdoptionApplicationScreen",
+      "file": "adoption/AdoptionApplicationScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "adoption-AdoptionContractScreen",
+      "file": "adoption/AdoptionContractScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "adoption-AdoptionManagerScreen",
+      "file": "adoption/AdoptionManagerScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": false,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "adoption-ApplicationReviewScreen",
+      "file": "adoption/ApplicationReviewScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "adoption-CreateListingScreen",
+      "file": "adoption/CreateListingScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "adoption-PetDetailsScreen",
+      "file": "adoption/PetDetailsScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ai-AICompatibilityScreen",
+      "file": "ai/AICompatibilityScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "ai-AIPhotoAnalyzerScreen",
+      "file": "ai/AIPhotoAnalyzerScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "calling-ActiveCallScreen",
+      "file": "calling/ActiveCallScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "calling-IncomingCallScreen",
+      "file": "calling/IncomingCallScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "community-CommunityScreen",
+      "file": "community/CommunityScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "like"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "leaderboard-LeaderboardScreen",
+      "file": "leaderboard/LeaderboardScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "onboarding-PetProfileSetupScreen",
+      "file": "onboarding/PetProfileSetupScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": true
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "onboarding-PreferencesSetupScreen",
+      "file": "onboarding/PreferencesSetupScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": true,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "onboarding-UserIntentScreen",
+      "file": "onboarding/UserIntentScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": true,
+        "error": false,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "onboarding-WelcomeScreen",
+      "file": "onboarding/WelcomeScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "premium-PremiumPurchaseScreen",
+      "file": "premium/PremiumPurchaseScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "boost",
+        "undo"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "premium-PremiumScreen",
+      "file": "premium/PremiumScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "boost",
+        "undo",
+        "back"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "premium-SubscriptionManagerScreen",
+      "file": "premium/SubscriptionManagerScreen.tsx",
+      "states": {
+        "loading": true,
+        "empty": false,
+        "success": true,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [
+        "superlike",
+        "boost"
+      ],
+      "hasTests": false,
+      "hasA11yIssues": false
+    },
+    {
+      "name": "premium-SubscriptionSuccessScreen",
+      "file": "premium/SubscriptionSuccessScreen.tsx",
+      "states": {
+        "loading": false,
+        "empty": false,
+        "success": false,
+        "error": true,
+        "skeleton": false
+      },
+      "actions": [],
+      "hasTests": false,
+      "hasA11yIssues": false
+    }
+  ],
+  "apis": [
+    {
+      "name": "deleteAccount",
+      "method": "POST",
+      "path": "/users/delete-account",
+      "status": "present",
+      "critical": true,
+      "area": "GDPR"
+    },
+    {
+      "name": "exportUserData",
+      "method": "POST",
+      "path": "/users/export-data",
+      "status": "present",
+      "critical": true,
+      "area": "GDPR"
+    },
+    {
+      "name": "confirmDeleteAccount",
+      "method": "POST",
+      "path": "/users/confirm-deletion",
+      "status": "present",
+      "critical": true,
+      "area": "GDPR"
+    },
+    {
+      "name": "cancelDeleteAccount",
+      "method": "POST",
+      "path": "/users/cancel-deletion",
+      "status": "present",
+      "critical": true,
+      "area": "GDPR"
+    },
+    {
+      "name": "sendMessage",
+      "method": "POST",
+      "path": "/matches/:matchId/messages",
+      "status": "present",
+      "critical": false,
+      "area": "Chat"
+    },
+    {
+      "name": "sendImage",
+      "method": "POST",
+      "path": "/matches/:matchId/messages/image",
+      "status": "missing",
+      "critical": false,
+      "area": "Chat"
+    },
+    {
+      "name": "sendVideo",
+      "method": "POST",
+      "path": "/matches/:matchId/messages/video",
+      "status": "missing",
+      "critical": false,
+      "area": "Chat"
+    },
+    {
+      "name": "sendVoice",
+      "method": "POST",
+      "path": "/matches/:matchId/messages/voice",
+      "status": "missing",
+      "critical": false,
+      "area": "Chat"
+    },
+    {
+      "name": "exportChat",
+      "method": "POST",
+      "path": "/chat/:matchId/export",
+      "status": "present",
+      "critical": false,
+      "area": "Chat"
+    },
+    {
+      "name": "likePet",
+      "method": "POST",
+      "path": "/swipe/:petId/like",
+      "status": "missing",
+      "critical": false,
+      "area": "Swipe"
+    },
+    {
+      "name": "passPet",
+      "method": "POST",
+      "path": "/swipe/:petId/pass",
+      "status": "missing",
+      "critical": false,
+      "area": "Swipe"
+    },
+    {
+      "name": "reportPet",
+      "method": "POST",
+      "path": "/swipe/:petId/report",
+      "status": "missing",
+      "critical": false,
+      "area": "Swipe"
+    },
+    {
+      "name": "boostProfile",
+      "method": "POST",
+      "path": "/users/boost",
+      "status": "present",
+      "critical": false,
+      "area": "Swipe"
+    },
+    {
+      "name": "superLike",
+      "method": "POST",
+      "path": "/swipe/:petId/superlike",
+      "status": "present",
+      "critical": false,
+      "area": "Swipe"
+    }
+  ],
+  "navigation": []
+}

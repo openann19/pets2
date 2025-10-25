@@ -354,7 +354,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               title="View Details"
               variant="secondary"
               size="small"
-              icon="eye"
+              leftIcon="eye"
               onPress={() =>
                 navigation.navigate("PetDetails", { petId: pet.id })
               }
@@ -365,7 +365,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               title={`Review (${pet.applications})`}
               variant="primary"
               size="small"
-              icon="document-text"
+              leftIcon="document-text"
               onPress={() =>
                 navigation.navigate("ApplicationReview", {
                   applicationId: pet.id,
@@ -433,7 +433,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 title="Reject"
                 variant="ghost"
                 size="small"
-                icon="close"
+                leftIcon="close"
                 onPress={() => {
                   handleApplicationAction(app.id, "reject");
                 }}
@@ -444,7 +444,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 title="Approve"
                 variant="primary"
                 size="small"
-                icon="checkmark"
+                leftIcon="checkmark"
                 onPress={() => {
                   handleApplicationAction(app.id, "approve");
                 }}
@@ -477,7 +477,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
         rightComponent={
           <EliteButton
             title="Add Pet"
-            icon="add"
+            leftIcon="add"
             size="small"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

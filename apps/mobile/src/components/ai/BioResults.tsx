@@ -17,7 +17,13 @@ import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Theme } from "../../theme/unified-theme";
-import { GeneratedBio } from "../../hooks/useAIBio";
+import { getBorderColor, getPrimaryColor } from "../../theme/helpers";
+import {
+  getTextColorString,
+  getBackgroundColorString,
+  getStatusColor,
+} from "../../theme/compatibility";
+import type { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {
   generatedBio: GeneratedBio;
@@ -32,14 +38,14 @@ export function BioResults({
 }: BioResultsProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = () => {
     try {
-      await Clipboard.setStringAsync(generatedBio.bio);
+      Clipboard.setString(generatedBio.bio);
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       Alert.alert("Error", "Failed to copy bio to clipboard");
     }
   };
@@ -51,16 +57,16 @@ export function BioResults({
     }
   };
 
-  const getSentimentColor = (score: number) => {
-    if (score >= 0.7) return Theme.colors.status.success;
-    if (score >= 0.4) return Theme.colors.status.warning;
-    return Theme.colors.status.error;
+  const getSentimentColor = (score: number): string => {
+    if (score >= 0.7) return getStatusColor("success");
+    if (score >= 0.4) return getStatusColor("warning");
+    return getStatusColor("error");
   };
 
-  const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return Theme.colors.status.success;
-    if (score >= 60) return Theme.colors.status.warning;
-    return Theme.colors.status.error;
+  const getMatchScoreColor = (score: number): string => {
+    if (score >= 80) return getStatusColor("success");
+    if (score >= 60) return getStatusColor("warning");
+    return getStatusColor("error");
   };
 
   return (
@@ -86,12 +92,16 @@ export function BioResults({
             <Ionicons
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
-              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
+              color={
+                copied
+                  ? getStatusColor("success")
+                  : getTextColorString("primary")
+              }
             />
             <Text
               style={[
                 styles.actionText,
-                copied && { color: Theme.colors.status.success },
+                copied && { color: getStatusColor("success") },
               ]}
             >
               {copied ? "Copied!" : "Copy"}
@@ -107,7 +117,7 @@ export function BioResults({
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={Theme.colors.text.primary}
+                color={getTextColorString("primary")}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -122,7 +132,7 @@ export function BioResults({
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={Theme.colors.text.primary}
+                color={getTextColorString("primary")}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>
@@ -151,7 +161,7 @@ export function BioResults({
                 style={[
                   styles.progressFill,
                   {
-                    width: `${generatedBio.matchScore}%`,
+                    width: generatedBio.matchScore,
                     backgroundColor: getMatchScoreColor(
                       generatedBio.matchScore,
                     ),
@@ -203,15 +213,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    color: getTextColorString("primary"),
     marginBottom: Theme.spacing.xl,
   },
   bioCard: {
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: getBackgroundColorString("primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
-    shadowColor: Theme.shadow,
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -222,7 +232,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary,
+    color: getTextColorString("primary"),
     lineHeight: Theme.typography.lineHeight.relaxed,
   },
   actionButtons: {
@@ -231,7 +241,7 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border,
+    borderTopColor: getBorderColor("light"),
   },
   actionButton: {
     flexDirection: "row",
@@ -241,19 +251,19 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.primary,
+    color: getTextColorString("primary"),
     marginLeft: Theme.spacing.xs,
     fontWeight: Theme.typography.fontWeight.medium,
   },
   analysisContainer: {
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: getBackgroundColorString("primary"),
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
   },
   analysisTitle: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: getTextColorString("primary"),
     marginBottom: Theme.spacing.lg,
   },
   metricsGrid: {
@@ -263,14 +273,14 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: getBackgroundColorString("primary"),
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
     alignItems: "center",
   },
   metricLabel: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColorString("secondary"),
     marginBottom: Theme.spacing.xs,
   },
   metricValue: {
@@ -280,12 +290,12 @@ const styles = StyleSheet.create({
   },
   metricSubtext: {
     fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
+    color: getTextColorString("secondary"),
   },
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: Theme.colors.border,
+    backgroundColor: getBorderColor("light"),
     borderRadius: Theme.borderRadius.full,
     overflow: "hidden",
   },
@@ -295,13 +305,13 @@ const styles = StyleSheet.create({
   },
   keywordsSection: {
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border,
+    borderTopColor: getBorderColor("light"),
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: getTextColorString("primary"),
     marginBottom: Theme.spacing.md,
   },
   keywordsContainer: {
@@ -310,14 +320,14 @@ const styles = StyleSheet.create({
     gap: Theme.spacing.sm,
   },
   keywordChip: {
-    backgroundColor: Theme.colors.primary,
+    backgroundColor: getPrimaryColor(500),
     borderRadius: Theme.borderRadius.full,
     paddingHorizontal: Theme.spacing.sm,
     paddingVertical: Theme.spacing.xs,
   },
   keywordText: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.background.primary,
+    color: getTextColorString("inverse"),
     fontWeight: Theme.typography.fontWeight.medium,
   },
 });

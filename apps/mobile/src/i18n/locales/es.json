@@ -1,0 +1,78 @@
+{
+  "common": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "loading": "Cargando...",
+    "error": "Error",
+    "retry": "Reintentar",
+    "close": "Cerrar"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "register": "Registrarse",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "createAccount": "Crear Cuenta",
+    "welcome": "Bienvenido a PawfectMatch",
+    "welcomeBack": "¡Bienvenido de vuelta!"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "swipe": "Deslizar",
+    "matches": "Matches",
+    "messages": "Mensajes",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "premium": "Premium"
+  },
+  "swipe": {
+    "like": "Me gusta",
+    "pass": "Pasar",
+    "superLike": "Super Like",
+    "undo": "Deshacer",
+    "noMorePets": "No hay más mascotas cerca",
+    "checkBackLater": "¡Vuelve más tarde para nuevos matches!"
+  },
+  "matches": {
+    "newMatches": "Nuevos Matches",
+    "messages": "Mensajes",
+    "sendMessage": "Enviar Mensaje",
+    "typeMessage": "Escribe un mensaje...",
+    "online": "En línea",
+    "lastSeen": "Visto por última vez hace {{time}}"
+  },
+  "profile": {
+    "editProfile": "Editar Perfil",
+    "photos": "Fotos",
+    "about": "Acerca de",
+    "interests": "Intereses",
+    "preferences": "Preferencias"
+  },
+  "premium": {
+    "upgrade": "Actualizar a Premium",
+    "premiumFeatures": "Funciones Premium",
+    "unlimitedSwipes": "Deslizamientos Ilimitados",
+    "seeWhoLikedYou": "Ver Quién Te Gustó",
+    "advancedFilters": "Filtros Avanzados",
+    "prioritySupport": "Soporte Prioritario"
+  },
+  "errors": {
+    "networkError": "Error de Red",
+    "serverError": "Error del Servidor",
+    "validationError": "Error de Validación",
+    "genericError": "Algo salió mal. Por favor, inténtalo de nuevo."
+  }
+}

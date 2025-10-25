@@ -21,7 +21,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { AdminScreenProps } from "../../navigation/types";
-import { _adminAPI as adminAPI } from "../../services/api";
+import { _adminAPI as adminAPI } from "../../services/adminAPI";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AdminStats {
@@ -130,6 +130,18 @@ export default function AdminDashboardScreen({
         break;
       case "verifications":
         navigation.navigate("AdminVerifications");
+        break;
+      case "enhanced-features":
+        navigation.navigate("AdminEnhancedFeatures");
+        break;
+      case "ai-services":
+        navigation.navigate("AdminAIServices");
+        break;
+      case "external-services":
+        navigation.navigate("AdminExternalServices");
+        break;
+      case "reports":
+        navigation.navigate("AdminReports");
         break;
       default:
         logger.info(`Quick action: ${action}`);
@@ -307,6 +319,58 @@ export default function AdminDashboardScreen({
               <Ionicons name="cloud-upload-outline" size={32} color="#06B6D4" />
               <Text style={[styles.quickActionTitle, { color: colors.text }]}>
                 Uploads
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              onPress={() => {
+                handleQuickAction("enhanced-features");
+              }}
+            >
+              <Ionicons name="star-outline" size={32} color="#EC4899" />
+              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+                Enhanced Features
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              onPress={() => {
+                handleQuickAction("ai-services");
+              }}
+            >
+              <Ionicons name="bulb-outline" size={32} color="#8B5CF6" />
+              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+                AI Services
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              onPress={() => {
+                handleQuickAction("external-services");
+              }}
+            >
+              <Ionicons name="globe-outline" size={32} color="#06B6D4" />
+              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+                External Services
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              onPress={() => {
+                handleQuickAction("reports");
+              }}
+            >
+              <Ionicons
+                name="document-text-outline"
+                size={32}
+                color="#F59E0B"
+              />
+              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+                Reports
               </Text>
             </TouchableOpacity>
           </View>

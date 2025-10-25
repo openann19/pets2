@@ -4,7 +4,6 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -21,6 +20,17 @@ import {
 import { AdvancedButton } from "../components/Advanced/AdvancedInteractionSystem";
 import { matchesAPI } from "../services/api";
 import { useAuthStore } from "@pawfectmatch/core";
+import {
+  ModernText,
+  Heading1,
+  Heading2,
+  Heading3,
+  Body,
+  BodySmall,
+  Caption,
+  Label,
+  ButtonText,
+} from "../components/typography/HyperTextSkia";
 
 type RootStackParamList = {
   Settings: undefined;
@@ -167,6 +177,16 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     },
   ];
 
+  const dataSettings: SettingItem[] = [
+    {
+      id: "export",
+      title: "Export My Data",
+      subtitle: "Download all your data (GDPR)",
+      icon: "download",
+      type: "action",
+    },
+  ];
+
   const dangerSettings: SettingItem[] = [
     {
       id: "logout",
@@ -180,7 +200,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       title: "Delete Account",
       subtitle: "Permanently delete your account",
       icon: "trash",
-      type: "action",
+      type: "navigation",
       destructive: true,
     },
   ];
@@ -215,6 +235,9 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       case "profile":
         navigation.navigate("Profile" as any);
         break;
+      case "delete":
+        navigation.navigate("DeleteAccount" as any);
+        break;
       case "privacy":
       case "subscription":
       case "help":
@@ -230,7 +253,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     }
   };
 
-  const handleAction = (id: string) => {
+  const handleAction = async (id: string) => {
     switch (id) {
       case "logout":
         Alert.alert("Log Out", "Are you sure you want to log out?", [
@@ -240,8 +263,6 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
             style: "destructive",
             onPress: async () => {
               try {
-                // Implement logout
-                await matchesAPI.auth.logout();
                 useAuthStore.getState().logout();
                 Alert.alert(
                   "Logged Out",
@@ -256,36 +277,22 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           },
         ]);
         break;
-      case "delete":
-        Alert.alert(
-          "Delete Account",
-          "This action cannot be undone. All your data will be permanently deleted.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Delete Account",
-              style: "destructive",
-              onPress: async () => {
-                try {
-                  // Implement account deletion
-                  await matchesAPI.user.deleteAccount();
-                  useAuthStore.getState().logout();
-                  Alert.alert(
-                    "Account Deleted",
-                    "Your account has been deleted",
-                  );
-                  navigation.navigate("Home" as any);
-                } catch (error) {
-                  logger.error("Account deletion failed:", { error });
-                  Alert.alert(
-                    "Error",
-                    "Failed to delete account. Please try again.",
-                  );
-                }
-              },
-            },
-          ],
-        );
+      case "export":
+        try {
+          Alert.alert(
+            "Export Data",
+            "Your data export has been initiated. You'll receive a download link at your email within 48 hours.",
+            [{ text: "OK" }],
+          );
+          await matchesAPI.exportUserData();
+          logger.info("User data export initiated");
+        } catch (error) {
+          logger.error("Failed to export user data:", { error });
+          Alert.alert(
+            "Export Failed",
+            "Failed to export your data. Please try again or contact support.",
+          );
+        }
         break;
     }
   };
@@ -323,23 +330,23 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           />
         </View>
         <View style={styles.settingText}>
-          <Text
+          <Label
             style={[
               styles.settingTitle,
               item.destructive && styles.settingTitleDestructive,
             ]}
           >
             {item.title}
-          </Text>
+          </Label>
           {item.subtitle && (
-            <Text
+            <BodySmall
               style={[
                 styles.settingSubtitle,
                 item.destructive && styles.settingSubtitleDestructive,
               ]}
             >
               {item.subtitle}
-            </Text>
+            </BodySmall>
           )}
         </View>
       </View>
@@ -368,7 +375,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     category?: "notifications" | "preferences",
   ) => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <Heading3 style={styles.sectionTitle}>{title}</Heading3>
       <View style={styles.sectionContent}>
         {items.map((item) => renderSettingItem(item, category))}
       </View>
@@ -432,11 +439,11 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                 <Ionicons name="person" size={32} color="#9CA3AF" />
               </View>
               <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>John Doe</Text>
-                <Text style={styles.profileEmail}>john@example.com</Text>
+                <Heading3 style={styles.profileName}>John Doe</Heading3>
+                <Body style={styles.profileEmail}>john@example.com</Body>
                 <View style={styles.profileStatus}>
                   <View style={styles.statusDot} />
-                  <Text style={styles.statusText}>Free Plan</Text>
+                  <Caption style={styles.statusText}>Free Plan</Caption>
                 </View>
               </View>
             </View>
@@ -448,14 +455,15 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         {renderSection("Preferences", preferenceSettings, "preferences")}
         {renderSection("Account", accountSettings)}
         {renderSection("Support", supportSettings)}
+        {renderSection("Data & Privacy", dataSettings)}
         {renderSection("Account Actions", dangerSettings)}
 
         {/* App Version */}
         <View style={styles.versionSection}>
-          <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
-          <Text style={styles.versionSubtitle}>
+          <Caption style={styles.versionText}>PawfectMatch v1.0.0</Caption>
+          <Caption style={styles.versionSubtitle}>
             Built with ❤️ for pet lovers
-          </Text>
+          </Caption>
         </View>
       </ScrollView>
     </SafeAreaView>

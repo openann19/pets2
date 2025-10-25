@@ -37,6 +37,7 @@ import {
 } from "../hooks/useUnifiedAnimations";
 import { Theme } from "../theme/unified-theme";
 import { useTheme } from "../contexts/ThemeContext";
+import { getPrimaryColor, getStatusColor } from "../../theme/helpers";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -316,7 +317,7 @@ function ModernSwipeCardComponent({
               <Ionicons
                 name="checkmark-circle"
                 size={24}
-                color={Theme.colors.status.success}
+                color={getStatusColor("success")}
               />
             </View>
           )}
@@ -371,7 +372,7 @@ function ModernSwipeCardComponent({
                     styles.compatibilityFill,
                     {
                       width: `${pet.compatibility}%`,
-                      backgroundColor: Theme.colors.primary[500],
+                      backgroundColor: getPrimaryColor(500),
                     },
                   ]}
                 />
@@ -388,14 +389,11 @@ function ModernSwipeCardComponent({
                   key={index}
                   style={[
                     styles.tag,
-                    { backgroundColor: `${Theme.colors.primary[500]}20` },
+                    { backgroundColor: `${getPrimaryColor(500)}20` },
                   ]}
                 >
                   <Text
-                    style={[
-                      styles.tagText,
-                      { color: Theme.colors.primary[500] },
-                    ]}
+                    style={[styles.tagText, { color: getPrimaryColor(500) }]}
                   >
                     {tag}
                   </Text>

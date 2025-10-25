@@ -1,0 +1,142 @@
+{
+  "root": {
+    "stack": [
+      {
+        "name": "Home",
+        "component": "HomeScreen",
+        "guards": []
+      },
+      {
+        "name": "Swipe",
+        "component": "SwipeScreen",
+        "guards": []
+      },
+      {
+        "name": "Matches",
+        "component": "MatchesScreen",
+        "guards": []
+      },
+      {
+        "name": "Profile",
+        "component": "ProfileScreen",
+        "params": [
+          "userId?",
+          "string"
+        ],
+        "guards": []
+      },
+      {
+        "name": "Settings",
+        "component": "SettingsScreen",
+        "guards": []
+      },
+      {
+        "name": "MyPets",
+        "component": "MyPetsScreen",
+        "guards": []
+      },
+      {
+        "name": "CreatePet",
+        "component": "CreatePetScreen",
+        "guards": []
+      },
+      {
+        "name": "AdoptionManager",
+        "component": "AdoptionManagerScreen",
+        "guards": []
+      },
+      {
+        "name": "MainTabs",
+        "component": "MainTabsScreen",
+        "guards": []
+      }
+    ],
+    "initialRoute": "Home",
+    "options": {
+      "headerShown": false
+    }
+  },
+  "admin": {
+    "stack": [],
+    "guard": "role === admin",
+    "initialRoute": "AdminDashboard"
+  },
+  "screens": {
+    "Home": {
+      "name": "Home",
+      "component": "HomeScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "Swipe": {
+      "name": "Swipe",
+      "component": "SwipeScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "Matches": {
+      "name": "Matches",
+      "component": "MatchesScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "Profile": {
+      "name": "Profile",
+      "component": "ProfileScreen",
+      "params": [
+        "userId?",
+        "string"
+      ],
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "Settings": {
+      "name": "Settings",
+      "component": "SettingsScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "MyPets": {
+      "name": "MyPets",
+      "component": "MyPetsScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "CreatePet": {
+      "name": "CreatePet",
+      "component": "CreatePetScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "AdoptionManager": {
+      "name": "AdoptionManager",
+      "component": "AdoptionManagerScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    },
+    "MainTabs": {
+      "name": "MainTabs",
+      "component": "MainTabsScreen",
+      "guards": [],
+      "isReachable": true,
+      "requiresAuth": true,
+      "isPremium": false
+    }
+  }
+}

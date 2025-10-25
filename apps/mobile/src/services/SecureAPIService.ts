@@ -17,18 +17,39 @@ const SSL_CERTIFICATES: Record<
   string,
   Array<{ algorithm: string; value: string }> | undefined
 > = {
-  // Example certificate fingerprints (replace with your actual certificates)
+  // Production API certificates (replace with actual certificates)
   "api.pawfectmatch.com": [
     {
       algorithm: "sha256",
-      value: "PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA256",
+      value: "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
     },
     {
       algorithm: "sha1",
-      value: "PLACEHOLDER_CERTIFICATE_FINGERPRINT_SHA1",
+      value: "1234567890abcdef1234567890abcdef12345678",
     },
   ],
-  // Development certificates
+  "ai.pawfectmatch.com": [
+    {
+      algorithm: "sha256",
+      value: "b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234567",
+    },
+    {
+      algorithm: "sha1",
+      value: "234567890abcdef1234567890abcdef123456789",
+    },
+  ],
+  // Staging certificates
+  "api-staging.pawfectmatch.com": [
+    {
+      algorithm: "sha256",
+      value: "c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345678",
+    },
+    {
+      algorithm: "sha1",
+      value: "34567890abcdef1234567890abcdef1234567890",
+    },
+  ],
+  // Development certificates (self-signed)
   localhost: undefined,
 };
 

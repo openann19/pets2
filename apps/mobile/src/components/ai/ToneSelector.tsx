@@ -8,6 +8,13 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Theme } from "../../theme/unified-theme";
+import {
+  createShadowStyle,
+  getBackgroundColor,
+  getTextColor,
+  getBorderColor,
+  getTextColorString,
+} from "../../theme/helpers";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
 interface ToneSelectorProps {
@@ -53,7 +60,7 @@ export function ToneSelector({
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Bio Tone</Text>
       <Text style={styles.sectionSubtitle}>
-        Choose the personality for your pet's bio
+        Choose the personality for your pet&apos;s bio
       </Text>
 
       <View style={styles.grid}>
@@ -65,7 +72,9 @@ export function ToneSelector({
               selectedTone === tone.id && styles.selectedCard,
               {
                 borderColor:
-                  selectedTone === tone.id ? tone.color : Theme.colors.border,
+                  selectedTone === tone.id
+                    ? tone.color
+                    : getBorderColor("light"),
               },
             ]}
             onPress={() => {
@@ -107,12 +116,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
+    color: getTextColor().primary,
     marginBottom: Theme.spacing.sm,
   },
   sectionSubtitle: {
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
+    color: getTextColorString("secondary"),
     marginBottom: Theme.spacing.xl,
   },
   grid: {
@@ -123,16 +132,12 @@ const styles = StyleSheet.create({
   toneCard: {
     flex: 1,
     minWidth: 140,
-    backgroundColor: Theme.colors.background.primary,
+    backgroundColor: getBackgroundColor().primary,
     borderRadius: Theme.borderRadius.lg,
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    shadowColor: Theme.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...createShadowStyle("sm"),
   },
   selectedCard: {
     shadowOffset: { width: 0, height: 4 },
@@ -154,13 +159,13 @@ const styles = StyleSheet.create({
   toneLabel: {
     fontSize: Theme.typography.fontSize.base,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
+    color: getTextColor().primary,
     marginBottom: Theme.spacing.xs,
     textAlign: "center",
   },
   toneDescription: {
     fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
+    color: getTextColorString("secondary"),
     textAlign: "center",
     lineHeight: Theme.typography.lineHeight.normal,
   },
@@ -175,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkmark: {
-    color: Theme.colors.background.primary,
+    color: getTextColor().inverse,
     fontSize: Theme.typography.fontSize.sm,
     fontWeight: Theme.typography.fontWeight.bold,
   },

@@ -18,6 +18,7 @@ const basePresets = [
     },
   ],
   '@babel/preset-typescript',
+  '@babel/preset-flow',
 ];
 
 const basePlugins = [

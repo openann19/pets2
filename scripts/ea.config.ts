@@ -33,6 +33,13 @@ export const EAConfig = {
     borderMedium: "colors.border.medium",
     borderDark: "colors.border.dark",
   },
+
+  // Direct Theme.colors path rewrites
+  themePathMap: {
+    "colors.border": "colors.borderColor",
+    "colors.background": "colors.backgroundColor",
+    "colors.text.primary": "colors.textColor",
+  },
   
   // Skip Animated import addition (too risky)
   skipAnimatedImport: true,

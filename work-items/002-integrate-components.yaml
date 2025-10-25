@@ -1,0 +1,27 @@
+id: WI-002  
+title: Integrate New Components into Screens
+priority: HIGH
+scope:
+  - apps/mobile/src/screens/SwipeScreen.tsx (add Boost)
+  - apps/mobile/src/components/chat/MessageList.tsx (add Reactions)
+
+description: |
+  Complete integration of BoostModal and MessageReactions into their
+  respective screens/components per original design.
+
+acceptance_criteria:
+  - SwipeScreen shows BoostModal on boost button press
+  - Messages show reaction bubbles
+  - Long press message shows reaction picker
+  - State management for boost active/timer
+  - State management for reactions per message
+
+risk: MEDIUM
+estimated_time: 1 hour
+rollback: Remove integrations, revert to previous state
+
+verification:
+  - Manual test: Can activate boost from SwipeScreen
+  - Manual test: Can react to messages
+  - No TypeScript errors
+  - No console errors in metro

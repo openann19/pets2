@@ -49,6 +49,7 @@ export const Footer: React.FC<FooterProps> = ({
       300,
       withSpring(0, { damping: 15, stiffness: 100 }),
     );
+    // Note: Intentionally empty deps - only run mount animation once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

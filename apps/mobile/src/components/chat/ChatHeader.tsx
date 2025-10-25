@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
-import { EliteHeader } from "../EliteHeader";
-import { EliteButton } from "../EliteButton";
+import { EliteHeader } from "../EliteComponents";
+import EliteButton from "../buttons/EliteButton";
 import { tokens } from "@pawfectmatch/design-tokens";
 
 interface ChatHeaderProps {
@@ -43,29 +43,29 @@ export function ChatHeader({
         title=""
         variant="glass"
         size="sm"
-        icon="call"
-        magnetic={true}
-        ripple={true}
-        glow={true}
+        leftIcon="call"
+        magneticEffect={true}
+        rippleEffect={true}
+        glowEffect={true}
         onPress={handleVoiceCall}
       />
       <EliteButton
         title=""
         variant="glass"
         size="sm"
-        icon="videocam"
-        magnetic={true}
-        ripple={true}
-        glow={true}
+        leftIcon="videocam"
+        magneticEffect={true}
+        rippleEffect={true}
+        glowEffect={true}
         onPress={handleVideoCall}
       />
       <EliteButton
         title=""
         variant="glass"
         size="sm"
-        icon="ellipsis-vertical"
-        magnetic={true}
-        ripple={true}
+        leftIcon="ellipsis-vertical"
+        magneticEffect={true}
+        rippleEffect={true}
         onPress={handleMoreOptions}
       />
     </View>

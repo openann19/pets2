@@ -1,10 +1,12 @@
 import React, { useCallback } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
-import { EliteButton } from "../EliteButton";
-import { GlassContainer } from "../GlassContainer";
-import { PremiumBody } from "../PremiumBody";
-import { FadeInUp } from "../FadeInUp";
+import {
+  EliteButton,
+  GlassContainer,
+  PremiumBody,
+  FadeInUp,
+} from "../PremiumComponents";
 import { SwipeFilters as SwipeFiltersType } from "../../hooks/useSwipeData";
 
 interface SwipeFiltersProps {
@@ -65,9 +67,9 @@ export function SwipeFilters({
                   title={breed}
                   variant={filters.breed === breed ? "primary" : "glass"}
                   size="sm"
-                  magnetic={true}
-                  ripple={true}
-                  glow={filters.breed === breed}
+                  magneticEffect={true}
+                  rippleEffect={true}
+                  glowEffect={filters.breed === breed}
                   onPress={() => {
                     handleBreedPress(breed);
                   }}
@@ -88,9 +90,9 @@ export function SwipeFilters({
                       : "glass"
                   }
                   size="sm"
-                  magnetic={true}
-                  ripple={true}
-                  glow={
+                  magneticEffect={true}
+                  rippleEffect={true}
+                  glowEffect={
                     (species === "All" ? "" : species.toLowerCase()) ===
                     filters.species
                   }
@@ -106,11 +108,11 @@ export function SwipeFilters({
               title="Apply Filters"
               variant="holographic"
               size="md"
-              icon="checkmark"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              shimmer={true}
+              leftIcon="checkmark"
+              magneticEffect={true}
+              rippleEffect={true}
+              glowEffect={true}
+              shimmerEffect={true}
               onPress={onApplyFilters}
             />
           </View>

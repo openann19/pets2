@@ -7,7 +7,7 @@ import { useSocket } from "../../hooks/useSocket";
 import ActiveCallScreen from "../../screens/calling/ActiveCallScreen";
 import IncomingCallScreen from "../../screens/calling/IncomingCallScreen";
 import type { CallState } from "../../services/WebRTCService";
-import WebRTCService, { CallData } from "../../services/WebRTCService";
+import WebRTCService, { type CallData } from "../../services/WebRTCService";
 
 interface CallManagerProps {
   children: React.ReactNode;
