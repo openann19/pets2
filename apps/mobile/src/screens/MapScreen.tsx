@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMapScreen } from "../hooks/screens/useMapScreen";
 import { MapFiltersModal, MapStatsPanel, PinDetailsModal, HeatmapOverlay, CreateActivityModal } from "../components/map";
-import { startPetActivity } from "../services/petActivityService";
+import { ScreenShell } from "../ui/layout/ScreenShell";
+import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
+import { haptic } from "../ui/haptics";
 import type { RootStackParamList } from "../navigation/types";
 import { Theme } from "../theme/unified-theme";
 
@@ -37,11 +38,8 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
 
   const [showCreate, setShowCreate] = useState(false);
 
-  const onStartActivity = async (form: Parameters<typeof startPetActivity>[0]) => {
-    await startPetActivity(form);
-  };
-
   const handleARPress = () => {
+    haptic.confirm();
     if (userLocation) {
       navigation.navigate("ARScentTrails", {
         initialLocation: userLocation,
@@ -50,12 +48,22 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
   };
 
   return (
-    <View testID="MapScreen" style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Pet Activity Map</Text>
-        <Text style={styles.subtitle}>Real-time locations</Text>
-      </View>
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "Pet Activity Map",
+            subtitle: "Real-time locations",
+            showBackButton: true,
+            onBackPress: () => {
+              haptic.tap();
+              navigation.goBack();
+            },
+          })}
+        />
+      }
+    >
+      <View testID="MapScreen" style={styles.container}>
 
       {/* MapView */}
       <MapView
@@ -99,7 +107,10 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
       <View style={styles.fabs}>
         <TouchableOpacity
           style={[styles.fab, styles.fabLocate]}
-          onPress={getCurrentLocation}
+          onPress={() => {
+            haptic.tap();
+            getCurrentLocation();
+          }}
           testID="fab-locate"
         >
           <Text style={styles.fabText}>📍</Text>
@@ -107,7 +118,10 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
 
         <TouchableOpacity
           style={[styles.fab, styles.fabAR]}
-          onPress={() => navigation.navigate("ARScentTrails", { initialLocation: userLocation })}
+          onPress={() => {
+            haptic.confirm();
+            navigation.navigate("ARScentTrails", { initialLocation: userLocation });
+          }}
           testID="fab-ar"
         >
           <Text style={styles.fabText}>👁️</Text>
@@ -115,7 +129,10 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
 
         <TouchableOpacity
           style={[styles.fab, styles.fabCreate]}
-          onPress={() => setShowCreate(true)}
+          onPress={() => {
+            haptic.confirm();
+            setShowCreate(true);
+          }}
           testID="fab-create-activity"
         >
           <Ionicons name="add" size={20} color="#fff" />
@@ -123,7 +140,10 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
 
         <TouchableOpacity
           style={[styles.fab, styles.fabFilters]}
-          onPress={toggleFilterPanel}
+          onPress={() => {
+            haptic.tap();
+            toggleFilterPanel();
+          }}
           testID="btn-filters"
         >
           <Text style={styles.fabText}>⚙️</Text>
@@ -152,21 +172,24 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
       />
 
       {/* Create activity */}
-      <CreateActivityModal
-        visible={showCreate}
-        onClose={() => setShowCreate(false)}
-        onStart={onStartActivity}
-        testID="create-activity-modal"
-      />
-    </View>
+      <View testID="create-activity-modal">
+        <CreateActivityModal
+          visible={showCreate}
+          onClose={() => {
+            haptic.selection();
+            setShowCreate(false);
+          }}
+          pets={[]}
+          activityTypes={activityTypes}
+        />
+      </View>
+      </View>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-  header: { paddingTop: 12, paddingBottom: 8, paddingHorizontal: 16 },
-  title: { fontSize: 18, fontWeight: "800", color: Theme.colors.neutral[800] },
-  subtitle: { color: Theme.colors.neutral[500], marginTop: 2 },
   map: { flex: 1 },
   fabs: { position: "absolute", right: 12, bottom: 24, gap: 10 },
   fab: {

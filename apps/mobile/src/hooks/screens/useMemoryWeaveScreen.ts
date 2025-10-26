@@ -56,13 +56,16 @@ const ensureBoolean = (value: boolean | undefined): boolean => {
 };
 
 export const useMemoryWeaveScreen = (route: {
-  params: { matchId: string; petName: string; memories?: MemoryNode[] };
+  params?: { matchId?: string; petName?: string; memories?: MemoryNode[] | unknown[] };
 }): UseMemoryWeaveScreenReturn => {
   const navigation = useNavigation();
   const theme = useTheme();
   const isDark = theme.isDark ?? theme.scheme === "dark";
   const colors = theme.colors;
-  const { matchId, petName, memories: initialMemories } = route.params;
+  const params = route.params ?? {};
+  const matchId = params.matchId ?? '';
+  const petName = params.petName ?? '';
+  const initialMemories = (params.memories ? (Array.isArray(params.memories) ? params.memories as MemoryNode[] : []) : []);
 
   const {
     memories,

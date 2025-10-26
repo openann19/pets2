@@ -17,7 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "../theme/Provider";
-import type { NavigationProp, RouteProp } from "../navigation/types";
+import type { RootStackScreenProps } from "../navigation/types";
 import { useMemoryWeaveScreen } from "../hooks/screens/useMemoryWeaveScreen";
 import { Theme } from '../theme/unified-theme';
 
@@ -39,16 +39,7 @@ interface MemoryNode {
   };
 }
 
-interface MemoryWeaveScreenProps {
-  navigation: NavigationProp;
-  route: RouteProp & {
-    params: {
-      matchId: string;
-      petName: string;
-      memories?: MemoryNode[];
-    };
-  };
-}
+type MemoryWeaveScreenProps = RootStackScreenProps<"MemoryWeave">;
 
 export default function MemoryWeaveScreen({
   navigation,
@@ -316,7 +307,7 @@ export default function MemoryWeaveScreen({
           showsHorizontalScrollIndicator={false}
           onScroll={(event) => {
             const offsetX = event.nativeEvent.contentOffset.x;
-            scrollX.value = offsetX;
+            scrollX.setValue(offsetX);
             handleScroll && handleScroll(event);
           }}
           scrollEventThrottle={16}

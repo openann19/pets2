@@ -11,6 +11,7 @@ import { tileUpscaleAuto } from "./TiledUpscaler";
 import { unsharpMask, type UnsharpOpts } from "./Unsharp";
 import { pickSharpest } from "./QualityScore";
 import * as ImageManipulator from "expo-image-manipulator";
+import { logger } from "../services/logger";
 
 type Rect = { x: number; y: number; width: number; height: number };
 type TrioKind = "tight" | "medium" | "loose";
@@ -223,8 +224,9 @@ export async function exportUltraVariants(
         completed++;
         onProgress?.(completed / total, variant);
         onProgress?.(completed / total, null);
-      } catch (error) {
-        console.error(`Failed to generate ${ratio} ${trio.kind} variant:`, error);
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error(`Failed to generate variant`, { ratio, kind: trio.kind, error: err });
         // Continue with next variant
         completed++;
         onProgress?.(completed / total, null);
@@ -244,8 +246,9 @@ export async function exportUltraVariants(
         if (best) {
           allVariants.push(best);
         }
-      } catch (error) {
-        console.error(`Failed to pick sharpest for ${ratio}:`, error);
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error(`Failed to pick sharpest`, { ratio, error: err });
         // Fallback: push first candidate
         const fallback = candidates[0];
         if (fallback) {
@@ -284,8 +287,9 @@ export async function previewUltraVariants(
       );
       
       withThumbs.push({ variant, thumbUri: thumb.uri });
-    } catch (error) {
-      console.error("Failed to generate thumbnail:", error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to generate thumbnail", { error: err });
       withThumbs.push({ variant, thumbUri: variant.outUri });
     }
   }

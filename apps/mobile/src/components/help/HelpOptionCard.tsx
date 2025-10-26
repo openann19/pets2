@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import type { HelpOption } from "../../hooks/useHelpSupportData";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface HelpOptionCardProps {
   option: HelpOption;

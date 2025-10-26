@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logger } from "../../services/logger";
 
 export interface UseChatInputOptions {
   matchId: string;
@@ -39,7 +40,7 @@ export function useChatInput({
           setInputTextState(draft);
         }
       } catch (error) {
-        console.error("Failed to load draft:", error);
+        logger.error("Failed to load draft", { error });
       }
     };
 
@@ -59,7 +60,7 @@ export function useChatInput({
           await AsyncStorage.removeItem(key);
         }
       } catch (error) {
-        console.error("Failed to persist draft:", error);
+        logger.error("Failed to persist draft", { error });
       }
     };
 

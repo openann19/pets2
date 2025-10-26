@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface SecurityAlert {

@@ -8,7 +8,9 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { logger } from "@pawfectmatch/core";
 import { useAuthStore } from "@pawfectmatch/core";
 import { matchesAPI } from "../../services/api";
+import { authService } from "../../services/AuthService";
 import type { RootStackParamList } from "../../navigation/types";
+import { haptic } from "../../ui/haptics";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -47,10 +49,13 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
+      // Get access token from AuthService
+      const accessToken = await authService.getAccessToken();
+      
       // Use real home stats API endpoint
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/home/stats`, {
         headers: {
-          Authorization: `Bearer ${user?.token}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
@@ -66,7 +71,7 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     } finally {
       setRefreshing(false);
     }
-  }, [user?.token]);
+  }, []);
 
   const handleQuickAction = useCallback(
     (action: string) => {
@@ -110,34 +115,42 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
   );
 
   const handleProfilePress = useCallback(() => {
+    haptic.tap();
     handleQuickAction("profile");
   }, [handleQuickAction]);
 
   const handleSettingsPress = useCallback(() => {
+    haptic.tap();
     handleQuickAction("settings");
   }, [handleQuickAction]);
 
   const handleSwipePress = useCallback(() => {
+    haptic.confirm();
     handleQuickAction("swipe");
   }, [handleQuickAction]);
 
   const handleMatchesPress = useCallback(() => {
+    haptic.confirm();
     handleQuickAction("matches");
   }, [handleQuickAction]);
 
   const handleMessagesPress = useCallback(() => {
+    haptic.confirm();
     handleQuickAction("messages");
   }, [handleQuickAction]);
 
   const handleMyPetsPress = useCallback(() => {
+    haptic.confirm();
     handleQuickAction("my-pets");
   }, [handleQuickAction]);
 
   const handleCreatePetPress = useCallback(() => {
+    haptic.confirm();
     handleQuickAction("create-pet");
   }, [handleQuickAction]);
 
   const handleCommunityPress = useCallback(() => {
+    haptic.confirm();
     handleQuickAction("community");
   }, [handleQuickAction]);
 

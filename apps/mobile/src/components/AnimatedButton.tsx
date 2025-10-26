@@ -108,8 +108,8 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         variant === "danger"
           ? Haptics.ImpactFeedbackStyle.Medium
           : Haptics.ImpactFeedbackStyle.Light,
-      ).catch((error) => {
-        logger.error("AnimatedButton haptic error", { error });
+      ).catch((error: unknown) => {
+        logger.error("AnimatedButton haptic error", { error: error instanceof Error ? error : new Error(String(error)) });
       });
     }
   }, [

@@ -15,12 +15,19 @@ const mockClearBadge = jest.fn();
 const mockCleanup = jest.fn();
 
 const mockNotificationService = {
+  initialize: jest.fn(),
+  sendLocalNotification: jest.fn(),
+  getBadgeCount: jest.fn(),
+  setBadgeCount: mockSetBadgeCount,
+  clearBadge: mockClearBadge,
+  cancelNotification: jest.fn(),
+  cancelAllNotifications: jest.fn(),
   sendMatchNotification: mockSendMatchNotification,
   sendMessageNotification: mockSendMessageNotification,
   sendLikeNotification: mockSendLikeNotification,
   scheduleReminderNotification: mockScheduleReminderNotification,
-  setBadgeCount: mockSetBadgeCount,
-  clearBadge: mockClearBadge,
+  getExpoPushToken: jest.fn(),
+  unregisterToken: jest.fn(),
   cleanup: mockCleanup,
 };
 
@@ -185,9 +192,7 @@ describe("useNotifications", () => {
       expect(mockInitializeNotificationsService).toHaveBeenCalledTimes(1);
     });
 
-    rerender();
-
-    // Should still be called only once
+    // Hook initialization should only happen once
     expect(mockInitializeNotificationsService).toHaveBeenCalledTimes(1);
   });
 

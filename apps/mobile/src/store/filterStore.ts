@@ -1,7 +1,7 @@
 import type { PetFilters } from "@pawfectmatch/core";
 import { create } from "zustand";
 
-const DEFAULT_FILTERS: PetFilters = {};
+export const DEFAULT_FILTERS: PetFilters = {};
 
 interface FilterStore {
   filters: PetFilters;

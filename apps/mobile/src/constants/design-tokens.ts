@@ -236,6 +236,7 @@ export const MOBILE_RADIUS = {
   "2xl": 24,
   "3xl": 32,
   full: 9999,
+  pill: 999,
 };
 
 // Convert web spacing values to React Native numbers
@@ -259,6 +260,7 @@ export const MOBILE_SPACING = {
   24: 96,
   28: 112,
   32: 128,
+  48: 192,
 };
 
 // Convert web typography to React Native numbers

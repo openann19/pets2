@@ -6,7 +6,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { type ComponentProps } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface SettingItem {
   id: string;

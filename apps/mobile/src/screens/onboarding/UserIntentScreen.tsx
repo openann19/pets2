@@ -24,7 +24,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 const { width } = Dimensions.get("window");
 

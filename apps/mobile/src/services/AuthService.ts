@@ -3,9 +3,9 @@
  * Handles user authentication, token management, and secure storage
  * Uses react-native-keychain for production-grade security
  */
-import * as Keychain from "react-native-keychain";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
+import * as Keychain from "react-native-keychain";
 import { logger } from "@pawfectmatch/core";
 import { api } from "./api";
 
@@ -76,67 +76,7 @@ class AuthService {
     this.startSessionMonitoring();
   }
 
-  // ===== Secure Storage Methods =====
-
-  /**
-   * Store item securely using Keychain (production) or SecureStore (development)
-   */
-  private async secureSetItemAsync(key: string, value: string): Promise<void> {
-    if (this.useKeychain) {
-      try {
-        await Keychain.setGenericPassword(key, value, {
-          service: `${AuthService.SERVICE_NAME}.${key}`,
-          accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
-        });
-      } catch (error) {
-        // Fallback to SecureStore if Keychain fails
-        logger.warn("Keychain failed, falling back to SecureStore", { error, key });
-        this.useKeychain = false;
-        await SecureStore.setItemAsync(key, value);
-      }
-    } else {
-      await SecureStore.setItemAsync(key, value);
-    }
-  }
-
-  /**
-   * Get item securely from Keychain or SecureStore
-   */
-  private async secureGetItemAsync(key: string): Promise<string | null> {
-    if (this.useKeychain) {
-      try {
-        const credentials = await Keychain.getGenericPassword({
-          service: `${AuthService.SERVICE_NAME}.${key}`,
-        });
-        return credentials ? credentials.password : null;
-      } catch (error) {
-        // Fallback to SecureStore if Keychain fails
-        logger.warn("Keychain retrieval failed, trying SecureStore", { error, key });
-        return await SecureStore.getItemAsync(key);
-      }
-    } else {
-      return await SecureStore.getItemAsync(key);
-    }
-  }
-
-  /**
-   * Delete item securely from Keychain or SecureStore
-   */
-  private async secureDeleteItemAsync(key: string): Promise<void> {
-    if (this.useKeychain) {
-      try {
-        await Keychain.resetGenericPassword({
-          service: `${AuthService.SERVICE_NAME}.${key}`,
-        });
-      } catch (error) {
-        // Fallback to SecureStore if Keychain fails
-        logger.warn("Keychain deletion failed, falling back to SecureStore", { error, key });
-        await SecureStore.deleteItemAsync(key);
-      }
-    } else {
-      await SecureStore.deleteItemAsync(key);
-    }
-  }
+  // ===== Session Management =====
 
   /**
    * Start session monitoring for auto-logout
@@ -678,6 +618,120 @@ class AuthService {
     } catch (error) {
       logger.error("Failed to update user data", { error });
       throw new AuthError("Failed to update user data", error);
+    }
+  }
+
+  // Secure storage methods - Keychain for sensitive data, SecureStore for session data
+  // Fallback to SecureStore if Keychain fails for robustness
+  private async secureSetItemAsync(key: string, value: string): Promise<void> {
+    try {
+      // Use Keychain for sensitive authentication data
+      if (key.includes('token') || key.includes('user')) {
+        try {
+          const result = await Keychain.setGenericPassword('pawfectmatch', value, {
+            service: 'pawfectmatch-auth',
+            accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
+            accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+          });
+          if (result === false) {
+            throw new Error('Failed to store in Keychain');
+          }
+          // Store a reference key in SecureStore for retrieval
+          await SecureStore.setItemAsync(`${key}_ref`, 'keychain', {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+          });
+          // Successfully stored in Keychain
+          return;
+        } catch (keychainError) {
+          // Fallback to SecureStore if Keychain fails
+          logger.warn(`Keychain failed, falling back to SecureStore for ${key}`, { error: keychainError });
+          await SecureStore.setItemAsync(key, value, {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+          });
+          // Store a reference indicating fallback to SecureStore
+          await SecureStore.setItemAsync(`${key}_ref`, 'securestore', {
+            keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+          });
+        }
+      } else {
+        // Use SecureStore for less sensitive session data
+        await SecureStore.setItemAsync(key, value, {
+          keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        });
+      }
+    } catch (error) {
+      logger.error(`Failed to securely store ${key}`, { error });
+      throw new AuthError(`Failed to securely store authentication data`, error);
+    }
+  }
+
+  private async secureGetItemAsync(key: string): Promise<string | null> {
+    try {
+      // Check if data is stored in Keychain or SecureStore (fallback)
+      const refKey = `${key}_ref`;
+      const storageLocation = await SecureStore.getItemAsync(refKey);
+
+      if (storageLocation === 'keychain') {
+        try {
+          const credentials = await Keychain.getGenericPassword({
+            service: 'pawfectmatch-auth',
+          });
+          if (credentials) {
+            // Return the password (which contains our stored value)
+            return credentials.password;
+          }
+          return null;
+        } catch (keychainError) {
+          // If Keychain retrieval fails, try SecureStore fallback
+          logger.warn(`Keychain retrieval failed, trying SecureStore fallback for ${key}`, { error: keychainError });
+          return await SecureStore.getItemAsync(key);
+        }
+      } else if (storageLocation === 'securestore') {
+        // Data was stored in SecureStore due to Keychain failure
+        return await SecureStore.getItemAsync(key);
+      } else {
+        // No reference found, try SecureStore directly (for non-sensitive keys)
+        return await SecureStore.getItemAsync(key);
+      }
+    } catch (error) {
+      logger.error(`Failed to securely retrieve ${key}`, { error });
+      return null;
+    }
+  }
+
+  private async secureDeleteItemAsync(key: string): Promise<void> {
+    try {
+      // Check if data is stored in Keychain or SecureStore (fallback)
+      const refKey = `${key}_ref`;
+      const storageLocation = await SecureStore.getItemAsync(refKey);
+
+      if (storageLocation === 'keychain') {
+        try {
+          // Reset Keychain credentials
+          await Keychain.resetGenericPassword({
+            service: 'pawfectmatch-auth',
+          });
+        } catch (keychainError) {
+          logger.warn(`Keychain deletion failed, continuing with cleanup`, { error: keychainError });
+        }
+        // Remove the reference
+        await SecureStore.deleteItemAsync(refKey);
+      } else if (storageLocation === 'securestore') {
+        // Data was stored in SecureStore
+        await SecureStore.deleteItemAsync(key);
+        // Remove the reference
+        await SecureStore.deleteItemAsync(refKey);
+      } else {
+        // Try to delete from SecureStore (for non-sensitive keys or cleanup)
+        try {
+          await SecureStore.deleteItemAsync(key);
+        } catch (error) {
+          // Silently ignore deletion errors
+        }
+      }
+    } catch (error) {
+      logger.error(`Failed to securely delete ${key}`, { error });
+      // Don't throw here as this is cleanup
     }
   }
 

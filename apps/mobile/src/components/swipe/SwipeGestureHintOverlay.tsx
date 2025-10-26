@@ -8,6 +8,7 @@ import { View, Text, StyleSheet, Animated, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme } from "../../theme/unified-theme";
+import { logger } from "../../services/logger";
 
 const STORAGE_KEY = "@PawfectMatch:swipe_hints_shown";
 
@@ -51,7 +52,7 @@ export function SwipeGestureHintOverlay({
         setShowHints(true);
       }
     } catch (error) {
-      console.error("Error checking hints status:", error);
+      logger.error("Error checking hints status", { error });
     }
   };
 
@@ -74,7 +75,7 @@ export function SwipeGestureHintOverlay({
         onDismiss?.();
       });
     } catch (error) {
-      console.error("Error dismissing hints:", error);
+      logger.error("Error dismissing hints", { error });
     }
   };
 

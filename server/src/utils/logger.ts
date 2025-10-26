@@ -253,5 +253,13 @@ logger.performance = (operation: string, durationMs: number, meta: Record<string
   });
 };
 
+// Extended Logger interface
+export interface ExtendedLogger extends winston.Logger {
+  request: (req: any, message: string, additionalMeta?: Record<string, any>) => string;
+  apiError: (req: any, error: any, statusCode?: number, additionalMeta?: Record<string, any>) => string;
+  security: (event: string, data?: Record<string, any>) => void;
+  performance: (operation: string, durationMs: number, meta?: Record<string, any>) => void;
+}
+
 // Export logger with enhanced types
 export default logger;

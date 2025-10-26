@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import type { FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logger } from "../../services/logger";
 
 export interface UseChatScrollOptions {
   matchId: string;
@@ -37,10 +38,7 @@ export function useChatScroll({
           setInitialOffset(Number(saved));
         }
       } catch (error) {
-        console.error(
-          `Failed to restore scroll position for chat ${matchId}:`,
-          error,
-        );
+        logger.error("Failed to restore scroll position for chat", { matchId, error });
       }
     };
 

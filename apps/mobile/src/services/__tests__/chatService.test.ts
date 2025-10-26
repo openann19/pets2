@@ -1,20 +1,30 @@
 /**
- * Chat Service Tests
- * Tests chat features: reactions, attachments, voice notes
+ * Chat Service Test Suite
+ * Tests reactions, attachments, voice notes, and messaging features
  */
 
-import { chatService } from '../chatService';
+import { chatService, sendVoiceNoteNative } from '../chatService';
+import { request } from '../api';
+import * as FileSystem from 'expo-file-system';
 
-// Mock the request function
+// Mock dependencies
 jest.mock('../api', () => ({
   request: jest.fn(),
 }));
 
-import { request } from '../api';
+jest.mock('expo-file-system', () => ({
+  uploadAsync: jest.fn(),
+}));
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+jest.mock('@pawfectmatch/core', () => ({
+  logger: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 
-describe('ChatService', () => {
+describe('Chat Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -23,95 +33,127 @@ describe('ChatService', () => {
     it('should send reaction successfully', async () => {
       const mockResponse = {
         success: true,
-        messageId: 'msg123',
+        messageId: 'msg-123',
         reactions: [
-          {
-            emoji: '👍',
-            userId: 'user123',
-            timestamp: '2024-01-01T12:00:00Z',
-          },
+          { emoji: '😍', userId: 'user-1', timestamp: '2024-01-01T00:00:00Z' },
         ],
       };
 
-      mockRequest.mockResolvedValue(mockResponse);
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const result = await chatService.sendReaction('match123', 'msg123', '👍');
+      const response = await chatService.sendReaction('match-123', 'msg-123', '😍');
 
-      expect(mockRequest).toHaveBeenCalledWith('/chat/reactions', {
+      expect(response).toEqual(mockResponse);
+      expect(request).toHaveBeenCalledWith('/chat/reactions', {
         method: 'POST',
         body: {
-          matchId: 'match123',
-          messageId: 'msg123',
-          reaction: '👍',
+          matchId: 'match-123',
+          messageId: 'msg-123',
+          reaction: '😍',
         },
       });
-      expect(result).toEqual(mockResponse);
     });
 
-    it('should handle reaction send failure', async () => {
-      const mockError = new Error('Network error');
-      mockRequest.mockRejectedValue(mockError);
+    it('should throw error on failed reaction', async () => {
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Failed to send reaction'));
 
       await expect(
-        chatService.sendReaction('match123', 'msg123', '👍')
-      ).rejects.toThrow('Network error');
+        chatService.sendReaction('match-123', 'msg-123', '😍')
+      ).rejects.toThrow('Failed to send reaction');
+    });
+
+    it('should handle multiple reactions', async () => {
+      const mockResponse = {
+        success: true,
+        messageId: 'msg-123',
+        reactions: [
+          { emoji: '😍', userId: 'user-1', timestamp: '2024-01-01T00:00:00Z' },
+          { emoji: '❤️', userId: 'user-2', timestamp: '2024-01-01T00:01:00Z' },
+        ],
+      };
+
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
+
+      const response = await chatService.sendReaction('match-123', 'msg-123', '❤️');
+
+      expect(response.reactions).toHaveLength(2);
     });
   });
 
   describe('sendAttachment', () => {
-    it('should send image attachment successfully', async () => {
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+    it('should send image attachment', async () => {
+      const mockFile = new File(['image data'], 'photo.jpg', { type: 'image/jpeg' });
       const mockResponse = {
         success: true,
-        url: 'https://example.com/image.jpg',
+        url: 'https://example.com/photo.jpg',
         type: 'image',
       };
 
-      mockRequest.mockResolvedValue(mockResponse);
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const result = await chatService.sendAttachment({
-        matchId: 'match123',
+      const response = await chatService.sendAttachment({
+        matchId: 'match-123',
         attachmentType: 'image',
         file: mockFile,
-        name: 'test.jpg',
+        name: 'photo.jpg',
       });
 
-      expect(mockRequest).toHaveBeenCalledWith('/chat/attachments', {
+      expect(response).toEqual(mockResponse);
+      expect(request).toHaveBeenCalledWith('/chat/attachments', {
         method: 'POST',
         body: expect.any(FormData),
-        headers: {}, // FormData sets Content-Type automatically
       });
-      expect(result).toEqual(mockResponse);
     });
 
-    it('should send video attachment successfully', async () => {
-      const mockFile = new File(['test'], 'test.mp4', { type: 'video/mp4' });
+    it('should send video attachment', async () => {
+      const mockFile = new File(['video data'], 'video.mp4', { type: 'video/mp4' });
       const mockResponse = {
         success: true,
         url: 'https://example.com/video.mp4',
         type: 'video',
       };
 
-      mockRequest.mockResolvedValue(mockResponse);
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-      const result = await chatService.sendAttachment({
-        matchId: 'match123',
+      const response = await chatService.sendAttachment({
+        matchId: 'match-123',
         attachmentType: 'video',
         file: mockFile,
+        name: 'video.mp4',
       });
 
-      expect(result).toEqual(mockResponse);
+      expect(response.type).toBe('video');
     });
 
-    it('should handle attachment upload failure', async () => {
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      const mockError = new Error('Upload failed');
-      mockRequest.mockRejectedValue(mockError);
+    it('should send file attachment', async () => {
+      const mockFile = new File(['file data'], 'document.pdf', { type: 'application/pdf' });
+      const mockResponse = {
+        success: true,
+        url: 'https://example.com/document.pdf',
+        type: 'file',
+      };
+
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
+
+      const response = await chatService.sendAttachment({
+        matchId: 'match-123',
+        attachmentType: 'file',
+        file: mockFile,
+        name: 'document.pdf',
+      });
+
+      expect(response.type).toBe('file');
+    });
+
+    it('should handle attachment errors', async () => {
+      const mockFile = new File(['data'], 'file.pdf', { type: 'application/pdf' });
+
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Upload failed'));
 
       await expect(
         chatService.sendAttachment({
-          matchId: 'match123',
-          attachmentType: 'image',
+          matchId: 'match-123',
+          attachmentType: 'file',
           file: mockFile,
         })
       ).rejects.toThrow('Upload failed');
@@ -119,89 +161,226 @@ describe('ChatService', () => {
   });
 
   describe('sendVoiceNote', () => {
-    it('should send voice note with new signature successfully', async () => {
-      const mockFormData = new FormData();
-      const mockResponse = {
-        success: true,
-        url: 'https://example.com/voice.webm',
-        duration: 30,
-      };
+    it('should send voice note with FormData (native)', async () => {
+      const formData = new FormData();
+      formData.append('audio', new Blob(['audio data'], { type: 'audio/webm' }), {
+        type: 'audio/webm',
+      });
 
-      mockRequest.mockResolvedValue(mockResponse);
+      (request as jest.Mock).mockResolvedValueOnce(undefined);
 
-      const result = await chatService.sendVoiceNote('match123', mockFormData, 30);
+      await chatService.sendVoiceNote('match-123', formData, 5);
 
-      expect(mockRequest).toHaveBeenCalledWith('/api/chat/voice', {
+      expect(request).toHaveBeenCalledWith('/api/chat/voice', {
         method: 'POST',
-        body: mockFormData,
+        body: expect.any(FormData),
         headers: {},
       });
-      // Note: The actual implementation doesn't return the response, it just sends
-      expect(result).toBeUndefined();
     });
 
-    it('should send voice note with legacy signature successfully', async () => {
-      const mockBlob = new Blob(['test'], { type: 'audio/m4a' });
-      const mockResponse = {
+    it('should send voice note with Blob (web)', async () => {
+      const audioBlob = new Blob(['audio data'], { type: 'audio/webm' });
+
+      (request as jest.Mock).mockResolvedValueOnce(undefined);
+
+      await chatService.sendVoiceNote('match-123', audioBlob, 5);
+
+      expect(request).toHaveBeenCalledWith('/api/chat/voice', {
+        method: 'POST',
+        body: expect.any(FormData),
+        headers: {},
+      });
+    });
+
+    it('should send voice note with legacy signature', async () => {
+      const audioBlob = new Blob(['audio data'], { type: 'audio/m4a' });
+
+      (request as jest.Mock).mockResolvedValueOnce({
         success: true,
         url: 'https://example.com/voice.m4a',
-        duration: 25,
-      };
-
-      mockRequest.mockResolvedValue(mockResponse);
-
-      const result = await chatService.sendVoiceNote({
-        matchId: 'match123',
-        audioBlob: mockBlob,
-        duration: 25,
+        duration: 5,
       });
 
-      expect(result).toBeUndefined();
+      await chatService.sendVoiceNote({
+        matchId: 'match-123',
+        audioBlob,
+        duration: 5,
+      });
+
+      expect(request).toHaveBeenCalledWith('/api/chat/voice', {
+        method: 'POST',
+        body: expect.any(FormData),
+        headers: {},
+      });
     });
 
-    it('should handle voice note upload failure', async () => {
-      const mockFormData = new FormData();
-      const mockError = new Error('Upload failed');
-      mockRequest.mockRejectedValue(mockError);
+    it('should throw error for invalid file type', async () => {
+      await expect(
+        chatService.sendVoiceNote('match-123', {} as FormData, 5)
+      ).rejects.toThrow('Invalid file type');
+    });
+
+    it('should handle voice note upload errors', async () => {
+      const formData = new FormData();
+
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Upload failed'));
 
       await expect(
-        chatService.sendVoiceNote('match123', mockFormData)
+        chatService.sendVoiceNote('match-123', formData, 5)
       ).rejects.toThrow('Upload failed');
-    });
-
-    it('should handle invalid file type', async () => {
-      const result = await chatService.sendVoiceNote('match123', 'invalid' as any);
-
-      // Should not throw but handle gracefully
-      expect(result).toBeUndefined();
     });
   });
 
   describe('sendVoiceNoteNative', () => {
-    beforeEach(() => {
-      // Mock FileSystem
-      jest.mock('expo-file-system', () => ({
-        uploadAsync: jest.fn().mockResolvedValue({}),
-        FileSystemUploadType: {
-          BINARY_CONTENT: 'BINARY_CONTENT',
-        },
-      }));
+    it('should upload voice note to S3 and register message', async () => {
+      const presignResponse = {
+        url: 'https://s3.example.com/upload',
+        key: 'voice-notes/abc123.webm',
+      };
 
-      // Reset the native method on chatService
-      delete (chatService as any).sendVoiceNoteNative;
-    });
+      (request as jest.Mock)
+        .mockResolvedValueOnce(presignResponse)
+        .mockResolvedValueOnce({ status: 200 })
+        .mockResolvedValueOnce({ success: true });
 
-    it('should send native voice note successfully', async () => {
-      const mockRequest = require('../api').request;
-      mockRequest.mockResolvedValueOnce({ url: 'presign-url', key: 'file-key' });
-      mockRequest.mockResolvedValueOnce({}); // Register message response
-
-      const result = await (chatService as any).sendVoiceNoteNative('match123', {
-        fileUri: 'file://test.webm',
-        duration: 30,
+      (FileSystem.uploadAsync as jest.Mock).mockResolvedValueOnce({
+        status: 200,
+        body: 'Uploaded',
       });
 
-      expect(result).toBeUndefined();
+      await sendVoiceNoteNative('match-123', {
+        fileUri: 'file://voice.webm',
+        duration: 10,
+      });
+
+      expect(request).toHaveBeenCalledWith('/uploads/voice/presign', {
+        method: 'POST',
+        body: { contentType: 'audio/webm' },
+      });
+
+      expect(FileSystem.uploadAsync).toHaveBeenCalledWith(
+        presignResponse.url,
+        'file://voice.webm',
+        {
+          httpMethod: 'PUT',
+          headers: { 'Content-Type': 'audio/webm' },
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+        }
+      );
+
+      expect(request).toHaveBeenCalledWith('/chat/match-123/voice-note', {
+        method: 'POST',
+        body: {
+          key: presignResponse.key,
+          duration: 10,
+          waveform: [],
+        },
+      });
+    });
+
+    it('should handle S3 upload errors', async () => {
+      (request as jest.Mock).mockResolvedValueOnce({
+        url: 'https://s3.example.com/upload',
+        key: 'voice-notes/abc123.webm',
+      });
+
+      (FileSystem.uploadAsync as jest.Mock).mockRejectedValueOnce(new Error('S3 upload failed'));
+
+      await expect(
+        sendVoiceNoteNative('match-123', {
+          fileUri: 'file://voice.webm',
+          duration: 10,
+        })
+      ).rejects.toThrow('S3 upload failed');
+    });
+
+    it('should handle presign errors', async () => {
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Presign failed'));
+
+      await expect(
+        sendVoiceNoteNative('match-123', {
+          fileUri: 'file://voice.webm',
+          duration: 10,
+        })
+      ).rejects.toThrow('Presign failed');
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle large file uploads', async () => {
+      const largeFile = new File(['x'.repeat(10 * 1024 * 1024)], 'large.jpg', {
+        type: 'image/jpeg',
+      });
+
+      const mockResponse = {
+        success: true,
+        url: 'https://example.com/large.jpg',
+        type: 'image',
+      };
+
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
+
+      const response = await chatService.sendAttachment({
+        matchId: 'match-123',
+        attachmentType: 'image',
+        file: largeFile,
+      });
+
+      expect(response.success).toBe(true);
+    });
+
+    it('should handle network errors during reaction', async () => {
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(
+        chatService.sendReaction('match-123', 'msg-123', '❤️')
+      ).rejects.toThrow('Network error');
+    });
+
+    it('should handle invalid match ID', async () => {
+      (request as jest.Mock).mockRejectedValueOnce(new Error('Match not found'));
+
+      await expect(
+        chatService.sendReaction('invalid-match', 'msg-123', '😍')
+      ).rejects.toThrow('Match not found');
+    });
+
+    it('should handle concurrent reactions', async () => {
+      const mockResponse = {
+        success: true,
+        messageId: 'msg-123',
+        reactions: [],
+      };
+
+      (request as jest.Mock).mockResolvedValue(mockResponse);
+
+      const reactions = await Promise.all([
+        chatService.sendReaction('match-123', 'msg-123', '😍'),
+        chatService.sendReaction('match-123', 'msg-123', '❤️'),
+        chatService.sendReaction('match-123', 'msg-123', '👍'),
+      ]);
+
+      expect(reactions).toHaveLength(3);
+      expect(reactions[0]?.success).toBe(true);
+    });
+
+    it('should handle missing attachment name', async () => {
+      const mockFile = new File(['data'], '', { type: 'image/jpeg' });
+      const mockResponse = {
+        success: true,
+        url: 'https://example.com/file',
+        type: 'image',
+      };
+
+      (request as jest.Mock).mockResolvedValueOnce(mockResponse);
+
+      const response = await chatService.sendAttachment({
+        matchId: 'match-123',
+        attachmentType: 'image',
+        file: mockFile,
+      });
+
+      expect(response.success).toBe(true);
     });
   });
 });

@@ -6,7 +6,7 @@
  */
 
 import { Easing } from "react-native";
-import { SPACING, RADIUS } from "@pawfectmatch/design-tokens";
+import { SPACING, RADIUS, COLORS, SHADOWS, TYPOGRAPHY } from "@pawfectmatch/design-tokens";
 
 // Animation constants
 export const DUR = { fast: 150, normal: 250, slow: 400 } as const;
@@ -24,6 +24,20 @@ export const SPRING = {
 
 // Backward compatibility - re-export design tokens
 // TODO: Components should import these from @pawfectmatch/design-tokens directly
-export const Spacing = SPACING;
+export const Spacing = {
+  ...SPACING,
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  "2xl": 64,
+  "3xl": 96,
+  "4xl": 128,
+};
 export const BorderRadius = RADIUS;
+export const Colors = COLORS as any; // Add Colors for backward compatibility
+export const Typography = TYPOGRAPHY as any; // Add Typography for backward compatibility
+export const Shadows = SHADOWS as any; // Add Shadows for backward compatibility
+export const GlobalStyles = {} as any; // Add GlobalStyles placeholder for backward compatibility
 

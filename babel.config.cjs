@@ -21,6 +21,16 @@ const basePresets = [
 ];
 
 const basePlugins = [
+  [
+    'module-resolver',
+    {
+      root: ['./'],
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      alias: {
+        '@mobile': './apps/mobile/src',
+      },
+    },
+  ],
   ['@babel/plugin-transform-runtime', { version: '7.23.7', helpers: true, regenerator: true }],
 ];
 

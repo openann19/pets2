@@ -7,12 +7,12 @@
 
 import { 
   processImageForUpload, 
-  ProcessedImage,
+  type ProcessedImage,
   checkUploadQuota,
   uploadWithRetry 
 } from './uploadHygiene';
-import { api } from './api';
-import logger from '../utils/logger';
+import { api, request } from './api';
+import { logger } from './logger';
 
 export interface UploadProgress {
   phase: 'presign' | 'upload' | 'register' | 'analyze' | 'pending' | 'approved' | 'rejected';
@@ -55,19 +55,27 @@ export class EnhancedUploadService {
     try {
       // 1. Presign
       if (onProgress) {
-        onProgress({ phase: 'presign', percent: 10, message: 'Requesting upload URL...' });
+        try {
+          onProgress({ phase: 'presign', percent: 10, message: 'Requesting upload URL...' });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.warn('Progress callback error', { error: err });
+        }
       }
 
-      const presignResponse = await api.post('/uploads/photos/presign', {
-        contentType: processedImage.mimeType,
-        filename: `photo-${Date.now()}.jpg`,
-      });
+      const presignResponse = await api.presignPhoto(processedImage.mimeType);
 
-      const { key, url, headers } = presignResponse.data.data;
+      const { key, url } = presignResponse;
+      const headers = { 'Content-Type': processedImage.mimeType };
 
       // 2. Upload to S3
       if (onProgress) {
-        onProgress({ phase: 'upload', percent: 30, message: 'Uploading to secure storage...' });
+        try {
+          onProgress({ phase: 'upload', percent: 30, message: 'Uploading to secure storage...' });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.warn('Progress callback error', { error: err });
+        }
       }
 
       // Upload file to presigned URL
@@ -85,41 +93,70 @@ export class EnhancedUploadService {
 
       // 3. Register upload
       if (onProgress) {
-        onProgress({ phase: 'register', percent: 60, message: 'Registering upload...' });
+        try {
+          onProgress({ phase: 'register', percent: 60, message: 'Registering upload...' });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.warn('Progress callback error', { error: err });
+        }
       }
 
       const idempotencyKey = `upload-${Date.now()}-${Math.random()}`;
 
-      const registerResponse = await api.post('/uploads', {
-        key,
-        type,
-        petId,
-        contentType: processedImage.mimeType,
-        bytes: processedImage.fileSize,
-        idempotencyKey,
+      const registerResponse = await request<{
+        data: {
+          upload: {
+            _id?: string;
+            id?: string;
+            s3Key?: string;
+            url?: string;
+            status?: string;
+          }
+        }
+      }>('/uploads', {
+        method: 'POST',
+        body: {
+          key,
+          type,
+          petId,
+          contentType: processedImage.mimeType,
+          bytes: processedImage.fileSize,
+          idempotencyKey,
+        },
       });
 
-      const upload = registerResponse.data.data.upload;
+      const upload = registerResponse.data.upload;
 
       if (onProgress) {
-        onProgress({ phase: 'analyze', percent: 80, message: 'Analyzing photo...' });
+        try {
+          onProgress({ phase: 'analyze', percent: 80, message: 'Analyzing photo...' });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.warn('Progress callback error', { error: err });
+        }
       }
 
       // 4. Trigger analysis (optional, async by default)
       if (onProgress) {
-        onProgress({ phase: 'pending', percent: 90, message: 'Awaiting moderation...' });
+        try {
+          onProgress({ phase: 'pending', percent: 90, message: 'Awaiting moderation...' });
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          logger.warn('Progress callback error', { error: err });
+        }
       }
 
       return {
-        uploadId: upload._id || upload.id,
+        uploadId: upload._id || upload.id || '',
         s3Key: upload.s3Key || key,
         url: upload.url || `https://s3.amazonaws.com/${process.env.AWS_BUCKET}/${key}`,
         status: upload.status || 'pending',
         analysis: undefined,
       };
-    } catch (error) {
-      logger.error('Upload failed:', error);
-      throw error;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Upload failed', { error: err });
+      throw err;
     }
   }
 
@@ -176,9 +213,10 @@ export class EnhancedUploadService {
         options?.petId,
         onProgress
       );
-    } catch (error) {
-      logger.error('Upload from picker failed:', error);
-      throw error;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Upload from picker failed', { error: err });
+      throw err;
     }
   }
 
@@ -191,14 +229,26 @@ export class EnhancedUploadService {
     intervalMs = 1000
   ): Promise<UploadResult> {
     for (let i = 0; i < maxAttempts; i++) {
-      const response = await api.get(`/uploads/${uploadId}`);
-      const { upload, analysis } = response.data.data;
+      const response = await request<{
+        data: {
+          upload: {
+            s3Key?: string;
+            url?: string;
+            status: string;
+            flagReason?: string;
+          };
+          analysis?: any;
+        }
+      }>(`/uploads/${uploadId}`, {
+        method: 'GET'
+      });
+      const { upload, analysis } = response.data;
 
       if (upload.status === 'approved') {
         return {
           uploadId,
-          s3Key: upload.s3Key,
-          url: upload.url,
+          s3Key: upload.s3Key || '',
+          url: upload.url || '',
           status: 'approved',
           analysis,
         };
@@ -234,19 +284,20 @@ export class EnhancedUploadService {
       }
 
       try {
-        const result = await this.uploadProcessedImage(
-          photo,
-          type,
-          petId,
-          (progress) => {
-            if (onProgress) {
-              onProgress(i, progress);
-            }
+      const result = await this.uploadProcessedImage(
+        photo!,
+        type,
+        petId,
+        (progress) => {
+          if (onProgress) {
+            onProgress(i, progress);
           }
-        );
+        }
+      );
         results.push(result);
-      } catch (error) {
-        logger.error(`Batch upload failed for photo ${i + 1}:`, error);
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Batch upload failed', { error: err, photoIndex: i + 1 });
         // Continue with other photos
       }
     }
@@ -259,10 +310,22 @@ export class EnhancedUploadService {
    */
   async checkDuplicate(uploadId: string): Promise<{ isDuplicate: boolean; similarImages?: string[] }> {
     try {
-      const response = await api.get(`/uploads/${uploadId}/duplicate-check`);
-      return response.data.data;
-    } catch (error) {
-      logger.error('Duplicate check failed:', error);
+      const response = await request<{ data: { isDuplicate: boolean; similarImages?: string[] } }>(
+        `/uploads/${uploadId}/duplicate-check`,
+        { method: 'GET' }
+      );
+      
+      // Validate response data is the expected format
+      if (response.data && typeof response.data === 'object' && 'isDuplicate' in response.data) {
+        return response.data;
+      }
+      
+      // Malformed response - return safe default
+      logger.warn('Duplicate check returned malformed response', { data: response.data });
+      return { isDuplicate: false };
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Duplicate check failed', { error: err });
       return { isDuplicate: false };
     }
   }
@@ -271,17 +334,25 @@ export class EnhancedUploadService {
    * Helper: Convert file URI to blob for fetch upload
    */
   private async fileUriToBlob(uri: string): Promise<Blob> {
-    const FileSystem = await import('expo-file-system');
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    try {
+      const FileSystem = await import('expo-file-system');
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      return new Blob([byteArray], { type: 'image/jpeg' });
+    } catch (error: unknown) {
+      // Re-throw with proper error message
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error(error ? String(error) : 'File system error');
     }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: 'image/jpeg' });
   }
 
   /**

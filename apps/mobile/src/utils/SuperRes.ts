@@ -7,6 +7,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import { Platform } from "react-native";
 import { tileUpscaleAuto } from "./TiledUpscaler";
 import { unsharpMask } from "./Unsharp";
+import { logger } from "../services/logger";
 
 export interface SuperResAdapter {
   name: string;
@@ -67,8 +68,10 @@ const BicubicAdapter: SuperResAdapter = {
           quality: 1,
           format: "jpg",
         });
-      } catch (error) {
-        console.warn("[SuperRes] Unsharp mask failed, continuing:", error);
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        const { logger } = await import('../services/logger');
+        logger.warn('SuperRes: Unsharp mask failed', { error: err });
       }
     }
     
@@ -163,18 +166,21 @@ export const SuperRes = {
     for (const adapter of ADAPTERS) {
       if (await adapter.available()) {
         try {
-          console.log(`[SuperRes] Using ${adapter.name} for upscaling to ${targetW}x${targetH}`);
+          const { logger } = await import('../services/logger');
+        logger.info('SuperRes: Using adapter for upscaling', { adapter: adapter.name, dimensions: `${targetW}x${targetH}` });
           const result = await adapter.upscale(uri, targetW, targetH, opts);
           return result;
-        } catch (error) {
-          console.warn(`[SuperRes] ${adapter.name} failed, trying fallback:`, error);
+        } catch (error: unknown) {
+          const err = error instanceof Error ? error : new Error(String(error));
+          const { logger } = await import('../services/logger');
+          logger.warn(`SuperRes: ${adapter.name} failed, trying fallback`, { error: err });
           // Continue to next adapter on error
         }
       }
     }
     
     // This should never be reached since BicubicAdapter is always available
-    console.error("[SuperRes] All adapters failed, returning original URI");
+    logger.error("[SuperRes] All adapters failed, returning original URI");
     return uri;
   },
 

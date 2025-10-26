@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { FlatList } from "react-native";
+import { logger } from "../../services/logger";
 
 export interface UseScrollPersistenceOptions {
   key: string;
@@ -42,10 +43,7 @@ export function useScrollPersistence({
           setInitialOffset(offset);
         }
       } catch (error) {
-        console.error(
-          `Failed to restore scroll position for key "${key}":`,
-          error,
-        );
+        logger.error('Failed to restore scroll position', { key, error });
       }
     };
 
@@ -72,10 +70,7 @@ export function useScrollPersistence({
       try {
         await AsyncStorage.setItem(key, String(offset));
       } catch (error) {
-        console.error(
-          `Failed to save scroll position for key "${key}":`,
-          error,
-        );
+        logger.error('Failed to save scroll position', { key, error });
       }
     },
     [key, enabled],

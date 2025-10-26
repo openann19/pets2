@@ -1,13 +1,22 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "jsx": "react",
-    "types": ["jest", "node"]
+    "noEmit": true,
+    "types": ["jest", "react", "react-native"]
   },
   "include": [
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
-    "src/**/__tests__/**/*"
+    "src/__tests__/**/*.ts",
+    "src/__tests__/**/*.tsx",
+    "src/mocks/**/*.ts",
+    "src/mocks/**/*.tsx",
+    "src/setupTests.ts"
   ],
-  "exclude": []
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage"
+  ]
 }

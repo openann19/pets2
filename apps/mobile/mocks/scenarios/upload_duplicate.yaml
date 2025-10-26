@@ -1,0 +1,27 @@
+name: upload_duplicate
+description: Upload flow with duplicate detection
+handlers:
+  - method: POST
+    url: '*/uploads/presign'
+    response:
+      status: 200
+      body:
+        success: true
+        data:
+          uploadUrl: "https://pawfectmatch-uploads.s3.amazonaws.com/test-upload"
+          key: "uploads/duplicate-key-123"
+          fields:
+            "Content-Type": "image/jpeg"
+            "x-amz-algorithm": "AWS4-HMAC-SHA256"
+
+  - method: POST
+    url: '*/uploads'
+    response:
+      status: 409
+      body:
+        success: false
+        error: "Duplicate image detected"
+        data:
+          reason: "exact_duplicate"
+          confidence: 0.99
+          duplicateOf: "upload-456"

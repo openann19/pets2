@@ -2,7 +2,8 @@ import express, { type Request, type Response, Router } from 'express';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validation';
 import { authenticateToken, requirePremiumFeature } from '../middleware/auth';
-import { type IUserDocument } from '../models/User';
+import User from '../models/User';
+import type { InferSchemaType } from 'mongoose';
 import {
   getRecommendations,
   recordSwipe,
@@ -18,7 +19,7 @@ import {
 
 interface AuthenticatedRequest extends Request {
   userId: string; // Required - set by authenticateToken middleware
-  user?: IUserDocument;
+  user?: InferSchemaType<typeof User>;
 }
 
 const router: Router = express.Router();

@@ -11,8 +11,7 @@ import { Server as SocketServer } from 'socket.io';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import 'dotenv/config';
-import logger from './src/utils/logger';
-import type { ExtendedLogger } from './src/utils/logger';
+import logger, { type ExtendedLogger } from './src/utils/logger';
 import { FLAGS } from './src/config/flags';
 
 // Swagger configuration
@@ -80,10 +79,7 @@ await import('./src/utils/validateEnv');
 
 // Initialize Sentry (must be before other imports)
 const {
-  initSentry,
-  sentryRequestHandler,
-  sentryTracingHandler,
-  sentryErrorHandler
+  initSentry
 } = await import('./src/config/sentry');
 
 const app: any = express();
@@ -91,8 +87,6 @@ const app: any = express();
 // Initialize Sentry for production environment
 if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
   initSentry(app);
-  app.use(sentryRequestHandler());
-  app.use(sentryTracingHandler());
   logger.info('🔍 Sentry monitoring enabled');
 } else {
   logger.info('⚠️ Sentry monitoring disabled - not in production or missing DSN');
@@ -118,18 +112,16 @@ const webhookRoutes = await import('./src/routes/webhooks');
 const biometricRoutes = await import('./src/routes/biometric');
 const leaderboardRoutes = await import('./src/routes/leaderboard');
 const notificationRoutes = await import('./src/routes/notifications');
-// Manual moderation routes
-const moderationRoutes = await import('./routes/moderationRoutes');
+// Manual moderation routes  
 const moderationUserRoutes = await import('./src/routes/moderation');
-const oldUploadRoutes = await import('./routes/uploadRoutes');
 const adminEnhancedFeaturesRoutes = await import('./src/routes/adminEnhancedFeatures');
 const moderationAdminRoutes = await import('./src/routes/moderationAdmin');
 const communityRoutes = await import('./src/routes/community'); // Import community routes
 const aiModerationRoutes = await import('./src/routes/aiModeration');
 const aiModerationAdminRoutes = await import('./src/routes/aiModerationAdmin');
 const adminModerationRoutes = await import('./src/routes/adminModeration');
-const favoritesRoutes = await import('./routes/favorites'); // Import favorites routes
-const storiesRoutes = await import('./routes/stories');
+// const favoritesRoutes = await import('./routes/favorites'); // Import favorites routes
+// const storiesRoutes = await import('./routes/stories');
 const conversationsRoutes = await import('./src/routes/conversations');
 const profileRoutes = await import('./src/routes/profile');
 const adoptionRoutes = await import('./src/routes/adoption');

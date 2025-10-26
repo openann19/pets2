@@ -1,11 +1,18 @@
 import { logger } from '@pawfectmatch/core';
+
 /**
  * Simple encryption utilities for securing localStorage data
  * Note: This is not a replacement for proper server-side security
  * but adds an additional layer of protection against casual inspection
  */
-// Simple encryption function (not production-grade, but better than plain text)
-export function encryptData(data, key) {
+
+/**
+ * Simple encryption function (not production-grade, but better than plain text)
+ * @param data - Data to encrypt
+ * @param key - Encryption key
+ * @returns Encrypted data as base64 string
+ */
+export function encryptData(data: string, key: string): string {
     try {
         // Simple XOR encryption with key
         let encrypted = '';
@@ -15,13 +22,19 @@ export function encryptData(data, key) {
         }
         return btoa(encrypted);
     }
-    catch (error) {
+    catch (error: unknown) {
         logger.error('Encryption error:', { error });
         return data; // Fallback to plain text if encryption fails
     }
 }
-// Simple decryption function
-export function decryptData(encryptedData, key) {
+
+/**
+ * Simple decryption function
+ * @param encryptedData - Encrypted data as base64 string
+ * @param key - Decryption key
+ * @returns Decrypted data
+ */
+export function decryptData(encryptedData: string, key: string): string {
     try {
         const decoded = atob(encryptedData);
         let decrypted = '';
@@ -31,13 +44,17 @@ export function decryptData(encryptedData, key) {
         }
         return decrypted;
     }
-    catch (error) {
+    catch (error: unknown) {
         logger.error('Decryption error:', { error });
         return ''; // Return empty string if decryption fails
     }
 }
-// Generate a simple key based on user agent and timestamp
-export function generateStorageKey() {
+
+/**
+ * Generate a simple key based on user agent and timestamp
+ * @returns A 16-character encryption key
+ */
+export function generateStorageKey(): string {
     const baseKey = typeof window !== 'undefined'
         ? window.navigator.userAgent + new Date().getTime()
         : 'fallback_key';

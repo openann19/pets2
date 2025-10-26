@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logger } from "../../services/logger";
 
 export interface UsePersistedStateOptions<T> {
   key: string;
@@ -45,10 +46,7 @@ export function usePersistedState<T>({
           setValueState(JSON.parse(saved));
         }
       } catch (error) {
-        console.error(
-          `Failed to load persisted state for key "${key}":`,
-          error,
-        );
+        logger.error('Failed to load persisted state', { key, error });
       } finally {
         setIsLoading(false);
       }
@@ -67,7 +65,7 @@ export function usePersistedState<T>({
       try {
         void AsyncStorage.setItem(key, JSON.stringify(newValue));
       } catch (error) {
-        console.error(`Failed to persist state for key "${key}":`, error);
+        logger.error('Failed to persist state', { key, error });
       }
     },
     [key, enabled],
@@ -78,7 +76,7 @@ export function usePersistedState<T>({
       await AsyncStorage.removeItem(key);
       setValueState(initialValue);
     } catch (error) {
-      console.error(`Failed to clear persisted state for key "${key}":`, error);
+      logger.error('Failed to clear persisted state', { key, error });
     }
   }, [key, initialValue]);
 

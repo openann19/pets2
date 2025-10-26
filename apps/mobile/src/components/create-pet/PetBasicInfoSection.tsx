@@ -10,7 +10,7 @@ import {
 import type { PetFormData } from "../../hooks/usePetForm";
 
 import type { FormFieldValue } from "../../types/forms";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface PetBasicInfoSectionProps {
   formData: PetFormData;

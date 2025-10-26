@@ -7,6 +7,7 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "paths": {
+      "@mobile/*": ["src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
       "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],
@@ -38,7 +39,8 @@
     "node_modules", 
     "dist", 
     "coverage",
-    "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/__mocks__/**",
+    "**/__tests__/**/*.test.ts",
+    "**/__tests__/**/*.test.tsx"
   ]
 }

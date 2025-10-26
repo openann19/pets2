@@ -13,8 +13,8 @@ import {
 import { logger } from "./logger";
 import { useAuthStore } from "../stores/useAuthStore";
 
-// TURN server configuration type
-interface RTCIceServer {
+// Extended RTCIceServer with React Native WebRTC compatibility
+interface ExtendedRTCIceServer {
   urls: string | string[];
   username?: string;
   credential?: string;
@@ -68,7 +68,7 @@ class WebRTCService extends EventEmitter {
   // STUN/TURN configuration with environment support
   private readonly rtcConfiguration = {
     iceServers: (() => {
-      const servers = [
+      const servers: ExtendedRTCIceServer[] = [
         { urls: "stun:stun.l.google.com:19302" },
         { urls: "stun:stun1.l.google.com:19302" },
       ];
@@ -79,11 +79,12 @@ class WebRTCService extends EventEmitter {
       const turnCredential = process.env.EXPO_PUBLIC_TURN_CREDENTIAL;
 
       if (turnUrl && turnUsername && turnCredential) {
-        servers.push({
+        const turnServer: ExtendedRTCIceServer = {
           urls: turnUrl,
           username: turnUsername,
           credential: turnCredential,
-        } satisfies RTCIceServer);
+        };
+        servers.push(turnServer);
         logger.info("TURN server configured", { url: turnUrl });
       } else {
         logger.warn(
@@ -449,12 +450,21 @@ class WebRTCService extends EventEmitter {
     }
   }
 
-  // Private methods for WebRTC signaling
+  // Private methods for WebRTC signaling  
   private setupPeerConnectionListeners() {
     if (this.peerConnection === null) return;
 
-    (this.peerConnection as any).onicecandidate = (event: any) => {
-      if (event.candidate !== null) {
+    // Type assertion for react-native-webrtc compatibility
+    // The library supports event handlers but types don't match exactly
+    const peerConnection = this.peerConnection as RTCPeerConnection & {
+      onicecandidate: ((event: RTCPeerConnectionIceEvent | null) => void) | null;
+      ontrack: ((event: RTCTrackEvent) => void) | null;
+      onconnectionstatechange: (() => void) | null;
+    };
+
+    // ICE candidate handler - typed properly
+    peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent | null) => {
+      if (event !== null && event.candidate !== null && event.candidate !== undefined) {
         if (this.socket !== null) {
           this.socket.emit("webrtc-ice-candidate", {
             callId: this.currentCallId,
@@ -464,15 +474,22 @@ class WebRTCService extends EventEmitter {
       }
     };
 
-    (this.peerConnection as any).ontrack = (event: any) => {
+    // Track handler - typed properly  
+    peerConnection.ontrack = (event: RTCTrackEvent) => {
       if (event.streams && event.streams.length > 0) {
-        this.remoteStream = event.streams[0];
-        this.callState.remoteStream = this.remoteStream || undefined;
-        this.emit("callStateChanged", this.callState);
+        // Cast to React Native WebRTC MediaStream type
+        // Using double cast to bridge browser WebRTC and React Native WebRTC types
+        const stream = event.streams[0] as unknown as MediaStream;
+        if (stream !== undefined && stream !== null) {
+          this.remoteStream = stream;
+          this.callState.remoteStream = stream;
+          this.emit("callStateChanged", this.callState);
+        }
       }
     };
 
-    (this.peerConnection as any).onconnectionstatechange = () => {
+    // Connection state change handler - typed properly
+    peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
       if (state === "connected") {
         this.callState.isConnected = true;
@@ -481,6 +498,28 @@ class WebRTCService extends EventEmitter {
       } else if (state === "disconnected" || state === "failed") {
         this.endCall();
       }
+    };
+
+    // Additional event listeners for comprehensive state tracking
+    // Using type assertion for optional handlers
+    const extendedPeerConnection = this.peerConnection as RTCPeerConnection & {
+      oniceconnectionstatechange?: (() => void) | null;
+      onicegatheringstatechange?: (() => void) | null;
+    };
+
+    extendedPeerConnection.oniceconnectionstatechange = () => {
+      const iceState = this.peerConnection?.iceConnectionState;
+      logger.debug("ICE connection state changed", { state: iceState });
+      
+      if (iceState === "failed") {
+        logger.error("ICE connection failed");
+        this.emit("callError", new Error("ICE connection failed"));
+      }
+    };
+
+    extendedPeerConnection.onicegatheringstatechange = () => {
+      const gatheringState = this.peerConnection?.iceGatheringState;
+      logger.debug("ICE gathering state changed", { state: gatheringState });
     };
   }
 

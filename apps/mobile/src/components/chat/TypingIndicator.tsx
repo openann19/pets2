@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { Animated } from "react-native";
 import { Spacing, BorderRadius } from "../../animation";
 import { useTheme } from "../../theme/Provider";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface TypingIndicatorProps {
   typingUsers: string[];

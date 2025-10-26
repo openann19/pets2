@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, ScrollView, Image } from "react-nat
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated from "react-native-reanimated";
+import Animated, { useAnimatedStyle, interpolate, Extrapolation } from "react-native-reanimated";
 
 import { Theme } from "../../../theme/unified-theme";
 
@@ -45,34 +45,42 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
     (index + 1) * screenWidth,
   ];
 
-  const scale = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.8, 1, 0.8],
-    extrapolate: "clamp",
-  });
+  const animatedStyle = useAnimatedStyle(() => {
+    const scaleValue = interpolate(
+      scrollX.value,
+      inputRange,
+      [0.8, 1, 0.8],
+      Extrapolation.CLAMP
+    );
 
-  const rotateY = scrollX.interpolate({
-    inputRange,
-    outputRange: ["45deg", "0deg", "-45deg"],
-    extrapolate: "clamp",
-  });
+    const rotateYValue = interpolate(
+      scrollX.value,
+      inputRange,
+      [45, 0, -45],
+      Extrapolation.CLAMP
+    );
 
-  const opacity = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.6, 1, 0.6],
-    extrapolate: "clamp",
+    const opacityValue = interpolate(
+      scrollX.value,
+      inputRange,
+      [0.6, 1, 0.6],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      transform: [
+        { scale: scaleValue },
+        { perspective: 1000 },
+        { rotateY: `${rotateYValue}deg` },
+      ],
+      opacity: opacityValue,
+    };
   });
 
   return (
     <Animated.View
       key={memory.id}
-      style={StyleSheet.flatten([
-        styles.memoryCard,
-        {
-          transform: [{ scale }, { perspective: 1000 }, { rotateY }],
-          opacity,
-        },
-      ])}
+      style={StyleSheet.flatten([styles.memoryCard, animatedStyle])}
     >
       <LinearGradient
         colors={["rgba(255,255,255,0.15)", "rgba(255,255,255,0.05)"]}

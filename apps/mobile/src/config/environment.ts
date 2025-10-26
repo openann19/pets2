@@ -94,12 +94,15 @@ export const isProduction = (): boolean => ENVIRONMENT === "production";
 
 // Log configuration in development
 if (isDevelopment() && ENABLE_LOGGING) {
-  console.log("🔧 Environment Configuration:", {
-    environment: ENVIRONMENT,
-    apiBaseUrl: API_BASE_URL,
-    socketUrl: SOCKET_URL,
-    aiServiceUrl: AI_SERVICE_URL,
-    logging: ENABLE_LOGGING,
-    analytics: ENABLE_ANALYTICS,
+  // Using dynamic import to avoid circular dependency
+  void import("../services/logger").then(({ logger }) => {
+    logger.info("🔧 Environment Configuration", {
+      environment: ENVIRONMENT,
+      apiBaseUrl: API_BASE_URL,
+      socketUrl: SOCKET_URL,
+      aiServiceUrl: AI_SERVICE_URL,
+      logging: ENABLE_LOGGING,
+      analytics: ENABLE_ANALYTICS,
+    });
   });
 }

@@ -29,6 +29,7 @@ import { batchAutoCrop } from '../../utils/BatchAutoCrop';
 import { exportUltraVariants, type UltraVariant } from '../../utils/UltraPublish';
 import { QualityTargets } from '../../utils/QualityTargets';
 import { Alert, Modal } from 'react-native';
+import { logger } from '../../services/logger';
 
 const { width, height } = Dimensions.get('window');
 const PREVIEW_HEIGHT = height * 0.5;
@@ -253,7 +254,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       // Show results modal
       setShowUltraModal(true);
       
-      console.log('[ULTRA Export] Generated', variants.length, 'variants:', {
+      logger.info('[ULTRA Export] Generated variants', {
+        count: variants.length,
         byRatio: variants.reduce((acc, v) => {
           acc[v.ratio] = (acc[v.ratio] || 0) + 1;
           return acc;
@@ -263,8 +265,9 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
           return acc;
         }, {} as Record<string, number>),
       });
-    } catch (error) {
-      console.error('[ULTRA Export] Failed:', error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('[ULTRA Export] Failed', { error: err });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Export Failed', 'Failed to generate ultra variants. Please try again.');
     } finally {
@@ -283,11 +286,12 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       // 2. Or upload to your backend
       // 3. Or attach to a post composer
       
-      console.log('[ULTRA] Saving all variants to camera roll or uploading...');
+      logger.info('[ULTRA] Saving all variants to camera roll or uploading', { variantCount: ultraVariants.length });
       Alert.alert('Saved!', `Successfully exported ${ultraVariants.length} publish-ready variants.`);
       setShowUltraModal(false);
-    } catch (error) {
-      console.error('Failed to save ultra variants:', error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to save ultra variants', { error: err });
       Alert.alert('Save Failed', 'Failed to save variants. Please try again.');
     }
   }, [ultraVariants]);

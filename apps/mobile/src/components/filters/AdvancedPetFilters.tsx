@@ -13,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import type { PetFilters } from "@pawfectmatch/core";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface AdvancedPetFiltersProps {
   value: PetFilters;

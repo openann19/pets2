@@ -28,5 +28,14 @@ module.exports = {
     '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
     '^@/types/(.*)$': '<rootDir>/src/types/$1',
     '^@pawfectmatch/core$': '<rootDir>/../../packages/core/src'
+  },
+  
+  coverageThreshold: {
+    global: {
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
   }
 };

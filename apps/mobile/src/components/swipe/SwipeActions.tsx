@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { EliteButton, StaggeredContainer, FadeInUp } from "../EliteComponents";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface SwipeActionsProps {
   onPass: () => void;

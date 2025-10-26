@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { logger } from "../../services/logger";
 
 export interface FormFieldState<T> {
   value: T;
@@ -116,7 +117,7 @@ export function useFormState<T extends Record<string, any>>({
       try {
         await onSubmit(values);
       } catch (error) {
-        console.error("Form submission error:", error);
+        logger.error("Form submission error", { error });
       }
     },
     [values, validate],

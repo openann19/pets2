@@ -8,7 +8,7 @@ interface QuickRepliesProps {
   visible?: boolean;
 }
 
-const DEFAULT_REPLIES = [
+export const DEFAULT_REPLIES = [
   "Sounds good! 👍",
   "When works for you?",
   "Let's do it! 🎾",

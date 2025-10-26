@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Footer from "../../components/Footer";
 import { usePremiumScreen } from "../../hooks/screens/premium";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 export function PremiumScreen(): JSX.Element {
   const {

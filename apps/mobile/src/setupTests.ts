@@ -45,12 +45,40 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
 
 jest.mock("react-native-keychain", () => ({
+  ACCESSIBLE: {
+    WHEN_UNLOCKED: "WHEN_UNLOCKED",
+    AFTER_FIRST_UNLOCK: "AFTER_FIRST_UNLOCK",
+    ALWAYS: "ALWAYS",
+    WHEN_PASSCODE_SET_THIS_DEVICE_ONLY: "WHEN_PASSCODE_SET_THIS_DEVICE_ONLY",
+    WHEN_UNLOCKED_THIS_DEVICE_ONLY: "WHEN_UNLOCKED_THIS_DEVICE_ONLY",
+  },
   SECURITY_LEVEL_ANY: "MOCK_SECURITY_LEVEL_ANY",
   SECURITY_LEVEL_SECURE_SOFTWARE: "MOCK_SECURITY_LEVEL_SECURE_SOFTWARE",
   SECURITY_LEVEL_SECURE_HARDWARE: "MOCK_SECURITY_LEVEL_SECURE_HARDWARE",
-  setGenericPassword: jest.fn(),
-  getGenericPassword: jest.fn(),
-  resetGenericPassword: jest.fn(),
+  setGenericPassword: jest.fn(() => Promise.resolve(true)),
+  getGenericPassword: jest.fn(() => Promise.resolve({ username: "key", password: "value" })),
+  resetGenericPassword: jest.fn(() => Promise.resolve(true)),
+}));
+
+jest.mock("expo-secure-store", () => ({
+  setItemAsync: jest.fn(() => Promise.resolve(undefined)),
+  getItemAsync: jest.fn(() => Promise.resolve(null)),
+  deleteItemAsync: jest.fn(() => Promise.resolve(undefined)),
+  isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+}));
+
+jest.mock("expo-local-authentication", () => ({
+  hasHardwareAsync: jest.fn(() => Promise.resolve(true)),
+  isEnrolledAsync: jest.fn(() => Promise.resolve(true)),
+  supportedAuthenticationTypesAsync: jest.fn(() => Promise.resolve([1, 2])),
+  authenticateAsync: jest.fn(() => Promise.resolve({ success: true })),
+  AuthenticationType: {
+    FACIAL_RECOGNITION: 1,
+    FINGERPRINT: 2,
+    IRIS: 3,
+    FACE_ID: 1,
+    TOUCH_ID: 2,
+  },
 }));
 
 // Mock react-native-gesture-handler

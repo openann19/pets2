@@ -1,0 +1,25 @@
+name: verification_tier2_requires_info
+description: Tier 2 verification requiring additional information
+handlers:
+  - method: POST
+    url: '*/verification/tier2'
+    response:
+      status: 200
+      body:
+        success: true
+        data:
+          id: "verification-789"
+          userId: "user-123"
+          tier: 2
+          status: "requires_info"
+          requiredDocuments:
+            - "government_id"
+            - "proof_of_address"
+          rejectionReason: "Documents need to be clearer - please ensure all text is readable"
+          submittedDocuments:
+            - type: "government_id"
+              filename: "id-front.jpg"
+              status: "rejected"
+              rejectionReason: "Text not readable"
+          createdAt: "2024-01-01T12:00:00Z"
+          updatedAt: "2024-01-01T14:00:00Z"

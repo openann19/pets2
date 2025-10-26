@@ -12,7 +12,7 @@ import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-import {
+import type {
   DynamicColors,
   EnhancedShadows,
   SemanticColors,
@@ -38,8 +38,8 @@ export interface ImmersiveCardProps extends TouchableOpacityProps {
   magneticHover?: boolean;
   shimmerEffect?: boolean;
   entranceAnimation?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" | "none";
-  gradientName?: keyof typeof DynamicColors.gradients;
-  glowColor?: keyof typeof EnhancedShadows.glow;
+  gradientName?: string;
+  glowColor?: string;
   style?: ViewStyle;
   contentStyle?: ViewStyle;
   onPress?: () => void;
@@ -114,38 +114,58 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
         case "default":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.background.secondary,
-            ...EnhancedShadows.depth.lg,
+            backgroundColor: "#f9fafb",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            elevation: 8,
           };
 
         case "glass":
           return {
             ...baseStyles,
-            ...DynamicColors.glass.medium,
-            ...EnhancedShadows.depth.sm,
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
           };
 
         case "holographic":
           return {
             ...baseStyles,
             backgroundColor: "transparent",
-            ...EnhancedShadows.depth.lg,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            elevation: 8,
           };
 
         case "elevated":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.background.secondary,
-            ...EnhancedShadows.depth.xl,
+            backgroundColor: "#f9fafb",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 16 },
+            shadowOpacity: 0.2,
+            shadowRadius: 20,
+            elevation: 12,
           };
 
         case "minimal":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.background.secondary,
-            ...EnhancedShadows.depth.sm,
+            backgroundColor: "#f9fafb",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
             borderWidth: 1,
-            borderColor: SemanticColors.border.subtle,
+            borderColor: "#e5e7eb",
           };
 
         default:
@@ -219,7 +239,31 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
     const getGlowStyle = (): ViewStyle => {
       if (!glowColor || !isHovered) return {};
 
-      const glowShadows = EnhancedShadows.glow;
+      // Simple glow shadows
+      const glowShadows: Record<string, ViewStyle> = {
+        blue: {
+          shadowColor: "#3b82f6",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.8,
+          shadowRadius: 16,
+          elevation: 8,
+        },
+        purple: {
+          shadowColor: "#a855f7",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.8,
+          shadowRadius: 16,
+          elevation: 8,
+        },
+        pink: {
+          shadowColor: "#ec4899",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.8,
+          shadowRadius: 16,
+          elevation: 8,
+        },
+      };
+      
       if (glowColor && glowShadows[glowColor]) {
         return glowShadows[glowColor];
       }
@@ -247,18 +291,25 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
 
       // Wrap with gradient for holographic variant
       if (variant === "holographic" && gradientName) {
-        const gradient = DynamicColors.gradients[gradientName];
-        return (
-          <LinearGradient
-            colors={gradient.colors as any}
-            locations={[...gradient.locations]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ flex: 1 }}
-          >
-            {content}
-          </LinearGradient>
-        );
+        const gradients: Record<string, { colors: string[]; locations: number[] }> = {
+          primary: { colors: ["#ec4899", "#f472b6", "#fbcfe8"], locations: [0, 0.5, 1] },
+          sunset: { colors: ["#f59e0b", "#f97316", "#fb923c"], locations: [0, 0.5, 1] },
+          ocean: { colors: ["#0ea5e9", "#38bdf8", "#7dd3fc"], locations: [0, 0.5, 1] },
+        };
+        const gradient = gradients[gradientName] ?? gradients.primary;
+        if (gradient) {
+          return (
+            <LinearGradient
+              colors={gradient.colors}
+              locations={gradient.locations}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ flex: 1 }}
+            >
+              {content}
+            </LinearGradient>
+          );
+        }
       }
 
       return content;
@@ -274,7 +325,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           entranceAnimation !== "none" ? entrance.style : undefined,
           isPressed ? { transform: [{ scale: 0.98 }] } : undefined,
           style,
-        ].filter(Boolean)}
+        ].filter(Boolean) as any}
       >
         {renderContent()}
       </Animated.View>

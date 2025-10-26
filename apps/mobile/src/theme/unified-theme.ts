@@ -3,6 +3,186 @@
  * Consistent design tokens across the entire application
  */
 
+import { Platform } from "react-native";
+
+// Type definitions for better IntelliSense and type safety
+export type DynamicColors = {
+  primary: string;
+  onPrimary: string;
+  background: string;
+  surface: string;
+  onSurface: string;
+};
+
+export type NeutralScale = Record<0 | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950, string>;
+export type PrimaryScale = Record<50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900, string>;
+
+export type SemanticColors = {
+  neutral: NeutralScale;
+  primary: PrimaryScale;
+  text: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    disabled?: string;
+    inverse: string;
+  };
+  background: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    inverse: string;
+  };
+  border: {
+    light: string;
+    medium: string;
+    dark: string;
+  };
+  status: {
+    success: string;
+    warning: string;
+    error: string;
+    info: string;
+  };
+};
+
+export type EnhancedTypography = {
+  fontSize: {
+    xs: number;
+    sm: number;
+    base: number;
+    lg: number;
+    xl: number;
+    "2xl": number;
+    "3xl": number;
+    "4xl": number;
+    "5xl": number;
+    "6xl": number;
+    "7xl": number;
+    "8xl": number;
+    "9xl": number;
+  };
+  fontWeight: {
+    thin: "100";
+    extralight: "200";
+    light: "300";
+    normal: "400";
+    medium: "500";
+    semibold: "600";
+    bold: "700";
+    extrabold: "800";
+    black: "900";
+  };
+  lineHeight: {
+    none: number;
+    tight: number;
+    normal: number;
+    relaxed: number;
+    loose: number;
+  };
+  letterSpacing: {
+    tighter: number;
+    tight: number;
+    normal: number;
+    wide: number;
+    wider: number;
+    widest: number;
+  };
+  body: {
+    fontSize: number;
+    lineHeight: number;
+    fontWeight: "400";
+  };
+  caption: {
+    fontSize: number;
+    lineHeight: number;
+    fontWeight: "400";
+  };
+  heading: {
+    fontSize: number;
+    lineHeight: number;
+    fontWeight: "700";
+  };
+  fontFamily?: {
+    regular?: string;
+    medium?: string;
+    semibold?: string;
+    bold?: string;
+  };
+};
+
+export type EnhancedShadows = {
+  depth: {
+    sm: any;
+    md: any;
+    lg: any;
+    xl: any;
+  };
+  shadow?: {
+    sm: any;
+    md: any;
+    lg: any;
+  };
+};
+
+export type SpacingScale = {
+  none?: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+  "3xl": number;
+  "4xl": number;
+};
+
+export type RadiusScale = {
+  none: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+  full: number;
+  pill?: number;
+};
+
+export type MotionSystem = {
+  springs: {
+    standard: { damping: number; stiffness: number; mass: number };
+    gentle: { damping: number; stiffness: number; mass: number };
+    snappy: { damping: number; stiffness: number; mass: number };
+    bouncy: { damping: number; stiffness: number; mass: number };
+  };
+  timings: {
+    fast: number;
+    standard: number;
+    slow: number;
+  };
+  easings: {
+    easeIn: string;
+    easeOut: string;
+    easeInOut: string;
+  };
+};
+
+export type UnifiedTheme = {
+  colors: SemanticColors & { primary: PrimaryScale; secondary?: any; semantic?: any };
+  typography: EnhancedTypography;
+  spacing: SpacingScale;
+  borderRadius: RadiusScale;
+  shadows: EnhancedShadows;
+  motion?: MotionSystem;
+  breakpoints?: any;
+  gradients?: any;
+  glass?: any;
+  glow?: any;
+  shadow?: any;
+  zIndex?: any;
+};
+
 export const Theme = {
   colors: {
     // Primary brand colors
@@ -160,6 +340,7 @@ export const Theme = {
   // Border radius system
   borderRadius: {
     none: 0,
+    xs: 2,
     sm: 4,
     md: 8,
     lg: 12,
@@ -171,6 +352,13 @@ export const Theme = {
   // Shadow system
   shadows: {
     depth: {
+      xs: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0.5 },
+        shadowOpacity: 0.02,
+        shadowRadius: 1,
+        elevation: 0.5,
+      },
       sm: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
@@ -386,5 +574,12 @@ export type SpacingSize = keyof typeof Theme.spacing;
 export type BorderRadiusSize = keyof typeof Theme.borderRadius;
 export type FontSize = keyof typeof Theme.typography.fontSize;
 export type FontWeight = keyof typeof Theme.typography.fontWeight;
+
+// Re-export types for convenience
+export type { DynamicColors as TDynamicColors };
+export type { EnhancedShadows as TEnhancedShadows };
+export type { SemanticColors as TSemanticColors };
+export type { EnhancedTypography as TEnhancedTypography };
+export type { UnifiedTheme as TUnifiedTheme };
 
 export default Theme;

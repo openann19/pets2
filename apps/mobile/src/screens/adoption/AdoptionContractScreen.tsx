@@ -12,7 +12,7 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 type AdoptionStackParamList = {
   AdoptionContract: {

@@ -15,6 +15,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system';
 import { Platform } from 'react-native';
+import { logger } from './logger';
 
 export interface UploadHygieneOptions {
   maxDimension?: number;
@@ -40,7 +41,7 @@ export interface ProcessedImage {
   };
 }
 
-const DEFAULT_OPTIONS: UploadHygieneOptions = {
+export const DEFAULT_OPTIONS: UploadHygieneOptions = {
   maxDimension: 2048,
   quality: 0.9,
   aspectRatio: [4, 3],
@@ -55,26 +56,32 @@ async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType
   try {
     // Read first bytes for signature detection
     const fileInfo = await FileSystem.getInfoAsync(uri);
-    if (fileInfo.exists && fileInfo.isFile) {
+    const isFile = fileInfo.exists && fileInfo.isDirectory === false;
+
+    if (isFile) {
       // Basic JPEG, PNG validation based on file extension
-      const ext = uri.split('.').pop()?.toLowerCase();
-      
-      const validExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-      const mimeTypes: Record<string, string> = {
+      const ext = uri.split('.').pop();
+
+      const validExtensions = ['jpg', 'jpeg', 'png', 'webp'] as const;
+      const mimeTypes: Record<(typeof validExtensions)[number], string> = {
         jpg: 'image/jpeg',
         jpeg: 'image/jpeg',
         png: 'image/png',
         webp: 'image/webp',
       };
 
-      if (ext && validExtensions.includes(ext)) {
-        return { valid: true, mimeType: mimeTypes[ext] };
+      if (typeof ext === 'string') {
+        const normalizedExt = ext.toLowerCase() as (typeof validExtensions)[number] | string;
+        if ((validExtensions as readonly string[]).includes(normalizedExt)) {
+          return { valid: true, mimeType: mimeTypes[normalizedExt as (typeof validExtensions)[number]] };
+        }
       }
     }
     
     return { valid: false, mimeType: 'unknown' };
-  } catch (error) {
-    console.error('MIME validation error:', error);
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('MIME validation error', { error: err });
     return { valid: false, mimeType: 'unknown' };
   }
 }
@@ -92,8 +99,9 @@ async function fixOrientation(imageUri: string): Promise<string> {
     );
 
     return result.uri;
-  } catch (error) {
-    console.error('Orientation fix error:', error);
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Orientation fix error', { error: err });
     return imageUri;
   }
 }
@@ -139,9 +147,10 @@ async function resizeImage(
     }
 
     return manipulateResult;
-  } catch (error) {
-    console.error('Resize error:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Resize error', { error: err });
+    throw err;
   }
 }
 
@@ -185,9 +194,10 @@ async function cropToAspectRatio(
       [cropRegion],
       { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
     );
-  } catch (error) {
-    console.error('Crop error:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Crop error', { error: err });
+    throw err;
   }
 }
 
@@ -209,9 +219,10 @@ async function compressImage(
         // For complete EXIF stripping, you'd need a native module or backend processing
       }
     );
-  } catch (error) {
-    console.error('Compress error:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Compress error', { error: err });
+    throw err;
   }
 }
 
@@ -225,8 +236,9 @@ async function getFileInfo(uri: string): Promise<{ size: number; exists: boolean
       return { size: info.size, exists: info.exists };
     }
     return { size: 0, exists: false };
-  } catch (error) {
-    console.error('File info error:', error);
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('File info error', { error: err });
     return { size: 0, exists: false };
   }
 }
@@ -241,18 +253,18 @@ export async function processImageForUpload(
   const opts = { ...DEFAULT_OPTIONS, ...options };
   
   try {
-    console.log('Starting upload hygiene processing...');
+    logger.info('Starting upload hygiene processing', { uri: imageUri });
 
     // 1. Validate MIME type
     const mimeValidation = await validateMimeType(imageUri);
     if (!mimeValidation.valid) {
       throw new Error(`Invalid file type: ${mimeValidation.mimeType}`);
     }
-    console.log('✓ MIME type validated:', mimeValidation.mimeType);
+    logger.debug('MIME type validated', { mimeType: mimeValidation.mimeType });
 
     // 2. Fix orientation
     const orientationFixed = await fixOrientation(imageUri);
-    console.log('✓ Orientation fixed');
+    logger.debug('Orientation fixed');
 
     // 3. Get initial dimensions
     const initialManipulate = await ImageManipulator.manipulateAsync(
@@ -263,11 +275,11 @@ export async function processImageForUpload(
     
     const originalWidth = initialManipulate.width;
     const originalHeight = initialManipulate.height;
-    console.log(`Original dimensions: ${originalWidth}x${originalHeight}`);
+    logger.debug('Original dimensions', { width: originalWidth, height: originalHeight });
 
     // 4. Resize to max dimensions
     const resized = await resizeImage(orientationFixed, opts.maxDimension!);
-    console.log(`✓ Resized to: ${resized.width}x${resized.height}`);
+    logger.debug('Image resized', { width: resized.width, height: resized.height });
 
     // 5. Crop to aspect ratio if required
     let cropped = resized;
@@ -278,12 +290,12 @@ export async function processImageForUpload(
         resized.width,
         resized.height
       );
-      console.log(`✓ Cropped to ${opts.aspectRatio![0]}:${opts.aspectRatio![1]}`);
+      logger.debug('Image cropped', { aspectRatio: opts.aspectRatio });
     }
 
     // 6. Compress with quality setting
     const compressed = await compressImage(cropped.uri, opts.quality!);
-    console.log(`✓ Compressed with quality: ${opts.quality}`);
+    logger.debug('Image compressed', { quality: opts.quality });
 
     // 7. Get final file info
     const fileInfo = await getFileInfo(compressed.uri);
@@ -302,15 +314,18 @@ export async function processImageForUpload(
       },
     };
 
-    console.log('✓ Upload hygiene complete:', {
+    logger.info('Upload hygiene complete', {
       finalSize: `${result.width}x${result.height}`,
       fileSize: `${(result.fileSize / 1024).toFixed(2)} KB`,
+      mimeType: result.mimeType,
+      metadata: result.metadata,
     });
 
     return result;
-  } catch (error) {
-    console.error('Upload hygiene processing failed:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Upload hygiene processing failed', { error: err });
+    throw err;
   }
 }
 
@@ -344,9 +359,10 @@ export async function pickAndProcessImage(
     
     // Process with upload hygiene
     return await processImageForUpload(asset.uri, options);
-  } catch (error) {
-    console.error('Pick and process error:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Pick and process error', { error: err });
+    throw err;
   }
 }
 
@@ -378,9 +394,10 @@ export async function captureAndProcessImage(
     
     // Process with upload hygiene
     return await processImageForUpload(asset.uri, options);
-  } catch (error) {
-    console.error('Capture and process error:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Capture and process error', { error: err });
+    throw err;
   }
 }
 
@@ -407,9 +424,10 @@ export async function checkUploadQuota(userId: string): Promise<QuotaCheck> {
       resetAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
       limit: 10,
     };
-  } catch (error) {
-    console.error('Quota check error:', error);
-    throw error;
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Quota check error', { error: err, userId });
+    throw err;
   }
 }
 
@@ -426,12 +444,12 @@ export async function uploadWithRetry<T>(
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await uploadFn();
-    } catch (error) {
-      lastError = error as Error;
+    } catch (error: unknown) {
+      lastError = error instanceof Error ? error : new Error(String(error));
       
       if (attempt < maxRetries) {
         const delay = backoffMs * Math.pow(2, attempt - 1);
-        console.log(`Upload failed, retrying in ${delay}ms (attempt ${attempt}/${maxRetries})...`);
+        logger.warn('Upload failed, retrying', { delay, attempt, maxRetries, error: lastError });
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }

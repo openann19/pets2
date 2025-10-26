@@ -13,7 +13,7 @@ import Animated, {
 import type { Match } from "../../hooks/useMatchesData";
 import * as Haptics from "expo-haptics";
 import OptimizedImage from "../OptimizedImage";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface MatchCardProps {
   match: Match;

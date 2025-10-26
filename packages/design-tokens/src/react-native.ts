@@ -18,5 +18,5 @@ export function toRNColor(value: string): ColorValue {
 export function getRNColorValue(colorObj: Record<string, string>, shade: string): ColorValue {
   const key = shade as keyof typeof colorObj;
   const color = colorObj[key] ?? "";
-  return color as unknown as ColorValue;
+  return color;
 }

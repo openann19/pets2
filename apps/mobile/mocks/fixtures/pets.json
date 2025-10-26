@@ -1,0 +1,85 @@
+{
+  "buddy": {
+    "id": "pet-456",
+    "name": "Buddy",
+    "breed": "Golden Retriever",
+    "age": 3,
+    "gender": "male",
+    "size": "large",
+    "photos": [
+      "https://example.com/buddy1.jpg",
+      "https://example.com/buddy2.jpg",
+      "https://example.com/buddy3.jpg"
+    ],
+    "ownerId": "user-123",
+    "vaccinated": true,
+    "neutered": true,
+    "description": "Friendly Golden Retriever who loves long walks and belly rubs! Very playful and great with kids.",
+    "personality": {
+      "energy": "high",
+      "friendliness": "very_friendly",
+      "playfulness": "high"
+    },
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T12:00:00Z"
+  },
+  "luna": {
+    "id": "pet-789",
+    "name": "Luna",
+    "breed": "Siamese Cat",
+    "age": 2,
+    "gender": "female",
+    "size": "small",
+    "photos": [
+      "https://example.com/luna1.jpg",
+      "https://example.com/luna2.jpg"
+    ],
+    "ownerId": "user-456",
+    "vaccinated": true,
+    "neutered": true,
+    "description": "Playful Siamese cat who loves attention, treats, and sleeping in sunny spots!",
+    "personality": {
+      "energy": "medium",
+      "friendliness": "friendly",
+      "playfulness": "high"
+    },
+    "createdAt": "2024-01-02T00:00:00Z",
+    "updatedAt": "2024-01-02T10:00:00Z"
+  },
+  "max": {
+    "id": "pet-max",
+    "name": "Max",
+    "breed": "German Shepherd",
+    "age": 4,
+    "gender": "male",
+    "size": "large",
+    "photos": [
+      "https://example.com/max1.jpg"
+    ],
+    "ownerId": "user-789",
+    "vaccinated": true,
+    "neutered": true,
+    "description": "Loyal German Shepherd who loves obedience training and family time.",
+    "personality": {
+      "energy": "high",
+      "friendliness": "friendly",
+      "playfulness": "medium"
+    },
+    "createdAt": "2024-01-03T00:00:00Z",
+    "updatedAt": "2024-01-03T08:00:00Z"
+  },
+  "emptyProfile": {
+    "id": "pet-empty",
+    "name": "",
+    "breed": "",
+    "age": 0,
+    "gender": "",
+    "size": "",
+    "photos": [],
+    "ownerId": "user-test",
+    "vaccinated": false,
+    "neutered": false,
+    "description": "",
+    "createdAt": "2024-01-01T00:00:00Z"
+  }
+}

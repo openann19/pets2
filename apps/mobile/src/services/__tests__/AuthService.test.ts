@@ -9,10 +9,8 @@ import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { api } from '../api';
 
-// Mock all dependencies
-jest.mock('react-native-keychain');
-jest.mock('expo-secure-store');
-jest.mock('expo-local-authentication');
+// Note: Core mocks are already in setupTests.ts
+// We only need to mock the API here
 jest.mock('../api', () => ({
   api: {
     request: jest.fn(),
@@ -33,6 +31,13 @@ describe('AuthService', () => {
     jest.clearAllMocks();
     jest.clearAllTimers();
     jest.useFakeTimers();
+    
+    // Reset all mocks to defaults
+    (api.request as jest.Mock).mockClear();
+    (Keychain.setGenericPassword as jest.Mock).mockClear();
+    (Keychain.getGenericPassword as jest.Mock).mockClear();
+    (SecureStore.setItemAsync as jest.Mock).mockClear();
+    (LocalAuthentication.authenticateAsync as jest.Mock).mockClear();
     
     // Setup default mocks
     (Keychain.setGenericPassword as jest.Mock).mockResolvedValue(true);

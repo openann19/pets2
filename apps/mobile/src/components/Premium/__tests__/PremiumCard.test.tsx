@@ -4,7 +4,7 @@ import "@testing-library/jest-native/extend-expect";
 import PremiumCard from "../../Premium/PremiumCard";
 import {} from "../../../theme/Provider";
 import * as Haptics from "expo-haptics";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../../theme/unified-theme';
 
 // Mock dependencies
 jest.mock("../../../theme/Provider");

@@ -1,4 +1,4 @@
-import { api } from "./api";
+import { request } from "./api";
 
 export type PartResult = { ETag: string; PartNumber: number; };
 
@@ -16,7 +16,7 @@ export async function multipartUpload({
   const RNFS = require("react-native-fs").default;
   const stat = await RNFS.stat(fileUri);
   const totalBytes = Number(stat.size);
-  const { data: { key, uploadId } } = await api.post("/upload/multipart/create", { contentType });
+  const { key, uploadId } = await request<{ key: string; uploadId: string }>("/upload/multipart/create", { method: 'POST', body: { contentType } });
 
   // slice file into parts (RNFS read with offset)
   const parts: PartResult[] = [];
@@ -26,7 +26,8 @@ export async function multipartUpload({
   for (let start = 0; start < totalBytes; start += partSize, partNumber++) {
     const end = Math.min(start + partSize, totalBytes);
     const length = end - start;
-    const { data: { url } } = await api.get("/upload/multipart/part-url", { 
+    const { url } = await request<{ url: string }>("/upload/multipart/part-url", { 
+      method: 'GET',
       params: { key, uploadId, partNumber } 
     });
     const base64 = await RNFS.read(fileUri, length, start, "base64");
@@ -41,7 +42,7 @@ export async function multipartUpload({
     onProgress?.(uploaded, totalBytes);
   }
 
-  const { data } = await api.post("/upload/multipart/complete", { key, uploadId, parts });
-  return data as { url: string; key: string; thumbnails: { jpg: string; webp: string; }; };
+  const data = await request<{ url: string; key: string; thumbnails: { jpg: string; webp: string; } }>("/upload/multipart/complete", { method: 'POST', body: { key, uploadId, parts } });
+  return data;
 }
 

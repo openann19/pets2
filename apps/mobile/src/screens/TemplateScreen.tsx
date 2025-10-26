@@ -13,6 +13,7 @@ import { AdvancedCard, CardConfigs } from '../components/Advanced/AdvancedCard';
 import { Theme } from '../theme/unified-theme';
 import { StaggerList } from '../ui/lists/StaggerList';
 import { BouncePressable } from '../ui/pressables/BouncePressable';
+import { logger } from '../services/logger';
 
 interface TemplateItem {
   _id: string;
@@ -29,7 +30,7 @@ export default function TemplateScreen() {
 
   const handlePress = () => {
     // Handle press action
-    console.log('Pressed');
+    logger.info('Template screen button pressed');
   };
 
   return (

@@ -24,8 +24,8 @@ export interface DoubleTapLikeProps {
   maxDelay?: number;
 }
 
-const DEFAULT_SCALE = { stiffness: 400, damping: 14, mass: 0.8 };
-const DEFAULT_HEART = { size: 64, color: "#ff4757", showMs: 600 };
+export const DEFAULT_SCALE = { stiffness: 400, damping: 14, mass: 0.8 };
+export const DEFAULT_HEART = { size: 64, color: "#ff4757", showMs: 600 };
 
 export function DoubleTapLike({
   children,

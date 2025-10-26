@@ -18,7 +18,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import { api } from "../../services/api";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
+import { logger } from '../../services/logger';
 
 interface ServiceStatus {
   name: string;
@@ -120,7 +121,7 @@ export default function AdminServicesScreen({
       setServices(mockServices);
     } catch (error) {
       Alert.alert('Error', 'Failed to load services');
-      console.error(error);
+      logger.error('Failed to load services', { error });
     } finally {
       setLoading(false);
     }

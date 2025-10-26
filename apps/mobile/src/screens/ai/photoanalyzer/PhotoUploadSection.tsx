@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 import { PinchZoomPro } from '../../../components/Gestures/PinchZoomPro';
 import { usePinchMetrics } from '../../../hooks/useInteractionMetrics';
 

@@ -25,7 +25,10 @@ export function tenengradScore(
   const L = (x: number, y: number) => {
     if (x < 0 || x >= w || y < 0 || y >= h) return 0;
     const i = (y * w + x) * 4;
-    return 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+    const r = data[i] ?? 0;
+    const g = data[i + 1] ?? 0;
+    const b = data[i + 2] ?? 0;
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
 
   let sum = 0;
@@ -39,8 +42,10 @@ export function tenengradScore(
       for (let j = -1; j <= 1; j++) {
         for (let i = -1; i <= 1; i++) {
           const v = L(x + i, y + j);
-          sx += v * gx[k];
-          sy += v * gy[k];
+          const gxVal = gx[k] ?? 0;
+          const gyVal = gy[k] ?? 0;
+          sx += v * gxVal;
+          sy += v * gyVal;
           k++;
         }
       }
@@ -66,21 +71,26 @@ export function entropyScore(canvas: HTMLCanvasElement, rect?: Rect): number {
   const hist = new Float32Array(256);
 
   for (let i = 0; i < data.length; i += 4) {
+    const r = data[i] ?? 0;
+    const g = data[i + 1] ?? 0;
+    const b = data[i + 2] ?? 0;
     const l = Math.round(
-      0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]
+      0.2126 * r + 0.7152 * g + 0.0722 * b
     );
-    hist[l]++;
+    hist[l] += 1;
   }
 
   let sum = 0;
   for (let i = 0; i < 256; i++) {
-    sum += hist[i];
+    const val = hist[i] ?? 0;
+    sum += val;
   }
   if (!sum) return 0;
 
   let H = 0;
   for (let i = 0; i < 256; i++) {
-    const p = hist[i] / sum;
+    const histVal = hist[i] ?? 0;
+    const p = histVal / sum;
     if (p > 0) H += -p * Math.log2(p);
   }
   return H; // 0..8

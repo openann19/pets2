@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
+// @ts-expect-error - react-native-purchases may not be installed
 import Purchases, { CustomerInfo, PurchasesOffering, PurchasesPackage } from "react-native-purchases";
+import { logger } from "../services/logger";
 
 type PremiumCtx = {
   isPremium: boolean;
@@ -29,8 +31,9 @@ export function PremiumProvider({ children }: PremiumProviderProps) {
     try {
       const { customerInfo } = await Purchases.getCustomerInfo();
       setIsPremium(!!customerInfo.entitlements.active["pro"]);
-    } catch (error) {
-      console.error("Failed to refresh premium status:", error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to refresh premium status", { error: err });
     }
   };
 
@@ -41,9 +44,10 @@ export function PremiumProvider({ children }: PremiumProviderProps) {
       if (!pkg) throw new Error("No package available");
       const { customerInfo } = await Purchases.purchasePackage(pkg);
       setIsPremium(!!customerInfo.entitlements.active["pro"]);
-    } catch (error) {
-      console.error("Failed to purchase:", error);
-      throw error;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to purchase", { error: err });
+      throw err;
     }
   };
 
@@ -51,9 +55,10 @@ export function PremiumProvider({ children }: PremiumProviderProps) {
     try {
       const { customerInfo } = await Purchases.restorePurchases();
       setIsPremium(!!customerInfo.entitlements.active["pro"]);
-    } catch (error) {
-      console.error("Failed to restore purchases:", error);
-      throw error;
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to restore purchases", { error: err });
+      throw err;
     }
   };
 

@@ -21,10 +21,9 @@ import { lightTheme, darkTheme, createTheme } from "./tokens";
 // Deprecation warning
 let warned = false;
 if (!warned && process.env.NODE_ENV !== "test") {
-  // eslint-disable-next-line no-console
-  console.warn(
-    "[DEPRECATION] theme/Provider → use theme/Provider instead.",
-  );
+  void import("../services/logger").then(({ logger }) => {
+    logger.warn("[DEPRECATION] theme/Provider → use theme/Provider instead.");
+  });
   warned = true;
 }
 

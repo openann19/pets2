@@ -20,3 +20,16 @@ export function getSocket(): Socket {
 
 export const socketClient = getSocket();
 
+// Export as socketService for test compatibility
+export const socketService = {
+  connect: () => getSocket(),
+  disconnect: () => {
+    if (socket) {
+      socket.disconnect();
+      socket = null;
+    }
+  },
+  getSocket,
+  socketClient,
+};
+

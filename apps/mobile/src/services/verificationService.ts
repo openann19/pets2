@@ -5,7 +5,8 @@
  * for user verification tier progression.
  */
 
-import { api } from './api';
+import { request } from './api';
+import { logger } from './logger';
 
 export interface VerificationStatus {
   tier: 'tier0' | 'tier1' | 'tier2' | 'tier3' | 'tier4';
@@ -89,10 +90,9 @@ class VerificationService {
    */
   async getStatus(): Promise<VerificationStatus> {
     try {
-      const response = await api.get('/verification/status');
-      return response.data;
+      return await request<VerificationStatus>('/verification/status', { method: 'GET' });
     } catch (error) {
-      console.error('Error getting verification status:', error);
+      logger.error('Error getting verification status', { error });
       throw error;
     }
   }
@@ -102,10 +102,9 @@ class VerificationService {
    */
   async submitIdentityVerification(data: IdentityVerificationData): Promise<VerificationStatus> {
     try {
-      const response = await api.post('/verification/identity', data);
-      return response.data;
+      return await request<VerificationStatus>('/verification/identity', { method: 'POST', body: data });
     } catch (error) {
-      console.error('Error submitting identity verification:', error);
+      logger.error('Error submitting identity verification', { error });
       throw error;
     }
   }
@@ -117,10 +116,9 @@ class VerificationService {
     data: PetOwnershipVerificationData
   ): Promise<VerificationStatus> {
     try {
-      const response = await api.post('/verification/pet-ownership', data);
-      return response.data;
+      return await request<VerificationStatus>('/verification/pet-ownership', { method: 'POST', body: data });
     } catch (error) {
-      console.error('Error submitting pet ownership verification:', error);
+      logger.error('Error submitting pet ownership verification', { error });
       throw error;
     }
   }
@@ -132,10 +130,9 @@ class VerificationService {
     data: VeterinaryVerificationData
   ): Promise<VerificationStatus> {
     try {
-      const response = await api.post('/verification/veterinary', data);
-      return response.data;
+      return await request<VerificationStatus>('/verification/veterinary', { method: 'POST', body: data });
     } catch (error) {
-      console.error('Error submitting veterinary verification:', error);
+      logger.error('Error submitting veterinary verification', { error });
       throw error;
     }
   }
@@ -147,10 +144,9 @@ class VerificationService {
     data: OrganizationVerificationData
   ): Promise<VerificationStatus> {
     try {
-      const response = await api.post('/verification/organization', data);
-      return response.data;
+      return await request<VerificationStatus>('/verification/organization', { method: 'POST', body: data });
     } catch (error) {
-      console.error('Error submitting organization verification:', error);
+      logger.error('Error submitting organization verification', { error });
       throw error;
     }
   }
@@ -160,10 +156,10 @@ class VerificationService {
    */
   async getRequirements(tier: string): Promise<string[]> {
     try {
-      const response = await api.get(`/verification/requirements/${tier}`);
-      return response.data.requirements;
+      const response = await request<{ requirements: string[] }>(`/verification/requirements/${tier}`, { method: 'GET' });
+      return response.requirements;
     } catch (error) {
-      console.error('Error getting requirements:', error);
+      logger.error('Error getting requirements', { error, tier });
       throw error;
     }
   }
@@ -173,9 +169,9 @@ class VerificationService {
    */
   async cancelVerification(verificationId: string): Promise<void> {
     try {
-      await api.post(`/verification/${verificationId}/cancel`);
+      await request(`/verification/${verificationId}/cancel`, { method: 'POST' });
     } catch (error) {
-      console.error('Error canceling verification:', error);
+      logger.error('Error canceling verification', { error, verificationId });
       throw error;
     }
   }
@@ -185,10 +181,10 @@ class VerificationService {
    */
   async getBadges(): Promise<string[]> {
     try {
-      const response = await api.get('/verification/badges');
-      return response.data.badges;
+      const response = await request<{ badges: string[] }>('/verification/badges', { method: 'GET' });
+      return response.badges;
     } catch (error) {
-      console.error('Error getting badges:', error);
+      logger.error('Error getting badges', { error });
       throw error;
     }
   }
@@ -198,10 +194,10 @@ class VerificationService {
    */
   async hasTier(requiredTier: string): Promise<boolean> {
     try {
-      const response = await api.get(`/verification/has-tier/${requiredTier}`);
-      return response.data.hasTier;
+      const response = await request<{ hasTier: boolean }>(`/verification/has-tier/${requiredTier}`, { method: 'GET' });
+      return response.hasTier;
     } catch (error) {
-      console.error('Error checking tier:', error);
+      logger.error('Error checking tier', { error, requiredTier });
       throw error;
     }
   }
@@ -225,7 +221,9 @@ class VerificationService {
       //   type: 'image/jpeg',
       // });
 
-      const response = await api.post('/verification/upload', formData, {
+      const response = await request<{ url: string }>('/verification/upload', {
+        method: 'POST',
+        body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -235,9 +233,9 @@ class VerificationService {
         },
       });
 
-      return response.data.url;
+      return response.url;
     } catch (error) {
-      console.error('Error uploading document:', error);
+      logger.error('Error uploading document', { error, documentType, verificationType });
       throw error;
     }
   }
@@ -247,9 +245,9 @@ class VerificationService {
    */
   async requestStatusUpdate(): Promise<void> {
     try {
-      await api.post('/verification/request-update');
+      await request('/verification/request-update', { method: 'POST' });
     } catch (error) {
-      console.error('Error requesting status update:', error);
+      logger.error('Error requesting status update', { error });
       throw error;
     }
   }

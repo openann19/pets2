@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 2;

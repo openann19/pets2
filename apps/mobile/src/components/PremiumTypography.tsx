@@ -17,9 +17,9 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 import { Colors, Spacing, BorderRadius } from "../animation";
-import MaskedViewIOS from "@react-native-masked-view/masked-view";
 import { Theme } from '../theme/unified-theme';
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
@@ -200,11 +200,11 @@ export const GradientText: React.FC<GradientTextProps> = ({
     ...style,
   };
 
-  // For iOS, use MaskedViewIOS for gradient text
+  // For iOS, use MaskedView for gradient text
   if (Platform.OS === "ios") {
     return (
       <Animated.View style={animated ? animatedStyle : undefined}>
-        <MaskedViewIOS maskElement={<Text style={textStyle}>{children}</Text>}>
+        <MaskedView maskElement={<Text style={textStyle}>{children}</Text>}>
           <LinearGradient
             colors={gradientColors}
             start={{ x: 0, y: 0 }}
@@ -230,7 +230,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
               {children}
             </Text>
           </LinearGradient>
-        </MaskedViewIOS>
+        </MaskedView>
       </Animated.View>
     );
   }

@@ -7,7 +7,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import { PerformanceMonitor } from "../../utils/PerformanceMonitor";
 import { PhoenixCard } from "../../components/phoenix/PhoenixCard";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 // Mock PerformanceMonitor
 jest.mock("../../utils/PerformanceMonitor", () => ({
