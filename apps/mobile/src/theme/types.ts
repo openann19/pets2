@@ -120,3 +120,127 @@ export interface Theme {
   styles?: Record<string, unknown>; // For legacy component support
   shadows?: Record<string, unknown>; // For legacy component support
 }
+
+// Additional types for theme providers
+export type ThemeMode = "light" | "dark" | "system";
+
+export interface ThemeContextValue {
+  theme: Theme;
+  mode: ThemeMode;
+  isDark: boolean;
+  setMode: (mode: ThemeMode) => void;
+  toggleTheme: () => void;
+}
+
+// Color Palette type for backward compatibility
+export interface ColorPalette {
+  [key: string]: string;
+}
+
+// Typography Scale type for backward compatibility
+export interface TypographyScale {
+  [key: string]: {
+    fontSize: number;
+    lineHeight: number;
+    fontWeight: string | number;
+    letterSpacing?: number;
+  };
+}
+
+// Spacing Scale type for backward compatibility
+export interface SpacingScale {
+  [key: string]: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+  "3xl": number;
+  "4xl": number;
+}
+
+// Shadow Scale type for backward compatibility
+export interface ShadowScale {
+  [key: string]: {
+    shadowColor: string;
+    shadowOffset: { width: number; height: number };
+    shadowOpacity: number;
+    shadowRadius: number;
+    elevation: number;
+  };
+}
+
+// Radius Scale type for backward compatibility
+export interface RadiusScale {
+  [key: string]: number;
+  none: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+  full: number;
+  pill: number;
+}
+
+// Opacity Scale type
+export interface OpacityScale {
+  [key: string]: number;
+  transparent: number;
+  invisible: number;
+  disabled: number;
+  hover: number;
+  focus: number;
+  pressed: number;
+  selected: number;
+}
+
+// Border Width Scale type
+export interface BorderWidthScale {
+  [key: string]: number;
+  none: number;
+  thin: number;
+  medium: number;
+  thick: number;
+}
+
+// Icon Size Scale type
+export interface IconSizeScale {
+  [key: string]: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+}
+
+// Animation Scale type
+export interface AnimationScale {
+  [key: string]: {
+    duration: number;
+    easing: string;
+  };
+  instant: { duration: number; easing: string };
+  fast: { duration: number; easing: string };
+  normal: { duration: number; easing: string };
+  slow: { duration: number; easing: string };
+  slower: { duration: number; easing: string };
+}
+
+// Z-Index Scale type
+export interface ZIndexScale {
+  [key: string]: number;
+  hide: number;
+  base: number;
+  docked: number;
+  dropdown: number;
+  sticky: number;
+  overlay: number;
+  modal: number;
+  popover: number;
+  tooltip: number;
+  toast: number;
+}

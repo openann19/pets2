@@ -14,7 +14,7 @@ import * as Haptics from "expo-haptics";
 export type ContextAction = {
   key: string;
   label: string;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   onPress: () => void | Promise<void>;
   danger?: boolean;
   disabled?: boolean;
@@ -31,7 +31,8 @@ interface MorphingContextMenuProps {
     text: string; 
     sub: string; 
     item: string; 
-    itemPressed: string 
+    itemPressed: string;
+    danger?: string;
   };
 }
 
@@ -59,6 +60,7 @@ export default function MorphingContextMenu({
     sub: "#9ca3af",
     item: "#181818", 
     itemPressed: "#222",
+    danger: "#ef4444",
   },
 }: MorphingContextMenuProps) {
   const alpha = useSharedValue(0);
@@ -105,8 +107,6 @@ export default function MorphingContextMenu({
       transparent 
       animationType="none" 
       onRequestClose={onClose}
-      accessibilityRole="dialog"
-      accessibilityLabel="Message options"
     >
       {/* Backdrop */}
       <Pressable style={styles.backdrop} onPress={onClose}>
@@ -172,13 +172,13 @@ export default function MorphingContextMenu({
                   <Ionicons 
                     name={a.icon} 
                     size={18} 
-                    color={a.danger ? "#ef4444" : theme.text} 
+                    color={a.danger ? (theme.danger ?? "#ef4444") : theme.text} 
                   />
                 ) : null}
                 <Text 
                   style={[
                     styles.itemText, 
-                    { color: a.danger ? "#ef4444" : theme.text }
+                    { color: a.danger ? (theme.danger ?? "#ef4444") : theme.text }
                   ]}
                 >
                   {a.label}

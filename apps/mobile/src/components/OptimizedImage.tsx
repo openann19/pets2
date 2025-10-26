@@ -141,7 +141,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           accessibilityRole="alert"
         >
           <Ionicons
-            name={fallbackIcon as any}
+            name={fallbackIcon}
             size={32}
             color={colors.text}
             style={styles.errorIcon}

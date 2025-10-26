@@ -120,8 +120,9 @@ export class MockPushManager {
         return {
             endpoint: 'https://fcm.googleapis.com/fcm/send/example',
             expirationTime: null,
-            options: _options || {},
+            options: (_options || {}) as PushSubscriptionOptions,
             getKey: (_name: string): ArrayBuffer => new Uint8Array([1, 2, 3, 4]).buffer,
+            unsubscribe: async () => Promise.resolve(true),
             toJSON: () => ({
                 endpoint: 'https://fcm.googleapis.com/fcm/send/example',
                 keys: {

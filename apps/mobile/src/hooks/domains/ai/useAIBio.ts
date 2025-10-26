@@ -61,13 +61,13 @@ export const useAIBio = (): UseAIBioReturn => {
         const bioData = await api.ai.generateBio(params);
 
         const generatedBio: GeneratedBio = {
-          bio: (bioData as any).bio,
-          keywords: (bioData as any).keywords || [],
-          sentiment: (bioData as any).sentiment || {
+          bio: bioData.bio,
+          keywords: bioData.keywords ?? [],
+          sentiment: bioData.sentiment ?? {
             score: 0.8,
             label: "positive",
           },
-          matchScore: (bioData as any).matchScore || 85,
+          matchScore: bioData.matchScore ?? 85,
         };
 
         setLastGeneratedBio(generatedBio);

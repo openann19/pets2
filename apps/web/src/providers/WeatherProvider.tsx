@@ -84,7 +84,7 @@ export const WeatherProvider = ({ children }: WeatherProviderProps) => {
     useEffect(() => {
         refreshWeather();
         const interval = setInterval(refreshWeather, 10 * 60 * 1000);
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [refreshWeather]);
     return (<WeatherContext.Provider value={{ weather, loading, error, refreshWeather, getWeatherForLocation }}>
       {children}

@@ -197,7 +197,7 @@ export const PetCareReminders = ({ reminders, pets, onAddReminder, onUpdateRemin
                             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'} relative`}>
                         <div className="flex items-center mb-2">
                           {/* Checkbox */}
-                          <button onClick={() => handleToggleComplete(reminder)} className={`w-5 h-5 rounded border flex-shrink-0 ${reminder.completed
+                          <button onClick={() => { handleToggleComplete(reminder); }} className={`w-5 h-5 rounded border flex-shrink-0 ${reminder.completed
                             ? 'bg-pink-500 border-pink-500'
                             : 'border-gray-300 dark:border-gray-600'}`} aria-label={reminder.completed ? 'Mark as incomplete' : 'Mark as complete'}>
                             {reminder.completed && (<svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

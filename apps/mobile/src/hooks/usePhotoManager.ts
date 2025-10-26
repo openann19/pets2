@@ -57,7 +57,7 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
       });
 
       if (!result.canceled && result.assets.length > 0) {
-        const newPhotos: PhotoData[] = result.assets.map((asset, index) => ({
+        const newPhotos: PhotoData[] = result.assets.map((asset: any, index: number) => ({
           uri: asset.uri,
           type: asset.type || "image/jpeg",
           fileName: `pet-photo-${Date.now()}-${index}.jpg`,

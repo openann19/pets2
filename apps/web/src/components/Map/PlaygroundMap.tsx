@@ -183,7 +183,7 @@ initialCenter = { lat: 40.712776, lng: -74.005974 }, initialZoom = 13, playgroun
             playgrounds.map((playground) => (<button key={playground.id} className={`absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group`} style={{
                     top: `${Math.random() * 80 + 10}%`,
                     left: `${Math.random() * 80 + 10}%`,
-                }} onClick={() => handlePlaygroundClick(playground)}>
+                }} onClick={() => { handlePlaygroundClick(playground); }}>
               <div className={`w-8 h-8 rounded-full ${getPlaygroundTypeColor(playground.type)} flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform z-10`}>
                 <span>{getPlaygroundTypeIcon(playground.type)}</span>
               </div>
@@ -228,7 +228,7 @@ initialCenter = { lat: 40.712776, lng: -74.005974 }, initialZoom = 13, playgroun
             <h4 className="font-medium text-gray-900 dark:text-white mb-2">Type</h4>
             <div className="space-y-2">
               {Object.keys(filters.types).map((type) => (<div key={type} className="flex items-center">
-                  <input type="checkbox" id={`type-${type}`} checked={filters.types[type]} onChange={(e) => handleFilterChange('types', type, e.target.checked)} className="w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-500 dark:border-gray-600 dark:bg-gray-700"/>
+                  <input type="checkbox" id={`type-${type}`} checked={filters.types[type]} onChange={(e) => { handleFilterChange('types', type, e.target.checked); }} className="w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-500 dark:border-gray-600 dark:bg-gray-700"/>
                   <label htmlFor={`type-${type}`} className="ml-2 text-gray-700 dark:text-gray-300">
                     <span className="mr-2">
                       {getPlaygroundTypeIcon(type)}
@@ -243,7 +243,7 @@ initialCenter = { lat: 40.712776, lng: -74.005974 }, initialZoom = 13, playgroun
           <div className="mb-6">
             <h4 className="font-medium text-gray-900 dark:text-white mb-2">Minimum Rating</h4>
             <div className="flex items-center space-x-2">
-              <input type="range" min="0" max="5" step="1" value={filters.ratings} onChange={(e) => handleSingleFilterChange('ratings', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
+              <input type="range" min="0" max="5" step="1" value={filters.ratings} onChange={(e) => { handleSingleFilterChange('ratings', parseInt(e.target.value)); }} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
               <span className="text-gray-900 dark:text-white font-medium">
                 {filters.ratings === 0 ? 'Any' : filters.ratings}+
               </span>
@@ -278,7 +278,7 @@ initialCenter = { lat: 40.712776, lng: -74.005974 }, initialZoom = 13, playgroun
             </div>
             <div className="space-y-2">
               {Object.keys(filters.amenities).map((amenity) => (<div key={amenity} className="flex items-center">
-                  <input type="checkbox" id={`amenity-${amenity}`} checked={filters.amenities[amenity]} onChange={(e) => handleFilterChange('amenities', amenity, e.target.checked)} className="w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-500 dark:border-gray-600 dark:bg-gray-700"/>
+                  <input type="checkbox" id={`amenity-${amenity}`} checked={filters.amenities[amenity]} onChange={(e) => { handleFilterChange('amenities', amenity, e.target.checked); }} className="w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-500 dark:border-gray-600 dark:bg-gray-700"/>
                   <label htmlFor={`amenity-${amenity}`} className="ml-2 text-gray-700 dark:text-gray-300 capitalize">
                     {amenity}
                   </label>
@@ -290,7 +290,7 @@ initialCenter = { lat: 40.712776, lng: -74.005974 }, initialZoom = 13, playgroun
           <div className="mb-6">
             <h4 className="font-medium text-gray-900 dark:text-white mb-2">Distance</h4>
             <div className="flex items-center space-x-2">
-              <input type="range" min="1" max="20" step="1" value={filters.distance} onChange={(e) => handleSingleFilterChange('distance', parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
+              <input type="range" min="1" max="20" step="1" value={filters.distance} onChange={(e) => { handleSingleFilterChange('distance', parseInt(e.target.value)); }} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"/>
               <span className="text-gray-900 dark:text-white font-medium whitespace-nowrap">
                 {filters.distance} mi
               </span>
@@ -304,7 +304,7 @@ initialCenter = { lat: 40.712776, lng: -74.005974 }, initialZoom = 13, playgroun
           {/* Favorites only */}
           <div className="mb-6">
             <div className="flex items-center">
-              <input type="checkbox" id="favorites-only" checked={filters.favoritesOnly} onChange={(e) => handleSingleFilterChange('favoritesOnly', e.target.checked)} className="w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-500 dark:border-gray-600 dark:bg-gray-700"/>
+              <input type="checkbox" id="favorites-only" checked={filters.favoritesOnly} onChange={(e) => { handleSingleFilterChange('favoritesOnly', e.target.checked); }} className="w-4 h-4 text-pink-600 rounded border-gray-300 focus:ring-pink-500 dark:border-gray-600 dark:bg-gray-700"/>
               <label htmlFor="favorites-only" className="ml-2 text-gray-700 dark:text-gray-300">
                 Favorites only
               </label>

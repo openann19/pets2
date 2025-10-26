@@ -390,7 +390,7 @@ class ApiService {
     return this.request<unknown[]>('/matches');
   }
 
-  async swipe(petId: string, action: 'like' | 'pass' | 'superlike'): Promise<ApiResponse<unknown>> {
+  async swipe(petId: string, action: 'like' | 'pass' | 'superlike'): Promise<ApiResponse> {
     return this.request<unknown>('/matches/swipe', {
       method: 'POST',
       body: JSON.stringify({ petId, action }),
@@ -402,7 +402,7 @@ class ApiService {
     return this.request<unknown[]>(`/matches/${matchId}/messages`);
   }
 
-  async sendMessage(matchId: string, content: string): Promise<ApiResponse<unknown>> {
+  async sendMessage(matchId: string, content: string): Promise<ApiResponse> {
     return this.request<unknown>(`/matches/${matchId}/messages`, {
       method: 'POST',
       body: JSON.stringify({ content }),

@@ -25,7 +25,10 @@ export class LRU<K, V> {
     if (this.map.has(k)) this.map.delete(k);
     this.map.set(k, v);
     if (this.map.size > this.max) {
-      this.map.delete(this.map.keys().next().value);
+      const firstKey = this.map.keys().next().value;
+      if (firstKey !== undefined) {
+        this.map.delete(firstKey);
+      }
     }
   }
 
@@ -52,7 +55,10 @@ export class LRU<K, V> {
   setCapacity(newMax: number) {
     this.max = newMax;
     while (this.map.size > this.max) {
-      this.map.delete(this.map.keys().next().value);
+      const firstKey = this.map.keys().next().value;
+      if (firstKey !== undefined) {
+        this.map.delete(firstKey);
+      }
     }
   }
 }

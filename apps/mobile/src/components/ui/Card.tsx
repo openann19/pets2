@@ -34,11 +34,13 @@ export function Card({
       backgroundColor: colors[tone],
       borderRadius: resolvedRadius,
       padding: resolvedPadding,
-      shadowColor: shadowToken.color,
-      shadowOffset: shadowToken.offset,
-      shadowOpacity: shadowToken.opacity,
-      shadowRadius: shadowToken.radius,
-      elevation: shadowToken.radius / 2,
+      ...(shadowToken ? {
+        shadowColor: shadowToken.color,
+        shadowOffset: shadowToken.offset,
+        shadowOpacity: shadowToken.opacity,
+        shadowRadius: shadowToken.radius,
+        elevation: shadowToken.radius / 2,
+      } : {}),
     },
     style,
   ]);

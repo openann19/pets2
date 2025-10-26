@@ -117,7 +117,8 @@ export function useFormState<T extends Record<string, any>>({
       try {
         await onSubmit(values);
       } catch (error) {
-        logger.error("Form submission error", { error });
+        const errorObj = error instanceof Error ? error : new Error('Form submission failed');
+        logger.error("Form submission error", { error: errorObj });
       }
     },
     [values, validate],

@@ -23,9 +23,9 @@ export function toneMapHighlights(
   const p = Math.max(0.01, Math.min(0.99, pivot));
 
   for (let i = 0; i < d.length; i += 4) {
-    const r = d[i] / 255;
-    const g = d[i + 1] / 255;
-    const b = d[i + 2] / 255;
+    const r = (d[i] ?? 0) / 255;
+    const g = (d[i + 1] ?? 0) / 255;
+    const b = (d[i + 2] ?? 0) / 255;
     const l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     // Compress highlights smoothly
     const t =
@@ -69,12 +69,12 @@ export function clarityLocalContrast(
   const blr = bctx.getImageData(0, 0, w, h);
 
   for (let i = 0; i < base.data.length; i += 4) {
-    const r = base.data[i];
-    const g = base.data[i + 1];
-    const b = base.data[i + 2];
+    const r = base.data[i] ?? 0;
+    const g = base.data[i + 1] ?? 0;
+    const b = base.data[i + 2] ?? 0;
     const rl = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     const bl =
-      0.2126 * blr.data[i] + 0.7152 * blr.data[i + 1] + 0.0722 * blr.data[i + 2];
+      0.2126 * (blr.data[i] ?? 0) + 0.7152 * (blr.data[i + 1] ?? 0) + 0.0722 * (blr.data[i + 2] ?? 0);
     // Detail = baseLuma - blurLuma; add fraction back
     const detail = rl - bl;
     const add = detail * amount;
@@ -113,9 +113,9 @@ export function vignetteCorrect(
       const i = (y * w + x) * 4;
       const r = Math.hypot(x - cx, y - cy) / maxR; // 0..1
       const v = 1 + amount * smoothstep(soft, 1, r); // boost/darken edges
-      d[i] = clampByte(d[i] * v);
-      d[i + 1] = clampByte(d[i + 1] * v);
-      d[i + 2] = clampByte(d[i + 2] * v);
+      d[i] = clampByte((d[i] ?? 0) * v);
+      d[i + 1] = clampByte((d[i + 1] ?? 0) * v);
+      d[i + 2] = clampByte((d[i + 2] ?? 0) * v);
     }
   }
   ctx.putImageData(img, 0, 0);
@@ -163,19 +163,19 @@ export function median3(canvas: HTMLCanvasElement) {
           const xx = clamp(x + dx, 0, w - 1);
           const yy = clamp(y + dy, 0, h - 1);
           const idx = (yy * w + xx) * 4;
-          rs.push(src.data[idx]);
-          gs.push(src.data[idx + 1]);
-          bs.push(src.data[idx + 2]);
+          rs.push(src.data[idx] ?? 0);
+          gs.push(src.data[idx + 1] ?? 0);
+          bs.push(src.data[idx + 2] ?? 0);
         }
       }
       rs.sort(n);
       gs.sort(n);
       bs.sort(n);
       const i = (y * w + x) * 4;
-      dst.data[i] = rs[4];
-      dst.data[i + 1] = gs[4];
-      dst.data[i + 2] = bs[4];
-      dst.data[i + 3] = src.data[i + 3];
+      dst.data[i] = rs[4] ?? 0;
+      dst.data[i + 1] = gs[4] ?? 0;
+      dst.data[i + 2] = bs[4] ?? 0;
+      dst.data[i + 3] = src.data[i + 3] ?? 255;
     }
   }
   ctx.putImageData(dst, 0, 0);

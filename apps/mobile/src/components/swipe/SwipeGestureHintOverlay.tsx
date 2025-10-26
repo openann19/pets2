@@ -51,8 +51,9 @@ export function SwipeGestureHintOverlay({
       if (!shown) {
         setShowHints(true);
       }
-    } catch (error) {
-      logger.error("Error checking hints status", { error });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Error checking hints status", { error: err });
     }
   };
 
@@ -74,8 +75,9 @@ export function SwipeGestureHintOverlay({
         setShowHints(false);
         onDismiss?.();
       });
-    } catch (error) {
-      logger.error("Error dismissing hints", { error });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Error dismissing hints", { error: err });
     }
   };
 

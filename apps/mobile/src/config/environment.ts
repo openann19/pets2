@@ -87,6 +87,9 @@ export const {
   API_TIMEOUT,
 } = config;
 
+// Alias for backward compatibility
+export const API_URL = API_BASE_URL;
+
 // Helper functions
 export const isDevelopment = (): boolean => ENVIRONMENT === "development";
 export const isStaging = (): boolean => ENVIRONMENT === "staging";

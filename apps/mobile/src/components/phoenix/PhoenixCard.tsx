@@ -101,35 +101,8 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
 
   const handlePress = useCallback(() => {
     if (onPress) {
-      // TouchableOpacity requires native event but we're calling it programmatically
-      // Creating minimal event object to satisfy type checker
-      const syntheticEvent = {
-        nativeEvent: {
-          pageX: 0,
-          pageY: 0,
-          locationX: 0,
-          locationY: 0,
-          timestamp: Date.now(),
-          target: 0,
-          identifier: 0,
-        },
-        currentTarget: 0,
-        target: 0,
-        bubbles: false,
-        cancelable: true,
-        defaultPrevented: false,
-        eventPhase: 0,
-        isTrusted: true,
-        preventDefault: () => {},
-        isDefaultPrevented: () => false,
-        stopPropagation: () => {},
-        isPropagationStopped: () => false,
-        persist: () => {},
-        timeStamp: Date.now(),
-        type: "press",
-      } as NativeSyntheticEvent<NativeTouchEvent>;
-      
-      onPress(syntheticEvent);
+      // Just call onPress directly - it accepts undefined
+      onPress(undefined as any);
     }
   }, [onPress]);
 

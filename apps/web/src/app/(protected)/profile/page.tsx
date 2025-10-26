@@ -185,10 +185,10 @@ export default function ProfilePage() {
       </div>
 
       {/* Photo Cropper Modal */}
-      {showPhotoCropper && (<PhotoCropper image={selectedImage} onCropComplete={handleCropComplete} onCancel={() => setShowPhotoCropper(false)} aspectRatio={1} cropShape="round"/>)}
+      {showPhotoCropper && (<PhotoCropper image={selectedImage} onCropComplete={handleCropComplete} onCancel={() => { setShowPhotoCropper(false); }} aspectRatio={1} cropShape="round"/>)}
 
       {/* Photo Editor Modal */}
-      {showPhotoEditor && (<PhotoEditor image={croppedImage} onSave={handlePhotoSave} onCancel={() => setShowPhotoEditor(false)}/>)}
+      {showPhotoEditor && (<PhotoEditor image={croppedImage} onSave={handlePhotoSave} onCancel={() => { setShowPhotoEditor(false); }}/>)}
     </div>);
 }
 //# sourceMappingURL=page.jsx.map

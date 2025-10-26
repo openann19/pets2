@@ -289,7 +289,7 @@ export default function MapPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {playgrounds.slice(0, 6).map((playground) => (<div key={playground.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow" onClick={() => handlePlaygroundSelect(playground)}>
+            {playgrounds.slice(0, 6).map((playground) => (<div key={playground.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow" onClick={() => { handlePlaygroundSelect(playground); }}>
                 {/* Image */}
                 <div className="h-48 bg-gray-200 dark:bg-gray-700 relative">
                   {playground.photos && playground.photos.length > 0 ? (<img src={playground.photos[0]} alt={playground.name} className="w-full h-full object-cover"/>) : (<div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-pink-400 to-purple-500">
@@ -371,12 +371,12 @@ export default function MapPage() {
               </div>)}
 
             {/* Close button */}
-            <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70 transition-opacity">
+            <button onClick={() => { setShowModal(false); }} className="absolute top-4 right-4 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70 transition-opacity">
               ×
             </button>
 
             {/* Favorite button */}
-            <button onClick={() => handleToggleFavorite(selectedPlayground)} className="absolute top-4 right-16 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button onClick={() => { handleToggleFavorite(selectedPlayground); }} className="absolute top-4 right-16 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <HeartIcon className={`w-5 h-5 ${selectedPlayground.isFavorite
                 ? 'text-pink-500 fill-pink-500'
                 : 'text-gray-400 dark:text-gray-500'}`}/>
@@ -486,7 +486,7 @@ export default function MapPage() {
                 Get Directions
               </button>
 
-              <button onClick={() => setShowModal(false)} className="py-2 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-colors">
+              <button onClick={() => { setShowModal(false); }} className="py-2 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-colors">
                 Close
               </button>
             </div>

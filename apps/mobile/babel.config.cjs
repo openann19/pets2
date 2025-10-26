@@ -16,11 +16,11 @@ module.exports = function (api) {
 
   const basePlugins = baseConfig.plugins || [];
   const filteredBasePlugins = basePlugins.filter(
-    (plugin) => !(Array.isArray(plugin) && plugin[0] === 'module-resolver'),
+    (plugin) => !(Array.isArray(plugin) && (plugin[0] === 'module-resolver' || plugin[0] === '@babel/plugin-transform-runtime')),
   );
 
   return {
-    presets: ['babel-preset-expo', ...baseConfig.presets],
+    presets: [['babel-preset-expo', { jsxRuntime: 'automatic' }], ...baseConfig.presets],
     plugins: [moduleResolverPlugin, ...filteredBasePlugins, 'react-native-reanimated/plugin'],
     env: baseConfig.env,
   };

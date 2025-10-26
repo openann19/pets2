@@ -2,7 +2,7 @@
 import { Image as RNImage } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 
-type Rect = { x: number; y: number; width: number; height: number };
+export type Rect = { x: number; y: number; width: number; height: number };
 type Suggestion = {
   ratio: string;            // "1:1" | "4:5" | "9:16" | etc.
   focus: Rect;              // the subject focus rect (after padding/weighting)
@@ -51,7 +51,11 @@ const biggestRect = (rects: Rect[]) =>
 
 const ratioToNumber = (r: string): number => {
   if (r === "FREE") return NaN;
-  const [a, b] = r.split(":").map(Number);
+  const parts = r.split(":");
+  if (parts.length !== 2) return NaN;
+  const a = Number(parts[0]);
+  const b = Number(parts[1]);
+  if (isNaN(a) || isNaN(b) || b === 0) return NaN;
   return a / b;
 };
 
@@ -129,6 +133,12 @@ function buildEyeWeightedFocus(faces: any[], imgW: number, imgH: number, eyeWeig
       const maxX = Math.max(...points.map((p) => p.x));
       const minY = Math.min(...points.map((p) => p.y));
       const maxY = Math.max(...points.map((p) => p.y));
+      // Validate values to ensure they are numbers
+      if (isNaN(minX) || isNaN(maxX) || isNaN(minY) || isNaN(maxY)) {
+        // Fallback to merged face bounds
+        const merged = padRect(unionRects(faceRects), imgW, imgH, 0.18);
+        return { rect: merged, method: "face" };
+      }
       const eyesRect: Rect = { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 
       // Expand to include a bit of muzzle/forehead (pets) or nose/forehead (humans)

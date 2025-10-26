@@ -12,6 +12,7 @@ interface HookUsageEvent {
   duration?: number;
   error?: string;
   metadata?: Record<string, unknown>;
+  timestamp?: number;
 }
 
 class HookAnalytics {

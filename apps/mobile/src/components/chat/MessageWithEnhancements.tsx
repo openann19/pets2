@@ -210,8 +210,8 @@ export function MessageWithEnhancements({
       <VoiceWaveform
         waveform={message.voiceNote.waveform || []}
         duration={message.voiceNote.duration}
-        audioUrl={message.voiceNote.url}
-        isOwnMessage={isOwnMessage}
+        isPlaying={false}
+        progress={0}
       />
     );
   };
@@ -275,7 +275,7 @@ export function MessageWithEnhancements({
 
             {/* Message Timestamp */}
             <Text style={[styles.timestamp, { color: isOwnMessage ? colors.white : colors.textSecondary }]}>
-              {new Date(message.timestamp).toLocaleTimeString("en-US", {
+              {new Date(message.sentAt).toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,

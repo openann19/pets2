@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Room, RemoteParticipant, LocalParticipant } from 'livekit-client';
 import { liveKitService } from '../services/livekitService';
-import { logger } from '../utils/logger';
+import { logger } from '../services/logger';
 import { API_URL } from '../config/environment';
 
 export interface UseLiveStreamReturn {
@@ -74,8 +74,9 @@ export function useLiveStream(): UseLiveStreamReturn {
       // socketRef.current = connectToChat(roomName);
 
     } catch (err) {
-      logger.error('Failed to start stream', { error: err });
-      setError(err instanceof Error ? err.message : 'Failed to start stream');
+      const error = err instanceof Error ? err : new Error('Failed to start stream');
+      logger.error('Failed to start stream', { error });
+      setError(error.message);
     }
   }, []);
 
@@ -114,8 +115,9 @@ export function useLiveStream(): UseLiveStreamReturn {
       setupRoomListeners(roomInstance);
 
     } catch (err) {
-      logger.error('Failed to watch stream', { error: err });
-      setError(err instanceof Error ? err.message : 'Failed to watch stream');
+      const error = err instanceof Error ? err : new Error('Failed to watch stream');
+      logger.error('Failed to watch stream', { error });
+      setError(error.message);
     }
   }, []);
 
@@ -152,7 +154,8 @@ export function useLiveStream(): UseLiveStreamReturn {
       }
 
     } catch (err) {
-      logger.error('Failed to end stream', { error: err });
+      const error = err instanceof Error ? err : new Error('Failed to end stream');
+      logger.error('Failed to end stream', { error });
     }
   }, [room, isPublishing]);
 
@@ -199,11 +202,11 @@ export function useLiveStream(): UseLiveStreamReturn {
    * Setup room event listeners
    */
   const setupRoomListeners = useCallback((roomInstance: Room) => {
-    roomInstance.on('participant-connected', (participant) => {
+    roomInstance.on('participantConnected', (participant: RemoteParticipant) => {
       setParticipants(Array.from(roomInstance.remoteParticipants.values()));
     });
 
-    roomInstance.on('participant-disconnected', (participant) => {
+    roomInstance.on('participantDisconnected', (participant: RemoteParticipant) => {
       setParticipants(Array.from(roomInstance.remoteParticipants.values()));
     });
 

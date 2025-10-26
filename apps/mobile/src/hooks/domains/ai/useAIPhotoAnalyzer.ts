@@ -75,7 +75,7 @@ export const useAIPhotoAnalyzer = (): UseAIPhotoAnalyzerReturn => {
       });
 
       if (!result.canceled && result.assets) {
-        const newPhotos = result.assets.map((asset) => asset.uri);
+        const newPhotos = result.assets.map((asset: { uri: string }) => asset.uri);
         setSelectedPhotos((prev) => [...prev, ...newPhotos].slice(0, 5)); // Limit to 5 photos
         setError(null);
       }

@@ -33,7 +33,7 @@ export const LoadingProvider = ({ children }) => {
         return loadingStates.some(state => state.id === id);
     }, [loadingStates]);
     const getLoadingState = useCallback((id) => {
-        return loadingStates.find(state => state.id === id);
+        loadingStates.find(state => state.id === id);
     }, [loadingStates]);
     return (<LoadingContext.Provider value={{
             loadingStates,

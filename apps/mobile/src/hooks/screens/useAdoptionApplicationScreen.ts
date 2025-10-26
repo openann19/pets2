@@ -104,13 +104,13 @@ export const useAdoptionApplicationScreen = (
   const validateStep = useCallback(() => {
     switch (currentStep) {
       case 0:
-        return formData.experience && formData.livingSpace;
+        return !!(formData.experience && formData.livingSpace);
       case 1:
-        return formData.workSchedule && formData.reason;
+        return !!(formData.workSchedule && formData.reason);
       case 2:
-        return formData.references[0]!.name && formData.references[0]!.phone;
+        return !!(formData.references[0]!.name && formData.references[0]!.phone);
       case 3:
-        return formData.commitment;
+        return !!formData.commitment;
       default:
         return false;
     }

@@ -180,7 +180,17 @@ class AccessibilityService {
     try {
       if (Platform.OS === "ios") {
         // iOS specific focus
-        (AccessibilityInfo as any).setAccessibilityFocus(ref);
+        // React Native AccessibilityInfo doesn't expose setAccessibilityFocus
+        // This would require a native module implementation
+        if (typeof ref === 'object' && ref !== null) {
+          // Attempt to set focus if native module is available
+          const accessibilityModule = AccessibilityInfo as AccessibilityInfo & {
+            setAccessibilityFocus?: (ref: unknown) => void;
+          };
+          if (accessibilityModule.setAccessibilityFocus) {
+            accessibilityModule.setAccessibilityFocus(ref);
+          }
+        }
       } else {
         // Android specific focus
         // Would need additional implementation

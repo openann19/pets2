@@ -48,7 +48,7 @@ export default function MicroPressable({
   const circle = useAnimatedStyle(() => {
     const r = Math.max(layout.w, layout.h) * 0.75;
     return {
-      position: "absolute",
+      position: "absolute" as const,
       top: y.value - r,
       left: x.value - r,
       width: r * 2,

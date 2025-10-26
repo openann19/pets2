@@ -103,8 +103,8 @@ export default function AdminBillingScreen({
         adminAPI.getBillingMetrics(),
       ]);
 
-      setSubscriptions(subscriptionsResponse.data.subscriptions);
-      setMetrics(metricsResponse.data);
+      setSubscriptions(subscriptionsResponse.data.subscriptions as Subscription[]);
+      setMetrics(metricsResponse.data as BillingMetrics);
     } catch (error: unknown) {
       logger.error("Error loading billing data:", { error });
       Alert.alert("Error", "Failed to load billing data");
@@ -150,7 +150,7 @@ export default function AdminBillingScreen({
             try {
               setActionLoading(subscriptionId);
               const response =
-                await adminAPI.cancelSubscription(subscriptionId);
+                await adminAPI.cancelSubscription({ userId: subscriptionId });
 
               if (response.success) {
                 setSubscriptions((prevSubs) =>
@@ -178,7 +178,7 @@ export default function AdminBillingScreen({
   const handleReactivateSubscription = async (subscriptionId: string) => {
     try {
       setActionLoading(subscriptionId);
-      const response = await adminAPI.reactivateSubscription(subscriptionId);
+      const response = await adminAPI.reactivateSubscription({ userId: subscriptionId });
 
       if (response.success) {
         setSubscriptions((prevSubs) =>

@@ -37,11 +37,11 @@ export interface CompatibilityResult {
 
 export async function generateBio(params: BioGenerationParams): Promise<string> {
   const { request } = await import('./api');
-  const response = await request('/ai/generate-bio', {
+  const response = await request<BioGenerationResult>('/ai/generate-bio', {
     method: 'POST',
     body: params,
   });
-  return (response as any).bio;
+  return response.bio;
 }
 
 export async function analyzePhoto(url: string): Promise<PhotoAnalysisResult> {
@@ -53,11 +53,14 @@ export async function analyzePhoto(url: string): Promise<PhotoAnalysisResult> {
   return response as PhotoAnalysisResult;
 }
 
-export async function computeCompatibility(a: any, b: any): Promise<CompatibilityResult> {
+export async function computeCompatibility(
+  pet1Id: string,
+  pet2Id: string,
+): Promise<CompatibilityResult> {
   const { request } = await import('./api');
-  const response = await request('/ai/compatibility', {
+  const response = await request<CompatibilityResult>('/ai/compatibility', {
     method: 'POST',
-    body: { a, b },
+    body: { pet1Id, pet2Id },
   });
-  return response as CompatibilityResult;
+  return response;
 }

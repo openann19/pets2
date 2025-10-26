@@ -48,7 +48,13 @@ export interface DataExportResponse {
   exportId?: string;
   estimatedTime?: string;
   message?: string;
-  exportData?: any;
+  exportData?: {
+    profile?: unknown;
+    pets?: unknown[];
+    matches?: unknown[];
+    messages?: unknown[];
+    preferences?: unknown;
+  };
   error?: string;
 }
 
@@ -73,13 +79,14 @@ export const deleteAccount = async (
     );
 
     return response;
-  } catch (error: any) {
-    logger.error('Delete account error:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'SERVER_ERROR';
+    logger.error('Delete account error:', error instanceof Error ? error : new Error(String(error)));
     
     return {
       success: false,
       message: 'Failed to delete account',
-      error: error.message || 'SERVER_ERROR',
+      error: errorMessage,
     };
   }
 };
@@ -98,12 +105,13 @@ export const cancelDeletion = async (): Promise<{
     );
 
     return response;
-  } catch (error: any) {
-    logger.error('Cancel deletion error:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to cancel deletion';
+    logger.error('Cancel deletion error:', error instanceof Error ? error : new Error(String(error)));
     
     return {
       success: false,
-      message: error.message || 'Failed to cancel deletion',
+      message: errorMessage,
     };
   }
 };
@@ -119,8 +127,8 @@ export const getAccountStatus = async (): Promise<AccountStatusResponse> => {
     );
 
     return response;
-  } catch (error: any) {
-    logger.error('Get account status error:', error);
+  } catch (error: unknown) {
+    logger.error('Get account status error:', error instanceof Error ? error : new Error(String(error)));
     
     return {
       success: false,
@@ -152,8 +160,8 @@ export const exportUserData = async (
     );
 
     return response;
-  } catch (error: any) {
-    logger.error('Export user data error:', error);
+  } catch (error: unknown) {
+    logger.error('Export user data error:', error instanceof Error ? error : new Error(String(error)));
     
     return {
       success: false,
@@ -176,9 +184,9 @@ export const downloadExport = async (exportId: string): Promise<Blob> => {
     );
 
     return response;
-  } catch (error: any) {
-    logger.error('Download export error:', error);
-    throw error;
+  } catch (error: unknown) {
+    logger.error('Download export error:', error instanceof Error ? error : new Error(String(error)));
+    throw error instanceof Error ? error : new Error(String(error));
   }
 };
 

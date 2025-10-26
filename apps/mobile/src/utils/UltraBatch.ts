@@ -59,7 +59,7 @@ export async function exportUltraBatch(
       results.push({
         source: uri,
         outputs: [],
-        error: String(e?.message ?? e),
+        error: e?.message ? String(e.message) : String(e ?? 'Unknown error'),
         duration,
       });
     }
@@ -89,6 +89,7 @@ export async function exportUltraBatchWithProgress(
 
   for (let i = 0; i < uris.length; i++) {
     const uri = uris[i];
+    if (!uri) continue;
     onProgress?.(i, total, uri);
 
     const startTime = Date.now();
@@ -108,7 +109,7 @@ export async function exportUltraBatchWithProgress(
       results.push({
         source: uri,
         outputs: [],
-        error: String(e?.message ?? e),
+        error: e?.message ? String(e.message) : String(e ?? 'Unknown error'),
         duration,
       });
     }

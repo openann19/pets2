@@ -119,7 +119,7 @@ export const PhotoAdjustmentSlider: React.FC<PhotoAdjustmentSliderProps> = ({
       style={styles.container}
     >
       <View style={styles.header}>
-        <Ionicons name={icon as any} size={18} color="white" />
+        <Ionicons name={icon} size={18} color="white" />
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.value}>{Math.round(value)}</Text>
       </View>

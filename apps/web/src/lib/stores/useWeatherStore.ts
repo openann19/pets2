@@ -12,31 +12,31 @@ export const useWeatherStore = create()(immer((set, get) => ({
         longitude: null,
     },
     // Set weather data
-    setWeatherData: (data) => set((state) => {
+    setWeatherData: (data) => { set((state) => {
         state.data = {
             ...data,
             lastUpdated: new Date().toISOString(),
         };
         state.error = null;
         return state;
-    }),
+    }); },
     // Set loading state
-    setIsLoading: (isLoading) => set((state) => {
+    setIsLoading: (isLoading) => { set((state) => {
         state.isLoading = isLoading;
         return state;
-    }),
+    }); },
     // Set error
-    setError: (error) => set((state) => {
+    setError: (error) => { set((state) => {
         state.error = error;
         return state;
-    }),
+    }); },
     // Set user location
-    setLocation: (latitude, longitude) => set((state) => {
+    setLocation: (latitude, longitude) => { set((state) => {
         state.location = { latitude, longitude };
         return state;
-    }),
+    }); },
     // Calculate and update time of day based on current time and sunrise/sunset
-    calculateTimeOfDay: () => set((state) => {
+    calculateTimeOfDay: () => { set((state) => {
         const data = get().data;
         if (!data || !data.sys)
             return state;
@@ -74,6 +74,6 @@ export const useWeatherStore = create()(immer((set, get) => ({
             state.data.season = 'winter';
         }
         return state;
-    }),
+    }); },
 })));
 //# sourceMappingURL=useWeatherStore.js.map

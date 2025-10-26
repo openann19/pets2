@@ -69,7 +69,7 @@ export function AttachmentPreview({
         {type !== "image" && (
           <View style={styles.fileIcon}>
             <Ionicons
-              name={getFileIcon(type) as any}
+              name={getFileIcon(type)}
               size={40}
               color={colors.primary}
             />

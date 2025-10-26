@@ -129,7 +129,7 @@ export class WebRTCService {
     if (!this.peerConnection || !this.localStream || !this.screenShareStream) return;
 
     // Stop all tracks in screen share stream
-    this.screenShareStream.getTracks().forEach(track => track.stop());
+    this.screenShareStream.getTracks().forEach(track => { track.stop(); });
 
     // Replace screen track with original video track
     const videoTrack = this.localStream.getVideoTracks()[0];
@@ -148,11 +148,11 @@ export class WebRTCService {
   disconnect(): void {
     // Stop all tracks
     if (this.localStream) {
-      this.localStream.getTracks().forEach(track => track.stop());
+      this.localStream.getTracks().forEach(track => { track.stop(); });
     }
 
     if (this.screenShareStream) {
-      this.screenShareStream.getTracks().forEach(track => track.stop());
+      this.screenShareStream.getTracks().forEach(track => { track.stop(); });
     }
 
     // Close peer connection

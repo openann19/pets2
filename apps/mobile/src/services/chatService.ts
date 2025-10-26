@@ -150,7 +150,11 @@ class ChatService {
     matchIdOrParams: string | SendVoiceNoteParams,
     file?: FormData | Blob,
     duration?: number
-  ): Promise<void> {
+  ): Promise<void | {
+    success: boolean;
+    url: string;
+    duration: number;
+  }> {
     try {
       // Handle both signatures
       let formData: FormData;
@@ -190,7 +194,11 @@ class ChatService {
         voiceDuration = params.duration;
       }
 
-      await request("/api/chat/voice", {
+      const response = await request<{
+        success: boolean;
+        url: string;
+        duration: number;
+      }>("/api/chat/voice", {
         method: "POST",
         body: formData,
         headers: {
@@ -199,6 +207,11 @@ class ChatService {
       });
 
       logger.info("Voice note sent successfully", { matchId, duration: voiceDuration });
+      
+      // Return result for legacy signature
+      if (typeof matchIdOrParams !== "string") {
+        return response;
+      }
     } catch (error) {
       logger.error("Failed to send voice note", { error, matchIdOrParams });
       throw error;
@@ -211,7 +224,7 @@ export const chatService = new ChatService();
 // Native voice note upload helper
 export async function sendVoiceNoteNative(matchId: string, p: { fileUri: string; duration: number }) {
   // presign
-  const presign = await request("/uploads/voice/presign", {
+  const presign = await request<{ url: string; key: string }>("/uploads/voice/presign", {
     method: "POST",
     body: { contentType: "audio/webm" },
   });
@@ -231,5 +244,10 @@ export async function sendVoiceNoteNative(matchId: string, p: { fileUri: string;
   });
 }
 
-// Inject to chatService
-(chatService as any).sendVoiceNoteNative = sendVoiceNoteNative;
+// Extended ChatService interface with native methods
+interface ChatServiceWithNative extends ChatService {
+  sendVoiceNoteNative: typeof sendVoiceNoteNative;
+}
+
+// Inject to chatService with proper type
+Object.assign(chatService, { sendVoiceNoteNative });

@@ -60,9 +60,11 @@ const ManageSubscriptionScreen = ({
       const data = await premiumAPI.getCurrentSubscription();
       // Map API response to local format
       if (data) {
+        const validStatuses: Array<"active" | "canceled" | "past_due" | "unpaid" | "incomplete" | "inactive"> = ["active", "inactive", "canceled", "past_due", "unpaid", "incomplete"];
+        const status = (data.status && validStatuses.includes(data.status as any)) ? data.status as "active" | "canceled" | "past_due" | "unpaid" | "incomplete" | "inactive" : undefined;
         setSubscription({
           id: data.id,
-          status: data.status,
+          status,
           plan:
             typeof data.plan === "string"
               ? { name: data.plan }

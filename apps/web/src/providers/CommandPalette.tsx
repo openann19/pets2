@@ -18,7 +18,7 @@ function useActions() {
             shortcut: ['g', 'h'],
             keywords: 'home dashboard main',
             icon: <HomeIcon className="h-5 w-5"/>,
-            perform: () => router.push('/'),
+            perform: () => { router.push('/'); },
         },
         {
             id: 'discover',
@@ -26,7 +26,7 @@ function useActions() {
             shortcut: ['g', 'd'],
             keywords: 'discover pets swipe match',
             icon: <HeartIcon className="h-5 w-5"/>,
-            perform: () => router.push('/discover'),
+            perform: () => { router.push('/discover'); },
         },
         {
             id: 'matches',
@@ -34,7 +34,7 @@ function useActions() {
             shortcut: ['g', 'm'],
             keywords: 'matches connections',
             icon: <HeartIcon className="h-5 w-5"/>,
-            perform: () => router.push('/matches'),
+            perform: () => { router.push('/matches'); },
         },
         {
             id: 'chat',
@@ -42,7 +42,7 @@ function useActions() {
             shortcut: ['g', 'c'],
             keywords: 'chat messages conversations',
             icon: <ChatBubbleLeftRightIcon className="h-5 w-5"/>,
-            perform: () => router.push('/chat'),
+            perform: () => { router.push('/chat'); },
         },
         {
             id: 'profile',
@@ -50,7 +50,7 @@ function useActions() {
             shortcut: ['g', 'p'],
             keywords: 'profile account settings',
             icon: <UserIcon className="h-5 w-5"/>,
-            perform: () => router.push('/profile'),
+            perform: () => { router.push('/profile'); },
         },
         {
             id: 'notifications',
@@ -58,7 +58,7 @@ function useActions() {
             shortcut: ['g', 'n'],
             keywords: 'notifications alerts',
             icon: <BellIcon className="h-5 w-5"/>,
-            perform: () => router.push('/notifications'),
+            perform: () => { router.push('/notifications'); },
         },
         {
             id: 'add-pet',
@@ -66,7 +66,7 @@ function useActions() {
             shortcut: ['a', 'p'],
             keywords: 'add pet create new',
             icon: <PlusIcon className="h-5 w-5"/>,
-            perform: () => router.push('/pets/new'),
+            perform: () => { router.push('/pets/new'); },
         },
         {
             id: 'search',
@@ -89,7 +89,7 @@ function useActions() {
             shortcut: ['t'],
             keywords: 'theme dark light mode',
             icon: theme === 'dark' ? <SunIcon className="h-5 w-5"/> : <MoonIcon className="h-5 w-5"/>,
-            perform: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+            perform: () => { setTheme(theme === 'dark' ? 'light' : 'dark'); },
         },
         // Settings
         {
@@ -98,7 +98,7 @@ function useActions() {
             shortcut: ['s'],
             keywords: 'settings preferences config',
             icon: <Cog6ToothIcon className="h-5 w-5"/>,
-            perform: () => router.push('/settings'),
+            perform: () => { router.push('/settings'); },
         },
         // Account actions
         {
@@ -148,7 +148,7 @@ export function CommandPalette({ children }) {
             }
         };
         document.addEventListener('toggle-theme', handleThemeToggle);
-        return () => document.removeEventListener('toggle-theme', handleThemeToggle);
+        return () => { document.removeEventListener('toggle-theme', handleThemeToggle); };
     }, [actions]);
     return (<KBarProvider actions={actions}>
       {children}

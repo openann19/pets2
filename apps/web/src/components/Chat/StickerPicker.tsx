@@ -107,7 +107,7 @@ export const StickerPicker = ({ isOpen, onClose, onSelectSticker }) => {
         return null;
     return (<AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4" onClick={onClose}>
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col" onClick={(e) => { e.stopPropagation(); }}>
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -121,7 +121,7 @@ export const StickerPicker = ({ isOpen, onClose, onSelectSticker }) => {
           {/* Pack Selection */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex space-x-2">
-              {stickerPacks.map((pack) => (<button key={pack.id} onClick={() => setSelectedPack(pack.id)} className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${selectedPack === pack.id
+              {stickerPacks.map((pack) => (<button key={pack.id} onClick={() => { setSelectedPack(pack.id); }} className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${selectedPack === pack.id
                 ? 'bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-200'
                 : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>
                   <span className="mr-1">{pack.emoji}</span>
@@ -133,7 +133,7 @@ export const StickerPicker = ({ isOpen, onClose, onSelectSticker }) => {
           {/* Sticker Grid */}
           <div className="flex-1 overflow-y-auto p-4">
             {currentPack && (<div className="grid grid-cols-4 gap-3">
-                {currentPack.stickers.map((sticker) => (<motion.button key={sticker.id} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 text-2xl flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" onClick={() => handleStickerSelect(sticker)} title={sticker.name}>
+                {currentPack.stickers.map((sticker) => (<motion.button key={sticker.id} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="w-12 h-12 text-2xl flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" onClick={() => { handleStickerSelect(sticker); }} title={sticker.name}>
                     {sticker.url}
                   </motion.button>))}
               </div>)}

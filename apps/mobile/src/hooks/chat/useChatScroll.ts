@@ -37,8 +37,9 @@ export function useChatScroll({
         if (saved) {
           setInitialOffset(Number(saved));
         }
-      } catch (error) {
-        logger.error("Failed to restore scroll position for chat", { matchId, error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error("Failed to restore scroll position for chat", { matchId, error: err });
       }
     };
 

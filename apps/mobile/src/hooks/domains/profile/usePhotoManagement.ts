@@ -65,7 +65,7 @@ export function usePhotoManagement({
     });
 
     if (!result.canceled) {
-      const newPhotos: PhotoData[] = result.assets.map((asset, index) => ({
+      const newPhotos: PhotoData[] = result.assets.map((asset: any, index: number) => ({
         uri: asset.uri,
         type: "image/jpeg",
         fileName: `photo-${Date.now()}-${index}.jpg`,

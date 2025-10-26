@@ -317,7 +317,7 @@ class AdvancedAnalytics {
       });
     }
     catch (error: unknown) {
-      logger.warn('Failed to send analytics event', error);
+      logger.warn('Failed to send analytics event', { error });
       this.queue.push(event);
     }
   }
@@ -414,11 +414,18 @@ class AdvancedAnalytics {
     if (recent.length < 3) {
       return 'stable';
     }
-    const trend = recent[recent.length - 1] - recent[0];
-    if (trend > recent[0] * 0.1) {
+    const first = recent[0];
+    const last = recent[recent.length - 1];
+    
+    if (first === undefined || last === undefined) {
+      return 'stable';
+    }
+    
+    const trend = last - first;
+    if (trend > first * 0.1) {
       return 'increasing';
     }
-    if (trend < -recent[0] * 0.1) {
+    if (trend < -first * 0.1) {
       return 'decreasing';
     }
     return 'stable';
@@ -497,7 +504,7 @@ export const useAnalytics = (): AnalyticsHook => {
     trackMatchSuccess,
     trackApiCall,
     generateReport,
-    setUserId: (userId: string | null) => analytics.setUserId(userId),
+    setUserId: (userId: string | null) => { analytics.setUserId(userId); },
   };
 };
 

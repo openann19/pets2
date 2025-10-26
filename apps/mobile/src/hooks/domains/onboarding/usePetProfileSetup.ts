@@ -6,14 +6,18 @@ import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import { logger } from "@pawfectmatch/core";
 import { api } from "../../../services/api";
+import type { Pet, PetPhoto } from "@pawfectmatch/core";
 
-interface PetProfile {
+// Interface for pet profile creation during onboarding
+interface PetProfileCreationData {
   name: string;
   breed: string;
   age: number;
-  species: string;
+  species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
+  gender: 'male' | 'female';
+  size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
   description?: string;
-  photos: string[];
+  photos: PetPhoto[];
 }
 
 interface PetProfileSetupState {
@@ -25,15 +29,15 @@ interface PetProfileSetupState {
 
 interface UsePetProfileSetupReturn {
   // State
-  profile: Partial<PetProfile>;
+  profile: Partial<PetProfileCreationData>;
   state: PetProfileSetupState;
 
   // Actions
-  updateProfile: (updates: Partial<PetProfile>) => void;
+  updateProfile: (updates: Partial<PetProfileCreationData>) => void;
   setCurrentStep: (step: number) => void;
   uploadPhoto: (uri: string) => Promise<void>;
   removePhoto: (index: number) => void;
-  submitProfile: () => Promise<PetProfile>;
+  submitProfile: () => Promise<Pet>;
   resetProfile: () => void;
   validateCurrentStep: () => boolean;
 
@@ -44,7 +48,7 @@ interface UsePetProfileSetupReturn {
 }
 
 export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
-  const [profile, setProfile] = useState<Partial<PetProfile>>({
+  const [profile, setProfile] = useState<Partial<PetProfileCreationData>>({
     photos: [],
   });
 
@@ -55,7 +59,7 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
     error: null,
   });
 
-  const updateProfile = useCallback((updates: Partial<PetProfile>) => {
+  const updateProfile = useCallback((updates: Partial<PetProfileCreationData>) => {
     setProfile((prev) => ({ ...prev, ...updates }));
     setState((prev) => ({ ...prev, error: null }));
     logger.info("Pet profile updated", { updates });
@@ -76,9 +80,15 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
       // Simulate upload delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      const newPhoto: PetPhoto = {
+        url: uri,
+        publicId: `photo-${Date.now()}`,
+        isPrimary: (profile.photos?.length ?? 0) === 0, // First photo is primary
+      };
+      
       setProfile((prev) => ({
         ...prev,
-        photos: [...(prev.photos || []), uri],
+        photos: [...(prev.photos || []), newPhoto],
       }));
 
       logger.info("Pet photo uploaded successfully");
@@ -100,7 +110,7 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
     logger.info("Pet photo removed", { index });
   }, []);
 
-  const submitProfile = useCallback(async (): Promise<PetProfile> => {
+  const submitProfile = useCallback(async (): Promise<Pet> => {
     if (!validateCurrentStep()) {
       throw new Error("Please complete all required fields");
     }
@@ -108,11 +118,13 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
     setState((prev) => ({ ...prev, isSubmitting: true, error: null }));
 
     try {
-      const completeProfile: PetProfile = {
+      const completeProfile: PetProfileCreationData = {
         name: profile.name!,
         breed: profile.breed!,
         age: profile.age!,
         species: profile.species || "dog",
+        gender: profile.gender || "male",
+        size: profile.size || "medium",
         description: profile.description,
         photos: profile.photos || [],
       };
@@ -123,11 +135,24 @@ export const usePetProfileSetup = (): UsePetProfileSetupReturn => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
+      // For onboarding, we need to create a minimal Pet object
+      // The API will handle the full creation with proper IDs
+      const petData: Partial<Pet> = {
+        name: completeProfile.name,
+        breed: completeProfile.breed,
+        age: completeProfile.age,
+        species: completeProfile.species,
+        gender: completeProfile.gender,
+        size: completeProfile.size,
+        description: completeProfile.description,
+        photos: completeProfile.photos,
+      };
+      
       // Call actual API
-      const result = await api.createPet(completeProfile);
+      const result = await api.createPet(petData);
 
       logger.info("Pet profile created successfully", { petId: result.id });
-      return completeProfile;
+      return result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to create pet profile";

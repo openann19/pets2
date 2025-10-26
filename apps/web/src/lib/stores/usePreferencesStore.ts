@@ -42,41 +42,41 @@ const defaultPreferences = {
 export const usePreferencesStore = create()(persist(immer((set) => ({
     ...defaultPreferences,
     // Update discovery preferences
-    updateDiscoveryPreferences: (preferences) => set((state) => {
+    updateDiscoveryPreferences: (preferences) => { set((state) => {
         state.discovery = {
             ...state.discovery,
             ...preferences,
         };
         return state;
-    }),
+    }); },
     // Update notification settings
-    updateNotificationSettings: (settings) => set((state) => {
+    updateNotificationSettings: (settings) => { set((state) => {
         state.notifications = {
             ...state.notifications,
             ...settings,
         };
         return state;
-    }),
+    }); },
     // Update appearance settings
-    updateAppearanceSettings: (settings) => set((state) => {
+    updateAppearanceSettings: (settings) => { set((state) => {
         state.appearance = {
             ...state.appearance,
             ...settings,
         };
         return state;
-    }),
+    }); },
     // Update privacy settings
-    updatePrivacySettings: (settings) => set((state) => {
+    updatePrivacySettings: (settings) => { set((state) => {
         state.privacy = {
             ...state.privacy,
             ...settings,
         };
         return state;
-    }),
+    }); },
     // Reset all preferences to defaults
-    resetPreferences: () => set(() => ({
+    resetPreferences: () => { set(() => ({
         ...defaultPreferences,
-    })),
+    })); },
 })), {
     name: 'pawfectmatch-preferences',
 }));

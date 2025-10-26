@@ -65,9 +65,8 @@ export function useTabReselectRefresh(opts: UseTabReselectRefreshOptions) {
 
   useEffect(() => {
     // SINGLE TAP on active tab → reselect
-    const sub1 = navigation.addListener("tabPress", (e: any) => {
+    const handleTabPress = () => {
       if (!isFocused) return;           // only the active screen handles "reselect"
-      // do not prevent default; let RN keep behavior for other listeners
       if (!canTrigger()) return;
 
       const offset = getOffset?.() ?? 0;
@@ -79,24 +78,25 @@ export function useTabReselectRefresh(opts: UseTabReselectRefreshOptions) {
       } else if (nearTopAction === "refresh") {
         if (haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         onRefresh();
-        // Optionally pulse tab icon – EnhancedTabBar handles visuals on its side
-        navigation.emit({ type: "tabReselect", target: (e as any).target });
       }
-    });
+    };
 
     // DOUBLE TAP on active tab → snap top + refresh
-    const sub2 = navigation.addListener("tabDoublePress", (e: any) => {
+    const handleTabDoublePress = () => {
       if (!isFocused) return;
       if (!canTrigger()) return;
       if (haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       scrollToTop(listRef);
       onRefresh();
-      navigation.emit({ type: "tabDoublePulse", target: (e as any).target });
-    });
+    };
+
+    // Try to subscribe to events, but handle if types don't exist
+    const sub1 = (navigation as unknown as { addListener?: (name: string, handler: () => void) => () => void }).addListener?.("tabPress", handleTabPress);
+    const sub2 = (navigation as unknown as { addListener?: (name: string, handler: () => void) => () => void }).addListener?.("tabDoublePress", handleTabDoublePress);
 
     return () => {
-      sub1();
-      sub2();
+      if (sub1) sub1();
+      if (sub2) sub2();
     };
   }, [navigation, isFocused, listRef, onRefresh, getOffset, topThreshold, canTrigger, haptics, nearTopAction]);
 }

@@ -77,7 +77,8 @@ export function entropyScore(canvas: HTMLCanvasElement, rect?: Rect): number {
     const l = Math.round(
       0.2126 * r + 0.7152 * g + 0.0722 * b
     );
-    hist[l] += 1;
+    const idx = Math.min(Math.max(l, 0), 255);
+    hist[idx] = (hist[idx] ?? 0) + 1;
   }
 
   let sum = 0;

@@ -14,10 +14,10 @@ interface UsePreferencesSetupScreenReturn {
   updateMaxDistance: (distance: number) => void;
   updateAgeRange: (range: any) => void;
   toggleBreed: (breed: string) => void;
-  setActivityLevel: (level: string) => void;
-  setSize: (size: string) => void;
-  toggleNotification: (type: string) => void;
-  togglePrivacy: (type: string) => void;
+  setActivityLevel: (level: "low" | "medium" | "high") => void;
+  setSize: (size: "small" | "medium" | "large") => void;
+  toggleNotification: (type: "push" | "email" | "matches" | "messages" | "updates") => void;
+  togglePrivacy: (type: "showOnlineStatus" | "showDistance" | "showProfile") => void;
   isValid: boolean;
   isComplete: boolean;
   availableBreeds: string[];

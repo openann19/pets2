@@ -126,7 +126,7 @@ const PremiumLayout = ({ children, showHeader = true, showFooter = false, classN
                   {/* Mobile actions */}
                   <div className="flex md:hidden items-center gap-3">
                     <div className="relative z-50"><LanguageSelect /></div>
-                    <button className="text-white/80 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} ref={mobileMenuButtonRef} aria-label="Toggle menu">
+                    <button className="text-white/80 hover:text-white transition-colors" onClick={() => { setMobileMenuOpen(!mobileMenuOpen); }} ref={mobileMenuButtonRef} aria-label="Toggle menu">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/>
                       </svg>

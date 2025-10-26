@@ -68,7 +68,9 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         });
 
         if (response?.success && response.data) {
-          setMessages(response.data);
+          // Ensure data is an array
+          const dataArray = Array.isArray(response.data) ? response.data : [response.data];
+          setMessages(dataArray as ChatMessage[]);
         }
       } catch (error) {
         errorHandler.handleError(

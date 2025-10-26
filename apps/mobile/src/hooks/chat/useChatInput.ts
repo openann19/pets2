@@ -39,8 +39,9 @@ export function useChatInput({
         if (draft) {
           setInputTextState(draft);
         }
-      } catch (error) {
-        logger.error("Failed to load draft", { error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error("Failed to load draft", { error: err });
       }
     };
 
@@ -59,8 +60,9 @@ export function useChatInput({
         } else {
           await AsyncStorage.removeItem(key);
         }
-      } catch (error) {
-        logger.error("Failed to persist draft", { error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error("Failed to persist draft", { error: err });
       }
     };
 

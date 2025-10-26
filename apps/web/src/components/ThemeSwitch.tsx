@@ -15,7 +15,7 @@ export function ThemeSwitch() {
     }
     const currentTheme = theme === 'system' ? systemTheme : theme;
     const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    return (<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-full p-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200" onClick={() => setTheme(nextTheme)} aria-label={`Switch to ${nextTheme} theme`} title={`Switch to ${nextTheme} theme`}>
+    return (<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-full p-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200" onClick={() => { setTheme(nextTheme); }} aria-label={`Switch to ${nextTheme} theme`} title={`Switch to ${nextTheme} theme`}>
       {currentTheme === 'dark' ? (<SunIcon className="h-5 w-5 text-yellow-500"/>) : (<MoonIcon className="h-5 w-5 text-blue-600"/>)}
     </motion.button>);
 }
@@ -41,7 +41,7 @@ export function ThemeSelector() {
     return (<div className="flex gap-2">
       {themes.map(({ value, icon: Icon, label }) => (<motion.button key={value} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={`rounded-full p-2 transition-colors duration-200 ${theme === value
                 ? 'bg-primary-500 text-white'
-                : 'hover:bg-neutral-200 dark:hover:bg-neutral-700'}`} onClick={() => setTheme(value)} aria-label={`Switch to ${label} theme`} title={`Switch to ${label} theme`}>
+                : 'hover:bg-neutral-200 dark:hover:bg-neutral-700'}`} onClick={() => { setTheme(value); }} aria-label={`Switch to ${label} theme`} title={`Switch to ${label} theme`}>
           <Icon className="h-5 w-5"/>
         </motion.button>))}
     </div>);

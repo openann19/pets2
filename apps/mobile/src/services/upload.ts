@@ -17,11 +17,10 @@ export async function pickAndUpload(): Promise<string | null> {
     const asset = result.assets[0];
     const formData = new FormData();
     formData.append('file', {
-      // @ts-expect-error React Native FormData type
       uri: asset.uri,
       name: 'photo.jpg',
       type: 'image/jpeg',
-    });
+    } as unknown as Blob);
 
     const data = await request<{ url: string }>('/upload/photo', {
       method: 'POST',
@@ -30,10 +29,13 @@ export async function pickAndUpload(): Promise<string | null> {
     });
     
     return data.url;
-  } catch (error) {
+  } catch (error: unknown) {
     const { logger } = await import('./logger');
-    logger.error('Upload error', { error });
-    throw error;
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Upload error', { 
+      error: err
+    });
+    throw err;
   }
 }
 

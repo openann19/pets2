@@ -627,7 +627,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <Animated.View key={preset.name} entering={FadeInDown.delay(50 * (index + 1)).springify()} exiting={FadeOutUp}>
                 <BouncePressable style={styles.filterCard} onPress={() => applyFilterPreset(preset)} accessibilityLabel={`Apply ${preset.name} filter`}>
                   <BlurView intensity={20} style={styles.filterIcon}>
-                    <Ionicons name={preset.icon as any} size={28} color="white" />
+                    <Ionicons name={preset.icon} size={28} color="white" />
                   </BlurView>
                   <Text style={styles.filterName}>{preset.name}</Text>
                 </BouncePressable>

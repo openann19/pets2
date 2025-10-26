@@ -97,7 +97,7 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
     data: storyGroups,
     isLoading,
     error,
-    refetch: refreshStories,
+    refetch,
   } = useQuery({
     queryKey: ["stories-feed"],
     queryFn: async () => {
@@ -107,6 +107,12 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
   });
 
   const currentGroup = storyGroups?.[currentGroupIndex];
+
+  // Wrapper function to match expected interface
+  const refreshStories = useCallback(async (): Promise<void> => {
+    await refetch();
+  }, [refetch]);
+
   const currentStory = currentGroup?.stories[currentStoryIndex];
 
   // Mark story as viewed mutation
@@ -173,7 +179,7 @@ export const useStories = (initialGroupIndex: number = 0): UseStoriesReturn => {
     (groupIndex: number, storyIndex: number) => {
       if (groupIndex >= 0 && storyGroups && groupIndex < storyGroups.length) {
         const group = storyGroups[groupIndex];
-        if (storyIndex >= 0 && storyIndex < group.stories.length) {
+        if (group && storyIndex >= 0 && storyIndex < group.stories.length) {
           setCurrentGroupIndex(groupIndex);
           setCurrentStoryIndex(storyIndex);
           setProgress(0);

@@ -129,7 +129,7 @@ export const FileShare = ({ onFileSelect, onClose }) => {
       <div className="mt-6 space-y-2">
         {fileTypes.map((fileType) => {
             const Icon = fileType.icon;
-            return (<motion.button key={fileType.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => openFileDialog(fileType.accept)} className="w-full flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+            return (<motion.button key={fileType.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => { openFileDialog(fileType.accept); }} className="w-full flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
               <Icon className="h-6 w-6 text-gray-600 dark:text-gray-400 mr-3"/>
               <div className="flex-1 text-left">
                 <p className="font-medium text-gray-900 dark:text-white">{fileType.label}</p>

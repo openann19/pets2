@@ -108,8 +108,8 @@ export default function AdminSecurityScreen({
         adminAPI.getSecurityMetrics(),
       ]);
 
-      setAlerts(alertsResponse.data.alerts);
-      setMetrics(metricsResponse.data);
+      setAlerts(alertsResponse.data.alerts as SecurityAlert[]);
+      setMetrics(metricsResponse.data as SecurityMetrics);
     } catch (error: unknown) {
       logger.error("Error loading security data:", { error });
       Alert.alert("Error", "Failed to load security data");
@@ -149,7 +149,7 @@ export default function AdminSecurityScreen({
 
     try {
       setActionLoading(alertId);
-      const response = await adminAPI.resolveSecurityAlert(alertId);
+      const response = await adminAPI.resolveSecurityAlert({ alertId, action: "resolved" });
 
       if (response.success) {
         setAlerts((prevAlerts) =>
@@ -187,7 +187,7 @@ export default function AdminSecurityScreen({
           onPress: async () => {
             try {
               setActionLoading(alertId);
-              const response = await adminAPI.blockIPAddress(ipAddress);
+              const response = await adminAPI.blockIPAddress({ ipAddress, reason: "Manual block" });
 
               if (response.success) {
                 Alert.alert("Success", "IP address blocked successfully");

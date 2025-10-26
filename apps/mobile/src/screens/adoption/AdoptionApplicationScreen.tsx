@@ -84,7 +84,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
       case 1:
         return formData.workSchedule && formData.reason;
       case 2:
-        return formData.references[0].name && formData.references[0].phone;
+        return formData.references[0]?.name && formData.references[0]?.phone;
       case 3:
         return formData.commitment;
       default:

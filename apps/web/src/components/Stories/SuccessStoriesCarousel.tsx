@@ -25,7 +25,7 @@ export function SuccessStoriesCarousel({ className = '', autoPlay = true, autoPl
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % stories.length);
         }, autoPlayInterval);
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [isAutoPlaying, stories.length, autoPlayInterval]);
     const nextStory = () => {
         setCurrentIndex((prev) => (prev + 1) % stories.length);
@@ -181,7 +181,7 @@ export function SuccessStoriesCarousel({ className = '', autoPlay = true, autoPl
 
           {/* Dots Indicator */}
           <div className="flex space-x-2">
-            {stories.map((_, index) => (<button key={index} onClick={() => goToStory(index)} className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex
+            {stories.map((_, index) => (<button key={index} onClick={() => { goToStory(index); }} className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex
                 ? 'bg-pink-500'
                 : 'bg-gray-300 hover:bg-gray-400'}`}/>))}
           </div>

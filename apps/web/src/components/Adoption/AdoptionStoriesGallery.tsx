@@ -76,12 +76,12 @@ export const AdoptionStoriesGallery = ({ stories, onLoadMore, hasMore = false, i
 
           {/* Tabs */}
           <div className="flex border-b">
-            <button onClick={() => setActiveTab('story')} className={`px-4 py-2 font-medium ${activeTab === 'story'
+            <button onClick={() => { setActiveTab('story'); }} className={`px-4 py-2 font-medium ${activeTab === 'story'
                 ? 'border-b-2 border-blue-500 text-blue-600'
                 : 'text-gray-500 hover:text-gray-700'}`}>
               Adoption Story
             </button>
-            {story.followUpUpdates && story.followUpUpdates.length > 0 && (<button onClick={() => setActiveTab('updates')} className={`px-4 py-2 font-medium ${activeTab === 'updates'
+            {story.followUpUpdates && story.followUpUpdates.length > 0 && (<button onClick={() => { setActiveTab('updates'); }} className={`px-4 py-2 font-medium ${activeTab === 'updates'
                     ? 'border-b-2 border-blue-500 text-blue-600'
                     : 'text-gray-500 hover:text-gray-700'}`}>
                 Follow-up Updates ({story.followUpUpdates.length})
@@ -156,7 +156,7 @@ export const AdoptionStoriesGallery = ({ stories, onLoadMore, hasMore = false, i
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stories
                 .filter((story) => story.featured)
-                .map((story) => (<StoryCard key={story._id} story={story} onClick={() => setSelectedStory(story)}/>))}
+                .map((story) => (<StoryCard key={story._id} story={story} onClick={() => { setSelectedStory(story); }}/>))}
           </div>
         </div>)}
 
@@ -164,7 +164,7 @@ export const AdoptionStoriesGallery = ({ stories, onLoadMore, hasMore = false, i
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">All Success Stories</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stories.map((story) => (<StoryCard key={story._id} story={story} onClick={() => setSelectedStory(story)}/>))}
+          {stories.map((story) => (<StoryCard key={story._id} story={story} onClick={() => { setSelectedStory(story); }}/>))}
         </div>
       </div>
 
@@ -209,8 +209,8 @@ export const AdoptionStoriesGallery = ({ stories, onLoadMore, hasMore = false, i
       </Card>
 
       {/* Modal */}
-      {selectedStory && (<Dialog open={!!selectedStory} onOpenChange={() => setSelectedStory(null)}>
-          <StoryModal story={selectedStory} onClose={() => setSelectedStory(null)}/>
+      {selectedStory && (<Dialog open={!!selectedStory} onOpenChange={() => { setSelectedStory(null); }}>
+          <StoryModal story={selectedStory} onClose={() => { setSelectedStory(null); }}/>
         </Dialog>)}
     </div>);
 };

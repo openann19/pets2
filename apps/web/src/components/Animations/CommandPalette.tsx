@@ -41,10 +41,10 @@ export function useCommandPalette() {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => { window.removeEventListener('keydown', handleKeyDown); };
   }, []);
 
-  return { isOpen, setIsOpen, open: () => setIsOpen(true), close: () => setIsOpen(false) };
+  return { isOpen, setIsOpen, open: () => { setIsOpen(true); }, close: () => { setIsOpen(false); } };
 }
 
 export function CommandPalette({ commands, placeholder = 'Search commands...', onClose }: CommandPaletteProps) {
@@ -60,12 +60,12 @@ export function CommandPalette({ commands, placeholder = 'Search commands...', o
   });
 
   // Group by category
-  const groupedCommands = filteredCommands.reduce((acc, cmd) => {
+  const groupedCommands = filteredCommands.reduce<Record<string, Command[]>>((acc, cmd) => {
     const category = cmd.category || 'General';
     if (!acc[category]) acc[category] = [];
     acc[category].push(cmd);
     return acc;
-  }, {} as Record<string, Command[]>);
+  }, {});
 
   // Keyboard navigation
   useEffect(() => {
@@ -83,7 +83,7 @@ export function CommandPalette({ commands, placeholder = 'Search commands...', o
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => { window.removeEventListener('keydown', handleKeyDown); };
   }, [selectedIndex, filteredCommands]);
 
   // Focus input on mount
@@ -131,7 +131,7 @@ export function CommandPalette({ commands, placeholder = 'Search commands...', o
             ref={inputRef}
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); }}
             placeholder={placeholder}
             className="w-full text-lg outline-none"
             aria-label="Command search"
@@ -154,11 +154,11 @@ export function CommandPalette({ commands, placeholder = 'Search commands...', o
                   return (
                     <button
                       key={cmd.id}
-                      onClick={() => executeCommand(cmd)}
+                      onClick={() => { executeCommand(cmd); }}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors ${
                         isSelected ? 'bg-purple-100 text-purple-900' : 'hover:bg-gray-100'
                       }`}
-                      onMouseEnter={() => setSelectedIndex(globalIndex)}
+                      onMouseEnter={() => { setSelectedIndex(globalIndex); }}
                     >
                       <div className="flex items-center gap-3">
                         {cmd.icon && <span className="text-xl">{cmd.icon}</span>}

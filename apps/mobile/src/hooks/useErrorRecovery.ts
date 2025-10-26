@@ -38,8 +38,9 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
       logger.info(`Offline retry attempt ${attempt}/${maxOfflineRetries}`);
     },
     onFailure: (error) => {
-      logger.error("Offline retry failed", { error: error.message });
-      onRecoveryFailure?.(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error("Offline retry failed", { error: errorObj });
+      onRecoveryFailure?.(errorObj);
     },
   });
 
@@ -51,8 +52,9 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
       logger.info(`Network retry attempt ${attempt}/${maxNetworkRetries}`);
     },
     onFailure: (error) => {
-      logger.error("Network retry failed", { error: error.message });
-      onRecoveryFailure?.(error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error("Network retry failed", { error: errorObj });
+      onRecoveryFailure?.(errorObj);
     },
   });
 

@@ -3,7 +3,9 @@
  * VoiceOver hints, high contrast support, Reduce Motion
  */
 
-import { AccessibilityInfo, ColorScheme } from "react-native";
+import { AccessibilityInfo, useColorScheme } from "react-native";
+
+type ColorScheme = 'light' | 'dark' | null;
 
 export interface AccessibilityFeatures {
   /** High contrast mode enabled */

@@ -26,13 +26,13 @@ export function estimateHorizonAngle(canvas: HTMLCanvasElement): number {
   const mag = new Float32Array(w * h);
   const ang = new Float32Array(w * h);
 
-  const getL = (x: number, y: number) => {
+  const getL = (x: number, y: number): number => {
     if (x < 0) x = 0;
     if (x >= w) x = w - 1;
     if (y < 0) y = 0;
     if (y >= h) y = h - 1;
     const i = (y * w + x) * 4;
-    return 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+    return 0.2126 * (d[i] ?? 0) + 0.7152 * (d[i + 1] ?? 0) + 0.0722 * (d[i + 2] ?? 0);
   };
 
   // Compute gradients
@@ -44,8 +44,8 @@ export function estimateHorizonAngle(canvas: HTMLCanvasElement): number {
       for (let j = -1; j <= 1; j++) {
         for (let i = -1; i <= 1; i++) {
           const v = getL(x + i, y + j);
-          sx += v * gx[k];
-          sy += v * gy[k];
+          sx += v * (gx[k] ?? 0);
+          sy += v * (gy[k] ?? 0);
           k++;
         }
       }
@@ -60,22 +60,22 @@ export function estimateHorizonAngle(canvas: HTMLCanvasElement): number {
   const bins = new Float32Array(181); // -90..+90
 
   for (let i = 0; i < ang.length; i++) {
-    const a = ang[i];
-    const m = mag[i];
-    if (!isFinite(a) || m < 5) continue;
+    const a = ang[i] ?? 0;
+    const m = mag[i] ?? 0;
+    if (!isFinite(a) || !m || m < 5) continue;
     // Angle of edge normal; horizon is near 0°
     let deg = ((a * 180) / Math.PI + 180) % 180; // 0..180
     if (deg > 90) deg -= 180; // -90..90
     const bin = Math.round(deg + 90);
-    bins[bin] += m;
+    bins[bin] = (bins[bin] ?? 0) + m;
   }
 
   // Pick mode within ±10° around 0° for stability
   let best = -1;
   let bestV = -1;
   for (let i = 80; i <= 100; i++) {
-    if (bins[i] > bestV) {
-      bestV = bins[i];
+    if ((bins[i] ?? 0) > bestV) {
+      bestV = bins[i] ?? 0;
       best = i;
     }
   }

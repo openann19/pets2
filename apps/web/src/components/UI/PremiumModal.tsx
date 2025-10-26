@@ -107,9 +107,9 @@ export default function PremiumModal({ isOpen, onClose, title, children, size = 
 // Hook for managing modal state
 export function usePremiumModal() {
     const [isOpen, setIsOpen] = React.useState(false);
-    const openModal = () => setIsOpen(true);
-    const closeModal = () => setIsOpen(false);
-    const toggleModal = () => setIsOpen(!isOpen);
+    const openModal = () => { setIsOpen(true); };
+    const closeModal = () => { setIsOpen(false); };
+    const toggleModal = () => { setIsOpen(!isOpen); };
     return {
         isOpen,
         openModal,

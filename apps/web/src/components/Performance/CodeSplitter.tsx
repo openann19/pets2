@@ -53,7 +53,7 @@ export function withCodeSplit(importFunc, options = {}) {
         React.useEffect(() => {
             if (delay > 0) {
                 const timer = setTimeout(() => setShowComponent(true), delay);
-                return () => clearTimeout(timer);
+                return () => { clearTimeout(timer); };
             }
             return undefined;
         }, [delay]);
@@ -101,7 +101,7 @@ export const LazyLoad = ({ children, fallback = <LoadingSpinner />, rootMargin =
         if (ref.current) {
             observer.observe(ref.current);
         }
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, [rootMargin, threshold]);
     return <div ref={ref}>{isVisible ? children : fallback}</div>;
 };

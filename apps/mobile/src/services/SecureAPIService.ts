@@ -4,6 +4,7 @@
  */
 import { fetch as sslFetch } from "react-native-ssl-pinning";
 import { logger } from "../services/logger";
+import type { SSLFetch, SSLResponse, SSLPinningConfig } from "../types/ssl-pinning";
 
 const BASE_URL =
   process.env["EXPO_PUBLIC_API_URL"] ??
@@ -39,7 +40,7 @@ interface SSLConfig {
 interface SSLRequestConfig {
   method: string;
   headers: Record<string, string>;
-  body?: string | null;
+  body?: string;
   timeoutInterval: number;
   sslPinning: {
     certs: string | Array<{ algorithm: string; value: string }>;
@@ -133,7 +134,7 @@ class SecureAPIService {
     const requestConfig: SSLRequestConfig = {
       method: fetchOptions.method ?? "GET",
       headers,
-      body: fetchOptions.body ? String(fetchOptions.body) : null,
+      body: fetchOptions.body ? String(fetchOptions.body) : undefined,
       timeoutInterval: timeout,
       ...sslConfig,
     };
@@ -151,11 +152,14 @@ class SecureAPIService {
           },
         );
 
-        const response = await sslFetch(url, requestConfig as any);
+        const response = (await sslFetch(url, {
+          ...requestConfig,
+          method: requestConfig.method as "GET" | "POST" | "PUT" | "DELETE",
+        } as any)) as SSLResponse;
         const status = response.status;
         const ok = status >= 200 && status < 300;
         if (!ok) {
-          const statusText = (response as any).statusText || "";
+          const statusText = response.statusText || "";
           throw new Error(`HTTP ${String(status)}: ${statusText}`);
         }
 
@@ -254,11 +258,13 @@ class SecureAPIService {
     try {
       const sslConfig = this.getSSLConfig(domain);
       // Perform a test request to validate SSL pinning
-      await sslFetch(`https://${domain}`, {
+      const testConfig: SSLPinningConfig = {
         method: "HEAD",
+        headers: {},
         timeoutInterval: 5000,
         ...sslConfig,
-      } as any);
+      };
+      await sslFetch(`https://${domain}`, testConfig as any);
       return true;
     } catch (error) {
       logger.error("SSL certificate validation failed", {

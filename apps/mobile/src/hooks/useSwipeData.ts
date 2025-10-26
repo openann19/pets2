@@ -90,10 +90,11 @@ export function useSwipeData(): SwipeData & SwipeActions {
         filters,
       });
     } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       const errorMessage =
         err instanceof Error ? err.message : "Failed to load pets";
       setError(errorMessage);
-      logger.error("Failed to load pets", { error: errorMessage });
+      logger.error("Failed to load pets", { error });
     } finally {
       setIsLoading(false);
     }
@@ -133,10 +134,11 @@ export function useSwipeData(): SwipeData & SwipeActions {
           isMatch: action === "like" || action === "superlike",
         });
       } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
         const errorMessage =
           err instanceof Error ? err.message : "Failed to process swipe";
         Alert.alert("Error", errorMessage);
-        logger.error("Swipe action failed", { error: errorMessage });
+        logger.error("Swipe action failed", { error });
       }
     },
     [pets, currentIndex, loadPets, user],
@@ -161,9 +163,9 @@ export function useSwipeData(): SwipeData & SwipeActions {
       setFilterStoreFilters({
         species: newFilters.species,
         breed: newFilters.breed,
-        ageMin: newFilters.ageMin,
-        ageMax: newFilters.ageMax,
-        distance: newFilters.distance,
+        minAge: newFilters.ageMin,
+        maxAge: newFilters.ageMax,
+        maxDistance: newFilters.distance,
       });
     },
     [setFilterStoreFilters],

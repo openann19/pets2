@@ -13,7 +13,7 @@ import { api } from "./api";
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
+  handleNotification: () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
@@ -134,7 +134,7 @@ class NotificationService {
         name: channel.name,
         importance: channel.importance,
         description: channel.description,
-        sound: channel.sound ?? null,
+        sound: channel.sound ?? undefined,
         vibrationPattern: [0, 250, 250, 250],
       });
     }
@@ -162,7 +162,7 @@ class NotificationService {
 
     // Handle different notification types with safe type checking
     const notificationType =
-      typeof data["type"] === "string" ? data["type"] : "";
+      (data && typeof data["type"] === "string") ? data["type"] : "";
 
     switch (notificationType) {
       case "match":
@@ -244,9 +244,10 @@ class NotificationService {
       // const channelId = Platform.OS === 'android' ? this.getChannelForType(notificationData.type) : undefined;
 
       // Configure trigger (immediate or scheduled)
-      let trigger: Notifications.NotificationTriggerInput | null = null;
+      let trigger: Notifications.NotificationTriggerInput | undefined = undefined;
       if (notificationData.scheduledFor !== undefined) {
         trigger = {
+          type: "date",
           date: notificationData.scheduledFor,
         };
       }

@@ -133,7 +133,71 @@ export default function AdminAnalyticsScreen({
     try {
       setLoading(true);
       const response = await adminAPI.getAnalytics({ period: selectedPeriod });
-      setAnalytics(response.data);
+      // Merge response data into full AnalyticsData structure
+      const responseData = response.data || {};
+      const fullData: AnalyticsData = {
+        users: {
+          total: responseData.users?.total || 0,
+          active: responseData.users?.active || 0,
+          suspended: responseData.users?.suspended || 0,
+          banned: responseData.users?.banned || 0,
+          verified: responseData.users?.verified || 0,
+          recent24h: responseData.users?.recent24h || 0,
+          growth: (responseData.users as any)?.growth || 0,
+          trend: ((responseData.users as any)?.trend as "up" | "down" | "stable") || "stable",
+        },
+        pets: {
+          total: responseData.pets?.total || 0,
+          active: responseData.pets?.active || 0,
+          recent24h: responseData.pets?.recent24h || 0,
+          growth: (responseData.pets as any)?.growth || 0,
+          trend: ((responseData.pets as any)?.trend as "up" | "down" | "stable") || "stable",
+        },
+        matches: {
+          total: responseData.matches?.total || 0,
+          active: responseData.matches?.active || 0,
+          blocked: responseData.matches?.blocked || 0,
+          recent24h: responseData.matches?.recent24h || 0,
+          growth: (responseData.matches as any)?.growth || 0,
+          trend: ((responseData.matches as any)?.trend as "up" | "down" | "stable") || "stable",
+        },
+        messages: {
+          total: responseData.messages?.total || 0,
+          deleted: responseData.messages?.deleted || 0,
+          recent24h: responseData.messages?.recent24h || 0,
+          growth: (responseData.messages as any)?.growth || 0,
+          trend: ((responseData.messages as any)?.trend as "up" | "down" | "stable") || "stable",
+        },
+        engagement: {
+          dailyActiveUsers: 0,
+          weeklyActiveUsers: 0,
+          monthlyActiveUsers: 0,
+          averageSessionDuration: 0,
+          bounceRate: 0,
+          retentionRate: 0,
+        },
+        revenue: {
+          totalRevenue: 0,
+          monthlyRecurringRevenue: 0,
+          averageRevenuePerUser: 0,
+          conversionRate: 0,
+          churnRate: 0,
+        },
+        timeSeries: [],
+        topPerformers: {
+          users: [],
+          pets: [],
+        },
+        geographic: [],
+        devices: [],
+        security: {
+          suspiciousLogins: 0,
+          blockedIPs: 0,
+          reportedContent: 0,
+          bannedUsers: 0,
+        },
+      };
+      setAnalytics(fullData);
     } catch (error: unknown) {
       logger.error("Error loading analytics data:", { error });
       Alert.alert("Error", "Failed to load analytics data");

@@ -82,7 +82,9 @@ function AdminUploadsScreen({
         });
 
         if (response?.success && response.data) {
-          setUploads(response.data);
+          // Handle different response shapes
+          const uploads = (response.data as any)?.uploads || response.data;
+          setUploads(Array.isArray(uploads) ? uploads : []);
         }
       } catch (error) {
         errorHandler.handleError(

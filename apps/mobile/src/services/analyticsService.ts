@@ -11,10 +11,11 @@ export interface AnalyticsEvent {
 export async function track(event: string, props?: Record<string, any>): Promise<void> {
   try {
     await request('/admin/analytics/track', { method: 'POST', body: { event, props } });
-  } catch (error) {
+  } catch (error: unknown) {
     // Analytics failures should not break the app - log silently via logger
     const { logger } = await import('./logger');
-    logger.warn('Analytics tracking failed', { error, event, props });
+    const errorDetails = error instanceof Error ? error : new Error('Unknown analytics error');
+    logger.warn('Analytics tracking failed', { error: errorDetails, event, props });
   }
 }
 

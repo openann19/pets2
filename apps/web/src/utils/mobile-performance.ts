@@ -26,7 +26,7 @@ export function useLazyLoad(options = {}) {
             ...options,
         });
         observer.observe(element);
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, [options]);
     return { isVisible, elementRef };
 }
@@ -99,7 +99,7 @@ export function usePerformanceMonitor() {
             logger.warn('Performance Observer not fully supported:', { error });
         }
         setMetrics(prev => ({ ...prev, isMobile }));
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, []);
     return metrics;
 }
@@ -188,7 +188,7 @@ export function useMemoryOptimization() {
         // Check memory every 30 seconds
         const interval = setInterval(checkMemory, 30000);
         checkMemory(); // Initial check
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, []);
     const clearCache = useCallback(() => {
         // Clear various caches to free memory

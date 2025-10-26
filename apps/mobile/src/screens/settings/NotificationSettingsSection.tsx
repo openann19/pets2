@@ -49,9 +49,9 @@ export function NotificationSettingsSection({
           ])}
         >
           <Ionicons
-            name={item.icon as any}
+            name={item.icon}
             size={20}
-            color={item.destructive ? "Theme.colors.status.error" : "Theme.colors.neutral[500]"}
+            color={item.destructive ? "#ef4444" : "#6b7280"}
           />
         </View>
         <View style={styles.settingText}>

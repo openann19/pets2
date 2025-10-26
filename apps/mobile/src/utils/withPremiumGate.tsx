@@ -18,13 +18,13 @@ interface PremiumStatus {
  */
 export function withPremiumGate<P extends object>(Component: React.ComponentType<P>) {
   return function Gate(props: P & PremiumGateProps) {
-    const { data, isLoading } = useQuery<PremiumStatus>(
-      ['premiumStatus'],
-      async () => {
+    const { data, isLoading } = useQuery<PremiumStatus>({
+      queryKey: ['premiumStatus'],
+      queryFn: async () => {
         const response = await api.get('/premium/status');
-        return response.data.data;
-      }
-    );
+        return (response as any).data ?? (response as any);
+      },
+    });
 
     if (isLoading) {
       return (

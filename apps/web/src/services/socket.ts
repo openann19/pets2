@@ -179,7 +179,7 @@ class SocketService {
   emit(event: string, data?: any): void {
     const handlers = this.eventHandlers.get(event);
     if (handlers) {
-      handlers.forEach((handler) => handler(data));
+      handlers.forEach((handler) => { handler(data); });
     }
   }
 

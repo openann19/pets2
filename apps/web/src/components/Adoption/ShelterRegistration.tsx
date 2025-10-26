@@ -169,7 +169,7 @@ export const ShelterRegistration = ({ onSubmit, initialData }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(() => setVerificationStep('documents'))} className="space-y-6">
+          <form onSubmit={handleSubmit(() => { setVerificationStep('documents'); })} className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -252,7 +252,7 @@ export const ShelterRegistration = ({ onSubmit, initialData }) => {
             <div className="space-y-3">
               <Label>Specializations *</Label>
               <div className="flex flex-wrap gap-2">
-                {SPECIALIZATION_OPTIONS.map((spec) => (<Badge key={spec} variant={watchedSpecializations.includes(spec) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => handleSpecializationToggle(spec)}>
+                {SPECIALIZATION_OPTIONS.map((spec) => (<Badge key={spec} variant={watchedSpecializations.includes(spec) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => { handleSpecializationToggle(spec); }}>
                     {spec.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                   </Badge>))}
               </div>
@@ -263,7 +263,7 @@ export const ShelterRegistration = ({ onSubmit, initialData }) => {
             <div className="space-y-3">
               <Label>Services Offered *</Label>
               <div className="flex flex-wrap gap-2">
-                {SERVICE_OPTIONS.map((service) => (<Badge key={service} variant={watchedServices.includes(service) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => handleServiceToggle(service)}>
+                {SERVICE_OPTIONS.map((service) => (<Badge key={service} variant={watchedServices.includes(service) ? 'default' : 'outline'} className="cursor-pointer" onClick={() => { handleServiceToggle(service); }}>
                     {service.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                   </Badge>))}
               </div>
@@ -359,10 +359,10 @@ export const ShelterRegistration = ({ onSubmit, initialData }) => {
             </div>
 
             <div className="flex justify-between">
-              <Button type="button" variant="outline" onClick={() => setVerificationStep('basic')}>
+              <Button type="button" variant="outline" onClick={() => { setVerificationStep('basic'); }}>
                 Back
               </Button>
-              <Button onClick={() => setVerificationStep('review')}>Continue to Review</Button>
+              <Button onClick={() => { setVerificationStep('review'); }}>Continue to Review</Button>
             </div>
           </div>
         </CardContent>
@@ -392,7 +392,7 @@ export const ShelterRegistration = ({ onSubmit, initialData }) => {
           {/* Summary of entered information would go here */}
 
           <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={() => setVerificationStep('documents')}>
+            <Button type="button" variant="outline" onClick={() => { setVerificationStep('documents'); }}>
               Back
             </Button>
             <Button onClick={handleSubmit(onFormSubmit)} disabled={isSubmitting}>

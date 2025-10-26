@@ -16,7 +16,7 @@ export const useKeyboardShortcuts = (shortcuts) => {
     }, [shortcuts]);
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        return () => { window.removeEventListener('keydown', handleKeyDown); };
     }, [handleKeyDown]);
 };
 // Moderation dashboard shortcuts

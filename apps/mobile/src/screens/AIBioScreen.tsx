@@ -58,7 +58,7 @@ export default function AIBioScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
         <View style={styles.headerRight}>
-          <Ionicons name="sparkles" size={24} color="#ff6b6b" />
+          <Ionicons name="star" size={24} color="#ff6b6b" />
         </View>
       </View>
 
@@ -183,7 +183,7 @@ export default function AIBioScreen() {
             {isGenerating ? (
               <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
             ) : (
-              <Ionicons name="sparkles" size={20} color="Theme.colors.neutral[0]" />
+              <Ionicons name="star" size={20} color="Theme.colors.neutral[0]" />
             )}
             <Text style={styles.generateButtonText}>
               {isGenerating ? "Generating..." : "Generate Bio"}
@@ -231,7 +231,7 @@ export default function AIBioScreen() {
                 <View style={styles.keywordsContainer}>
                   <Text style={styles.keywordsTitle}>Keywords:</Text>
                   <View style={styles.keywordsList}>
-                    {generatedBio.keywords.map((keyword, index) => (
+                    {generatedBio.keywords.map((keyword: string, index: number) => (
                       <View key={index} style={styles.keywordTag}>
                         <Text style={styles.keywordText}>{keyword}</Text>
                       </View>

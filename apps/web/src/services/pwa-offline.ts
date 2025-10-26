@@ -30,7 +30,7 @@ class PWAOfflineService {
     async initIndexedDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, this.dbVersion);
-            request.onerror = () => reject(request.error);
+            request.onerror = () => { reject(request.error); };
             request.onsuccess = () => {
                 this.db = request.result;
                 resolve();
@@ -89,8 +89,8 @@ class PWAOfflineService {
             };
             await new Promise((resolve, reject) => {
                 const request = store.put(cachedPet);
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
+                request.onsuccess = () => { resolve(); };
+                request.onerror = () => { reject(request.error); };
             });
         }
         // Keep only last 50 pets
@@ -110,7 +110,7 @@ class PWAOfflineService {
                 const pets = request.result.sort((a, b) => b.cachedAt - a.cachedAt);
                 resolve(pets.slice(0, 50)); // Return last 50 pets
             };
-            request.onerror = () => reject(request.error);
+            request.onerror = () => { reject(request.error); };
         });
     }
     /**
@@ -132,8 +132,8 @@ class PWAOfflineService {
             };
             await new Promise((resolve, reject) => {
                 const request = store.put(cachedMessage);
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
+                request.onsuccess = () => { resolve(); };
+                request.onerror = () => { reject(request.error); };
             });
         }
         // Keep only last 100 messages per chat
@@ -154,7 +154,7 @@ class PWAOfflineService {
                 const messages = request.result.sort((a, b) => a.timestamp - b.timestamp);
                 resolve(messages.slice(-50)); // Return last 50 messages
             };
-            request.onerror = () => reject(request.error);
+            request.onerror = () => { reject(request.error); };
         });
     }
     /**
@@ -234,8 +234,8 @@ class PWAOfflineService {
         const store = transaction.objectStore('actions');
         await new Promise((resolve, reject) => {
             const request = store.put(action);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
+            request.onsuccess = () => { resolve(); };
+            request.onerror = () => { reject(request.error); };
         });
     }
     /**
@@ -294,8 +294,8 @@ class PWAOfflineService {
         const store = transaction.objectStore('actions');
         await new Promise((resolve, reject) => {
             const request = store.delete(actionId);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
+            request.onsuccess = () => { resolve(); };
+            request.onerror = () => { reject(request.error); };
         });
     }
     /**
@@ -358,8 +358,8 @@ class PWAOfflineService {
             const store = transaction.objectStore(storeName);
             await new Promise((resolve, reject) => {
                 const request = store.clear();
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
+                request.onsuccess = () => { resolve(); };
+                request.onerror = () => { reject(request.error); };
             });
         }
         this.pendingActions = [];

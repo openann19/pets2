@@ -68,7 +68,7 @@ const AnimatedMarker = memo(({ pin, isMatch = false, onMarkerClick }) => {
     const [showTrail, setShowTrail] = useState(false);
     useEffect(() => {
         const timer = setTimeout(() => setIsNew(false), 2000);
-        return () => clearTimeout(timer);
+        return () => { clearTimeout(timer); };
     }, []);
     const handleMarkerClick = useCallback(() => {
         onMarkerClick?.(pin);

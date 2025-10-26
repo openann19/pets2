@@ -1,5 +1,6 @@
 import { useRef, useCallback } from "react";
 import { Animated, Dimensions, PanResponder } from "react-native";
+import type { PanResponderInstance } from "react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -8,7 +9,7 @@ export interface SwipeGestureState {
   rotate: Animated.AnimatedInterpolation<string>;
   likeOpacity: Animated.AnimatedInterpolation<string | number>;
   nopeOpacity: Animated.AnimatedInterpolation<string | number>;
-  panResponder: PanResponder.Instance;
+  panResponder: PanResponderInstance;
 }
 
 export interface UseSwipeGesturesOptions {
@@ -58,16 +59,17 @@ export function useSwipeGestures({
   }, [position]);
 
   // Pan responder for swipe gestures
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: Animated.event(
-      [null, { dx: position.x, dy: position.y }],
-      {
-        useNativeDriver: false,
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: (e, gestureState) => {
+        position.setValue({
+          x: gestureState.dx,
+          y: gestureState.dy,
+        });
       },
-    ),
-    onPanResponderRelease: (_evt, gestureState) => {
+      onPanResponderRelease: (_evt, gestureState) => {
       const { dx, dy } = gestureState;
       const swipeThreshold = screenWidth * 0.3;
 
@@ -85,7 +87,8 @@ export function useSwipeGestures({
         resetPosition();
       }
     },
-  });
+    })
+  ).current;
 
   return {
     position,

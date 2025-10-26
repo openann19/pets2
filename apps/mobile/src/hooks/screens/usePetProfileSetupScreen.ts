@@ -4,6 +4,7 @@
  */
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { usePetProfileSetup } from "../domains/onboarding/usePetProfileSetup";
+import type { OnboardingScreenProps } from "../../navigation/types";
 
 interface UsePetProfileSetupScreenReturn {
   // From domain hook
@@ -28,8 +29,8 @@ interface UsePetProfileSetupScreenReturn {
 }
 
 export const usePetProfileSetupScreen = (): UsePetProfileSetupScreenReturn => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<any>();
+  const route = useRoute<any>();
   const { userIntent } = route.params as { userIntent: string };
 
   const {
@@ -62,7 +63,7 @@ export const usePetProfileSetupScreen = (): UsePetProfileSetupScreenReturn => {
 
     try {
       await submitProfile();
-      navigation.navigate("PreferencesSetup" as never, { userIntent });
+      navigation.navigate("PreferencesSetup", { userIntent });
     } catch (error) {
       // Error handling is done in the domain hook
     }

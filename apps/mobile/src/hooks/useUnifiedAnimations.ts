@@ -14,7 +14,7 @@
 export {
   useSpringAnimation,
   useEntranceAnimation,
-  useSwipeGesture,
+  useSwipeGestures as useSwipeGesture,
   usePressAnimation,
   useGlowAnimation,
 } from "./animations/index";
@@ -23,7 +23,7 @@ export {
 import {
   useSpringAnimation,
   useEntranceAnimation,
-  useSwipeGesture,
+  useSwipeGestures,
   usePressAnimation,
   useGlowAnimation,
 } from "./animations";
@@ -32,7 +32,7 @@ import {
 const UnifiedAnimations = {
   useSpringAnimation,
   useEntranceAnimation,
-  useSwipeGesture,
+  useSwipeGesture: useSwipeGestures,
   usePressAnimation,
   useGlowAnimation,
 };

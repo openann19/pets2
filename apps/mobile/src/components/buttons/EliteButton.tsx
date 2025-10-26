@@ -45,6 +45,9 @@ export interface EliteButtonProps extends BaseButtonProps {
 
   // Haptic feedback
   hapticFeedback?: boolean;
+  
+  // Icon support (inherited from BaseButtonProps)
+  icon?: string;
 }
 
 // === MAIN COMPONENT ===
@@ -71,6 +74,14 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
       hapticFeedback = true,
 
       // Base button props
+      title,
+      variant,
+      size,
+      loading,
+      disabled,
+      icon,
+      leftIcon,
+      rightIcon,
       style,
       onPress,
       ...baseProps
@@ -88,7 +99,19 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
 
     // Create the button with all effects applied
     let ButtonComponent = (
-      <BaseButton {...baseProps} onPress={handlePress} style={style} />
+      <BaseButton
+        {...baseProps}
+        title={title}
+        variant={variant}
+        size={size}
+        loading={loading}
+        disabled={disabled}
+        icon={icon}
+        leftIcon={leftIcon}
+        rightIcon={rightIcon}
+        onPress={handlePress}
+        style={style}
+      />
     );
 
     // Apply effects in reverse order (outermost to innermost)

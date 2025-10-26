@@ -16,7 +16,6 @@ export interface BiometricCapabilities {
   hasHardware: boolean;
   isEnrolled: boolean;
   supportedTypes: LocalAuthentication.AuthenticationType[];
-  securityLevel: LocalAuthentication.SecurityLevel;
 }
 
 class BiometricService {
@@ -32,20 +31,17 @@ class BiometricService {
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
       const supportedTypes =
         await LocalAuthentication.supportedAuthenticationTypesAsync();
-      const securityLevel = await LocalAuthentication.getEnrolledLevelAsync();
 
       const capabilities: BiometricCapabilities = {
         hasHardware,
         isEnrolled,
         supportedTypes,
-        securityLevel,
       };
 
       logger.info("Biometric capabilities checked", {
         hasHardware,
         isEnrolled,
         supportedTypes: supportedTypes.length,
-        securityLevel,
       });
 
       return capabilities;
@@ -55,7 +51,6 @@ class BiometricService {
         hasHardware: false,
         isEnrolled: false,
         supportedTypes: [],
-        securityLevel: LocalAuthentication.SecurityLevel.NONE,
       };
     }
   }

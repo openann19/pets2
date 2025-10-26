@@ -4,6 +4,7 @@
  */
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../theme/Provider";
+import { getIsDark } from "../../theme/adapters";
 import { useWelcome } from "../domains/onboarding/useWelcome";
 
 interface UseWelcomeScreenReturn {
@@ -33,7 +34,9 @@ interface UseWelcomeScreenReturn {
 
 export const useWelcomeScreen = (): UseWelcomeScreenReturn => {
   const navigation = useNavigation();
-  const { colors, styles, isDark } = useTheme();
+  const theme = useTheme();
+  const { colors, styles } = theme;
+  const isDark = getIsDark(theme);
 
   const {
     logoScale,

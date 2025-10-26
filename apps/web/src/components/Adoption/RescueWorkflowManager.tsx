@@ -176,7 +176,7 @@ const RescueWorkflowManager = ({ applicationId: _applicationId }) => {
                     Applicant: {app.applicantName} • Submitted {formatDate(app.submittedDate)}
                   </p>
                 </div>
-                <button onClick={() => setSelectedApplication(selectedApplication?.id === app.id ? null : app)} className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                <button onClick={() => { setSelectedApplication(selectedApplication?.id === app.id ? null : app); }} className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                   {selectedApplication?.id === app.id ? 'Hide Details' : 'View Details'}
                 </button>
               </div>

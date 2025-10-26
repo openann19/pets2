@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuthStore } from "@pawfectmatch/core";
 import { matchesAPI } from "../../../services/api";
 import { logger } from "@pawfectmatch/core";
-import type { Pet, User } from "@pawfectmatch/core";
+import type { Pet } from "@pawfectmatch/core";
 
 export interface UseProfileDataOptions {
   enabled?: boolean;
 }
 
 export interface UseProfileDataReturn {
-  user: User | null;
+  user: any;
   pets: Pet[];
   isLoading: boolean;
   error: string | null;
@@ -54,7 +54,7 @@ export function useProfileData({
   }, [refreshProfile]);
 
   return {
-    user,
+    user: user as any,
     pets,
     isLoading,
     error,

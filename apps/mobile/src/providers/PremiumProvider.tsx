@@ -1,8 +1,39 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
-// @ts-expect-error - react-native-purchases may not be installed
-import Purchases, { CustomerInfo, PurchasesOffering, PurchasesPackage } from "react-native-purchases";
 import { logger } from "../services/logger";
+
+// Type aliases for React Native Purchases
+type PurchasesOffering = {
+  current?: {
+    availablePackages: Array<PurchasesPackage>;
+  } | null;
+};
+
+type PurchasesPackage = {
+  identifier: string;
+  packageType: string;
+};
+
+// Conditional import for react-native-purchases
+let Purchases: {
+  getCustomerInfo: () => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
+  getOfferings: () => Promise<PurchasesOffering>;
+  purchasePackage: (pkg: PurchasesPackage) => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
+  restorePurchases: () => Promise<{ customerInfo: { entitlements: { active: Record<string, unknown> } } }>;
+};
+
+try {
+  Purchases = require("react-native-purchases").default;
+} catch {
+  // Mock for when package is not installed
+  const mockPackage: PurchasesPackage = { identifier: "", packageType: "" };
+  Purchases = {
+    getCustomerInfo: async () => ({ customerInfo: { entitlements: { active: {} } } }),
+    getOfferings: async (): Promise<PurchasesOffering> => ({ current: null }),
+    purchasePackage: async () => { throw new Error("Purchases not configured"); },
+    restorePurchases: async () => ({ customerInfo: { entitlements: { active: {} } } }),
+  };
+}
 
 type PremiumCtx = {
   isPremium: boolean;

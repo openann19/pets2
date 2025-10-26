@@ -68,8 +68,16 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
     }
   };
 
+  // Convert BorderRadius string value to number for Animated
+  const getBorderRadiusValue = (key: keyof typeof BorderRadius): number => {
+    const value = BorderRadius[key];
+    // Remove 'px', 'rem', etc. and convert to number
+    const numeric = parseFloat(value.replace('px', '').replace('rem', ''));
+    return isNaN(numeric) ? 0 : numeric;
+  };
+
   const glassStyle: ViewStyle = {
-    borderRadius: BorderRadius[borderRadius],
+    borderRadius: getBorderRadiusValue(borderRadius),
     overflow: "hidden",
     ...BORDER_CONFIGS[border],
     ...SHADOW_CONFIGS[shadow],
@@ -95,7 +103,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
         intensity={BLUR_CONFIGS[intensity]}
         style={{
           flex: 1,
-          borderRadius: BorderRadius[borderRadius],
+          borderRadius: getBorderRadiusValue(borderRadius),
         }}
       >
         <LinearGradient
@@ -104,7 +112,7 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
           end={{ x: 1, y: 1 }}
           style={{
             flex: 1,
-            borderRadius: BorderRadius[borderRadius],
+            borderRadius: getBorderRadiusValue(borderRadius),
             padding: Spacing.lg,
           }}
         >

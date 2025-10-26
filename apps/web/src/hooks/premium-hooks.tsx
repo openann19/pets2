@@ -163,7 +163,7 @@ export function usePremiumTier(userId: string | undefined): UsePremiumTierReturn
         },
     });
     
-    const cancelMutation = useMutation<UserSubscription, Error, void>({
+    const cancelMutation = useMutation<UserSubscription>({
         mutationFn: async () => {
             if (!userId) throw new Error('User ID is required');
             const response = await fetch(`/api/subscriptions/${userId}/cancel`, {
@@ -216,7 +216,7 @@ interface UseUserAnalyticsReturn {
 }
 
 export function useUserAnalytics(userId: string | undefined, period: string = 'week'): UseUserAnalyticsReturn {
-    const { data: analytics, isLoading, error, refetch } = useQuery<UserAnalytics, Error>({
+    const { data: analytics, isLoading, error, refetch } = useQuery<UserAnalytics>({
         queryKey: ['analytics', userId, period],
         queryFn: () => {
             if (!userId) throw new Error('User ID is required');
@@ -245,7 +245,7 @@ interface UseMatchAnalyticsReturn {
 }
 
 export function useMatchAnalytics(userId: string | undefined): UseMatchAnalyticsReturn {
-    const { data, isLoading, error } = useQuery<MatchAnalytics, Error>({
+    const { data, isLoading, error } = useQuery<MatchAnalytics>({
         queryKey: ['matchAnalytics', userId],
         queryFn: () => {
             if (!userId) throw new Error('User ID is required');
@@ -359,7 +359,7 @@ export function usePerformanceMonitoring(): UsePerformanceMonitoringReturn {
         fetchMetrics();
         const interval = setInterval(fetchMetrics, 30000); // Update every 30 seconds
         
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, []);
     
     return { metrics };

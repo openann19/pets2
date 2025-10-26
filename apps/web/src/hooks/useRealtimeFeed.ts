@@ -64,10 +64,10 @@ export const useFeedActions = (userId) => {
     };
     const { emit } = useRealtimeFeed(options);
     return {
-        createPost: (post) => emit('post:create', post),
-        likePost: (postId) => emit('post:like', { postId, userId }),
-        commentOnPost: (postId, comment) => emit('post:comment', { postId, userId, comment }),
-        deletePost: (postId) => emit('post:delete', { postId, userId }),
+        createPost: (post) => { emit('post:create', post); },
+        likePost: (postId) => { emit('post:like', { postId, userId }); },
+        commentOnPost: (postId, comment) => { emit('post:comment', { postId, userId, comment }); },
+        deletePost: (postId) => { emit('post:delete', { postId, userId }); },
     };
 };
 //# sourceMappingURL=useRealtimeFeed.js.map

@@ -70,7 +70,7 @@ export function PeekSheet({ nextPet, show = false }: PeekSheetProps): React.JSX.
             name: nextPet.name,
             age: nextPet.age,
             breed: nextPet.breed,
-            photos: nextPet.photos.map((p) => p.url || p),
+            photos: nextPet.photos.map((p) => (typeof p === 'string' ? p : p.url)).filter((p): p is string => typeof p === 'string'),
             bio: nextPet.description || '',
             distance: 2.5,
             compatibility: 85,

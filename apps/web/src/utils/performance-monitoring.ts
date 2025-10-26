@@ -378,7 +378,7 @@ export const useCoreWebVitals = () => {
         updateVitals();
         // Update periodically
         const interval = setInterval(updateVitals, 10000);
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, []);
     return vitals;
 };

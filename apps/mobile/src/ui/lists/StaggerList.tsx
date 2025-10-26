@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Animated, { FadeInDown, Easing as REasing } from 'react-native-reanimated';
+import Animated, { FadeInDown, Easing } from 'react-native-reanimated';
 import { useMotion } from '../motion/useMotion';
 
 export interface StaggerListProps<T> {
@@ -37,7 +37,7 @@ export function StaggerList<T extends { _id?: string }>({
       {data.map((item, i) => (
         <Animated.View
           key={item._id ?? keyExtractor(item, i)}
-          entering={FadeInDown.duration(m.duration).easing(REasing.bezier(0.2, 0, 0, 1)).delay(i * (m.stagger ?? 0))}
+          entering={FadeInDown.duration(m.duration ?? 240).delay(i * (m.stagger ?? 0))}
           style={{ marginBottom: 12 }}
         >
           {renderItem(item, i)}

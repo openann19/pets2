@@ -99,7 +99,7 @@ const SimpleInstallPrompt = () => (
 const SimpleSplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   React.useEffect(() => {
     const timer = setTimeout(onComplete, 100)
-    return () => clearTimeout(timer)
+    return () => { clearTimeout(timer); }
   }, [onComplete])
 
   return (
@@ -114,12 +114,12 @@ const SimplePWAManager = ({ children }: { children: React.ReactNode }) => {
   const [showSplash, setShowSplash] = React.useState(true)
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 100)
-    return () => clearTimeout(timer)
+    const timer = setTimeout(() => { setShowSplash(false); }, 100)
+    return () => { clearTimeout(timer); }
   }, [])
 
   if (showSplash) {
-    return <SimpleSplashScreen onComplete={() => setShowSplash(false)} />
+    return <SimpleSplashScreen onComplete={() => { setShowSplash(false); }} />
   }
 
   return (
