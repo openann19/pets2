@@ -25,7 +25,7 @@ interface OptimizedImageProps {
   containerStyle?: StyleProp<ViewStyle>;
   showLoadingIndicator?: boolean;
   showErrorState?: boolean;
-  fallbackIcon?: keyof typeof Ionicons.glyphMap;
+  fallbackIcon?: string;
   priority?: Priority;
   resizeMode?: ResizeMode;
   cache?: "immutable" | "web" | "cacheOnly";
@@ -54,7 +54,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
     containerStyle,
     showLoadingIndicator = true,
     showErrorState = true,
-    fallbackIcon = "image-outline" as keyof typeof Ionicons.glyphMap,
+    fallbackIcon = "image-outline",
     priority = "normal" as Priority,
     resizeMode = "cover" as ResizeMode,
     cache = "immutable",
@@ -141,7 +141,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           accessibilityRole="alert"
         >
           <Ionicons
-            name={fallbackIcon}
+            name={fallbackIcon as any}
             size={32}
             color={colors.text}
             style={styles.errorIcon}

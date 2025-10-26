@@ -50,4 +50,3 @@ export interface Result<T = unknown> {
 export interface RequestParams {
     [key: string]: unknown;
 }
-//# sourceMappingURL=bulk-fix-types.d.ts.map

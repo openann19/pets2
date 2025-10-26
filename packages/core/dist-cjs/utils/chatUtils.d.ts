@@ -15,4 +15,3 @@ export declare const _getCurrentUserPet: () => Pet;
  * Gets the list of typing users (excluding current user)
  */
 export declare const _getTypingUsers: (isTyping: Record<string, boolean>, currentUserId: string, otherUser: User) => string[];
-//# sourceMappingURL=chatUtils.d.ts.map

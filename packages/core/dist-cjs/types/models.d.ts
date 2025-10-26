@@ -44,4 +44,3 @@ export type Message = {
     read: boolean;
     createdAt: string | Date;
 };
-//# sourceMappingURL=models.d.ts.map

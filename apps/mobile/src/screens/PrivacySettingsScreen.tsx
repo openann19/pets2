@@ -4,10 +4,9 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import { logger, useAuthStore } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import * as Haptics from "expo-haptics";
-import React, { useEffect, useState } from "react";
+import { logger } from "@pawfectmatch/core";
+import React, { useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -21,93 +20,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../contexts/ThemeContext";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
+import {
+  usePrivacySettingsScreen,
+  type PrivacySettings,
+} from "../hooks/screens/usePrivacySettingsScreen";
 
 type PrivacySettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "PrivacySettings"
 >;
 
-interface PrivacySettings {
-  profileVisibility: "public" | "friends" | "nobody";
-  showOnlineStatus: boolean;
-  showDistance: boolean;
-  showLastActive: boolean;
-  allowMessages: "everyone" | "matches" | "nobody";
-  showReadReceipts: boolean;
-  incognitoMode: boolean;
-  shareLocation: boolean;
-  dataSharing: boolean;
-  analyticsTracking: boolean;
-}
-
 function PrivacySettingsScreen({
   navigation,
 }: PrivacySettingsScreenProps): JSX.Element {
   const { colors } = useTheme();
-  const { user: _user } = useAuthStore();
-  const [settings, setSettings] = useState<PrivacySettings>({
-    profileVisibility: "nobody",
-    showOnlineStatus: true,
-    showDistance: true,
-    showLastActive: true,
-    allowMessages: "nobody",
-    showReadReceipts: true,
-    incognitoMode: false,
-    shareLocation: true,
-    dataSharing: false,
-    analyticsTracking: true,
-  });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadPrivacySettings();
-  }, []);
-
-  const loadPrivacySettings = async () => {
-    try {
-      setLoading(true);
-      const response = await request<PrivacySettings>("/api/profile/privacy", {
-        method: "GET",
-      });
-
-      if (response) {
-        setSettings(response);
-      }
-
-      logger.info("Privacy settings loaded");
-    } catch (error) {
-      logger.error("Failed to load privacy settings:", error);
-      // Don't show alert on first load - use defaults
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateSetting = async <K extends keyof PrivacySettings>(
-    key: K,
-    value: PrivacySettings[K],
-  ) => {
-    try {
-      setLoading(true);
-      await Haptics.selectionAsync();
-
-      const newSettings = { ...settings, [key]: value };
-      setSettings(newSettings);
-
-      // Save to API
-      await request("/api/profile/privacy", {
-        method: "PUT",
-        body: newSettings,
-      });
-
-      logger.info("Privacy setting updated", { key, value });
-    } catch (error) {
-      logger.error("Failed to update privacy setting:", error);
-      Alert.alert("Error", "Failed to update setting");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { settings, loading, updateSetting } = usePrivacySettingsScreen();
+  const [loadingExport, setLoadingExport] = useState(false);
 
   const renderSettingItem = (
     title: string,
@@ -426,7 +354,7 @@ function PrivacySettingsScreen({
               style={styles.actionButton}
               onPress={async () => {
                 try {
-                  setLoading(true);
+                  setLoadingExport(true);
 
                   const response = await request<{
                     url: string;
@@ -447,7 +375,7 @@ function PrivacySettingsScreen({
                     "Failed to initiate data export. Please try again.",
                   );
                 } finally {
-                  setLoading(false);
+                  setLoadingExport(false);
                 }
               }}
             >

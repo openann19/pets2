@@ -1,3 +1,4 @@
+/* eslint-env jest, node */
 // Comprehensive React Native mock for Jest
 // Standalone mock that doesn't require actual react-native
 

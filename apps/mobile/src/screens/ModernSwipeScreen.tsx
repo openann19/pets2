@@ -10,16 +10,10 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import {
-  useAuthStore,
-  logger,
-  type Pet,
-  type PetFilters,
-  type User,
-} from "@pawfectmatch/core";
+import { type Pet } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
 
 // Import new architecture components
 import {
@@ -33,15 +27,12 @@ import {
   Heading2,
   Body,
   BodySmall,
-  useStaggeredAnimation,
-  useEntranceAnimation,
 } from "../components";
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import { useTheme } from "../contexts/ThemeContext";
-import { matchesAPI } from "../services/api";
-
+import { useModernSwipeScreen } from "../hooks/screens/useModernSwipeScreen";
 import type { RootStackScreenProps } from "../navigation/types";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -49,230 +40,26 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
-  const { user } = useAuthStore();
-  const activePetId = user?._id;
-  const userId = user?._id;
-
-  // State management
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showMatchModal, setShowMatchModal] = useState(false);
-  const [matchedPet, setMatchedPet] = useState<Pet | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Filter state
-  const [filters, setFilters] = useState<PetFilters>({
-    breed: "",
-    species: "",
-    size: "",
-    maxDistance: 25,
-  });
-
-  // Swipe logic implementation
-  const handleLike = useCallback(
-    async (pet: Pet) => {
-      try {
-        // Create a match (like action)
-        if (user?.activePetId && pet._id) {
-          const currentPetId = user.activePetId ?? "";
-          const match = await matchesAPI.createMatch(currentPetId, pet._id);
-
-          if (match) {
-            // Check if it's a mutual match
-            const existingMatch = pets.find((p) => p._id === pet._id);
-            if (existingMatch) {
-              setShowMatchModal(true);
-              setMatchedPet(pet);
-            }
-
-            return match;
-          }
-        }
-        return null;
-      } catch (error) {
-        logger.error("Error liking pet", {
-          error: error instanceof Error ? error : new Error(String(error)),
-        });
-        return null;
-      }
-    },
-    [user, pets],
-  );
-
-  const handlePass = useCallback(async (pet: Pet) => {
-    try {
-      // Pass action - just move to next
-      logger.info("Pet passed", { petId: pet._id });
-      return null;
-    } catch (error) {
-      logger.error("Error passing pet", {
-        error: error instanceof Error ? error : new Error(String(error)),
-      });
-      return null;
-    }
-  }, []);
-
-  const handleSuperLike = useCallback(
-    async (pet: Pet) => {
-      try {
-        // Super like is same as like but with different marker
-        const result = await handleLike(pet);
-
-        if (result) {
-          Alert.alert(
-            "Super Like Sent!",
-            `${pet.name} will see that you super liked them!`,
-          );
-        }
-
-        return result;
-      } catch (error) {
-        logger.error("Error super liking pet", {
-          error: error instanceof Error ? error : new Error(String(error)),
-        });
-        return null;
-      }
-    },
-    [handleLike],
-  );
-
-  // Animation hooks
-  // Simplified animation hooks
-  const startStaggeredAnimation = () => {};
-  const getAnimatedStyle = (index: number) => ({ opacity: 1 });
-
-  // Simplified entrance animation
-  const startEntrance = () => {};
-  const entranceStyle = { opacity: 1 };
-
-  // Start animations
-  useEffect(() => {
-    startStaggeredAnimation();
-    startEntrance();
-  }, [startStaggeredAnimation, startEntrance]);
-
-  // Load pets function
-  const loadPets = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const realPets = await matchesAPI.getPets(filters);
-      setPets(realPets);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to load pets. Please check your connection.";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filters]);
-
-  // Swipe pet function
-  const swipePet = useCallback(
-    async (petId: string, action: "like" | "pass" | "superlike") => {
-      try {
-        const pet = pets.find((p) => p._id === petId);
-        if (!pet) return null;
-
-        const corePet = pet as any;
-
-        switch (action) {
-          case "like":
-            return await handleLike(corePet);
-          case "pass":
-            return await handlePass(corePet);
-          case "superlike":
-            return await handleSuperLike(corePet);
-          default:
-            return null;
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error occurred";
-        Alert.alert("Error", `Failed to process swipe: ${errorMessage}`);
-        return null;
-      }
-    },
-    [pets, handleLike, handlePass, handleSuperLike],
-  );
-
-  // Swipe handlers
-  const handleSwipeLeft = useCallback(
-    (pet: Pet) => {
-      swipePet(pet._id, "pass")
-        .then((result) => {
-          if (result?.isMatch) {
-            setShowMatchModal(true);
-            setMatchedPet(pet);
-          }
-          setCurrentIndex((prev) => prev + 1);
-        })
-        .catch(console.error);
-    },
-    [swipePet],
-  );
-
-  const handleSwipeRight = useCallback(
-    (pet: Pet) => {
-      swipePet(pet._id, "like")
-        .then((result) => {
-          if (result?.isMatch) {
-            setShowMatchModal(true);
-            setMatchedPet(pet);
-          }
-          setCurrentIndex((prev) => prev + 1);
-        })
-        .catch(console.error);
-    },
-    [swipePet],
-  );
-
-  const handleSwipeUp = useCallback(
-    (pet: Pet) => {
-      swipePet(pet._id, "superlike")
-        .then((result) => {
-          if (result?.isMatch) {
-            setShowMatchModal(true);
-            setMatchedPet(pet);
-          }
-          setCurrentIndex((prev) => prev + 1);
-        })
-        .catch(console.error);
-    },
-    [swipePet],
-  );
-
-  // Button swipe handlers
-  const handleButtonSwipe = useCallback(
-    (action: "like" | "pass" | "superlike") => {
-      const currentPet = pets[currentIndex];
-      if (!currentPet) return;
-
-      switch (action) {
-        case "like":
-          handleSwipeRight(currentPet);
-          break;
-        case "pass":
-          handleSwipeLeft(currentPet);
-          break;
-        case "superlike":
-          handleSwipeUp(currentPet);
-          break;
-      }
-    },
-    [pets, currentIndex, handleSwipeRight, handleSwipeLeft, handleSwipeUp],
-  );
-
-  // Load pets on mount
-  useEffect(() => {
-    void loadPets();
-  }, [loadPets]);
-
-  const currentPet = pets[currentIndex];
+  const {
+    pets,
+    currentPet,
+    isLoading,
+    error,
+    currentIndex,
+    showMatchModal,
+    matchedPet,
+    showFilters,
+    filters,
+    setCurrentIndex,
+    setShowMatchModal,
+    setShowFilters,
+    setFilters,
+    loadPets,
+    handleButtonSwipe,
+    handleSwipeLeft,
+    handleSwipeRight,
+    handleSwipeUp,
+  } = useModernSwipeScreen();
 
   // Loading state
   if (isLoading && pets.length === 0) {

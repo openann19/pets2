@@ -34,4 +34,3 @@ function ensureArray(value) {
 function getProperty(obj, key) {
     return obj?.[key];
 }
-//# sourceMappingURL=api.js.map

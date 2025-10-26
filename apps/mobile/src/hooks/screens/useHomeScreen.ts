@@ -1,0 +1,147 @@
+/**
+ * useHomeScreen Hook
+ * Manages HomeScreen state and business logic
+ */
+import { useCallback, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { logger } from "@pawfectmatch/core";
+import { useAuthStore } from "@pawfectmatch/core";
+import { matchesAPI } from "../../services/api";
+import type { RootStackParamList } from "../../navigation/types";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+interface Stats {
+  matches: number;
+  messages: number;
+  pets: number;
+}
+
+interface UseHomeScreenReturn {
+  stats: Stats;
+  refreshing: boolean;
+  onRefresh: () => Promise<void>;
+  handleQuickAction: (action: string) => void;
+  handleProfilePress: () => void;
+  handleSettingsPress: () => void;
+  handleSwipePress: () => void;
+  handleMatchesPress: () => void;
+  handleMessagesPress: () => void;
+  handleMyPetsPress: () => void;
+  handleCreatePetPress: () => void;
+}
+
+export const useHomeScreen = (): UseHomeScreenReturn => {
+  const navigation = useNavigation<NavigationProp>();
+  const { user } = useAuthStore();
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [stats, setStats] = useState<Stats>({
+    matches: 0,
+    messages: 0,
+    pets: 0,
+  });
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const [matches, userStats] = await Promise.all([
+        matchesAPI.getMatches().catch(() => []),
+        matchesAPI
+          .getUserStats()
+          .catch(() => ({ matches: 0, messages: 0, pets: 0 })),
+      ]);
+
+      setStats({
+        matches: matches.length,
+        messages: userStats.messages,
+        pets: userStats.pets,
+      });
+    } catch (error) {
+      logger.error("Failed to refresh data:", { error });
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
+  const handleQuickAction = useCallback(
+    (action: string) => {
+      try {
+        switch (action) {
+          case "swipe":
+            navigation.navigate("Swipe");
+            break;
+          case "matches":
+            navigation.navigate("Matches");
+            break;
+          case "messages":
+            navigation.navigate("Matches");
+            break;
+          case "profile":
+            navigation.navigate("Profile");
+            break;
+          case "settings":
+            navigation.navigate("Settings");
+            break;
+          case "my-pets":
+            navigation.navigate("MyPets");
+            break;
+          case "create-pet":
+            navigation.navigate("CreatePet");
+            break;
+          case "premium":
+            navigation.navigate("Profile");
+            break;
+          default:
+            logger.warn(`Unknown action: ${action}`);
+        }
+      } catch (error) {
+        logger.error("Navigation error:", { error });
+      }
+    },
+    [navigation],
+  );
+
+  const handleProfilePress = useCallback(() => {
+    handleQuickAction("profile");
+  }, [handleQuickAction]);
+
+  const handleSettingsPress = useCallback(() => {
+    handleQuickAction("settings");
+  }, [handleQuickAction]);
+
+  const handleSwipePress = useCallback(() => {
+    handleQuickAction("swipe");
+  }, [handleQuickAction]);
+
+  const handleMatchesPress = useCallback(() => {
+    handleQuickAction("matches");
+  }, [handleQuickAction]);
+
+  const handleMessagesPress = useCallback(() => {
+    handleQuickAction("messages");
+  }, [handleQuickAction]);
+
+  const handleMyPetsPress = useCallback(() => {
+    handleQuickAction("my-pets");
+  }, [handleQuickAction]);
+
+  const handleCreatePetPress = useCallback(() => {
+    handleQuickAction("create-pet");
+  }, [handleQuickAction]);
+
+  return {
+    stats,
+    refreshing,
+    onRefresh,
+    handleQuickAction,
+    handleProfilePress,
+    handleSettingsPress,
+    handleSwipePress,
+    handleMatchesPress,
+    handleMessagesPress,
+    handleMyPetsPress,
+    handleCreatePetPress,
+  };
+};

@@ -18,7 +18,7 @@ import {
 import { _subscriptionAPI as subscriptionApi } from "../../services/api";
 import type { RootStackParamList } from "../../navigation/types";
 
-type NavigationProp = NavigationProp<RootStackParamList>;
+type SubscriptionManagerNavigationProp = NavigationProp<RootStackParamList>;
 
 interface Subscription {
   id: string;
@@ -74,7 +74,7 @@ const createCheckoutSession = async <T extends { url: string }>(payload: {
 };
 
 export const SubscriptionManagerScreen = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<SubscriptionManagerNavigationProp>();
 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
@@ -88,7 +88,7 @@ export const SubscriptionManagerScreen = () => {
       setError(null);
       // Fetch current subscription using the core SDK
       const subscriptionData = await (
-        subscriptionApi as {
+        subscriptionApi as unknown as {
           getCurrentSubscription: () => Promise<Subscription | null>;
         }
       ).getCurrentSubscription();

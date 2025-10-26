@@ -1,7 +1,6 @@
 import { BlurView } from "expo-blur";
-import { logger } from "@pawfectmatch/core";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -19,7 +18,6 @@ import {
   PhysicsBasedScaleIn,
   PageTransition,
   ScrollTrigger,
-  AnimatedFlatList,
 } from "../components/MotionPrimitives";
 
 // Project Hyperion Design System
@@ -28,6 +26,7 @@ import {
   useStaggeredFadeIn,
   useGlowEffect,
 } from "../hooks/useMotionSystem";
+import { usePremiumDemoScreen } from "../hooks/screens/usePremiumDemoScreen";
 
 // Define fallback design tokens
 const DynamicColors = {
@@ -41,6 +40,21 @@ const DynamicColors = {
   glass: {
     colors: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"],
     locations: [0, 1],
+    subtle: {
+      backgroundColor: "rgba(255, 255, 255, 0.05)",
+      borderColor: "rgba(255, 255, 255, 0.1)",
+      borderWidth: 1,
+    },
+    medium: {
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      borderColor: "rgba(255, 255, 255, 0.2)",
+      borderWidth: 1,
+    },
+    strong: {
+      backgroundColor: "rgba(255, 255, 255, 0.15)",
+      borderColor: "rgba(255, 255, 255, 0.3)",
+      borderWidth: 1,
+    },
   },
 };
 
@@ -61,6 +75,11 @@ const EnhancedTypography = {
         textShadowColor: "rgba(0, 0, 0, 0.3)",
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 2,
+      },
+      glow: {
+        textShadowColor: "rgba(255, 215, 0, 0.8)",
+        textShadowOffset: { width: 0, height: 0 },
+        textShadowRadius: 8,
       },
     },
   },
@@ -94,9 +113,15 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 // Showcases all premium components and features properly wired together
 
 function PremiumDemoScreen(): JSX.Element {
-  const [activeDemo, setActiveDemo] = useState<
-    "buttons" | "cards" | "animations" | "glass"
-  >("buttons");
+  const {
+    activeDemo,
+    setActiveDemo,
+    handleButtonPress,
+    handleCardPress,
+    buttonVariants,
+    cardVariants,
+    gradientNames,
+  } = usePremiumDemoScreen();
 
   // Premium entrance animation
   const headerEntrance = useEntranceAnimation("fadeInUp");
@@ -113,32 +138,6 @@ function PremiumDemoScreen(): JSX.Element {
 
   // Glow effect for active demo
   const glowEffect = useGlowEffect(0.8, 2000);
-
-  // Demo data
-  const buttonVariants: Array<
-    "primary" | "secondary" | "holographic" | "glass" | "outline"
-  > = ["primary", "secondary", "holographic", "glass", "outline"];
-
-  const cardVariants: Array<"default" | "glass" | "holographic" | "elevated"> =
-    ["default", "glass", "holographic", "elevated"];
-
-  const gradientNames: Array<keyof typeof DynamicColors.gradients> = [
-    "primary",
-    "secondary",
-    "premium",
-    "sunset",
-    "ocean",
-  ];
-
-  const handleButtonPress = (variant: string) => {
-    logger.info(`Pressed ${variant} button`);
-    // Add haptic feedback here
-  };
-
-  const handleCardPress = (variant: string) => {
-    logger.info(`Pressed ${variant} card`);
-    // Add haptic feedback here
-  };
 
   const renderButtonDemo = () => (
     <ScrollTrigger animation="fadeInUp" triggerPoint={0.8}>
@@ -165,9 +164,9 @@ function PremiumDemoScreen(): JSX.Element {
                 magneticEffect={true}
                 glowEffect={variant === "holographic"}
                 gradientName={
-                  variant === "holographic"
-                    ? gradientNames[index % gradientNames.length]
-                    : undefined
+                  variant === "holographic" && gradientNames[index % gradientNames.length] !== "sunset"
+                    ? gradientNames[index % gradientNames.length] as "primary" | "secondary" | "premium"
+                    : variant === "holographic" ? "premium" : undefined
                 }
                 hapticFeedback={true}
                 soundEffect={false}
@@ -258,7 +257,9 @@ function PremiumDemoScreen(): JSX.Element {
               shimmerEffect={variant === "holographic"}
               entranceAnimation="scaleIn"
               gradientName={
-                variant === "holographic" ? gradientNames[index] : undefined
+                variant === "holographic" && gradientNames[index % gradientNames.length] !== "sunset" && gradientNames[index % gradientNames.length] !== "ocean"
+                  ? gradientNames[index % gradientNames.length] as "primary" | "secondary" | "premium"
+                  : variant === "holographic" ? "premium" : undefined
               }
               glowColor={variant === "elevated" ? "primary" : undefined}
               style={{ marginBottom: 20 }}
@@ -353,7 +354,6 @@ function PremiumDemoScreen(): JSX.Element {
           <View
             style={{
               padding: 20,
-              backgroundColor: DynamicColors.glass.medium.backgroundColor,
               borderRadius: 16,
               alignItems: "center",
               ...DynamicColors.glass.medium,
@@ -385,8 +385,8 @@ function PremiumDemoScreen(): JSX.Element {
 
         {/* Background with gradient */}
         <LinearGradient
-          colors={DynamicColors.gradients.premium.colors as any}
-          locations={DynamicColors.gradients.premium.locations}
+          colors={DynamicColors.gradients.premium}
+          locations={DynamicColors.glass.locations}
           style={{
             borderRadius: 20,
             padding: 20,
@@ -492,8 +492,8 @@ function PremiumDemoScreen(): JSX.Element {
 
       {/* Premium Header with Glass Morphism */}
       <LinearGradient
-        colors={DynamicColors.gradients.primary.colors as any}
-        locations={DynamicColors.gradients.primary.locations}
+        colors={DynamicColors.gradients.primary}
+        locations={DynamicColors.glass.locations}
         style={{
           paddingTop: 20,
           paddingBottom: 30,

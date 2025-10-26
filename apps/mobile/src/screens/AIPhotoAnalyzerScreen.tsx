@@ -1,14 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React from "react";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,10 +12,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { api } from "../services/api";
+import { useAIPhotoAnalyzerScreen } from "../hooks/screens/useAIPhotoAnalyzerScreen";
 import { useTheme } from "../contexts/ThemeContext";
 import type { NavigationProp } from "../navigation/types";
-import { PhotoUploadSection, AnalysisResultsSection } from "./ai/photoanalyzer";
+import {
+  PhotoUploadSection,
+  AnalysisResultsSection,
+} from "./ai/photoanalyzer";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -52,113 +50,20 @@ interface PhotoAnalysisResult {
 export default function AIPhotoAnalyzerScreen({
   navigation,
 }: AIPhotoAnalyzerScreenProps) {
-  const { user } = useAuthStore();
   const { isDark, colors } = useTheme();
 
-  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
-  const [analysisResult, setAnalysisResult] =
-    useState<PhotoAnalysisResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const requestPermissions = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Required",
-        "We need access to your photo library to analyze pet photos.",
-        [{ text: "OK" }],
-      );
-      return false;
-    }
-    return true;
-  };
-
-  const pickImages = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsMultipleSelection: true,
-        quality: 0.8,
-        aspect: [4, 3],
-      });
-
-      if (!result.canceled && result.assets) {
-        const newPhotos = result.assets.map((asset) => asset.uri);
-        setSelectedPhotos((prev) => [...prev, ...newPhotos].slice(0, 5)); // Limit to 5 photos
-        setError(null);
-      }
-    } catch (err) {
-      logger.error("Error picking images:", { error });
-      setError("Failed to select images. Please try again.");
-    }
-  };
-
-  const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Required",
-        "We need access to your camera to take pet photos.",
-        [{ text: "OK" }],
-      );
-      return;
-    }
-
-    try {
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.8,
-        aspect: [4, 3],
-      });
-
-      if (!result.canceled && result.assets && result.assets[0] !== undefined) {
-        const newPhoto = result.assets[0].uri;
-        setSelectedPhotos((prev) => [...prev, newPhoto].slice(0, 5));
-        setError(null);
-      }
-    } catch (err) {
-      logger.error("Error taking photo:", { error });
-      setError("Failed to take photo. Please try again.");
-    }
-  };
-
-  const analyzePhotos = async () => {
-    if (selectedPhotos.length === 0) {
-      Alert.alert("No Photos", "Please select at least one photo to analyze.");
-      return;
-    }
-
-    setIsAnalyzing(true);
-    setError(null);
-
-    try {
-      const result = await api.ai.analyzePhotos(selectedPhotos);
-      setAnalysisResult(result);
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to analyze photos. Please try again.";
-      logger.error("Photo analysis error:", { error: err });
-      setError(message);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const removePhoto = (index: number) => {
-    setSelectedPhotos((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const resetAnalysis = () => {
-    setSelectedPhotos([]);
-    setAnalysisResult(null);
-    setError(null);
-  };
+  const {
+    isAnalyzing,
+    analysisResult,
+    error,
+    selectedPhotos,
+    pickImages,
+    takePhoto,
+    analyzePhotos,
+    removePhoto,
+    resetAnalysis,
+    clearError,
+  } = useAIPhotoAnalyzerScreen();
 
   return (
     <SafeAreaView
@@ -188,7 +93,7 @@ export default function AIPhotoAnalyzerScreen({
           <>
             <PhotoUploadSection
               selectedImage={selectedPhotos[0] || null}
-              onImageSelected={(uri) => setSelectedPhotos([uri])}
+              onImageSelected={pickImages}
               colors={colors}
             />
 
@@ -219,6 +124,9 @@ export default function AIPhotoAnalyzerScreen({
         {error && (
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle" size={24} color="#ff4444" />
+            <TouchableOpacity onPress={clearError} style={styles.errorDismiss}>
+              <Ionicons name="close" size={20} color="#c62828" />
+            </TouchableOpacity>
             <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
@@ -277,9 +185,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
+  errorDismiss: {
+    marginRight: 8,
+  },
   errorText: {
     color: "#c62828",
-    marginLeft: 10,
     flex: 1,
   },
 });

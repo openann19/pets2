@@ -60,14 +60,13 @@ export function ToneSelector({
         {TONE_DETAILS.map((tone) => (
           <TouchableOpacity
             key={tone.id}
-            style={StyleSheet.flatten([
+            style={[
               styles.toneCard,
-              selectedTone === tone.id && styles.selectedCard,
+              selectedTone === tone.id ? styles.selectedCard : undefined,
               {
-                borderColor:
-                  selectedTone === tone.id ? tone.color : Theme.colors.border,
+                borderColor: selectedTone === tone.id ? tone.color : String(Theme.colors.border),
               },
-            ])}
+            ]}
             onPress={() => {
               onToneSelect(tone.id);
             }}
@@ -131,7 +130,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    shadowColor: Theme.shadow,
+    shadowColor: "rgba(0, 0, 0, 0.1)",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

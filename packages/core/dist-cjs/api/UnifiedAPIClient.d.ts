@@ -2,8 +2,8 @@
  * Unified API Client
  * Production-grade API client with circuit breaker, retry logic, offline queue, and error handling
  */
-import { OfflineQueueManager, QueueItem, QueuePriority, QueueConfig } from './OfflineQueueManager';
-export interface APIClientConfig extends QueueConfig {
+import { OfflineQueueManager, type QueueItem, type QueuePriority } from './OfflineQueueManager';
+export interface APIClientConfig {
     baseURL: string;
     timeout?: number;
     retryConfig?: {
@@ -16,8 +16,12 @@ export interface APIClientConfig extends QueueConfig {
         successThreshold: number;
         resetTimeout: number;
     };
+    queueConfig?: {
+        maxSize: number;
+        persistence: 'memory' | 'localStorage' | 'indexedDB' | 'asyncStorage';
+    };
 }
-export interface RequestConfig {
+export interface UnifiedRequestConfig {
     method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     headers?: Record<string, string>;
     body?: unknown;
@@ -26,15 +30,15 @@ export interface RequestConfig {
     priority?: QueuePriority;
     requireOnline?: boolean;
 }
-export interface Response<T> {
+export interface UnifiedResponse<T> {
     success: boolean;
-    data: T | null;
+    data?: T;
     error?: string;
     statusCode?: number;
     retries?: number;
 }
 export declare class UnifiedAPIClient extends OfflineQueueManager {
-    private apiConfig;
+    private readonly clientConfig;
     private circuitBreaker;
     private retryStrategy;
     private errorClassifier;
@@ -54,27 +58,27 @@ export declare class UnifiedAPIClient extends OfflineQueueManager {
     /**
      * Execute API request
      */
-    request<T>(endpoint: string, config?: RequestConfig): Promise<Response<T>>;
+    request<T>(endpoint: string, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>>;
     /**
      * GET request
      */
-    get<T>(endpoint: string, config?: RequestConfig): Promise<Response<T>>;
+    get<T>(endpoint: string, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>>;
     /**
      * POST request
      */
-    post<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<Response<T>>;
+    post<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>>;
     /**
      * PUT request
      */
-    put<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<Response<T>>;
+    put<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>>;
     /**
      * PATCH request
      */
-    patch<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<Response<T>>;
+    patch<T>(endpoint: string, data?: unknown, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>>;
     /**
      * DELETE request
      */
-    delete<T>(endpoint: string, config?: RequestConfig): Promise<Response<T>>;
+    delete<T>(endpoint: string, config?: UnifiedRequestConfig): Promise<UnifiedResponse<T>>;
     /**
      * Make actual HTTP request
      */

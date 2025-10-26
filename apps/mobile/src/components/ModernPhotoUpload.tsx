@@ -65,7 +65,6 @@ function ModernPhotoUpload({
     useStaggeredAnimation(
       photos.length + 1, // +1 for add button
       100,
-      "gentle",
     );
 
   // Start staggered animation when photos change
@@ -161,10 +160,9 @@ function ModernPhotoUpload({
   const renderPhotoItem = useCallback(
     (photo: PhotoItem, index: number) => {
       const AnimatedView = require("react-native-reanimated").default.View;
-      const animatedStyle = getAnimatedStyle(index);
 
       return (
-        <AnimatedView key={photo.id} style={animatedStyle}>
+        <AnimatedView key={photo.id} style={getAnimatedStyle}>
           <FXContainer
             type="glass"
             variant="medium"
@@ -228,10 +226,9 @@ function ModernPhotoUpload({
   // Render add button
   const renderAddButton = useCallback(() => {
     const AnimatedView = require("react-native-reanimated").default.View;
-    const animatedStyle = getAnimatedStyle(photos.length);
 
     return (
-      <AnimatedView style={animatedStyle}>
+      <AnimatedView style={getAnimatedStyle}>
         <EliteButton
           title="Add Photo"
           size="lg"

@@ -183,7 +183,7 @@ function ModernSwipeCardComponent({
 
   // Entrance animation for non-top cards
   const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "gentle");
+    useEntranceAnimation("fadeInUp", 0);
 
   // Start entrance animation for non-top cards
   React.useEffect(() => {

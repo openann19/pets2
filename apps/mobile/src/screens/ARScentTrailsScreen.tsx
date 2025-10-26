@@ -3,7 +3,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React from "react";
 import {
   Alert,
   Image,
@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useARScentTrailsScreen } from "../hooks/screens/useARScentTrailsScreen";
 
 type MapStackParamList = {
   ARScentTrails: undefined;
@@ -24,89 +25,14 @@ type ARScentTrailsScreenProps = NativeStackScreenProps<
 >;
 
 const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
-  const [isScanning, setIsScanning] = useState(false);
-  const [scentTrails, setScentTrails] = useState([
-    {
-      id: "1",
-      petName: "Buddy",
-      petBreed: "Golden Retriever",
-      distance: "150m",
-      direction: "north",
-      intensity: "strong",
-      lastSeen: "5 minutes ago",
-      petPhoto:
-        "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
-    },
-    {
-      id: "2",
-      petName: "Luna",
-      petBreed: "Siberian Husky",
-      distance: "280m",
-      direction: "east",
-      intensity: "medium",
-      lastSeen: "12 minutes ago",
-      petPhoto:
-        "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=200",
-    },
-    {
-      id: "3",
-      petName: "Max",
-      petBreed: "Beagle",
-      distance: "420m",
-      direction: "southwest",
-      intensity: "weak",
-      lastSeen: "25 minutes ago",
-      petPhoto:
-        "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200",
-    },
-  ]);
-
-  const startScanning = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setIsScanning(true);
-
-    // Simulate scanning process
-    setTimeout(() => {
-      setIsScanning(false);
-      Alert.alert("Scan Complete", "Found 3 scent trails nearby!");
-    }, 3000);
-  };
-
-  const getIntensityColor = (intensity: string) => {
-    switch (intensity) {
-      case "strong":
-        return "#10b981";
-      case "medium":
-        return "#f59e0b";
-      case "weak":
-        return "#ef4444";
-      default:
-        return "#6b7280";
-    }
-  };
-
-  const getDirectionIcon = (direction: string) => {
-    switch (direction) {
-      case "north":
-        return "↑";
-      case "south":
-        return "↓";
-      case "east":
-        return "→";
-      case "west":
-        return "←";
-      case "northeast":
-        return "↗";
-      case "northwest":
-        return "↖";
-      case "southeast":
-        return "↘";
-      case "southwest":
-        return "↙";
-      default:
-        return "•";
-    }
-  };
+  const {
+    isScanning,
+    scentTrails,
+    startScanning,
+    getIntensityColor,
+    getDirectionIcon,
+    handleFollowTrail,
+  } = useARScentTrailsScreen();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -185,25 +111,7 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
               <TouchableOpacity
                 key={trail.id}
                 style={styles.trailCard}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  Alert.alert(
-                    "Follow Trail",
-                    `Follow ${trail.petName}'s scent trail?`,
-                    [
-                      { text: "Cancel", style: "cancel" },
-                      {
-                        text: "Follow",
-                        onPress: () => {
-                          Alert.alert(
-                            "Navigation",
-                            "Starting navigation to scent trail...",
-                          );
-                        },
-                      },
-                    ],
-                  );
-                }}
+                onPress={() => handleFollowTrail(trail.petName)}
               >
                 <Image
                   source={{ uri: trail.petPhoto }}

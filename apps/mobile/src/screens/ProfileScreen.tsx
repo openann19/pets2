@@ -1,21 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
-import {
-  Alert,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React from "react";
+import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
@@ -23,72 +11,36 @@ import {
   AdvancedHeader,
   HeaderConfigs,
 } from "../components/Advanced/AdvancedHeader";
-// import { AdvancedButton } from '../components/Advanced/AdvancedInteractionSystem';
 import { matchesAPI } from "../services/api";
+import { useProfileScreen } from "../hooks/screens/useProfileScreen";
 
 import type { RootStackScreenProps } from "../navigation/types";
 
 type ProfileScreenProps = RootStackScreenProps<"Profile">;
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  const { user, logout } = useAuthStore();
-  const [notifications, setNotifications] = useState({
-    matches: true,
-    messages: true,
-    email: true,
-    push: true,
-  });
-  const [privacy, setPrivacy] = useState({
-    showLocation: true,
-    showAge: true,
-    showBreed: true,
-  });
-
-  const handleLogout = () => {
-    Alert.alert("Logout", "Are you sure you want to logout?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Logout",
-        style: "destructive",
-        onPress: () => {
-          void (async () => {
-            try {
-              logout?.();
-              await AsyncStorage.clear();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: "Login" }],
-              });
-            } catch (error) {
-              logger.error("Logout error:", { error });
-            }
-          })();
-        },
-      },
-    ]);
-  };
-
-  const handleSettingToggle = (setting: string) => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setNotifications((prev) => ({
-      ...prev,
-      [setting]: !prev[setting as keyof typeof prev],
-    }));
-  };
-
-  const handlePrivacyToggle = (setting: string) => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setPrivacy((prev) => ({
-      ...prev,
-      [setting]: !prev[setting as keyof typeof prev],
-    }));
-  };
+  const {
+    user,
+    notifications,
+    privacy,
+    handleLogout,
+    handleSettingToggle,
+    handlePrivacyToggle,
+  } = useProfileScreen();
 
   const handleNotificationToggle = (key: string) => () => {
     handleSettingToggle(key);
   };
   const handlePrivacySettingToggle = (key: string) => () => {
     handlePrivacyToggle(key);
+  };
+
+  const onLogout = () => {
+    handleLogout();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
   };
 
   const menuItems = [
@@ -315,7 +267,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
           <LinearGradient
             colors={["#ef4444", "#dc2626"]}
             style={styles.logoutGradient}

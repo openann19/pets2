@@ -27,7 +27,6 @@ import {
   PanResponder,
   Platform,
   AccessibilityInfo,
-  type AnimatedInterpolation,
 } from "react-native";
 
 import { useTheme } from "../contexts/ThemeContext";

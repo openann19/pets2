@@ -101,4 +101,3 @@ class BioGeneratorService {
 exports.BioGeneratorService = BioGeneratorService;
 // Export singleton
 exports._bioGeneratorService = new BioGeneratorService();
-//# sourceMappingURL=bio-generator.js.map

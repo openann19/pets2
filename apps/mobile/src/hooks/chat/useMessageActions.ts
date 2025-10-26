@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { Message } from "../useChatData";
-import { matchesAPI } from "../services/api";
-import { logger } from "../services/logger";
+import { matchesAPI } from "../../services/api";
+import { logger } from "../../services/logger";
 
 export interface UseMessageActionsOptions {
   matchId: string;

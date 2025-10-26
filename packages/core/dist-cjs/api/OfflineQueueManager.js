@@ -24,7 +24,7 @@ class OfflineQueueManager {
     constructor(config = {}) {
         this.config = { ...DEFAULT_CONFIG, ...config };
         this.initializeStorage();
-        void this.loadQueue();
+        this.loadQueue();
         this.startSyncInterval();
     }
     /**
@@ -85,7 +85,7 @@ class OfflineQueueManager {
                 this.removeItem(item.id);
                 logger_1.logger.debug('Item processed successfully', { id: item.id });
             }
-            catch (_error) {
+            catch (error) {
                 item.retryCount++;
                 if (item.retryCount >= item.maxRetries) {
                     logger_1.logger.error('Item failed after max retries', {
@@ -112,8 +112,8 @@ class OfflineQueueManager {
     /**
      * Process individual item
      */
-    async processItem(_item) {
-        // This would be implemented by the actual API client
+    async processItem(item) {
+        // This should be implemented by subclasses
         throw new Error('processItem must be implemented by subclass');
     }
     /**
@@ -121,7 +121,7 @@ class OfflineQueueManager {
      */
     getStats() {
         const criticalItems = this.queue.filter(item => item.priority === 'critical').length;
-        const oldestItem = this.queue.length > 0 ? this.queue[0]?.timestamp : undefined;
+        const oldestItem = this.queue.length > 0 ? this.queue[0].timestamp : undefined;
         return {
             totalItems: this.queue.length,
             pendingItems: this.queue.length - this.processing.size,
@@ -153,7 +153,7 @@ class OfflineQueueManager {
         const index = this.queue.findIndex(item => item.id === id);
         if (index !== -1) {
             this.queue.splice(index, 1);
-            void this.persistQueue();
+            this.persistQueue();
             this.notifyListeners();
         }
     }
@@ -189,8 +189,8 @@ class OfflineQueueManager {
         const priorityValue = this.getPriorityValue(item.priority);
         let insertIndex = this.queue.length;
         for (let i = 0; i < this.queue.length; i++) {
-            const queueItem = this.queue[i];
-            if (queueItem && this.getPriorityValue(queueItem.priority) < priorityValue) {
+            const current = this.queue[i];
+            if (this.getPriorityValue(current.priority) < priorityValue) {
                 insertIndex = i;
                 break;
             }

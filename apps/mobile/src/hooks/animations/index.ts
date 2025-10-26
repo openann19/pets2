@@ -1,12 +1,13 @@
-/**
- * Premium Animation Hooks - Barrel Export
- * Modular animation hooks extracted from usePremiumAnimations
- */
-
 // Constants
 export { PREMIUM_ANIMATIONS } from "./constants";
 
+// Configs
+export { SPRING_CONFIGS, TIMING_CONFIGS } from "./configs";
+
 // Hooks
+export { useSpringAnimation } from "./useSpringAnimation";
+export { usePressAnimation } from "./usePressAnimation";
+export { useGlowAnimation } from "./useGlowAnimation";
 export { useMagneticEffect } from "./useMagneticEffect";
 export { useRippleEffect } from "./useRippleEffect";
 export { useShimmerEffect } from "./useShimmerEffect";
@@ -19,3 +20,4 @@ export { useStaggeredAnimation } from "./useStaggeredAnimation";
 export { usePageTransition } from "./usePageTransition";
 export { useLoadingAnimation } from "./useLoadingAnimation";
 export { useParallaxEffect } from "./useParallaxEffect";
+export { useSwipeGesture } from "./useSwipeGesture";

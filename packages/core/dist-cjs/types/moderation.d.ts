@@ -72,4 +72,3 @@ export declare const mutePayloadSchema: z.ZodObject<{
     reason?: string | undefined;
 }>;
 export type MutePayload = z.infer<typeof mutePayloadSchema>;
-//# sourceMappingURL=moderation.d.ts.map

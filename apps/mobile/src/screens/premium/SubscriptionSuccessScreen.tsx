@@ -17,7 +17,7 @@ import {
 
 import type { RootStackParamList } from "../../navigation/types";
 
-type NavigationProp = NavigationProp<RootStackParamList>;
+type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
 
 const AnimatedCheckmark = () => {
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -87,7 +87,7 @@ const AnimatedCheckmark = () => {
 };
 
 export function SubscriptionSuccessScreen(): JSX.Element {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<SubscriptionSuccessNavigationProp>();
   const route = useRoute();
   const { sessionId } = (route.params as { sessionId?: string }) || {};
 
@@ -95,8 +95,10 @@ export function SubscriptionSuccessScreen(): JSX.Element {
   useEffect(() => {
     const trackSubscriptionSuccess = async () => {
       try {
-        const { analyticsAPI } = await import("../../services/api");
-        await analyticsAPI.trackUserEvent("subscription_success", {
+        // TODO: Add analyticsAPI to services/api.ts
+        // const { analyticsAPI } = await import("../../services/api");
+        // await analyticsAPI.trackUserEvent("subscription_success", {
+        logger.info("Subscription success tracked", {
           sessionId,
           timestamp: new Date().toISOString(),
         });

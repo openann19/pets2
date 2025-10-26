@@ -8,9 +8,11 @@ import type {
   TextStyle,
   ColorValue,
 } from "react-native";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { Easing } from "react-native";
 import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 // Import base tokens from design-tokens package (React Native optimized)
 import {

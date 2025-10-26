@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import type { ViewStyle, FlatListProps } from "react-native";
 import { StyleSheet } from "react-native";
-import { View, Animated, ScrollView, FlatList } from "react-native";
+import { View, Animated, ScrollView, FlatList, Easing } from "react-native";
 import { Theme } from "../theme/unified-theme";
 
 // === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
@@ -44,6 +44,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
     <View style={StyleSheet.flatten([containerStyle])}>
       {children.map((child, index) => {
         const animatedValue = animatedValues[index];
+        if (!animatedValue) return null;
         return (
           <Animated.View
             key={index}
@@ -141,7 +142,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
     Animated.timing(animatedValue, {
       toValue: 1,
       duration,
-      easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+      easing: Easing.bezier(0.4, 0, 0.2, 1),
       useNativeDriver: true,
     }).start();
   }, [animatedValue, duration]);

@@ -78,4 +78,3 @@ function useGesture(onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown) {
         handleTouchEnd
     };
 }
-//# sourceMappingURL=useGesture.js.map

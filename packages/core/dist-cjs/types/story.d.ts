@@ -119,4 +119,3 @@ export interface StoriesBarState {
     storyGroups: StoryGroup[];
     error: string | null;
 }
-//# sourceMappingURL=story.d.ts.map

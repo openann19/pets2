@@ -261,19 +261,20 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
   }));
 
   const baseShadow = GLOW_SHADOW_CONFIGS.coloredShadows[color];
+  const baseStyle = {
+    borderWidth: width,
+    borderColor: baseShadow.shadowColor,
+    borderRadius: BorderRadius["2xl"],
+    ...baseShadow,
+  };
 
   return (
     <Animated.View
-      style={StyleSheet.flatten([
-        {
-          borderWidth: width,
-          borderColor: baseShadow.shadowColor,
-          borderRadius: BorderRadius["2xl"],
-          ...baseShadow,
-        },
-        animated ? animatedStyle : {},
+      style={[
+        baseStyle,
+        animated ? animatedStyle : undefined,
         style,
-      ])}
+      ]}
       {...props}
     >
       {children}
