@@ -1,0 +1,35 @@
+id: typescript-safety
+owner: tg
+severity: critical
+area: mobile
+context: |
+  TypeScript errors exist in codebase. Many @ts-expect-error suppressions found.
+  Unsafe any types, missing type definitions, loose strict mode.
+  Reports show baseline errors that need fixing.
+acceptance:
+  - pnpm mobile:tsc passes with zero errors
+  - All @ts-expect-error suppressions removed or justified with comments
+  - No any types in production code (changed scope)
+  - Strict mode enabled in all tsconfig files
+  - All components properly typed with proper prop types
+  - No implicit any in function parameters
+states: [baseline_audit, in_progress, fixed, verified]
+telemetry:
+  - event: TYPE_ERROR_DETECTED
+    props: [file, line, error]
+  - event: TYPE_ERROR_FIXED
+    props: [file, line, fix]
+assets:
+  tests:
+    - pnpm mobile:tsc (should pass)
+    - pnpm mobile:lint (should pass)
+  reports:
+    - reports/ts_errors.json
+risks:
+  - runtime errors due to type mismatches
+  - breaking changes to existing API contracts
+  - performance impact from over-typing
+rollback:
+  - revert tsconfig to previous state
+  - keep suppressions for critical paths
+status: open

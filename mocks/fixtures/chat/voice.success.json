@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "url": "https://storage.example.com/voice/msg_xyz.opus",
+  "duration": 15,
+  "format": "opus",
+  "size": 89234
+}
+

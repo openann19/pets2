@@ -3,7 +3,8 @@
  * Controls access to premium features with elegant upgrade prompts
  */
 
-import { Ionicons, type ComponentProps } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import type { ComponentProps } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";

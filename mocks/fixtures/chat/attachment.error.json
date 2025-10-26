@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": "FILE_TOO_LARGE",
+  "message": "File size exceeds the maximum allowed size of 10MB",
+  "maxSize": 10485760
+}
+

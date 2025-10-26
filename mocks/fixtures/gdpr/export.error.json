@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": "EXPORT_IN_PROGRESS",
+  "message": "A data export is already in progress. Please wait for it to complete before requesting another.",
+  "estimatedCompletionTime": "2025-01-20T13:30:00.000Z"
+}
+

@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "url": "https://storage.example.com/attachments/msg_abc/image.jpg",
+  "type": "image/jpeg",
+  "size": 245678,
+  "thumbnailUrl": "https://storage.example.com/attachments/msg_abc/image_thumb.jpg"
+}
+

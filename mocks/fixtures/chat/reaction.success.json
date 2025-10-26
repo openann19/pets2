@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "messageId": "msg_123",
+  "reactions": {
+    "👍": ["user_456"],
+    "❤️": ["user_456", "user_789"]
+  },
+  "totalReactions": 3
+}
+

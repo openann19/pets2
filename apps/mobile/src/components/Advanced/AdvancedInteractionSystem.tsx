@@ -62,7 +62,7 @@ const HAPTIC_PATTERNS = {
   light: Haptics.ImpactFeedbackStyle.Light,
   medium: Haptics.ImpactFeedbackStyle.Medium,
   heavy: Haptics.ImpactFeedbackStyle.Heavy,
-  selection: Haptics.SelectionFeedbackStyle.Selection,
+  selection: 0, // Using light impact as fallback since SelectionFeedbackStyle not available
   notification: Haptics.NotificationFeedbackType.Success,
 };
 
