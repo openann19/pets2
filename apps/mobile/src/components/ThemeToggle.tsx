@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import { useThemeToggle } from "../hooks/useThemeToggle";
-import { Spacing, BorderRadius, Typography } from "../styles/GlobalStyles";
+import { Spacing, BorderRadius, Typography } from "../animation";
 
 interface ThemeToggleProps {
   variant?: "icon" | "button" | "selector";
@@ -105,7 +105,6 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         style={[
           themeStyles.buttonContainer,
           buttonSizes[size],
-          styles.buttonSecondary,
           style,
         ]}
         activeOpacity={0.8}

@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import type { HelpOption } from "../../hooks/useHelpSupportData";
+import { Theme } from '../theme/unified-theme';
 
 interface HelpOptionCardProps {
   option: HelpOption;
@@ -31,7 +32,7 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
             <View
               style={StyleSheet.flatten([
                 styles.optionIcon,
-                { backgroundColor: "#3B82F6" },
+                { backgroundColor: "Theme.colors.status.info" },
               ])}
             >
               <Ionicons name={option.icon as any} size={20} color="white" />

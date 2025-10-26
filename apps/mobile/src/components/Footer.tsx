@@ -13,7 +13,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import { getExtendedColors } from "../theme/adapters";
 import AnimatedButton from "./AnimatedButton";
 
 interface FooterProps {
@@ -27,7 +28,7 @@ interface FooterProps {
   accessibilityHint?: string;
 }
 
-export const Footer: React.FC<FooterProps> = ({
+export default function Footer({
   showCopyright = true,
   showLegal = true,
   showVersion = false,
@@ -36,8 +37,9 @@ export const Footer: React.FC<FooterProps> = ({
   style,
   accessibilityLabel = "App footer with legal links and support information",
   accessibilityHint = "Contains links to terms of service, privacy policy, and support contact",
-}) => {
-  const { colors } = useTheme();
+}: FooterProps) {
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
 
   // Animation values
   const opacity = useSharedValue(0);
@@ -49,8 +51,7 @@ export const Footer: React.FC<FooterProps> = ({
       300,
       withSpring(0, { damping: 15, stiffness: 100 }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [opacity.value, translateY.value]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -505,4 +506,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Footer;

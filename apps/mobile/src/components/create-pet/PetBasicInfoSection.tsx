@@ -10,6 +10,7 @@ import {
 import type { PetFormData } from "../../hooks/usePetForm";
 
 import type { FormFieldValue } from "../../types/forms";
+import { Theme } from '../theme/unified-theme';
 
 interface PetBasicInfoSectionProps {
   formData: PetFormData;
@@ -54,7 +55,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             onUpdateFormData("name", value);
           }}
           placeholder="Enter your pet's name"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="Theme.colors.neutral[400]"
         />
         {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
       </View>
@@ -104,7 +105,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             onUpdateFormData("breed", value);
           }}
           placeholder="e.g., Golden Retriever, Siamese"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="Theme.colors.neutral[400]"
         />
         {errors.breed && <Text style={styles.errorText}>{errors.breed}</Text>}
       </View>
@@ -123,7 +124,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             }}
             placeholder="0-30"
             keyboardType="numeric"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="Theme.colors.neutral[400]"
           />
           {errors.age && <Text style={styles.errorText}>{errors.age}</Text>}
         </View>
@@ -216,7 +217,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             onUpdateFormData("description", value);
           }}
           placeholder="Tell us about your pet's personality, habits, and what makes them special..."
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="Theme.colors.neutral[400]"
           multiline
           numberOfLines={4}
           textAlignVertical="top"
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 16,
   },
   inputGroup: {
@@ -242,32 +243,32 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   inputError: {
-    borderColor: "#EF4444",
+    borderColor: "Theme.colors.status.error",
   },
   errorText: {
     fontSize: 14,
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
     marginTop: 4,
   },
   textArea: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     height: 100,
   },
   row: {
@@ -289,16 +290,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 12,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     flex: 1,
     minWidth: 150,
     justifyContent: "center",
   },
   optionButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   optionEmoji: {
     fontSize: 20,
@@ -306,11 +307,11 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   optionTextSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
   },
   genderOptions: {
     flexDirection: "row",
@@ -323,13 +324,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 12,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   genderButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   genderEmoji: {
     fontSize: 16,
@@ -337,11 +338,11 @@ const styles = StyleSheet.create({
   },
   genderText: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   genderTextSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
   },
   sizeOptions: {
     gap: 8,
@@ -349,26 +350,26 @@ const styles = StyleSheet.create({
   sizeButton: {
     padding: 12,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     alignItems: "center",
   },
   sizeButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   sizeLabel: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "600",
   },
   sizeLabelSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
   },
   sizeDesc: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 2,
   },
   sizeDescSelected: {

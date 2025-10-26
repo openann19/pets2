@@ -1,8 +1,6 @@
-import { logger } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,81 +11,23 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
-
+import { useForgotPasswordScreen } from "../hooks/screens/useForgotPasswordScreen";
 import type { RootStackScreenProps } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 type ForgotPasswordScreenProps = RootStackScreenProps<"ForgotPassword">;
 
 function ForgotPasswordScreen({
   navigation,
 }: ForgotPasswordScreenProps): JSX.Element {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string | undefined }>({});
-
-  const validateForm = (): boolean => {
-    const newErrors: { email?: string } = {};
-
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleForgotPassword = async (): Promise<void> => {
-    if (!validateForm()) return;
-
-    setLoading(true);
-    try {
-      // Haptic feedback for password reset attempt
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-      // TODO: Replace with actual API call
-      const response = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        // Success haptic feedback
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-        Alert.alert(
-          "Check Your Email",
-          "We've sent you a password reset link. Please check your email and follow the instructions.",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.goBack(),
-            },
-          ],
-        );
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to send reset email");
-      }
-    } catch (error) {
-      // Error haptic feedback
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
-      logger.error("Forgot password error:", { error });
-      Alert.alert(
-        "Error",
-        "Unable to send password reset email. Please try again.",
-        [{ text: "OK" }],
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    values,
+    errors,
+    loading,
+    setValue,
+    handleSubmit,
+    navigateBack,
+  } = useForgotPasswordScreen({ navigation });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,10 +36,7 @@ function ForgotPasswordScreen({
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.backButton} onPress={navigateBack}>
             <Text style={styles.backButtonText}>← Back</Text>
           </TouchableOpacity>
 
@@ -115,15 +52,9 @@ function ForgotPasswordScreen({
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email Address</Text>
               <TextInput
-                style={StyleSheet.flatten([
-                  styles.input,
-                  errors.email && styles.inputError,
-                ])}
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (errors.email) setErrors({ ...errors, email: undefined });
-                }}
+                style={errors.email ? [styles.input, styles.inputError] : styles.input}
+                value={values.email}
+                onChangeText={(text) => setValue("email", text)}
                 placeholder="your@email.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -136,18 +67,18 @@ function ForgotPasswordScreen({
             </View>
 
             <TouchableOpacity
-              style={StyleSheet.flatten([
+              style={[
                 styles.button,
                 loading && styles.buttonDisabled,
-              ])}
-              onPress={handleForgotPassword}
+              ]}
+              onPress={handleSubmit}
               disabled={loading}
             >
               <Text
-                style={StyleSheet.flatten([
+                style={[
                   styles.buttonText,
                   loading && styles.buttonTextDisabled,
-                ])}
+                ]}
               >
                 {loading ? "Sending..." : "Send Reset Link"}
               </Text>
@@ -174,7 +105,7 @@ function ForgotPasswordScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   keyboardView: {
     flex: 1,
@@ -189,7 +120,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
   },
   header: {
     marginBottom: 40,
@@ -206,10 +137,10 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   form: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -225,39 +156,39 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     color: "#333",
   },
   inputError: {
-    borderColor: "#ef4444",
+    borderColor: "Theme.colors.status.error",
   },
   errorText: {
-    color: "#ef4444",
+    color: "Theme.colors.status.error",
     fontSize: 12,
     marginTop: 4,
   },
   button: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 8,
     padding: 15,
     alignItems: "center",
     marginVertical: 16,
   },
   buttonDisabled: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   buttonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "bold",
   },
   buttonTextDisabled: {
-    color: "#9ca3af",
+    color: "Theme.colors.neutral[400]",
   },
   helpText: {
     alignItems: "center",
@@ -268,7 +199,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   linkText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "bold",
   },
 });

@@ -1,282 +1,229 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback } from "react";
-import {
-  Animated,
-  Modal,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+// apps/mobile/src/screens/__tests__/MapScreen.test.tsx
+import React from "react";
+import { fireEvent, render } from "@testing-library/react-native";
+import { Animated } from "react-native";
 
-import {
-  MapFiltersModal,
-  MapStatsPanel,
-  PinDetailsModal,
-} from "../components/map";
-import { useMapScreen } from "../hooks/screens/useMapScreen";
-import type { RootStackParamList } from "../navigation/types";
+import MapScreen from "../MapScreen";
 
-type MapScreenProps = NativeStackScreenProps<RootStackParamList, "Map">;
+// ---- Mocks ----
 
-type ArScentTrailsNavigation = {
-  navigate: (
-    screen: "ARScentTrails",
-    params: RootStackParamList["ARScentTrails"],
-  ) => void;
-};
-
-function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
-  const {
-    region,
-    userLocation,
-    filteredPins,
-    filters,
-    stats,
-    selectedPin,
-    filterPanelHeight,
-    statsOpacity,
-    activityTypes,
-    setSelectedPin,
-    setFilters,
-    getCurrentLocation,
-    toggleFilterPanel,
-    toggleActivity,
-    getMarkerColor,
-    getStableMatchFlag,
-  } = useMapScreen();
-
-  const navigateToArScentTrails = useCallback(() => {
-    const typedNavigation = navigation as unknown as ArScentTrailsNavigation;
-
-    typedNavigation.navigate("ARScentTrails", {
-      initialLocation: userLocation ?? null,
-    });
-  }, [navigation, userLocation]);
-
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1F2937" />
-
-      {/* Header */}
-      <LinearGradient colors={["#1F2937", "#374151"]} style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={styles.headerLeft}>
-            <View style={styles.logoContainer}>
-              <Text style={styles.logoEmoji}>🗺️</Text>
-            </View>
-            <View>
-              <Text style={styles.headerTitle}>Pet Activity Map</Text>
-              <Text style={styles.headerSubtitle}>Real-time locations</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.filterButton} onPress={toggleFilterPanel}>
-            <Text style={styles.filterButtonText}>⚙️</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Stats Bar */}
-        <MapStatsPanel stats={stats} opacity={statsOpacity} />
-      </LinearGradient>
-
-      {/* Map */}
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        region={region}
-        showsUserLocation={true}
-        showsMyLocationButton={false}
-        loadingEnabled={true}
-      >
-        {/* User location marker */}
-        {userLocation && (
-          <Marker
-            coordinate={userLocation}
-            title="Your Location"
-            pinColor="#EC4899"
-          />
-        )}
-
-        {/* Pet activity markers */}
-        {filteredPins.map((pin) => {
-          const isMatch = getStableMatchFlag(pin);
-          return (
-            <React.Fragment key={pin._id}>
-              <Marker
-                coordinate={{
-                  latitude: pin.latitude,
-                  longitude: pin.longitude,
-                }}
-                title={pin.activity}
-                description={pin.message || "Pet activity"}
-                pinColor={getMarkerColor(pin.activity, isMatch)}
-                onPress={() => {
-                  setSelectedPin(pin);
-                }}
-              />
-
-              {/* Activity radius circle */}
-              <Circle
-                center={{
-                  latitude: pin.latitude,
-                  longitude: pin.longitude,
-                }}
-                radius={100}
-                strokeColor={getMarkerColor(pin.activity, isMatch)}
-                fillColor={`${getMarkerColor(pin.activity, isMatch)}20`}
-                strokeWidth={2}
-              />
-            </React.Fragment>
-          );
-        })}
-      </MapView>
-
-      {/* Filter Panel */}
-      <Animated.View
-        style={[
-          styles.filterPanel,
-          { height: filterPanelHeight },
-        ]}
-      >
-        <MapFiltersModal
-          filters={filters}
-          activityTypes={activityTypes}
-          onToggleActivity={toggleActivity}
-          onSetFilters={setFilters}
-        />
-      </Animated.View>
-
-      {/* Floating Action Buttons */}
-      <View style={styles.fabContainer}>
-        <TouchableOpacity
-          style={[styles.fab, styles.arFab]}
-          onPress={navigateToArScentTrails}
-        >
-          <Text style={styles.fabIcon}>👁️</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.fab, styles.locationFab]}
-          onPress={getCurrentLocation}
-        >
-          <Text style={styles.fabIcon}>📍</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Pin Detail Modal */}
-      <Modal
-        visible={!!selectedPin}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => {
-          setSelectedPin(null);
-        }}
-      >
-        <PinDetailsModal
-          visible={!!selectedPin}
-          pin={selectedPin}
-          activityTypes={activityTypes}
-          onClose={() => setSelectedPin(null)}
-        />
-      </Modal>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F9FAFB",
-  },
-  header: {
-    paddingTop: Platform.OS === "ios" ? 50 : 20,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-  },
-  headerContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#EC4899",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  logoEmoji: {
-    fontSize: 20,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "#D1D5DB",
-  },
-  filterButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  filterButtonText: {
-    fontSize: 18,
-  },
-  map: {
-    flex: 1,
-  },
-  filterPanel: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "transparent",
-  },
-  fabContainer: {
-    position: "absolute",
-    right: 16,
-    bottom: 100,
-  },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  locationFab: {
-    backgroundColor: "#3B82F6",
-  },
-  arFab: {
-    backgroundColor: "#8B5CF6",
-  },
-  fabIcon: {
-    fontSize: 24,
-  },
+// react-navigation native stack props mock
+const mockNavigate = jest.fn();
+jest.mock("@react-navigation/native", () => {
+  return {
+    // if you need more hooks from react-navigation, extend here
+    useNavigation: () => ({ navigate: mockNavigate }),
+  };
 });
 
-export default MapScreen;
+// mock navigation prop type that MapScreen receives from stack
+const mockNavigationProp: any = {
+  navigate: mockNavigate,
+};
+
+// mock map components so RN doesn't try to load native maps in Jest env
+jest.mock("react-native-maps", () => {
+  const React = require("react");
+  const { View, Text } = require("react-native");
+
+  const MockMapView = ({ children }: any) => (
+    <View testID="MapView">{children}</View>
+  );
+  const MockMarker = ({ title }: any) => (
+    <View testID="Marker">
+      <Text>{title}</Text>
+    </View>
+  );
+  const MockCircle = () => <View testID="Circle" />;
+
+  return {
+    __esModule: true,
+    default: MockMapView,
+    PROVIDER_GOOGLE: "google",
+    Marker: MockMarker,
+    Circle: MockCircle,
+  };
+});
+
+// mock LinearGradient to a simple View
+jest.mock("expo-linear-gradient", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+  return {
+    LinearGradient: ({ children, ...rest }: any) => (
+      <View accessibilityLabel="LinearGradient" {...rest}>
+        {children}
+      </View>
+    ),
+  };
+});
+
+// mock tab double press hook => just call cb immediately for determinism
+jest.mock("../../hooks/navigation/useTabDoublePress", () => ({
+  useTabDoublePress: (cb: () => void) => {
+    // we do NOT auto-call it here because in prod it's an event listener
+    // Keeping it inert avoids side effects on mount.
+    void cb;
+  },
+}));
+
+// lightweight stubs for subpanels; render minimal content for assertions
+jest.mock("../../components/map", () => {
+  const React = require("react");
+  const { View, Text, TouchableOpacity } = require("react-native");
+
+  return {
+    MapFiltersModal: ({
+      onSetFilters,
+      onToggleActivity,
+    }: {
+      onSetFilters: any;
+      onToggleActivity: any;
+    }) => (
+      <View testID="MapFiltersModal">
+        <TouchableOpacity
+          onPress={() => {
+            onToggleActivity("walk");
+            onSetFilters({ radius: 1000 });
+          }}
+        >
+          <Text>Filters</Text>
+        </TouchableOpacity>
+      </View>
+    ),
+    MapStatsPanel: ({ stats }: { stats: any }) => (
+      <View testID="MapStatsPanel">
+        <Text>{JSON.stringify(stats)}</Text>
+      </View>
+    ),
+    PinDetailsModal: ({
+      visible,
+      onClose,
+    }: {
+      visible: boolean;
+      onClose: () => void;
+    }) =>
+      visible ? (
+        <View testID="PinDetailsModal">
+          <TouchableOpacity onPress={onClose}>
+            <Text>Close Pin</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null,
+  };
+});
+
+// central hook mock: we fully control scenario data here
+const mockGetCurrentLocation = jest.fn();
+const mockToggleFilterPanel = jest.fn();
+const mockSetSelectedPin = jest.fn();
+const mockSetFilters = jest.fn();
+const mockToggleActivity = jest.fn();
+
+jest.mock("../../hooks/screens/useMapScreen", () => {
+  const { Animated } = require("react-native");
+  return {
+    useMapScreen: () => ({
+      region: {
+        latitude: 42.6977,
+        longitude: 23.3219,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      },
+      userLocation: {
+        latitude: 42.6977,
+        longitude: 23.3219,
+      },
+      filteredPins: [
+        {
+          _id: "pin-1",
+          latitude: 42.698,
+          longitude: 23.322,
+          activity: "walk",
+          message: "Dog walking spotted",
+        },
+      ],
+      filters: { radius: 500, types: { walk: true } },
+      stats: { activeDogs: 3, activeCats: 1, hotspots: 2 },
+      selectedPin: null,
+      filterPanelHeight: new Animated.Value(120),
+      statsOpacity: new Animated.Value(1),
+      activityTypes: ["walk", "play", "lost_pet"],
+
+      setSelectedPin: mockSetSelectedPin,
+      setFilters: mockSetFilters,
+      getCurrentLocation: mockGetCurrentLocation,
+      toggleFilterPanel: mockToggleFilterPanel,
+      toggleActivity: mockToggleActivity,
+      getMarkerColor: (activity: string, isMatch: boolean) => {
+        if (isMatch) return "#00ff88";
+        if (activity === "walk") return "#4da6ff";
+        return "#ffffff";
+      },
+      getStableMatchFlag: (pin: any) => {
+        return pin.activity === "walk";
+      },
+    }),
+  };
+});
+
+// ---- TESTS ----
+
+describe("MapScreen", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("renders header title and subtitle", () => {
+    const { getByText } = render(<MapScreen navigation={mockNavigationProp} />);
+
+    expect(getByText("Pet Activity Map")).toBeTruthy();
+    expect(getByText("Real-time locations")).toBeTruthy();
+  });
+
+  it("shows MapView and at least one Marker", () => {
+    const { getByTestId, getAllByTestId } = render(
+      <MapScreen navigation={mockNavigationProp} />,
+    );
+
+    expect(getByTestId("MapView")).toBeTruthy();
+    const markers = getAllByTestId("Marker");
+    expect(markers.length).toBeGreaterThan(0);
+  });
+
+  it("pressing the location FAB triggers getCurrentLocation()", () => {
+    const { getAllByText } = render(
+      <MapScreen navigation={mockNavigationProp} />,
+    );
+
+    // "📍" is the location FAB icon
+    const locateButtons = getAllByText("📍");
+    fireEvent.press(locateButtons[0]);
+    expect(mockGetCurrentLocation).toHaveBeenCalledTimes(1);
+  });
+
+  it("pressing the filter button triggers toggleFilterPanel()", () => {
+    const { getByText } = render(<MapScreen navigation={mockNavigationProp} />);
+
+    // The filter/settings button has "⚙️"
+    fireEvent.press(getByText("⚙️"));
+    expect(mockToggleFilterPanel).toHaveBeenCalledTimes(1);
+  });
+
+  it("AR FAB navigates to ARScentTrails with user location", () => {
+    const { getAllByText } = render(
+      <MapScreen navigation={mockNavigationProp} />,
+    );
+
+    // "👁️" is AR FAB icon
+    const arButtons = getAllByText("👁️");
+    fireEvent.press(arButtons[0]);
+
+    expect(mockNavigate).toHaveBeenCalledWith("ARScentTrails", {
+      initialLocation: {
+        latitude: 42.6977,
+        longitude: 23.3219,
+      },
+    });
+  });
+});

@@ -10,8 +10,9 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 const PremiumSuccessScreen = (): React.JSX.Element => {
   const { colors } = useTheme();
@@ -47,7 +48,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
         {isVerified ? (
           <>
             <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color="#10b981" />
+              <Ionicons name="checkmark-circle" size={80} color="Theme.colors.status.success" />
             </View>
 
             <Text
@@ -68,7 +69,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
 
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="heart" size={20} color="#10b981" />
+                <Ionicons name="heart" size={20} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -79,7 +80,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="eye" size={20} color="#10b981" />
+                <Ionicons name="eye" size={20} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -90,7 +91,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="flash" size={20} color="#10b981" />
+                <Ionicons name="flash" size={20} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,

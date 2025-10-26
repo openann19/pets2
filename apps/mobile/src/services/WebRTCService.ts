@@ -1,4 +1,4 @@
-// @ts-ignore - events package available in React Native
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import { EventEmitter } from "events";
 
 import InCallManager from "react-native-incall-manager";

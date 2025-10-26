@@ -16,6 +16,7 @@ export interface AuthState {
 
   // Actions
   setUser: (user: User | null) => void;
+  updateUser: (user: User) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   clearTokens: () => void;
   logout: () => void;
@@ -43,6 +44,15 @@ export const useAuthStore = create<AuthState>()(
         set((state) => {
           state.user = user;
           state.isAuthenticated = user !== null;
+          return state;
+        }),
+
+      // Update user data (merge with existing)
+      updateUser: (user: User) =>
+        set((state) => {
+          if (state.user) {
+            state.user = { ...state.user, ...user };
+          }
           return state;
         }),
 

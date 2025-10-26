@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Theme } from '../theme/unified-theme';
 
 interface ToastProps {
   message: string;
@@ -61,15 +62,15 @@ export function Toast({
   const getTypeStyles = () => {
     switch (type) {
       case "success":
-        return { backgroundColor: "#10b981", borderColor: "#059669" };
+        return { backgroundColor: "Theme.colors.status.success", borderColor: "#059669" };
       case "error":
-        return { backgroundColor: "#ef4444", borderColor: "#dc2626" };
+        return { backgroundColor: "Theme.colors.status.error", borderColor: "#dc2626" };
       default:
         return { backgroundColor: "#6366f1", borderColor: "#4f46e5" };
     }
   };
 
-  if (!visible) return null;
+  if (!visible) return <></>;
 
   return (
     <Animated.View
@@ -96,14 +97,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 8,
   },
   text: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
     textAlign: "center",

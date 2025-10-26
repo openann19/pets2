@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAIBioScreen } from "../hooks/screens/ai";
+import { Theme } from '../theme/unified-theme';
 
 export default function AIBioScreen() {
   const {
@@ -180,9 +181,9 @@ export default function AIBioScreen() {
             style={styles.generateButtonGradient}
           >
             {isGenerating ? (
-              <ActivityIndicator color="#fff" size="small" />
+              <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
             ) : (
-              <Ionicons name="sparkles" size={20} color="#fff" />
+              <Ionicons name="sparkles" size={20} color="Theme.colors.neutral[0]" />
             )}
             <Text style={styles.generateButtonText}>
               {isGenerating ? "Generating..." : "Generate Bio"}
@@ -249,7 +250,7 @@ export default function AIBioScreen() {
                   <Text style={styles.regenerateText}>Regenerate</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.saveButton} onPress={saveBio}>
-                  <Ionicons name="checkmark" size={16} color="#fff" />
+                  <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />
                   <Text style={styles.saveText}>Save Bio</Text>
                 </TouchableOpacity>
               </View>
@@ -287,8 +288,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    backgroundColor: "Theme.colors.neutral[0]",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -319,8 +320,8 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    backgroundColor: "Theme.colors.neutral[0]",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -352,14 +353,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -377,7 +378,7 @@ const styles = StyleSheet.create({
   toneOption: {
     flex: 1,
     minWidth: "30%",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 10,
     padding: 15,
     alignItems: "center",
@@ -411,15 +412,15 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   generateButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 18,
     fontWeight: "bold",
   },
   bioContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 15,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -472,7 +473,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   keywordText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -506,18 +507,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   saveText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },
   historyItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,

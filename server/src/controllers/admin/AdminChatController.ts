@@ -6,8 +6,7 @@
 import type { Request, Response } from 'express';
 import Match from '../../models/Match';
 import Conversation from '../../models/Conversation';
-// @ts-ignore - AuditLog is a JS file without types
-import AuditLog from '../../models/AuditLog';
+const AuditLog = require('../../models/AuditLog');
 const logger = require('../../utils/logger');
 
 // Type definitions

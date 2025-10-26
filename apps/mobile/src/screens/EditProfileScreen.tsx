@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -12,10 +12,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEditProfileScreen } from "../hooks/screens/useEditProfileScreen";
 import type { ProfileData } from "../hooks/screens/useEditProfileScreen";
+import { Theme } from '../theme/unified-theme';
+import { AdvancedPhotoEditor } from "../components/photo/AdvancedPhotoEditor";
 
 interface EditProfileScreenProps {
   navigation: {
@@ -26,6 +29,9 @@ interface EditProfileScreenProps {
 function EditProfileScreen({
   navigation,
 }: EditProfileScreenProps): JSX.Element {
+  const [showPhotoEditor, setShowPhotoEditor] = useState(false);
+  const [avatarToEdit, setAvatarToEdit] = useState<string | undefined>(undefined);
+
   const {
     profileData,
     loading,
@@ -35,6 +41,31 @@ function EditProfileScreen({
     handleSave,
     handleCancel,
   } = useEditProfileScreen();
+
+  const handleSelectAvatarWithEditor = async () => {
+    try {
+      // This will launch the image picker
+      await handleSelectAvatar();
+      // If an avatar was selected, show the editor
+      if (profileData.avatar) {
+        setAvatarToEdit(profileData.avatar);
+        setShowPhotoEditor(true);
+      }
+    } catch (error) {
+      // Handle error
+    }
+  };
+
+  const handlePhotoEditorSave = (editedUri: string) => {
+    updateField("avatar", editedUri);
+    setShowPhotoEditor(false);
+    setAvatarToEdit(undefined);
+  };
+
+  const handlePhotoEditorCancel = () => {
+    setShowPhotoEditor(false);
+    setAvatarToEdit(undefined);
+  };
 
   const onSubmit = async () => {
     const result = await handleSave();
@@ -59,9 +90,23 @@ function EditProfileScreen({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#6366f1", "#8b5cf6", "#ec4899"]}
+        colors={["#6366f1", "#8b5cf6", Theme.colors.primary[500]]}
         style={StyleSheet.absoluteFillObject}
       />
+
+      {/* Photo Editor Modal */}
+      {showPhotoEditor && avatarToEdit && (
+        <Modal visible={showPhotoEditor} animationType="slide" presentationStyle="fullScreen">
+          <AdvancedPhotoEditor
+            imageUri={avatarToEdit}
+            onSave={handlePhotoEditorSave}
+            onCancel={handlePhotoEditorCancel}
+            aspectRatio={[1, 1]}
+            maxWidth={512}
+            maxHeight={512}
+          />
+        </Modal>
+      )}
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
@@ -102,7 +147,7 @@ function EditProfileScreen({
               <Text style={styles.sectionTitle}>Profile Picture</Text>
               <TouchableOpacity
                 style={styles.avatarContainer}
-                onPress={handleSelectAvatar}
+                onPress={handleSelectAvatarWithEditor}
               >
                 <BlurView intensity={20} style={styles.avatarBlur}>
                   {profileData.avatar ? (

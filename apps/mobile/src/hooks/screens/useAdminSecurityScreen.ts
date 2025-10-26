@@ -74,9 +74,9 @@ export interface AdminSecurityScreenState {
 
   // Actions
   onRefresh: () => Promise<void>;
-  onSeverityFilterChange: (severity: typeof severityFilter) => void;
-  onStatusFilterChange: (status: typeof statusFilter) => void;
-  onTypeFilterChange: (type: typeof typeFilter) => void;
+  onSeverityFilterChange: (severity: "all" | "low" | "medium" | "high" | "critical") => void;
+  onStatusFilterChange: (status: "all" | "active" | "resolved" | "investigating") => void;
+  onTypeFilterChange: (type: "all" | SecurityEvent["type"]) => void;
   onSearchChange: (query: string) => void;
   onEventSelect: (event: SecurityEvent) => void;
   onResolveEvent: (eventId: string, resolution: string) => Promise<void>;

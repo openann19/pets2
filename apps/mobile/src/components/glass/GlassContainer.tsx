@@ -9,7 +9,7 @@ import {
 } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
-import { BorderRadius, Spacing } from "../../styles/GlobalStyles";
+import { BorderRadius, Spacing } from "../../animation";
 import {
   BLUR_CONFIGS,
   TRANSPARENCY_CONFIGS,

@@ -40,7 +40,7 @@ export interface EliteButtonProps extends BaseButtonProps {
   glowIntensity?: number;
   magneticSensitivity?: number;
   shimmerDuration?: number;
-  gradientName?: keyof typeof import("../../theme/unified-theme").Theme.gradients;
+  gradientName?: "primary" | "secondary" | "success" | "warning" | "error" | "glass" | "glow";
   gradientColors?: string[];
 
   // Haptic feedback
@@ -164,7 +164,7 @@ export const EliteButtonPresets = {
     <EliteButton
       {...props}
       gradientEffect={true}
-      gradientName="holographic"
+      gradientName="primary"
       shimmerEffect={true}
       glowEffect={true}
       rippleEffect={true}

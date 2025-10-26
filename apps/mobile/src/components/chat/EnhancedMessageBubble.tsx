@@ -19,7 +19,8 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 interface EnhancedMessageBubbleProps {
   message: MessageWithReactions;
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   avatarText: {
     fontSize: 16,
@@ -252,26 +253,26 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
   },
   ownMessageDark: {
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "Theme.colors.secondary[500]",
   },
   ownMessageLight: {
     backgroundColor: "#FF6B6B",
   },
   otherMessageDark: {
-    backgroundColor: "#374151",
+    backgroundColor: "Theme.colors.neutral[700]",
   },
   otherMessageLight: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   messageText: {
     fontSize: 16,
     lineHeight: 20,
   },
   messageTextDark: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
   messageTextLight: {
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
   },
   reactionsContainer: {
     flexDirection: "row",
@@ -304,23 +305,23 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
   },
   timestampDark: {
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
   },
   timestampLight: {
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
   },
   status: {
     fontSize: 11,
     marginLeft: 4,
   },
   statusDark: {
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
   },
   statusLight: {
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
   },
   modalOverlay: {
     flex: 1,
@@ -331,11 +332,11 @@ const styles = StyleSheet.create({
   reactionPicker: {
     flexDirection: "row",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     padding: 16,
     borderRadius: 24,
     marginHorizontal: 40,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

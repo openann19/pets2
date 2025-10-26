@@ -11,7 +11,7 @@ import {
   withDelay,
 } from "react-native-reanimated";
 import { logger } from "@pawfectmatch/core";
-import { AnimationConfigs } from "../../../styles/GlobalStyles";
+import { AnimationConfigs } from "../../../animation";
 
 interface UseWelcomeReturn {
   // Animation values

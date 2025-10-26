@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { Alert } from "react-native";
 
 import type { ThemeMode } from "../stores/useUIStore";
-import { useTheme } from "../contexts/ThemeContext";
-import type { ThemeColors } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import type { ThemeColors } from "../theme/Provider";
 
 export interface UseThemeToggleReturn {
   isDark: boolean;

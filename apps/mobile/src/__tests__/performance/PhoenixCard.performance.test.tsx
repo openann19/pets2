@@ -7,6 +7,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import { PerformanceMonitor } from "../../utils/PerformanceMonitor";
 import { PhoenixCard } from "../../components/phoenix/PhoenixCard";
+import { Theme } from '../theme/unified-theme';
 
 // Mock PerformanceMonitor
 jest.mock("../../utils/PerformanceMonitor", () => ({
@@ -23,32 +24,32 @@ jest.mock("../../utils/PerformanceMonitor", () => ({
 }));
 
 // Mock theme
-jest.mock("../../contexts/ThemeContext", () => ({
+jest.mock("../../theme/Provider", () => ({
   useTheme: () => ({
     isDark: false,
     colors: {
       primary: "#007AFF",
-      surface: "#FFFFFF",
+      surface: "Theme.colors.neutral[0]",
       surfaceElevated: "#F8F9FA",
-      text: "#000000",
+      text: "Theme.colors.neutral[950]",
       textSecondary: "#666666",
       border: "#E5E5E5",
-      shadow: "#000000",
+      shadow: "Theme.colors.neutral[950]",
     },
   }),
 }));
 
 // Mock styles
-jest.mock("../../styles/GlobalStyles", () => ({
+jest.mock("../../animation", () => ({
   Colors: {
     primary: "#007AFF",
-    surface: "#FFFFFF",
+    surface: "Theme.colors.neutral[0]",
     surfaceElevated: "#F8F9FA",
-    text: "#000000",
+    text: "Theme.colors.neutral[950]",
     textSecondary: "#666666",
     border: "#E5E5E5",
     borderLight: "#F0F0F0",
-    shadow: "#000000",
+    shadow: "Theme.colors.neutral[950]",
   },
   Spacing: {
     xs: 4,
@@ -71,7 +72,7 @@ jest.mock("../../styles/GlobalStyles", () => ({
   },
   PREMIUM_SHADOWS: {
     medium: {
-      shadowColor: "#000000",
+      shadowColor: "Theme.colors.neutral[950]",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,

@@ -1,0 +1,561 @@
+codemods/theme-to-unified.js:2: * Codemod: Migrate from old theme contexts to unified theme/Provider
+codemods/theme-to-unified.js:3: * Run: npx jscodeshift -t apps/mobile/codemods/theme-to-unified.js apps/mobile/src --extensions=ts,tsx --parser=tsx
+codemods/theme-to-unified.js:6:  { from: /contexts\/ThemeContext(\.tsx?)?/g, to: "theme/Provider" },
+codemods/theme-to-unified.js:7:  { from: /theme\/UnifiedThemeProvider(\.tsx?)?/g, to: "theme/Provider" },
+codemods/theme-to-unified.js:8:  { from: /theme\/ThemeProvider(\.tsx?)?/g, to: "theme/Provider" },
+codemods/theme-to-unified.js:9:  { from: /constants\/design-tokens(\.ts)?/g, to: "@pawfectmatch/design-tokens" },
+codemods/theme-to-unified.js:10:  { from: /styles\/EnhancedDesignTokens(\.tsx?)?/g, to: "theme/Provider" },
+src/animation/index.ts:5: * Also provides backward-compatible re-exports for design tokens
+src/animation/index.ts:9:import { SPACING, RADIUS } from "@pawfectmatch/design-tokens";
+src/animation/index.ts:25:// Backward compatibility - re-export design tokens
+src/animation/index.ts:26:// TODO: Components should import these from @pawfectmatch/design-tokens directly
+src/constants/design-tokens.ts:4: * Uses unified design tokens from @pawfectmatch/design-tokens package
+src/constants/design-tokens.ts:7:// TODO: Re-export from unified design tokens package once built
+src/constants/design-tokens.ts:8:// export { COLORS, GRADIENTS, SHADOWS, BLUR, RADIUS, SPACING, TYPOGRAPHY, TRANSITIONS, Z_INDEX, VARIANTS, utils } from '@pawfectmatch/design-tokens';
+src/stores/useUIStore.ts:2:import type { Tokens } from "@pawfectmatch/design-tokens";
+src/stores/useUIStore.ts:14:  theme: string;
+src/stores/useUIStore.ts:15:  themeMode: ThemeMode;
+src/stores/useUIStore.ts:17:  setTheme: (theme: string) => void;
+src/stores/useUIStore.ts:41:  theme: "",
+src/stores/useUIStore.ts:42:  themeMode: "light",
+src/stores/useUIStore.ts:44:  setTheme: (theme) => {
+src/stores/useUIStore.ts:45:    set({ theme });
+src/stores/useUIStore.ts:48:    set({ themeMode: mode, isDark: mode === "dark" });
+src/stores/useUIStore.ts:52:    if (state.themeMode === "system" && colorScheme) {
+src/stores/useUIStore.ts:58:      const newMode = state.themeMode === "light" ? "dark" : "light";
+src/stores/useUIStore.ts:59:      return { themeMode: newMode, isDark: newMode === "dark" };
+src/stores/useAuthStore.ts:29: * Fixes M-SEC-01: Uses expo-secure-store instead of AsyncStorage for JWT tokens
+src/stores/useAuthStore.ts:30: * Persists sensitive tokens securely and user data safely
+src/stores/useAuthStore.ts:59:      // Set tokens after successful login/registration
+src/stores/useAuthStore.ts:68:      // Clear tokens on logout
+src/hooks/__tests__/useThemeToggle.test.ts:28:  themeMode: "light" as const,
+src/hooks/__tests__/useThemeToggle.test.ts:40:jest.mock("../../theme/Provider", () => ({
+src/hooks/__tests__/useThemeToggle.test.ts:50:  it("should initialize with theme context values", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:54:    expect(result.current.themeMode).toBe("light");
+src/hooks/__tests__/useThemeToggle.test.ts:60:  it("should provide all theme control functions", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:70:  it("should toggle theme with haptic feedback", async () => {
+src/hooks/__tests__/useThemeToggle.test.ts:83:  it("should toggle theme even if haptics fail", async () => {
+src/hooks/__tests__/useThemeToggle.test.ts:97:  it("should set light theme", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:107:  it("should set dark theme", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:117:  it("should set system theme", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:127:  it("should show theme selector with current theme", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:136:      "Current theme: Light",
+src/hooks/__tests__/useThemeToggle.test.ts:150:  it("should show theme selector with dark mode UI", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:151:    // Mock the theme context to return dark theme
+src/hooks/__tests__/useThemeToggle.test.ts:152:    const mockUseTheme = require("../../theme/Provider").useTheme;
+src/hooks/__tests__/useThemeToggle.test.ts:156:      themeMode: "dark",
+src/hooks/__tests__/useThemeToggle.test.ts:167:      "Current theme: Dark",
+src/hooks/__tests__/useThemeToggle.test.ts:175:  it("should show theme selector with system theme label", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:176:    // Mock the theme context to return system theme
+src/hooks/__tests__/useThemeToggle.test.ts:177:    const mockUseTheme = require("../../theme/Provider").useTheme;
+src/hooks/__tests__/useThemeToggle.test.ts:180:      themeMode: "system",
+src/hooks/__tests__/useThemeToggle.test.ts:191:      "Current theme: System Default",
+src/hooks/__tests__/useThemeToggle.test.ts:253:  it("should expose theme colors", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:261:      .mocked(require("../../theme/Provider").useTheme)
+src/hooks/__tests__/useThemeToggle.test.ts:287:  it("should handle theme mode changes reactively", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:288:    // Mock the theme context to return dark theme
+src/hooks/__tests__/useThemeToggle.test.ts:289:    const mockUseTheme = require("../../theme/Provider").useTheme;
+src/hooks/__tests__/useThemeToggle.test.ts:292:      themeMode: "dark",
+src/hooks/__tests__/useThemeToggle.test.ts:298:    expect(result.current.themeMode).toBe("dark");
+src/hooks/__tests__/useThemeToggle.test.ts:302:  it("should expose styles from theme context", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:308:    // Mock the theme context with custom styles
+src/hooks/__tests__/useThemeToggle.test.ts:309:    const mockUseTheme = require("../../theme/Provider").useTheme;
+src/hooks/__tests__/useThemeToggle.test.ts:320:  it("should expose shadows from theme context", () => {
+src/hooks/__tests__/useThemeToggle.test.ts:326:    // Mock the theme context with custom shadows
+src/hooks/__tests__/useThemeToggle.test.ts:327:    const mockUseTheme = require("../../theme/Provider").useTheme;
+src/hooks/__tests__/integration/auth-profile.integration.test.ts:101:      JSON.stringify({ theme: "dark" }),
+src/hooks/__tests__/integration/auth-profile.integration.test.ts:224:      JSON.stringify({ theme: "dark" }),
+src/hooks/__tests__/integration/auth-profile.integration.test.ts:232:    expect(JSON.parse(storedSettings!).theme).toBe("dark");
+src/hooks/__tests__/integration/auth-profile.integration.test.ts:352:      theme: "light",
+src/hooks/utils/__tests__/usePersistedState.test.ts:26:    const initialValue = { theme: "light", language: "en" };
+src/hooks/utils/__tests__/usePersistedState.test.ts:40:    const storedValue = { theme: "dark", language: "es" };
+src/hooks/utils/__tests__/usePersistedState.test.ts:46:        initialValue: { theme: "light", language: "en" },
+src/hooks/utils/usePersistedState.ts:23: *   initialValue: { theme: 'light' }
+src/theme/tokens.ts:3: * React Native-adapted design tokens from @pawfectmatch/design-tokens
+src/theme/tokens.ts:4: * Converts web tokens to mobile-compatible format
+src/theme/tokens.ts:15:} from "@pawfectmatch/design-tokens";
+src/theme/UnifiedThemeProvider.tsx:2: * @deprecated Use theme/Provider instead
+src/theme/UnifiedThemeProvider.tsx:5: * Professional theme provider for mobile app
+src/theme/UnifiedThemeProvider.tsx:19:import { lightTheme, darkTheme, createTheme } from "./tokens";
+src/theme/UnifiedThemeProvider.tsx:26:    "[DEPRECATION] theme/Provider → use theme/Provider instead.",
+src/theme/UnifiedThemeProvider.tsx:69:  // Get current theme based on mode
+src/theme/UnifiedThemeProvider.tsx:70:  const theme = useMemo<Theme>(() => {
+src/theme/UnifiedThemeProvider.tsx:74:  // Toggle theme function
+src/theme/UnifiedThemeProvider.tsx:87:      theme,
+src/theme/UnifiedThemeProvider.tsx:93:    [theme, mode, isDark, toggleTheme],
+src/theme/UnifiedThemeProvider.tsx:114:// Main theme hook - returns the current theme
+src/theme/UnifiedThemeProvider.tsx:116:  return useThemeContext().theme;
+src/theme/UnifiedThemeProvider.tsx:127:  return useThemeContext().theme.colors;
+src/theme/UnifiedThemeProvider.tsx:132:  return useThemeContext().theme.typography;
+src/theme/UnifiedThemeProvider.tsx:137:  return useThemeContext().theme.spacing;
+src/theme/UnifiedThemeProvider.tsx:142:  return useThemeContext().theme.shadows;
+src/theme/types.ts:3: * Single source of truth for theme types across the mobile app
+src/theme/unified-theme.ts:3: * Consistent design tokens across the entire application
+src/theme/unified-theme.ts:357:// Dark theme variant
+src/theme/unified-theme.ts:382:// Export theme types
+src/theme/useTheme.ts:4:  return useThemeContext().theme;
+src/theme/rnTokens.ts:3: * Wraps @pawfectmatch/design-tokens for React Native compatibility
+src/theme/rnTokens.ts:6:import { COLORS, SPACING, RADIUS } from "@pawfectmatch/design-tokens";
+src/theme/Provider.tsx:3: * Single source of truth for theme management in the mobile app
+src/theme/index.ts:3: * Single export point for all theme-related functionality
+src/theme/index.ts:11:// Re-export the extended theme hook for convenience
+src/theme/ThemeProvider.tsx:2: * @deprecated Use theme/Provider instead
+src/theme/ThemeProvider.tsx:7:import type { Theme } from "./theme";
+src/theme/ThemeProvider.tsx:8:import { darkTheme, lightTheme, type ThemeName } from "./theme";
+src/theme/ThemeProvider.tsx:16:    "[DEPRECATION] theme/Provider → use theme/Provider instead.",
+src/theme/ThemeProvider.tsx:22:  theme: Theme;
+src/theme/ThemeProvider.tsx:50:      theme: resolvedTheme,
+src/theme/hooks.ts:3: * Convenience hooks for accessing theme properties
+src/theme/hooks.ts:20: * Returns the current theme object
+src/theme/hooks.ts:23:  return useThemeContext().theme;
+src/theme/hooks.ts:27: * Returns theme mode controls
+src/theme/hooks.ts:38:  return useThemeContext().theme.colors;
+src/theme/hooks.ts:45:  return useThemeContext().theme.typography;
+src/theme/hooks.ts:52:  return useThemeContext().theme.spacing;
+src/theme/hooks.ts:59:  return useThemeContext().theme.shadows;
+src/theme/hooks.ts:66:  return useThemeContext().theme.radii;
+src/theme/hooks.ts:73:  return useThemeContext().theme.opacity;
+src/theme/hooks.ts:80:  return useThemeContext().theme.borderWidth;
+src/theme/hooks.ts:87:  return useThemeContext().theme.iconSize;
+src/theme/hooks.ts:94:  return useThemeContext().theme.animation;
+src/theme/hooks.ts:101:  return useThemeContext().theme.zIndex;
+src/theme/hooks.ts:147: * Returns theme colors in the old format
+src/theme/hooks.ts:150:  const theme = useTheme();
+src/theme/hooks.ts:155:    colors: theme.colors,
+src/theme/hooks.ts:157:    shadows: theme.shadows,
+package.json:56:    "migrate:theme": "npx jscodeshift -t ./codemods/theme-to-unified.js src --extensions=ts,tsx --parser=tsx",
+package.json:67:    "@pawfectmatch/design-tokens": "workspace:*",
+src/theme/adapters.ts:3: * Bridges old theme API with new unified theme
+src/theme/adapters.ts:11: * Adds properties that components expect from the old theme
+src/theme/adapters.ts:63: * Adapter function to convert unified theme to extended colors
+src/theme/adapters.ts:66:export function getExtendedColors(theme: Theme): ExtendedColors {
+src/theme/adapters.ts:67:  const { colors } = theme;
+src/theme/adapters.ts:68:  const isDark = theme.scheme === "dark";
+src/theme/adapters.ts:124: * Helper to get theme colors with extensions
+src/theme/adapters.ts:125: * Usage: const extendedColors = getThemeColors(theme);
+src/theme/adapters.ts:127:export function getThemeColors(theme: Theme): ExtendedColors {
+src/theme/adapters.ts:128:  return getExtendedColors(theme);
+src/theme/adapters.ts:132: * Check if theme is dark
+src/theme/adapters.ts:133: * Usage: const isDark = getIsDark(theme);
+src/theme/adapters.ts:135:export function getIsDark(theme: Theme): boolean {
+src/theme/adapters.ts:136:  return theme.scheme === "dark";
+tsconfig.json:14:      "@pawfectmatch/design-tokens": [
+tsconfig.json:15:        "../../packages/design-tokens/src/index.ts"
+tsconfig.json:17:      "@pawfectmatch/design-tokens/*": [
+tsconfig.json:18:        "../../packages/design-tokens/src/*"
+scripts/assert-consistency.ts:6: * Fails build on any violations of the new unified theme/animation/component structure
+scripts/assert-consistency.ts:15:  "theme/UnifiedThemeProvider",
+scripts/assert-consistency.ts:16:  "theme/ThemeProvider.tsx",
+scripts/assert-consistency.ts:17:  "constants/design-tokens",
+src/App.tsx:8:import { ThemeProvider } from "./theme/Provider";
+src/index.ts:2:export { ThemeProvider } from "./theme/Provider";
+src/index.ts:3:export { useTheme } from "./theme/useTheme";
+src/index.ts:4:export * from "./theme/theme";
+src/screens/MemoryWeaveScreen.tsx:19:import { useTheme } from "../theme/Provider";
+src/screens/MemoryWeaveScreen.tsx:22:import { Theme } from '../theme/unified-theme';
+src/screens/MapScreen.tsx:23:import { Theme } from '../theme/unified-theme';
+docs/testing-strategy.md:45:│   ├── theme-integration.test.js
+docs/theme-consolidation.md:6:- **Single source of truth**: All theme/tokens/animation constants come from one place
+docs/theme-consolidation.md:7:- **RN-safe tokens**: Proper adaptation of design tokens for React Native
+docs/theme-consolidation.md:8:- **Fewer bugs**: No conflicting theme definitions
+docs/theme-consolidation.md:16:import { useTheme } from "theme";
+docs/theme-consolidation.md:18:import { ThemeProvider } from "theme";
+docs/theme-consolidation.md:57:- `contexts/ThemeContext` → use `theme/Provider`
+docs/theme-consolidation.md:58:- `constants/design-tokens` → use `@pawfectmatch/design-tokens`
+docs/theme-consolidation.md:59:- `styles/EnhancedDesignTokens` → use `theme/Provider`
+docs/theme-consolidation.md:65:1. **Run codemods**: `pnpm migrate:theme && pnpm migrate:animation`
+docs/theme-consolidation.md:68:4. **Update components** to use new theme/animation APIs
+src/__tests__/performance/PhoenixCard.performance.test.tsx:10:import { Theme } from '../theme/unified-theme';
+src/__tests__/performance/PhoenixCard.performance.test.tsx:26:// Mock theme
+src/__tests__/performance/PhoenixCard.performance.test.tsx:27:jest.mock("../../theme/Provider", () => ({
+src/screens/premium/SubscriptionSuccessScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+docs/type-fix-guide.md:12:The codemods successfully changed **import paths** but components still use the **old API** (`colors.gray500`, `theme.isDark`, etc.) which doesn't exist in the new `Theme` type.
+docs/type-fix-guide.md:18:**File**: `apps/mobile/src/theme/types.ts`
+docs/type-fix-guide.md:40:import { useTheme as useUnifiedTheme } from "../theme";
+docs/type-fix-guide.md:41:import { getExtendedColors, getIsDark } from "../theme/adapters";
+docs/type-fix-guide.md:44:  const theme = useUnifiedTheme();
+docs/type-fix-guide.md:45:  const extendedColors = getExtendedColors(theme);
+docs/type-fix-guide.md:48:    ...theme,
+docs/type-fix-guide.md:50:    isDark: getIsDark(theme),
+docs/type-fix-guide.md:59:### 1. Components trying to import from `animation` that don't export design tokens
+docs/type-fix-guide.md:61:**Fix**: Import from `@pawfectmatch/design-tokens` instead
+docs/type-fix-guide.md:68:import { SPACING, RADIUS, COLORS } from "@pawfectmatch/design-tokens";
+docs/type-fix-guide.md:71:### 2. Components using `theme.isDark`
+docs/type-fix-guide.md:73:**Fix**: Use `theme.scheme === 'dark'` or import `getIsDark` helper
+docs/type-fix-guide.md:80:import { getIsDark } from "../../theme/Provider";
+docs/type-fix-guide.md:81:const theme = useTheme();
+docs/type-fix-guide.md:82:const isDark = getIsDark(theme);
+docs/type-fix-guide.md:88:### 3. Components using colors like `theme.colors.gray500`
+docs/type-fix-guide.md:98:import { getExtendedColors } from "../../theme/Provider";
+docs/type-fix-guide.md:99:const theme = useTheme();
+docs/type-fix-guide.md:100:const colors = getExtendedColors(theme);
+docs/type-fix-guide.md:110:   - Fix: Import from `@pawfectmatch/design-tokens` or `theme/Provider`
+docs/type-fix-guide.md:112:2. **Fix isDark usage** - Components using `theme.isDark`
+docs/type-fix-guide.md:114:   - Fix: Use `getIsDark(theme)` helper
+docs/type-fix-guide.md:120:   - Fix: Use `getExtendedColors(theme)` helper
+docs/type-fix-guide.md:130:Create `scripts/fix-theme-usage.sh`:
+docs/type-fix-guide.md:134:# Fix common theme API usage issues
+docs/type-fix-guide.md:136:# Replace theme.isDark with getIsDark(theme)
+docs/type-fix-guide.md:137:find src -name "*.tsx" -o -name "*.ts" | xargs sed -i 's/const { isDark } = useTheme();/const theme = useTheme(); const isDark = getIsDark(theme);/g'
+docs/type-fix-guide.md:145:1. `src/components/ErrorFallback.tsx` - Uses `theme.isDark`
+src/__tests__/phoenix/PhoenixCard.test.tsx:36:// Mock theme context
+src/__tests__/phoenix/PhoenixCard.test.tsx:37:jest.mock("../../theme/Provider", () => ({
+src/__tests__/phoenix/PhoenixCard.test.tsx:95:import { Theme } from '../theme/unified-theme';
+src/__tests__/phoenix/PhoenixCard.test.tsx:252:    it("should use theme colors correctly", () => {
+src/screens/premium/PremiumScreen.tsx:13:import { Theme } from '../theme/unified-theme';
+src/contexts/__tests__/ThemeContext.test.tsx:7:// Test component that uses the theme
+src/contexts/__tests__/ThemeContext.test.tsx:10:  return <Text testID="theme-test">{isDark ? "dark" : "light"}</Text>;
+src/contexts/__tests__/ThemeContext.test.tsx:14:  it("provides theme context to children", () => {
+src/contexts/__tests__/ThemeContext.test.tsx:21:    const testElement = getByTestId("theme-test");
+src/contexts/__tests__/ThemeContext.test.tsx:25:  it("defaults to light theme", () => {
+src/contexts/__tests__/ThemeContext.test.tsx:32:    const testElement = getByTestId("theme-test");
+src/screens/premium/SubscriptionManagerScreen.tsx:20:import { Theme } from '../theme/unified-theme';
+src/contexts/ThemeContext.tsx:2: * @deprecated Use theme/Provider instead
+src/contexts/ThemeContext.tsx:6:export { ThemeProvider, useTheme } from "../theme/Provider";
+src/contexts/ThemeContext.tsx:12:    "[DEPRECATION] theme/Provider → use theme/Provider instead.",
+src/contexts/ThemeContext.tsx:71:  themeMode: "light" | "dark" | "system";
+src/__tests__/components/SwipeCard.test.tsx:4:import { ThemeContext } from "../../theme/Provider";
+src/__tests__/components/SwipeCard.test.tsx:5:import { Theme } from '../theme/unified-theme';
+src/__tests__/components/SwipeCard.test.tsx:25:// Mock theme context
+plan1.md:18:* **Enforced design tokens** across mobile UI
+plan1.md:207:* Replace magic numbers with tokens from `packages/design-tokens`.
+plan1.md:270:* Pure presentational subcomponents; tokenized styles only from `@packages/design-tokens`
+plan1.md:311:### 3.2 Shared Packages (`core`, `ui`, `ai`, `design-tokens`)
+plan1.md:324:* Variant system: sizes, colors, states from `design-tokens`
+plan1.md:335:**`@packages/design-tokens`:**
+plan1.md:340:* Version tokens; breaking changes require ADR
+plan1.md:458:**Goal:** Lock design tokens as single source of truth; eliminate hardcoded values
+plan1.md:459:**Deliverables:** `@packages/design-tokens` finalized, ESLint rule for token enforcement, Storybook with all primitives
+plan1.md:476:* Elevation scale: shadow tokens (none, sm, md, lg, xl)
+plan1.md:477:* All styling backed by `@packages/design-tokens`
+plan1.md:502:* Establish **Motion System** with tokens (durations, easings, distances) in `@packages/motion-system`
+plan1.md:597:* `docs/ui/motion-guidelines.md` (tokens, do/don’t, a11y rules, examples).
+plan1.md:624:* **Auth tokens**: `react-native-keychain` (iOS Keychain, Android Keystore) - NOT AsyncStorage
+plan1.md:760:* **`docs/ui-unification.md`**: design tokens, primitives, motion system, component library
+plan1.md:770:* **`003-state-management-standardization.md`**: Zustand for global, TanStack Query for server, Context for theme
+plan1.md:771:* **`004-ui-system-architecture.md`**: Design tokens, primitive library, Storybook, accessibility
+plan1.md:775:* **`008-advanced-motion-and-components.md`**: Reanimated 3, motion tokens, 60fps budgets, accessibility
+plan1.md:875:* **Secure storage**: auth tokens in Keychain/Keystore, not AsyncStorage
+plan1.md:982:* **Phase 3** (Web + Server): Apply same standards to Next.js web app + shared packages (`core`, `ui`, `design-tokens`). **Convert server from JS→TS** (57+ files): models, controllers, routes, services. Export API contracts to `/contracts/`.
+plan1.md:983:* **Phase 4** (Tokens): Lock design tokens; build primitive library; ESLint rule to ban hardcoded colors.
+plan1.md:1469:* **Session storage**: user sessions, auth tokens (30-day TTL)
+plan1.md:1635:* **JWT rotation**: refresh tokens every 7 days
+plan1.md:1636:* **Token revocation**: blacklist compromised tokens in Redis
+src/screens/SettingsScreen.tsx:18:import { Theme } from '../theme/unified-theme';
+src/screens/BlockedUsersScreen.tsx:17:import { useTheme } from "../theme/Provider";
+src/screens/BlockedUsersScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/screens/calling/__tests__/IncomingCallScreen.test.tsx:47:import { Theme } from '../theme/unified-theme';
+src/screens/ChatScreen.tsx:27:import { useTheme } from "../theme/Provider";
+src/screens/ChatScreen.tsx:28:import { tokens } from "@pawfectmatch/design-tokens";
+src/screens/ProfileScreen.tsx:18:import { Theme } from '../theme/unified-theme';
+src/screens/calling/IncomingCallScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/services/observability.ts:373:      // Remove passwords, tokens, etc.
+src/screens/AboutTermsPrivacyScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/screens/calling/ActiveCallScreen.tsx:18:import { Theme } from '../theme/unified-theme';
+src/screens/PremiumSuccessScreen.tsx:13:import { useTheme } from "../theme/Provider";
+src/screens/PremiumSuccessScreen.tsx:15:import { Theme } from '../theme/unified-theme';
+src/screens/ModernSwipeScreen.tsx:34:import { useTheme } from "../theme/Provider";
+src/screens/PrivacySettingsScreen.tsx:20:import { useTheme } from "../theme/Provider";
+src/screens/PrivacySettingsScreen.tsx:24:import { Theme } from '../theme/unified-theme';
+src/screens/AIBioScreen.tsx:15:import { Theme } from '../theme/unified-theme';
+src/screens/HomeScreen.tsx:39:import { Theme } from '../theme/unified-theme';
+src/screens/AIBioScreen.refactored.tsx:16:import { Theme } from "../theme/unified-theme";
+src/screens/ManageSubscriptionScreen.tsx:16:import { useTheme } from "../theme/Provider";
+src/screens/ManageSubscriptionScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/hooks/screens/__tests__/useWelcomeScreen.test.ts:17:// Mock theme context
+src/hooks/screens/__tests__/useWelcomeScreen.test.ts:28:jest.mock("../../../theme/Provider", () => ({
+src/hooks/screens/__tests__/useWelcomeScreen.test.ts:60:  it("should initialize with theme data", () => {
+src/hooks/screens/__tests__/useWelcomeScreen.test.ts:124:  it("should expose theme information", () => {
+src/screens/SafetyCenterScreen.tsx:14:import { Theme } from '../theme/unified-theme';
+src/hooks/screens/useSafetyCenterScreen.ts:6:import { useTheme } from "../../theme/Provider";
+src/screens/StoriesScreen.tsx:35:import { Theme } from '../theme/unified-theme';
+src/screens/ARScentTrailsScreen.tsx:17:import { Theme } from '../theme/unified-theme';
+src/screens/ModerationToolsScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/screens/onboarding/PreferencesSetupScreen.tsx:22:import { Theme } from '../theme/unified-theme';
+src/screens/SwipeScreen.tsx:22:import { Theme } from '../theme/unified-theme';
+src/hooks/domains/settings/__tests__/useSettingsPersistence.test.ts:37:    const storedSettings = { theme: "dark", notifications: true };
+src/hooks/domains/settings/__tests__/useSettingsPersistence.test.ts:51:    const initialData = { theme: "light", language: "en" };
+src/hooks/domains/settings/__tests__/useSettingsPersistence.test.ts:150:        theme: "dark",
+src/hooks/screens/useWelcomeScreen.ts:3: * Manages Welcome screen with navigation and theme integration
+src/hooks/screens/useWelcomeScreen.ts:6:import { useTheme } from "../../theme/Provider";
+src/screens/onboarding/WelcomeScreen.tsx:24:import { useTheme } from "../../theme/Provider";
+src/screens/onboarding/WelcomeScreen.tsx:31:import { lightTheme } from "../../theme/tokens";
+src/screens/EditProfileScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/screens/onboarding/PetProfileSetupScreen.tsx:64:import { Theme } from '../theme/unified-theme';
+src/screens/NotificationPreferencesScreen.tsx:16:import { useTheme } from "../theme/Provider";
+src/screens/NotificationPreferencesScreen.tsx:17:import { Theme } from '../theme/unified-theme';
+src/hooks/screens/useMemoryWeaveScreen.ts:9:import { useTheme } from "../../theme/Provider";
+src/screens/onboarding/UserIntentScreen.tsx:27:import { Theme } from '../theme/unified-theme';
+src/screens/AICompatibilityScreen.tsx:16:import { useTheme } from "../theme/Provider";
+src/screens/AICompatibilityScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/screens/MatchesScreen.tsx:13:import { Theme } from '../theme/unified-theme';
+src/screens/ForgotPasswordScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/screens/ComponentTestScreen.tsx:14:import { Theme } from "../theme/Provider";
+src/hooks/useThemeToggle.ts:6:import { useTheme } from "../theme/Provider";
+src/hooks/useThemeToggle.ts:7:import type { ThemeColors } from "../theme/Provider";
+src/hooks/useThemeToggle.ts:11:  themeMode: ThemeMode;
+src/hooks/useThemeToggle.ts:25:    themeMode,
+src/hooks/useThemeToggle.ts:45:  // Set specific theme modes
+src/hooks/useThemeToggle.ts:58:  // Show theme selection modal
+src/hooks/useThemeToggle.ts:64:    }[themeMode];
+src/hooks/useThemeToggle.ts:68:      `Current theme: ${currentThemeLabel}`,
+src/hooks/useThemeToggle.ts:73:          style: themeMode === "light" ? "default" : "default",
+src/hooks/useThemeToggle.ts:78:          style: themeMode === "dark" ? "default" : "default",
+src/hooks/useThemeToggle.ts:83:          style: themeMode === "system" ? "default" : "default",
+src/hooks/useThemeToggle.ts:95:  }, [themeMode, isDark, setLightTheme, setDarkTheme, setSystemTheme]);
+src/hooks/useThemeToggle.ts:99:    themeMode,
+src/services/AuthService.ts:197:      // Call refresh endpoint to get new tokens
+src/services/AuthService.ts:203:      // Store new tokens
+src/services/AuthService.ts:489:      // Store new tokens
+src/services/AuthService.ts:494:      // Clear invalid tokens
+src/screens/__tests__/ChatScreen.theme.test.tsx:4:import { ThemeProvider } from "../../theme/Provider";
+src/screens/__tests__/ChatScreen.theme.test.tsx:40:  it("renders without crashing with theme provider", () => {
+src/screens/__tests__/ChatScreen.theme.test.tsx:50:  it("applies theme colors correctly", () => {
+src/screens/__tests__/ChatScreen.theme.test.tsx:58:    // This tests that theme colors are properly applied
+src/screens/leaderboard/LeaderboardScreen.tsx:29:import { Theme } from '../theme/unified-theme';
+src/styles/EnhancedDesignTokens.tsx:3: * Provides React Native compatible design tokens and utilities
+src/styles/EnhancedDesignTokens.tsx:17:// Import base tokens from design-tokens package (React Native optimized)
+src/styles/EnhancedDesignTokens.tsx:19:import { Theme } from '../theme/unified-theme';
+src/styles/EnhancedDesignTokens.tsx:29:} from "@pawfectmatch/design-tokens";
+src/styles/GlobalStyles.ts:7:} from "@pawfectmatch/design-tokens";
+src/styles/GlobalStyles.ts:66:  // Background Gradients (using design tokens)
+src/screens/admin/AdminAnalyticsScreen.tsx:22:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminAnalyticsScreen.tsx:25:import { Theme } from '../theme/unified-theme';
+src/hooks/useExtendedTheme.ts:16:import { useTheme } from "../theme/Provider";
+src/hooks/useExtendedTheme.ts:17:import { getExtendedColors, getIsDark } from "../theme/adapters";
+src/hooks/useExtendedTheme.ts:18:import type { Theme } from "../theme/types";
+src/hooks/useExtendedTheme.ts:19:import type { ExtendedColors } from "../theme/adapters";
+src/hooks/useExtendedTheme.ts:27: * Hook that returns the theme with extended color palette
+src/hooks/useExtendedTheme.ts:31:  const theme = useTheme();
+src/hooks/useExtendedTheme.ts:34:    ...theme,
+src/hooks/useExtendedTheme.ts:35:    colors: getExtendedColors(theme),
+src/hooks/useExtendedTheme.ts:36:    isDark: getIsDark(theme),
+src/hooks/useExtendedTheme.ts:44:  const theme = useTheme();
+src/hooks/useExtendedTheme.ts:45:  return getExtendedColors(theme);
+TESTING_COMPLETE_REPORT.md:85:   - Reactive theme changes
+src/screens/admin/AdminUsersScreen.tsx:18:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminUsersScreen.tsx:21:import { Theme } from '../theme/unified-theme';
+tsconfig.eslint.json:18:      "@pawfectmatch/design-tokens": [
+tsconfig.eslint.json:19:        "../../packages/design-tokens/src/index.ts"
+tsconfig.eslint.json:21:      "@pawfectmatch/design-tokens/*": [
+tsconfig.eslint.json:22:        "../../packages/design-tokens/src/*"
+src/screens/AdvancedFiltersScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/screens/DeactivateAccountScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/screens/admin/AdminDashboardScreen.tsx:22:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminDashboardScreen.tsx:25:import { Theme } from '../theme/unified-theme';
+src/screens/RegisterScreen.tsx:15:import { Theme } from '../theme/unified-theme';
+src/screens/ResetPasswordScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/screens/LoginScreen.tsx:17:import { Theme } from '../theme/unified-theme';
+src/screens/admin/AdminChatsScreen.tsx:20:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminChatsScreen.tsx:23:import { Theme } from '../theme/unified-theme';
+src/screens/admin/AdminBillingScreen.tsx:21:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminBillingScreen.tsx:24:import { Theme } from '../theme/unified-theme';
+src/screens/admin/AdminUploadsScreen.tsx:22:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminUploadsScreen.tsx:25:import { Theme } from '../theme/unified-theme';
+src/navigation/types.ts:298:  theme?: unknown;
+src/navigation/types.ts:566:  theme: NavigationTheme;
+src/navigation/types.ts:581:  theme: NavigationTheme;
+src/screens/admin/AdminSecurityScreen.tsx:22:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminSecurityScreen.tsx:25:import { Theme } from '../theme/unified-theme';
+src/screens/admin/AdminVerificationsScreen.tsx:20:import { useTheme } from "../../theme/Provider";
+src/screens/admin/AdminVerificationsScreen.tsx:23:import { Theme } from '../theme/unified-theme';
+src/screens/adoption/CreateListingScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/components/Footer.tsx:16:import { useTheme } from "../theme/Provider";
+src/navigation/AdminNavigator.tsx:20:import { Theme } from '../theme/unified-theme';
+src/screens/adoption/AdoptionContractScreen.tsx:15:import { Theme } from '../theme/unified-theme';
+src/screens/PremiumDemoScreen.tsx:30:import { Theme } from '../theme/unified-theme';
+src/screens/PremiumDemoScreen.tsx:40:// Define fallback design tokens
+src/screens/adoption/AdoptionApplicationScreen.tsx:16:import { Theme } from '../theme/unified-theme';
+src/components/feedback/Toast.tsx:10:import { Theme } from '../theme/unified-theme';
+src/screens/PremiumCancelScreen.tsx:13:import { useTheme } from "../theme/Provider";
+src/screens/PremiumCancelScreen.tsx:15:import { Theme } from '../theme/unified-theme';
+src/screens/adoption/ApplicationReviewScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/screens/PremiumScreen.tsx:15:import { useTheme } from "../theme/Provider";
+src/screens/PremiumScreen.tsx:18:import { Theme } from '../theme/unified-theme';
+src/screens/adoption/PetDetailsScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/screens/adoption/AdoptionManagerScreen.tsx:39:import { Theme } from '../theme/unified-theme';
+src/components/OptimizedImage.tsx:20:import { useTheme } from "../theme/Provider";
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:23:import { useTheme } from "../../theme/Provider";
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:27:import { Theme } from '../theme/unified-theme';
+src/components/typography/ModernTypography.tsx:4: * Unified typography components that consume design tokens from the theme system.
+src/components/typography/ModernTypography.tsx:22:import { Theme } from "../../theme/unified-theme";
+src/components/ui/Spacer.tsx:3:import { useTheme } from "../../theme/useTheme";
+src/components/ui/Spacer.tsx:4:import type { SpacingScale } from "../../theme/theme";
+src/components/ui/PetCard.tsx:3:import { useTheme } from "../../theme/useTheme";
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:19:import { Theme } from '../theme/unified-theme';
+src/components/phoenix/PhoenixCard.tsx:35:import { useTheme } from "../../theme/Provider";
+src/screens/settings/NotificationSettingsSection.tsx:9:import { Theme } from '../theme/unified-theme';
+src/components/ui/Card.tsx:3:import { useTheme } from "../../theme/useTheme";
+src/components/ui/Card.tsx:4:import type { ShadowScale, SpacingScale } from "../../theme/theme";
+src/components/ui/Text.tsx:7:import { useTheme } from "../../theme/useTheme";
+src/components/ui/Text.tsx:8:import type { ColorPalette, TypographyScale } from "../../theme/theme";
+src/screens/settings/DangerZoneSection.tsx:9:import { Theme } from '../theme/unified-theme';
+src/screens/ai/AICompatibilityScreen.tsx:22:import { useTheme } from "../../theme/Provider";
+src/screens/ai/AICompatibilityScreen.tsx:26:import { Theme } from '../theme/unified-theme';
+src/components/Premium/PremiumGate.tsx:21:import { useTheme } from "../../theme/Provider";
+src/components/Premium/PremiumGate.tsx:22:import { Theme } from '../theme/unified-theme';
+src/screens/settings/AccountSettingsSection.tsx:9:import { Theme } from '../theme/unified-theme';
+src/components/ui/Button.tsx:3:import { useTheme } from "../../theme/useTheme";
+src/components/ui/Button.tsx:4:import type { ColorPalette } from "../../theme/theme";
+src/components/index.ts:11:export { default as Theme } from "../theme/unified-theme";
+src/components/index.ts:12:export type { ThemeType } from "../theme/unified-theme";
+src/screens/CommunityScreen.tsx:31:import { useTheme } from "../theme/Provider";
+src/screens/CommunityScreen.tsx:34:import { Theme } from '../theme/unified-theme';
+src/components/Premium/PremiumButton.tsx:15:import { Theme } from '../theme/unified-theme';
+src/screens/settings/ProfileSummarySection.tsx:11:import { Theme } from '../theme/unified-theme';
+src/components/ui/Input.tsx:3:import { useTheme } from "../../theme/useTheme";
+src/screens/AIPhotoAnalyzerScreen.tsx:16:import { useTheme } from "../theme/Provider";
+src/screens/AIPhotoAnalyzerScreen.tsx:19:import { Theme } from '../theme/unified-theme';
+src/screens/CreatePetScreen.tsx:22:import { Theme } from '../theme/unified-theme';
+src/screens/MigrationExampleScreen.tsx:17:import { Theme } from '../theme/unified-theme';
+src/components/Premium/__tests__/PremiumButton.test.tsx:5:import {} from "../../../theme/Provider";
+src/components/Premium/__tests__/PremiumButton.test.tsx:7:import { Theme } from '../theme/unified-theme';
+src/components/Premium/__tests__/PremiumButton.test.tsx:10:jest.mock("../../../theme/Provider");
+src/components/Premium/__tests__/PremiumButton.test.tsx:27:    // Mock theme context
+src/components/Premium/__tests__/PremiumButton.test.tsx:75:  it("renders with gradient style in light theme", () => {
+src/components/Premium/__tests__/PremiumButton.test.tsx:85:  it("renders with dark theme style", () => {
+src/components/Premium/__tests__/PremiumButton.test.tsx:86:    // Mock dark theme
+src/components/Premium/__tests__/PremiumButton.test.tsx:101:    // Should have dark theme style
+src/components/LazyScreen.tsx:9:import { useTheme } from "../theme/Provider";
+src/components/Advanced/AdvancedInteractionTest.tsx:26:import { Theme } from '../theme/unified-theme';
+src/components/shortcuts/SiriShortcuts.tsx:5:import { Theme } from '../theme/unified-theme';
+src/components/ErrorBoundary.tsx:7:import { Theme } from '../theme/unified-theme';
+src/components/Premium/__tests__/PremiumCard.test.tsx:5:import {} from "../../../theme/Provider";
+src/components/Premium/__tests__/PremiumCard.test.tsx:7:import { Theme } from '../theme/unified-theme';
+src/components/Premium/__tests__/PremiumCard.test.tsx:10:jest.mock("../../../theme/Provider");
+src/components/Premium/__tests__/PremiumCard.test.tsx:40:    // Mock theme context
+src/components/Premium/__tests__/PremiumCard.test.tsx:102:  it("renders with dark theme style", () => {
+src/components/Premium/__tests__/PremiumCard.test.tsx:103:    // Mock dark theme
+src/components/Premium/__tests__/PremiumCard.test.tsx:120:    // Should have dark theme style
+src/components/ModernSwipeCard.tsx:39:import { Theme } from "../theme/unified-theme";
+src/components/ModernSwipeCard.tsx:40:import { useTheme } from "../theme/Provider";
+src/components/shortcuts/QuickActions.tsx:4:import { Theme } from '../theme/unified-theme';
+src/components/PerformanceTestSuite.tsx:19:import { Theme } from "../theme/unified-theme";
+src/components/Advanced/AdvancedInteractionSystem.tsx:14:import { Theme } from '../theme/unified-theme';
+src/components/Premium/__tests__/PremiumGate.test.tsx:6:import {} from "../../../theme/Provider";
+src/components/Premium/__tests__/PremiumGate.test.tsx:7:import { Theme } from '../theme/unified-theme';
+src/components/Premium/__tests__/PremiumGate.test.tsx:11:jest.mock("../../../theme/Provider");
+src/components/Premium/__tests__/PremiumGate.test.tsx:21:    // Mock theme context
+src/components/Premium/__tests__/PremiumGate.test.tsx:158:  it("renders with dark theme style", () => {
+src/components/Premium/__tests__/PremiumGate.test.tsx:159:    // Mock dark theme
+src/components/Premium/__tests__/PremiumGate.test.tsx:193:    // Should have dark theme style
+src/components/Premium/PremiumCard.tsx:13:import { Theme } from '../theme/unified-theme';
+src/components/admin/AdminUserListItem.tsx:10:import type { ThemeColors } from "../../theme/Provider";
+src/components/admin/AdminUserListItem.tsx:12:import { Theme } from '../theme/unified-theme';
+src/components/containers/FXContainer.tsx:31:import { Theme } from "../../theme/unified-theme";
+src/components/PawPullToRefresh.tsx:14:import { useTheme } from "../theme/Provider";
+src/components/PawPullToRefresh.tsx:15:import { Theme } from '../theme/unified-theme';
+src/components/ThemeToggle.tsx:29:  const { isDark, themeMode, colors, styles, toggleTheme, showThemeSelector } =
+src/components/ThemeToggle.tsx:73:          themeStyles.iconContainer,
+src/components/ThemeToggle.tsx:90:              themeStyles.label,
+src/components/ThemeToggle.tsx:106:          themeStyles.buttonContainer,
+src/components/ThemeToggle.tsx:112:        <View style={themeStyles.buttonContent}>
+src/components/ThemeToggle.tsx:120:              themeStyles.buttonText,
+src/components/ThemeToggle.tsx:132:    const themeLabels = {
+src/components/ThemeToggle.tsx:142:          themeStyles.selectorContainer,
+src/components/ThemeToggle.tsx:152:        <View style={themeStyles.selectorContent}>
+src/components/ThemeToggle.tsx:153:          <View style={themeStyles.selectorLeft}>
+src/components/ThemeToggle.tsx:156:                themeMode === "system"
+src/components/ThemeToggle.tsx:167:                themeStyles.selectorText,
+src/components/ThemeToggle.tsx:171:              Theme: {themeLabels[themeMode]}
+src/components/ThemeToggle.tsx:183:const themeStyles = StyleSheet.create({
+src/utils/security.ts:224:  private tokens = new Map<string, { token: string; expires: number }>();
+src/utils/security.ts:242:    this.tokens.set(sessionId, {
+src/utils/security.ts:254:    const record = this.tokens.get(sessionId);
+src/utils/security.ts:270:   * Clean up expired tokens
+src/utils/security.ts:274:    for (const [sessionId, record] of this.tokens.entries()) {
+src/utils/security.ts:276:        this.tokens.delete(sessionId);
+src/components/AnimatedSplash.tsx:13:import { Theme } from '../theme/unified-theme';
+src/components/Advanced/Card/CardBackground.tsx:11:import { Theme } from '../theme/unified-theme';
+src/components/Advanced/Card/CardVariants.tsx:7:import { Theme } from '../theme/unified-theme';
+src/components/auth/BiometricSetup.tsx:21:import { Theme } from '../theme/unified-theme';
+src/components/SwipeFilters.tsx:11:import { useTheme } from "../theme/Provider";
+src/components/matches/ErrorState.tsx:3:import { Theme } from '../theme/unified-theme';
+src/utils/secureStorage.ts:8: * Uses expo-secure-store instead of AsyncStorage for sensitive data like JWT tokens
+src/utils/secureStorage.ts:59: * Used for preferences, theme settings, etc.
+src/components/Advanced/AdvancedHeader.tsx:29:import { Theme } from '../theme/unified-theme';
+src/components/matches/MatchCard.tsx:16:import { Theme } from '../theme/unified-theme';
+src/components/SwipeCard.tsx:32:import { useTheme } from "../theme/Provider";
+src/components/SwipeCard.tsx:33:import { Theme } from '../theme/unified-theme';
+src/components/Advanced/AdvancedCard.tsx:32:import { Theme } from '../theme/unified-theme';
+src/components/matches/EmptyState.tsx:3:import { Theme } from '../theme/unified-theme';
+src/components/matches/MatchesTabs.tsx:5:import { Theme } from '../theme/unified-theme';
+src/components/NewComponents.tsx:9:export { default as Theme } from "../theme/unified-theme";
+src/components/NewComponents.tsx:10:export type { ThemeType } from "../theme/unified-theme";
+src/components/library/cards/MemoryCard.tsx:8:import { Theme } from "../../../theme/unified-theme";
+src/components/InteractiveButton.tsx:19:import { Theme } from '../theme/unified-theme';
+src/components/InteractiveButton.tsx:29:// } from '../theme/Provider'; // === PROJECT HYPERION: INTERACTIVE BUTTON COMPONENT ===
+src/components/InteractiveButton.tsx:133:        // Shadow effect removed - using theme shadows instead
+src/components/filters/AdvancedPetFilters.tsx:16:import { Theme } from '../theme/unified-theme';
+src/components/EnhancedTabBar.tsx:6:import { Theme } from '../theme/unified-theme';
+src/components/library/README.md:169:    backgroundColor: theme.colors.primary[50],
+src/components/library/README.md:170:    borderRadius: theme.borderRadius.lg,
+src/components/PremiumTypography.tsx:23:import { Theme } from '../theme/unified-theme';
+src/components/library/navigation/ConnectionPath.tsx:5:import { Theme } from "../../../theme/unified-theme";
+src/components/ai/PetInfoForm.tsx:12:import { Theme } from "../../theme/unified-theme";
+src/components/ai/__tests__/ai-components.test.tsx:15:import { Theme } from '../theme/unified-theme';
+src/components/ai/__tests__/ai-components.test.tsx:37:// Mock theme
+src/components/ai/__tests__/ai-components.test.tsx:38:jest.mock("../../theme/unified-theme", () => ({
+src/components/ai/BioResults.tsx:19:import { Theme } from "../../theme/unified-theme";
+src/components/ai/ToneSelector.tsx:10:import { Theme } from "../../theme/unified-theme";
+src/components/swipe/MatchModal.tsx:10:import { Theme } from '../theme/unified-theme';
+src/components/GlowShadowSystem.tsx:14:import { Theme } from '../theme/unified-theme';
+src/components/swipe/SwipeActions.tsx:5:import { Theme } from '../theme/unified-theme';
+src/components/AnimatedButton.tsx:23:import { Theme } from '../theme/unified-theme';
+src/components/ModernPhotoUpload.tsx:28:import { Theme } from "../theme/unified-theme";
+src/components/swipe/SwipeCard.tsx:18:import { tokens } from "@pawfectmatch/design-tokens";
+src/components/swipe/SwipeCard.tsx:19:import { Theme } from '../theme/unified-theme';
+src/components/ImmersiveCard.tsx:20:} from "../theme/Provider";
+src/components/swipe/EmptyState.tsx:8:import { Theme } from '../theme/unified-theme';
+src/components/widgets/SwipeWidget.tsx:4:import { Theme } from '../theme/unified-theme';
+src/components/widgets/MatchWidget.tsx:3:import { Theme } from '../theme/unified-theme';
+src/components/help/HelpOptionCard.tsx:8:import { Theme } from '../theme/unified-theme';
+src/components/widgets/EventWidget.tsx:4:import { Theme } from '../theme/unified-theme';
+src/components/elite/cards/EliteCard.tsx:30:import { Theme } from '../theme/unified-theme';
+src/components/chat/MessageItem.tsx:6:import { useTheme } from "../../theme/Provider";
+src/components/chat/MessageItem.tsx:10:import { tokens } from "@pawfectmatch/design-tokens";
+src/components/chat/MessageItem.tsx:11:import { Theme } from '../theme/unified-theme';
+src/components/help/HelpContactCard.tsx:5:import { Theme } from '../theme/unified-theme';
+src/components/chat/QuickReplies.tsx:5:import { Theme } from '../theme/unified-theme';
+src/components/chat/EnhancedMessageBubble.tsx:22:import { useTheme } from "../../theme/Provider";
+src/components/chat/EnhancedMessageBubble.tsx:23:import { Theme } from '../theme/unified-theme';
+src/components/PhotoUploadComponent.tsx:13:import { Theme } from '../theme/unified-theme';
+src/components/chat/MessageInput.tsx:9:import { tokens } from "@pawfectmatch/design-tokens";
+src/components/chat/MessageInput.tsx:10:import { useTheme } from "../../theme/Provider";
+src/components/chat/MessageInput.tsx:13:import { Theme } from '../theme/unified-theme';
+src/components/chat/MessageInput.tsx:395:    // Warning styles handled by theme colors
+src/components/chat/MobileVoiceRecorder.tsx:5:import { useTheme } from "../../theme/Provider";
+src/components/chat/MobileVoiceRecorder.tsx:6:import { Theme } from '../theme/unified-theme';
+src/components/Gestures/PinchZoom.tsx:21:import { Theme } from '../theme/unified-theme';
+src/components/HolographicEffects.tsx:16:import { Theme } from '../theme/unified-theme';
+src/components/chat/MessageBubble.tsx:5:import { useTheme } from "../../theme/Provider";
+src/components/chat/MessageBubble.tsx:6:import { Theme } from '../theme/unified-theme';
+src/components/elite/containers/EliteContainer.tsx:6:import { useTheme } from "../../../theme/Provider";
+src/components/premium-demo/ButtonDemo.tsx:8:// Design tokens
+src/components/layout/Screen.tsx:4:import { useTheme } from "../../theme/useTheme";
+src/components/chat/VoiceRecorder.tsx:11:import { Theme } from '../theme/unified-theme';
+src/components/premium-demo/CardDemo.tsx:8:// Design tokens
+src/components/chat/MobileChat.tsx:12:import { useTheme } from "../../theme/Provider";
+src/components/chat/AttachmentPreview.tsx:16:import { useTheme } from "../../theme/Provider";
+src/components/chat/AttachmentPreview.tsx:17:import { Theme } from '../theme/unified-theme';
+src/components/chat/TypingIndicator.tsx:5:import { useTheme } from "../../theme/Provider";
+src/components/chat/TypingIndicator.tsx:6:import { Theme } from '../theme/unified-theme';
+src/components/chat/ReactionPicker.tsx:17:import { useTheme } from "../../theme/Provider";
+src/components/chat/ReactionPicker.tsx:18:import { Theme } from '../theme/unified-theme';
+src/components/premium-demo/GlassDemo.tsx:9:// Design tokens
+src/components/premium-demo/AnimationDemo.tsx:12:// Design tokens
+src/components/MotionPrimitives.tsx:5:import { Theme } from "../theme/unified-theme";
+src/components/ErrorFallback.tsx:4:import { useTheme } from "../theme/Provider";
+src/components/ErrorFallback.tsx:5:import { Theme } from '../theme/unified-theme';
+src/components/create-pet/PetPersonalitySection.tsx:6:import { Theme } from '../theme/unified-theme';
+src/components/create-pet/PetIntentHealthSection.tsx:7:import { Theme } from '../theme/unified-theme';
+src/components/create-pet/PetFormSubmit.tsx:4:import { Theme } from '../theme/unified-theme';
+src/components/create-pet/PetBasicInfoSection.tsx:13:import { Theme } from '../theme/unified-theme';
+src/components/create-pet/PetPhotosSection.tsx:13:import { Theme } from '../theme/unified-theme';
+src/components/buttons/BaseButton.tsx:26:import { Theme } from "../../theme/unified-theme";
+src/components/buttons/EffectWrappers.tsx:29:import { Theme } from "../../theme/unified-theme";
+src/components/modals/PasswordConfirmationModal.tsx:20:import { Theme } from '../theme/unified-theme';
+src/components/map/MapStatsPanel.tsx:3:import { Theme } from '../theme/unified-theme';
+src/components/map/MapFiltersModal.tsx:6:import { Theme } from '../theme/unified-theme';
+src/components/map/ActivityTypeSelector.tsx:3:import { Theme } from '../theme/unified-theme';
+src/components/map/PinDetailsModal.tsx:4:import { Theme } from '../theme/unified-theme';

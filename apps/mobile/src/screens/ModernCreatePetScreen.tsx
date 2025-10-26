@@ -35,7 +35,7 @@ import {
 } from "../components";
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { EliteContainer, EliteHeader } from "../components";
 import { useCreatePetScreen } from "../hooks/screens/useCreatePetScreen";
 
 import type { RootStackScreenProps } from "../navigation/types";

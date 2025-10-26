@@ -17,9 +17,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
+import { Theme } from '../theme/unified-theme';
 
 interface Verification {
   id: string;
@@ -230,28 +231,28 @@ function AdminVerificationsScreen({
   const getStatusColor = (status: Verification["status"]) => {
     switch (status) {
       case "approved":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "rejected":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       case "pending":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "requires_info":
-        return "#8B5CF6";
+        return "Theme.colors.secondary[500]";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
   const getPriorityColor = (priority: Verification["priority"]) => {
     switch (priority) {
       case "high":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       case "medium":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "low":
-        return "#10B981";
+        return "Theme.colors.status.success";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -774,7 +775,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   backButton: {
     marginRight: 16,
@@ -786,7 +787,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -830,7 +831,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -915,13 +916,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   approveButton: {
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
   },
   infoButton: {
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "Theme.colors.secondary[500]",
   },
   rejectButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   emptyContainer: {
     flex: 1,
@@ -956,7 +957,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   modalTitle: {
     fontSize: 18,

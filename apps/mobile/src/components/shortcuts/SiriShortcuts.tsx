@@ -10,6 +10,8 @@ import {
   View,
 } from "react-native";
 
+import { Theme } from '../../theme/unified-theme';
+
 // Mock Siri Shortcuts API for non-iOS platforms
 let ExpoSiriShortcuts: any = null;
 if (Platform.OS === "ios") {
@@ -114,7 +116,7 @@ export function SiriShortcuts(): React.JSX.Element {
         phrase: shortcut.phrase,
         icon: {
           name: shortcut.icon,
-          color: "#8B5CF6",
+          color: "Theme.colors.secondary[500]",
         },
       });
 
@@ -164,7 +166,7 @@ export function SiriShortcuts(): React.JSX.Element {
                 <Ionicons
                   name={shortcut.icon as any}
                   size={20}
-                  color="#8B5CF6"
+                  color="Theme.colors.secondary[500]"
                 />
                 <Text style={styles.shortcutTitle}>{shortcut.title}</Text>
                 {shortcut.isActive ? (
@@ -218,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -227,12 +229,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 16,
   },
   shortcutsList: {
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   shortcutInfo: {
     flex: 1,
@@ -256,12 +258,12 @@ const styles = StyleSheet.create({
   shortcutTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginLeft: 8,
     flex: 1,
   },
   activeBadge: {
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
@@ -273,12 +275,12 @@ const styles = StyleSheet.create({
   },
   shortcutDescription: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 2,
   },
   shortcutPhrase: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
     fontStyle: "italic",
   },
   actionButton: {
@@ -288,10 +290,10 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   createButton: {
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "Theme.colors.secondary[500]",
   },
   deleteButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   actionButtonText: {
     color: "white",
@@ -299,19 +301,19 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   instructions: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 8,
     padding: 12,
   },
   instructionsTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 4,
   },
   instructionsText: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     lineHeight: 18,
   },
 });

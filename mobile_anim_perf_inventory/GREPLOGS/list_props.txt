@@ -1,0 +1,15 @@
+src/screens/admin/AdminUsersScreen.tsx:34:  const { filters, onStatusChange, users, keyExtractor, getItemLayout } = state;
+src/screens/admin/AdminUsersScreen.tsx:280:          getItemLayout={getItemLayout}
+src/screens/admin/AdminUsersScreen.tsx:281:          initialNumToRender={8}
+src/screens/admin/AdminUsersScreen.tsx:282:          windowSize={5}
+src/screens/admin/AdminUsersScreen.tsx:283:          removeClippedSubviews
+src/hooks/useAdminUsersScreen.ts:48:  getItemLayout: AdminUserListItemProps["onSelect"] extends (
+src/hooks/useAdminUsersScreen.ts:467:  const getItemLayout = useCallback(
+src/hooks/useAdminUsersScreen.ts:498:    getItemLayout,
+plan1.md:283:* Heavy lists: `FlatList` with memoized `renderItem`, stable `keyExtractor`, `getItemLayout`.
+src/components/chat/MessageList.tsx:57:  const getItemLayout = useCallback(
+src/components/chat/MessageList.tsx:77:        initialNumToRender={20}
+src/components/chat/MessageList.tsx:78:        windowSize={10}
+src/components/chat/MessageList.tsx:79:        maxToRenderPerBatch={10}
+src/components/chat/MessageList.tsx:81:        removeClippedSubviews={true}
+src/components/chat/MessageList.tsx:82:        getItemLayout={getItemLayout}

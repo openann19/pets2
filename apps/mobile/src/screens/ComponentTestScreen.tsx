@@ -10,7 +10,8 @@ import { logger } from "@pawfectmatch/core";
 import { View, Text, StyleSheet } from "react-native";
 
 // Test imports - if these work, the components are properly wired
-import { Theme, EliteButton, FXContainer } from "../components/NewComponents";
+import { EliteButton, FXContainer } from "../components";
+import { Theme } from "../theme/Provider";
 
 export default function ComponentTestScreen() {
   return (

@@ -17,13 +17,15 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
 import {
   usePrivacySettingsScreen,
   type PrivacySettings,
 } from "../hooks/screens/usePrivacySettingsScreen";
+
+import { Theme } from '../theme/unified-theme';
 
 type PrivacySettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -435,7 +437,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -463,7 +465,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
   },
   pickerOptionText: {
     fontSize: 12,

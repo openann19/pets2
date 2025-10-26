@@ -19,10 +19,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import type { RootStackParamList } from "../../navigation/types";
 import { aiAPI, matchesAPI } from "../../services/api";
 import { logger } from "../../services/logger";
+import { Theme } from '../theme/unified-theme';
 
 interface Pet {
   id: string;
@@ -319,10 +320,10 @@ const AICompatibilityScreen = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return "#10B981";
-    if (score >= 80) return "#3B82F6";
-    if (score >= 70) return "#F59E0B";
-    return "#EF4444";
+    if (score >= 90) return "Theme.colors.status.success";
+    if (score >= 80) return "Theme.colors.status.info";
+    if (score >= 70) return "Theme.colors.status.warning";
+    return "Theme.colors.status.error";
   };
 
   const getScoreLabel = (score: number) => {
@@ -467,7 +468,7 @@ const AICompatibilityScreen = ({
                   );
                 }}
               >
-                <Ionicons name="time" size={20} color="#FFFFFF" />
+                <Ionicons name="time" size={20} color="Theme.colors.neutral[0]" />
               </TouchableOpacity>
             )}
           </View>
@@ -545,12 +546,12 @@ const AICompatibilityScreen = ({
             >
               {isAnalyzing ? (
                 <>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
                   <Text style={styles.analyzeButtonText}>Analyzing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="analytics" size={20} color="#FFFFFF" />
+                  <Ionicons name="analytics" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.analyzeButtonText}>
                     Analyze Compatibility
                   </Text>
@@ -630,7 +631,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bar-chart" size={24} color="#3B82F6" />
+                <Ionicons name="bar-chart" size={24} color="Theme.colors.status.info" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -685,7 +686,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="people" size={24} color="#8B5CF6" />
+                <Ionicons name="people" size={24} color="Theme.colors.secondary[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -729,7 +730,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color="#10B981" />
+                <Ionicons name="list" size={24} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -745,7 +746,7 @@ const AICompatibilityScreen = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.factorGroupTitle,
-                      { color: "#10B981" },
+                      { color: "Theme.colors.status.success" },
                     ])}
                   >
                     Strengths
@@ -756,7 +757,7 @@ const AICompatibilityScreen = ({
                         <Ionicons
                           name="checkmark-circle"
                           size={16}
-                          color="#10B981"
+                          color="Theme.colors.status.success"
                         />
                         <Text
                           style={StyleSheet.flatten([
@@ -775,7 +776,7 @@ const AICompatibilityScreen = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.factorGroupTitle,
-                      { color: "#F59E0B" },
+                      { color: "Theme.colors.status.warning" },
                     ])}
                   >
                     Concerns
@@ -783,7 +784,7 @@ const AICompatibilityScreen = ({
                   {analysisResult.score.factors.concerns.map(
                     (concern, index) => (
                       <View key={index} style={styles.factorItem}>
-                        <Ionicons name="warning" size={16} color="#F59E0B" />
+                        <Ionicons name="warning" size={16} color="Theme.colors.status.warning" />
                         <Text
                           style={StyleSheet.flatten([
                             styles.factorText,
@@ -801,7 +802,7 @@ const AICompatibilityScreen = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.factorGroupTitle,
-                      { color: "#3B82F6" },
+                      { color: "Theme.colors.status.info" },
                     ])}
                   >
                     Recommendations
@@ -809,7 +810,7 @@ const AICompatibilityScreen = ({
                   {analysisResult.score.factors.recommendations.map(
                     (recommendation, index) => (
                       <View key={index} style={styles.factorItem}>
-                        <Ionicons name="bulb" size={16} color="#3B82F6" />
+                        <Ionicons name="bulb" size={16} color="Theme.colors.status.info" />
                         <Text
                           style={StyleSheet.flatten([
                             styles.factorText,
@@ -833,7 +834,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="document-text" size={24} color="#6B7280" />
+                <Ionicons name="document-text" size={24} color="Theme.colors.neutral[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -861,7 +862,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb-outline" size={24} color="#F59E0B" />
+                <Ionicons name="bulb-outline" size={24} color="Theme.colors.status.warning" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -877,7 +878,7 @@ const AICompatibilityScreen = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color="#F59E0B"
+                      color="Theme.colors.status.warning"
                     />
                     <Text
                       style={StyleSheet.flatten([
@@ -976,7 +977,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -984,7 +985,7 @@ const styles = StyleSheet.create({
   },
   petCardSelected: {
     borderWidth: 2,
-    borderColor: "#3B82F6",
+    borderColor: "Theme.colors.status.info",
   },
   petInfo: {
     flexDirection: "row",
@@ -995,7 +996,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -1026,7 +1027,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   petTagText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 10,
     fontWeight: "600",
   },
@@ -1048,7 +1049,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -1059,7 +1060,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1107,7 +1108,7 @@ const styles = StyleSheet.create({
   breakdownBar: {
     flex: 1,
     height: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 4,
     overflow: "hidden",
   },

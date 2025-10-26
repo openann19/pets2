@@ -13,12 +13,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAICompatibilityScreen } from "../hooks/screens/useAICompatibilityScreen";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { NavigationProp, RouteProp } from "../navigation/types";
 import {
   PetSelectionSection,
   AnalysisResultsSection,
 } from "./ai/compatibility";
+
+import { Theme } from '../theme/unified-theme';
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -72,7 +74,7 @@ export default function AICompatibilityScreen({
         style={styles.header}
       >
         <TouchableOpacity style={styles.backButton} onPress={navigation.goBack}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Compatibility</Text>
         <View style={styles.headerRight} />
@@ -101,9 +103,9 @@ export default function AICompatibilityScreen({
                 disabled={isAnalyzing}
               >
                 {isAnalyzing ? (
-                  <ActivityIndicator color="#fff" size="small" />
+                  <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
                 ) : (
-                  <Ionicons name="analytics" size={20} color="#fff" />
+                  <Ionicons name="analytics" size={20} color="Theme.colors.neutral[0]" />
                 )}
                 <Text style={styles.analyzeButtonText}>
                   {isAnalyzing ? "Analyzing..." : "Analyze Compatibility"}
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   headerRight: {
     width: 34,
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   analyzeButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "bold",
     fontSize: 16,
     marginLeft: 8,

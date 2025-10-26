@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Footer from "../../components/Footer";
 import { usePremiumScreen } from "../../hooks/screens/premium";
+import { Theme } from '../theme/unified-theme';
 
 export function PremiumScreen(): JSX.Element {
   const {
@@ -69,7 +70,7 @@ export function PremiumScreen(): JSX.Element {
         <View style={styles.featuresContainer}>
           {tier.features.map((feature, index) => (
             <View key={index} style={styles.featureRow}>
-              <Ionicons name="checkmark-circle" size={20} color="#10b981" />
+              <Ionicons name="checkmark-circle" size={20} color="Theme.colors.status.success" />
               <Text style={styles.featureText}>{feature}</Text>
             </View>
           ))}
@@ -84,7 +85,7 @@ export function PremiumScreen(): JSX.Element {
           disabled={isLoading}
         >
           {isLoading && selectedTier === tier.id ? (
-            <ActivityIndicator color="#fff" testID="loading-indicator" />
+            <ActivityIndicator color="Theme.colors.neutral[0]" testID="loading-indicator" />
           ) : (
             <Text style={styles.subscribeButtonText}>
               {isSelected ? "Subscribe Now" : "Select Plan"}
@@ -97,7 +98,7 @@ export function PremiumScreen(): JSX.Element {
 
   return (
     <LinearGradient
-      colors={["#ec4899", "#8b5cf6", "#3b82f6"]}
+      colors={["Theme.colors.primary[500]", "#8b5cf6", "Theme.colors.status.info"]}
       style={styles.container}
     >
       <ScrollView
@@ -110,7 +111,7 @@ export function PremiumScreen(): JSX.Element {
             style={styles.backButton}
             accessibilityLabel="Back"
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
           </TouchableOpacity>
 
           <Text style={styles.title}>Upgrade to Premium</Text>
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 8,
   },
   subtitle: {
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   billingOptionActive: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   billingText: {
     fontSize: 16,
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -8,
     right: 8,
-    backgroundColor: "#10b981",
+    backgroundColor: "Theme.colors.status.success",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -252,14 +253,14 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 10,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   tiersContainer: {
     padding: 20,
     gap: 16,
   },
   tierCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
@@ -275,13 +276,13 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   tierCardPopular: {
-    borderColor: "#10b981",
+    borderColor: "Theme.colors.status.success",
   },
   popularBadge: {
     position: "absolute",
     top: -12,
     right: 20,
-    backgroundColor: "#10b981",
+    backgroundColor: "Theme.colors.status.success",
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
@@ -289,12 +290,12 @@ const styles = StyleSheet.create({
   popularText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   tierName: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   priceContainer: {
@@ -305,22 +306,22 @@ const styles = StyleSheet.create({
   priceSymbol: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   priceAmount: {
     fontSize: 48,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   pricePeriod: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginLeft: 4,
   },
   discount: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#10b981",
+    color: "Theme.colors.status.success",
     marginBottom: 16,
   },
   featuresContainer: {
@@ -334,11 +335,11 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 14,
-    color: "#4b5563",
+    color: "Theme.colors.neutral[600]",
     flex: 1,
   },
   subscribeButton: {
-    backgroundColor: "#e5e7eb",
+    backgroundColor: "Theme.colors.neutral[200]",
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   footer: {
     padding: 20,

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import type { PhotoData } from "../../hooks/usePhotoManager";
+import { Theme } from '../theme/unified-theme';
 
 interface PetPhotosSectionProps {
   photos: PhotoData[];
@@ -37,7 +38,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
         onPress={onPickImage}
         disabled={photos.length >= 10}
       >
-        <Ionicons name="camera" size={24} color="#6B7280" />
+        <Ionicons name="camera" size={24} color="Theme.colors.neutral[500]" />
         <Text style={styles.addPhotoText}>
           {photos.length === 0
             ? "Add Photos"
@@ -67,7 +68,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                       onSetPrimaryPhoto(index);
                     }}
                   >
-                    <Ionicons name="star" size={16} color="#FFFFFF" />
+                    <Ionicons name="star" size={16} color="Theme.colors.neutral[0]" />
                   </TouchableOpacity>
                 )}
 
@@ -80,7 +81,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                     onRemovePhoto(index);
                   }}
                 >
-                  <Ionicons name="trash" size={16} color="#FFFFFF" />
+                  <Ionicons name="trash" size={16} color="Theme.colors.neutral[0]" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -103,12 +104,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 16,
   },
   errorText: {
     fontSize: 14,
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
     marginTop: 4,
   },
   addPhotoButton: {
@@ -117,14 +118,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     borderWidth: 2,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 12,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     borderStyle: "dashed",
   },
   addPhotoText: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginLeft: 8,
     fontWeight: "500",
   },
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
   },
   primaryBadgeText: {
     fontSize: 10,
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "bold",
   },
   photoActions: {
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
   },
   photoHint: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 12,
     lineHeight: 18,
   },

@@ -18,25 +18,26 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 
-import { Colors, Spacing, BorderRadius } from "../styles/GlobalStyles";
+import { Colors, Spacing, BorderRadius } from "../animation";
 import MaskedViewIOS from "@react-native-masked-view/masked-view";
+import { Theme } from '../theme/unified-theme';
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = {
-  primary: ["#ec4899", "#f472b6", "#f9a8d4"],
-  secondary: ["#0ea5e9", "#38bdf8", "#7dd3fc"],
-  premium: ["#a855f7", "#c084fc", "#d8b4fe"],
-  sunset: ["#f59e0b", "#f97316", "#fb923c"],
-  ocean: ["#0ea5e9", "#06b6d4", "#22d3ee"],
+  primary: ["Theme.colors.primary[500]", "Theme.colors.primary[400]", "#f9a8d4"],
+  secondary: ["Theme.colors.secondary[500]", "#38bdf8", "#7dd3fc"],
+  premium: ["Theme.colors.secondary[500]", "#c084fc", "#d8b4fe"],
+  sunset: ["Theme.colors.status.warning", "#f97316", "#fb923c"],
+  ocean: ["Theme.colors.secondary[500]", "#06b6d4", "#22d3ee"],
   holographic: ["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe"],
-  neon: ["#00f5ff", "#ff00ff", "#ffff00"],
+  neon: ["#00f5ff", "#ff00ff", "Theme.colors.neutral[0]f00"],
   gold: ["#ffd700", "#ffed4e", "#f39c12"],
   rainbow: [
     "#ff0000",
     "#ff7f00",
-    "#ffff00",
+    "Theme.colors.neutral[0]f00",
     "#00ff00",
-    "#0000ff",
+    "Theme.colors.neutral[950]0ff",
     "#4b0082",
     "#9400d3",
   ],
@@ -45,12 +46,12 @@ const TEXT_GRADIENTS = {
 // === PREMIUM TEXT SHADOWS ===
 const TEXT_SHADOWS = {
   primary: {
-    textShadowColor: "#ec4899",
+    textShadowColor: "Theme.colors.primary[500]",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
   secondary: {
-    textShadowColor: "#0ea5e9",
+    textShadowColor: "Theme.colors.secondary[500]",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
@@ -65,7 +66,7 @@ const TEXT_SHADOWS = {
     textShadowRadius: 15,
   },
   glow: {
-    textShadowColor: "#ffffff",
+    textShadowColor: "Theme.colors.neutral[0]",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },

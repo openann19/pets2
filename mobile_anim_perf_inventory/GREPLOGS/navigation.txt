@@ -1,0 +1,14 @@
+src/navigation/types.ts:237:  screenOptions?: ScreenOptions;
+src/navigation/types.ts:515:  screenOptions: ScreenOptions;
+src/navigation/AdminNavigator.tsx:7:import { createNativeStackNavigator } from "@react-navigation/native-stack";
+src/navigation/AdminNavigator.tsx:22:const Stack = createNativeStackNavigator();
+src/navigation/AdminNavigator.tsx:52:      screenOptions={{
+src/App.tsx:4:import { createNativeStackNavigator } from "@react-navigation/native-stack";
+src/App.tsx:86:const Stack = createNativeStackNavigator<RootStackParamList>();
+src/App.tsx:93:    screenOptions={{ headerShown: false }}
+src/screens/__tests__/MyPetsScreen.debug.test.tsx:4:import { createNativeStackNavigator } from "@react-navigation/native-stack";
+src/screens/__tests__/MyPetsScreen.debug.test.tsx:18:const Stack = createNativeStackNavigator();
+src/screens/__tests__/MyPetsScreen.test.tsx:2:import { createNativeStackNavigator } from "@react-navigation/native-stack";
+src/screens/__tests__/MyPetsScreen.test.tsx:11:// Mock createStackNavigator
+src/screens/__tests__/MyPetsScreen.test.tsx:12:const createStackNavigator = jest.fn(() => ({
+src/screens/__tests__/MyPetsScreen.test.tsx:32:const Stack = createStackNavigator();

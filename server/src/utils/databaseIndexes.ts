@@ -3,49 +3,50 @@
  * Creates indexes for all frequently queried fields to eliminate N+1 queries
  */
 
-import { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import logger from './logger';
 
-// Import models (these will be properly typed in Phase 2)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let User: Model<any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let Pet: Model<any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let Match: Model<any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let Message: Model<any> | undefined;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let AuditLog: Model<any> | undefined;
+// Dynamic imports for optional models
+let User: mongoose.Model<any>;
+let Pet: mongoose.Model<any>;
+let Match: mongoose.Model<any>;
+let Message: mongoose.Model<any> | undefined;
+let AuditLog: mongoose.Model<any> | undefined;
 
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  User = require('../models/User');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  Pet = require('../models/Pet');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  Match = require('../models/Match');
-} catch (error) {
-  logger.warn('Models not available for index management', {
-    error: (error as Error).message
-  });
+  User = require('../models/User').default || mongoose.model('User');
+} catch (error: any) {
+  logger.error('Failed to load User model', { error: error.message });
+  throw error;
 }
 
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  Message = require('../models/Message');
-} catch (error) {
+  Pet = require('../models/Pet').default || mongoose.model('Pet');
+} catch (error: any) {
+  logger.error('Failed to load Pet model', { error: error.message });
+  throw error;
+}
+
+try {
+  Match = require('../models/Match').default || mongoose.model('Match');
+} catch (error: any) {
+  logger.error('Failed to load Match model', { error: error.message });
+  throw error;
+}
+
+try {
+  Message = require('../models/Message')?.default || mongoose.models.Message;
+} catch (error: any) {
   logger.warn('Optional Message model not available for index management', {
-    error: (error as Error).message
+    error: error.message
   });
 }
 
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  AuditLog = require('../models/AdminActivityLog');
-} catch (error) {
+  AuditLog = require('../models/AdminActivityLog')?.default || mongoose.models.AdminActivityLog;
+} catch (error: any) {
   logger.warn('Optional AdminActivityLog model not available for index management', {
-    error: (error as Error).message
+    error: error.message
   });
 }
 
@@ -107,7 +108,7 @@ export const createIndexes = async (): Promise<void> => {
     }
 
     logger.info('Database indexes created successfully');
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Error creating database indexes:', error);
     throw error;
   }
@@ -117,19 +118,19 @@ export const dropIndexes = async (): Promise<void> => {
   try {
     logger.info('Dropping database indexes...');
 
-    const collections = [User, Pet, Match, Message, AuditLog].filter((m): m is NonNullable<typeof m> => Boolean(m));
+    const collections = [User, Pet, Match, Message, AuditLog].filter(Boolean);
 
     for (const Model of collections) {
       const indexes = await Model.collection.indexes();
       for (const index of indexes) {
-        if (index.name && index.name !== '_id_') { // Keep the default _id index
+        if (index.name !== '_id_') { // Keep the default _id index
           await Model.collection.dropIndex(index.name);
         }
       }
     }
 
     logger.info('Database indexes dropped successfully');
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Error dropping database indexes:', error);
     throw error;
   }
@@ -145,7 +146,7 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
       { model: Match, name: 'matches' },
       Message && { model: Message, name: 'messages' },
       AuditLog && { model: AuditLog, name: 'auditlogs' }
-    ].filter(Boolean) as Array<{ model: Model<unknown>; name: string }>;
+    ].filter(Boolean) as Array<{ model: mongoose.Model<any>; name: string }>;
 
     for (const { model, name } of collections) {
       const indexes = await model.collection.indexes();
@@ -153,9 +154,8 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
     }
 
     return stats;
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Error getting index stats:', error);
     throw error;
   }
 };
-

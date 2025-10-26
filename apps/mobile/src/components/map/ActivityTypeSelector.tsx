@@ -1,5 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../theme/unified-theme';
 
 const { width } = Dimensions.get("window");
 
@@ -34,7 +35,7 @@ export function ActivityTypeSelector({
               {
                 backgroundColor: selectedActivities.includes(activity.id)
                   ? activity.color
-                  : "#F3F4F6",
+                  : "Theme.colors.neutral[100]",
               },
             ]}
             onPress={() => {
@@ -47,8 +48,8 @@ export function ActivityTypeSelector({
                 styles.label,
                 {
                   color: selectedActivities.includes(activity.id)
-                    ? "#FFFFFF"
-                    : "#374151",
+                    ? "Theme.colors.neutral[0]"
+                    : "Theme.colors.neutral[700]",
                 },
               ]}
             >
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 12,
   },
   grid: {

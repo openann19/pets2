@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { matchesAPI } from "../../services/api";
-import { logger } from "../../services/logger";
+import { matchesAPI } from "../../../services/api";
+import { logger } from "@pawfectmatch/core";
 
 export interface UseSettingsSyncOptions {
   onSyncSuccess?: () => void;
@@ -29,7 +29,7 @@ export function useSettingsSync({
       setError(null);
 
       try {
-        await matchesAPI.updateSettings(settings);
+        await matchesAPI.updateUserSettings(settings);
         logger.info("Settings synced successfully", { settings });
         onSyncSuccess?.();
         return true;

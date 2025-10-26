@@ -15,9 +15,10 @@ import {
   AdminUserListItem,
   type AdminUserListItemViewModel,
 } from "../../components/admin/AdminUserListItem";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { useAdminUsersScreen } from "../../hooks/useAdminUsersScreen";
 import type { AdminScreenProps } from "../../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 const FILTER_BUTTON_HIT_SLOP = {
   top: 8,
@@ -142,7 +143,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                   <Text
                     style={StyleSheet.flatten([
                       styles.filterText,
-                      { color: isActive ? "#FFFFFF" : colors.text },
+                      { color: isActive ? "Theme.colors.neutral[0]" : colors.text },
                     ])}
                   >
                     {filter.label}

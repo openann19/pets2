@@ -16,9 +16,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { NavigationProp, RouteProp } from "../navigation/types";
 import { useMemoryWeaveScreen } from "../hooks/screens/useMemoryWeaveScreen";
+import { Theme } from '../theme/unified-theme';
+
+// Import extracted components
+// import { MemoryCard, ConnectionPath } from "../components/library";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -68,6 +72,7 @@ export default function MemoryWeaveScreen({
     getEmotionColor,
     getEmotionEmoji,
     formatTimestamp,
+    petName,
   } = useMemoryWeaveScreen(route);
 
   const isAnimating = false; // Not used in current implementation
@@ -164,7 +169,7 @@ export default function MemoryWeaveScreen({
               <View style={styles.memoryMetadata}>
                 {memory.metadata.location && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="location-outline" size={14} color="#fff" />
+                    <Ionicons name="location-outline" size={14} color="Theme.colors.neutral[0]" />
                     <Text style={styles.metadataText}>
                       {memory.metadata.location}
                     </Text>
@@ -172,7 +177,7 @@ export default function MemoryWeaveScreen({
                 )}
                 {memory.metadata.participants && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="people-outline" size={14} color="#fff" />
+                    <Ionicons name="people-outline" size={14} color="Theme.colors.neutral[0]" />
                     <Text style={styles.metadataText}>
                       {memory.metadata.participants.join(" & ")}
                     </Text>
@@ -234,7 +239,7 @@ export default function MemoryWeaveScreen({
               {
                 left: point.x - 6,
                 top: point.y - 6,
-                backgroundColor: index === currentIndex ? "#FF69B4" : "#fff",
+                backgroundColor: index === currentIndex ? "#FF69B4" : "Theme.colors.neutral[0]",
                 transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
               },
             ])}
@@ -271,7 +276,7 @@ export default function MemoryWeaveScreen({
             }}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color="#fff" />
+              <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
             </BlurView>
           </TouchableOpacity>
 
@@ -288,7 +293,7 @@ export default function MemoryWeaveScreen({
             }}
           >
             <BlurView intensity={20} style={styles.shareButtonBlur}>
-              <Ionicons name="share-outline" size={24} color="#fff" />
+              <Ionicons name="share-outline" size={24} color="Theme.colors.neutral[0]" />
             </BlurView>
           </TouchableOpacity>
         </Animated.View>
@@ -309,13 +314,11 @@ export default function MemoryWeaveScreen({
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            {
-              useNativeDriver: false,
-              listener: handleScroll,
-            },
-          )}
+          onScroll={(event) => {
+            const offsetX = event.nativeEvent.contentOffset.x;
+            scrollX.value = offsetX;
+            handleScroll && handleScroll(event);
+          }}
           scrollEventThrottle={16}
           decelerationRate="fast"
           snapToInterval={screenWidth}
@@ -355,7 +358,7 @@ export default function MemoryWeaveScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
   },
   header: {
     paddingHorizontal: 20,
@@ -385,7 +388,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   headerSubtitle: {
     fontSize: 14,
@@ -434,7 +437,7 @@ const styles = StyleSheet.create({
   memoryTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 4,
   },
   memoryTimestamp: {
@@ -477,7 +480,7 @@ const styles = StyleSheet.create({
   },
   memoryText: {
     fontSize: 18,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     lineHeight: 26,
     fontStyle: "italic",
     textAlign: "center",
@@ -497,7 +500,7 @@ const styles = StyleSheet.create({
   },
   metadataText: {
     fontSize: 12,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginLeft: 4,
   },
   pathContainer: {
@@ -522,7 +525,7 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: "Theme.colors.neutral[0]",
   },
   counterContainer: {
     position: "absolute",
@@ -537,7 +540,7 @@ const styles = StyleSheet.create({
   },
   counterText: {
     fontSize: 14,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
 });

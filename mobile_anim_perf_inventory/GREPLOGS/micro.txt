@@ -1,0 +1,1060 @@
+src/hooks/animations/useHapticFeedback.ts:6:import * as Haptics from "expo-haptics";
+src/hooks/useAdminUsersScreen.ts:2:import * as Haptics from "expo-haptics";
+src/hooks/__tests__/useThemeToggle.test.ts:7:import * as Haptics from "expo-haptics";
+src/hooks/__tests__/useThemeToggle.test.ts:10:jest.mock("expo-haptics", () => ({
+package.json:92:    "expo-haptics": "~12.4.0",
+src/hooks/useAnimations.ts:4:import * as Haptics from "expo-haptics";
+src/hooks/useAnimations.ts:48:  onPressIn: () => void;
+src/hooks/useAnimations.ts:49:  onPressOut: () => void;
+src/hooks/useAnimations.ts:71:  const onPressIn = () => {
+src/hooks/useAnimations.ts:77:  const onPressOut = () => {
+src/hooks/useAnimations.ts:83:  return { animatedStyle, onPressIn, onPressOut };
+src/hooks/useAnimations.ts:178:  onPressIn: () => void;
+src/hooks/useAnimations.ts:179:  onPressOut: () => void;
+src/hooks/useAnimations.ts:194:  const onPressIn = () => {
+src/hooks/useAnimations.ts:202:  const onPressOut = () => {
+src/hooks/useAnimations.ts:212:  return { animatedStyle, onPressIn, onPressOut, onHover };
+src/components/Footer.tsx:4:import * as Haptics from "expo-haptics";
+src/components/calling/__tests__/CallManager.test.tsx:3:import { Alert, Text, TouchableOpacity, View } from "react-native";
+src/components/calling/__tests__/CallManager.test.tsx:188:        <TouchableOpacity
+src/components/calling/__tests__/CallManager.test.tsx:193:        </TouchableOpacity>
+src/components/calling/__tests__/CallManager.test.tsx:194:        <TouchableOpacity
+src/components/calling/__tests__/CallManager.test.tsx:199:        </TouchableOpacity>
+src/components/calling/__tests__/CallManager.test.tsx:200:        <TouchableOpacity testID="end-call" onPress={endCall}>
+src/components/calling/__tests__/CallManager.test.tsx:202:        </TouchableOpacity>
+src/components/create-pet/PetBasicInfoSection.tsx:6:  TouchableOpacity,
+src/components/create-pet/PetBasicInfoSection.tsx:67:            <TouchableOpacity
+src/components/create-pet/PetBasicInfoSection.tsx:88:            </TouchableOpacity>
+src/components/create-pet/PetBasicInfoSection.tsx:145:              <TouchableOpacity
+src/components/create-pet/PetBasicInfoSection.tsx:166:              </TouchableOpacity>
+src/components/create-pet/PetBasicInfoSection.tsx:179:            <TouchableOpacity
+src/components/create-pet/PetBasicInfoSection.tsx:205:            </TouchableOpacity>
+src/components/create-pet/PetPersonalitySection.tsx:2:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/create-pet/PetPersonalitySection.tsx:49:          <TouchableOpacity
+src/components/create-pet/PetPersonalitySection.tsx:68:          </TouchableOpacity>
+src/components/create-pet/PetIntentHealthSection.tsx:3:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/create-pet/PetIntentHealthSection.tsx:42:            <TouchableOpacity
+src/components/create-pet/PetIntentHealthSection.tsx:61:            </TouchableOpacity>
+src/components/create-pet/PetIntentHealthSection.tsx:71:            <TouchableOpacity
+src/components/create-pet/PetIntentHealthSection.tsx:96:            </TouchableOpacity>
+src/components/create-pet/PetFormSubmit.tsx:3:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/create-pet/PetFormSubmit.tsx:17:      <TouchableOpacity
+src/components/create-pet/PetFormSubmit.tsx:41:      </TouchableOpacity>
+src/components/AnimatedButton.tsx:1:import * as Haptics from "expo-haptics";
+src/components/AnimatedButton.tsx:9:  TouchableOpacity,
+src/components/AnimatedButton.tsx:240:      <TouchableOpacity
+src/components/AnimatedButton.tsx:269:      </TouchableOpacity>
+src/components/create-pet/PetPhotosSection.tsx:8:  TouchableOpacity,
+src/components/create-pet/PetPhotosSection.tsx:36:      <TouchableOpacity
+src/components/create-pet/PetPhotosSection.tsx:47:      </TouchableOpacity>
+src/components/create-pet/PetPhotosSection.tsx:65:                  <TouchableOpacity
+src/components/create-pet/PetPhotosSection.tsx:72:                  </TouchableOpacity>
+src/components/create-pet/PetPhotosSection.tsx:75:                <TouchableOpacity
+src/components/create-pet/PetPhotosSection.tsx:85:                </TouchableOpacity>
+src/components/ImmersiveCard.tsx:5:  TouchableOpacityProps,
+src/components/ImmersiveCard.tsx:7:import { StyleSheet, TouchableOpacity as RNTouchableOpacity } from "react-native";
+src/components/ImmersiveCard.tsx:9:import { View, TouchableOpacity, Text, Animated } from "react-native";
+src/components/ImmersiveCard.tsx:33:export interface ImmersiveCardProps extends TouchableOpacityProps {
+src/components/ImmersiveCard.tsx:72:const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
+src/components/ImmersiveCard.tsx:295:            <TouchableOpacity
+src/components/ImmersiveCard.tsx:296:              onPressIn={handlePressIn}
+src/components/ImmersiveCard.tsx:297:              onPressOut={handlePressOut}
+src/components/ImmersiveCard.tsx:304:            </TouchableOpacity>
+src/components/ImmersiveCard.tsx:312:      <TouchableOpacity
+src/components/ImmersiveCard.tsx:314:        onPressIn={handlePressIn}
+src/components/ImmersiveCard.tsx:315:        onPressOut={handlePressOut}
+src/components/ImmersiveCard.tsx:322:      </TouchableOpacity>
+src/components/ErrorFallback.tsx:3:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/ErrorFallback.tsx:52:      <TouchableOpacity
+src/components/ErrorFallback.tsx:58:      </TouchableOpacity>
+src/components/InteractiveButton.tsx:6:  TouchableOpacityProps,
+src/components/InteractiveButton.tsx:9:  TouchableOpacity,
+src/components/InteractiveButton.tsx:41:export interface InteractiveButtonProps extends TouchableOpacityProps {
+src/components/InteractiveButton.tsx:91:const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
+src/components/InteractiveButton.tsx:328:        <TouchableOpacity
+src/components/InteractiveButton.tsx:332:          onPressIn={handlePressIn}
+src/components/InteractiveButton.tsx:333:          onPressOut={handlePressOut}
+src/components/InteractiveButton.tsx:339:          ) as TouchableOpacityProps)}
+src/components/InteractiveButton.tsx:362:        </TouchableOpacity>
+src/components/buttons/BaseButton.tsx:16:  TouchableOpacity,
+src/components/buttons/BaseButton.tsx:21:  type TouchableOpacityProps,
+src/components/buttons/BaseButton.tsx:32:export interface BaseButtonProps extends TouchableOpacityProps {
+src/components/buttons/BaseButton.tsx:82:const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
+src/components/buttons/BaseButton.tsx:236:      <TouchableOpacity
+src/components/buttons/BaseButton.tsx:256:      </TouchableOpacity>
+src/components/EnhancedTabBar.tsx:4:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/EnhancedTabBar.tsx:193:          <TouchableOpacity
+src/components/EnhancedTabBar.tsx:229:          </TouchableOpacity>
+src/components/modals/PasswordConfirmationModal.tsx:13:  TouchableOpacity,
+src/components/modals/PasswordConfirmationModal.tsx:103:            <TouchableOpacity
+src/components/modals/PasswordConfirmationModal.tsx:113:            </TouchableOpacity>
+src/components/modals/PasswordConfirmationModal.tsx:126:            <TouchableOpacity
+src/components/modals/PasswordConfirmationModal.tsx:132:            </TouchableOpacity>
+src/components/modals/PasswordConfirmationModal.tsx:134:            <TouchableOpacity
+src/components/modals/PasswordConfirmationModal.tsx:153:            </TouchableOpacity>
+src/components/PhotoUploadComponent.tsx:9:  TouchableOpacity,
+src/components/PhotoUploadComponent.tsx:206:              <TouchableOpacity
+src/components/PhotoUploadComponent.tsx:213:              </TouchableOpacity>
+src/components/PhotoUploadComponent.tsx:215:            <TouchableOpacity
+src/components/PhotoUploadComponent.tsx:225:            </TouchableOpacity>
+src/components/PhotoUploadComponent.tsx:235:          <TouchableOpacity
+src/components/PhotoUploadComponent.tsx:244:          </TouchableOpacity>
+src/components/PhotoUploadComponent.tsx:270:          <TouchableOpacity
+src/components/PhotoUploadComponent.tsx:275:          </TouchableOpacity>
+src/hooks/domains/safety/__tests__/useSafetyCenter.test.ts:12:jest.mock("expo-haptics", () => ({
+src/hooks/domains/safety/__tests__/useSafetyCenter.test.ts:299:    const Haptics = require("expo-haptics");
+src/hooks/domains/safety/__tests__/useSafetyCenter.test.ts:312:    const Haptics = require("expo-haptics");
+src/hooks/domains/safety/useSafetyCenter.ts:6:import * as Haptics from "expo-haptics";
+src/components/ModernPhotoUpload.tsx:14:import * as Haptics from "expo-haptics";
+src/components/map/ActivityTypeSelector.tsx:2:import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/map/ActivityTypeSelector.tsx:31:          <TouchableOpacity
+src/components/map/ActivityTypeSelector.tsx:58:          </TouchableOpacity>
+src/components/map/PinDetailsModal.tsx:2:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/map/PinDetailsModal.tsx:59:            <TouchableOpacity style={[styles.modalButton, styles.likeButton]}>
+src/components/map/PinDetailsModal.tsx:61:            </TouchableOpacity>
+src/components/map/PinDetailsModal.tsx:63:            <TouchableOpacity style={[styles.modalButton, styles.chatButton]}>
+src/components/map/PinDetailsModal.tsx:65:            </TouchableOpacity>
+src/components/map/PinDetailsModal.tsx:68:          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+src/components/map/PinDetailsModal.tsx:70:          </TouchableOpacity>
+src/hooks/domains/social/__tests__/useStories.test.ts:33:jest.mock("expo-haptics", () => ({
+src/hooks/domains/social/useStories.ts:6:import * as Haptics from "expo-haptics";
+src/components/phoenix/PhoenixCard.tsx:11:  TouchableOpacity,
+src/components/phoenix/PhoenixCard.tsx:13:  type TouchableOpacityProps,
+src/components/phoenix/PhoenixCard.tsx:26:import * as Haptics from "expo-haptics";
+src/components/phoenix/PhoenixCard.tsx:38:interface PhoenixCardProps extends TouchableOpacityProps {
+src/components/phoenix/PhoenixCard.tsx:196:        <TouchableOpacity
+src/components/phoenix/PhoenixCard.tsx:202:          onPressIn={handlePressIn}
+src/components/phoenix/PhoenixCard.tsx:203:          onPressOut={handlePressOut}
+src/components/phoenix/PhoenixCard.tsx:223:        </TouchableOpacity>
+src/hooks/domains/social/useMemoryWeave.ts:7:import * as Haptics from "expo-haptics";
+src/components/Premium/PremiumGate.tsx:10:import * as Haptics from "expo-haptics";
+src/components/Premium/PremiumGate.tsx:18:  TouchableOpacity,
+src/components/Premium/PremiumGate.tsx:71:          <TouchableOpacity
+src/components/Premium/PremiumGate.tsx:85:              <TouchableOpacity
+src/components/Premium/PremiumGate.tsx:91:              </TouchableOpacity>
+src/components/Premium/PremiumGate.tsx:187:                <TouchableOpacity
+src/components/Premium/PremiumGate.tsx:201:                </TouchableOpacity>
+src/components/Premium/PremiumGate.tsx:203:                <TouchableOpacity
+src/components/Premium/PremiumGate.tsx:219:                </TouchableOpacity>
+src/components/Premium/PremiumButton.tsx:10:import * as Haptics from "expo-haptics";
+src/components/Premium/PremiumButton.tsx:16:  TouchableOpacity,
+src/components/Premium/PremiumButton.tsx:264:        <TouchableOpacity
+src/components/Premium/PremiumButton.tsx:266:          onPressIn={handlePressIn}
+src/components/Premium/PremiumButton.tsx:267:          onPressOut={handlePressOut}
+src/components/Premium/PremiumButton.tsx:293:        </TouchableOpacity>
+src/components/Premium/PremiumButton.tsx:316:        <TouchableOpacity
+src/components/Premium/PremiumButton.tsx:318:          onPressIn={handlePressIn}
+src/components/Premium/PremiumButton.tsx:319:          onPressOut={handlePressOut}
+src/components/Premium/PremiumButton.tsx:345:        </TouchableOpacity>
+src/components/Premium/PremiumButton.tsx:368:      <TouchableOpacity
+src/components/Premium/PremiumButton.tsx:370:        onPressIn={handlePressIn}
+src/components/Premium/PremiumButton.tsx:371:        onPressOut={handlePressOut}
+src/components/Premium/PremiumButton.tsx:397:      </TouchableOpacity>
+src/components/Premium/__tests__/PremiumButton.test.tsx:6:import * as Haptics from "expo-haptics";
+src/components/Premium/__tests__/PremiumButton.test.tsx:11:jest.mock("expo-haptics", () => ({
+src/components/Premium/__tests__/PremiumCard.test.tsx:6:import * as Haptics from "expo-haptics";
+src/components/Premium/__tests__/PremiumCard.test.tsx:11:jest.mock("expo-haptics", () => ({
+src/components/ui/Button.tsx:2:import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+src/components/ui/Button.tsx:71:    <Pressable
+src/components/ui/Button.tsx:101:    </Pressable>
+src/components/Premium/PremiumCard.tsx:8:import * as Haptics from "expo-haptics";
+src/components/Premium/PremiumCard.tsx:19:  TouchableOpacity,
+src/components/Premium/PremiumCard.tsx:338:          <TouchableOpacity
+src/components/Premium/PremiumCard.tsx:340:            onPressIn={handlePressIn}
+src/components/Premium/PremiumCard.tsx:341:            onPressOut={handlePressOut}
+src/components/Premium/PremiumCard.tsx:347:          </TouchableOpacity>
+src/components/Premium/PremiumCard.tsx:398:          <TouchableOpacity
+src/components/Premium/PremiumCard.tsx:400:            onPressIn={handlePressIn}
+src/components/Premium/PremiumCard.tsx:401:            onPressOut={handlePressOut}
+src/components/Premium/PremiumCard.tsx:407:          </TouchableOpacity>
+src/components/Premium/PremiumCard.tsx:460:        <TouchableOpacity
+src/components/Premium/PremiumCard.tsx:462:          onPressIn={handlePressIn}
+src/components/Premium/PremiumCard.tsx:463:          onPressOut={handlePressOut}
+src/components/Premium/PremiumCard.tsx:469:        </TouchableOpacity>
+src/components/chat/MessageItem.tsx:2:import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+src/components/chat/MessageItem.tsx:144:          <TouchableOpacity style={styles.avatarContainer}>
+src/components/chat/MessageItem.tsx:159:          </TouchableOpacity>
+src/components/chat/MessageItem.tsx:164:        <TouchableOpacity
+src/components/chat/MessageItem.tsx:216:                <TouchableOpacity
+src/components/chat/MessageItem.tsx:224:                </TouchableOpacity>
+src/components/chat/MessageItem.tsx:237:        </TouchableOpacity>
+src/components/ThemeToggle.tsx:4:  TouchableOpacity,
+src/components/ThemeToggle.tsx:70:      <TouchableOpacity
+src/components/ThemeToggle.tsx:97:      </TouchableOpacity>
+src/components/ThemeToggle.tsx:103:      <TouchableOpacity
+src/components/ThemeToggle.tsx:127:      </TouchableOpacity>
+src/components/ThemeToggle.tsx:139:      <TouchableOpacity
+src/components/ThemeToggle.tsx:176:      </TouchableOpacity>
+src/components/shortcuts/SiriShortcuts.tsx:10:  TouchableOpacity,
+src/components/shortcuts/SiriShortcuts.tsx:185:            <TouchableOpacity
+src/components/shortcuts/SiriShortcuts.tsx:199:            </TouchableOpacity>
+src/components/auth/BiometricSetup.tsx:17:  TouchableOpacity,
+src/components/auth/BiometricSetup.tsx:132:          <TouchableOpacity
+src/components/auth/BiometricSetup.tsx:142:          </TouchableOpacity>
+src/components/auth/BiometricSetup.tsx:210:              <TouchableOpacity
+src/components/auth/BiometricSetup.tsx:221:              </TouchableOpacity>
+src/components/auth/BiometricSetup.tsx:228:              <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+src/components/auth/BiometricSetup.tsx:230:              </TouchableOpacity>
+src/components/auth/BiometricSetup.tsx:233:            <TouchableOpacity
+src/components/auth/BiometricSetup.tsx:245:            </TouchableOpacity>
+src/components/SwipeFilters.tsx:8:  TouchableOpacity,
+src/components/SwipeFilters.tsx:61:            <TouchableOpacity onPress={onClose}>
+src/components/SwipeFilters.tsx:63:            </TouchableOpacity>
+src/components/SwipeFilters.tsx:79:                  <TouchableOpacity
+src/components/SwipeFilters.tsx:109:                  </TouchableOpacity>
+src/components/SwipeFilters.tsx:150:          <TouchableOpacity
+src/components/SwipeFilters.tsx:158:          </TouchableOpacity>
+src/components/chat/MessageInput.tsx:4:import * as Haptics from "expo-haptics";
+src/components/SwipeCard.tsx:17:import * as Haptics from "expo-haptics";
+src/components/chat/MessageBubble.tsx:4:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/chat/MessageBubble.tsx:140:        <TouchableOpacity style={styles.imageBubble}>
+src/components/chat/MessageBubble.tsx:142:        </TouchableOpacity>
+src/components/chat/MessageBubble.tsx:161:        <TouchableOpacity style={styles.voiceBubble}>
+src/components/chat/MessageBubble.tsx:163:        </TouchableOpacity>
+src/components/chat/MessageBubble.tsx:182:        <TouchableOpacity style={styles.videoBubble}>
+src/components/chat/MessageBubble.tsx:184:        </TouchableOpacity>
+src/components/chat/MessageBubble.tsx:203:        <TouchableOpacity style={styles.gifBubble}>
+src/components/chat/MessageBubble.tsx:207:        </TouchableOpacity>
+src/components/chat/MessageBubble.tsx:273:            <TouchableOpacity style={styles.reactionButton}>
+src/components/chat/MessageBubble.tsx:275:            </TouchableOpacity>
+src/components/chat/MessageBubble.tsx:276:            <TouchableOpacity style={styles.reactionButton}>
+src/components/chat/MessageBubble.tsx:278:            </TouchableOpacity>
+src/components/chat/MessageBubble.tsx:279:            <TouchableOpacity style={styles.reactionButton}>
+src/components/chat/MessageBubble.tsx:281:            </TouchableOpacity>
+src/components/chat/VoiceRecorder.tsx:7:import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+src/components/chat/VoiceRecorder.tsx:8:import * as Haptics from "expo-haptics";
+src/components/chat/VoiceRecorder.tsx:141:      <TouchableOpacity
+src/components/chat/VoiceRecorder.tsx:146:        onPressIn={handlePressIn}
+src/components/chat/VoiceRecorder.tsx:147:        onPressOut={handlePressOut}
+src/components/chat/VoiceRecorder.tsx:155:      </TouchableOpacity>
+src/components/chat/VoiceRecorder.tsx:167:            <TouchableOpacity
+src/components/chat/VoiceRecorder.tsx:172:            </TouchableOpacity>
+src/components/chat/VoiceRecorder.tsx:173:            <TouchableOpacity
+src/components/chat/VoiceRecorder.tsx:186:            </TouchableOpacity>
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:3:import * as Haptics from "expo-haptics";
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:6:// Mock expo-haptics
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:7:jest.mock("expo-haptics", () => ({
+src/components/filters/AdvancedPetFilters.tsx:3:import * as Haptics from "expo-haptics";
+src/components/filters/AdvancedPetFilters.tsx:6:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/filters/AdvancedPetFilters.tsx:156:          <TouchableOpacity
+src/components/filters/AdvancedPetFilters.tsx:162:          </TouchableOpacity>
+src/components/filters/AdvancedPetFilters.tsx:163:          <TouchableOpacity
+src/components/filters/AdvancedPetFilters.tsx:169:          </TouchableOpacity>
+src/components/chat/AttachmentPreview.tsx:13:  TouchableOpacity,
+src/components/chat/AttachmentPreview.tsx:85:        <TouchableOpacity
+src/components/chat/AttachmentPreview.tsx:92:        </TouchableOpacity>
+src/components/chat/MobileVoiceRecorder.tsx:4:import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/chat/MobileVoiceRecorder.tsx:150:            <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
+src/components/chat/MobileVoiceRecorder.tsx:152:            </TouchableOpacity>
+src/components/chat/MobileVoiceRecorder.tsx:201:              <TouchableOpacity
+src/components/chat/MobileVoiceRecorder.tsx:209:              </TouchableOpacity>
+src/components/chat/MobileVoiceRecorder.tsx:212:                <TouchableOpacity
+src/components/chat/MobileVoiceRecorder.tsx:227:                </TouchableOpacity>
+src/components/chat/MobileVoiceRecorder.tsx:228:                <TouchableOpacity
+src/components/chat/MobileVoiceRecorder.tsx:239:                </TouchableOpacity>
+src/components/chat/ChatHeader.tsx:3:import * as Haptics from "expo-haptics";
+src/components/ai/BioResults.tsx:11:  TouchableOpacity,
+src/components/ai/BioResults.tsx:81:          <TouchableOpacity
+src/components/ai/BioResults.tsx:101:          </TouchableOpacity>
+src/components/ai/BioResults.tsx:104:            <TouchableOpacity
+src/components/ai/BioResults.tsx:115:            </TouchableOpacity>
+src/components/ai/BioResults.tsx:119:            <TouchableOpacity
+src/components/ai/BioResults.tsx:130:            </TouchableOpacity>
+src/components/chat/ReactionPicker.tsx:13:  TouchableOpacity,
+src/components/chat/ReactionPicker.tsx:63:    <TouchableOpacity
+src/components/chat/ReactionPicker.tsx:73:    </TouchableOpacity>
+src/components/chat/ReactionPicker.tsx:83:      <TouchableOpacity
+src/components/chat/ReactionPicker.tsx:107:      </TouchableOpacity>
+src/components/ai/ToneSelector.tsx:8:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/ai/ToneSelector.tsx:61:          <TouchableOpacity
+src/components/ai/ToneSelector.tsx:98:          </TouchableOpacity>
+src/hooks/useHelpSupportData.ts:1:import * as Haptics from "expo-haptics";
+src/components/chat/MobileChat.tsx:9:  TouchableOpacity,
+src/components/chat/MobileChat.tsx:128:          <TouchableOpacity
+src/components/chat/MobileChat.tsx:138:          </TouchableOpacity>
+src/components/chat/MobileChat.tsx:140:          <TouchableOpacity
+src/components/chat/MobileChat.tsx:153:          </TouchableOpacity>
+src/hooks/screens/useAdminDashboardScreen.ts:9:import * as Haptics from "expo-haptics";
+src/__mocks__/react-native.js:9:const TouchableOpacity = 'TouchableOpacity';
+src/__mocks__/react-native.js:10:const TouchableHighlight = 'TouchableHighlight';
+src/__mocks__/react-native.js:11:const TouchableWithoutFeedback = 'TouchableWithoutFeedback';
+src/__mocks__/react-native.js:22:  TouchableOpacity,
+src/__mocks__/react-native.js:23:  TouchableHighlight,
+src/__mocks__/react-native.js:24:  TouchableWithoutFeedback,
+src/__mocks__/react-native.js:33:  Pressable: 'Pressable',
+src/hooks/screens/useARScentTrailsScreen.ts:2:import * as Haptics from "expo-haptics";
+src/__tests__/PremiumScreen.test.tsx:7:import * as Haptics from "expo-haptics";
+src/__tests__/PremiumScreen.test.tsx:18:jest.mock("expo-haptics", () => ({
+src/hooks/screens/__tests__/useDeactivateAccountScreen.test.ts:18:jest.mock("expo-haptics", () => ({
+src/hooks/screens/__tests__/useAdminDashboardScreen.test.ts:32:jest.mock("expo-haptics", () => ({
+src/hooks/screens/useAdminUploadsScreen.ts:9:import * as Haptics from "expo-haptics";
+src/components/Advanced/AdvancedInteractionTest.tsx:9:import * as Haptics from "expo-haptics";
+src/hooks/screens/__tests__/useForgotPasswordScreen.test.ts:23:jest.mock("expo-haptics", () => ({
+src/hooks/screens/useMapScreen.ts:15:import * as Haptics from "expo-haptics";
+src/hooks/screens/useForgotPasswordScreen.ts:7:import * as Haptics from "expo-haptics";
+src/components/Advanced/AdvancedInteractionSystem.tsx:9:import * as Haptics from "expo-haptics";
+src/components/Advanced/AdvancedInteractionSystem.tsx:21:  TouchableOpacity,
+src/components/Advanced/AdvancedInteractionSystem.tsx:566:      <TouchableOpacity
+src/components/Advanced/AdvancedInteractionSystem.tsx:569:        onPressIn={() => {
+src/components/Advanced/AdvancedInteractionSystem.tsx:572:        onPressOut={() => {
+src/components/Advanced/AdvancedInteractionSystem.tsx:586:      </TouchableOpacity>
+src/hooks/screens/__tests__/useAdvancedFiltersScreen.test.ts:16:jest.mock("expo-haptics", () => ({
+src/__tests__/phoenix/PhoenixCard.test.tsx:27:jest.mock("expo-haptics", () => ({
+src/__tests__/phoenix/PhoenixCard.test.tsx:325:          title="Pressable Card"
+src/__tests__/phoenix/PhoenixCard.test.tsx:331:      const card = screen.getByLabelText("Pressable Card");
+src/hooks/screens/useLoginScreen.ts:3:import * as Haptics from "expo-haptics";
+src/__tests__/components/AnimatedSplash.test.tsx:6:jest.mock("expo-haptics", () => ({
+src/components/Advanced/Card/CardAnimations.tsx:8:import * as Haptics from "expo-haptics";
+src/hooks/screens/useEditProfileScreen.ts:3:import * as Haptics from "expo-haptics";
+src/__tests__/components/SwipeCard.test.tsx:8:jest.mock("expo-haptics", () => ({
+src/hooks/screens/useMemoryWeaveScreen.ts:8:import * as Haptics from "expo-haptics";
+src/__tests__/ManageSubscriptionScreen.test.tsx:4:import * as Haptics from "expo-haptics";
+src/__tests__/ManageSubscriptionScreen.test.tsx:20:jest.mock("expo-haptics", () => ({
+src/hooks/screens/useDeactivateAccountScreen.ts:8:import * as Haptics from "expo-haptics";
+src/components/Advanced/AdvancedHeader.tsx:10:import * as Haptics from "expo-haptics";
+src/components/Advanced/AdvancedHeader.tsx:19:  TouchableOpacity,
+src/components/Advanced/AdvancedCard.tsx:16:  TouchableOpacity,
+src/components/Advanced/AdvancedCard.tsx:395:      <TouchableOpacity
+src/components/Advanced/AdvancedCard.tsx:398:        onPressIn={() => {
+src/components/Advanced/AdvancedCard.tsx:401:        onPressOut={() => {
+src/components/Advanced/AdvancedCard.tsx:409:      </TouchableOpacity>
+src/hooks/useThemeToggle.ts:1:import * as Haptics from "expo-haptics";
+src/hooks/screens/useAdvancedFiltersScreen.ts:7:import * as Haptics from "expo-haptics";
+src/hooks/screens/useAdminChatsScreen.ts:9:import * as Haptics from "expo-haptics";
+src/hooks/screens/useAdminVerificationsScreen.ts:9:import * as Haptics from "expo-haptics";
+src/hooks/screens/useAdminAnalyticsScreen.ts:8:import * as Haptics from "expo-haptics";
+src/hooks/screens/useRegisterScreen.ts:3:import * as Haptics from "expo-haptics";
+src/hooks/screens/useResetPasswordScreen.ts:7:import * as Haptics from "expo-haptics";
+src/hooks/screens/useAdminBillingScreen.ts:9:import * as Haptics from "expo-haptics";
+src/hooks/screens/useAdminSecurityScreen.ts:9:import * as Haptics from "expo-haptics";
+src/types/premium-components.ts:163:  onPressIn: () => void;
+src/types/premium-components.ts:164:  onPressOut: () => void;
+src/hooks/screens/README.md:108:        <TouchableOpacity onPress={() => unblockUser(user.id)}>
+src/hooks/screens/README.md:110:        </TouchableOpacity>
+src/hooks/screens/usePrivacySettingsScreen.ts:2:import * as Haptics from "expo-haptics";
+src/hooks/screens/useStoriesScreen.ts:8:import * as Haptics from "expo-haptics";
+src/components/elite/buttons/EliteButton.tsx:5:  TouchableOpacity,
+src/components/elite/buttons/EliteButton.tsx:7:  type TouchableOpacityProps,
+src/components/elite/buttons/EliteButton.tsx:23:import * as Haptics from "expo-haptics";
+src/components/elite/buttons/EliteButton.tsx:41:interface EliteButtonProps extends TouchableOpacityProps {
+src/components/elite/buttons/EliteButton.tsx:296:      <TouchableOpacity
+src/components/elite/buttons/EliteButton.tsx:303:        onPressIn={handlePressIn}
+src/components/elite/buttons/EliteButton.tsx:304:        onPressOut={handlePressOut}
+src/components/elite/buttons/EliteButton.tsx:359:      </TouchableOpacity>
+src/hooks/screens/useProfileScreen.ts:4:import * as Haptics from "expo-haptics";
+src/types/common.ts:31:export interface TouchableComponentProps extends BaseComponentProps {
+src/components/shortcuts/QuickActions.tsx:3:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/shortcuts/QuickActions.tsx:26:          <TouchableOpacity
+src/components/shortcuts/QuickActions.tsx:36:          </TouchableOpacity>
+src/components/PawPullToRefresh.tsx:13:import * as Haptics from "expo-haptics";
+src/components/ModernSwipeCard.tsx:14:import * as Haptics from "expo-haptics";
+src/components/elite/cards/EliteCard.tsx:4:  TouchableOpacity,
+src/components/elite/cards/EliteCard.tsx:19:import * as Haptics from "expo-haptics";
+src/components/elite/cards/EliteCard.tsx:156:        <TouchableOpacity
+src/components/elite/cards/EliteCard.tsx:159:          onPressIn={handlePressIn}
+src/components/elite/cards/EliteCard.tsx:160:          onPressOut={handlePressOut}
+src/components/elite/cards/EliteCard.tsx:215:        </TouchableOpacity>
+src/setupTests.ts:135:jest.mock("expo-haptics", () => ({
+src/components/elite/headers/EliteHeader.tsx:5:  TouchableOpacity,
+src/components/elite/headers/EliteHeader.tsx:11:import * as Haptics from "expo-haptics";
+src/components/elite/headers/EliteHeader.tsx:79:        <TouchableOpacity
+src/components/elite/headers/EliteHeader.tsx:85:        </TouchableOpacity>
+src/components/admin/AdminUserListItem.tsx:7:  TouchableOpacity,
+src/components/admin/AdminUserListItem.tsx:91:      <TouchableOpacity
+src/components/admin/AdminUserListItem.tsx:153:            <TouchableOpacity
+src/components/admin/AdminUserListItem.tsx:171:            </TouchableOpacity>
+src/components/admin/AdminUserListItem.tsx:172:            <TouchableOpacity
+src/components/admin/AdminUserListItem.tsx:190:            </TouchableOpacity>
+src/components/admin/AdminUserListItem.tsx:216:      </TouchableOpacity>
+src/components/ErrorBoundary.tsx:5:import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+src/components/ErrorBoundary.tsx:74:            <TouchableOpacity
+src/components/ErrorBoundary.tsx:80:            </TouchableOpacity>
+src/components/library/navigation/ConnectionPath.tsx:2:import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+src/components/library/navigation/ConnectionPath.tsx:60:        <TouchableOpacity
+src/components/widgets/SwipeWidget.tsx:3:import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/widgets/SwipeWidget.tsx:23:        <TouchableOpacity onPress={onViewProfile}>
+src/components/widgets/SwipeWidget.tsx:25:        </TouchableOpacity>
+src/components/widgets/SwipeWidget.tsx:43:        <TouchableOpacity
+src/components/widgets/SwipeWidget.tsx:50:        </TouchableOpacity>
+src/components/widgets/SwipeWidget.tsx:52:        <TouchableOpacity
+src/components/widgets/SwipeWidget.tsx:59:        </TouchableOpacity>
+src/screens/MemoryWeaveScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/MemoryWeaveScreen.tsx:11:  TouchableOpacity,
+src/screens/MemoryWeaveScreen.tsx:235:          <TouchableOpacity
+src/screens/MemoryWeaveScreen.tsx:271:          <TouchableOpacity
+src/screens/MemoryWeaveScreen.tsx:281:          </TouchableOpacity>
+src/screens/MemoryWeaveScreen.tsx:288:          <TouchableOpacity
+src/screens/MemoryWeaveScreen.tsx:298:          </TouchableOpacity>
+src/components/widgets/MatchWidget.tsx:8:  TouchableOpacity,
+src/components/widgets/MatchWidget.tsx:35:        <TouchableOpacity onPress={onViewAll}>
+src/components/widgets/MatchWidget.tsx:37:        </TouchableOpacity>
+src/components/widgets/MatchWidget.tsx:43:            <TouchableOpacity
+src/components/widgets/MatchWidget.tsx:75:            </TouchableOpacity>
+src/screens/MapScreen.tsx:11:  TouchableOpacity,
+src/screens/MapScreen.tsx:79:          <TouchableOpacity style={styles.filterButton} onPress={toggleFilterPanel}>
+src/screens/MapScreen.tsx:81:          </TouchableOpacity>
+src/screens/MapScreen.tsx:157:        <TouchableOpacity
+src/screens/MapScreen.tsx:162:        </TouchableOpacity>
+src/screens/MapScreen.tsx:164:        <TouchableOpacity
+src/screens/MapScreen.tsx:169:        </TouchableOpacity>
+src/components/widgets/EventWidget.tsx:3:import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/widgets/EventWidget.tsx:53:        <TouchableOpacity onPress={onEventPress}>
+src/components/widgets/EventWidget.tsx:55:        </TouchableOpacity>
+src/components/widgets/EventWidget.tsx:110:          <TouchableOpacity style={styles.joinButton} onPress={onJoinEvent}>
+src/components/widgets/EventWidget.tsx:112:          </TouchableOpacity>
+src/utils/hapticFeedback.ts:1:import * as Haptics from "expo-haptics";
+src/utils/haptics.ts:6:import * as Haptics from "expo-haptics";
+src/screens/premium/SubscriptionSuccessScreen.tsx:5:import * as Haptics from "expo-haptics";
+src/screens/premium/SubscriptionSuccessScreen.tsx:14:  TouchableOpacity,
+src/screens/premium/SubscriptionSuccessScreen.tsx:152:        <TouchableOpacity
+src/screens/premium/SubscriptionSuccessScreen.tsx:159:        </TouchableOpacity>
+src/screens/premium/SubscriptionSuccessScreen.tsx:161:        <TouchableOpacity
+src/screens/premium/SubscriptionSuccessScreen.tsx:168:        </TouchableOpacity>
+src/components/help/HelpOptionCard.tsx:4:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/help/HelpOptionCard.tsx:25:      <TouchableOpacity
+src/components/help/HelpOptionCard.tsx:51:      </TouchableOpacity>
+src/components/help/HelpContactCard.tsx:4:import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+src/components/help/HelpContactCard.tsx:15:    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+src/components/help/HelpContactCard.tsx:33:    </TouchableOpacity>
+src/components/AnimatedSplash.tsx:12:import * as Haptics from "expo-haptics";
+src/components/matches/ErrorState.tsx:2:import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/matches/ErrorState.tsx:20:      <TouchableOpacity
+src/components/matches/ErrorState.tsx:26:      </TouchableOpacity>
+src/screens/premium/PremiumScreen.tsx:8:  TouchableOpacity,
+src/screens/premium/PremiumScreen.tsx:36:      <TouchableOpacity
+src/screens/premium/PremiumScreen.tsx:79:        <TouchableOpacity
+src/screens/premium/PremiumScreen.tsx:94:        </TouchableOpacity>
+src/screens/premium/PremiumScreen.tsx:95:      </TouchableOpacity>
+src/screens/premium/PremiumScreen.tsx:109:          <TouchableOpacity
+src/screens/premium/PremiumScreen.tsx:115:          </TouchableOpacity>
+src/screens/premium/PremiumScreen.tsx:124:          <TouchableOpacity
+src/screens/premium/PremiumScreen.tsx:141:          </TouchableOpacity>
+src/screens/premium/PremiumScreen.tsx:143:          <TouchableOpacity
+src/screens/premium/PremiumScreen.tsx:163:          </TouchableOpacity>
+src/components/Gestures/PinchZoom.tsx:20:import * as Haptics from "expo-haptics";
+src/components/matches/MatchCard.tsx:5:import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/matches/MatchCard.tsx:14:import * as Haptics from "expo-haptics";
+src/components/matches/MatchCard.tsx:96:      <TouchableOpacity
+src/components/matches/MatchCard.tsx:100:        onPressIn={handlePressIn}
+src/components/matches/MatchCard.tsx:101:        onPressOut={handlePressOut}
+src/components/matches/MatchCard.tsx:136:                <TouchableOpacity
+src/components/matches/MatchCard.tsx:145:                </TouchableOpacity>
+src/components/matches/MatchCard.tsx:148:                <TouchableOpacity
+src/components/matches/MatchCard.tsx:154:                </TouchableOpacity>
+src/components/matches/MatchCard.tsx:157:                <TouchableOpacity
+src/components/matches/MatchCard.tsx:170:                </TouchableOpacity>
+src/components/matches/MatchCard.tsx:175:      </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx:15:  TouchableOpacity,
+src/screens/premium/SubscriptionManagerScreen.tsx:294:          <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx:299:          </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx:313:          <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx:320:          </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx:456:                <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx:475:                </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx:480:              <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx:496:              </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx:499:            <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx:512:            </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx:514:            <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx:529:            </TouchableOpacity>
+src/components/matches/MatchesTabs.tsx:2:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/components/matches/MatchesTabs.tsx:25:        <TouchableOpacity
+src/components/matches/MatchesTabs.tsx:44:        </TouchableOpacity>
+src/components/matches/MatchesTabs.tsx:45:        <TouchableOpacity
+src/components/matches/MatchesTabs.tsx:64:        </TouchableOpacity>
+src/screens/MigrationExampleScreen.tsx:12:  TouchableOpacity,
+src/screens/MigrationExampleScreen.tsx:31:      <TouchableOpacity style={styles.button} onPress={() => {}}>
+src/screens/MigrationExampleScreen.tsx:33:      </TouchableOpacity>
+src/screens/MigrationExampleScreen.tsx:35:      <TouchableOpacity
+src/screens/MigrationExampleScreen.tsx:40:      </TouchableOpacity>
+src/screens/MigrationExampleScreen.tsx:95:        <TouchableOpacity
+src/screens/MigrationExampleScreen.tsx:103:        </TouchableOpacity>
+src/screens/MigrationExampleScreen.tsx:105:        <TouchableOpacity
+src/screens/MigrationExampleScreen.tsx:113:        </TouchableOpacity>
+src/screens/MigrationExampleScreen.tsx:118:          <TouchableOpacity
+src/screens/MigrationExampleScreen.tsx:129:          </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:6:import { ActivityIndicator, Alert, Linking, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:221:          <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:226:          </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:235:          <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:240:          </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:354:              <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:362:              </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:366:              <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:374:              </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:377:            <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:385:            </TouchableOpacity>
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:387:            <TouchableOpacity
+src/screens/premium/SubscriptionManagerScreen.tsx.bak2:395:            </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:4:import * as Haptics from "expo-haptics";
+src/screens/ARScentTrailsScreen.tsx:12:  TouchableOpacity,
+src/screens/ARScentTrailsScreen.tsx:42:        <TouchableOpacity
+src/screens/ARScentTrailsScreen.tsx:47:        </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:50:          <TouchableOpacity style={styles.headerButton}>
+src/screens/ARScentTrailsScreen.tsx:56:          </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:80:              <TouchableOpacity
+src/screens/ARScentTrailsScreen.tsx:91:              </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:112:              <TouchableOpacity
+src/screens/ARScentTrailsScreen.tsx:164:              </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:173:          <TouchableOpacity
+src/screens/ARScentTrailsScreen.tsx:186:          </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:188:          <TouchableOpacity
+src/screens/ARScentTrailsScreen.tsx:201:          </TouchableOpacity>
+src/screens/ARScentTrailsScreen.tsx:203:          <TouchableOpacity
+src/screens/ARScentTrailsScreen.tsx:216:          </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:8:  TouchableOpacity,
+src/screens/MyPetsScreen.tsx:42:      <TouchableOpacity
+src/screens/MyPetsScreen.tsx:126:            <TouchableOpacity
+src/screens/MyPetsScreen.tsx:141:            </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:143:            <TouchableOpacity
+src/screens/MyPetsScreen.tsx:154:            </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:156:            <TouchableOpacity
+src/screens/MyPetsScreen.tsx:166:            </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:169:      </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:181:      <TouchableOpacity
+src/screens/MyPetsScreen.tsx:189:      </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:197:        <TouchableOpacity
+src/screens/MyPetsScreen.tsx:202:        </TouchableOpacity>
+src/screens/MyPetsScreen.tsx:204:        <TouchableOpacity
+src/screens/MyPetsScreen.tsx:209:        </TouchableOpacity>
+src/screens/ModerationToolsScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/ModerationToolsScreen.tsx:12:  TouchableOpacity,
+src/screens/ModerationToolsScreen.tsx:130:          <TouchableOpacity
+src/screens/ModerationToolsScreen.tsx:142:          </TouchableOpacity>
+src/screens/ModerationToolsScreen.tsx:178:            <TouchableOpacity
+src/screens/ModerationToolsScreen.tsx:214:            </TouchableOpacity>
+src/screens/ModerationToolsScreen.tsx:233:          <TouchableOpacity
+src/screens/ModerationToolsScreen.tsx:244:          </TouchableOpacity>
+src/screens/ModerationToolsScreen.tsx:246:          <TouchableOpacity
+src/screens/ModerationToolsScreen.tsx:254:          </TouchableOpacity>
+src/screens/ModerationToolsScreen.tsx:256:          <TouchableOpacity
+src/screens/ModerationToolsScreen.tsx:264:          </TouchableOpacity>
+src/screens/SettingsScreen.tsx:5:import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+src/screens/SettingsScreen.tsx:241:    <TouchableOpacity
+src/screens/SettingsScreen.tsx:306:    </TouchableOpacity>
+src/screens/SwipeScreen.tsx:16:  TouchableOpacity,
+src/screens/SwipeScreen.tsx:98:          <TouchableOpacity onPress={() => navigation.goBack()}>
+src/screens/SwipeScreen.tsx:100:          </TouchableOpacity>
+src/screens/SwipeScreen.tsx:102:          <TouchableOpacity onPress={() => navigation.navigate("Matches")}>
+src/screens/SwipeScreen.tsx:104:          </TouchableOpacity>
+src/screens/SwipeScreen.tsx:120:          <TouchableOpacity onPress={() => navigation.goBack()}>
+src/screens/SwipeScreen.tsx:122:          </TouchableOpacity>
+src/screens/SwipeScreen.tsx:124:          <TouchableOpacity onPress={() => navigation.navigate("Matches")}>
+src/screens/SwipeScreen.tsx:126:          </TouchableOpacity>
+src/screens/SwipeScreen.tsx:142:        <TouchableOpacity onPress={() => navigation.goBack()}>
+src/screens/SwipeScreen.tsx:144:        </TouchableOpacity>
+src/screens/SwipeScreen.tsx:146:        <TouchableOpacity onPress={() => navigation.navigate("Matches")}>
+src/screens/SwipeScreen.tsx:148:        </TouchableOpacity>
+src/screens/SwipeScreen.tsx:178:        <TouchableOpacity
+src/screens/SwipeScreen.tsx:183:        </TouchableOpacity>
+src/screens/SwipeScreen.tsx:185:        <TouchableOpacity
+src/screens/SwipeScreen.tsx:193:        </TouchableOpacity>
+src/screens/SwipeScreen.tsx:195:        <TouchableOpacity
+src/screens/SwipeScreen.tsx:200:        </TouchableOpacity>
+src/screens/EditProfileScreen.tsx:13:  TouchableOpacity,
+src/screens/EditProfileScreen.tsx:70:          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+src/screens/EditProfileScreen.tsx:72:          </TouchableOpacity>
+src/screens/EditProfileScreen.tsx:74:          <TouchableOpacity
+src/screens/EditProfileScreen.tsx:90:          </TouchableOpacity>
+src/screens/EditProfileScreen.tsx:104:              <TouchableOpacity
+src/screens/EditProfileScreen.tsx:130:              </TouchableOpacity>
+src/screens/BlockedUsersScreen.tsx:10:  TouchableOpacity,
+src/screens/BlockedUsersScreen.tsx:16:import * as Haptics from "expo-haptics";
+src/screens/BlockedUsersScreen.tsx:146:        <TouchableOpacity
+src/screens/BlockedUsersScreen.tsx:155:        </TouchableOpacity>
+src/screens/BlockedUsersScreen.tsx:171:          <TouchableOpacity
+src/screens/BlockedUsersScreen.tsx:183:          </TouchableOpacity>
+src/screens/NotificationPreferencesScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/NotificationPreferencesScreen.tsx:12:  TouchableOpacity,
+src/screens/NotificationPreferencesScreen.tsx:150:          <TouchableOpacity
+src/screens/NotificationPreferencesScreen.tsx:165:          </TouchableOpacity>
+src/screens/NotificationPreferencesScreen.tsx:207:          <TouchableOpacity
+src/screens/NotificationPreferencesScreen.tsx:219:          </TouchableOpacity>
+src/screens/NotificationPreferencesScreen.tsx:221:          <TouchableOpacity style={styles.saveButton} onPress={saveSettings}>
+src/screens/NotificationPreferencesScreen.tsx:223:          </TouchableOpacity>
+src/screens/NotificationPreferencesScreen.tsx:291:          <TouchableOpacity
+src/screens/NotificationPreferencesScreen.tsx:305:          </TouchableOpacity>
+src/screens/ProfileScreen.tsx:6:import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+src/screens/ProfileScreen.tsx:271:        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+src/screens/ProfileScreen.tsx:279:        </TouchableOpacity>
+src/screens/AICompatibilityScreen.tsx:10:  TouchableOpacity,
+src/screens/AICompatibilityScreen.tsx:75:        <TouchableOpacity style={styles.backButton} onPress={navigation.goBack}>
+src/screens/AICompatibilityScreen.tsx:77:        </TouchableOpacity>
+src/screens/AICompatibilityScreen.tsx:96:              <TouchableOpacity
+src/screens/AICompatibilityScreen.tsx:112:              </TouchableOpacity>
+src/screens/AICompatibilityScreen.tsx:126:            <TouchableOpacity onPress={clearError} style={styles.errorDismiss}>
+src/screens/AICompatibilityScreen.tsx:128:            </TouchableOpacity>
+src/screens/calling/IncomingCallScreen.tsx:12:  TouchableOpacity,
+src/screens/calling/IncomingCallScreen.tsx:186:          <TouchableOpacity
+src/screens/calling/IncomingCallScreen.tsx:206:          </TouchableOpacity>
+src/screens/calling/IncomingCallScreen.tsx:209:          <TouchableOpacity
+src/screens/calling/IncomingCallScreen.tsx:224:          </TouchableOpacity>
+src/screens/calling/IncomingCallScreen.tsx:236:          <TouchableOpacity style={styles.additionalButton}>
+src/screens/calling/IncomingCallScreen.tsx:239:          </TouchableOpacity>
+src/screens/calling/IncomingCallScreen.tsx:241:          <TouchableOpacity style={styles.additionalButton}>
+src/screens/calling/IncomingCallScreen.tsx:244:          </TouchableOpacity>
+src/screens/ForgotPasswordScreen.tsx:10:  TouchableOpacity,
+src/screens/ForgotPasswordScreen.tsx:39:          <TouchableOpacity style={styles.backButton} onPress={navigateBack}>
+src/screens/ForgotPasswordScreen.tsx:41:          </TouchableOpacity>
+src/screens/ForgotPasswordScreen.tsx:69:            <TouchableOpacity
+src/screens/ForgotPasswordScreen.tsx:85:            </TouchableOpacity>
+src/screens/AboutTermsPrivacyScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/AboutTermsPrivacyScreen.tsx:12:  TouchableOpacity,
+src/screens/AboutTermsPrivacyScreen.tsx:101:          <TouchableOpacity
+src/screens/AboutTermsPrivacyScreen.tsx:113:          </TouchableOpacity>
+src/screens/AboutTermsPrivacyScreen.tsx:135:          <TouchableOpacity style={styles.websiteCard} onPress={handleWebsite}>
+src/screens/AboutTermsPrivacyScreen.tsx:152:          </TouchableOpacity>
+src/screens/AboutTermsPrivacyScreen.tsx:158:            <TouchableOpacity
+src/screens/AboutTermsPrivacyScreen.tsx:188:            </TouchableOpacity>
+src/screens/calling/ActiveCallScreen.tsx:11:  TouchableOpacity,
+src/screens/calling/ActiveCallScreen.tsx:145:          <TouchableOpacity
+src/screens/calling/ActiveCallScreen.tsx:150:          </TouchableOpacity>
+src/screens/calling/ActiveCallScreen.tsx:155:      <TouchableOpacity
+src/screens/calling/ActiveCallScreen.tsx:234:            <TouchableOpacity
+src/screens/calling/ActiveCallScreen.tsx:246:            </TouchableOpacity>
+src/screens/calling/ActiveCallScreen.tsx:249:            <TouchableOpacity
+src/screens/calling/ActiveCallScreen.tsx:254:            </TouchableOpacity>
+src/screens/calling/ActiveCallScreen.tsx:258:              <TouchableOpacity
+src/screens/calling/ActiveCallScreen.tsx:270:              </TouchableOpacity>
+src/screens/calling/ActiveCallScreen.tsx:274:            <TouchableOpacity
+src/screens/calling/ActiveCallScreen.tsx:292:            </TouchableOpacity>
+src/screens/PremiumSuccessScreen.tsx:9:import * as Haptics from "expo-haptics";
+src/screens/PremiumSuccessScreen.tsx:11:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/screens/PremiumSuccessScreen.tsx:106:            <TouchableOpacity
+src/screens/PremiumSuccessScreen.tsx:114:            </TouchableOpacity>
+src/screens/leaderboard/LeaderboardScreen.tsx:19:  TouchableOpacity,
+src/screens/leaderboard/LeaderboardScreen.tsx:172:      <TouchableOpacity
+src/screens/leaderboard/LeaderboardScreen.tsx:189:      </TouchableOpacity>
+src/screens/leaderboard/LeaderboardScreen.tsx:192:        <TouchableOpacity
+src/screens/leaderboard/LeaderboardScreen.tsx:216:        </TouchableOpacity>
+src/screens/leaderboard/LeaderboardScreen.tsx:224:        <TouchableOpacity
+src/screens/leaderboard/LeaderboardScreen.tsx:242:        </TouchableOpacity>
+src/screens/leaderboard/LeaderboardScreen.tsx:363:        <TouchableOpacity
+src/screens/leaderboard/LeaderboardScreen.tsx:370:        </TouchableOpacity>
+src/screens/PrivacySettingsScreen.tsx:16:  TouchableOpacity,
+src/screens/PrivacySettingsScreen.tsx:82:        <TouchableOpacity
+src/screens/PrivacySettingsScreen.tsx:103:        </TouchableOpacity>
+src/screens/PrivacySettingsScreen.tsx:122:        <TouchableOpacity
+src/screens/PrivacySettingsScreen.tsx:127:        </TouchableOpacity>
+src/screens/PrivacySettingsScreen.tsx:338:            <TouchableOpacity
+src/screens/PrivacySettingsScreen.tsx:347:            </TouchableOpacity>,
+src/screens/PrivacySettingsScreen.tsx:354:            <TouchableOpacity
+src/screens/PrivacySettingsScreen.tsx:388:            </TouchableOpacity>,
+src/screens/AIBioScreen.tsx:10:  TouchableOpacity,
+src/screens/AIBioScreen.tsx:56:        <TouchableOpacity onPress={handleGoBack}>
+src/screens/AIBioScreen.tsx:58:        </TouchableOpacity>
+src/screens/AIBioScreen.tsx:69:          <TouchableOpacity style={styles.photoUpload} onPress={pickImage}>
+src/screens/AIBioScreen.tsx:83:          </TouchableOpacity>
+src/screens/AIBioScreen.tsx:145:              <TouchableOpacity
+src/screens/AIBioScreen.tsx:165:              </TouchableOpacity>
+src/screens/AIBioScreen.tsx:171:        <TouchableOpacity
+src/screens/AIBioScreen.tsx:192:        </TouchableOpacity>
+src/screens/AIBioScreen.tsx:245:                <TouchableOpacity
+src/screens/AIBioScreen.tsx:251:                </TouchableOpacity>
+src/screens/AIBioScreen.tsx:252:                <TouchableOpacity style={styles.saveButton} onPress={saveBio}>
+src/screens/AIBioScreen.tsx:255:                </TouchableOpacity>
+src/screens/HelpSupportScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/HelpSupportScreen.tsx:10:  TouchableOpacity,
+src/screens/HelpSupportScreen.tsx:42:          <TouchableOpacity
+src/screens/HelpSupportScreen.tsx:54:          </TouchableOpacity>
+src/screens/AIBioScreen.refactored.tsx:7:import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+src/screens/AIBioScreen.refactored.tsx:70:        <TouchableOpacity
+src/screens/AIBioScreen.refactored.tsx:80:        </TouchableOpacity>
+src/screens/AIBioScreen.refactored.tsx:110:              <TouchableOpacity
+src/screens/AIBioScreen.refactored.tsx:129:              </TouchableOpacity>
+src/screens/AIBioScreen.refactored.tsx:133:            <TouchableOpacity
+src/screens/AIBioScreen.refactored.tsx:145:            </TouchableOpacity>
+src/screens/AIBioScreen.refactored.tsx:171:            <TouchableOpacity
+src/screens/AIBioScreen.refactored.tsx:185:            </TouchableOpacity>
+src/screens/ManageSubscriptionScreen.tsx:5:import * as Haptics from "expo-haptics";
+src/screens/ManageSubscriptionScreen.tsx:12:  TouchableOpacity,
+src/screens/ManageSubscriptionScreen.tsx:176:          <TouchableOpacity
+src/screens/ManageSubscriptionScreen.tsx:184:          </TouchableOpacity>
+src/screens/ManageSubscriptionScreen.tsx:325:            <TouchableOpacity
+src/screens/ManageSubscriptionScreen.tsx:340:            </TouchableOpacity>
+src/screens/ManageSubscriptionScreen.tsx:342:            <TouchableOpacity
+src/screens/ManageSubscriptionScreen.tsx:350:            </TouchableOpacity>
+src/screens/ManageSubscriptionScreen.tsx:353:          <TouchableOpacity
+src/screens/ManageSubscriptionScreen.tsx:368:          </TouchableOpacity>
+src/screens/StoriesScreen.tsx:28:  TouchableOpacity,
+src/screens/StoriesScreen.tsx:210:              <TouchableOpacity
+src/screens/StoriesScreen.tsx:221:              </TouchableOpacity>
+src/screens/StoriesScreen.tsx:225:            <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
+src/screens/StoriesScreen.tsx:227:            </TouchableOpacity>
+src/screens/SafetyCenterScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/SafetyCenterScreen.tsx:9:  TouchableOpacity,
+src/screens/SafetyCenterScreen.tsx:51:          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+src/screens/SafetyCenterScreen.tsx:55:          </TouchableOpacity>
+src/screens/SafetyCenterScreen.tsx:80:            <TouchableOpacity
+src/screens/SafetyCenterScreen.tsx:90:            </TouchableOpacity>
+src/screens/SafetyCenterScreen.tsx:99:            <TouchableOpacity
+src/screens/SafetyCenterScreen.tsx:129:            </TouchableOpacity>
+src/screens/SafetyCenterScreen.tsx:139:          <TouchableOpacity style={styles.quickActionCard}>
+src/screens/SafetyCenterScreen.tsx:156:          </TouchableOpacity>
+src/screens/SafetyCenterScreen.tsx:158:          <TouchableOpacity style={styles.quickActionCard}>
+src/screens/SafetyCenterScreen.tsx:179:          </TouchableOpacity>
+src/screens/admin/AdminAnalyticsScreen.tsx:8:import * as Haptics from "expo-haptics";
+src/screens/admin/AdminAnalyticsScreen.tsx:18:  TouchableOpacity,
+src/screens/admin/AdminAnalyticsScreen.tsx:234:          <TouchableOpacity
+src/screens/admin/AdminAnalyticsScreen.tsx:241:          </TouchableOpacity>
+src/screens/admin/AdminAnalyticsScreen.tsx:249:              <TouchableOpacity
+src/screens/admin/AdminAnalyticsScreen.tsx:274:              </TouchableOpacity>
+src/screens/PremiumScreen.tsx:2:import * as Haptics from "expo-haptics";
+src/screens/PremiumScreen.tsx:10:  TouchableOpacity,
+src/screens/PremiumScreen.tsx:55:        <TouchableOpacity
+src/screens/PremiumScreen.tsx:63:        </TouchableOpacity>
+src/screens/PremiumScreen.tsx:73:          <TouchableOpacity
+src/screens/PremiumScreen.tsx:96:          </TouchableOpacity>
+src/screens/PremiumScreen.tsx:97:          <TouchableOpacity
+src/screens/PremiumScreen.tsx:118:          </TouchableOpacity>
+src/screens/PremiumScreen.tsx:126:              <TouchableOpacity
+src/screens/PremiumScreen.tsx:186:              </TouchableOpacity>
+src/screens/PremiumScreen.tsx:191:        <TouchableOpacity
+src/screens/PremiumScreen.tsx:208:        </TouchableOpacity>
+src/screens/admin/AdminUsersScreen.tsx:9:  TouchableOpacity,
+src/screens/admin/AdminUsersScreen.tsx:82:          <TouchableOpacity
+src/screens/admin/AdminUsersScreen.tsx:99:          </TouchableOpacity>
+src/screens/admin/AdminUsersScreen.tsx:127:                <TouchableOpacity
+src/screens/admin/AdminUsersScreen.tsx:151:                </TouchableOpacity>
+src/screens/admin/AdminUsersScreen.tsx:187:              <TouchableOpacity
+src/screens/admin/AdminUsersScreen.tsx:203:              </TouchableOpacity>
+src/screens/admin/AdminUsersScreen.tsx:204:              <TouchableOpacity
+src/screens/admin/AdminUsersScreen.tsx:220:              </TouchableOpacity>
+src/screens/admin/AdminUsersScreen.tsx:221:              <TouchableOpacity
+src/screens/admin/AdminUsersScreen.tsx:237:              </TouchableOpacity>
+src/screens/PremiumCancelScreen.tsx:7:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/screens/PremiumCancelScreen.tsx:12:import * as Haptics from "expo-haptics";
+src/screens/PremiumCancelScreen.tsx:59:            <TouchableOpacity
+src/screens/PremiumCancelScreen.tsx:67:            </TouchableOpacity>
+src/screens/PremiumCancelScreen.tsx:69:            <TouchableOpacity
+src/screens/PremiumCancelScreen.tsx:84:            </TouchableOpacity>
+src/screens/onboarding/PreferencesSetupScreen.tsx:12:  TouchableOpacity,
+src/screens/onboarding/PreferencesSetupScreen.tsx:254:                <TouchableOpacity
+src/screens/onboarding/PreferencesSetupScreen.tsx:274:                </TouchableOpacity>
+src/screens/onboarding/PreferencesSetupScreen.tsx:287:                <TouchableOpacity
+src/screens/onboarding/PreferencesSetupScreen.tsx:307:                </TouchableOpacity>
+src/screens/onboarding/PreferencesSetupScreen.tsx:383:        <TouchableOpacity
+src/screens/onboarding/PreferencesSetupScreen.tsx:388:        </TouchableOpacity>
+src/screens/onboarding/PreferencesSetupScreen.tsx:390:        <TouchableOpacity
+src/screens/onboarding/PreferencesSetupScreen.tsx:395:        </TouchableOpacity>
+src/screens/admin/AdminDashboardScreen.tsx:8:import * as Haptics from "expo-haptics";
+src/screens/admin/AdminDashboardScreen.tsx:18:  TouchableOpacity,
+src/screens/admin/AdminDashboardScreen.tsx:283:            <TouchableOpacity
+src/screens/admin/AdminDashboardScreen.tsx:301:            </TouchableOpacity>
+src/screens/admin/AdminDashboardScreen.tsx:303:            <TouchableOpacity
+src/screens/admin/AdminDashboardScreen.tsx:321:            </TouchableOpacity>
+src/screens/admin/AdminDashboardScreen.tsx:323:            <TouchableOpacity
+src/screens/admin/AdminDashboardScreen.tsx:341:            </TouchableOpacity>
+src/screens/admin/AdminDashboardScreen.tsx:343:            <TouchableOpacity
+src/screens/admin/AdminDashboardScreen.tsx:361:            </TouchableOpacity>
+src/screens/admin/AdminDashboardScreen.tsx:363:            <TouchableOpacity
+src/screens/admin/AdminDashboardScreen.tsx:382:            </TouchableOpacity>
+src/screens/admin/AdminDashboardScreen.tsx:384:            <TouchableOpacity
+src/screens/admin/AdminDashboardScreen.tsx:402:            </TouchableOpacity>
+src/screens/onboarding/WelcomeScreen.tsx:26:import * as Haptics from "expo-haptics";
+src/screens/admin/AdminChatsScreen.tsx:16:  TouchableOpacity,
+src/screens/admin/AdminChatsScreen.tsx:213:            <TouchableOpacity
+src/screens/admin/AdminChatsScreen.tsx:222:            </TouchableOpacity>
+src/screens/admin/AdminChatsScreen.tsx:224:            <TouchableOpacity
+src/screens/admin/AdminChatsScreen.tsx:233:            </TouchableOpacity>
+src/screens/admin/AdminChatsScreen.tsx:235:            <TouchableOpacity
+src/screens/admin/AdminChatsScreen.tsx:244:            </TouchableOpacity>
+src/screens/admin/AdminChatsScreen.tsx:253:    <TouchableOpacity
+src/screens/admin/AdminChatsScreen.tsx:272:    </TouchableOpacity>
+src/screens/admin/AdminChatsScreen.tsx:289:        <TouchableOpacity
+src/screens/admin/AdminChatsScreen.tsx:296:        </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:50:  TouchableOpacity,
+src/screens/onboarding/PetProfileSetupScreen.tsx:253:            <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:272:            </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:315:            <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:333:            </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:342:            <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:360:            </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:376:            <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:394:            </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:405:            <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:424:            </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:458:          <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:486:          </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:522:          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+src/screens/onboarding/PetProfileSetupScreen.tsx:524:          </TouchableOpacity>
+src/screens/onboarding/PetProfileSetupScreen.tsx:526:          <TouchableOpacity
+src/screens/onboarding/PetProfileSetupScreen.tsx:537:          </TouchableOpacity>
+src/screens/admin/AdminUploadsScreen.tsx:18:  TouchableOpacity,
+src/screens/admin/AdminUploadsScreen.tsx:181:      <TouchableOpacity
+src/screens/admin/AdminUploadsScreen.tsx:237:      </TouchableOpacity>
+src/screens/admin/AdminUploadsScreen.tsx:256:    <TouchableOpacity
+src/screens/admin/AdminUploadsScreen.tsx:275:    </TouchableOpacity>
+src/screens/admin/AdminUploadsScreen.tsx:298:            <TouchableOpacity
+src/screens/admin/AdminUploadsScreen.tsx:304:            </TouchableOpacity>
+src/screens/admin/AdminUploadsScreen.tsx:432:              <TouchableOpacity
+src/screens/admin/AdminUploadsScreen.tsx:441:              </TouchableOpacity>
+src/screens/admin/AdminUploadsScreen.tsx:443:              <TouchableOpacity
+src/screens/admin/AdminUploadsScreen.tsx:454:              </TouchableOpacity>
+src/screens/admin/AdminUploadsScreen.tsx:476:        <TouchableOpacity
+src/screens/admin/AdminUploadsScreen.tsx:483:        </TouchableOpacity>
+src/screens/onboarding/UserIntentScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/onboarding/UserIntentScreen.tsx:10:  TouchableOpacity,
+src/screens/onboarding/UserIntentScreen.tsx:194:                <TouchableOpacity
+src/screens/onboarding/UserIntentScreen.tsx:254:                </TouchableOpacity>
+src/screens/onboarding/UserIntentScreen.tsx:264:                <TouchableOpacity
+src/screens/onboarding/UserIntentScreen.tsx:322:                </TouchableOpacity>
+src/screens/ai/compatibility/PetSelectionSection.tsx:13:  TouchableOpacity,
+src/screens/ai/compatibility/PetSelectionSection.tsx:60:    <TouchableOpacity
+src/screens/ai/compatibility/PetSelectionSection.tsx:105:    </TouchableOpacity>
+src/screens/ai/compatibility/PetSelectionSection.tsx:232:            <TouchableOpacity
+src/screens/ai/compatibility/PetSelectionSection.tsx:268:            </TouchableOpacity>
+src/screens/AdvancedFiltersScreen.tsx:8:  TouchableOpacity,
+src/screens/AdvancedFiltersScreen.tsx:14:import * as Haptics from "expo-haptics";
+src/screens/AdvancedFiltersScreen.tsx:50:            <TouchableOpacity
+src/screens/AdvancedFiltersScreen.tsx:85:            </TouchableOpacity>
+src/screens/AdvancedFiltersScreen.tsx:103:          <TouchableOpacity
+src/screens/AdvancedFiltersScreen.tsx:115:          </TouchableOpacity>
+src/screens/AdvancedFiltersScreen.tsx:117:          <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
+src/screens/AdvancedFiltersScreen.tsx:119:          </TouchableOpacity>
+src/screens/AdvancedFiltersScreen.tsx:142:          <TouchableOpacity style={styles.saveButton} onPress={saveFilters}>
+src/screens/AdvancedFiltersScreen.tsx:147:          </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:16:  TouchableOpacity,
+src/screens/admin/AdminVerificationsScreen.tsx:276:      <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:385:            <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:393:            </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:395:            <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:405:            </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:407:            <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:417:            </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:420:      </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:431:    <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:450:    </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:473:            <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:479:            </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:595:                  <TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:597:                  </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:606:              <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:617:              </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:619:              <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:630:              </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:632:              <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:643:              </TouchableOpacity>
+src/screens/admin/AdminVerificationsScreen.tsx:665:        <TouchableOpacity
+src/screens/admin/AdminVerificationsScreen.tsx:672:        </TouchableOpacity>
+src/screens/RegisterScreen.tsx:7:  TouchableOpacity,
+src/screens/RegisterScreen.tsx:30:          <TouchableOpacity style={styles.backButton} onPress={navigateToLogin}>
+src/screens/RegisterScreen.tsx:32:          </TouchableOpacity>
+src/screens/RegisterScreen.tsx:126:            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+src/screens/RegisterScreen.tsx:128:            </TouchableOpacity>
+src/screens/ai/compatibility/AnalysisResultsSection.tsx:8:import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+src/screens/ai/compatibility/AnalysisResultsSection.tsx:296:        <TouchableOpacity style={styles.resetButton} onPress={onReset}>
+src/screens/ai/compatibility/AnalysisResultsSection.tsx:306:        </TouchableOpacity>
+src/screens/LoginScreen.tsx:10:  TouchableOpacity,
+src/screens/LoginScreen.tsx:80:            <TouchableOpacity
+src/screens/LoginScreen.tsx:85:            </TouchableOpacity>
+src/screens/LoginScreen.tsx:87:            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+src/screens/LoginScreen.tsx:89:            </TouchableOpacity>
+src/screens/LoginScreen.tsx:93:              <TouchableOpacity onPress={navigateToRegister}>
+src/screens/LoginScreen.tsx:95:              </TouchableOpacity>
+src/screens/admin/AdminBillingScreen.tsx:17:  TouchableOpacity,
+src/screens/admin/AdminBillingScreen.tsx:333:              <TouchableOpacity
+src/screens/admin/AdminBillingScreen.tsx:346:              </TouchableOpacity>
+src/screens/admin/AdminBillingScreen.tsx:348:              <TouchableOpacity
+src/screens/admin/AdminBillingScreen.tsx:361:              </TouchableOpacity>
+src/screens/admin/AdminBillingScreen.tsx:437:        <TouchableOpacity
+src/screens/admin/AdminBillingScreen.tsx:444:        </TouchableOpacity>
+src/screens/admin/AdminBillingScreen.tsx:451:          <TouchableOpacity
+src/screens/admin/AdminBillingScreen.tsx:460:          </TouchableOpacity>
+src/screens/admin/AdminBillingScreen.tsx:682:              <TouchableOpacity
+src/screens/admin/AdminBillingScreen.tsx:707:              </TouchableOpacity>
+src/screens/admin/AdminBillingScreen.tsx:723:              <TouchableOpacity
+src/screens/admin/AdminBillingScreen.tsx:745:              </TouchableOpacity>
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:8:import * as Haptics from "expo-haptics";
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:19:  TouchableOpacity,
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:300:          <TouchableOpacity
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:307:          </TouchableOpacity>
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:315:              <TouchableOpacity
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:329:              </TouchableOpacity>
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:351:              <TouchableOpacity
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:360:              </TouchableOpacity>
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:379:                <TouchableOpacity
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:388:                </TouchableOpacity>
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:389:                <TouchableOpacity
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:398:                </TouchableOpacity>
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:407:            <TouchableOpacity
+src/screens/ai/AIPhotoAnalyzerScreen.tsx:427:            </TouchableOpacity>
+src/screens/ResetPasswordScreen.tsx:10:  TouchableOpacity,
+src/screens/ResetPasswordScreen.tsx:40:          <TouchableOpacity style={styles.backButton} onPress={navigateBack}>
+src/screens/ResetPasswordScreen.tsx:42:          </TouchableOpacity>
+src/screens/ResetPasswordScreen.tsx:85:            <TouchableOpacity
+src/screens/ResetPasswordScreen.tsx:101:            </TouchableOpacity>
+src/screens/admin/AdminSecurityScreen.tsx:8:import * as Haptics from "expo-haptics";
+src/screens/admin/AdminSecurityScreen.tsx:18:  TouchableOpacity,
+src/screens/admin/AdminSecurityScreen.tsx:316:              <TouchableOpacity
+src/screens/admin/AdminSecurityScreen.tsx:329:              </TouchableOpacity>
+src/screens/admin/AdminSecurityScreen.tsx:332:                <TouchableOpacity
+src/screens/admin/AdminSecurityScreen.tsx:341:                </TouchableOpacity>
+src/screens/admin/AdminSecurityScreen.tsx:443:        <TouchableOpacity
+src/screens/admin/AdminSecurityScreen.tsx:450:        </TouchableOpacity>
+src/screens/admin/AdminSecurityScreen.tsx:457:          <TouchableOpacity
+src/screens/admin/AdminSecurityScreen.tsx:466:          </TouchableOpacity>
+src/screens/admin/AdminSecurityScreen.tsx:607:                <TouchableOpacity
+src/screens/admin/AdminSecurityScreen.tsx:636:                </TouchableOpacity>
+src/screens/admin/AdminSecurityScreen.tsx:663:              <TouchableOpacity
+src/screens/admin/AdminSecurityScreen.tsx:687:              </TouchableOpacity>
+src/screens/__tests__/MatchesScreen.calling.test.tsx:22:  TouchableOpacity: "TouchableOpacity",
+src/screens/__tests__/AIBioScreen.test.tsx:26:jest.mock("expo-haptics", () => ({
+src/screens/DeactivateAccountScreen.tsx:8:  TouchableOpacity,
+src/screens/DeactivateAccountScreen.tsx:14:import * as Haptics from "expo-haptics";
+src/screens/DeactivateAccountScreen.tsx:48:          <TouchableOpacity
+src/screens/DeactivateAccountScreen.tsx:55:          </TouchableOpacity>
+src/screens/DeactivateAccountScreen.tsx:75:            <TouchableOpacity
+src/screens/DeactivateAccountScreen.tsx:101:            </TouchableOpacity>
+src/screens/DeactivateAccountScreen.tsx:138:            <TouchableOpacity
+src/screens/DeactivateAccountScreen.tsx:145:            </TouchableOpacity>
+src/screens/DeactivateAccountScreen.tsx:147:            <TouchableOpacity
+src/screens/DeactivateAccountScreen.tsx:164:            </TouchableOpacity>
+src/screens/__tests__/ChatScreen.calling.test.tsx:26:  TouchableOpacity: "TouchableOpacity",
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:15:  TouchableOpacity,
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:18:import * as Haptics from "expo-haptics";
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:123:          <TouchableOpacity
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:132:          </TouchableOpacity>
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:151:            <TouchableOpacity
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:160:            </TouchableOpacity>
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:161:            <TouchableOpacity
+src/screens/ai/photoanalyzer/PhotoUploadSection.tsx:170:            </TouchableOpacity>
+src/screens/AIPhotoAnalyzerScreen.tsx:10:  TouchableOpacity,
+src/screens/AIPhotoAnalyzerScreen.tsx:80:        <TouchableOpacity
+src/screens/AIPhotoAnalyzerScreen.tsx:87:        </TouchableOpacity>
+src/screens/AIPhotoAnalyzerScreen.tsx:102:              <TouchableOpacity
+src/screens/AIPhotoAnalyzerScreen.tsx:118:              </TouchableOpacity>
+src/screens/AIPhotoAnalyzerScreen.tsx:128:            <TouchableOpacity onPress={clearError} style={styles.errorDismiss}>
+src/screens/AIPhotoAnalyzerScreen.tsx:130:            </TouchableOpacity>
+src/screens/CreatePetScreen.tsx:9:  TouchableOpacity,
+src/screens/CreatePetScreen.tsx:44:          <TouchableOpacity
+src/screens/CreatePetScreen.tsx:49:          </TouchableOpacity>
+src/screens/settings/NotificationSettingsSection.tsx:8:import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+src/screens/settings/NotificationSettingsSection.tsx:31:    <TouchableOpacity
+src/screens/settings/NotificationSettingsSection.tsx:92:    </TouchableOpacity>
+src/screens/ai/AICompatibilityScreen.tsx:9:import * as Haptics from "expo-haptics";
+src/screens/ai/AICompatibilityScreen.tsx:18:  TouchableOpacity,
+src/screens/ai/AICompatibilityScreen.tsx:337:    <TouchableOpacity
+src/screens/ai/AICompatibilityScreen.tsx:405:    </TouchableOpacity>
+src/screens/ai/AICompatibilityScreen.tsx:444:          <TouchableOpacity
+src/screens/ai/AICompatibilityScreen.tsx:451:          </TouchableOpacity>
+src/screens/ai/AICompatibilityScreen.tsx:459:              <TouchableOpacity
+src/screens/ai/AICompatibilityScreen.tsx:472:              </TouchableOpacity>
+src/screens/ai/AICompatibilityScreen.tsx:538:            <TouchableOpacity
+src/screens/ai/AICompatibilityScreen.tsx:560:            </TouchableOpacity>
+src/screens/settings/AccountSettingsSection.tsx:8:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/screens/settings/AccountSettingsSection.tsx:31:    <TouchableOpacity
+src/screens/settings/AccountSettingsSection.tsx:82:    </TouchableOpacity>
+src/screens/CommunityScreen.tsx:21:  TouchableOpacity,
+src/screens/CommunityScreen.tsx:28:import * as Haptics from "expo-haptics";
+src/screens/CommunityScreen.tsx:199:          <TouchableOpacity
+src/screens/CommunityScreen.tsx:217:          </TouchableOpacity>
+src/screens/CommunityScreen.tsx:219:          <TouchableOpacity
+src/screens/CommunityScreen.tsx:237:          </TouchableOpacity>
+src/screens/CommunityScreen.tsx:273:              <TouchableOpacity
+src/screens/CommunityScreen.tsx:278:              </TouchableOpacity>
+src/screens/CommunityScreen.tsx:285:          <TouchableOpacity
+src/screens/CommunityScreen.tsx:303:          </TouchableOpacity>
+src/screens/CommunityScreen.tsx:305:          <TouchableOpacity
+src/screens/CommunityScreen.tsx:313:          </TouchableOpacity>
+src/screens/CommunityScreen.tsx:315:          <TouchableOpacity style={styles.actionButton}>
+src/screens/CommunityScreen.tsx:317:          </TouchableOpacity>
+src/components/Gestures/DoubleTapLike.tsx:17:import * as Haptics from "expo-haptics";
+src/screens/settings/ProfileSummarySection.tsx:8:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/screens/adoption/CreateListingScreen.tsx:5:import * as Haptics from "expo-haptics";
+src/screens/adoption/CreateListingScreen.tsx:14:  TouchableOpacity,
+src/screens/adoption/CreateListingScreen.tsx:164:          <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:169:          </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:172:            <TouchableOpacity style={styles.headerButton}>
+src/screens/adoption/CreateListingScreen.tsx:174:            </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:182:            <TouchableOpacity style={styles.photoUpload} onPress={addPhoto}>
+src/screens/adoption/CreateListingScreen.tsx:193:            </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:227:                    <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:247:                    </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:256:                    <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:274:                    </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:312:                    <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:330:                    </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:366:                <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:385:                </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:397:                <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:417:                </TouchableOpacity>
+src/screens/adoption/CreateListingScreen.tsx:425:          <TouchableOpacity
+src/screens/adoption/CreateListingScreen.tsx:451:          </TouchableOpacity>
+src/screens/adoption/AdoptionContractScreen.tsx:8:  TouchableOpacity,
+src/screens/adoption/AdoptionContractScreen.tsx:120:        <TouchableOpacity onPress={() => navigation.goBack()}>
+src/screens/adoption/AdoptionContractScreen.tsx:122:        </TouchableOpacity>
+src/screens/adoption/AdoptionContractScreen.tsx:326:        <TouchableOpacity
+src/screens/adoption/AdoptionContractScreen.tsx:339:        </TouchableOpacity>
+src/screens/adoption/AdoptionManagerScreen.tsx:3:import * as Haptics from "expo-haptics";
+src/screens/adoption/AdoptionManagerScreen.tsx:9:  TouchableOpacity,
+src/screens/adoption/AdoptionManagerScreen.tsx:304:            <TouchableOpacity
+src/screens/adoption/AdoptionManagerScreen.tsx:323:            </TouchableOpacity>
+src/screens/adoption/AdoptionManagerScreen.tsx:342:            <TouchableOpacity
+src/screens/adoption/AdoptionManagerScreen.tsx:349:            </TouchableOpacity>
+src/screens/adoption/AdoptionManagerScreen.tsx:350:            <TouchableOpacity
+src/screens/adoption/AdoptionManagerScreen.tsx:369:            </TouchableOpacity>
+src/screens/adoption/AdoptionManagerScreen.tsx:387:            <TouchableOpacity
+src/screens/adoption/AdoptionManagerScreen.tsx:407:            </TouchableOpacity>
+src/screens/adoption/AdoptionManagerScreen.tsx:568:          <TouchableOpacity
+src/screens/adoption/AdoptionManagerScreen.tsx:590:          </TouchableOpacity>
+src/screens/adoption/AdoptionManagerScreen.tsx:594:          <TouchableOpacity
+src/screens/adoption/AdoptionManagerScreen.tsx:618:          </TouchableOpacity>
+src/screens/adoption/AdoptionApplicationScreen.tsx:8:  TouchableOpacity,
+src/screens/adoption/AdoptionApplicationScreen.tsx:144:              <TouchableOpacity
+src/screens/adoption/AdoptionApplicationScreen.tsx:162:              </TouchableOpacity>
+src/screens/adoption/AdoptionApplicationScreen.tsx:177:            <TouchableOpacity
+src/screens/adoption/AdoptionApplicationScreen.tsx:195:            </TouchableOpacity>
+src/screens/adoption/AdoptionApplicationScreen.tsx:364:          <TouchableOpacity onPress={() => navigation.goBack()}>
+src/screens/adoption/AdoptionApplicationScreen.tsx:366:          </TouchableOpacity>
+src/screens/adoption/AdoptionApplicationScreen.tsx:392:            <TouchableOpacity
+src/screens/adoption/AdoptionApplicationScreen.tsx:399:            </TouchableOpacity>
+src/screens/adoption/AdoptionApplicationScreen.tsx:402:          <TouchableOpacity
+src/screens/adoption/AdoptionApplicationScreen.tsx:413:          </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:5:import * as Haptics from "expo-haptics";
+src/screens/adoption/ApplicationReviewScreen.tsx:14:  TouchableOpacity,
+src/screens/adoption/ApplicationReviewScreen.tsx:171:          <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:176:          </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:190:          <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:195:          </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:198:            <TouchableOpacity style={styles.headerButton}>
+src/screens/adoption/ApplicationReviewScreen.tsx:200:            </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:353:            <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:366:            </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:368:            <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:381:            </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:383:            <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:396:            </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:404:            <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:420:            </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:422:            <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:435:            </TouchableOpacity>
+src/screens/adoption/ApplicationReviewScreen.tsx:437:            <TouchableOpacity
+src/screens/adoption/ApplicationReviewScreen.tsx:453:            </TouchableOpacity>
+src/screens/adoption/PetDetailsScreen.tsx:5:import * as Haptics from "expo-haptics";
+src/screens/adoption/PetDetailsScreen.tsx:14:  TouchableOpacity,
+src/screens/adoption/PetDetailsScreen.tsx:150:          <TouchableOpacity
+src/screens/adoption/PetDetailsScreen.tsx:155:          </TouchableOpacity>
+src/screens/adoption/PetDetailsScreen.tsx:169:          <TouchableOpacity
+src/screens/adoption/PetDetailsScreen.tsx:174:          </TouchableOpacity>
+src/screens/adoption/PetDetailsScreen.tsx:177:            <TouchableOpacity style={styles.headerButton}>
+src/screens/adoption/PetDetailsScreen.tsx:179:            </TouchableOpacity>
+src/screens/adoption/PetDetailsScreen.tsx:305:            <TouchableOpacity
+src/screens/adoption/PetDetailsScreen.tsx:322:            </TouchableOpacity>
+src/screens/adoption/PetDetailsScreen.tsx:324:            <TouchableOpacity
+src/screens/adoption/PetDetailsScreen.tsx:337:            </TouchableOpacity>
+src/screens/adoption/PetDetailsScreen.tsx:347:                <TouchableOpacity
+src/screens/adoption/PetDetailsScreen.tsx:366:                </TouchableOpacity>
+src/components/chat/EnhancedMessageBubble.tsx:15:  TouchableOpacity,
+src/components/chat/EnhancedMessageBubble.tsx:18:  Pressable,
+src/components/chat/EnhancedMessageBubble.tsx:123:      <Pressable onLongPress={handleLongPress}>
+src/components/chat/EnhancedMessageBubble.tsx:160:                <TouchableOpacity
+src/components/chat/EnhancedMessageBubble.tsx:169:                </TouchableOpacity>
+src/components/chat/EnhancedMessageBubble.tsx:195:      </Pressable>
+src/components/chat/EnhancedMessageBubble.tsx:204:        <Pressable
+src/components/chat/EnhancedMessageBubble.tsx:210:              <TouchableOpacity
+src/components/chat/EnhancedMessageBubble.tsx:216:              </TouchableOpacity>
+src/components/chat/EnhancedMessageBubble.tsx:219:        </Pressable>
+src/screens/settings/DangerZoneSection.tsx:8:import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+src/screens/settings/DangerZoneSection.tsx:30:    <TouchableOpacity
+src/screens/settings/DangerZoneSection.tsx:81:    </TouchableOpacity>

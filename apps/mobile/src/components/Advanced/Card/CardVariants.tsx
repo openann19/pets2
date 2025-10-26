@@ -4,6 +4,7 @@
  */
 
 import type { ViewStyle } from "react-native";
+import { Theme } from '../../../theme/unified-theme';
 
 export type CardVariant =
   | "default"
@@ -36,12 +37,12 @@ interface GetMarginValueOptions {
 
 export function getCardStyles({
   variant,
-  glowColor = "#ec4899",
+  glowColor = "Theme.colors.primary[500]",
 }: GetCardStylesOptions): ViewStyle {
   const baseStyles: ViewStyle = {
     borderRadius: 12,
     overflow: "hidden",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   };
 
   switch (variant) {
@@ -69,7 +70,7 @@ export function getCardStyles({
         ...baseStyles,
         backgroundColor: "transparent",
         borderWidth: 1,
-        borderColor: "#e5e7eb",
+        borderColor: "Theme.colors.neutral[200]",
       };
     case "neon":
       return {
@@ -86,8 +87,8 @@ export function getCardStyles({
     case "floating":
       return {
         ...baseStyles,
-        backgroundColor: "#fff",
-        shadowColor: "#000",
+        backgroundColor: "Theme.colors.neutral[0]",
+        shadowColor: "Theme.colors.neutral[950]",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 12,
@@ -96,8 +97,8 @@ export function getCardStyles({
     default:
       return {
         ...baseStyles,
-        backgroundColor: "#fff",
-        shadowColor: "#000",
+        backgroundColor: "Theme.colors.neutral[0]",
+        shadowColor: "Theme.colors.neutral[950]",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,

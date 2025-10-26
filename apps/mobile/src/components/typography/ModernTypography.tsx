@@ -47,7 +47,7 @@ export interface ModernTextProps extends TextProps {
   gradient?: keyof typeof Theme.gradients;
   gradientColors?: string[];
   animated?: boolean;
-  animationType?: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight";
+  animationType?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn";
   children: ReactNode;
 }
 
@@ -155,7 +155,7 @@ function ModernText({
   gradient,
   gradientColors,
   animated = false,
-  animationType = "fadeInUp",
+  animationType = "slideIn",
   style,
   children,
   ...props

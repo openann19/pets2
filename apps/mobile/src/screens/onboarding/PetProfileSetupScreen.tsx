@@ -61,6 +61,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../theme/unified-theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -543,7 +544,7 @@ const PetProfileSetupScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   keyboardView: {
     flex: 1,
@@ -551,7 +552,7 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   progressContainer: {
     alignItems: "center",
@@ -559,18 +560,18 @@ const styles = StyleSheet.create({
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: "#e5e7eb",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 2,
     marginBottom: 8,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 2,
   },
   progressText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   content: {
@@ -583,12 +584,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 32,
   },
   inputGroup: {
@@ -597,17 +598,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   textArea: {
     height: 100,
@@ -623,9 +624,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionButton: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -634,15 +635,15 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
+    borderColor: "Theme.colors.primary[500]",
   },
   optionText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   selectedOptionText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
   tagsContainer: {
@@ -651,21 +652,21 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tagButton: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "Theme.colors.neutral[100]",
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
   selectedTag: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
   },
   tagText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   selectedTagText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   healthOptions: {
     gap: 16,
@@ -674,15 +675,15 @@ const styles = StyleSheet.create({
   healthOption: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
   },
   selectedHealthOption: {
     backgroundColor: "#f0fdf4",
-    borderColor: "#10b981",
+    borderColor: "Theme.colors.status.success",
   },
   healthIcon: {
     fontSize: 24,
@@ -690,16 +691,16 @@ const styles = StyleSheet.create({
   },
   healthLabel: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   selectedHealthLabel: {
-    color: "#10b981",
+    color: "Theme.colors.status.success",
     fontWeight: "600",
   },
   healthNote: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     lineHeight: 20,
     fontStyle: "italic",
   },
@@ -708,22 +709,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
+    borderTopColor: "Theme.colors.neutral[100]",
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
   },
   backButtonText: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "600",
   },
   nextButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -731,11 +732,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: "#d1d5db",
+    backgroundColor: "Theme.colors.neutral[300]",
   },
   nextButtonText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
 });

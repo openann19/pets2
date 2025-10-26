@@ -3,11 +3,14 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { queryClient } from "./config/queryClient";
-import { ThemeProvider } from "./theme/ThemeProvider";
+import { ThemeProvider } from "./theme/Provider";
 import type { RootStackParamList } from "./navigation/types";
 import AdminNavigator from "./navigation/AdminNavigator";
+import BottomTabNavigator from "./navigation/BottomTabNavigator";
+import { screenTransitions } from "./navigation/transitions";
 
 // Authentication Screens
 import LoginScreen from "./screens/LoginScreen";
@@ -38,8 +41,8 @@ import ManageSubscriptionScreen from "./screens/ManageSubscriptionScreen";
 
 // AI Screens
 import AIBioScreen from "./screens/AIBioScreen";
-import AIPhotoAnalyzerScreen from "./screens/ai/AIPhotoAnalyzerScreen";
-import AICompatibilityScreen from "./screens/ai/AICompatibilityScreen";
+import AIPhotoAnalyzerScreen from "./screens/AIPhotoAnalyzerScreen";
+import AICompatibilityScreen from "./screens/AICompatibilityScreen";
 
 // Settings & Privacy Screens
 import SettingsScreen from "./screens/SettingsScreen";
@@ -68,10 +71,11 @@ import AdoptionApplicationScreen from "./screens/adoption/AdoptionApplicationScr
 // import IncomingCallScreen from "./screens/calling/IncomingCallScreen";
 
 // Advanced Feature Screens
-// import MemoryWeaveScreen from "./screens/MemoryWeaveScreen";
+import MemoryWeaveScreen from "./screens/MemoryWeaveScreen";
 // import ARScentTrailsScreen from "./screens/ARScentTrailsScreen";
 import StoriesScreen from "./screens/StoriesScreen";
 import LeaderboardScreen from "./screens/leaderboard/LeaderboardScreen";
+import CommunityScreen from "./screens/CommunityScreen";
 // import ModernSwipeScreen from "./screens/ModernSwipeScreen";
 // import ModernCreatePetScreen from "./screens/ModernCreatePetScreen";
 
@@ -97,23 +101,23 @@ const AppNavigator = (): React.ReactElement => (
     <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
     <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
-    {/* Main Screens */}
-    <Stack.Screen name="Home" component={HomeScreen} />
+    {/* Main Tab Navigator (with EnhancedTabBar) */}
+    <Stack.Screen name="Home" component={BottomTabNavigator} />
     <Stack.Screen name="Main" component={HomeScreen} />
-    <Stack.Screen name="Swipe" component={SwipeScreen} />
-    <Stack.Screen name="Matches" component={MatchesScreen} />
-    <Stack.Screen name="Profile" component={ProfileScreen} />
-    <Stack.Screen name="Settings" component={SettingsScreen} />
-    <Stack.Screen name="Chat" component={ChatScreen} />
+    <Stack.Screen name="Swipe" component={SwipeScreen} options={screenTransitions.fluid} />
+    <Stack.Screen name="Matches" component={MatchesScreen} options={screenTransitions.fluid} />
+    <Stack.Screen name="Profile" component={ProfileScreen} options={screenTransitions.scale} />
+    <Stack.Screen name="Settings" component={SettingsScreen} options={screenTransitions.fluid} />
+    <Stack.Screen name="Chat" component={ChatScreen} options={screenTransitions.fluid} />
     <Stack.Screen name="MainTabs" component={MainTabsScreen} />
 
     {/* Onboarding Screens - Commented out due to navigation prop requirements */}
     {/* These screens expect specific navigation props that will be handled by their own navigators */}
 
     {/* Pet Management Screens */}
-    <Stack.Screen name="MyPets" component={MyPetsScreen} />
-    <Stack.Screen name="CreatePet" component={CreatePetScreen} />
-    <Stack.Screen name="Map" component={MapScreen} />
+    <Stack.Screen name="MyPets" component={MyPetsScreen} options={screenTransitions.fluid} />
+    <Stack.Screen name="CreatePet" component={CreatePetScreen} options={screenTransitions.fluid} />
+    <Stack.Screen name="Map" component={MapScreen} options={screenTransitions.fluid} />
 
     {/* Premium & Subscription Screens */}
     <Stack.Screen name="Premium" component={PremiumScreen} />
@@ -181,8 +185,10 @@ const AppNavigator = (): React.ReactElement => (
     {/* <Stack.Screen name="IncomingCall" component={IncomingCallScreen} /> */}
 
     {/* Advanced Feature Screens */}
+    <Stack.Screen name="MemoryWeave" component={MemoryWeaveScreen} />
     <Stack.Screen name="Stories" component={StoriesScreen} />
     <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+    <Stack.Screen name="Community" component={CommunityScreen} />
 
     {/* Test/Demo Screens */}
     <Stack.Screen name="ComponentTest" component={ComponentTestScreen} />
@@ -197,13 +203,15 @@ const AppNavigator = (): React.ReactElement => (
 
 export default function App(): React.ReactElement {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <NavigationContainer>
-          <StatusBar style="dark" />
-          <AppNavigator />
-        </NavigationContainer>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <NavigationContainer>
+            <StatusBar style="dark" />
+            <AppNavigator />
+          </NavigationContainer>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

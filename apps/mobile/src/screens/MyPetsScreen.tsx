@@ -15,6 +15,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { RootStackScreenProps } from "../navigation/types";
 import { useMyPetsScreen } from "../hooks/screens/useMyPetsScreen";
+import { DoubleTapLikePlus } from "../components/Gestures/DoubleTapLikePlus";
+import { PinchZoomPro } from "../components/Gestures/PinchZoomPro";
+import { useDoubleTapMetrics, usePinchMetrics } from "../hooks/useInteractionMetrics";
 
 const { width: _screenWidth } = Dimensions.get("window");
 
@@ -32,6 +35,15 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
     getIntentLabel,
     handleDeletePet,
   } = useMyPetsScreen();
+  const { startInteraction: startDoubleTap, endInteraction: endDoubleTap } = useDoubleTapMetrics();
+  const { startInteraction: startPinch, endInteraction: endPinch } = usePinchMetrics();
+
+  const handlePetLike = (pet: Pet) => {
+    startDoubleTap('petLike', { petId: pet.id, petName: pet.name });
+    // Add some love for the pet
+    console.log(`❤️ Showing love for ${pet.name}!`);
+    endDoubleTap('petLike', true);
+  };
 
   useEffect(() => {
     void loadPets();
@@ -46,19 +58,38 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           navigation.navigate("PetDetails", { petId: item.id, pet: item });
         }}
       >
-        {/* Pet Photo */}
+        {/* Pet Photo with Gestures */}
         <View style={styles.petImageContainer}>
           {item.photos && item.photos.length > 0 ? (
-            <Image
-              source={{
-                uri:
-                  item.photos.find((p) => p.isPrimary)?.url ??
-                  item.photos[0]?.url ??
-                  "",
-              }}
-              style={styles.petImage}
-              resizeMode="cover"
-            />
+            <DoubleTapLikePlus
+              onDoubleTap={() => handlePetLike(item)}
+              heartColor="#ff6b6b"
+              particles={4}
+              haptics={{ enabled: true, style: "light" }}
+            >
+              <PinchZoomPro
+                source={{
+                  uri:
+                    item.photos.find((p) => p.isPrimary)?.url ??
+                    item.photos[0]?.url ??
+                    "",
+                }}
+                width={120}
+                height={120}
+                minScale={1}
+                maxScale={2.5}
+                enableMomentum={false}
+                haptics={true}
+                onScaleChange={(scale) => {
+                  if (scale > 1.1) {
+                    startPinch('petPhoto', { petId: item.id });
+                  } else {
+                    endPinch('petPhoto', true);
+                  }
+                }}
+                backgroundColor="#f0f0f0"
+              />
+            </DoubleTapLikePlus>
           ) : (
             <View style={styles.petImagePlaceholder}>
               <Text style={styles.petImageEmoji}>

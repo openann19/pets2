@@ -61,8 +61,8 @@ export interface AdminUploadsScreenState {
 
   // Actions
   onRefresh: () => Promise<void>;
-  onTypeFilterChange: (type: typeof typeFilter) => void;
-  onStatusFilterChange: (status: typeof statusFilter) => void;
+  onTypeFilterChange: (type: "all" | "image" | "video" | "document") => void;
+  onStatusFilterChange: (status: "all" | "pending" | "approved" | "rejected" | "flagged") => void;
   onSearchChange: (query: string) => void;
   onUploadSelect: (upload: MediaUpload) => void;
   onUploadClose: () => void;

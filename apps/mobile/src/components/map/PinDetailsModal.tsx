@@ -1,5 +1,7 @@
 import React from "react";
-import { BlurView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BlurView } from "expo-blur";
+import { Theme } from '../theme/unified-theme';
 
 export interface PulsePin {
   _id: string;
@@ -91,17 +93,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   modalMessage: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 12,
   },
   modalTime: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
     marginBottom: 20,
   },
   modalActions: {
@@ -131,6 +133,6 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
 });

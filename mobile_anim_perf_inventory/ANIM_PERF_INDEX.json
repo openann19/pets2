@@ -1,0 +1,2161 @@
+[
+  {
+    "file": "src/hooks/useMotionSystem.ts",
+    "component": "Usemotionsystem",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/hooks/animations/useRippleEffect.ts",
+    "component": "Userippleeffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useParallaxEffect.ts",
+    "component": "Useparallaxeffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useMagneticEffect.ts",
+    "component": "Usemagneticeffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useSpringAnimation.ts",
+    "component": "Usespringanimation",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useGlowEffect.ts",
+    "component": "Usegloweffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useGlowAnimation.ts",
+    "component": "Useglowanimation",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useFloatingEffect.ts",
+    "component": "Usefloatingeffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/setupTests.ts",
+    "component": "Setuptests",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown- jest.fn((toValue",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useLoadingAnimation.ts",
+    "component": "Useloadinganimation",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useShimmerEffect.ts",
+    "component": "Useshimmereffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/__tests__/components/AnimatedSplash.test.tsx",
+    "component": "Animatedsplash.test",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/hooks/animations/usePulseEffect.ts",
+    "component": "Usepulseeffect",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useSwipeGesture.ts",
+    "component": "Useswipegesture",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/usePageTransition.ts",
+    "component": "Usepagetransition",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useStaggeredAnimation.ts",
+    "component": "Usestaggeredanimation",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/useEntranceAnimation.ts",
+    "component": "Useentranceanimation",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown- 500 });",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/animations/usePressAnimation.ts",
+    "component": "Usepressanimation",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/MemoryWeaveScreen.tsx",
+    "component": "Memoryweavescreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/Footer.tsx",
+    "component": "Footer",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/MapScreen.tsx",
+    "component": "Mapscreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/hooks/__tests__/integration/swipe-match.integration.test.ts",
+    "component": "SwipeMatch.integration.test",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/types/expo-components.d.ts",
+    "component": "ExpoComponents.d",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown- T, config?",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/feedback/Toast.tsx",
+    "component": "Toast",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/premium/SubscriptionSuccessScreen.tsx",
+    "component": "Subscriptionsuccessscreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/Gestures/PinchZoom.tsx",
+    "component": "Pinchzoom",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring",
+      "withDecay"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/useAnimations.ts",
+    "component": "Useanimations",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/Gestures/DoubleTapLike.tsx",
+    "component": "Doubletaplike",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/MotionPrimitives.tsx",
+    "component": "Motionprimitives",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "high",
+    "why_risk": "Inline style objects created in render",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Inline style objects created in render",
+      "Missing keys in .map()",
+      "Heavy computation in render without memoization"
+    ],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/phoenix/PhoenixCard.tsx",
+    "component": "Phoenixcard",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "medium",
+    "why_risk": "Inline style objects created in render",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Inline style objects created in render"
+    ],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/calling/__tests__/IncomingCallScreen.test.tsx",
+    "component": "Incomingcallscreen.test",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " \"Animated.View\",-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/screens/SwipeScreen.tsx",
+    "component": "Swipescreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/screens/calling/IncomingCallScreen.tsx",
+    "component": "Incomingcallscreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/animations/EnhancedAnimations.tsx",
+    "component": "Enhancedanimations",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "medium",
+    "why_risk": "Inline style objects created in render",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Inline style objects created in render"
+    ],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/screens/calling/ActiveCallScreen.tsx",
+    "component": "Activecallscreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/screens/ChatScreen.tsx",
+    "component": "Chatscreen",
+    "category": "animation",
+    "library": [
+      "animated",
+      "animated"
+    ],
+    "symbols": [
+      "LayoutAnimation",
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/Premium/PremiumButton.tsx",
+    "component": "Premiumbutton",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/PhotoUploadComponent.tsx",
+    "component": "Photouploadcomponent",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/glass/GlassButton.tsx",
+    "component": "Glassbutton",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/buttons/EffectWrappers.tsx",
+    "component": "Effectwrappers",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [],
+    "risk": "medium",
+    "why_risk": "Inline style objects created in render",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Inline style objects created in render"
+    ],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/ShimmerPlaceholder.tsx",
+    "component": "Shimmerplaceholder",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/glass/GlassContainer.tsx",
+    "component": "Glasscontainer",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/HolographicEffects.tsx",
+    "component": "Holographiceffects",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/onboarding/PreferencesSetupScreen.tsx",
+    "component": "Preferencessetupscreen",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/glass/GlassModal.tsx",
+    "component": "Glassmodal",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/StoriesScreen.tsx",
+    "component": "Storiesscreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/Premium/PremiumCard.tsx",
+    "component": "Premiumcard",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/screens/onboarding/WelcomeScreen.tsx",
+    "component": "Welcomescreen",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/ThemeToggle.tsx",
+    "component": "Themetoggle",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " 0),-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/map/MapStatsPanel.tsx",
+    "component": "Mapstatspanel",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "medium",
+    "why_risk": "Inline style objects created in render",
+    "evidence": " Animated.Value;-unknown",
+    "perf_hints": [
+      "Inline style objects created in render"
+    ],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/ModernSwipeCard.tsx",
+    "component": "Modernswipecard",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useAnimatedStyle"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/onboarding/PetProfileSetupScreen.tsx",
+    "component": "Petprofilesetupscreen",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/Advanced/AdvancedInteractionSystem.tsx",
+    "component": "Advancedinteractionsystem",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/screens/adoption/AdoptionManagerScreen.tsx",
+    "component": "Adoptionmanagerscreen",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/screens/onboarding/UserIntentScreen.tsx",
+    "component": "Userintentscreen",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/swipe/__tests__/useSwipeGestures.test.ts",
+    "component": "Useswipegestures.test",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown- jest.fn((value) => value),",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/PerformanceTestSuite.tsx",
+    "component": "Performancetestsuite",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/typography/ModernTypography.tsx",
+    "component": "Moderntypography",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useAnimatedStyle"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/swipe/useSwipeAnimations.ts",
+    "component": "Useswipeanimations",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " Animated.ValueXY,-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/SwipeCard.tsx",
+    "component": "Swipecard",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " new Animated.ValueXY(),-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/Advanced/Card/CardAnimations.tsx",
+    "component": "Cardanimations",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/containers/FXContainer.tsx",
+    "component": "Fxcontainer",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useAnimatedStyle"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/swipe/useSwipeGestures.ts",
+    "component": "Useswipegestures",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " Animated.ValueXY;- Animated.event(",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/AnimatedSplash.tsx",
+    "component": "Animatedsplash",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/InteractiveButton.tsx",
+    "component": "Interactivebutton",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/hooks/useHelpSupportData.ts",
+    "component": "Usehelpsupportdata",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/PremiumTypography.tsx",
+    "component": "Premiumtypography",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "medium",
+    "why_risk": "Inline style objects created in render",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Inline style objects created in render"
+    ],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/EnhancedTabBar.tsx",
+    "component": "Enhancedtabbar",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/hooks/screens/useMapScreen.ts",
+    "component": "Usemapscreen",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " Animated.Value;-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/Advanced/AdvancedHeader.tsx",
+    "component": "Advancedheader",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/ImmersiveCard.tsx",
+    "component": "Immersivecard",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/help/HelpOptionCard.tsx",
+    "component": "Helpoptioncard",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/filters/__tests__/AdvancedPetFilters.test.tsx",
+    "component": "Advancedpetfilters.test",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown- jest.fn(() => ({})),",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/styles/EnhancedDesignTokens.tsx",
+    "component": "Enhanceddesigntokens",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/AnimatedButton.tsx",
+    "component": "Animatedbutton",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/matches/MatchCard.tsx",
+    "component": "Matchcard",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/Advanced/AdvancedCard.tsx",
+    "component": "Advancedcard",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/filters/AdvancedPetFilters.tsx",
+    "component": "Advancedpetfilters",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/ModernPhotoUpload.tsx",
+    "component": "Modernphotoupload",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/GlowShadowSystem.tsx",
+    "component": "Glowshadowsystem",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/PawPullToRefresh.tsx",
+    "component": "Pawpulltorefresh",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/swipe/SwipeCard.tsx",
+    "component": "Swipecard",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " Animated.ValueXY;-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/hooks/domains/onboarding/useWelcome.ts",
+    "component": "Usewelcome",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/__mocks__/react-native.js",
+    "component": "ReactNative",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " 'Animated.View',- 0);",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/chat/TypingIndicator.tsx",
+    "component": "Typingindicator",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " Animated.Value;-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/chat/MessageInput.tsx",
+    "component": "Messageinput",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "medium",
+    "why_risk": "Inline style objects created in render",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Inline style objects created in render"
+    ],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/elite/buttons/EliteButton.tsx",
+    "component": "Elitebutton",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/elite/headers/ElitePageHeader.tsx",
+    "component": "Elitepageheader",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/hooks/domains/social/useMemoryWeave.ts",
+    "component": "Usememoryweave",
+    "category": "animation",
+    "library": [
+      "animated"
+    ],
+    "symbols": [
+      "Animated"
+    ],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": " Animated.Value;-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/elite/headers/EliteHeader.tsx",
+    "component": "Eliteheader",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Animation on JS thread",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "JS",
+    "notes": "Consider migrating to Reanimated 2 for 60fps"
+  },
+  {
+    "file": "src/components/elite/animations/ScaleIn.tsx",
+    "component": "Scalein",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/elite/animations/FadeInUp.tsx",
+    "component": "Fadeinup",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/components/elite/cards/EliteCard.tsx",
+    "component": "Elitecard",
+    "category": "animation",
+    "library": [
+      "reanimated"
+    ],
+    "symbols": [
+      "useSharedValue",
+      "useAnimatedStyle",
+      "withTiming",
+      "withSpring"
+    ],
+    "risk": "low",
+    "why_risk": "OK",
+    "evidence": "unknown-unknown",
+    "perf_hints": [],
+    "animation_thread": "UI"
+  },
+  {
+    "file": "src/setupTests.ts",
+    "component": "Setuptests",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/hooks/animations/useSwipeGesture.ts",
+    "component": "Useswipegesture",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [
+      "PanGestureHandler"
+    ],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/components/Gestures/PinchZoom.tsx",
+    "component": "Pinchzoom",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [
+      "Gesture"
+    ],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/components/Gestures/DoubleTapLike.tsx",
+    "component": "Doubletaplike",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [
+      "Gesture"
+    ],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/components/MotionPrimitives.tsx",
+    "component": "Motionprimitives",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/screens/ModernSwipeScreen.tsx",
+    "component": "Modernswipescreen",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/components/ImmersiveCard.tsx",
+    "component": "Immersivecard",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [
+      "PanGestureHandler"
+    ],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/components/ModernSwipeCard.tsx",
+    "component": "Modernswipecard",
+    "category": "micro-interaction",
+    "library": [
+      "gesture-handler"
+    ],
+    "symbols": [
+      "PanGestureHandler"
+    ],
+    "risk": "low",
+    "why_risk": "Gesture handler",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Gesture handlers run on UI thread - good for performance"
+    ]
+  },
+  {
+    "file": "src/__mocks__/react-native.js",
+    "component": "ReactNative",
+    "category": "performance",
+    "library": [
+      "FlatList",
+      "SectionList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/MyPetsScreen.tsx",
+    "component": "Mypetsscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/BlockedUsersScreen.tsx",
+    "component": "Blockedusersscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/ModerationToolsScreen.tsx",
+    "component": "Moderationtoolsscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/hooks/useMatchesData.ts",
+    "component": "Usematchesdata",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/admin/AdminUsersScreen.tsx",
+    "component": "Adminusersscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "low",
+    "why_risk": "List has proper optimizations",
+    "evidence": "unknown-unknown",
+    "perf_hints": []
+  },
+  {
+    "file": "src/screens/MatchesScreen.tsx",
+    "component": "Matchesscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/admin/AdminChatsScreen.tsx",
+    "component": "Adminchatsscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/admin/AdminUploadsScreen.tsx",
+    "component": "Adminuploadsscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/admin/AdminVerificationsScreen.tsx",
+    "component": "Adminverificationsscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/admin/AdminBillingScreen.tsx",
+    "component": "Adminbillingscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/admin/AdminSecurityScreen.tsx",
+    "component": "Adminsecurityscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/components/MotionPrimitives.tsx",
+    "component": "Motionprimitives",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/CommunityScreen.tsx",
+    "component": "Communityscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/hooks/utils/useScrollPersistence.ts",
+    "component": "Usescrollpersistence",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/ai/compatibility/PetSelectionSection.tsx",
+    "component": "Petselectionsection",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/hooks/chat/useChatScroll.ts",
+    "component": "Usechatscroll",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/screens/ai/AICompatibilityScreen.tsx",
+    "component": "Aicompatibilityscreen",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/components/chat/QuickReplies.tsx",
+    "component": "Quickreplies",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/components/chat/MessageList.tsx",
+    "component": "Messagelist",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "medium",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor"
+    ]
+  },
+  {
+    "file": "src/components/chat/ReactionPicker.tsx",
+    "component": "Reactionpicker",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  },
+  {
+    "file": "src/components/chat/MobileChat.tsx",
+    "component": "Mobilechat",
+    "category": "performance",
+    "library": [
+      "FlatList"
+    ],
+    "symbols": [],
+    "risk": "high",
+    "why_risk": "Missing keyExtractor",
+    "evidence": "unknown-unknown",
+    "perf_hints": [
+      "Missing keyExtractor",
+      "Missing getItemLayout - performance penalty",
+      "Consider removeClippedSubviews for long lists"
+    ]
+  }
+]

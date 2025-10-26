@@ -3,7 +3,7 @@
  * Manages Safety Center screen state and interactions
  */
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { useSafetyCenter } from "../domains/safety/useSafetyCenter";
 
 interface UseSafetyCenterScreenReturn {

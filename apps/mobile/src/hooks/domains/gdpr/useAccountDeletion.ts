@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
-import { gdprService } from "../../../services/gdprService";
-import { logger } from "../../../services/logger";
+import gdprService from "../../../services/gdprService";
+import { logger } from "@pawfectmatch/core";
 
 export interface UseAccountDeletionReturn {
   isDeleting: boolean;
@@ -31,11 +31,11 @@ export function useAccountDeletion(): UseAccountDeletionReturn {
       setError(null);
 
       try {
-        const result = await gdprService.requestAccountDeletion(
+        const result = await gdprService.deleteAccount({
           password,
           reason,
           feedback,
-        );
+        });
 
         if (result.success) {
           Alert.alert(
@@ -73,9 +73,9 @@ export function useAccountDeletion(): UseAccountDeletionReturn {
     setError(null);
 
     try {
-      const cancelled = await gdprService.cancelAccountDeletion();
+      const cancelled = await gdprService.cancelDeletion();
 
-      if (cancelled) {
+      if (cancelled.success) {
         Alert.alert(
           "Deletion Cancelled",
           "Your account deletion has been cancelled.",

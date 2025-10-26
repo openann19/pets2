@@ -3,7 +3,7 @@
  * Manages Welcome screen with navigation and theme integration
  */
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { useWelcome } from "../domains/onboarding/useWelcome";
 
 interface UseWelcomeScreenReturn {

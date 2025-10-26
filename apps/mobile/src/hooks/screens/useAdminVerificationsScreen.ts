@@ -68,8 +68,8 @@ export interface AdminVerificationsScreenState {
 
   // Actions
   onRefresh: () => Promise<void>;
-  onStatusFilterChange: (status: typeof statusFilter) => void;
-  onPriorityFilterChange: (priority: typeof priorityFilter) => void;
+  onStatusFilterChange: (status: "all" | "pending" | "under_review" | "approved" | "rejected") => void;
+  onPriorityFilterChange: (priority: "all" | "high" | "medium" | "low") => void;
   onSearchChange: (query: string) => void;
   onRequestSelect: (request: VerificationRequest) => void;
   onRequestClose: () => void;
@@ -136,7 +136,6 @@ export function useAdminVerificationsScreen({
             ownerId: "user1",
             ownerName: "Alice Johnson",
             ownerEmail: "alice@example.com",
-            submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
             documents: [
               {
                 id: "doc1",
@@ -180,7 +179,6 @@ export function useAdminVerificationsScreen({
             status: "under_review",
             priority: "medium",
             assignedAdmin: "admin1",
-            submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
           },
         ];
 

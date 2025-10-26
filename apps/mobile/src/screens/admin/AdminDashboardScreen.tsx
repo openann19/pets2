@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
+import { Theme } from '../theme/unified-theme';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AdminStats {
@@ -139,13 +140,13 @@ export default function AdminDashboardScreen({
   const getStatusColor = (status: string): string => {
     switch (status) {
       case "healthy":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "warning":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "error":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -288,7 +289,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("analytics");
               }}
             >
-              <Ionicons name="analytics-outline" size={32} color="#3B82F6" />
+              <Ionicons name="analytics-outline" size={32} color="Theme.colors.status.info" />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -308,7 +309,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("users");
               }}
             >
-              <Ionicons name="people-outline" size={32} color="#8B5CF6" />
+              <Ionicons name="people-outline" size={32} color="Theme.colors.secondary[500]" />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -328,7 +329,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("security");
               }}
             >
-              <Ionicons name="shield-outline" size={32} color="#EF4444" />
+              <Ionicons name="shield-outline" size={32} color="Theme.colors.status.error" />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -348,7 +349,7 @@ export default function AdminDashboardScreen({
                 handleQuickAction("billing");
               }}
             >
-              <Ionicons name="card-outline" size={32} color="#10B981" />
+              <Ionicons name="card-outline" size={32} color="Theme.colors.status.success" />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -369,7 +370,7 @@ export default function AdminDashboardScreen({
               }}
             >
               ?{" "}
-              <Ionicons name="chatbubbles-outline" size={32} color="#F59E0B" />
+              <Ionicons name="chatbubbles-outline" size={32} color="Theme.colors.status.warning" />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -422,7 +423,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="people" size={24} color="#3B82F6" />
+                <Ionicons name="people" size={24} color="Theme.colors.status.info" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -460,7 +461,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "#F59E0B" },
+                    { color: "Theme.colors.status.warning" },
                   ])}
                 >
                   Suspended: {stats.users.suspended}
@@ -468,7 +469,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "#EF4444" },
+                    { color: "Theme.colors.status.error" },
                   ])}
                 >
                   Banned: {stats.users.banned}
@@ -484,7 +485,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="paw" size={24} color="#10B981" />
+                <Ionicons name="paw" size={24} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -514,7 +515,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "#10B981" },
+                    { color: "Theme.colors.status.success" },
                   ])}
                 >
                   +{stats.pets.recent24h} today
@@ -530,7 +531,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="heart" size={24} color="#EC4899" />
+                <Ionicons name="heart" size={24} color="Theme.colors.primary[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -560,7 +561,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "#EF4444" },
+                    { color: "Theme.colors.status.error" },
                   ])}
                 >
                   Blocked: {stats.matches.blocked}
@@ -568,7 +569,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "#10B981" },
+                    { color: "Theme.colors.status.success" },
                   ])}
                 >
                   +{stats.matches.recent24h} today
@@ -584,7 +585,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color="#8B5CF6" />
+                <Ionicons name="chatbubble" size={24} color="Theme.colors.secondary[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -614,7 +615,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "#10B981" },
+                    { color: "Theme.colors.status.success" },
                   ])}
                 >
                   +{stats.messages.recent24h} today
@@ -663,7 +664,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -710,7 +711,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -729,7 +730,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,

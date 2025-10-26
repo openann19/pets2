@@ -1,7 +1,10 @@
-import { useCallback } from "react";
-import { logger } from "../services/logger";
+import { useCallback, useState } from "react";
+import { Alert } from "react-native";
+import * as Haptics from "expo-haptics";
+import { logger } from "../../services/logger";
+import { authService, AuthError } from "../../services/AuthService";
 import { useFormState } from "../utils/useFormState";
-import type { RootStackScreenProps } from "../navigation/types";
+import type { RootStackScreenProps } from "../../navigation/types";
 
 interface LoginFormValues {
   email: string;
@@ -17,6 +20,7 @@ interface UseLoginScreenReturn {
   errors: Partial<Record<keyof LoginFormValues, string>>;
   touched: Partial<Record<keyof LoginFormValues, boolean>>;
   isValid: boolean;
+  loading: boolean;
   setValue: (name: keyof LoginFormValues, value: string) => void;
   handleSubmit: (e?: any) => Promise<void>;
   navigateToRegister: () => void;
@@ -54,6 +58,7 @@ export function useLoginScreen({
   );
 
   // Form state management
+  const [loading, setLoading] = useState(false);
   const {
     values,
     errors,
@@ -71,20 +76,51 @@ export function useLoginScreen({
 
   // Handle login submission
   const handleLogin = useCallback(async () => {
-    logger.info("Login attempt:", { email: values.email });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    setLoading(true);
+    
+    try {
+      logger.info("Login attempt:", { email: values.email });
 
-    // TODO: Implement actual authentication
-    // This is a placeholder for the authentication logic
-    // In production, you would:
-    // 1. Call AuthService.login(values.email, values.password)
-    // 2. Handle success: navigation.navigate("Home")
-    // 3. Handle error: setError state and display in UI
+      const response = await authService.login({
+        email: values.email,
+        password: values.password,
+      });
 
-    // For demo purposes, navigate to Home
-    navigation.navigate("Home");
-  }, [values.email, navigation]);
+      // Success haptic feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+        () => {},
+      );
 
-  const handleSubmit = handleSubmitForm(handleLogin);
+      logger.info("Login successful", { userId: response.user.id });
+
+      // Navigate to Home on successful login
+      navigation.navigate("Home");
+    } catch (error) {
+      // Error haptic feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(
+        () => {},
+      );
+
+      logger.error("Login failed", { error: error as Error, email: values.email });
+
+      const errorMessage =
+        error instanceof AuthError
+          ? error.message
+          : "Login failed. Please check your credentials and try again.";
+
+      Alert.alert("Login Failed", errorMessage, [{ text: "OK", style: "default" }]);
+    } finally {
+      setLoading(false);
+    }
+  }, [values.email, values.password, navigation]);
+
+  const handleSubmit = useCallback(
+    async (e?: any) => {
+      await handleSubmitForm(handleLogin)(e);
+    },
+    [handleSubmitForm, handleLogin]
+  );
 
   const navigateToRegister = useCallback(() => {
     navigation.navigate("Register");
@@ -99,6 +135,7 @@ export function useLoginScreen({
     errors,
     touched,
     isValid,
+    loading,
     setValue,
     handleSubmit,
     navigateToRegister,

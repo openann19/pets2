@@ -27,25 +27,27 @@ import {
   utils,
 } from "@pawfectmatch/design-tokens";
 
+import { Theme } from '../theme/unified-theme';
+
 // ===== RN-SAFE FACADE WRAPPERS =====
 
 /** DynamicColors — gradients + glass presets (RN-safe) */
 export const DynamicColors = {
   gradients: {
     primary: {
-      colors: ["#ec4899", "#db2777"] as ColorValue[],
+      colors: ["Theme.colors.primary[500]", "Theme.colors.primary[600]"] as ColorValue[],
       locations: [0, 1],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
     },
     secondary: {
-      colors: ["#a855f7", "#9333ea"] as ColorValue[],
+      colors: ["Theme.colors.secondary[500]", "#9333ea"] as ColorValue[],
       locations: [0, 1],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
     },
     premium: {
-      colors: ["#ec4899", "#a855f7", "#3b82f6"] as ColorValue[],
+      colors: ["Theme.colors.primary[500]", "Theme.colors.secondary[500]", "Theme.colors.status.info"] as ColorValue[],
       locations: [0, 0.5, 1],
       start: { x: 0, y: 0 },
       end: { x: 1, y: 1 },
@@ -84,35 +86,35 @@ export const DynamicColors = {
 export const EnhancedShadows = {
   depth: {
     sm: {
-      shadowColor: "#000",
+      shadowColor: "Theme.colors.neutral[950]",
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.05,
       shadowRadius: 2,
       elevation: 2,
     } as ViewStyle,
     md: {
-      shadowColor: "#000",
+      shadowColor: "Theme.colors.neutral[950]",
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 6,
       elevation: 4,
     } as ViewStyle,
     lg: {
-      shadowColor: "#000",
+      shadowColor: "Theme.colors.neutral[950]",
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.15,
       shadowRadius: 12,
       elevation: 8,
     } as ViewStyle,
     xl: {
-      shadowColor: "#000",
+      shadowColor: "Theme.colors.neutral[950]",
       shadowOffset: { width: 0, height: 12 },
       shadowOpacity: 0.18,
       shadowRadius: 16,
       elevation: 12,
     } as ViewStyle,
     xxl: {
-      shadowColor: "#000",
+      shadowColor: "Theme.colors.neutral[950]",
       shadowOffset: { width: 0, height: 20 },
       shadowOpacity: 0.22,
       shadowRadius: 24,

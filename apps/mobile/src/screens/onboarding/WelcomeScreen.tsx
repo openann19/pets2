@@ -19,9 +19,9 @@ import Animated, {
 } from "react-native-reanimated";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
-import { EliteButton } from "../../components/EliteComponents";
+import { EliteButton } from "../../components";
 import { useWelcomeScreen } from "../../hooks/screens/onboarding";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { logger } from "@pawfectmatch/core";

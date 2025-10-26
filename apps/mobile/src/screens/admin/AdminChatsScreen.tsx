@@ -17,9 +17,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
+import { Theme } from '../theme/unified-theme';
 
 interface ChatMessage {
   id: string;
@@ -395,7 +396,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   backButton: {
     marginRight: 16,
@@ -407,7 +408,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -451,7 +452,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -521,13 +522,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   approveButton: {
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
   },
   warnButton: {
-    backgroundColor: "#F59E0B",
+    backgroundColor: "Theme.colors.status.warning",
   },
   removeButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   actionButtonText: {
     fontSize: 12,

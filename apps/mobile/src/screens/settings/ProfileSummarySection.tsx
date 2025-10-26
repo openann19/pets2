@@ -12,6 +12,8 @@ import {
   CardConfigs,
 } from "../../components/Advanced/AdvancedCard";
 
+import { Theme } from '../../theme/unified-theme';
+
 interface ProfileSummarySectionProps {
   onEditProfile: () => void;
 }
@@ -38,7 +40,7 @@ export function ProfileSummarySection({
       >
         <View style={styles.profileCardContent}>
           <View style={styles.profileAvatar}>
-            <Ionicons name="person" size={32} color="#9CA3AF" />
+            <Ionicons name="person" size={32} color="Theme.colors.neutral[400]" />
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>John Doe</Text>
@@ -60,12 +62,12 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   profileCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
@@ -90,12 +92,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 2,
   },
   profileEmail: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 4,
   },
   profileStatus: {
@@ -106,12 +108,12 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
     marginRight: 6,
   },
   statusText: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
 });

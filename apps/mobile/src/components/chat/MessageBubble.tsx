@@ -2,10 +2,25 @@ import type { Message } from "@pawfectmatch/core";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedRef,
+  measure,
+  runOnJS,
+} from "react-native-reanimated";
+import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from "../../theme/unified-theme";
+import { useSwipeToReply } from "../../hooks/useSwipeToReply";
+import ReplySwipeHint from "./ReplySwipeHint";
+import MorphingContextMenu, { type ContextAction } from "../menus/MorphingContextMenu";
+import MessageStatusTicks, { type MessageStatus } from "./MessageStatusTicks";
+import RetryBadge from "./RetryBadge";
+import { useBubbleRetryShake } from "../../hooks/useBubbleRetryShake";
 
 interface MessageBubbleProps {
-  message: Message;
+  message: Message & { status?: MessageStatus };
   isOwnMessage: boolean;
   showStatus?: boolean;
   currentUserId: string;
@@ -17,6 +32,12 @@ interface MessageBubbleProps {
     species: string;
     mood?: "happy" | "excited" | "curious" | "sleepy" | "playful";
   };
+  onRetry?: (message: Message) => Promise<boolean> | boolean;
+  onReply?: (message: Message) => void;
+  onCopy?: (message: Message) => void;
+  onReact?: (message: Message) => void;
+  onDelete?: (message: Message) => void;
+  onShowReadBy?: (message: Message) => void;
 }
 
 /**
@@ -32,8 +53,77 @@ export function MessageBubble({
   totalMessages,
   showAvatars = false,
   petInfo,
+  onRetry,
+  onReply,
+  onCopy,
+  onReact,
+  onDelete,
+  onShowReadBy,
 }: MessageBubbleProps): React.JSX.Element {
   const { isDark, colors } = useTheme();
+  const { style: bubbleShakeStyle, shake } = useBubbleRetryShake();
+  
+  // Default status if not provided
+  const messageStatus: MessageStatus = message.status || "sent";
+  
+  // Measure anchor rect for morphing menu
+  const bubbleRef = useAnimatedRef<Animated.View>();
+  const [menuVisible, setMenuVisible] = React.useState(false);
+  const [anchor, setAnchor] = React.useState<{ x: number; y: number; width: number; height: number }>();
+
+  // Swipe-to-reply gesture
+  const { gesture: swipeGesture, bubbleStyle, progressX } = useSwipeToReply({
+    enabled: true,
+    onReply: onReply || (() => {}),
+    payload: message,
+  });
+
+  // Long-press gesture for context menu
+  const handleOpenMenu = (rect: { x: number; y: number; width: number; height: number }) => {
+    setAnchor(rect);
+    setMenuVisible(true);
+    Haptics.selectionAsync().catch(() => {});
+  };
+
+  const longPress = Gesture.LongPress()
+    .minDuration(350)
+    .maxDistance(10)
+    .onStart(() => {
+      const m = measure(bubbleRef);
+      if (m) {
+        runOnJS(handleOpenMenu)({ 
+          x: m.pageX, 
+          y: m.pageY, 
+          width: m.width, 
+          height: m.height 
+        });
+      }
+      runOnJS(setMenuVisible)(true);
+      Haptics.selectionAsync().catch(() => {});
+    });
+
+  const tap = Gesture.Tap();
+  const composed = Gesture.Exclusive(swipeGesture, Gesture.Simultaneous(longPress, tap));
+
+  // Menu actions
+  const canReadBy = isOwnMessage && (messageStatus === "delivered" || messageStatus === "read");
+  const actions: ContextAction[] = [
+    { key: "reply", label: "Reply", icon: "arrow-undo", onPress: () => onReply?.(message) },
+    { key: "copy", label: "Copy", icon: "copy", onPress: () => onCopy?.(message) },
+    { key: "react", label: "React…", icon: "happy", onPress: () => onReact?.(message) },
+    ...(canReadBy ? [{ key: "readby", label: "Read by…", icon: "eye", onPress: () => onShowReadBy?.(message) }] : []),
+    ...(isOwnMessage
+      ? [{ key: "delete", label: "Delete", icon: "trash", onPress: () => onDelete?.(message), danger: true }]
+      : []),
+  ];
+
+  const handleRetry = async () => {
+    if (!onRetry) return;
+    const result = await Promise.resolve(onRetry(message)).catch(() => false);
+    if (!result) {
+      shake();
+    }
+  };
 
   const formatTime = (timestamp: string) =>
     new Date(timestamp).toLocaleTimeString([], {
@@ -215,12 +305,18 @@ export function MessageBubble({
   }
 
   return (
-    <View
-      style={StyleSheet.flatten([
-        styles.messageContainer,
-        isOwnMessage ? styles.ownContainer : styles.otherContainer,
-      ])}
-    >
+    <>
+      <GestureDetector gesture={composed}>
+        <Animated.View
+          ref={bubbleRef}
+          style={[
+            StyleSheet.flatten([
+              styles.messageContainer,
+              isOwnMessage ? styles.ownContainer : styles.otherContainer,
+            ]),
+            isOwnMessage && messageStatus === "failed" && bubbleShakeStyle,
+          ]}
+        >
       {/* Milestone Badge */}
       {getMilestoneBadge() && (
         <View style={styles.milestoneContainer}>
@@ -252,16 +348,17 @@ export function MessageBubble({
         </View>
       ) : null}
 
-      <LinearGradient
-        colors={
-          isOwnMessage
-            ? ["#FF6B6B", "#FF8E8E"]
-            : [colors.card, colors.background]
-        }
-        style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
+      <Animated.View style={bubbleStyle}>
+        <LinearGradient
+          colors={
+            isOwnMessage
+              ? ["#FF6B6B", "#FF8E8E"]
+              : ["#F0F0F0", "#E0E0E0"]
+          }
+          style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
         <Text style={StyleSheet.flatten([styles.messageText, getTextStyle()])}>
           {message.content}
         </Text>
@@ -292,17 +389,46 @@ export function MessageBubble({
           {formatTime(message.sentAt)}
         </Text>
         {isOwnMessage && showStatus ? (
-          <Text
-            style={StyleSheet.flatten([
-              styles.status,
-              isDark ? styles.statusDark : styles.statusLight,
-            ])}
-          >
-            {getStatusIcon()}
-          </Text>
+          <View style={styles.statusRow}>
+            <MessageStatusTicks
+              status={messageStatus}
+              size={12}
+              sentColor="#9ca3af"
+              deliveredColor="#9ca3af"
+              readColor="#3b82f6"
+              failedColor="#ef4444"
+            />
+            {messageStatus === "failed" && (
+              <RetryBadge onPress={handleRetry} />
+            )}
+          </View>
         ) : null}
-      </View>
-    </View>
+        </View>
+      </Animated.View>
+
+      {/* Reply swipe hint - appears during swipe */}
+      {!isOwnMessage && (
+        <ReplySwipeHint progress={progressX} align="right" />
+      )}
+      </Animated.View>
+      </GestureDetector>
+
+      {/* Context menu */}
+      <MorphingContextMenu
+        visible={menuVisible}
+        onClose={() => setMenuVisible(false)}
+        anchor={anchor}
+        actions={actions}
+        theme={{
+          bg: isDark ? "#111" : "#fff",
+          border: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+          text: isDark ? "#fff" : "#111",
+          sub: isDark ? "#9ca3af" : "#666",
+          item: isDark ? "#181818" : "#f8f9fa",
+          itemPressed: isDark ? "#222" : "#e0e0e0",
+        }}
+      />
+    </>
   );
 }
 
@@ -310,6 +436,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     marginVertical: 4,
     maxWidth: "80%",
+    position: "relative",
   },
   ownContainer: {
     alignSelf: "flex-end",
@@ -329,7 +456,7 @@ const styles = StyleSheet.create({
   },
   milestoneText: {
     fontSize: 12,
-    color: "#FFFFFF",
+    color: Theme.colors.neutral[0],
     fontWeight: "600",
   },
   avatarContainer: {
@@ -367,7 +494,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     marginBottom: 4,
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -380,7 +507,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E55555",
   },
   otherMessageLight: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Theme.colors.neutral[0],
     borderWidth: 1,
     borderColor: "#E0E0E0",
   },
@@ -467,6 +594,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 2,
+  },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   timestamp: {
     fontSize: 12,

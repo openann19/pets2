@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { useMemoryWeave } from "../domains/social/useMemoryWeave";
 
 interface MemoryNode {
@@ -37,6 +37,8 @@ interface UseMemoryWeaveScreenReturn {
   getEmotionColor: (emotion?: string) => string;
   getEmotionEmoji: (emotion?: string) => string;
   formatTimestamp: (timestamp: string) => string;
+  petName: string;
+  matchId: string;
 
   // Screen-specific
   isDark: boolean;
@@ -101,6 +103,8 @@ export const useMemoryWeaveScreen = (route: {
     getEmotionColor,
     getEmotionEmoji,
     formatTimestamp,
+    petName,
+    matchId,
 
     // Screen-specific
     isDark,

@@ -12,7 +12,9 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 
-import { BorderRadius, Spacing } from "../styles/GlobalStyles";
+import { MOBILE_SPACING } from '../constants/design-tokens';
+import { Theme } from '../theme/unified-theme';
+import { MOBILE_RADIUS } from '../constants/design-tokens';
 
 // === HOLOGRAPHIC CONSTANTS ===
 export const HOLOGRAPHIC_CONFIGS = {
@@ -21,16 +23,16 @@ export const HOLOGRAPHIC_CONFIGS = {
     rainbow: [
       "#ff0000",
       "#ff7f00",
-      "#ffff00",
+      "Theme.colors.neutral[0]f00",
       "#00ff00",
-      "#0000ff",
+      "Theme.colors.neutral[950]0ff",
       "#4b0082",
       "#9400d3",
     ],
     cyber: [
       "#00f5ff",
       "#ff00ff",
-      "#ffff00",
+      "Theme.colors.neutral[0]f00",
       "#00ff00",
       "#ff0080",
       "#8000ff",
@@ -57,7 +59,7 @@ export const HOLOGRAPHIC_CONFIGS = {
     neon: [
       "#00f5ff",
       "#ff00ff",
-      "#ffff00",
+      "Theme.colors.neutral[0]f00",
       "#00ff00",
       "#ff0080",
       "#8000ff",
@@ -202,7 +204,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
           end={{ x: 1, y: 1 }}
           style={{
             flex: 1,
-            borderRadius: BorderRadius["2xl"],
+            borderRadius: MOBILE_RADIUS["2xl"],
           }}
         />
       </Animated.View>

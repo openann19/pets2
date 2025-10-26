@@ -1,0 +1,60 @@
+src/screens/ModerationToolsScreen.tsx:8:  FlatList,
+src/screens/ModerationToolsScreen.tsx:166:        <FlatList
+src/screens/ai/compatibility/PetSelectionSection.tsx:14:  FlatList,
+src/screens/ai/compatibility/PetSelectionSection.tsx:215:      <FlatList
+src/screens/MatchesScreen.tsx:1:import { FlatList, RefreshControl, StyleSheet } from "react-native";
+src/screens/MatchesScreen.tsx:76:      <FlatList
+src/screens/admin/AdminUsersScreen.tsx:4:  FlatList,
+src/screens/admin/AdminUsersScreen.tsx:242:        <FlatList
+src/screens/ai/AICompatibilityScreen.tsx:14:  FlatList,
+src/screens/ai/AICompatibilityScreen.tsx:526:          <FlatList
+plan1.md:283:* Heavy lists: `FlatList` with memoized `renderItem`, stable `keyExtractor`, `getItemLayout`.
+plan1.md:1139:* **Virtualization**: `FlashList` instead of `FlatList` (Shopify)
+src/screens/CommunityScreen.tsx:16:  FlatList,
+src/screens/CommunityScreen.tsx:408:      <FlatList
+src/screens/admin/AdminSecurityScreen.tsx:14:  FlatList,
+src/screens/admin/AdminSecurityScreen.tsx:694:      <FlatList
+src/screens/admin/AdminVerificationsScreen.tsx:11:  FlatList,
+src/screens/admin/AdminVerificationsScreen.tsx:566:            <FlatList
+src/screens/admin/AdminVerificationsScreen.tsx:730:        <FlatList
+src/screens/admin/AdminBillingScreen.tsx:13:  FlatList,
+src/screens/admin/AdminBillingScreen.tsx:752:      <FlatList
+src/screens/admin/AdminUploadsScreen.tsx:12:  FlatList,
+src/screens/admin/AdminUploadsScreen.tsx:541:        <FlatList
+src/screens/MyPetsScreen.tsx:9:  FlatList,
+src/screens/MyPetsScreen.tsx:213:      <FlatList
+src/screens/BlockedUsersScreen.tsx:6:  FlatList,
+src/screens/BlockedUsersScreen.tsx:207:            <FlatList
+src/__mocks__/react-native.js:13:const FlatList = 'FlatList';
+src/__mocks__/react-native.js:14:const SectionList = 'SectionList';
+src/__mocks__/react-native.js:26:  FlatList,
+src/__mocks__/react-native.js:27:  SectionList,
+src/components/MotionPrimitives.tsx:2:import type { ViewStyle, FlatListProps } from "react-native";
+src/components/MotionPrimitives.tsx:4:import { View, Animated, ScrollView, FlatList, Easing } from "react-native";
+src/components/MotionPrimitives.tsx:256:// Enhanced FlatList with Staggered Animations
+src/components/MotionPrimitives.tsx:257:interface AnimatedFlatListProps<T> extends FlatListProps<T> {
+src/components/MotionPrimitives.tsx:262:export function AnimatedFlatList<T>({
+src/components/MotionPrimitives.tsx:266:}: AnimatedFlatListProps<T>) {
+src/components/MotionPrimitives.tsx:329:    <FlatList
+src/components/MotionPrimitives.tsx:450:  AnimatedFlatList,
+src/hooks/useMatchesData.ts:6:import type { FlatList } from "react-native";
+src/hooks/useMatchesData.ts:34:  listRef: React.RefObject<FlatList<Match>>;
+src/hooks/useMatchesData.ts:47:  const listRef = useRef<FlatList<Match>>(null);
+src/hooks/chat/useChatScroll.ts:2:import type { FlatList } from "react-native";
+src/hooks/chat/useChatScroll.ts:11:  flatListRef: React.RefObject<FlatList<any>>;
+src/hooks/chat/useChatScroll.ts:23:  const flatListRef = useRef<FlatList<any>>(null);
+src/hooks/utils/useScrollPersistence.ts:3:import type { FlatList } from "react-native";
+src/hooks/utils/useScrollPersistence.ts:11:  listRef: React.RefObject<FlatList<any>>;
+src/hooks/utils/useScrollPersistence.ts:29:  const listRef = useRef<FlatList<any>>(null);
+src/components/chat/QuickReplies.tsx:2:import { View, FlatList, StyleSheet } from "react-native";
+src/components/chat/QuickReplies.tsx:48:        <FlatList
+src/components/chat/MessageList.tsx:3:  FlatList,
+src/components/chat/MessageList.tsx:21:  flatListRef?: React.RefObject<FlatList<Message>>;
+src/components/chat/MessageList.tsx:68:      <FlatList<Message>
+src/components/chat/ReactionPicker.tsx:14:  FlatList,
+src/components/chat/ReactionPicker.tsx:98:          <FlatList
+src/components/chat/MobileChat.tsx:5:  FlatList,
+src/components/chat/MobileChat.tsx:32:  const flatListRef = useRef<FlatList>(null);
+src/components/chat/MobileChat.tsx:90:      <FlatList
+src/screens/admin/AdminChatsScreen.tsx:11:  FlatList,
+src/screens/admin/AdminChatsScreen.tsx:354:        <FlatList

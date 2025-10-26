@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { CallData } from "../../services/WebRTCService";
+import { Theme } from '../theme/unified-theme';
 
 interface IncomingCallScreenProps {
   callData: CallData;
@@ -198,7 +199,7 @@ export default function IncomingCallScreen({
               <Ionicons
                 name="call"
                 size={32}
-                color="#fff"
+                color="Theme.colors.neutral[0]"
                 style={{ transform: [{ rotate: "135deg" }] }}
               />
             </LinearGradient>
@@ -218,7 +219,7 @@ export default function IncomingCallScreen({
               colors={["#2ed573", "#1dd1a1"]}
               style={styles.buttonGradient}
             >
-              <Ionicons name="call" size={32} color="#fff" />
+              <Ionicons name="call" size={32} color="Theme.colors.neutral[0]" />
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
@@ -233,12 +234,12 @@ export default function IncomingCallScreen({
           ])}
         >
           <TouchableOpacity style={styles.additionalButton}>
-            <Ionicons name="chatbubble" size={24} color="#fff" />
+            <Ionicons name="chatbubble" size={24} color="Theme.colors.neutral[0]" />
             <Text style={styles.additionalButtonText}>Message</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.additionalButton}>
-            <Ionicons name="person" size={24} color="#fff" />
+            <Ionicons name="person" size={24} color="Theme.colors.neutral[0]" />
             <Text style={styles.additionalButtonText}>Profile</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -250,7 +251,7 @@ export default function IncomingCallScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
   },
   backgroundGradient: {
     position: "absolute",
@@ -277,13 +278,13 @@ const styles = StyleSheet.create({
   },
   incomingCallText: {
     fontSize: 18,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     opacity: 0.8,
     marginBottom: 5,
   },
   callTypeText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     opacity: 0.6,
   },
   callerInfo: {
@@ -312,13 +313,13 @@ const styles = StyleSheet.create({
   callerName: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 8,
     textAlign: "center",
   },
   callerSubtext: {
     fontSize: 18,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     opacity: 0.7,
   },
   actionsContainer: {
@@ -332,7 +333,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   additionalButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     marginTop: 5,
     opacity: 0.8,

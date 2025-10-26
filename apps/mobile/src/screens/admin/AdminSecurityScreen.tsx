@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
+import { Theme } from '../theme/unified-theme';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface SecurityAlert {
@@ -207,15 +208,15 @@ export default function AdminSecurityScreen({
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "critical":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       case "high":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "medium":
-        return "#3B82F6";
+        return "Theme.colors.status.info";
       case "low":
-        return "#10B981";
+        return "Theme.colors.status.success";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -315,15 +316,15 @@ export default function AdminSecurityScreen({
               <TouchableOpacity
                 style={StyleSheet.flatten([
                   styles.actionButton,
-                  { backgroundColor: "#10B981" },
+                  { backgroundColor: "Theme.colors.status.success" },
                 ])}
                 onPress={() => handleResolveAlert(item.id)}
                 disabled={isActionLoading}
               >
                 {isActionLoading ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
                 ) : (
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                  <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />
                 )}
               </TouchableOpacity>
 
@@ -331,12 +332,12 @@ export default function AdminSecurityScreen({
                 <TouchableOpacity
                   style={StyleSheet.flatten([
                     styles.actionButton,
-                    { backgroundColor: "#EF4444" },
+                    { backgroundColor: "Theme.colors.status.error" },
                   ])}
                   onPress={() => handleBlockIP(item.id, item.ipAddress!)}
                   disabled={isActionLoading}
                 >
-                  <Ionicons name="ban" size={16} color="#FFFFFF" />
+                  <Ionicons name="ban" size={16} color="Theme.colors.neutral[0]" />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -345,7 +346,7 @@ export default function AdminSecurityScreen({
 
         {item.resolved ? (
           <View style={styles.resolvedInfo}>
-            <Ionicons name="checkmark-circle" size={16} color="#10B981" />
+            <Ionicons name="checkmark-circle" size={16} color="Theme.colors.status.success" />
             <Text
               style={StyleSheet.flatten([
                 styles.resolvedText,
@@ -461,7 +462,7 @@ export default function AdminSecurityScreen({
             onPress={onRefresh}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color="#FFFFFF" />
+            <Ionicons name="refresh" size={20} color="Theme.colors.neutral[0]" />
           </TouchableOpacity>
         </View>
       </View>
@@ -485,7 +486,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="alert-circle" size={20} color="#EF4444" />
+                <Ionicons name="alert-circle" size={20} color="Theme.colors.status.error" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -498,7 +499,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: "#EF4444" },
+                  { color: "Theme.colors.status.error" },
                 ])}
               >
                 {metrics.criticalAlerts}
@@ -512,7 +513,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="warning" size={20} color="#F59E0B" />
+                <Ionicons name="warning" size={20} color="Theme.colors.status.warning" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -525,7 +526,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: "#F59E0B" },
+                  { color: "Theme.colors.status.warning" },
                 ])}
               >
                 {metrics.highAlerts}
@@ -539,7 +540,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="information-circle" size={20} color="#3B82F6" />
+                <Ionicons name="information-circle" size={20} color="Theme.colors.status.info" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -552,7 +553,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: "#3B82F6" },
+                  { color: "Theme.colors.status.info" },
                 ])}
               >
                 {metrics.mediumAlerts}
@@ -566,7 +567,7 @@ export default function AdminSecurityScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                <Ionicons name="checkmark-circle" size={20} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -579,7 +580,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: "#10B981" },
+                  { color: "Theme.colors.status.success" },
                 ])}
               >
                 {metrics.resolvedAlerts}
@@ -625,7 +626,7 @@ export default function AdminSecurityScreen({
                       {
                         color:
                           selectedSeverity === severity
-                            ? "#FFFFFF"
+                            ? "Theme.colors.neutral[0]"
                             : colors.text,
                       },
                     ])}
@@ -676,7 +677,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.filterText,
-                    { color: selectedType === type ? "#FFFFFF" : colors.text },
+                    { color: selectedType === type ? "Theme.colors.neutral[0]" : colors.text },
                   ])}
                 >
                   {type
@@ -768,7 +769,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -828,7 +829,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -873,7 +874,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   severityText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 10,
     fontWeight: "600",
   },

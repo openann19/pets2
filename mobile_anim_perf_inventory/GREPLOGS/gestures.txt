@@ -1,0 +1,21 @@
+jest.config.cjs:11:    'node_modules/(?!(react-native|@react-native|@react-navigation|expo|@expo|react-native-reanimated|react-native-gesture-handler)/)',
+src/setupTests.ts:56:// Mock react-native-gesture-handler
+src/setupTests.ts:57:jest.mock("react-native-gesture-handler", () => ({
+src/hooks/animations/useSwipeGesture.ts:2:import type { PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
+src/components/MotionPrimitives.tsx:251:  // This would integrate with react-native-gesture-handler
+src/screens/ModernSwipeScreen.tsx:5: * - Uses ModernSwipeCard with react-native-gesture-handler
+src/components/ImmersiveCard.tsx:8:import { PanGestureHandler, State } from "react-native-gesture-handler";
+src/components/Gestures/PinchZoom.tsx:8:import { Gesture, GestureDetector } from "react-native-gesture-handler";
+src/components/Gestures/PinchZoom.tsx:149:  const pinchGesture = Gesture.Pinch()
+src/components/Gestures/PinchZoom.tsx:259:  const panGesture = Gesture.Pan()
+src/components/Gestures/PinchZoom.tsx:306:  const doubleTapGesture = Gesture.Tap()
+src/components/Gestures/PinchZoom.tsx:333:  const composedGesture = Gesture.Simultaneous(
+src/components/Gestures/PinchZoom.tsx:403:  const pinchGesture = Gesture.Pinch()
+src/components/Gestures/PinchZoom.tsx:416:  const panGesture = Gesture.Pan().onUpdate((event) => {
+src/components/Gestures/PinchZoom.tsx:432:    <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
+src/components/Gestures/DoubleTapLike.tsx:8:import { Gesture, GestureDetector } from "react-native-gesture-handler";
+src/components/Gestures/DoubleTapLike.tsx:183:  const singleTap = Gesture.Tap().onEnd(() => {
+src/components/Gestures/DoubleTapLike.tsx:311:  const singleTap = Gesture.Tap().onEnd(() => {
+src/components/ModernSwipeCard.tsx:5: * - react-native-gesture-handler for performant gestures
+src/components/ModernSwipeCard.tsx:27:import { PanGestureHandler } from "react-native-gesture-handler";
+package.json:110:    "react-native-gesture-handler": "^2.12.1",

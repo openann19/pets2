@@ -10,16 +10,14 @@
  */
 
 // Re-export all animation hooks from the modular structure
+// NOTE: This file is a compatibility layer. New code should import directly from hooks/animations/ or animation/index
 export {
   useSpringAnimation,
   useEntranceAnimation,
   useSwipeGesture,
   usePressAnimation,
   useGlowAnimation,
-} from "./animations";
-
-// Re-export configs
-export { SPRING_CONFIGS, TIMING_CONFIGS } from "./animations";
+} from "./animations/index";
 
 // Import for default export object
 import {

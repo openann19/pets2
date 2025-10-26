@@ -3,6 +3,7 @@ import { BlurView } from "expo-blur";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ActivityTypeSelector } from "./ActivityTypeSelector";
 import type { ActivityType } from "./ActivityTypeSelector";
+import { Theme } from '../theme/unified-theme';
 
 export interface MapFilters {
   showMyPets: boolean;
@@ -27,7 +28,8 @@ export function MapFiltersModal({
 }: MapFiltersModalProps): React.JSX.Element {
   const sliderPosition = React.useMemo(() => {
     const percentage = Math.min(100, Math.max(0, (filters.radius / 50) * 100));
-    return `${percentage.toFixed(0)}%`;
+    // Convert percentage to numeric value for React Native style
+    return percentage; // Return as number for DimensionValue
   }, [filters.radius]);
 
   return (
@@ -49,7 +51,7 @@ export function MapFiltersModal({
             <View
               style={[
                 styles.sliderThumb,
-                { left: sliderPosition },
+                { left: `${sliderPosition}%` },
               ]}
             />
           </View>
@@ -69,13 +71,13 @@ const styles = StyleSheet.create({
   filterTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 20,
   },
   filterSectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 12,
     marginTop: 16,
   },
@@ -84,14 +86,14 @@ const styles = StyleSheet.create({
   },
   sliderTrack: {
     height: 4,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 2,
     position: "relative",
   },
   sliderThumb: {
     width: 20,
     height: 20,
-    backgroundColor: "#EC4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 10,
     position: "absolute",
     top: -8,

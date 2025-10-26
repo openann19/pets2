@@ -18,7 +18,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -96,7 +97,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 colors={["#FFD700", "#FFA000"]}
                 style={styles.iconContainer}
               >
-                <Ionicons name="star" size={30} color="#fff" />
+                <Ionicons name="star" size={30} color="Theme.colors.neutral[0]" />
               </LinearGradient>
 
               {/* Feature Icon */}
@@ -192,7 +193,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     colors={["#FF6B6B", "#FF8E8E"]}
                     style={styles.upgradeButtonGradient}
                   >
-                    <Ionicons name="star" size={20} color="#fff" />
+                    <Ionicons name="star" size={20} color="Theme.colors.neutral[0]" />
                     <Text style={styles.upgradeButtonText}>
                       Upgrade to Premium
                     </Text>
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - 40,
     maxWidth: 400,
     borderRadius: 25,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   upgradeButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 18,
     fontWeight: "700",
   },

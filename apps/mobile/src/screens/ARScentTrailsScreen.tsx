@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useARScentTrailsScreen } from "../hooks/screens/useARScentTrailsScreen";
+import { Theme } from '../theme/unified-theme';
 
 type MapStackParamList = {
   ARScentTrails: undefined;
@@ -60,7 +61,7 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
       <View style={styles.arContainer}>
         <BlurView intensity={30} style={styles.arView}>
           <View style={styles.arContent}>
-            <Ionicons name="camera" size={80} color="#fff" />
+            <Ionicons name="camera" size={80} color="Theme.colors.neutral[0]" />
             <Text style={styles.arTitle}>Augmented Reality</Text>
             <Text style={styles.arSubtitle}>
               Point your camera to detect scent trails in your area
@@ -69,7 +70,7 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
             {isScanning ? (
               <View style={styles.scanningContainer}>
                 <View style={styles.scanningAnimation}>
-                  <Ionicons name="scan" size={40} color="#ec4899" />
+                  <Ionicons name="scan" size={40} color="Theme.colors.primary[500]" />
                 </View>
                 <Text style={styles.scanningText}>
                   Scanning for scent trails...
@@ -81,10 +82,10 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
                 onPress={startScanning}
               >
                 <LinearGradient
-                  colors={["#ec4899", "#db2777"]}
+                  colors={["Theme.colors.primary[500]", "Theme.colors.primary[600]"]}
                   style={styles.scanButtonGradient}
                 >
-                  <Ionicons name="search" size={24} color="#fff" />
+                  <Ionicons name="search" size={24} color="Theme.colors.neutral[0]" />
                   <Text style={styles.scanButtonText}>Start Scanning</Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -99,7 +100,7 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
 
         {scentTrails.length === 0 ? (
           <BlurView intensity={20} style={styles.emptyState}>
-            <Ionicons name="paw-outline" size={60} color="#9ca3af" />
+            <Ionicons name="paw-outline" size={60} color="Theme.colors.neutral[400]" />
             <Text style={styles.emptyTitle}>No Scent Trails Found</Text>
             <Text style={styles.emptySubtitle}>
               Start scanning to detect nearby pet scent trails
@@ -144,21 +145,21 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
 
                   <View style={styles.trailDetails}>
                     <View style={styles.detailItem}>
-                      <Ionicons name="navigate" size={16} color="#6b7280" />
+                      <Ionicons name="navigate" size={16} color="Theme.colors.neutral[500]" />
                       <Text style={styles.detailText}>
                         {getDirectionIcon(trail.direction)} {trail.distance}
                       </Text>
                     </View>
 
                     <View style={styles.detailItem}>
-                      <Ionicons name="time" size={16} color="#6b7280" />
+                      <Ionicons name="time" size={16} color="Theme.colors.neutral[500]" />
                       <Text style={styles.detailText}>{trail.lastSeen}</Text>
                     </View>
                   </View>
                 </View>
 
                 <View style={styles.followButton}>
-                  <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
+                  <Ionicons name="chevron-forward" size={20} color="Theme.colors.neutral[400]" />
                 </View>
               </TouchableOpacity>
             ))}
@@ -176,10 +177,10 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
             }}
           >
             <LinearGradient
-              colors={["#3b82f6", "#1d4ed8"]}
+              colors={["Theme.colors.status.info", "#1d4ed8"]}
               style={styles.actionGradient}
             >
-              <Ionicons name="filter" size={20} color="#fff" />
+              <Ionicons name="filter" size={20} color="Theme.colors.neutral[0]" />
               <Text style={styles.actionText}>Filter</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -191,10 +192,10 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
             }}
           >
             <LinearGradient
-              colors={["#10b981", "#047857"]}
+              colors={["Theme.colors.status.success", "#047857"]}
               style={styles.actionGradient}
             >
-              <Ionicons name="map" size={20} color="#fff" />
+              <Ionicons name="map" size={20} color="Theme.colors.neutral[0]" />
               <Text style={styles.actionText}>Map</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -209,7 +210,7 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
               colors={["#8b5cf6", "#7c3aed"]}
               style={styles.actionGradient}
             >
-              <Ionicons name="settings" size={20} color="#fff" />
+              <Ionicons name="settings" size={20} color="Theme.colors.neutral[0]" />
               <Text style={styles.actionText}>Settings</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   },
   arContainer: {
     height: 300,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
   },
   arView: {
     flex: 1,
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
   arTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginTop: 16,
     marginBottom: 8,
   },
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
   },
   scanningText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "500",
   },
   scanButton: {
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   scanButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 16,
   },
   emptyState: {
@@ -320,13 +321,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: "#9ca3af",
+    color: "Theme.colors.neutral[400]",
     textAlign: "center",
   },
   trailsList: {
@@ -335,10 +336,10 @@ const styles = StyleSheet.create({
   trailCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -362,7 +363,7 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   intensityBadge: {
     paddingHorizontal: 8,
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   },
   petBreed: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 8,
   },
   trailDetails: {
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   followButton: {
     padding: 8,
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   actionText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },

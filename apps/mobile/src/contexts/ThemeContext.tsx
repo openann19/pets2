@@ -1,15 +1,20 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  type ReactNode,
-} from "react";
-import { Appearance } from "react-native";
+/**
+ * @deprecated Use theme/Provider instead
+ * This file is kept for backward compatibility during migration
+ */
 
-import { ColorsDark, GlobalStylesDark, ShadowsDark } from "../styles/DarkTheme";
-import { Colors, GlobalStyles, Shadows } from "../styles/GlobalStyles";
-import { useUIStore, type ThemeMode } from "../stores/useUIStore";
+export { ThemeProvider, useTheme } from "../theme/Provider";
 
+let warned = false;
+if (!warned) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[DEPRECATION] theme/Provider → use theme/Provider instead.",
+  );
+  warned = true;
+}
+
+// Legacy exports for backwards compatibility
 export interface ThemeColors {
   primary: string;
   primaryLight: string;
@@ -48,7 +53,6 @@ export interface ThemeColors {
   gradientSuccess: string[];
   gradientWarning: string[];
   gradientError: string[];
-  // Additional UI colors
   background: string;
   surface: string;
   surfaceElevated: string;
@@ -64,68 +68,10 @@ export interface ThemeColors {
 
 export interface ThemeContextType {
   isDark: boolean;
-  themeMode: ThemeMode;
+  themeMode: "light" | "dark" | "system";
   colors: ThemeColors;
   styles: Record<string, unknown>;
   shadows: Record<string, unknown>;
-  setThemeMode: (mode: ThemeMode) => void;
+  setThemeMode: (mode: "light" | "dark" | "system") => void;
   toggleTheme: () => void;
 }
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-interface ThemeProviderProps {
-  children: ReactNode;
-}
-
-export function ThemeProvider({
-  children,
-}: ThemeProviderProps): React.JSX.Element {
-  const { themeMode, isDark, setThemeMode, setSystemColorScheme, toggleTheme } =
-    useUIStore();
-
-  // Get current theme colors and styles
-  const colors = isDark ? ColorsDark : Colors;
-  const styles = isDark ? GlobalStylesDark : GlobalStyles;
-  const shadows = isDark ? ShadowsDark : Shadows;
-
-  // Listen to system color scheme changes and update store
-  useEffect(() => {
-    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      setSystemColorScheme(colorScheme);
-    });
-
-    // Initialize with current system color scheme
-    setSystemColorScheme(Appearance.getColorScheme());
-
-    return () => {
-      subscription?.remove();
-    };
-  }, [setSystemColorScheme]);
-
-  const contextValue: ThemeContextType = {
-    isDark,
-    themeMode,
-    colors,
-    styles,
-    shadows,
-    setThemeMode,
-    toggleTheme,
-  };
-
-  return (
-    <ThemeContext.Provider value={contextValue}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
-
-export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
-};
-
-export default ThemeContext;

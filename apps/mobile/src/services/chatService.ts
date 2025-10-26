@@ -4,12 +4,17 @@
  */
 
 import { logger } from "@pawfectmatch/core";
+import type { Message } from "@pawfectmatch/core";
 import { request } from "./api";
 
 export interface ChatReaction {
   emoji: string;
   userId: string;
   timestamp: string;
+}
+
+export interface MessageWithReactions extends Message {
+  reactions?: Record<string, number>;
 }
 
 export interface ChatAttachment {
@@ -51,7 +56,11 @@ class ChatService {
   /**
    * Send a reaction to a message
    */
-  async sendReaction(params: SendReactionParams): Promise<{
+  async sendReaction(
+    matchId: string,
+    messageId: string,
+    reaction: string
+  ): Promise<{
     success: boolean;
     messageId: string;
     reactions: ChatReaction[];
@@ -64,17 +73,17 @@ class ChatService {
       }>("/chat/reactions", {
         method: "POST",
         body: {
-          matchId: params.matchId,
-          messageId: params.messageId,
-          reaction: params.reaction,
+          matchId,
+          messageId,
+          reaction,
         },
       });
 
-      logger.info("Reaction sent successfully", { params });
+      logger.info("Reaction sent successfully", { matchId, messageId, reaction });
 
       return response;
     } catch (error) {
-      logger.error("Failed to send reaction", { error, params });
+      logger.error("Failed to send reaction", { error, matchId, messageId, reaction });
       throw error;
     }
   }
@@ -119,29 +128,68 @@ class ChatService {
 
   /**
    * Send a voice note
+   * Supports both FormData (native) and Blob (web)
+   */
+  async sendVoiceNote(
+    matchId: string,
+    file: FormData | Blob,
+    duration?: number
+  ): Promise<void>;
+  
+  /**
+   * Send a voice note (legacy signature)
    */
   async sendVoiceNote(params: SendVoiceNoteParams): Promise<{
     success: boolean;
     url: string;
     duration: number;
-  }> {
+  }>;
+  
+  async sendVoiceNote(
+    matchIdOrParams: string | SendVoiceNoteParams,
+    file?: FormData | Blob,
+    duration?: number
+  ): Promise<void> {
     try {
-      const formData = new FormData();
+      // Handle both signatures
+      let formData: FormData;
+      let matchId: string;
+      let voiceDuration: number;
+      
+      if (typeof matchIdOrParams === "string") {
+        // New signature: sendVoiceNote(matchId, file, duration?)
+        matchId = matchIdOrParams;
+        if (file instanceof FormData) {
+          // Native: FormData already has the file wrapped
+          formData = file;
+          formData.append("matchId", matchId);
+        } else if (file instanceof Blob) {
+          // Web: wrap Blob in FormData
+          formData = new FormData();
+          const audioFile = new File([file], "voice-note.webm", {
+            type: "audio/webm",
+          });
+          formData.append("audioBlob", audioFile);
+          formData.append("matchId", matchId);
+        } else {
+          throw new Error("Invalid file type");
+        }
+        voiceDuration = duration || 0;
+      } else {
+        // Legacy signature: sendVoiceNote({ matchId, audioBlob, duration })
+        const params = matchIdOrParams;
+        matchId = params.matchId;
+        formData = new FormData();
+        const audioFile = new File([params.audioBlob], "voice-note.m4a", {
+          type: "audio/m4a",
+        });
+        formData.append("audioBlob", audioFile);
+        formData.append("matchId", matchId);
+        formData.append("duration", String(params.duration));
+        voiceDuration = params.duration;
+      }
 
-      // Create a file-like object for the audio blob
-      const audioFile = new File([params.audioBlob], "voice-note.m4a", {
-        type: "audio/m4a",
-      });
-
-      formData.append("audioBlob", audioFile);
-      formData.append("matchId", params.matchId);
-      formData.append("duration", String(params.duration));
-
-      const response = await request<{
-        success: boolean;
-        url: string;
-        duration: number;
-      }>("/api/chat/voice", {
+      await request("/api/chat/voice", {
         method: "POST",
         body: formData,
         headers: {
@@ -149,11 +197,9 @@ class ChatService {
         },
       });
 
-      logger.info("Voice note sent successfully", { params });
-
-      return response;
+      logger.info("Voice note sent successfully", { matchId, duration: voiceDuration });
     } catch (error) {
-      logger.error("Failed to send voice note", { error, params });
+      logger.error("Failed to send voice note", { error, matchIdOrParams });
       throw error;
     }
   }

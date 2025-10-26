@@ -17,6 +17,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { logger } from "@pawfectmatch/core";
+import { Theme } from '../theme/unified-theme';
 
 interface PasswordConfirmationModalProps {
   visible: boolean;
@@ -81,7 +82,7 @@ export function PasswordConfirmationModal({
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.iconContainer}>
-              <Ionicons name="lock-closed" size={28} color="#EF4444" />
+              <Ionicons name="lock-closed" size={28} color="Theme.colors.status.error" />
             </View>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.message}>{message}</Text>
@@ -107,7 +108,7 @@ export function PasswordConfirmationModal({
               <Ionicons
                 name={isSecureTextEntry ? "eye-off" : "eye"}
                 size={20}
-                color="#6B7280"
+                color="Theme.colors.neutral[500]"
               />
             </TouchableOpacity>
           </View>
@@ -115,7 +116,7 @@ export function PasswordConfirmationModal({
           {/* Error Message */}
           {error && (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle" size={16} color="#EF4444" />
+              <Ionicons name="alert-circle" size={16} color="Theme.colors.status.error" />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
@@ -138,8 +139,8 @@ export function PasswordConfirmationModal({
               <LinearGradient
                 colors={
                   isLoading || !password.trim()
-                    ? ["#9CA3AF", "#6B7280"]
-                    : ["#EF4444", "#DC2626"]
+                    ? ["Theme.colors.neutral[400]", "Theme.colors.neutral[500]"]
+                    : ["Theme.colors.status.error", "#DC2626"]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -167,10 +168,10 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "85%",
     maxWidth: 400,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 20,
     padding: 24,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -192,13 +193,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 8,
     textAlign: "center",
   },
   message: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     lineHeight: 20,
   },
@@ -208,13 +209,13 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     height: 50,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingRight: 50,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "Theme.colors.neutral[200]",
   },
   eyeIcon: {
     position: "absolute",
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 13,
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
     marginLeft: 8,
     flex: 1,
   },
@@ -248,12 +249,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   cancelButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
   },
   confirmButton: {
     overflow: "hidden",
@@ -268,6 +269,6 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
 });

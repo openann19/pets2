@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../theme/unified-theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -187,8 +188,8 @@ const PreferencesSetupScreen = ({
                 onValueChange={(value) => {
                   updatePreferences("maxDistance", Math.round(value));
                 }}
-                minimumTrackTintColor="#ec4899"
-                maximumTrackTintColor="#e5e7eb"
+                minimumTrackTintColor="Theme.colors.primary[500]"
+                maximumTrackTintColor="Theme.colors.neutral[200]"
               />
               <View style={styles.sliderLabels}>
                 <Text style={styles.sliderLabel}>5 mi</Text>
@@ -211,32 +212,32 @@ const PreferencesSetupScreen = ({
                   style={styles.slider}
                   minimumValue={0}
                   maximumValue={15}
-                  value={preferences.ageRange.min}
+                  value={preferences.ageRange?.min || 1}
                   onValueChange={(value) => {
                     updatePreferences("ageRange", {
                       ...preferences.ageRange,
                       min: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor="#ec4899"
-                  maximumTrackTintColor="#e5e7eb"
+                  minimumTrackTintColor="Theme.colors.primary[500]"
+                  maximumTrackTintColor="Theme.colors.neutral[200]"
                 />
               </View>
               <View style={styles.ageSlider}>
                 <Text style={styles.ageLabel}>Max Age</Text>
                 <Slider
                   style={styles.slider}
-                  minimumValue={preferences.ageRange.min}
+                  minimumValue={preferences.ageRange?.min || 1}
                   maximumValue={20}
-                  value={preferences.ageRange.max}
+                  value={preferences.ageRange?.max || 10}
                   onValueChange={(value) => {
                     updatePreferences("ageRange", {
                       ...preferences.ageRange,
                       max: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor="#ec4899"
-                  maximumTrackTintColor="#e5e7eb"
+                  minimumTrackTintColor="Theme.colors.primary[500]"
+                  maximumTrackTintColor="Theme.colors.neutral[200]"
                 />
               </View>
             </View>
@@ -353,13 +354,13 @@ const PreferencesSetupScreen = ({
                     onValueChange={(value) => {
                       updateNotifications(option.key, value);
                     }}
-                    trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
+                    trackColor={{ false: "Theme.colors.neutral[200]", true: "#fce7f3" }}
                     thumbColor={
                       preferences.notifications[
                         option.key as keyof typeof preferences.notifications
                       ]
-                        ? "#ec4899"
-                        : "#9ca3af"
+                        ? "Theme.colors.primary[500]"
+                        : "Theme.colors.neutral[400]"
                     }
                   />
                 </View>
@@ -400,7 +401,7 @@ const PreferencesSetupScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   content: {
     flex: 1,
@@ -416,12 +417,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
   },
   section: {
@@ -430,12 +431,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -447,7 +448,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   sliderThumb: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     width: 20,
     height: 20,
   },
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
   },
   sliderLabel: {
     fontSize: 12,
-    color: "#9ca3af",
+    color: "Theme.colors.neutral[400]",
   },
   ageRangeContainer: {
     gap: 16,
@@ -469,7 +470,7 @@ const styles = StyleSheet.create({
   ageLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   optionsGrid: {
@@ -478,9 +479,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionButton: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -489,16 +490,16 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
+    borderColor: "Theme.colors.primary[500]",
   },
   optionText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
     textAlign: "center",
   },
   selectedOptionText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
   notificationOptions: {
@@ -508,7 +509,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     padding: 16,
   },
@@ -519,12 +520,12 @@ const styles = StyleSheet.create({
   notificationLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 4,
   },
   notificationDescription: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   privacyNote: {
     backgroundColor: "#f0f9ff",
@@ -544,22 +545,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
+    borderTopColor: "Theme.colors.neutral[100]",
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
   },
   backButtonText: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "600",
   },
   completeButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -568,7 +569,7 @@ const styles = StyleSheet.create({
   },
   completeButtonText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
 });

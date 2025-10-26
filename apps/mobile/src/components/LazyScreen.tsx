@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { logger } from "@pawfectmatch/core";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 
 interface LazyScreenProps {
   fallback?: React.ComponentType;
@@ -34,7 +34,7 @@ function DefaultLoadingFallback() {
     <View
       style={StyleSheet.flatten([
         styles.loadingContainer,
-        { backgroundColor: colors.background },
+        { backgroundColor: colors.bg },
       ])}
       accessible={true}
       accessibilityLabel="Loading screen"
@@ -70,7 +70,7 @@ function DefaultErrorBoundary({
     <View
       style={StyleSheet.flatten([
         styles.errorContainer,
-        { backgroundColor: colors.background },
+        { backgroundColor: colors.bg },
       ])}
       accessible={true}
       accessibilityLabel="Screen failed to load"
@@ -217,7 +217,7 @@ export const LazyProfileScreen = createLazyScreen(
         <View
           style={StyleSheet.flatten([
             styles.loadingContainer,
-            { backgroundColor: colors.background },
+            { backgroundColor: colors.bg },
           ])}
         >
           <ActivityIndicator size="large" color={colors.primary} />
@@ -244,7 +244,7 @@ export const LazySettingsScreen = createLazyScreen(
         <View
           style={StyleSheet.flatten([
             styles.loadingContainer,
-            { backgroundColor: colors.background },
+            { backgroundColor: colors.bg },
           ])}
         >
           <ActivityIndicator size="large" color={colors.primary} />
@@ -271,7 +271,7 @@ export const LazyMatchesScreen = createLazyScreen(
         <View
           style={StyleSheet.flatten([
             styles.loadingContainer,
-            { backgroundColor: colors.background },
+            { backgroundColor: colors.bg },
           ])}
         >
           <ActivityIndicator size="large" color={colors.primary} />

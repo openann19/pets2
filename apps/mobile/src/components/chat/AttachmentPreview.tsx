@@ -13,7 +13,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 export interface AttachmentPreviewProps {
   uri: string;
@@ -87,7 +88,7 @@ export function AttachmentPreview({
           accessibilityLabel="Remove attachment"
           accessibilityRole="button"
         >
-          <Ionicons name="close-circle" size={24} color="#fff" />
+          <Ionicons name="close-circle" size={24} color="Theme.colors.neutral[0]" />
         </TouchableOpacity>
       </View>
 

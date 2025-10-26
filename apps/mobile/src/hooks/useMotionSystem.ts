@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Easing, Dimensions, Platform } from "react-native";
+import { Easing, Dimensions, Platform } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  withRepeat,
+  withSequence,
+  withDelay,
+  interpolate,
+  Extrapolate,
+} from "react-native-reanimated";
 
 // Simplified MotionSystem and Accessibility definitions
 const MotionSystem = {
@@ -37,45 +48,35 @@ export const useSpring = (
   initialValue = 0,
   config: keyof typeof MotionSystem.springs = "standard",
 ) => {
-  const animatedValue = useRef(new Animated.Value(initialValue)).current;
-  const [value, setValue] = useState(initialValue);
-
-  // Listen to animation value changes
-  useEffect(() => {
-    const listener = animatedValue.addListener(({ value: newValue }) => {
-      setValue(newValue);
-    });
-    return () => {
-      animatedValue.removeListener(listener);
-    };
-  }, [animatedValue]);
+  const animatedValue = useSharedValue(initialValue);
 
   const animate = (
     toValue: number,
     customConfig?: Partial<{ tension: number; friction: number }>,
   ) => {
-    const springConfig = {
-      ...MotionSystem.springs[config],
-      ...customConfig,
-      toValue,
-      useNativeDriver: true,
-    };
-
-    // Check for reduced motion preference
     const { prefersReducedMotion } = Accessibility.motion;
+    
     if (prefersReducedMotion) {
-      // Use simplified animation for reduced motion
-      return Animated.timing(animatedValue, {
-        toValue,
-        duration: 200,
-        useNativeDriver: true,
-      });
+      animatedValue.value = withTiming(toValue, { duration: 200 });
+      return { start: () => {} };
     }
 
-    return Animated.spring(animatedValue, springConfig);
+    // Convert Animated.spring config to Reanimated 2 withSpring config
+    const springConfig = customConfig
+      ? {
+          damping: customConfig.friction ?? 15,
+          stiffness: customConfig.tension ?? 300,
+        }
+      : {
+          damping: MotionSystem.springs[config].friction,
+          stiffness: MotionSystem.springs[config].tension,
+        };
+
+    animatedValue.value = withSpring(toValue, springConfig);
+    return { start: () => {} };
   };
 
-  return { value, animatedValue, animate };
+  return { value: animatedValue, animatedValue, animate };
 };
 
 // Hook for transform animations
@@ -175,14 +176,14 @@ export const useStaggeredFadeIn = (
 
 // Hook for entrance animations with different effects
 export const useEntranceAnimation = (
-  type: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight" = "fadeInUp",
+  type: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" = "slideIn",
   config: keyof typeof MotionSystem.springs = "standard",
 ) => {
   const { value, animatedValue, animate } = useSpring(0, config);
 
   const getTransform = () => {
     switch (type) {
-      case "fadeInUp":
+      case "slideIn":
         return {
           opacity: animatedValue,
           transform: [
@@ -206,29 +207,22 @@ export const useEntranceAnimation = (
             },
           ],
         };
-      case "slideInLeft":
+      case "bounceIn":
         return {
           opacity: animatedValue,
           transform: [
             {
-              translateX: animatedValue.interpolate({
+              scale: animatedValue.interpolate({
                 inputRange: [0, 1],
-                outputRange: [-50, 0],
+                outputRange: [0.7, 1],
               }),
             },
           ],
         };
-      case "slideInRight":
+      case "fadeIn":
         return {
           opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50, 0],
-              }),
-            },
-          ],
+          transform: [{ translateY: 0 }],
         };
       default:
         return {

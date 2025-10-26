@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
-import { useAuthStore } from "../../stores/useAuthStore";
-import { matchesAPI } from "../../services/api";
-import { logger } from "../../services/logger";
+import { logger } from "@pawfectmatch/core";
+import { useAuthStore } from "../../../stores/useAuthStore";
+import { matchesAPI } from "../../../services/api";
 
 export interface ProfileUpdateData {
   firstName?: string;
@@ -37,7 +37,7 @@ export function useProfileUpdate(): UseProfileUpdateReturn {
       setError(null);
 
       try {
-        const updatedUser = await matchesAPI.updateProfile(data);
+        const updatedUser = await matchesAPI.updateUserProfile(data);
         updateUser(updatedUser);
         logger.info("Profile updated successfully", { userId: user._id });
         Alert.alert("Success", "Profile updated successfully!");

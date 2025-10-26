@@ -14,6 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Theme } from '../theme/unified-theme';
 
 export default function MigrationExampleScreen() {
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   elevatedContainer: {
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

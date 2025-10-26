@@ -1,0 +1,119 @@
+src/hooks/animations/useSpringAnimation.ts:41:      // Respect reduced motion preference
+src/hooks/animations/configs/accessibility.ts:9:// Initialize reduced motion preference
+src/theme/types.ts:48:  motion: Motion;
+src/theme/unified-theme.ts:206:  motion: {
+src/theme/rnTokens.ts:48:    motion: {
+src/screens/MemoryWeaveScreen.tsx:38:    emotion?: "happy" | "excited" | "love" | "playful";
+src/screens/MemoryWeaveScreen.tsx:72:    getEmotionColor,
+src/screens/MemoryWeaveScreen.tsx:73:    getEmotionEmoji,
+src/screens/MemoryWeaveScreen.tsx:131:                  styles.emotionBadge,
+src/screens/MemoryWeaveScreen.tsx:133:                    backgroundColor: `${getEmotionColor(memory.metadata?.emotion)}30`,
+src/screens/MemoryWeaveScreen.tsx:137:                <Text style={styles.emotionEmoji}>
+src/screens/MemoryWeaveScreen.tsx:138:                  {getEmotionEmoji(memory.metadata?.emotion)}
+src/screens/MemoryWeaveScreen.tsx:447:  emotionBadge: {
+src/screens/MemoryWeaveScreen.tsx:455:  emotionEmoji: {
+src/screens/NotificationPreferencesScreen.tsx:83:      description: "News, promotions, and app updates",
+docs/theme-consolidation.md:21:  const { colors, spacing, radius, motion } = useTheme();
+docs/type-fix-guide.md:26:  motion: Motion;
+plan1.md:19:* **Advanced motion system** with Reanimated 3, 60fps target
+plan1.md:42:6. **Accessibility Agent (A11Y)** → ensures WCAG compliance, reduced-motion
+plan1.md:337:* Export full token map: colors, spacing, typography, shadows, motion
+plan1.md:493:**Goal:** Implement premium motion system for PawfectMatch core interactions: swipe cards, match celebrations, chat animations
+plan1.md:494:**Deliverables:** `/packages/motion-system/`, `/docs/ui/motion-guidelines.md`, 60fps animations with reduced-motion support
+plan1.md:498:**Hypothesis:** Implementing GPU-accelerated motion with Reanimated 3 for swipe cards and chat will achieve consistent 60fps (vs current ~40fps jank), improve perceived quality score +30%, and increase swipe engagement +15%.
+plan1.md:502:* Establish **Motion System** with tokens (durations, easings, distances) in `@packages/motion-system`
+plan1.md:505:* Honor accessibility: `prefers-reduced-motion`, non-gesture alternatives
+plan1.md:509:Create `docs/ui/motion-audit.md` with:
+plan1.md:511:* **Inventory**: grep/code‑mod assisted scan for `Animated`, `LayoutAnimation`, `FramerMotion`, `reanimated`, `gesture-handler`, `Lottie`, inline `transition` CSS, etc.
+plan1.md:513:* **Gaps & Debt**: blocking jank, non‑interruptible animations, duplicated ad‑hoc timings, missing `prefers-reduced-motion` guards.
+plan1.md:517:Create `packages/motion-system/` exporting:
+plan1.md:519:* `motionTokens.ts`: `{ duration: { xs:120, sm:180, md:240, lg:320 }, ease: { standard:[0.2,0,0,1], emphasized:[0.2,0,0,1], out:[0.2,0,0,1] }, distance:{ sm:8, md:16, lg:24 } }` (example values).
+plan1.md:521:* **Web bindings**: Framer Motion variant helpers; `prefers-reduced-motion` utilities.
+plan1.md:526:* **Adopt**: React Native Reanimated **3.x**, React Native Gesture Handler **v2**, React Navigation latest screen transitions with Reanimated drivers, **Moti** for terser motion API (optional), **RN Skia** for shader‑grade effects (blur, particles), **Haptics** prudent use.
+plan1.md:529:* **Accessibility**: honor reduced motion; ensure gestures have non‑gesture affordances.
+plan1.md:536:* **Route Transitions**: integrate Next.js app router with motion wrappers; respect `prefers-reduced-motion`.
+plan1.md:537:* **GPU**: transform/opacity only during motion; avoid layout thrash; isolate compositing layers where needed.
+plan1.md:550:* Fallback: simple fade for `prefers-reduced-motion`
+plan1.md:558:* Fallback: simple scale-in for reduced motion
+plan1.md:585:* Test reduced-motion: animations disabled, functionality intact
+plan1.md:586:* Document results in `/reports/motion_performance.md` with video captures
+plan1.md:590:* **Storybook** motion scenarios; visual regression with reduced motion **off** and **on**.
+plan1.md:592:* **Perf tests**: RN perf monitor & React DevTools profiler traces before/after; Lighthouse motion/CLS sanity on web.
+plan1.md:596:* `packages/motion-system/` shipped + consumed by `apps/mobile` and `apps/web`.
+plan1.md:597:* `docs/ui/motion-guidelines.md` (tokens, do/don’t, a11y rules, examples).
+plan1.md:599:* ADR `008-advanced-motion-and-components.md` capturing decisions/libraries/budgets.
+plan1.md:760:* **`docs/ui-unification.md`**: design tokens, primitives, motion system, component library
+plan1.md:775:* **`008-advanced-motion-and-components.md`**: Reanimated 3, motion tokens, 60fps budgets, accessibility
+plan1.md:786:* **Motion**: animation performance metrics, reduced-motion coverage
+plan1.md:870:* **Motion tests**: verify reduced-motion fallbacks; performance profiling
+plan1.md:886:* **Motion accessibility**: `prefers-reduced-motion` honored; animations skippable
+plan1.md:909:  * `008-advanced-motion-and-components.md`
+plan1.md:910:* **Docs present**: `docs/ui/motion-guidelines.md`, `docs/ui/motion-audit.md`, `docs/state-architecture.md`, `docs/performance-playbook.md`, `docs/quality-dashboard.md`
+plan1.md:984:* **Phase 4A** (Motion): Audit animations; build motion system (`@packages/motion-system`); implement Reanimated 3 for swipe cards, match celebrations, chat bubbles. 60fps target with reduced-motion support.
+plan1.md:1063:  * **Animated illustration** with Lottie or Rive
+detox.config.cjs:56:    genymotion: {
+src/hooks/domains/social/useMemoryWeave.ts:21:    emotion?: "happy" | "excited" | "love" | "playful";
+src/hooks/domains/social/useMemoryWeave.ts:45:  getEmotionColor: (emotion?: string) => string;
+src/hooks/domains/social/useMemoryWeave.ts:46:  getEmotionEmoji: (emotion?: string) => string;
+src/hooks/domains/social/useMemoryWeave.ts:109:  const getEmotionColor = useCallback((emotion?: string): string => {
+src/hooks/domains/social/useMemoryWeave.ts:110:    switch (emotion) {
+src/hooks/domains/social/useMemoryWeave.ts:124:  const getEmotionEmoji = useCallback((emotion?: string): string => {
+src/hooks/domains/social/useMemoryWeave.ts:125:    switch (emotion) {
+src/hooks/domains/social/useMemoryWeave.ts:172:    getEmotionColor,
+src/hooks/domains/social/useMemoryWeave.ts:173:    getEmotionEmoji,
+src/hooks/useMotionSystem.ts:36:  motion: {
+src/hooks/useMotionSystem.ts:57:    const { prefersReducedMotion } = Accessibility.motion;
+src/hooks/screens/useMemoryWeaveScreen.ts:21:    emotion?: "happy" | "excited" | "love" | "playful";
+src/hooks/screens/useMemoryWeaveScreen.ts:37:  getEmotionColor: (emotion?: string) => string;
+src/hooks/screens/useMemoryWeaveScreen.ts:38:  getEmotionEmoji: (emotion?: string) => string;
+src/hooks/screens/useMemoryWeaveScreen.ts:68:    getEmotionColor,
+src/hooks/screens/useMemoryWeaveScreen.ts:69:    getEmotionEmoji,
+src/hooks/screens/useMemoryWeaveScreen.ts:103:    getEmotionColor,
+src/hooks/screens/useMemoryWeaveScreen.ts:104:    getEmotionEmoji,
+src/services/AccessibilityService.ts:143:   * Check if reduce motion is enabled
+src/styles/EnhancedDesignTokens.tsx:293:  motion: {
+src/components/PawPullToRefresh.tsx:28: * Implements U-02: Lottie pull-to-refresh (paw scratch)
+src/components/PawPullToRefresh.tsx:59:          // Paw moves down and rotates (scratching motion)
+src/components/library/cards/MemoryCard.tsx:21:    emotion?: "happy" | "excited" | "love" | "playful";
+src/components/library/cards/MemoryCard.tsx:30:  getEmotionColor: (emotion?: string) => string;
+src/components/library/cards/MemoryCard.tsx:31:  getEmotionEmoji: (emotion?: string) => string;
+src/components/library/cards/MemoryCard.tsx:39:  getEmotionColor,
+src/components/library/cards/MemoryCard.tsx:40:  getEmotionEmoji,
+src/components/library/cards/MemoryCard.tsx:92:                styles.emotionBadge,
+src/components/library/cards/MemoryCard.tsx:94:                  backgroundColor: `${getEmotionColor(memory.metadata?.emotion)}30`,
+src/components/library/cards/MemoryCard.tsx:98:              <Text style={styles.emotionEmoji}>
+src/components/library/cards/MemoryCard.tsx:99:                {getEmotionEmoji(memory.metadata?.emotion)}
+src/components/library/cards/MemoryCard.tsx:190:  emotionBadge: {
+src/components/library/cards/MemoryCard.tsx:198:  emotionEmoji: {
+src/components/library/README.md:37:  getEmotionColor={getEmotionColor}
+src/components/library/README.md:38:  getEmotionEmoji={getEmotionEmoji}
+src/components/library/README.md:113:- Reduced motion preferences
+src/components/MotionPrimitives.tsx:8:const MotionSystem = Theme.motion;
+src/components/Animations/Lottie/index.ts:5:export { LottieAnimation } from "./LottieAnimation";
+src/components/Animations/Lottie/index.ts:6:export type { LottieAnimationProps } from "./LottieAnimation";
+src/components/Animations/Lottie/LottieAnimation.tsx:3: * Professional-grade Lottie animation wrapper with lifecycle management
+src/components/Animations/Lottie/LottieAnimation.tsx:7:import LottieView from "lottie-react-native";
+src/components/Animations/Lottie/LottieAnimation.tsx:10:export interface LottieAnimationProps {
+src/components/Animations/Lottie/LottieAnimation.tsx:36:export function LottieAnimation({
+src/components/Animations/Lottie/LottieAnimation.tsx:47:}: LottieAnimationProps) {
+src/components/Animations/Lottie/LottieAnimation.tsx:48:  const animationRef = useRef<LottieView>(null);
+src/components/Animations/Lottie/LottieAnimation.tsx:77:      <LottieView
+src/components/Animations/Lottie/LoadingAnimation.tsx:7:import { LottieAnimation } from "./LottieAnimation";
+src/components/Animations/Lottie/LoadingAnimation.tsx:98:    <LottieAnimation
+src/components/Animations/Lottie/ErrorAnimation.tsx:7:import { LottieAnimation } from "./LottieAnimation";
+src/components/Animations/Lottie/ErrorAnimation.tsx:120:    <LottieAnimation
+src/components/Animations/Lottie/SuccessAnimation.tsx:7:import { LottieAnimation } from "./LottieAnimation";
+src/components/Animations/Lottie/SuccessAnimation.tsx:92:    <LottieAnimation
+src/components/Animations/LottieAnimations.tsx:3: * Professional-grade Lottie animations for mobile success/loading states
+src/components/Animations/LottieAnimations.tsx:6: * This file re-exports from the modular Lottie components for backward compatibility
+src/components/Animations/LottieAnimations.tsx:12:export { LottieAnimation } from "./Lottie/LottieAnimation";
+src/components/Animations/LottieAnimations.tsx:13:export type { LottieAnimationProps } from "./Lottie/LottieAnimation";
+src/components/Animations/LottieAnimations.tsx:16:export { SuccessAnimation as SuccessLottie } from "./Lottie/SuccessAnimation";
+src/components/Animations/LottieAnimations.tsx:17:export { LoadingAnimation as LoadingLottie } from "./Lottie/LoadingAnimation";
+src/components/Animations/LottieAnimations.tsx:18:export { ErrorAnimation as ErrorLottie } from "./Lottie/ErrorAnimation";
+src/components/Animations/LottieAnimations.tsx:21:export { SuccessAnimation } from "./Lottie/SuccessAnimation";
+src/components/Animations/LottieAnimations.tsx:22:export { LoadingAnimation } from "./Lottie/LoadingAnimation";
+src/components/Animations/LottieAnimations.tsx:23:export { ErrorAnimation } from "./Lottie/ErrorAnimation";
+src/components/Animations/LottieAnimations.tsx:26: * Hook for managing Lottie animations
+src/components/Animations/LottieAnimations.tsx:28:export function useLottieAnimation() {
+src/components/Animations/LottieAnimations.tsx:61:// Note: EmptyLottie and CelebrationLottie were removed as they were not used

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { gdprService } from "../../../services/gdprService";
-import { logger } from "../../../services/logger";
+import gdprService from "../../../services/gdprService";
+import { logger } from "@pawfectmatch/core";
 
 export interface GDPRStatus {
   isPending: boolean;
@@ -30,15 +30,23 @@ export function useGDPRStatus(): UseGDPRStatusReturn {
   const refresh = useCallback(async () => {
     setIsLoading(true);
     try {
-      const isPending = await gdprService.isDeletionPending();
-      const daysRemaining = await gdprService.getDaysUntilDeletion();
-
-      setStatus({
-        isPending,
-        daysRemaining: daysRemaining ?? null,
-        gracePeriodEndsAt: null, // TODO: Fetch from API
-        canCancel: isPending && (daysRemaining ?? 0) > 0,
-      });
+      const result = await gdprService.getAccountStatus();
+      
+      if (result.success && result.status === 'pending') {
+        setStatus({
+          isPending: true,
+          daysRemaining: result.daysRemaining ?? 30,
+          gracePeriodEndsAt: result.scheduledDeletionDate ?? null,
+          canCancel: result.canCancel ?? true,
+        });
+      } else {
+        setStatus({
+          isPending: false,
+          daysRemaining: null,
+          gracePeriodEndsAt: null,
+          canCancel: false,
+        });
+      }
     } catch (error) {
       logger.error("Failed to check GDPR status:", { error });
     } finally {

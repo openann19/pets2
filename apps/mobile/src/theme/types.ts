@@ -1,87 +1,24 @@
 /**
  * 🎨 UNIFIED THEME TYPES
- * Complete TypeScript definitions for the mobile theme system
- * Extends @pawfectmatch/design-tokens with React Native-specific types
+ * Single source of truth for theme types across the mobile app
  */
 
-import type { TextStyle, ViewStyle } from "react-native";
+export type ColorScheme = "light" | "dark";
 
-// ====== COLOR SYSTEM ======
-export interface ColorPalette {
-  // Brand colors
+export interface SemanticColors {
+  bg: string;
+  bgElevated: string;
+  text: string;
+  textMuted: string;
   primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  primaryForeground: string;
-
-  secondary: string;
-  secondaryLight: string;
-  secondaryDark: string;
-  secondaryForeground: string;
-
-  // Status colors
+  primaryText: string;
+  border: string;
   success: string;
   warning: string;
-  error: string;
-  info: string;
-
-  // Semantic colors
-  background: string;
-  backgroundSecondary: string;
-  backgroundTertiary: string;
-
-  surface: string;
-  surfaceMuted: string;
-  surfaceElevated: string;
-
-  border: string;
-  borderLight: string;
-  borderDark: string;
-
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  textInverse: string;
-
-  // Overlay colors
-  overlay: string;
-  overlayDark: string;
-
-  // Special colors
-  glass: string;
-  glassLight: string;
-  glassDark: string;
+  danger: string;
 }
 
-// ====== TYPOGRAPHY SYSTEM ======
-export interface TypographyVariant
-  extends Pick<TextStyle, "fontFamily" | "fontWeight"> {
-  fontSize: number;
-  lineHeight: number;
-  letterSpacing?: number;
-}
-
-export interface TypographyScale {
-  heading1: TypographyVariant;
-  heading2: TypographyVariant;
-  heading3: TypographyVariant;
-  heading4: TypographyVariant;
-  heading5: TypographyVariant;
-  heading6: TypographyVariant;
-  subtitle: TypographyVariant;
-  subtitleSmall: TypographyVariant;
-  body: TypographyVariant;
-  bodySmall: TypographyVariant;
-  callout: TypographyVariant;
-  caption: TypographyVariant;
-  overline: TypographyVariant;
-  button: TypographyVariant;
-  label: TypographyVariant;
-}
-
-// ====== SPACING SYSTEM ======
-export interface SpacingScale {
-  none: number;
+export interface Spacing {
   xs: number;
   sm: number;
   md: number;
@@ -92,10 +29,8 @@ export interface SpacingScale {
   "4xl": number;
 }
 
-// ====== BORDER RADIUS SYSTEM ======
-export interface RadiusScale {
+export interface Radius {
   none: number;
-  xs: number;
   sm: number;
   md: number;
   lg: number;
@@ -104,180 +39,21 @@ export interface RadiusScale {
   full: number;
 }
 
-// ====== SHADOW SYSTEM ======
-export interface ShadowToken {
-  shadowColor: string;
-  shadowOffset: { width: number; height: number };
-  shadowOpacity: number;
-  shadowRadius: number;
-  elevation: number;
+export interface Motion {
+  duration: { fast: number; normal: number; slow: number };
+  easing: { standard: (t: number) => number };
+  spring: { stiff: { stiffness: number; damping: number; mass: number } };
 }
 
-export interface ShadowScale {
-  none: ShadowToken;
-  xs: ShadowToken;
-  sm: ShadowToken;
-  md: ShadowToken;
-  lg: ShadowToken;
-  xl: ShadowToken;
-  "2xl": ShadowToken;
-}
-
-// ====== OPACITY SYSTEM ======
-export interface OpacityScale {
-  transparent: number;
-  invisible: number;
-  disabled: number;
-  hover: number;
-  focus: number;
-  pressed: number;
-  selected: number;
-}
-
-// ====== BORDER WIDTH SYSTEM ======
-export interface BorderWidthScale {
-  none: number;
-  thin: number;
-  medium: number;
-  thick: number;
-}
-
-// ====== ICON SIZES ======
-export interface IconSizeScale {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-}
-
-// ====== ANIMATION SYSTEM ======
-export interface AnimationConfig {
-  duration: number;
-  easing: string;
-}
-
-export interface AnimationScale {
-  instant: AnimationConfig;
-  fast: AnimationConfig;
-  normal: AnimationConfig;
-  slow: AnimationConfig;
-  slower: AnimationConfig;
-}
-
-// ====== Z-INDEX SYSTEM ======
-export interface ZIndexScale {
-  hide: number;
-  base: number;
-  docked: number;
-  dropdown: number;
-  sticky: number;
-  overlay: number;
-  modal: number;
-  popover: number;
-  tooltip: number;
-  toast: number;
-}
-
-// ====== COMPLETE THEME INTERFACE ======
 export interface Theme {
-  colors: ColorPalette;
-  typography: TypographyScale;
-  spacing: SpacingScale;
-  radii: RadiusScale;
-  shadows: ShadowScale;
-  opacity: OpacityScale;
-  borderWidth: BorderWidthScale;
-  iconSize: IconSizeScale;
-  animation: AnimationScale;
-  zIndex: ZIndexScale;
-}
-
-// ====== THEME MODE ======
-export type ThemeMode = "light" | "dark" | "system";
-
-export interface ThemeContextValue {
-  theme: Theme;
-  mode: ThemeMode;
-  isDark: boolean;
-  setMode: (mode: ThemeMode) => void;
-  toggleTheme: () => void;
-}
-
-// ====== THEME OVERRIDES ======
-export interface ThemeOverrides {
-  colors?: Partial<ColorPalette>;
-  typography?: Partial<TypographyScale>;
-  spacing?: Partial<SpacingScale>;
-  radii?: Partial<RadiusScale>;
-  shadows?: Partial<ShadowScale>;
-  opacity?: Partial<OpacityScale>;
-  borderWidth?: Partial<BorderWidthScale>;
-  iconSize?: Partial<IconSizeScale>;
-  animation?: Partial<AnimationScale>;
-  zIndex?: Partial<ZIndexScale>;
-}
-
-// ====== LEGACY TYPE DEFINITIONS ======
-/**
- * Legacy type definitions for backward compatibility
- * These types are used in premium screens and components
- */
-
-export interface DynamicColors {
-  gradients: Record<string, string[]>;
-  glass: {
-    colors: string[];
-    locations: number[];
-  };
-}
-
-export interface SemanticColors {
-  premium: Record<string, string>;
-  interactive: Record<string, string>;
-  text: Record<string, string>;
-  background: Record<string, string>;
-}
-
-export interface EnhancedTypography {
-  effects: {
-    gradient: Record<string, TextStyle>;
-    shadow: {
-      text: TextStyle;
-    };
-  };
-}
-
-// ====== UTILITY TYPES ======
-export type ColorToken = keyof ColorPalette;
-export type TypographyVariantName = keyof TypographyScale;
-export type SpacingToken = keyof SpacingScale;
-export type RadiusToken = keyof RadiusScale;
-export type ShadowTokenName = keyof ShadowScale;
-export type OpacityToken = keyof OpacityScale;
-export type BorderWidthToken = keyof BorderWidthScale;
-export type IconSizeToken = keyof IconSizeScale;
-export type AnimationToken = keyof AnimationScale;
-export type ZIndexToken = keyof ZIndexScale;
-
-// ====== COMPONENT PROP TYPES ======
-export interface ThemedComponentProps {
-  variant?: string;
-  tone?: ColorToken;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-}
-
-export interface ThemedViewProps extends ThemedComponentProps {
-  padding?: SpacingToken;
-  margin?: SpacingToken;
-  radius?: RadiusToken;
-  shadow?: ShadowTokenName;
-  borderWidth?: BorderWidthToken;
-}
-
-export interface ThemedTextProps extends ThemedComponentProps {
-  variant?: TypographyVariantName;
-  color?: ColorToken;
-  align?: "auto" | "left" | "right" | "center" | "justify";
+  scheme: ColorScheme;
+  colors: SemanticColors;
+  spacing: Spacing;
+  radius: Radius;
+  motion: Motion;
+  
+  // Backward compatibility helpers
+  isDark?: boolean; // Use scheme === 'dark' instead
+  styles?: Record<string, unknown>; // For legacy component support
+  shadows?: Record<string, unknown>; // For legacy component support
 }

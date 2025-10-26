@@ -37,7 +37,7 @@ const mockThemeContext = {
   setThemeMode: mockSetThemeMode,
 };
 
-jest.mock("../../contexts/ThemeContext", () => ({
+jest.mock("../../theme/Provider", () => ({
   useTheme: () => mockThemeContext,
 }));
 
@@ -149,7 +149,7 @@ describe("useThemeToggle", () => {
 
   it("should show theme selector with dark mode UI", () => {
     // Mock the theme context to return dark theme
-    const mockUseTheme = require("../../contexts/ThemeContext").useTheme;
+    const mockUseTheme = require("../../theme/Provider").useTheme;
     mockUseTheme.mockReturnValue({
       ...mockThemeContext,
       isDark: true,
@@ -174,7 +174,7 @@ describe("useThemeToggle", () => {
 
   it("should show theme selector with system theme label", () => {
     // Mock the theme context to return system theme
-    const mockUseTheme = require("../../contexts/ThemeContext").useTheme;
+    const mockUseTheme = require("../../theme/Provider").useTheme;
     mockUseTheme.mockReturnValue({
       ...mockThemeContext,
       themeMode: "system",
@@ -258,7 +258,7 @@ describe("useThemeToggle", () => {
     };
 
     jest
-      .mocked(require("../../contexts/ThemeContext").useTheme)
+      .mocked(require("../../theme/Provider").useTheme)
       .mockReturnValue({
         ...mockThemeContext,
         colors: customColors,
@@ -286,7 +286,7 @@ describe("useThemeToggle", () => {
 
   it("should handle theme mode changes reactively", () => {
     // Mock the theme context to return dark theme
-    const mockUseTheme = require("../../contexts/ThemeContext").useTheme;
+    const mockUseTheme = require("../../theme/Provider").useTheme;
     mockUseTheme.mockReturnValue({
       ...mockThemeContext,
       themeMode: "dark",
@@ -306,7 +306,7 @@ describe("useThemeToggle", () => {
     };
 
     // Mock the theme context with custom styles
-    const mockUseTheme = require("../../contexts/ThemeContext").useTheme;
+    const mockUseTheme = require("../../theme/Provider").useTheme;
     mockUseTheme.mockReturnValue({
       ...mockThemeContext,
       styles: customStyles,
@@ -324,7 +324,7 @@ describe("useThemeToggle", () => {
     };
 
     // Mock the theme context with custom shadows
-    const mockUseTheme = require("../../contexts/ThemeContext").useTheme;
+    const mockUseTheme = require("../../theme/Provider").useTheme;
     mockUseTheme.mockReturnValue({
       ...mockThemeContext,
       shadows: customShadows,
