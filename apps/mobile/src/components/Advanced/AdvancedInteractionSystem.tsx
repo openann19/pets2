@@ -22,6 +22,8 @@ import {
   AccessibilityInfo,
 } from "react-native";
 
+import { Theme } from '../../theme/unified-theme';
+
 // Lazy load dimensions to avoid issues in test environment
 const getScreenDimensions = () => {
   try {
@@ -124,8 +126,8 @@ function AdvancedButtonComponent({
   textStyle,
   children,
   apiAction,
-  glowColor = "#ec4899",
-  gradientColors = ["#ec4899", "#db2777"],
+  glowColor = "Theme.colors.primary[500]",
+  gradientColors = ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
   blurIntensity = 20,
 }: AdvancedButtonProps): React.JSX.Element {
   // Animation Values
@@ -379,7 +381,7 @@ function AdvancedButtonComponent({
           ...baseStyles,
           backgroundColor: "transparent",
           borderWidth: 1,
-          borderColor: "#e5e7eb",
+          borderColor: "Theme.colors.neutral[200]",
         };
       case "premium":
         return {
@@ -391,7 +393,7 @@ function AdvancedButtonComponent({
       default:
         return {
           ...baseStyles,
-          backgroundColor: "#ec4899",
+          backgroundColor: "Theme.colors.primary[500]",
         };
     }
   }, [variant, glowColor]);
@@ -632,8 +634,8 @@ export function AdvancedCard({
   onPress,
   disabled = false,
   style,
-  glowColor = "#ec4899",
-  gradientColors = ["#ec4899", "#db2777"],
+  glowColor = "Theme.colors.primary[500]",
+  gradientColors = ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
   blurIntensity = 20,
   padding = "md",
 }: AdvancedCardProps): React.JSX.Element {
@@ -689,10 +691,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 8,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   title: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
     textAlign: "center",
   },
@@ -706,7 +708,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: "Theme.colors.neutral[0]",
     borderTopColor: "transparent",
     borderRadius: 10,
   },

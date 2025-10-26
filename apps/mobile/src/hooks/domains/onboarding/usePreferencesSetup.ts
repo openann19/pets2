@@ -194,6 +194,21 @@ export const usePreferencesSetup = (): UsePreferencesSetupReturn => {
     [],
   );
 
+  // Validation computed value
+  const isValid = !!(
+    preferences.maxDistance &&
+    preferences.ageRange &&
+    preferences.ageRange.min &&
+    preferences.ageRange.max &&
+    preferences.ageRange.min <= preferences.ageRange.max &&
+    preferences.breeds &&
+    preferences.breeds.length > 0 &&
+    preferences.activityLevel &&
+    preferences.size &&
+    preferences.notifications &&
+    preferences.privacy
+  );
+
   const submitPreferences = useCallback(async (): Promise<UserPreferences> => {
     if (!isValid) {
       throw new Error("Please complete all required preferences");
@@ -238,15 +253,6 @@ export const usePreferencesSetup = (): UsePreferencesSetupReturn => {
     setError(null);
     logger.info("User preferences reset to defaults");
   }, []);
-
-  const isValid = !!(
-    preferences.maxDistance &&
-    preferences.ageRange &&
-    preferences.activityLevel &&
-    preferences.size &&
-    preferences.notifications &&
-    preferences.privacy
-  );
 
   const isComplete = isValid && (preferences.breeds?.length ?? 0) > 0;
 

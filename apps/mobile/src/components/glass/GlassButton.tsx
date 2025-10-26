@@ -7,7 +7,7 @@ import {
 } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
-import { Spacing } from "../../styles/GlobalStyles";
+import { Spacing } from "../../animation";
 import { GlassContainer } from "./GlassContainer";
 import {
   BLUR_CONFIGS,

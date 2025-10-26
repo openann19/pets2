@@ -3,11 +3,10 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import type { Message } from "../../hooks/useChatData";
-import { useTheme } from "../../contexts/ThemeContext";
-import { Spacing, BorderRadius } from "../../styles/GlobalStyles";
+import { useTheme } from "../../theme/Provider";
 import { ReactionPicker } from "./ReactionPicker";
 import { chatService } from "../../services/chatService";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { Theme } from '../../theme/unified-theme';
 
 interface MessageItemProps {
   message: Message;
@@ -99,11 +98,7 @@ export function MessageItem({
     async (reaction: string) => {
       try {
         if (message.matchId && message._id) {
-          await chatService.sendReaction({
-            matchId: message.matchId,
-            messageId: message._id,
-            reaction,
-          });
+          await chatService.sendReaction(message.matchId, message._id, reaction);
         }
         // Update local reactions
         setReactions((prev) => ({
@@ -128,12 +123,7 @@ export function MessageItem({
       {showDateHeader && (
         <View style={styles.dateHeader}>
           <BlurView intensity={20} style={styles.dateHeaderBlur}>
-            <Text
-              style={StyleSheet.flatten([
-                styles.dateHeaderText,
-                { color: colors.gray600 },
-              ])}
-            >
+            <Text style={[styles.dateHeaderText, { color: colors.textMuted }]}>
               {getDateHeader(message.timestamp)}
             </Text>
           </BlurView>
@@ -142,10 +132,10 @@ export function MessageItem({
 
       {/* Message Container */}
       <View
-        style={StyleSheet.flatten([
+        style={[
           styles.messageContainer,
-          isMyMessage && styles.myMessageContainer,
-        ])}
+          isMyMessage ? styles.myMessageContainer : null,
+        ]}
       >
         {/* Avatar */}
         {!isMyMessage && showAvatar && (
@@ -154,17 +144,14 @@ export function MessageItem({
               source={{
                 uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=100",
               }}
-              style={StyleSheet.flatten([
-                styles.avatar,
-                isOnline && styles.avatarOnline,
-              ])}
+              style={[styles.avatar, isOnline ? styles.avatarOnline : null]}
             />
             {isOnline && (
               <View
-                style={StyleSheet.flatten([
+                style={[
                   styles.onlineIndicator,
-                  { backgroundColor: colors.success },
-                ])}
+                  { backgroundColor: Theme.colors.status.success },
+                ]}
               />
             )}
           </TouchableOpacity>
@@ -176,25 +163,27 @@ export function MessageItem({
           activeOpacity={0.8}
           onPress={handlePress}
           onLongPress={handleLongPress}
-          style={StyleSheet.flatten([
+          style={[
             styles.messageBubble,
             isMyMessage
               ? [styles.myMessage, { backgroundColor: colors.primary }]
               : [
                   styles.otherMessage,
                   {
-                    backgroundColor: colors.white,
-                    borderColor: colors.gray200,
+                    backgroundColor: Theme.colors.neutral[0],
+                    borderColor: Theme.colors.neutral[200],
                   },
                 ],
-            hasError && [
-              styles.errorMessage,
-              {
-                backgroundColor: `${colors.error}20`,
-                borderColor: colors.error,
-              },
-            ],
-          ])}
+            hasError
+              ? [
+                  styles.errorMessage,
+                  {
+                    backgroundColor: `${Theme.colors.status.error}20`,
+                    borderColor: Theme.colors.status.error,
+                  },
+                ]
+              : null,
+          ]}
         >
           {message.type === "image" ? (
             <Image
@@ -203,11 +192,11 @@ export function MessageItem({
             />
           ) : (
             <Text
-              style={StyleSheet.flatten([
+              style={[
                 styles.messageText,
-                { color: isMyMessage ? colors.white : colors.gray800 },
-                hasError && { color: colors.error },
-              ])}
+                { color: isMyMessage ? Theme.colors.neutral[0] : Theme.colors.neutral[800] },
+                hasError ? { color: Theme.colors.status.error } : null,
+              ]}
             >
               {message.content}
             </Text>
@@ -217,12 +206,7 @@ export function MessageItem({
           {isMyMessage && (
             <View style={styles.messageStatus}>
               {message.status === "sending" && (
-                <Text
-                  style={StyleSheet.flatten([
-                    styles.sendingText,
-                    { color: `${colors.white}B3` },
-                  ])}
-                >
+                <Text style={[styles.sendingText, { color: `${Theme.colors.neutral[0]}B3` }]}> 
                   Sending...
                 </Text>
               )}
@@ -231,13 +215,8 @@ export function MessageItem({
                   style={styles.retryButton}
                   onPress={handleRetry}
                 >
-                  <Ionicons name="refresh" size={12} color={colors.error} />
-                  <Text
-                    style={StyleSheet.flatten([
-                      styles.retryText,
-                      { color: colors.error },
-                    ])}
-                  >
+                  <Ionicons name="refresh" size={12} color={Theme.colors.status.error} />
+                  <Text style={[styles.retryText, { color: Theme.colors.status.error }]}> 
                     Retry
                   </Text>
                 </TouchableOpacity>
@@ -247,7 +226,7 @@ export function MessageItem({
                   <Ionicons
                     name="alert-circle"
                     size={12}
-                    color={colors.error}
+                    color={Theme.colors.status.error}
                   />
                 </View>
               )}
@@ -258,20 +237,17 @@ export function MessageItem({
         {/* Time and Read Receipt */}
         {showTime && (
           <View
-            style={StyleSheet.flatten([
+            style={[
               styles.timeContainer,
-              isMyMessage && {
-                justifyContent: "flex-end",
-                marginRight: Spacing.sm,
-              },
-            ])}
+              isMyMessage
+                ? {
+                    justifyContent: "flex-end",
+                    marginRight: Theme.spacing.sm,
+                  }
+                : null,
+            ]}
           >
-            <Text
-              style={StyleSheet.flatten([
-                styles.messageTime,
-                { color: colors.gray500 },
-              ])}
-            >
+            <Text style={[styles.messageTime, { color: Theme.colors.neutral[500] }]}>
               {formatMessageTime(message.timestamp)}
             </Text>
             {isMyMessage && !hasError && (
@@ -279,7 +255,7 @@ export function MessageItem({
                 <Ionicons
                   name={message.read ? "checkmark-done" : "checkmark"}
                   size={14}
-                  color={message.read ? colors.success : colors.gray500}
+                  color={message.read ? Theme.colors.status.success : Theme.colors.neutral[500]}
                   style={styles.readIndicator}
                 />
               </View>
@@ -325,13 +301,13 @@ const shouldShowDateHeader = (
 const styles = StyleSheet.create({
   dateHeader: {
     alignItems: "center",
-    marginVertical: Spacing.md,
+    marginVertical: Theme.spacing.md,
   },
   dateHeaderBlur: {
-    borderRadius: BorderRadius.lg,
+    borderRadius: Theme.borderRadius.lg,
     overflow: "hidden",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: Theme.spacing.sm,
+    paddingVertical: Theme.spacing.xs,
   },
   dateHeaderText: {
     fontSize: 12,
@@ -340,23 +316,23 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flexDirection: "row",
-    marginBottom: Spacing.xs,
+    marginBottom: Theme.spacing.xs,
     alignItems: "flex-end",
-    paddingHorizontal: Spacing.xs,
+    paddingHorizontal: Theme.spacing.xs,
   },
   myMessageContainer: {
     justifyContent: "flex-end",
   },
   avatarContainer: {
     position: "relative",
-    marginRight: Spacing.xs,
+    marginRight: Theme.spacing.xs,
   },
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: "#fff",
+    borderColor: Theme.colors.neutral[0],
   },
   avatarOnline: {
     borderColor: "#4CAF50",
@@ -372,22 +348,22 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: Theme.colors.neutral[0],
   },
   messageBubble: {
     maxWidth: "75%",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.xl,
-    marginBottom: Spacing.xs,
+    paddingHorizontal: Theme.spacing.md,
+    paddingVertical: Theme.spacing.sm,
+    borderRadius: Theme.borderRadius["2xl"],
+    marginBottom: Theme.spacing.xs,
     position: "relative",
   },
   myMessage: {
     marginLeft: 40,
-    borderBottomRightRadius: BorderRadius.sm,
+    borderBottomRightRadius: Theme.borderRadius.md,
   },
   otherMessage: {
-    borderBottomLeftRadius: BorderRadius.sm,
+    borderBottomLeftRadius: Theme.borderRadius.md,
     borderWidth: 0.5,
   },
   errorMessage: {
@@ -400,13 +376,13 @@ const styles = StyleSheet.create({
   messageImage: {
     width: 200,
     height: 150,
-    borderRadius: BorderRadius.md,
+    borderRadius: Theme.borderRadius.lg,
     resizeMode: "cover",
   },
   messageStatus: {
     position: "absolute",
-    bottom: Spacing.xs,
-    right: Spacing.xs,
+    bottom: Theme.spacing.xs,
+    right: Theme.spacing.xs,
   },
   sendingText: {
     fontSize: 10,
@@ -414,49 +390,49 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     backgroundColor: "#ff6b6b",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-    marginTop: Spacing.xs,
+    paddingHorizontal: Theme.spacing.sm,
+    paddingVertical: Theme.spacing.xs,
+    borderRadius: Theme.borderRadius.lg,
+    marginTop: Theme.spacing.xs,
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
+    gap: Theme.spacing.xs,
   },
   retryText: {
     fontSize: 12,
     fontWeight: "500",
   },
   errorIndicator: {
-    marginLeft: Spacing.xs,
+    marginLeft: Theme.spacing.xs,
   },
   timeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.xs,
+    marginTop: Theme.spacing.xs,
     marginLeft: 40,
-    marginBottom: Spacing.xs,
+    marginBottom: Theme.spacing.xs,
   },
   messageTime: {
     fontSize: 12,
     fontWeight: "500",
   },
   readReceiptContainer: {
-    marginLeft: Spacing.xs,
+    marginLeft: Theme.spacing.xs,
   },
   readIndicator: {
-    marginLeft: Spacing.xs,
+    marginLeft: Theme.spacing.xs,
   },
   reactionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 4,
     marginTop: 4,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Theme.spacing.sm,
   },
   reactionBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: Theme.colors.neutral[100],
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -468,6 +444,6 @@ const styles = StyleSheet.create({
   reactionCount: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#6B7280",
+    color: Theme.colors.neutral[500],
   },
 });

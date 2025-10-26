@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { AdvancedCard, CardConfigs } from "../Advanced/AdvancedCard";
+import { Theme } from '../theme/unified-theme';
 
 interface MatchesTabsProps {
   selectedTab: "matches" | "likedYou";
@@ -69,7 +70,7 @@ export function MatchesTabs({
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: "#ec4899",
+    borderBottomColor: "Theme.colors.primary[500]",
   },
   tabText: {
     fontSize: 16,
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   activeTabText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "bold",
   },
 });

@@ -36,9 +36,9 @@ jest.mock('next/link', () => {
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: { [key: string]: unknown }) => {
-    // In tests, we can use a simple mock that doesn't need alt text
-    // eslint-disable-next-line jsx-a11y/alt-text
-    return <img {...props} alt={(props as unknown).alt || ''} />;
+    // In tests, we can use a simple mock with alt text
+    const altText = (props as { alt?: string }).alt || '';
+    return <img {...props} alt={altText} />;
   },
 }));
 

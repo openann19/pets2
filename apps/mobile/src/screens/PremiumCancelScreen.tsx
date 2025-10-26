@@ -10,8 +10,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 const PremiumCancelScreen = (): React.JSX.Element => {
   const { colors } = useTheme();
@@ -35,7 +36,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="close-circle" size={80} color="#ef4444" />
+            <Ionicons name="close-circle" size={80} color="Theme.colors.status.error" />
           </View>
 
           <Text

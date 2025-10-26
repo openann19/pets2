@@ -13,9 +13,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
 import { premiumAPI } from "../services/api";
+import { Theme } from '../theme/unified-theme';
 
 type ManageSubscriptionScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -534,7 +535,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 15,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

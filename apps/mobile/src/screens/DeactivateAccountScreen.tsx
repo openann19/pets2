@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
+import { useDeactivateAccountScreen } from "../hooks/screens/useDeactivateAccountScreen";
+import { Theme } from '../theme/unified-theme';
 
 interface DeactivateAccountScreenProps {
   navigation: {
@@ -23,64 +24,16 @@ interface DeactivateAccountScreenProps {
 function DeactivateAccountScreen({
   navigation,
 }: DeactivateAccountScreenProps): JSX.Element {
-  const [reason, setReason] = useState("");
-  const [confirmText, setConfirmText] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const reasons = [
-    "Taking a break from dating",
-    "Found a partner",
-    "Not enjoying the app",
-    "Privacy concerns",
-    "Too many notifications",
-    "Other",
-  ];
-
-  const handleDeactivate = useCallback(async () => {
-    if (!reason) {
-      Alert.alert("Required", "Please select a reason for deactivation.");
-      return;
-    }
-
-    if (confirmText.toLowerCase() !== "deactivate") {
-      Alert.alert(
-        "Confirmation Required",
-        'Please type "deactivate" to confirm.',
-      );
-      return;
-    }
-
-    setLoading(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      Alert.alert(
-        "Account Deactivated",
-        "Your account has been temporarily deactivated. You can reactivate it anytime by logging back in.",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              // In real app, would log out user
-              navigation.goBack();
-            },
-          },
-        ],
-      );
-    } catch (error) {
-      Alert.alert("Error", "Failed to deactivate account. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [reason, confirmText, navigation]);
-
-  const selectReason = useCallback((selectedReason: string) => {
-    Haptics.selectionAsync().catch(() => {});
-    setReason(selectedReason);
-  }, []);
+  const {
+    reason,
+    confirmText,
+    loading,
+    reasons,
+    selectReason,
+    setConfirmText,
+    handleDeactivate,
+    handleGoBack,
+  } = useDeactivateAccountScreen();
 
   return (
     <View style={styles.container}>
@@ -94,12 +47,7 @@ function DeactivateAccountScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                () => {},
-              );
-              navigation.goBack();
-            }}
+            onPress={handleGoBack}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
               <Ionicons name="arrow-back" size={24} color="white" />
@@ -113,7 +61,7 @@ function DeactivateAccountScreen({
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Warning */}
           <BlurView intensity={15} style={styles.warningCard}>
-            <Ionicons name="warning-outline" size={24} color="#F59E0B" />
+            <Ionicons name="warning-outline" size={24} color="Theme.colors.status.warning" />
             <Text style={styles.warningText}>
               Deactivating your account will temporarily hide your profile and
               pause all activity. You can reactivate anytime by logging back in.
@@ -147,7 +95,7 @@ function DeactivateAccountScreen({
                   {item}
                 </Text>
                 {reason === item && (
-                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                  <Ionicons name="checkmark-circle" size={20} color="Theme.colors.status.success" />
                 )}
               </BlurView>
             </TouchableOpacity>
@@ -163,7 +111,7 @@ function DeactivateAccountScreen({
                 multiline
                 numberOfLines={3}
                 value={reason}
-                onChangeText={setReason}
+                onChangeText={selectReason}
               />
             </BlurView>
           )}
@@ -367,7 +315,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   deactivateButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   deactivateButtonText: {
     color: "white",

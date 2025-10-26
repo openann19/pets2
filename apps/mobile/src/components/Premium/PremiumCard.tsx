@@ -18,6 +18,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { Theme } from '../../theme/unified-theme';
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PremiumCardProps {
@@ -184,16 +186,16 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const getVariantStyles = () => {
     const variants = {
       default: {
-        colors: ["#ffffff", "#f8fafc"],
-        shadowColor: "#000000",
+        colors: ["Theme.colors.neutral[0]", "#f8fafc"],
+        shadowColor: "Theme.colors.neutral[950]",
       },
       glass: {
         colors: ["transparent", "transparent"],
-        shadowColor: "#000000",
+        shadowColor: "Theme.colors.neutral[950]",
       },
       elevated: {
-        colors: ["#ffffff", "#f8fafc"],
-        shadowColor: "#000000",
+        colors: ["Theme.colors.neutral[0]", "#f8fafc"],
+        shadowColor: "Theme.colors.neutral[950]",
       },
       gradient: {
         colors: ["#667eea", "#764ba2"],
@@ -201,7 +203,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       },
       neon: {
         colors: ["#1a1a1a", "#1a1a1a"],
-        shadowColor: "#ec4899",
+        shadowColor: "Theme.colors.primary[500]",
       },
       holographic: {
         colors: ["#ff6b6b", "#4ecdc4", "#45b7b8", "#96ceb4", "#ffeaa7"],
@@ -248,8 +250,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case "elevated":
         return {
           ...baseStyle,
-          backgroundColor: "#ffffff",
-          shadowColor: "#000000",
+          backgroundColor: "Theme.colors.neutral[0]",
+          shadowColor: "Theme.colors.neutral[950]",
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.15,
           shadowRadius: 16,
@@ -262,8 +264,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           ...baseStyle,
           backgroundColor: "#1a1a1a",
           borderWidth: 2,
-          borderColor: "#ec4899",
-          shadowColor: "#ec4899",
+          borderColor: "Theme.colors.primary[500]",
+          shadowColor: "Theme.colors.primary[500]",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.4,
           shadowRadius: 12,
@@ -285,8 +287,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       default:
         return {
           ...baseStyle,
-          backgroundColor: "#ffffff",
-          shadowColor: "#000000",
+          backgroundColor: "Theme.colors.neutral[0]",
+          shadowColor: "Theme.colors.neutral[950]",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,

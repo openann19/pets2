@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../theme/unified-theme';
 
 interface QuickAction {
   id: string;
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 12,
   },
   actionsGrid: {
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

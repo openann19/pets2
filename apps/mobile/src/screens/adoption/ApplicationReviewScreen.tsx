@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   ApplicationReview: { applicationId: string };
@@ -121,15 +122,15 @@ const ApplicationReviewScreen = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "#f59e0b";
+        return "Theme.colors.status.warning";
       case "approved":
-        return "#10b981";
+        return "Theme.colors.status.success";
       case "rejected":
-        return "#ef4444";
+        return "Theme.colors.status.error";
       case "interview":
         return "#8b5cf6";
       default:
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -249,19 +250,19 @@ const ApplicationReviewScreen = ({
           <BlurView intensity={20} style={styles.sectionCard}>
             <View style={styles.contactInfo}>
               <View style={styles.contactItem}>
-                <Ionicons name="mail" size={20} color="#3b82f6" />
+                <Ionicons name="mail" size={20} color="Theme.colors.status.info" />
                 <Text style={styles.contactText}>
                   {application.applicantEmail}
                 </Text>
               </View>
               <View style={styles.contactItem}>
-                <Ionicons name="call" size={20} color="#10b981" />
+                <Ionicons name="call" size={20} color="Theme.colors.status.success" />
                 <Text style={styles.contactText}>
                   {application.applicantPhone}
                 </Text>
               </View>
               <View style={styles.contactItem}>
-                <Ionicons name="location" size={20} color="#ef4444" />
+                <Ionicons name="location" size={20} color="Theme.colors.status.error" />
                 <Text style={styles.contactText}>
                   {application.applicantLocation}
                 </Text>
@@ -356,10 +357,10 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["#10b981", "#047857"]}
+                colors={["Theme.colors.status.success", "#047857"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="checkmark-circle" size={24} color="#fff" />
+                <Ionicons name="checkmark-circle" size={24} color="Theme.colors.neutral[0]" />
                 <Text style={styles.actionText}>Approve</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -374,7 +375,7 @@ const ApplicationReviewScreen = ({
                 colors={["#8b5cf6", "#7c3aed"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="chatbubble" size={24} color="#fff" />
+                <Ionicons name="chatbubble" size={24} color="Theme.colors.neutral[0]" />
                 <Text style={styles.actionText}>Schedule Interview</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -386,10 +387,10 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["#ef4444", "#dc2626"]}
+                colors={["Theme.colors.status.error", "#dc2626"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="close-circle" size={24} color="#fff" />
+                <Ionicons name="close-circle" size={24} color="Theme.colors.neutral[0]" />
                 <Text style={styles.actionText}>Reject</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -410,10 +411,10 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["#3b82f6", "#1d4ed8"]}
+                colors={["Theme.colors.status.info", "#1d4ed8"]}
                 style={styles.contactButtonGradient}
               >
-                <Ionicons name="mail" size={20} color="#fff" />
+                <Ionicons name="mail" size={20} color="Theme.colors.neutral[0]" />
                 <Text style={styles.contactButtonText}>Email</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -425,10 +426,10 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["#10b981", "#047857"]}
+                colors={["Theme.colors.status.success", "#047857"]}
                 style={styles.contactButtonGradient}
               >
-                <Ionicons name="call" size={20} color="#fff" />
+                <Ionicons name="call" size={20} color="Theme.colors.neutral[0]" />
                 <Text style={styles.contactButtonText}>Call</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -446,7 +447,7 @@ const ApplicationReviewScreen = ({
                 colors={["#8b5cf6", "#7c3aed"]}
                 style={styles.contactButtonGradient}
               >
-                <Ionicons name="chatbubble" size={20} color="#fff" />
+                <Ionicons name="chatbubble" size={20} color="Theme.colors.neutral[0]" />
                 <Text style={styles.contactButtonText}>Message</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -497,7 +498,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -543,11 +544,11 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   applicantName: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -560,7 +561,7 @@ const styles = StyleSheet.create({
   },
   applicationDate: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
   },
   section: {
@@ -569,7 +570,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 12,
   },
   sectionCard: {
@@ -587,7 +588,7 @@ const styles = StyleSheet.create({
   },
   contactText: {
     fontSize: 16,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   lifestyleGrid: {
@@ -605,19 +606,19 @@ const styles = StyleSheet.create({
   },
   lifestyleLabel: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
     marginBottom: 4,
   },
   lifestyleValue: {
     fontSize: 14,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     fontWeight: "600",
   },
   experienceText: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#4b5563",
+    color: "Theme.colors.neutral[600]",
   },
   questionsList: {
     gap: 16,
@@ -625,23 +626,23 @@ const styles = StyleSheet.create({
   questionItem: {
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   questionText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   answerText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   notesText: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#4b5563",
+    color: "Theme.colors.neutral[600]",
     fontStyle: "italic",
   },
   actionsGrid: {
@@ -656,7 +657,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
     marginTop: 8,
@@ -675,7 +676,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   contactButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
     marginTop: 4,
@@ -685,7 +686,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
 });

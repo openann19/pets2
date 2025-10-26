@@ -29,6 +29,7 @@ import {
   type CardSize,
 } from "./Card/CardVariants";
 import { CardBackground } from "./Card/CardBackground";
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -106,8 +107,8 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   titleStyle,
   subtitleStyle,
   descriptionStyle,
-  glowColor = "#ec4899",
-  gradientColors = ["#ec4899", "#db2777"],
+  glowColor = "Theme.colors.primary[500]",
+  gradientColors = ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
   blurIntensity = 20,
   padding = "md",
   margin = "sm",
@@ -225,13 +226,13 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           <View
             style={StyleSheet.flatten([
               styles.badge,
-              { backgroundColor: badge.backgroundColor || "#ef4444" },
+              { backgroundColor: badge.backgroundColor || "Theme.colors.status.error" },
             ])}
           >
             <Text
               style={StyleSheet.flatten([
                 styles.badgeText,
-                { color: badge.color || "#fff" },
+                { color: badge.color || "Theme.colors.neutral[0]" },
               ])}
             >
               {badge.text}
@@ -244,13 +245,13 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
           <View
             style={StyleSheet.flatten([
               styles.status,
-              { backgroundColor: status.backgroundColor || "#10b981" },
+              { backgroundColor: status.backgroundColor || "Theme.colors.status.success" },
             ])}
           >
             <Text
               style={StyleSheet.flatten([
                 styles.statusText,
-                { color: status.color || "#fff" },
+                { color: status.color || "Theme.colors.neutral[0]" },
               ])}
             >
               {status.text}
@@ -431,7 +432,7 @@ export const CardConfigs = {
   gradient: (props: Partial<AdvancedCardProps>) => ({
     variant: "gradient" as CardVariant,
     interactions: ["hover", "press", "glow"] as CardInteraction[],
-    gradientColors: ["#ec4899", "#db2777"],
+    gradientColors: ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
     ...props,
   }),
 
@@ -517,18 +518,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 8,
   },
   description: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     lineHeight: 20,
     marginBottom: 12,
   },

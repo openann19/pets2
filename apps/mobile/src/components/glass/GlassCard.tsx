@@ -7,7 +7,7 @@ import {
   BORDER_CONFIGS,
   SHADOW_CONFIGS,
 } from "./configs";
-import { BorderRadius, Spacing } from "../../styles/GlobalStyles";
+import { BorderRadius, Spacing } from "../../animation";
 
 /**
  * GlassCard Component

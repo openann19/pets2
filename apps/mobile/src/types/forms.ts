@@ -3,7 +3,14 @@
  * Replaces any types used in form field updates
  */
 
-export type FormFieldValue = string | number | boolean | string[] | null;
+export type FormFieldValue = 
+  | string 
+  | number 
+  | boolean 
+  | string[] 
+  | { min: number; max: number }
+  | Record<string, boolean>
+  | null;
 
 export type FormUpdateHandler<T> = <K extends keyof T>(
   field: K,

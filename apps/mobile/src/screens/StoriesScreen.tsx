@@ -28,9 +28,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, type RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRef, useEffect } from "react";
 import { useStoriesScreen } from "../hooks/screens/social";
+import { Theme } from '../theme/unified-theme';
 
 // Navigation types
 type MainStackParamList = {
@@ -120,7 +122,7 @@ export default function StoriesScreen() {
   if (!currentGroup || !currentStory) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#A855F7" />
+        <ActivityIndicator size="large" color="Theme.colors.secondary[500]" />
       </View>
     );
   }
@@ -199,7 +201,7 @@ export default function StoriesScreen() {
           <View style={styles.headerActions}>
             {/* View Count */}
             <View style={styles.viewCount}>
-              <Ionicons name="eye" size={16} color="#fff" />
+              <Ionicons name="eye" size={16} color="Theme.colors.neutral[0]" />
               <Text style={styles.viewCountText}>{viewCount}</Text>
             </View>
 
@@ -214,14 +216,14 @@ export default function StoriesScreen() {
                 <Ionicons
                   name={isMuted ? "volume-mute" : "volume-high"}
                   size={24}
-                  color="#fff"
+                  color="Theme.colors.neutral[0]"
                 />
               </TouchableOpacity>
             )}
 
             {/* Close Button */}
             <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
-              <Ionicons name="close" size={24} color="#fff" />
+              <Ionicons name="close" size={24} color="Theme.colors.neutral[0]" />
             </TouchableOpacity>
           </View>
         </View>
@@ -240,11 +242,11 @@ export default function StoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 2,
   },
   header: {
@@ -297,10 +299,10 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: "Theme.colors.neutral[0]",
   },
   username: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   viewCountText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -343,7 +345,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   caption: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     textAlign: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",

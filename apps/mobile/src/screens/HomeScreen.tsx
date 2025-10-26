@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useAuthStore } from "@pawfectmatch/core";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import type { ScrollView } from "react-native";
 
 // Import new architecture components
 import {
@@ -15,7 +16,7 @@ import {
   Heading2,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from "../components/NewComponents";
+} from "../components";
 
 // Import legacy components for backward compatibility
 import {
@@ -25,7 +26,7 @@ import {
   EliteCard,
   FadeInUp,
   StaggeredContainer,
-} from "../components/EliteComponents";
+} from "../components";
 
 // Import premium components
 import {
@@ -36,11 +37,15 @@ import {
   ParticleEffect,
 } from "../components/PremiumComponents";
 import { useHomeScreen } from "../hooks/screens/useHomeScreen";
+import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
+import { Theme } from '../theme/unified-theme';
 
 const { width: screenWidth } = Dimensions.get("window");
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
+  const scrollRef = useRef<ScrollView>(null);
+  const { onScroll, getOffset } = useScrollOffsetTracker();
 
   const {
     stats,
@@ -53,11 +58,20 @@ export default function HomeScreen() {
     handleMessagesPress,
     handleMyPetsPress,
     handleCreatePetPress,
+    handleCommunityPress,
   } = useHomeScreen();
 
   // Animation hooks
   const { start: startStaggeredAnimation } = useStaggeredAnimation(6, 100);
   const { start: startEntranceAnimation } = useEntranceAnimation("fadeIn", 0);
+
+  useTabReselectRefresh({
+    listRef: scrollRef,
+    onRefresh,
+    getOffset,
+    topThreshold: 100,
+    cooldownMs: 700,
+  });
 
   // Start animations
   React.useEffect(() => {
@@ -91,12 +105,15 @@ export default function HomeScreen() {
       />
 
       <EliteScrollContainer
+        ref={scrollRef}
         gradient="primary"
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#ec4899"
+            tintColor={Theme.colors.primary[500]}
           />
         }
       >
@@ -120,10 +137,10 @@ export default function HomeScreen() {
                       <View
                         style={StyleSheet.flatten([
                           styles.actionIcon,
-                          { backgroundColor: "#ec4899" },
+                          { backgroundColor: Theme.colors.primary[500] },
                         ])}
                       >
-                        <Ionicons name="heart" size={24} color="#fff" />
+                        <Ionicons name="heart" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -152,10 +169,10 @@ export default function HomeScreen() {
                       <View
                         style={StyleSheet.flatten([
                           styles.actionIcon,
-                          { backgroundColor: "#10b981" },
+                          { backgroundColor: Theme.colors.status.success },
                         ])}
                       >
-                        <Ionicons name="people" size={24} color="#fff" />
+                        <Ionicons name="people" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -189,10 +206,10 @@ export default function HomeScreen() {
                       <View
                         style={StyleSheet.flatten([
                           styles.actionIcon,
-                          { backgroundColor: "#3b82f6" },
+                          { backgroundColor: Theme.colors.status.info },
                         ])}
                       >
-                        <Ionicons name="chatbubbles" size={24} color="#fff" />
+                        <Ionicons name="chatbubbles" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -229,7 +246,7 @@ export default function HomeScreen() {
                           { backgroundColor: "#8b5cf6" },
                         ])}
                       >
-                        <Ionicons name="person" size={24} color="#fff" />
+                        <Ionicons name="person" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -237,6 +254,38 @@ export default function HomeScreen() {
                         gradient="premium"
                       >
                         Profile
+                      </PremiumBody>
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+
+              <FadeInUp delay={400}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleCommunityPress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="warning"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: Theme.colors.status.warning },
+                        ])}
+                      >
+                        <Ionicons name="people" size={24} color={Theme.colors.neutral[0]} />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
+                        Community
                       </PremiumBody>
                     </View>
                   </GlowContainer>
@@ -268,7 +317,7 @@ export default function HomeScreen() {
                       animated={true}
                     >
                       <View style={styles.activityIcon}>
-                        <Ionicons name="heart" size={20} color="#ec4899" />
+                        <Ionicons name="heart" size={20} color={Theme.colors.primary[500]} />
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
@@ -297,7 +346,7 @@ export default function HomeScreen() {
                       animated={true}
                     >
                       <View style={styles.activityIcon}>
-                        <Ionicons name="chatbubble" size={20} color="#3b82f6" />
+                        <Ionicons name="chatbubble" size={20} color={Theme.colors.status.info} />
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
@@ -398,7 +447,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -459,7 +508,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -8,
     right: -8,
-    backgroundColor: "#ef4444",
+    backgroundColor: Theme.colors.status.error,
     borderRadius: 12,
     minWidth: 24,
     height: 24,
@@ -468,7 +517,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   badgeText: {
-    color: "#fff",
+    color: Theme.colors.neutral[0],
     fontSize: 12,
     fontWeight: "bold",
   },
@@ -476,10 +525,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   activityCard: {
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -516,16 +565,16 @@ const styles = StyleSheet.create({
   },
   activityTime: {
     fontSize: 12,
-    color: "#9ca3af",
+    color: Theme.colors.neutral[400],
   },
   premiumSection: {
     padding: 20,
   },
   premiumCard: {
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderRadius: 12,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -556,14 +605,14 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   premiumButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: Theme.colors.primary[500],
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
     alignItems: "center",
   },
   premiumButtonText: {
-    color: "#fff",
+    color: Theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
   },

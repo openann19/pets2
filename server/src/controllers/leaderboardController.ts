@@ -81,8 +81,20 @@ const getDateRange = (timeframe: string): DateRange => {
  */
 export const getLeaderboard = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { category, timeframe } = req.params;
+    const { category: categoryParam, timeframe: timeframeParam } = req.params;
     const { limit = 50, offset = 0 }: LeaderboardQuery = req.query;
+
+    // Validate inputs
+    if (!categoryParam || !timeframeParam) {
+      res.status(400).json({
+        success: false,
+        message: 'Category and timeframe are required'
+      });
+      return;
+    }
+
+    const category = categoryParam;
+    const timeframe = timeframeParam;
 
     // Validate category
     const validCategories = ['overall', 'streak', 'matches', 'engagement'];
@@ -108,7 +120,7 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
     const dateRange = getDateRange(timeframe);
 
     // Get leaderboard entries based on category
-    const entries = await getLeaderboardEntries(category, timeframe, dateRange, parseInt(limit as string), parseInt(offset as string));
+    const entries = await getLeaderboardEntries(category, timeframe, dateRange, Number(limit) || 50, Number(offset) || 0);
     const totalEntries = await getTotalEntries(category, timeframe);
 
     const response: LeaderboardResponse = {
@@ -147,13 +159,45 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
  */
 export const getUserRank = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { category, timeframe } = req.params;
+    const { category: categoryParam, timeframe: timeframeParam } = req.params;
     const userId = (req as any).userId;
 
     if (!userId) {
       res.status(401).json({
         success: false,
         message: 'Authentication required'
+      });
+      return;
+    }
+
+    // Validate inputs
+    if (!categoryParam || !timeframeParam) {
+      res.status(400).json({
+        success: false,
+        message: 'Category and timeframe are required'
+      });
+      return;
+    }
+
+    const category = categoryParam;
+    const timeframe = timeframeParam;
+
+    // Validate category
+    const validCategories = ['overall', 'streak', 'matches', 'engagement'];
+    if (!validCategories.includes(category)) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid category. Must be one of: overall, streak, matches, engagement'
+      });
+      return;
+    }
+
+    // Validate timeframe
+    const validTimeframes = ['daily', 'weekly', 'monthly', 'allTime'];
+    if (!validTimeframes.includes(timeframe)) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid timeframe. Must be one of: daily, weekly, monthly, allTime'
       });
       return;
     }
@@ -497,8 +541,16 @@ function getBadgeForScore(score: number, category: string): string {
   return 'beginner';
 }
 
-export default {
+interface LeaderboardController {
+  getLeaderboard: (req: Request, res: Response) => Promise<void>;
+  getUserRank: (req: Request, res: Response) => Promise<void>;
+  updateScore: (req: Request, res: Response) => Promise<void>;
+}
+
+const leaderboardController: LeaderboardController = {
   getLeaderboard,
   getUserRank,
   updateScore
 };
+
+export default leaderboardController;

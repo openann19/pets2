@@ -25,7 +25,7 @@ const mockTheme = {
   isDark: false,
 };
 
-jest.mock("../../../contexts/ThemeContext", () => ({
+jest.mock("../../../theme/Provider", () => ({
   useTheme: () => mockTheme,
 }));
 

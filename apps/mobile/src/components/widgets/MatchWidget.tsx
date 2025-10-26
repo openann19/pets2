@@ -8,6 +8,8 @@ import {
   View,
 } from "react-native";
 
+import { Theme } from '../../theme/unified-theme';
+
 interface MatchWidgetProps {
   matches: Array<{
     id: string;
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -100,11 +102,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
   },
   viewAll: {
     fontSize: 14,
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
     fontWeight: "500",
   },
   matchesContainer: {
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -146,22 +148,22 @@ const styles = StyleSheet.create({
   matchName: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 2,
   },
   petName: {
     fontSize: 11,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 4,
   },
   lastMessage: {
     fontSize: 10,
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
     textAlign: "center",
     marginBottom: 2,
   },
   timestamp: {
     fontSize: 9,
-    color: "#D1D5DB",
+    color: "Theme.colors.neutral[300]",
   },
 });

@@ -20,6 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 // import { animationConfig } from '@pawfectmatch/core';
 import { logger } from "../services/logger";
+import { Theme } from '../theme/unified-theme';
 
 interface AnimatedButtonProps {
   onPress: () => void;
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     borderColor: "#FF6B9D",
   },
   dangerButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   smallButton: {
     paddingHorizontal: 12,
@@ -307,10 +308,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
   shadow: {
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

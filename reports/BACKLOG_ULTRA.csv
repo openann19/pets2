@@ -1,0 +1,62 @@
+ID,Area,Title,Priority,Estimate,Depends On,Acceptance Criteria
+A-01,Image,Tile-based upscale (512 tiles),P0,3, ,Upscales 12MP→24MP without OOM; visual seams: none; time<2.5s on M1; param tileSize respected.
+A-02,Image,Sharpen-after-upscale (USM),P0,2,A-01,Radius/amount/threshold slider; no haloing at threshold>=3; compare before/after hold.
+A-03,Image,Denoise pre-pass (median),P1,2, ,Radius 1–2; preserves edges > 3px; no color shifts > 1/255.
+A-04,Image,Adaptive JPEG by SSIM target,P0,3, ,Given target 0.985, picks Q ∈ [0.6,0.95]; SSIM computed at 512px downscale; output < baseline size in 90% images.
+A-05,Image,WebP thumbnail export,P0,1, ,Generate 512w webp q=0.8; bytes < jpeg(0.8) in 80% cases.
+A-06,Image,EXIF orient + default strip,P0,1, ,All rotated assets drawn upright; output has no EXIF blocks.
+A-07,Image,Glare/highlight recovery slider,P1,2, ,Tone curve reduces clipped regions by ≥15% without gray cast.
+A-08,Image,Edge-protected clarity (local contrast),P1,2,A-02,Clarity radius 8–32; edges preserved; no halos >2px.
+A-09,Image,Vignette correction/intensity,P2,2, ,Radial gain map; L2 color error < 2/255 at center.
+A-10,Image,Mobile noise presets (iOS/Android),P2,1,A-03,One-tap presets: "iOS Night", "Android Mid".
+B-01,Crop,Overlay: ratios+guides+safe text,P0,2, ,1:1,4:5,9:16,3:2; thirds/golden/diagonals/eye-line; safe bottom 15%.
+B-02,Crop,Interactive recenter inertia/bounce,P0,1,B-01,Drag + inertial settle <500ms; clamped to image bounds.
+B-03,Crop,HDR clip warn (>3% highlights),P1,2, ,Histogram detects >3% at 250–255; shows badge.
+B-04,Crop,Auto-straighten (Hough fallback),P1,3, ,Detect horizon; rotate <±5°; residual tilt <0.5° in tests.
+B-05,Crop,Group subject focus,P2,3,C-01,Find multi-pet boxes; center consensus.
+B-06,Crop,Batch tight/loose best-of-3,P1,2, ,Tenengrad/entropy score ranks top crop; export all 3 variants.
+C-01,ML,On-device pet detector (tflite),P0,5, ,Locate pet bbox >0.6 IoU vs GT on gold set.
+C-02,ML,Eye landmark gating + fallback,P1,3,C-01,If eye conf <0.4, fall back to nose/whiskers cluster.
+C-03,ML,Ignore human faces unless tagged,P1,2,C-01,Human faces masked from framing unless "owner" tag present.
+C-04,ML,Multi-subject priority (tap-to-prio),P2,2,C-01,Tap cycles subject-of-interest; UI highlights.
+C-05,ML,Motion blur scoring,P1,2, ,Reject frames with variance of Laplacian < T.
+C-06,ML,Low-res rescue pre-upsample,P1,2, ,If short side <512, pre-upsample ×2 before detect.
+D-01,Perf,Worker queue + abort tokens,P0,2, ,Leaving screen cancels ops immediately, no leaks.
+D-02,Perf,Frame budget logger,P2,1, ,Dropped frame count overlay on dev builds.
+D-03,Perf,RN fast-image integration,P1,1, ,Cache hits improve first paint by >30%.
+D-04,Perf,Keep-alive cache last 8 assets,P1,1, ,LRU retains last 8 canvases/blobs; memory cap respected.
+E-01,UX,Haptic tiering (snap/lock/export),P2,1, ,Light/Medium/Success patterns mapped to events.
+E-02,UX,Press-and-hold Before/After,P1,1,A-02,Hold overlay toggles original vs edited <16ms swap.
+E-03,UX,Animated trio chips (tight/med/loose),P2,1,B-06,Chips ripple + change crop preset instantly.
+E-04,UX,Export confetti gradient,P3,1, ,Confetti togglable; CPU cost <3ms/frame on mid devices.
+E-05,UX,Undo toast with countdown+scrub,P2,2, ,Scrub to previous state within 5s window.
+F-01,A11y,VO hints for ratios/guides,P1,1,B-01,Screen reader announces "4 by 5, golden ratio grid on".
+F-02,A11y,Dynamic type ramp,P2,1, ,All labels respect system font size.
+F-03,A11y,High-contrast theme,P2,1, ,Switch increases contrast ratio ≥ 7:1.
+F-04,A11y,Color-blind-safe overlays,P2,1, ,No red/green ambiguity; patterned lines.
+F-05,A11y,Reduce motion toggle,P1,1, ,Disables parallax; shortens transitions by 60%.
+F-06,A11y,Spoken batch progress,P2,1, ,Announces "3 of 10 exported".
+G-01,QA,Gold images + SSIM snapshots,P1,2, ,10-scene suite; SSIM diff alert if <0.98.
+G-02,QA,Jest ratio math + clamping,P1,1, ,100% pass on clamp/fit tests.
+G-03,QA,Detox flow edit→export→save,P2,3, ,Green on CI (iOS/Android).
+G-04,QA,Fuzz random crop rects,P2,1, ,No crashes across 10k fuzz cases.
+G-05,QA,Android leak watchdog,P2,2, ,After 50 exports heap growth <10%.
+G-06,QA,Slow-device emulation,P2,1, ,Budget overlay verified on Moto G profile.
+G-07,QA,ESRGAN backoff+retry,P2,2, ,3 attempts with jitter; surfacing errors.
+G-08,QA,Crash grouping + breadcrumbs,P1,2, ,Breadcrumbs include edit stack.
+H-01,Store,LRU disk cache + purge,P1,2,D-04,Evicts by recency/size; UI meter updates.
+H-02,Store,Offline queue for upscales,P1,2, ,Syncs when online; shows status.
+H-03,Store,Disk usage meter + quick clean,P2,1, ,One-tap clears thumbs/tmp.
+H-04,Store,Edit recipes JSON,P1,2, ,Replay deterministic outputs.
+H-05,Store,Low storage guard,P2,1, ,Suggest lighter formats when <5% free.
+I-01,Privacy,Strip GPS EXIF default,P0,1,A-06,No GPS tags in outputs.
+I-02,Privacy,Redact faces in crowds,P2,3,C-01,Gaussian blur on non-primary faces.
+I-03,Privacy,Signed URL short TTL,P1,2, ,Upload tokens expire <5min.
+I-04,Privacy,On-device-only mode,P1,2, ,All network toggled off; warning badge.
+I-05,Privacy,PII-free metrics,P1,1, ,Only event+device class; no user IDs.
+J-01,Growth,Telemetry on ratio choices,P2,1, ,Aggregate counts per cohort.
+J-02,Growth,Time-to-export metric,P2,1, ,p50/p95 recorded.
+J-03,Growth,Funnel Edit→Post,P2,1, ,Drop-off heatmap rendered.
+J-04,Growth,A/B default ratio,P2,2,B-01,Randomized rollout; compare completion rate.
+J-05,Growth,Suggest best ratio per user,P3,3,J-01,Model picks ratio with >5% lift.
+

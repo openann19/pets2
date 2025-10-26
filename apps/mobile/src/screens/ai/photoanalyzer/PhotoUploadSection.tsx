@@ -16,6 +16,9 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+import { Theme } from '../theme/unified-theme';
+import { PinchZoomPro } from '../../../components/Gestures/PinchZoomPro';
+import { usePinchMetrics } from '../../../hooks/useInteractionMetrics';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -35,6 +38,7 @@ export function PhotoUploadSection({
   onImageSelected,
   colors,
 }: PhotoUploadSectionProps) {
+  const { startInteraction, endInteraction } = usePinchMetrics();
   const pickImage = async (): Promise<void> => {
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -118,7 +122,23 @@ export function PhotoUploadSection({
 
       {selectedImage !== null ? (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+          <PinchZoomPro
+            source={{ uri: selectedImage }}
+            width={SCREEN_WIDTH - 32}
+            height={SCREEN_WIDTH - 32}
+            minScale={1}
+            maxScale={3}
+            enableMomentum={true}
+            haptics={true}
+            onScaleChange={(scale) => {
+              if (scale > 1.1) {
+                startInteraction('pinch', { imageUri: selectedImage });
+              } else {
+                endInteraction('pinch', true);
+              }
+            }}
+            backgroundColor="#000"
+          />
           <TouchableOpacity
             style={StyleSheet.flatten([
               styles.changeImageButton,
@@ -126,7 +146,7 @@ export function PhotoUploadSection({
             ])}
             onPress={pickImage}
           >
-            <Ionicons name="camera" size={20} color="#FFFFFF" />
+            <Ionicons name="camera" size={20} color="#ffffff" />
             <Text style={styles.changeImageText}>Change Photo</Text>
           </TouchableOpacity>
         </View>
@@ -154,7 +174,7 @@ export function PhotoUploadSection({
               ])}
               onPress={pickImage}
             >
-              <Ionicons name="image" size={20} color="#FFFFFF" />
+              <Ionicons name="image" size={20} color="Theme.colors.neutral[0]" />
               <Text style={styles.imageButtonText}>Gallery</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -164,7 +184,7 @@ export function PhotoUploadSection({
               ])}
               onPress={takePhoto}
             >
-              <Ionicons name="camera" size={20} color="#FFFFFF" />
+              <Ionicons name="camera" size={20} color="Theme.colors.neutral[0]" />
               <Text style={styles.imageButtonText}>Camera</Text>
             </TouchableOpacity>
           </View>
@@ -201,7 +221,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   changeImageText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -230,7 +250,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   imageButtonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },

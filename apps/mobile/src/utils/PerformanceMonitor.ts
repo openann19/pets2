@@ -21,6 +21,9 @@ export interface PerformanceMetrics {
   memoryUsage: number;
   interactionTime: number;
   timestamp: number;
+  gestureResponseTime?: number;
+  animationFrameTime?: number;
+  componentRenderTime?: number;
 }
 
 interface InteractionTiming {

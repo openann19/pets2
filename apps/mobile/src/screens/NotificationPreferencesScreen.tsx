@@ -13,7 +13,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import { Theme } from '../theme/unified-theme';
 
 interface NotificationPreferencesScreenProps {
   navigation: {
@@ -158,8 +159,8 @@ function NotificationPreferencesScreen({
               onValueChange={() => {
                 toggleCategory(category);
               }}
-              trackColor={{ false: "#767577", true: "#3B82F6" }}
-              thumbColor={categoryEnabled ? "#FFFFFF" : "#f4f3f4"}
+              trackColor={{ false: "#767577", true: "Theme.colors.status.info" }}
+              thumbColor={categoryEnabled ? "Theme.colors.neutral[0]" : "#f4f3f4"}
             />
           </TouchableOpacity>
 
@@ -181,8 +182,8 @@ function NotificationPreferencesScreen({
                   onValueChange={() => {
                     toggleSetting(setting.id);
                   }}
-                  trackColor={{ false: "#767577", true: "#3B82F6" }}
-                  thumbColor={setting.enabled ? "#FFFFFF" : "#f4f3f4"}
+                  trackColor={{ false: "#767577", true: "Theme.colors.status.info" }}
+                  thumbColor={setting.enabled ? "Theme.colors.neutral[0]" : "#f4f3f4"}
                 />
               </View>
             </BlurView>
@@ -228,7 +229,7 @@ function NotificationPreferencesScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color="#3B82F6"
+              color="Theme.colors.status.info"
             />
             <Text style={styles.infoText}>
               Choose which notifications you'd like to receive. You can always
@@ -260,8 +261,8 @@ function NotificationPreferencesScreen({
                     "Push notification settings would be managed by device settings.",
                   );
                 }}
-                trackColor={{ false: "#767577", true: "#10B981" }}
-                thumbColor={"#FFFFFF"}
+                trackColor={{ false: "#767577", true: "Theme.colors.status.success" }}
+                thumbColor={"Theme.colors.neutral[0]"}
               />
             </View>
 
@@ -280,7 +281,7 @@ function NotificationPreferencesScreen({
                     "Quiet hours feature coming soon!",
                   );
                 }}
-                trackColor={{ false: "#767577", true: "#8B5CF6" }}
+                trackColor={{ false: "#767577", true: "Theme.colors.secondary[500]" }}
                 thumbColor={"#f4f3f4"}
               />
             </View>

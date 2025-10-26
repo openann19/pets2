@@ -18,13 +18,15 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { EliteContainer } from "../components/EliteComponents";
+import { EliteContainer } from "../components";
 import { ChatHeader } from "../components/chat/ChatHeader";
 import { MessageList } from "../components/chat/MessageList";
 import { MessageInput } from "../components/chat/MessageInput";
 import { QuickReplies } from "../components/chat/QuickReplies";
+import ReactionBarMagnetic from "../components/chat/ReactionBarMagnetic";
+import { useReactionMetrics } from "../hooks/useInteractionMetrics";
 import { useChatData } from "../hooks/useChatData";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { api } from "../services/api";
 
@@ -50,6 +52,9 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   // Local state for UI interactions
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [showReactions, setShowReactions] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const { startInteraction, endInteraction } = useReactionMetrics();
 
   // Refs
   const flatListRef = useRef<any>(null);
@@ -222,6 +227,30 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
     inputRef.current?.focus();
   }, []);
 
+  // Handle message long press for reactions
+  const handleMessageLongPress = useCallback((messageId: string) => {
+    setSelectedMessageId(messageId);
+    setShowReactions(true);
+  }, []);
+
+  // Handle reaction selection
+  const handleReactionSelect = useCallback((emoji: string) => {
+    if (selectedMessageId) {
+      startInteraction('reaction', { messageId: selectedMessageId, emoji });
+      // TODO: Send reaction to server
+      console.log(`Reacted with ${emoji} to message ${selectedMessageId}`);
+      endInteraction('reaction', true);
+    }
+    setShowReactions(false);
+    setSelectedMessageId(null);
+  }, [selectedMessageId, startInteraction, endInteraction]);
+
+  // Handle reaction cancel
+  const handleReactionCancel = useCallback(() => {
+    setShowReactions(false);
+    setSelectedMessageId(null);
+  }, []);
+
   // Call handlers
   const handleVoiceCall = useCallback(async () => {
     Alert.alert("Voice Call", `Start a voice call with ${petName}?`, [
@@ -280,6 +309,8 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           messages={data.messages}
           typingUsers={data.otherUserTyping ? ["Other User"] : []}
           isOnline={data.isOnline}
+          currentUserId="current-user"
+          matchId={matchId}
           onRetryMessage={actions.retryMessage}
           flatListRef={flatListRef}
           onScroll={handleScroll}
@@ -305,6 +336,20 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           matchId={matchId}
         />
       </KeyboardAvoidingView>
+
+      {/* Reaction Bar Overlay */}
+      {showReactions && (
+        <View style={styles.reactionOverlay}>
+          <ReactionBarMagnetic
+            onSelect={handleReactionSelect}
+            onCancel={handleReactionCancel}
+            influenceRadius={100}
+            baseSize={32}
+            backgroundColor={isDark ? "#2a2a2a" : "#ffffff"}
+            borderColor={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+          />
+        </View>
+      )}
     </EliteContainer>
   );
 }
@@ -313,5 +358,13 @@ const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     paddingTop: 80, // Account for header
+  },
+  reactionOverlay: {
+    position: 'absolute',
+    bottom: 120,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 1000,
   },
 });

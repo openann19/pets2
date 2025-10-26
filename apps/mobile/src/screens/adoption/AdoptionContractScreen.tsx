@@ -12,6 +12,7 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   AdoptionContract: {
@@ -188,11 +189,11 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
-                trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
+                trackColor={{ false: "Theme.colors.neutral[200]", true: "#fce7f3" }}
                 thumbColor={
                   contractTerms[item.key as keyof ContractTerms]
-                    ? "#ec4899"
-                    : "#9ca3af"
+                    ? "Theme.colors.primary[500]"
+                    : "Theme.colors.neutral[400]"
                 }
               />
             </View>
@@ -233,11 +234,11 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
-                trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
+                trackColor={{ false: "Theme.colors.neutral[200]", true: "#fce7f3" }}
                 thumbColor={
                   contractTerms[item.key as keyof ContractTerms]
-                    ? "#ec4899"
-                    : "#9ca3af"
+                    ? "Theme.colors.primary[500]"
+                    : "Theme.colors.neutral[400]"
                 }
               />
             </View>
@@ -344,7 +345,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   header: {
     flexDirection: "row",
@@ -352,17 +353,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   backButton: {
     fontSize: 16,
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   placeholder: {
     width: 50,
@@ -372,7 +373,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   contractInfo: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
@@ -381,18 +382,18 @@ const styles = StyleSheet.create({
   contractTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
     textAlign: "center",
   },
   contractSubtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 4,
   },
   contractDate: {
     fontSize: 14,
-    color: "#9ca3af",
+    color: "Theme.colors.neutral[400]",
   },
   section: {
     marginBottom: 32,
@@ -400,12 +401,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -415,32 +416,32 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   textArea: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     textAlignVertical: "top",
     minHeight: 100,
   },
   helperText: {
     fontSize: 12,
-    color: "#9ca3af",
+    color: "Theme.colors.neutral[400]",
     marginTop: 4,
     lineHeight: 16,
   },
@@ -448,7 +449,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -460,12 +461,12 @@ const styles = StyleSheet.create({
   switchLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 4,
   },
   switchDescription: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     lineHeight: 18,
   },
   legalNotice: {
@@ -488,22 +489,22 @@ const styles = StyleSheet.create({
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
+    borderTopColor: "Theme.colors.neutral[100]",
   },
   generateButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 12,
     paddingVertical: 16,
     paddingHorizontal: 24,
     alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: "#d1d5db",
+    backgroundColor: "Theme.colors.neutral[300]",
   },
   generateButtonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
 });
 

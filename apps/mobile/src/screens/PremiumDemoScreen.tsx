@@ -27,6 +27,15 @@ import {
   useGlowEffect,
 } from "../hooks/useMotionSystem";
 import { usePremiumDemoScreen } from "../hooks/screens/usePremiumDemoScreen";
+import { Theme } from '../theme/unified-theme';
+
+// Import extracted demo components
+import {
+  ButtonDemo,
+  CardDemo,
+  AnimationDemo,
+  GlassDemo,
+} from "../components/premium-demo";
 
 // Define fallback design tokens
 const DynamicColors = {
@@ -96,14 +105,14 @@ const SemanticColors = {
     secondary: "#5856D6",
   },
   text: {
-    primary: "#000000",
+    primary: "Theme.colors.neutral[950]",
     secondary: "#666666",
-    inverse: "#FFFFFF",
+    inverse: "Theme.colors.neutral[0]",
   },
   background: {
-    primary: "#FFFFFF",
+    primary: "Theme.colors.neutral[0]",
     secondary: "#F8F9FA",
-    dark: "#000000",
+    dark: "Theme.colors.neutral[950]",
   },
 };
 
@@ -124,7 +133,7 @@ function PremiumDemoScreen(): JSX.Element {
   } = usePremiumDemoScreen();
 
   // Premium entrance animation
-  const headerEntrance = useEntranceAnimation("fadeInUp");
+  const headerEntrance = useEntranceAnimation("fadeIn");
 
   // Staggered animations for demo sections
   const demoItems = [
@@ -139,348 +148,18 @@ function PremiumDemoScreen(): JSX.Element {
   // Glow effect for active demo
   const glowEffect = useGlowEffect(0.8, 2000);
 
-  const renderButtonDemo = () => (
-    <ScrollTrigger animation="fadeInUp" triggerPoint={0.8}>
-      <View style={{ padding: 20 }}>
-        <Text
-          style={{
-            ...EnhancedTypography.effects.gradient.primary,
-            fontSize: 24,
-            fontWeight: "700",
-            textAlign: "center",
-            marginBottom: 30,
-          }}
-        >
-          Interactive Buttons
-        </Text>
-
-        <StaggeredFadeInUpList delay={100}>
-          {buttonVariants.map((variant, index) => (
-            <View key={variant} style={{ marginBottom: 20 }}>
-              <InteractiveButton
-                title={`${variant.charAt(0).toUpperCase() + variant.slice(1)} Button`}
-                variant={variant as any}
-                size="lg"
-                magneticEffect={true}
-                glowEffect={variant === "holographic"}
-                gradientName={
-                  variant === "holographic" && gradientNames[index % gradientNames.length] !== "sunset"
-                    ? gradientNames[index % gradientNames.length] as "primary" | "secondary" | "premium"
-                    : variant === "holographic" ? "premium" : undefined
-                }
-                hapticFeedback={true}
-                soundEffect={false}
-                onPress={() => {
-                  handleButtonPress(variant);
-                }}
-                style={{ marginBottom: 10 }}
-              />
-
-              <InteractiveButton
-                title="Loading State"
-                variant={variant as any}
-                size="md"
-                loading={true}
-                disabled={false}
-                style={{ marginBottom: 10 }}
-              />
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <InteractiveButton
-                  title="SM"
-                  variant={variant as any}
-                  size="sm"
-                  onPress={() => {
-                    handleButtonPress(`${variant}-sm`);
-                  }}
-                />
-                <InteractiveButton
-                  title="MD"
-                  variant={variant as any}
-                  size="md"
-                  onPress={() => {
-                    handleButtonPress(`${variant}-md`);
-                  }}
-                />
-                <InteractiveButton
-                  title="LG"
-                  variant={variant as any}
-                  size="lg"
-                  onPress={() => {
-                    handleButtonPress(`${variant}-lg`);
-                  }}
-                />
-                <InteractiveButton
-                  title="XL"
-                  variant={variant as any}
-                  size="xl"
-                  onPress={() => {
-                    handleButtonPress(`${variant}-xl`);
-                  }}
-                />
-              </View>
-            </View>
-          ))}
-        </StaggeredFadeInUpList>
-      </View>
-    </ScrollTrigger>
-  );
-
-  const renderCardDemo = () => (
-    <ScrollTrigger animation="scaleIn" triggerPoint={0.8}>
-      <View style={{ padding: 20 }}>
-        <Text
-          style={{
-            ...EnhancedTypography.effects.gradient.secondary,
-            fontSize: 24,
-            fontWeight: "700",
-            textAlign: "center",
-            marginBottom: 30,
-          }}
-        >
-          Immersive Cards
-        </Text>
-
-        <StaggeredFadeInUpList delay={150}>
-          {cardVariants.map((variant, index) => (
-            <ImmersiveCard
-              key={variant}
-              variant={variant as any}
-              size="lg"
-              tiltEnabled={true}
-              magneticHover={true}
-              shimmerEffect={variant === "holographic"}
-              entranceAnimation="scaleIn"
-              gradientName={
-                variant === "holographic" && gradientNames[index % gradientNames.length] !== "sunset" && gradientNames[index % gradientNames.length] !== "ocean"
-                  ? gradientNames[index % gradientNames.length] as "primary" | "secondary" | "premium"
-                  : variant === "holographic" ? "premium" : undefined
-              }
-              glowColor={variant === "elevated" ? "primary" : undefined}
-              style={{ marginBottom: 20 }}
-              onPress={() => {
-                handleCardPress(variant);
-              }}
-            >
-              <View style={{ padding: 20 }}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: "600",
-                    color: SemanticColors.text.primary,
-                    marginBottom: 10,
-                  }}
-                >
-                  {variant.charAt(0).toUpperCase() + variant.slice(1)} Card
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: SemanticColors.text.secondary,
-                    lineHeight: 20,
-                  }}
-                >
-                  This is a premium {variant} card with advanced visual effects,
-                  3D tilt interactions, and smooth animations. Experience the
-                  future of mobile UI.
-                </Text>
-              </View>
-            </ImmersiveCard>
-          ))}
-        </StaggeredFadeInUpList>
-      </View>
-    </ScrollTrigger>
-  );
-
-  const renderAnimationDemo = () => (
-    <ScrollTrigger animation="slideInLeft" triggerPoint={0.8}>
-      <View style={{ padding: 20 }}>
-        <Text
-          style={{
-            fontSize: 24,
-            fontWeight: "700",
-            textAlign: "center",
-            marginBottom: 30,
-            color: SemanticColors.text.primary,
-          }}
-        >
-          Motion System Demo
-        </Text>
-
-        {/* Physics-based ScaleIn */}
-        <PhysicsBasedScaleIn delay={300} style={{ marginBottom: 30 }}>
-          <View
-            style={{
-              padding: 20,
-              backgroundColor: SemanticColors.background.secondary,
-              borderRadius: 16,
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 16, color: SemanticColors.text.primary }}>
-              Physics-Based Scale Animation
-            </Text>
-          </View>
-        </PhysicsBasedScaleIn>
-
-        {/* Staggered List */}
-        <StaggeredFadeInUpList delay={100} style={{ marginBottom: 30 }}>
-          {["First Item", "Second Item", "Third Item", "Fourth Item"].map(
-            (item, index) => (
-              <View
-                key={index}
-                style={{
-                  padding: 15,
-                  backgroundColor: SemanticColors.background.secondary,
-                  borderRadius: 12,
-                  marginBottom: 10,
-                }}
-              >
-                <Text style={{ color: SemanticColors.text.primary }}>
-                  {item}
-                </Text>
-              </View>
-            ),
-          )}
-        </StaggeredFadeInUpList>
-
-        {/* Page Transition Demo */}
-        <PageTransition type="scale" duration={800}>
-          <View
-            style={{
-              padding: 20,
-              borderRadius: 16,
-              alignItems: "center",
-              ...DynamicColors.glass.medium,
-            }}
-          >
-            <Text style={{ fontSize: 16, color: SemanticColors.text.primary }}>
-              Page Transition Effect
-            </Text>
-          </View>
-        </PageTransition>
-      </View>
-    </ScrollTrigger>
-  );
-
-  const renderGlassDemo = () => (
-    <ScrollTrigger animation="slideInRight" triggerPoint={0.8}>
-      <View style={{ padding: 20 }}>
-        <Text
-          style={{
-            fontSize: 24,
-            fontWeight: "700",
-            textAlign: "center",
-            marginBottom: 30,
-            color: SemanticColors.text.primary,
-          }}
-        >
-          Glass Morphism Showcase
-        </Text>
-
-        {/* Background with gradient */}
-        <LinearGradient
-          colors={DynamicColors.gradients.premium}
-          locations={DynamicColors.glass.locations}
-          style={{
-            borderRadius: 20,
-            padding: 20,
-            marginBottom: 20,
-          }}
-        >
-          <BlurView
-            intensity={20}
-            tint="light"
-            style={{
-              borderRadius: 16,
-              padding: 20,
-              ...DynamicColors.glass.strong,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: "600",
-                color: SemanticColors.text.primary,
-                textAlign: "center",
-                marginBottom: 10,
-              }}
-            >
-              Premium Glass Container
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: SemanticColors.text.secondary,
-                textAlign: "center",
-                lineHeight: 20,
-              }}
-            >
-              Experience layered transparency with backdrop blur effects and
-              subtle border styling for a modern, premium look.
-            </Text>
-          </BlurView>
-        </LinearGradient>
-
-        {/* Multiple glass tiers */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          {(["subtle", "medium", "strong"] as const).map((tier) => (
-            <BlurView
-              key={tier}
-              intensity={tier === "subtle" ? 10 : tier === "medium" ? 20 : 30}
-              tint="light"
-              style={{
-                flex: 1,
-                marginHorizontal: 5,
-                borderRadius: 12,
-                padding: 15,
-                ...DynamicColors.glass[tier],
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "600",
-                  color: SemanticColors.text.primary,
-                  marginBottom: 5,
-                }}
-              >
-                {tier.charAt(0).toUpperCase() + tier.slice(1)}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 10,
-                  color: SemanticColors.text.secondary,
-                  textAlign: "center",
-                }}
-              >
-                Glass Tier
-              </Text>
-            </BlurView>
-          ))}
-        </View>
-      </View>
-    </ScrollTrigger>
-  );
-
   const renderDemoContent = () => {
     switch (activeDemo) {
       case "buttons":
-        return renderButtonDemo();
+        return <ButtonDemo onButtonPress={handleButtonPress} />;
       case "cards":
-        return renderCardDemo();
+        return <CardDemo onCardPress={handleCardPress} />;
       case "animations":
-        return renderAnimationDemo();
+        return <AnimationDemo />;
       case "glass":
-        return renderGlassDemo();
+        return <GlassDemo />;
       default:
-        return renderButtonDemo();
+        return <ButtonDemo onButtonPress={handleButtonPress} />;
     }
   };
 

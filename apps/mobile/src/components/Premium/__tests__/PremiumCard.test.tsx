@@ -2,11 +2,12 @@ import React from "react";
 import {} from "@testing-library/react-native";
 import "@testing-library/jest-native/extend-expect";
 import PremiumCard from "../../Premium/PremiumCard";
-import {} from "../../../contexts/ThemeContext";
+import {} from "../../../theme/Provider";
 import * as Haptics from "expo-haptics";
+import { Theme } from '../theme/unified-theme';
 
 // Mock dependencies
-jest.mock("../../../contexts/ThemeContext");
+jest.mock("../../../theme/Provider");
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: {
@@ -40,11 +41,11 @@ describe("PremiumCard", () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: "#7c3aed",
-        secondary: "#ec4899",
-        background: "#ffffff",
-        text: "#000000",
-        card: "#ffffff",
-        accent: "#0ea5e9",
+        secondary: "Theme.colors.primary[500]",
+        background: "Theme.colors.neutral[0]",
+        text: "Theme.colors.neutral[950]",
+        card: "Theme.colors.neutral[0]",
+        accent: "Theme.colors.secondary[500]",
       },
       isDark: false,
     });
@@ -103,11 +104,11 @@ describe("PremiumCard", () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: "#7c3aed",
-        secondary: "#ec4899",
-        background: "#1f2937",
-        text: "#ffffff",
-        card: "#374151",
-        accent: "#0ea5e9",
+        secondary: "Theme.colors.primary[500]",
+        background: "Theme.colors.neutral[800]",
+        text: "Theme.colors.neutral[0]",
+        card: "Theme.colors.neutral[700]",
+        accent: "Theme.colors.secondary[500]",
       },
       isDark: true,
     });

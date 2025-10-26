@@ -1,5 +1,6 @@
 import React from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
+import { Theme } from '../theme/unified-theme';
 
 export interface MapStats {
   totalPets: number;
@@ -47,10 +48,10 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
   statLabel: {
     fontSize: 12,
-    color: "#D1D5DB",
+    color: "Theme.colors.neutral[300]",
   },
 });

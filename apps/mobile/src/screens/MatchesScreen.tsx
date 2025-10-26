@@ -1,5 +1,7 @@
 import { FlatList, RefreshControl, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { FlatList as FlatListType } from "react-native";
+import { useRef } from "react";
 
 import {
   AdvancedHeader,
@@ -10,6 +12,9 @@ import { MatchesTabs } from "../components/matches/MatchesTabs";
 import { useMatchesData } from "../hooks/useMatchesData";
 import { logger } from "../services/logger";
 import type { Match } from "../hooks/useMatchesData";
+import { Theme } from '../theme/unified-theme';
+import { useScrollOffsetTracker } from "../hooks/navigation/useScrollOffsetTracker";
+import { useTabReselectRefresh } from "../hooks/navigation/useTabReselectRefresh";
 
 interface MatchesScreenProps {
   navigation: {
@@ -30,6 +35,17 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
     setSelectedTab,
     handleScroll,
   } = useMatchesData();
+
+  const listRef = useRef<FlatListType<Match>>(null);
+  const { onScroll, getOffset } = useScrollOffsetTracker();
+
+  useTabReselectRefresh({
+    listRef,
+    onRefresh,
+    getOffset,
+    topThreshold: 120,
+    cooldownMs: 700,
+  });
 
   const handleMatchPress = (matchId: string, petName: string) => {
     navigation.navigate("Chat", { matchId, petName });
@@ -73,6 +89,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
       <MatchesTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
 
       <FlatList
+        ref={listRef}
         data={selectedTab === "matches" ? matches : likedYou}
         renderItem={({ item }) => (
           <MatchCard
@@ -85,15 +102,16 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
         keyExtractor={(item) => item._id}
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        onScroll={async (e) => {
-          await handleScroll(e.nativeEvent.contentOffset.y);
+        onScroll={(e) => {
+          onScroll(e);       // track offset for smart reselect
+          handleScroll(e.nativeEvent.contentOffset.y); // persistence
         }}
         scrollEventThrottle={120}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#ec4899"
+            tintColor={Theme.colors.primary[500]}
           />
         }
       />

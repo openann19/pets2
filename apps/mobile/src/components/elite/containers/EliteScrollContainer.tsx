@@ -1,9 +1,10 @@
-import React, { type ReactNode } from "react";
+import React, { forwardRef, type ReactNode } from "react";
 import { ScrollView, type ScrollViewProps } from "react-native";
+import type { ScrollView as ScrollViewType } from "react-native";
 
 import { EliteContainer } from "./EliteContainer";
-import { GlobalStyles } from "../../../styles/GlobalStyles";
-import { Colors } from "../../../styles/GlobalStyles";
+import { GlobalStyles } from "../../../animation";
+import { Colors } from "../../../animation";
 
 /**
  * EliteScrollContainer Component
@@ -15,14 +16,15 @@ interface EliteScrollContainerProps extends ScrollViewProps {
   gradient?: keyof typeof Colors;
 }
 
-export const EliteScrollContainer: React.FC<EliteScrollContainerProps> = ({
+export const EliteScrollContainer = forwardRef<ScrollViewType, EliteScrollContainerProps>(({
   children,
   gradient = "gradientPrimary",
   ...props
-}) => {
+}, ref) => {
   return (
     <EliteContainer gradient={gradient}>
       <ScrollView
+        ref={ref}
         contentContainerStyle={GlobalStyles.scrollContainer}
         showsVerticalScrollIndicator={false}
         bounces={true}
@@ -32,6 +34,8 @@ export const EliteScrollContainer: React.FC<EliteScrollContainerProps> = ({
       </ScrollView>
     </EliteContainer>
   );
-};
+});
+
+EliteScrollContainer.displayName = "EliteScrollContainer";
 
 export default EliteScrollContainer;

@@ -1,7 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { Alert } from "react-native";
+import * as Haptics from "expo-haptics";
 import { logger } from "../../services/logger";
+import { authService, AuthError } from "../../services/AuthService";
 import { useFormState } from "../utils/useFormState";
-import type { RootStackScreenProps } from "../navigation/types";
+import type { RootStackScreenProps } from "../../navigation/types";
 
 interface RegisterFormValues {
   email: string;
@@ -20,6 +23,7 @@ interface UseRegisterScreenReturn {
   values: RegisterFormValues;
   errors: Partial<Record<keyof RegisterFormValues, string>>;
   isValid: boolean;
+  loading: boolean;
   setValue: (name: keyof RegisterFormValues, value: string) => void;
   handleSubmit: (e?: any) => Promise<void>;
   navigateToLogin: () => void;
@@ -50,6 +54,12 @@ export function useRegisterScreen({
         errors.password = "Password is required";
       } else if (values.password.length < 8) {
         errors.password = "Password must be at least 8 characters";
+      } else if (!/(?=.*[a-z])/.test(values.password)) {
+        errors.password = "Password must contain at least one lowercase letter";
+      } else if (!/(?=.*[A-Z])/.test(values.password)) {
+        errors.password = "Password must contain at least one uppercase letter";
+      } else if (!/(?=.*\d)/.test(values.password)) {
+        errors.password = "Password must contain at least one number";
       }
 
       // Confirm password validation
@@ -80,6 +90,7 @@ export function useRegisterScreen({
   );
 
   // Form state management
+  const [loading, setLoading] = useState(false);
   const {
     values,
     errors,
@@ -100,20 +111,73 @@ export function useRegisterScreen({
 
   // Handle registration submission
   const handleRegister = useCallback(async () => {
-    logger.info("Registration attempt:", { email: values.email });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    setLoading(true);
 
-    // TODO: Implement actual registration
-    // This is a placeholder for the registration logic
-    // In production, you would:
-    // 1. Call AuthService.register(values)
-    // 2. Handle success: navigation.navigate("Login")
-    // 3. Handle error: setError state and display in UI
+    try {
+      logger.info("Registration attempt:", { email: values.email });
 
-    // For demo purposes, navigate to Login
-    navigation.navigate("Login");
+      // Validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(values.password)) {
+        throw new AuthError(
+          "Password must be at least 8 characters and include uppercase, lowercase, number, and special character"
+        );
+      }
+
+      const response = await authService.register({
+        email: values.email,
+        password: values.password,
+        name: `${values.firstName} ${values.lastName}`,
+        confirmPassword: values.confirmPassword,
+      });
+
+      // Success haptic feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+        () => {},
+      );
+
+      logger.info("Registration successful", { userId: response.user.id });
+
+      Alert.alert(
+        "Registration Successful",
+        "Your account has been created successfully. You can now log in.",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Login"),
+            style: "default",
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      // Error haptic feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(
+        () => {},
+      );
+
+      logger.error("Registration failed", { error: error as Error, email: values.email });
+
+      const errorMessage =
+        error instanceof AuthError
+          ? error.message
+          : "Registration failed. Please check your information and try again.";
+
+      Alert.alert("Registration Failed", errorMessage, [
+        { text: "OK", style: "default" }
+      ]);
+    } finally {
+      setLoading(false);
+    }
   }, [values, navigation]);
 
-  const handleSubmit = handleSubmitForm(handleRegister);
+  const handleSubmit = useCallback(
+    async (e?: any) => {
+      await handleSubmitForm(handleRegister)(e);
+    },
+    [handleSubmitForm, handleRegister]
+  );
 
   const navigateToLogin = useCallback(() => {
     navigation.navigate("Login");
@@ -123,6 +187,7 @@ export function useRegisterScreen({
     values,
     errors,
     isValid,
+    loading,
     setValue,
     handleSubmit,
     navigateToLogin,

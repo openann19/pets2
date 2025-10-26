@@ -27,15 +27,25 @@ import {
   EliteButton,
   EliteLoading,
   EliteEmptyState,
-} from "../../components/EliteComponents";
+} from "../../components";
 import { adoptionAPI } from "../../services/api";
 import {
   GlobalStyles,
   Colors,
   Spacing,
   Shadows,
-} from "../../styles/GlobalStyles";
+} from "../../animation";
 import type { RootStackScreenProps } from "../../navigation/types";
+import { Theme } from '../theme/unified-theme';
+
+// Helper to convert rem spacing to pixels
+const sp = (key: number): number => {
+  const value = Spacing[key as keyof typeof Spacing];
+  if (typeof value === 'string') {
+    return Number.parseFloat(value.replace('rem', '')) * 16;
+  }
+  return value as number;
+};
 
 type AdoptionManagerScreenProps = RootStackScreenProps<"AdoptionManager">;
 
@@ -72,6 +82,75 @@ const SPRING_CONFIG = {
   mass: 1,
 };
 
+const VALID_LISTING_STATUSES = new Set<PetListing["status"]>([
+  "active",
+  "pending",
+  "adopted",
+  "paused",
+]);
+
+const normalizeListing = (listing: unknown): PetListing => {
+  const item = listing as Record<string, unknown>;
+  const id = (item.id ?? item._id ?? "") as string;
+
+  return {
+    id,
+    name: (item.name as string) ?? "Unknown Pet",
+    species: (item.species as string) ?? "Unknown",
+    breed: (item.breed as string) ?? "Unknown",
+    age: typeof item.age === "number" ? item.age : 0,
+    status: VALID_LISTING_STATUSES.has(item.status as PetListing["status"])
+      ? (item.status as PetListing["status"])
+      : "pending",
+    photos: Array.isArray(item.photos)
+      ? (item.photos as string[])
+      : [],
+    applications: typeof item.applications === "number" ? item.applications : 0,
+    views: typeof item.views === "number" ? item.views : 0,
+    featured: typeof item.featured === "boolean" ? item.featured : false,
+    listedAt:
+      typeof item.listedAt === "string"
+        ? (item.listedAt as string)
+        : new Date().toISOString(),
+  };
+};
+
+const normalizeApplication = (application: unknown): AdoptionApplication => {
+  const item = application as Record<string, unknown>;
+  const status = item.status as AdoptionApplication["status"];
+
+  return {
+    id: (item.id ?? item._id ?? "") as string,
+    petId: (item.petId ?? "") as string,
+    petName:
+      (item.petName as string) ?? ((item.pet as { name?: string })?.name ?? "Unknown"),
+    applicantName:
+      (item.applicantName as string) ??
+      ((item.applicant as { name?: string })?.name ?? "Pending Applicant"),
+    applicantEmail:
+      (item.applicantEmail as string) ??
+      ((item.applicant as { email?: string })?.email ?? "unknown@example.com"),
+    status:
+      status && ["pending", "approved", "rejected", "withdrawn"].includes(status)
+        ? status
+        : "pending",
+    submittedAt:
+      typeof item.submittedAt === "string"
+        ? (item.submittedAt as string)
+        : new Date().toISOString(),
+    experience:
+      (item.experience as string) ??
+      ((item.applicationData as { experience?: string })?.experience ?? ""),
+    livingSpace:
+      (item.livingSpace as string) ??
+      ((item.applicationData as { livingSituation?: string })?.livingSituation ?? ""),
+    references:
+      typeof item.references === "number"
+        ? item.references
+        : ((item.applicationData as { references?: number })?.references ?? 0),
+  };
+};
+
 const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const [activeTab, setActiveTab] = useState<"listings" | "applications">(
     "listings",
@@ -97,10 +176,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
     try {
       if (activeTab === "listings") {
         const listingsData = await adoptionAPI.getListings();
-        setPetListings(listingsData as PetListing[]);
+        setPetListings(listingsData.map(normalizeListing));
       } else {
         const applicationsData = await adoptionAPI.getApplications();
-        setApplications(applicationsData as AdoptionApplication[]);
+        setApplications(applicationsData.map(normalizeApplication));
       }
     } catch (err: unknown) {
       const message =
@@ -185,19 +264,19 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "#10b981";
+        return "Theme.colors.status.success";
       case "pending":
-        return "#f59e0b";
+        return "Theme.colors.status.warning";
       case "adopted":
         return "#8b5cf6";
       case "paused":
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
       case "approved":
-        return "#10b981";
+        return "Theme.colors.status.success";
       case "rejected":
-        return "#ef4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -457,7 +536,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                   handleApplicationAction(app.id, "approve");
                 }}
                 style={{ flex: 1 }}
-                gradient={[Colors.success, "#10b981"]}
+                gradient={[Colors.success, "Theme.colors.status.success"]}
               />
             </View>
           )}
@@ -469,10 +548,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   if (isLoading) {
     return (
       <EliteContainer>
-        <EliteLoading
-          title="Loading your pets..."
-          subtitle="Getting your adoption listings and applications ready"
-        />
+        <EliteLoading size="large" />
       </EliteContainer>
     );
   }
@@ -486,7 +562,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <EliteButton
             title="Add Pet"
             icon="add"
-            size="small"
+            size="sm"
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               navigation.navigate("CreateListing");
@@ -630,13 +706,13 @@ const styles = {
   // === BASIC STYLES ===
   tabContent: {
     flex: 1,
-    padding: Spacing.lg,
+    padding: sp(6),
   },
   listingCard: {
     backgroundColor: Colors.white,
     borderRadius: 12,
-    padding: Spacing.lg,
-    marginBottom: Spacing.md,
+    padding: sp(6),
+    marginBottom: sp(4),
     borderWidth: 1,
     borderColor: Colors.gray200,
     ...Shadows.sm,
@@ -645,7 +721,7 @@ const styles = {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
     alignItems: "flex-start" as const,
-    marginBottom: Spacing.md,
+    marginBottom: sp(4),
   },
   petInfo: {
     flex: 1,
@@ -661,8 +737,8 @@ const styles = {
     color: Colors.gray600,
   },
   statusBadge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: sp(4),
+    paddingVertical: sp(3),
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray300,
@@ -674,11 +750,11 @@ const styles = {
   listingStats: {
     flexDirection: "row" as const,
     justifyContent: "space-around" as const,
-    paddingVertical: Spacing.md,
+    paddingVertical: sp(4),
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: Colors.gray200,
-    marginVertical: Spacing.md,
+    marginVertical: sp(4),
   },
   stat: {
     alignItems: "center" as const,
@@ -696,12 +772,12 @@ const styles = {
   },
   listingActions: {
     flexDirection: "row" as const,
-    gap: Spacing.md,
+    gap: sp(4),
   },
   actionButton: {
     flex: 1,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+    paddingVertical: sp(4),
+    paddingHorizontal: sp(6),
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray300,
@@ -724,22 +800,22 @@ const styles = {
   // === ELITE TAB SYSTEM ===
   tabContainer: {
     flexDirection: "row" as const,
-    paddingHorizontal: Spacing["2xl"],
-    paddingVertical: Spacing.lg,
-    gap: Spacing.md,
+    paddingHorizontal: sp(12),
+    paddingVertical: sp(6),
+    gap: sp(4),
   },
   eliteTab: {
     flex: 1,
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "center" as const,
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl,
+    paddingVertical: sp(6),
+    paddingHorizontal: sp(8),
     borderRadius: 16,
     backgroundColor: Colors.glassWhite,
     borderWidth: 1,
     borderColor: Colors.glassWhiteDark,
-    gap: Spacing.sm,
+    gap: sp(2),
   },
   eliteActiveTab: {
     backgroundColor: Colors.primary,
@@ -759,11 +835,11 @@ const styles = {
   eliteListingHeader: {
     flexDirection: "row" as const,
     alignItems: "flex-start" as const,
-    marginBottom: Spacing.lg,
+    marginBottom: sp(6),
   },
   eliteStatusBadge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: sp(4),
+    paddingVertical: sp(3),
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.glassWhiteDark,
@@ -775,8 +851,8 @@ const styles = {
   eliteStatsContainer: {
     flexDirection: "row" as const,
     justifyContent: "space-around" as const,
-    paddingVertical: Spacing.lg,
-    marginVertical: Spacing.lg,
+    paddingVertical: sp(6),
+    marginVertical: sp(6),
     backgroundColor: Colors.glassWhiteLight,
     borderRadius: 12,
     borderWidth: 1,
@@ -789,7 +865,7 @@ const styles = {
     fontSize: 20,
     fontWeight: "700" as const,
     color: Colors.primary,
-    marginBottom: Spacing.xs,
+    marginBottom: sp(1),
   },
   eliteStatLabel: {
     fontSize: 12,
@@ -798,26 +874,26 @@ const styles = {
   },
   eliteActionsContainer: {
     flexDirection: "row" as const,
-    marginTop: Spacing.lg,
-    gap: Spacing.md,
+    marginTop: sp(6),
+    gap: sp(4),
   },
 
   // === ELITE APPLICATION STYLES ===
   eliteApplicationHeader: {
     flexDirection: "row" as const,
     alignItems: "flex-start" as const,
-    marginBottom: Spacing.lg,
+    marginBottom: sp(6),
   },
   eliteApplicationDetails: {
-    gap: Spacing.md,
-    marginBottom: Spacing.lg,
+    gap: sp(4),
+    marginBottom: sp(6),
   },
   eliteDetailRow: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    gap: Spacing.md,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
+    gap: sp(4),
+    paddingVertical: sp(3),
+    paddingHorizontal: sp(4),
     backgroundColor: Colors.glassWhiteLight,
     borderRadius: 8,
     borderWidth: 1,
@@ -832,11 +908,11 @@ const styles = {
 
   // === MODAL STYLES ===
   statusOptions: {
-    gap: Spacing.md,
-    marginVertical: Spacing.lg,
+    gap: sp(4),
+    marginVertical: sp(6),
   },
   statusOptionButton: {
-    marginBottom: Spacing.sm,
+    marginBottom: sp(3),
   },
 };
 

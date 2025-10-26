@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAuthStore } from "../../stores/useAuthStore";
-import { matchesAPI } from "../../services/api";
-import { logger } from "../../services/logger";
-import type { Pet } from "../../types/api";
+import { useAuthStore } from "@pawfectmatch/core";
+import { matchesAPI } from "../../../services/api";
+import { logger } from "@pawfectmatch/core";
+import type { Pet } from "@pawfectmatch/core";
 
 export interface UseProfileDataOptions {
   enabled?: boolean;
@@ -34,10 +34,10 @@ export function useProfileData({
     setError(null);
 
     try {
-      const userPets = await matchesAPI.getMyPets();
-      setPets(userPets.data || []);
+      const userPets = await matchesAPI.getUserPets();
+      setPets(userPets || []);
       logger.info("Profile data refreshed", {
-        petCount: userPets.data?.length,
+        petCount: userPets?.length,
       });
     } catch (err) {
       const errorMessage =

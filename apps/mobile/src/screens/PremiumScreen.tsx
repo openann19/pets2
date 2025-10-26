@@ -12,9 +12,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import { usePremiumScreen } from "../hooks/screens/usePremiumScreen";
 import type { NavigationProp } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 interface PremiumScreenProps {
   navigation: NavigationProp;
@@ -85,7 +86,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
                 {
                   color:
                     billingPeriod === "monthly"
-                      ? "#fff"
+                      ? "Theme.colors.neutral[0]"
                       : colors.gray400,
                 },
               ]}
@@ -108,7 +109,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
                 styles.billingButtonText,
                 {
                   color:
-                    billingPeriod === "yearly" ? "#fff" : colors.gray400,
+                    billingPeriod === "yearly" ? "Theme.colors.neutral[0]" : colors.gray400,
                 },
               ]}
             >
@@ -197,11 +198,11 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
           ) : (
             <>
               <Text style={styles.subscribeButtonText}>Subscribe Now</Text>
-              <Ionicons name="arrow-forward" size={20} color="#fff" />
+              <Ionicons name="arrow-forward" size={20} color="Theme.colors.neutral[0]" />
             </>
           )}
         </TouchableOpacity>
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
   },
   billingToggle: {
     flexDirection: "row",
-    backgroundColor: "#1f2937",
+    backgroundColor: "Theme.colors.neutral[800]",
     borderRadius: 12,
     padding: 4,
     marginBottom: 30,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   billingButtonActive: {
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   popularText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   subscribeButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 18,
     fontWeight: "bold",
   },

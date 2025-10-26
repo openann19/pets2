@@ -23,11 +23,16 @@ export { useAdminVerificationsScreen } from "./useAdminVerificationsScreen";
 // Auth Hooks
 export { useLoginScreen } from "./useLoginScreen";
 export { useRegisterScreen } from "./useRegisterScreen";
+export { useForgotPasswordScreen } from "./useForgotPasswordScreen";
+export { useResetPasswordScreen } from "./useResetPasswordScreen";
 
 // Blocking & Safety
 export { useBlockedUsersScreen } from "./useBlockedUsersScreen";
 export { useSafetyCenterScreen } from "./useSafetyCenterScreen";
 export { useModerationToolsScreen } from "./useModerationToolsScreen";
+
+// Filters
+export { useAdvancedFiltersScreen } from "./useAdvancedFiltersScreen";
 
 // Home & Navigation
 export { useHomeScreen } from "./useHomeScreen";
@@ -74,6 +79,7 @@ export { usePrivacySettingsScreen } from "./usePrivacySettingsScreen";
 
 // Settings
 export { useSettingsScreen } from "./useSettingsScreen";
+export { useDeactivateAccountScreen } from "./useDeactivateAccountScreen";
 
 // Social
 export { useStoriesScreen } from "./useStoriesScreen";

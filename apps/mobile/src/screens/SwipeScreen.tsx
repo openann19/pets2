@@ -19,6 +19,8 @@ import {
 } from "react-native";
 import type { RootStackScreenProps } from "../navigation/types";
 import { useSwipeData } from "../hooks/useSwipeData";
+import { useTabDoublePress } from "../hooks/navigation/useTabDoublePress";
+import { Theme } from '../theme/unified-theme';
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -33,7 +35,13 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
     currentIndex,
     handleSwipe,
     handleButtonSwipe,
+    refreshPets,
   } = useSwipeData();
+
+  // Handle double-tap to refresh pets
+  useTabDoublePress(() => {
+    refreshPets();
+  });
 
   // Animation values for gestures
   const position = useRef(new Animated.ValueXY()).current;
@@ -241,7 +249,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

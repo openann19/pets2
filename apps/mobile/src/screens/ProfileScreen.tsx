@@ -1,24 +1,35 @@
 import { Ionicons } from "@expo/vector-icons";
+import type { ComponentProps } from "react";
 import { logger } from "@pawfectmatch/core";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import React, { useRef } from "react";
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import SmartImage from "../components/common/SmartImage";
+import MicroPressable from "../components/micro/MicroPressable";
+import HapticSwitch from "../components/micro/HapticSwitch";
 
 import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
 import {
   AdvancedHeader,
   HeaderConfigs,
 } from "../components/Advanced/AdvancedHeader";
+import { DoubleTapLikePlus } from "../components/Gestures/DoubleTapLikePlus";
+import { useDoubleTapMetrics } from "../hooks/useInteractionMetrics";
 import { matchesAPI } from "../services/api";
 import { useProfileScreen } from "../hooks/screens/useProfileScreen";
+import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
 
 import type { RootStackScreenProps } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 type ProfileScreenProps = RootStackScreenProps<"Profile">;
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+  const scrollRef = useRef<ScrollView>(null);
+  const { onScroll, getOffset } = useScrollOffsetTracker();
+  
   const {
     user,
     notifications,
@@ -27,6 +38,25 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     handleSettingToggle,
     handlePrivacyToggle,
   } = useProfileScreen();
+  const { startInteraction, endInteraction } = useDoubleTapMetrics();
+
+  useTabReselectRefresh({
+    listRef: scrollRef,
+    onRefresh: () => {
+      // Profile doesn't have a refresh callback, but we can still scroll to top
+    },
+    getOffset,
+    topThreshold: 100,
+    cooldownMs: 700,
+    nearTopAction: "none", // Just scroll to top, no refresh
+  });
+
+  const handleProfileLike = () => {
+    startInteraction('profileLike', { userId: user?._id });
+    // Add some fun feedback for profile self-appreciation
+    Alert.alert('Self Love! 💖', 'You liked your own profile! Confidence is key! 🌟');
+    endInteraction('profileLike', true);
+  };
 
   const handleNotificationToggle = (key: string) => () => {
     handleSettingToggle(key);
@@ -43,23 +73,28 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     });
   };
 
-  const menuItems = [
+  const menuItems: Array<{
+    title: string;
+    icon: ComponentProps<typeof Ionicons>['name'];
+    color: string;
+    onPress: () => void;
+  }> = [
     {
       title: "My Pets",
       icon: "paw",
-      color: "#ec4899",
+      color: Theme.colors.primary[500],
       onPress: () => navigation.navigate("MyPets"),
     },
     {
       title: "Settings",
       icon: "settings",
-      color: "#3b82f6",
+      color: Theme.colors.status.info,
       onPress: () => navigation.navigate("Settings"),
     },
     {
       title: "Add New Pet",
       icon: "add-circle",
-      color: "#10b981",
+      color: Theme.colors.status.success,
       onPress: () => navigation.navigate("CreatePet"),
     },
     {
@@ -72,8 +107,8 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     },
     {
       title: "About",
-      icon: "information",
-      color: "#f59e0b",
+      icon: "information-circle",
+      color: Theme.colors.status.warning,
       onPress: () => {
         Alert.alert("About", "PawfectMatch v1.0.0");
       },
@@ -112,8 +147,11 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       />
 
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
       >
         {/* Profile Header Card */}
         <AdvancedCard
@@ -128,22 +166,31 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           style={styles.header}
         >
           <View style={styles.profileSection}>
-            <Image
-              source={{
-                uri:
-                  user?.avatar ??
-                  "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150",
-              }}
-              style={styles.profileImage}
-            />
+            <DoubleTapLikePlus
+              onDoubleTap={handleProfileLike}
+              heartColor="#ff69b4"
+              particles={5}
+              haptics={{ enabled: true, style: "light" }}
+            >
+              <SmartImage
+                source={{
+                  uri:
+                    user?.avatar ??
+                    "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150",
+                }}
+                style={styles.profileImage}
+                useShimmer={true}
+                rounded={40}
+              />
+            </DoubleTapLikePlus>
             <View style={styles.profileInfo}>
-              <Text style={styles.userName}>
+              <Text style={[styles.userName, { color: Theme.colors.neutral[800] }]}>
                 {user?.firstName ?? "User"} {user?.lastName ?? ""}
               </Text>
-              <Text style={styles.userEmail}>
+              <Text style={[styles.userEmail, { color: Theme.colors.neutral[500] }]}>
                 {user?.email ?? "user@example.com"}
               </Text>
-              <Text style={styles.memberSince}>
+              <Text style={[styles.memberSince, { color: Theme.colors.neutral[400] }]}>
                 Member since {new Date().getFullYear()}
               </Text>
             </View>
@@ -230,11 +277,9 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                     Receive {key} notifications
                   </Text>
                 </View>
-                <Switch
+                <HapticSwitch
                   value={value}
                   onValueChange={handleNotificationToggle(key)}
-                  trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
-                  thumbColor={value ? "#ec4899" : "#9ca3af"}
                 />
               </View>
             ))}
@@ -255,11 +300,9 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                     {value ? "Visible to others" : "Hidden from others"}
                   </Text>
                 </View>
-                <Switch
+                <HapticSwitch
                   value={value}
                   onValueChange={handlePrivacySettingToggle(key)}
-                  trackColor={{ false: "#e5e7eb", true: "#fce7f3" }}
-                  thumbColor={value ? "#ec4899" : "#9ca3af"}
                 />
               </View>
             ))}
@@ -267,15 +310,15 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+        <MicroPressable style={styles.logoutButton} onPress={onLogout}>
           <LinearGradient
-            colors={["#ef4444", "#dc2626"]}
+            colors={[Theme.colors.status.error, "#dc2626"]}
             style={styles.logoutGradient}
           >
-            <Ionicons name="log-out" size={20} color="#fff" />
+            <Ionicons name="log-out" size={20} color={Theme.colors.neutral[0]} />
             <Text style={styles.logoutText}>Logout</Text>
           </LinearGradient>
-        </TouchableOpacity>
+        </MicroPressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -313,17 +356,17 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: Theme.colors.neutral[800],
     marginBottom: 4,
   },
   userEmail: {
     fontSize: 16,
-    color: "#6b7280",
+    color: Theme.colors.neutral[500],
     marginBottom: 4,
   },
   memberSince: {
     fontSize: 14,
-    color: "#9ca3af",
+    color: Theme.colors.neutral[400],
   },
   statsSection: {
     flexDirection: "row",
@@ -337,12 +380,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#ec4899",
+    color: Theme.colors.primary[500],
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: "#6b7280",
+    color: Theme.colors.neutral[500],
   },
   menuSection: {
     paddingHorizontal: 20,
@@ -351,11 +394,11 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -373,7 +416,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: "600",
-    color: "#1f2937",
+    color: Theme.colors.neutral[800],
   },
   section: {
     paddingHorizontal: 20,
@@ -382,7 +425,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: Theme.colors.neutral[800],
     marginBottom: 12,
     paddingLeft: 4,
   },
@@ -397,7 +440,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: Theme.colors.neutral[100],
   },
   settingInfo: {
     flex: 1,
@@ -405,19 +448,19 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1f2937",
+    color: Theme.colors.neutral[800],
     marginBottom: 4,
   },
   settingDescription: {
     fontSize: 14,
-    color: "#6b7280",
+    color: Theme.colors.neutral[500],
   },
   logoutButton: {
     marginHorizontal: 20,
     marginBottom: 40,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -431,7 +474,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   logoutText: {
-    color: "#fff",
+    color: Theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,

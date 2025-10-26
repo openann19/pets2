@@ -30,9 +30,9 @@ import {
   Spacing,
   BorderRadius,
   AnimationConfigs,
-  PREMIUM_SHADOWS,
-} from "../../styles/GlobalStyles";
-import { useTheme } from "../../contexts/ThemeContext";
+} from "../../animation";
+import { PREMIUM_SHADOWS } from "../elite/constants";
+import { useTheme } from "../../theme/Provider";
 
 // TypeScript strict interface - no any, no implicit any
 interface PhoenixCardProps extends TouchableOpacityProps {
@@ -101,7 +101,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
 
   const handlePress = useCallback(() => {
     if (onPress) {
-      runOnJS(onPress)();
+      onPress({} as any);
     }
   }, [onPress]);
 
@@ -122,8 +122,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
     const variants = {
       elevated: {
         backgroundColor: isDark ? Colors.surfaceElevated : Colors.surface,
-        shadowColor: Colors.shadow,
-        ...PREMIUM_SHADOWS.medium,
+        ...PREMIUM_SHADOWS.primaryGlow,
       },
       glass: {
         backgroundColor: "transparent",
@@ -149,7 +148,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   // WCAG AA+ accessibility compliance
   const accessibilityProps = {
     accessible: true,
-    accessibilityRole: interactive ? "button" : "none",
+    accessibilityRole: (interactive ? "button" : "none") as "button" | "none",
     accessibilityLabel: accessibilityLabel || title || "Card",
     accessibilityHint:
       accessibilityHint || (interactive ? "Double tap to interact" : undefined),

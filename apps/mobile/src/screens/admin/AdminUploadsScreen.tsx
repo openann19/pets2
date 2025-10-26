@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
+import { Theme } from '../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 2;
@@ -241,13 +242,13 @@ function AdminUploadsScreen({
   const getStatusColor = (status: Upload["status"]) => {
     switch (status) {
       case "approved":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "rejected":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       case "pending":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -587,7 +588,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   backButton: {
     marginRight: 16,
@@ -599,7 +600,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -647,7 +648,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -726,7 +727,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   modalTitle: {
     fontSize: 18,
@@ -763,10 +764,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   approveButton: {
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
   },
   rejectButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   actionButtonText: {
     fontSize: 16,

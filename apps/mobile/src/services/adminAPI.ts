@@ -640,6 +640,67 @@ class AdminAPIService {
       },
     );
   }
+
+  // Billing - Subscription Management
+  async cancelSubscription(params: {
+    userId: string;
+    reason?: string;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request(`/admin/users/${params.userId}/cancel-subscription`, {
+      method: "PUT",
+      body: JSON.stringify({ reason: params.reason }),
+    });
+  }
+
+  async reactivateSubscription(params: {
+    userId: string;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request(`/admin/users/${params.userId}/reactivate-subscription`, {
+      method: "PUT",
+    });
+  }
+
+  // Security - Alert Management
+  async resolveSecurityAlert(params: {
+    alertId: string;
+    action: "resolved" | "dismissed";
+    notes?: string;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request(`/admin/security/alerts/${params.alertId}/resolve`, {
+      method: "PUT",
+      body: JSON.stringify({ action: params.action, notes: params.notes }),
+    });
+  }
+
+  async blockIPAddress(params: {
+    ipAddress: string;
+    reason: string;
+    duration?: number;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    return await this.request("/admin/security/block-ip", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
+  }
+
+  // Upload Management - Moderate
+  async moderateUpload(params: {
+    uploadId: string;
+    action: "approve" | "reject" | "remove";
+    reason?: string;
+    notes?: string;
+  }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
+    switch (params.action) {
+      case "approve":
+        return await this.approveUpload(params.uploadId, params.notes);
+      case "reject":
+        return await this.rejectUpload(params.uploadId, params.reason ?? "Violates guidelines", params.notes);
+      case "remove":
+        return await this.deleteUpload(params.uploadId, params.reason ?? "Removed by admin");
+      default:
+        throw new Error(`Unknown action: ${params.action}`);
+    }
+  }
 }
 
 export const _adminAPI = new AdminAPIService();

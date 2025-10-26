@@ -17,7 +17,7 @@ import type {
   Source,
 } from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 
 interface OptimizedImageProps {
   uri: string;

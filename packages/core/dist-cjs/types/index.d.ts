@@ -267,6 +267,11 @@ export interface Message {
     isDeleted: boolean;
     duration?: number;
     thumbnailUrl?: string;
+    replyTo?: {
+        _id: string;
+        author?: string;
+        text?: string;
+    };
 }
 export interface Attachment {
     type: string;

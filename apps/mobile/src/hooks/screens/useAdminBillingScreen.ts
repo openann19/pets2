@@ -81,14 +81,14 @@ export interface AdminBillingScreenState {
   // Actions
   onRefresh: () => Promise<void>;
   onTransactionStatusFilterChange: (
-    status: typeof transactionStatusFilter,
+    status: "all" | BillingTransaction["status"],
   ) => void;
-  onTransactionTypeFilterChange: (type: typeof transactionTypeFilter) => void;
+  onTransactionTypeFilterChange: (type: "all" | BillingTransaction["type"]) => void;
   onSubscriptionStatusFilterChange: (
-    status: typeof subscriptionStatusFilter,
+    status: "all" | SubscriptionData["status"],
   ) => void;
-  onSubscriptionPlanFilterChange: (plan: typeof subscriptionPlanFilter) => void;
-  onDateRangeChange: (range: typeof dateRange) => void;
+  onSubscriptionPlanFilterChange: (plan: "all" | SubscriptionData["plan"]) => void;
+  onDateRangeChange: (range: "7d" | "30d" | "90d" | "1y") => void;
   onSearchChange: (query: string) => void;
   onTransactionSelect: (transaction: BillingTransaction) => void;
   onSubscriptionSelect: (subscription: SubscriptionData) => void;

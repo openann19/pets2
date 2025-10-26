@@ -2,7 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 // Mock Audio for missing expo-av dependency
 type RecordingInstance = {
@@ -200,7 +201,7 @@ export function MobileVoiceRecorder({
               <TouchableOpacity
                 style={StyleSheet.flatten([
                   styles.recordButton,
-                  { backgroundColor: "#ef4444" },
+                  { backgroundColor: "Theme.colors.status.error" },
                 ])}
                 onPress={stopRecording}
               >

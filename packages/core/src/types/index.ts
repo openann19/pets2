@@ -284,6 +284,7 @@ export interface Message {
   isDeleted: boolean;
   duration?: number; // For voice/video messages
   thumbnailUrl?: string; // For video messages
+  replyTo?: { _id: string; author?: string; text?: string }; // Reply metadata
 }
 
 export interface Attachment {

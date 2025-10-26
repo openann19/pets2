@@ -20,10 +20,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import type { AIScreenProps } from "../../navigation/types";
 import { logger } from "../../services/logger";
 import { api } from "../../services/api";
+import { Theme } from '../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -264,23 +265,23 @@ export default function AIPhotoAnalyzerScreen({
   const getHealthColor = (overall: string): string => {
     switch (overall) {
       case "excellent":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "good":
-        return "#3B82F6";
+        return "Theme.colors.status.info";
       case "fair":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "poor":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
   const getQualityColor = (score: number): string => {
-    if (score >= 90) return "#10B981";
-    if (score >= 80) return "#3B82F6";
-    if (score >= 70) return "#F59E0B";
-    return "#EF4444";
+    if (score >= 90) return "Theme.colors.status.success";
+    if (score >= 80) return "Theme.colors.status.info";
+    if (score >= 70) return "Theme.colors.status.warning";
+    return "Theme.colors.status.error";
   };
 
   return (
@@ -324,7 +325,7 @@ export default function AIPhotoAnalyzerScreen({
                   );
                 }}
               >
-                <Ionicons name="time" size={20} color="#FFFFFF" />
+                <Ionicons name="time" size={20} color="Theme.colors.neutral[0]" />
               </TouchableOpacity>
             )}
           </View>
@@ -354,7 +355,7 @@ export default function AIPhotoAnalyzerScreen({
                 ])}
                 onPress={pickImage}
               >
-                <Ionicons name="camera" size={20} color="#FFFFFF" />
+                <Ionicons name="camera" size={20} color="Theme.colors.neutral[0]" />
                 <Text style={styles.changeImageText}>Change Photo</Text>
               </TouchableOpacity>
             </View>
@@ -382,7 +383,7 @@ export default function AIPhotoAnalyzerScreen({
                   ])}
                   onPress={pickImage}
                 >
-                  <Ionicons name="image" size={20} color="#FFFFFF" />
+                  <Ionicons name="image" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.imageButtonText}>Gallery</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -392,7 +393,7 @@ export default function AIPhotoAnalyzerScreen({
                   ])}
                   onPress={takePhoto}
                 >
-                  <Ionicons name="camera" size={20} color="#FFFFFF" />
+                  <Ionicons name="camera" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.imageButtonText}>Camera</Text>
                 </TouchableOpacity>
               </View>
@@ -414,12 +415,12 @@ export default function AIPhotoAnalyzerScreen({
             >
               {isAnalyzing ? (
                 <>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
                   <Text style={styles.analyzeButtonText}>Analyzing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="flash" size={20} color="#FFFFFF" />
+                  <Ionicons name="flash" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.analyzeButtonText}>Analyze Photo</Text>
                 </>
               )}
@@ -447,7 +448,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="paw" size={24} color="#8B5CF6" />
+                <Ionicons name="paw" size={24} color="Theme.colors.secondary[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -483,7 +484,7 @@ export default function AIPhotoAnalyzerScreen({
                       {
                         width:
                           `${Math.round(analysisResult.breed.confidence * 100)}%` as const,
-                        backgroundColor: "#8B5CF6",
+                        backgroundColor: "Theme.colors.secondary[500]",
                       },
                     ])}
                   />
@@ -645,7 +646,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color="#3B82F6" />
+                <Ionicons name="list" size={24} color="Theme.colors.status.info" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -708,7 +709,7 @@ export default function AIPhotoAnalyzerScreen({
                           key={index}
                           style={StyleSheet.flatten([
                             styles.tag,
-                            { backgroundColor: "#3B82F6" },
+                            { backgroundColor: "Theme.colors.status.info" },
                           ])}
                         >
                           <Text style={styles.tagText}>{trait}</Text>
@@ -733,7 +734,7 @@ export default function AIPhotoAnalyzerScreen({
                           key={index}
                           style={StyleSheet.flatten([
                             styles.tag,
-                            { backgroundColor: "#10B981" },
+                            { backgroundColor: "Theme.colors.status.success" },
                           ])}
                         >
                           <Text style={styles.tagText}>{feature}</Text>
@@ -753,7 +754,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb" size={24} color="#F59E0B" />
+                <Ionicons name="bulb" size={24} color="Theme.colors.status.warning" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -769,7 +770,7 @@ export default function AIPhotoAnalyzerScreen({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color="#F59E0B"
+                      color="Theme.colors.status.warning"
                     />
                     <Text
                       style={StyleSheet.flatten([
@@ -792,7 +793,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="pricetag" size={24} color="#8B5CF6" />
+                <Ionicons name="pricetag" size={24} color="Theme.colors.secondary[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -808,7 +809,7 @@ export default function AIPhotoAnalyzerScreen({
                     key={index}
                     style={StyleSheet.flatten([
                       styles.tag,
-                      { backgroundColor: "#8B5CF6" },
+                      { backgroundColor: "Theme.colors.secondary[500]" },
                     ])}
                   >
                     <Text style={styles.tagText}>#{tag}</Text>
@@ -883,7 +884,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   changeImageText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -912,7 +913,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   imageButtonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -931,7 +932,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -942,7 +943,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -970,7 +971,7 @@ const styles = StyleSheet.create({
   },
   confidenceBar: {
     height: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 4,
     overflow: "hidden",
   },
@@ -1034,7 +1035,7 @@ const styles = StyleSheet.create({
   qualityFactorBar: {
     flex: 1,
     height: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 4,
     overflow: "hidden",
   },
@@ -1072,7 +1073,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tagText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },

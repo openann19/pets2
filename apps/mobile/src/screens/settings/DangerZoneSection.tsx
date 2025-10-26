@@ -6,6 +6,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { type ComponentProps } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../theme/unified-theme';
 
 interface SettingItem {
   id: string;
@@ -48,7 +49,7 @@ export function DangerZoneSection({
           <Ionicons
             name={item.icon as ComponentProps<typeof Ionicons>["name"]}
             size={20}
-            color="#EF4444"
+            color="Theme.colors.status.error"
           />
         </View>
         <View style={styles.settingText}>
@@ -74,7 +75,7 @@ export function DangerZoneSection({
       </View>
       <View style={styles.settingRight}>
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          <Ionicons name="chevron-forward" size={20} color="Theme.colors.neutral[400]" />
         )}
       </View>
     </TouchableOpacity>
@@ -98,15 +99,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 12,
   },
   sectionContent: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   settingItemDestructive: {
     borderBottomColor: "#FEF2F2",
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -146,15 +147,15 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 2,
   },
   settingTitleDestructive: {
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
   },
   settingSubtitle: {
     fontSize: 13,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
   settingSubtitleDestructive: {
     color: "#FCA5A5",

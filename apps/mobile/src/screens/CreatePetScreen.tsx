@@ -19,6 +19,7 @@ import { PetPhotosSection } from "../components/create-pet/PetPhotosSection";
 import { usePetForm } from "../hooks/usePetForm";
 import { usePhotoManager } from "../hooks/usePhotoManager";
 import type { RootStackScreenProps } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 
@@ -44,7 +45,7 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
             onPress={() => navigation.goBack()}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color="#6B7280" />
+            <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[500]" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Create Pet Profile</Text>
           <View style={styles.placeholder} />
@@ -91,7 +92,7 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   keyboardAvoid: {
     flex: 1,
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   backButton: {
     padding: 8,
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
   },
   placeholder: {
     width: 40,

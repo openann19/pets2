@@ -2,55 +2,88 @@
  * useBlockedUsersScreen Hook
  * Manages Blocked Users screen state and interactions
  */
-import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "../../contexts/ThemeContext";
-import { useBlockedUsers } from "../domains/safety/useBlockedUsers";
+import { useCallback, useState } from "react";
+import { Alert } from "react-native";
+import { logger } from "@pawfectmatch/core";
+import { matchesAPI } from "../../services/api";
+
+interface BlockedUser {
+  id: string;
+  name: string;
+  email: string;
+  blockedAt: string;
+  reason?: string;
+  avatar?: string;
+}
 
 interface UseBlockedUsersScreenReturn {
-  // From domain hook
-  blockedUsers: any[];
-  isLoading: boolean;
-  isRefreshing: boolean;
-  totalBlocked: number;
-  loadBlockedUsers: (refresh?: boolean) => Promise<void>;
-  unblockUser: (userId: string, userName: string) => Promise<void>;
-  refreshData: () => Promise<void>;
-
-  // Screen-specific
-  colors: any;
-  handleGoBack: () => void;
+  blockedUsers: BlockedUser[];
+  loading: boolean;
+  refreshing: boolean;
+  loadBlockedUsers: () => Promise<void>;
+  refreshBlockedUsers: () => Promise<void>;
+  unblockUser: (userId: string) => Promise<void>;
 }
 
 export const useBlockedUsersScreen = (): UseBlockedUsersScreenReturn => {
-  const navigation = useNavigation();
-  const { colors } = useTheme();
+  const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    blockedUsers,
-    isLoading,
-    isRefreshing,
-    totalBlocked,
-    loadBlockedUsers,
-    unblockUser,
-    refreshData,
-  } = useBlockedUsers();
+  const loadBlockedUsers = useCallback(async (refresh = false) => {
+    try {
+      if (refresh) setRefreshing(true);
+      else setLoading(true);
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+      // Fetch real blocked users from API
+      const users = await matchesAPI.getBlockedUsers();
+
+      // Transform API response to BlockedUser format
+      const transformedUsers: BlockedUser[] = users.map((user) => ({
+        id: user._id || user.id || "",
+        name: user.firstName && user.lastName 
+          ? `${user.firstName} ${user.lastName}`.trim() 
+          : user.firstName || "Unknown",
+        email: user.email || "",
+        blockedAt: user.createdAt || new Date().toISOString(),
+        reason: "User blocked",
+      }));
+
+      setBlockedUsers(transformedUsers);
+    } catch (error) {
+      logger.error("Failed to load blocked users:", { error });
+      Alert.alert("Error", "Failed to load blocked users. Please try again.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  const refreshBlockedUsers = useCallback(async () => {
+    await loadBlockedUsers(true);
+  }, [loadBlockedUsers]);
+
+  const unblockUser = useCallback(async (userId: string) => {
+    try {
+      await matchesAPI.unblockUser(userId);
+      
+      // Remove user from list
+      setBlockedUsers(prev => prev.filter(user => user.id !== userId));
+      
+      logger.info("User unblocked successfully", { userId });
+      Alert.alert("Success", "User has been unblocked");
+    } catch (error) {
+      logger.error("Failed to unblock user:", { error, userId });
+      Alert.alert("Error", "Failed to unblock user. Please try again.");
+    }
+  }, []);
 
   return {
-    // From domain hook
     blockedUsers,
-    isLoading,
-    isRefreshing,
-    totalBlocked,
+    loading,
+    refreshing,
     loadBlockedUsers,
+    refreshBlockedUsers,
     unblockUser,
-    refreshData,
-
-    // Screen-specific
-    colors,
-    handleGoBack,
   };
 };

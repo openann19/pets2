@@ -60,20 +60,13 @@ export function useChatScroll({
     }
   }, [initialOffset]);
 
+  let writeTimer: ReturnType<typeof setTimeout> | undefined;
   const handleScroll = async (offset: number) => {
     if (!enabled) return;
-
-    try {
-      await AsyncStorage.setItem(
-        `mobile_chat_scroll_${matchId}`,
-        String(offset),
-      );
-    } catch (error) {
-      console.error(
-        `Failed to save scroll position for chat ${matchId}:`,
-        error,
-      );
-    }
+    if (writeTimer) clearTimeout(writeTimer);
+    writeTimer = setTimeout(() => {
+      AsyncStorage.setItem(`mobile_chat_scroll_${matchId}`, String(offset)).catch(() => {});
+    }, 250);
   };
 
   return {

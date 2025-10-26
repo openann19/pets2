@@ -1,131 +1,123 @@
-import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+/**
+ * MatchModal Component
+ * Displays match celebration modal with confetti burst
+ * Extracted from ModernSwipeScreen for better modularity
+ */
 
-import { EliteButton, ScaleIn, FadeInUp } from "../EliteComponents";
-import { HolographicContainer, ParticleEffect } from "../HolographicEffects";
-import { GlowContainer } from "../GlowShadowSystem";
-import PremiumTypography from "../PremiumTypography";
-import type { Pet } from "../../types/api";
-import { Dimensions } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { EliteButtonPresets, FXContainerPresets, Heading1, Body } from '../';
+import { Theme } from '../../theme/unified-theme';
+import type { Pet } from '@pawfectmatch/core';
+import { ConfettiBurst } from './ConfettiBurst';
 
-const { PremiumHeading, PremiumBody } = PremiumTypography;
+const { width: screenWidth } = Dimensions.get('window');
 
-const { width: screenWidth } = Dimensions.get("window");
-
-interface MatchModalProps {
-  matchedPet: Pet;
+export interface MatchModalProps {
+  pet: Pet;
   onKeepSwiping: () => void;
   onSendMessage: () => void;
+  show?: boolean;
 }
 
 export function MatchModal({
-  matchedPet,
+  pet,
   onKeepSwiping,
   onSendMessage,
-}: MatchModalProps) {
+  show = true,
+}: MatchModalProps): JSX.Element {
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    if (show) {
+      setShowConfetti(true);
+      // Stop confetti after 4 seconds
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [show]);
+
+  if (!show) return <View />;
+
   return (
-    <View style={styles.matchModal}>
-      <ParticleEffect count={20} variant="rainbow" speed="fast" />
-      <HolographicContainer
-        variant="rainbow"
-        speed="fast"
-        animated={true}
-        shimmer={true}
-        glow={true}
-        style={styles.matchModalContent}
-      >
-        <ScaleIn delay={0}>
-          <PremiumHeading
-            level={1}
-            gradient="holographic"
-            animated={true}
-            glow={true}
-          >
-            It's a Match! 🎉
-          </PremiumHeading>
-        </ScaleIn>
+    <View style={styles.overlay}>
+      {/* Confetti burst for match celebration */}
+      <ConfettiBurst
+        show={showConfetti}
+        intensity="heavy"
+        duration={4000}
+        onComplete={() => setShowConfetti(false)}
+      />
 
-        <FadeInUp delay={200}>
-          <View style={styles.matchPhotos}>
-            <GlowContainer color="primary" intensity="medium" animated={true}>
-              <Image
-                source={{ uri: matchedPet.photos[0]?.url }}
-                style={styles.matchPhoto}
-              />
-            </GlowContainer>
-            <GlowContainer color="secondary" intensity="medium" animated={true}>
-              <Image
-                source={{ uri: "https://via.placeholder.com/100" }}
-                style={styles.matchPhoto}
-              />
-            </GlowContainer>
+      <FXContainerPresets.premium style={styles.content}>
+        <Heading1 style={styles.title}>It's a Match! 🎉</Heading1>
+
+        <View style={styles.photos}>
+          <View style={styles.photoContainer}>
+            {/* Match photo would go here */}
           </View>
-        </FadeInUp>
+        </View>
 
-        <FadeInUp delay={400}>
-          <PremiumBody size="lg" weight="semibold" gradient="primary">
-            You and {matchedPet.name} liked each other!
-          </PremiumBody>
-        </FadeInUp>
+        <Body style={styles.text}>
+          You and {pet.name} liked each other!
+        </Body>
 
-        <FadeInUp delay={600}>
-          <View style={styles.matchButtons}>
-            <EliteButton
-              title="Keep Swiping"
-              variant="glass"
-              size="lg"
-              ripple={true}
-              onPress={onKeepSwiping}
-            />
-            <EliteButton
-              title="Send Message"
-              variant="primary"
-              size="lg"
-              icon="chatbubble"
-              ripple={true}
-              glow={true}
-              shimmer={true}
-              onPress={onSendMessage}
-            />
-          </View>
-        </FadeInUp>
-      </HolographicContainer>
+        <View style={styles.buttons}>
+          <EliteButtonPresets.glass
+            title="Keep Swiping"
+            onPress={onKeepSwiping}
+          />
+          <EliteButtonPresets.premium
+            title="Send Message"
+            leftIcon="chatbubble"
+            onPress={onSendMessage}
+          />
+        </View>
+      </FXContainerPresets.premium>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  matchModal: {
-    position: "absolute",
+  overlay: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10000,
   },
-  matchModalContent: {
-    width: screenWidth - 40,
-    padding: 40,
-    borderRadius: 20,
-    alignItems: "center",
+  content: {
+    width: screenWidth - Theme.spacing['4xl'],
+    padding: Theme.spacing['4xl'],
+    alignItems: 'center',
   },
-  matchPhotos: {
-    flexDirection: "row",
-    marginBottom: 30,
+  title: {
+    textAlign: 'center',
+    marginBottom: Theme.spacing.xl,
   },
-  matchPhoto: {
+  photos: {
+    flexDirection: 'row',
+    marginBottom: Theme.spacing.xl,
+    gap: Theme.spacing.lg,
+  },
+  photoContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginHorizontal: 10,
-    borderWidth: 3,
-    borderColor: "#fff",
   },
-  matchButtons: {
-    flexDirection: "row",
-    gap: 15,
+  text: {
+    textAlign: 'center',
+    marginBottom: Theme.spacing.xl,
+    color: Theme.colors.text.secondary,
+  },
+  buttons: {
+    flexDirection: 'row',
+    gap: Theme.spacing.lg,
   },
 });

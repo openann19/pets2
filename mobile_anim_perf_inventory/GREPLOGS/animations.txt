@@ -1,0 +1,1409 @@
+jest.config.cjs:11:    'node_modules/(?!(react-native|@react-native|@react-navigation|expo|@expo|react-native-reanimated|react-native-gesture-handler)/)',
+babel.config.cjs:7:    plugins: [...baseConfig.plugins, 'react-native-reanimated/plugin'],
+TESTING_IMPLEMENTATION_GUIDE.md:65:jest.mock("react-native-reanimated", () => ({
+TESTING_IMPLEMENTATION_GUIDE.md:66:  useSharedValue: (initial: number) => ({ value: initial }),
+TESTING_IMPLEMENTATION_GUIDE.md:67:  withTiming: (toValue: number) => toValue,
+docs/theme-consolidation.md:41:Animated.timing(anim, {
+package.json:118:    "react-native-reanimated": "~3.3.0",
+plan1.md:503:* Replace legacy `Animated.*` patterns with **Reanimated 3 worklets** (GPU-accelerated, interruptible)
+plan1.md:511:* **Inventory**: grep/code‑mod assisted scan for `Animated`, `LayoutAnimation`, `FramerMotion`, `reanimated`, `gesture-handler`, `Lottie`, inline `transition` CSS, etc.
+plan1.md:527:* **Replace**: Legacy `Animated.*` & `LayoutAnimation` with Reanimated layout transitions (`entering`, `exiting`, `layout`) and worklets.
+src/setupTests.ts:15:jest.mock("react-native-reanimated", () => ({
+src/setupTests.ts:16:  useSharedValue: jest.fn((initial: number) => ({ value: initial })),
+src/setupTests.ts:17:  useAnimatedStyle: jest.fn(() => ({})),
+src/setupTests.ts:18:  withTiming: jest.fn((toValue: number) => toValue),
+src/setupTests.ts:19:  withSpring: jest.fn((toValue: number) => toValue),
+src/hooks/animations/useRippleEffect.ts:7:  useSharedValue,
+src/hooks/animations/useRippleEffect.ts:8:  useAnimatedStyle,
+src/hooks/animations/useRippleEffect.ts:9:  withTiming,
+src/hooks/animations/useRippleEffect.ts:10:} from "react-native-reanimated";
+src/hooks/animations/useRippleEffect.ts:13:  const rippleScale = useSharedValue(0);
+src/hooks/animations/useRippleEffect.ts:14:  const rippleOpacity = useSharedValue(0);
+src/hooks/animations/useRippleEffect.ts:19:    rippleScale.value = withTiming(2, { duration: 300 });
+src/hooks/animations/useRippleEffect.ts:20:    rippleOpacity.value = withTiming(0, { duration: 300 });
+src/hooks/animations/useRippleEffect.ts:23:  const rippleStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useParallaxEffect.ts:6:import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+src/hooks/animations/useParallaxEffect.ts:9:  const translateY = useSharedValue(0);
+src/hooks/animations/useParallaxEffect.ts:15:  const parallaxStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useSpringAnimation.ts:3:  useSharedValue,
+src/hooks/animations/useSpringAnimation.ts:4:  withSpring,
+src/hooks/animations/useSpringAnimation.ts:5:  withTiming,
+src/hooks/animations/useSpringAnimation.ts:6:} from "react-native-reanimated";
+src/hooks/animations/useSpringAnimation.ts:17:  value: ReturnType<typeof useSharedValue<number>>;
+src/hooks/animations/useSpringAnimation.ts:29:  const animatedValue = useSharedValue(initialValue);
+src/hooks/animations/useSpringAnimation.ts:43:        animatedValue.value = withTiming(toValue, {
+src/hooks/animations/useSpringAnimation.ts:47:        animatedValue.value = withSpring(toValue, springConfig);
+src/hooks/animations/useSpringAnimation.ts:54:    animatedValue.value = withSpring(initialValue, SPRING_CONFIGS[config]);
+src/hooks/animations/useGlowAnimation.ts:3:  useSharedValue,
+src/hooks/animations/useGlowAnimation.ts:4:  useAnimatedStyle,
+src/hooks/animations/useGlowAnimation.ts:5:  withSpring,
+src/hooks/animations/useGlowAnimation.ts:7:  withTiming,
+src/hooks/animations/useGlowAnimation.ts:10:} from "react-native-reanimated";
+src/hooks/animations/useGlowAnimation.ts:19:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/animations/useGlowAnimation.ts:27:  const glowIntensity = useSharedValue(0);
+src/hooks/animations/useGlowAnimation.ts:34:        withTiming(intensity, { duration: duration / 2 }),
+src/hooks/animations/useGlowAnimation.ts:35:        withTiming(0, { duration: duration / 2 }),
+src/hooks/animations/useGlowAnimation.ts:47:  const animatedStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useFloatingEffect.ts:8:  useSharedValue,
+src/hooks/animations/useFloatingEffect.ts:9:  useAnimatedStyle,
+src/hooks/animations/useFloatingEffect.ts:12:  withTiming,
+src/hooks/animations/useFloatingEffect.ts:13:} from "react-native-reanimated";
+src/hooks/animations/useFloatingEffect.ts:16:  const translateY = useSharedValue(0);
+src/hooks/animations/useFloatingEffect.ts:22:          withTiming(-10, { duration: 2000 }),
+src/hooks/animations/useFloatingEffect.ts:23:          withTiming(0, { duration: 2000 }),
+src/hooks/animations/useFloatingEffect.ts:31:  const floatingStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useLoadingAnimation.ts:8:  useSharedValue,
+src/hooks/animations/useLoadingAnimation.ts:9:  useAnimatedStyle,
+src/hooks/animations/useLoadingAnimation.ts:12:  withTiming,
+src/hooks/animations/useLoadingAnimation.ts:13:} from "react-native-reanimated";
+src/hooks/animations/useLoadingAnimation.ts:16:  const rotation = useSharedValue(0);
+src/hooks/animations/useLoadingAnimation.ts:17:  const scale = useSharedValue(1);
+src/hooks/animations/useLoadingAnimation.ts:20:    rotation.value = withRepeat(withTiming(360, { duration: 1000 }), -1, false);
+src/hooks/animations/useLoadingAnimation.ts:24:        withTiming(1.1, { duration: 500 }),
+src/hooks/animations/useLoadingAnimation.ts:25:        withTiming(1, { duration: 500 }),
+src/hooks/animations/useLoadingAnimation.ts:32:  const loadingStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useShimmerEffect.ts:8:  useSharedValue,
+src/hooks/animations/useShimmerEffect.ts:9:  useAnimatedStyle,
+src/hooks/animations/useShimmerEffect.ts:12:  withTiming,
+src/hooks/animations/useShimmerEffect.ts:14:} from "react-native-reanimated";
+src/hooks/animations/useShimmerEffect.ts:17:  const shimmerOffset = useSharedValue(-100);
+src/hooks/animations/useShimmerEffect.ts:23:          withTiming(100, { duration: 2000 }),
+src/hooks/animations/useShimmerEffect.ts:24:          withDelay(1000, withTiming(-100, { duration: 0 })),
+src/hooks/animations/useShimmerEffect.ts:32:  const shimmerStyle = useAnimatedStyle(() => ({
+src/hooks/animations/usePageTransition.ts:7:  useSharedValue,
+src/hooks/animations/usePageTransition.ts:8:  useAnimatedStyle,
+src/hooks/animations/usePageTransition.ts:9:  withSpring,
+src/hooks/animations/usePageTransition.ts:10:  withTiming,
+src/hooks/animations/usePageTransition.ts:12:} from "react-native-reanimated";
+src/hooks/animations/usePageTransition.ts:16:  const screenOpacity = useSharedValue(1);
+src/hooks/animations/usePageTransition.ts:17:  const screenTranslateY = useSharedValue(0);
+src/hooks/animations/usePageTransition.ts:22:    screenOpacity.value = withSpring(1, PREMIUM_ANIMATIONS.spring.gentle);
+src/hooks/animations/usePageTransition.ts:23:    screenTranslateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+src/hooks/animations/usePageTransition.ts:27:    screenOpacity.value = withTiming(0, { duration: 300 });
+src/hooks/animations/usePageTransition.ts:28:    screenTranslateY.value = withTiming(-50, { duration: 300 });
+src/hooks/animations/usePageTransition.ts:37:  const pageStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useEntranceAnimation.ts:8:  useSharedValue,
+src/hooks/animations/useEntranceAnimation.ts:9:  useAnimatedStyle,
+src/hooks/animations/useEntranceAnimation.ts:11:  withTiming,
+src/hooks/animations/useEntranceAnimation.ts:12:  withSpring,
+src/hooks/animations/useEntranceAnimation.ts:14:} from "react-native-reanimated";
+src/hooks/animations/useEntranceAnimation.ts:21:  const opacity = useSharedValue(0);
+src/hooks/animations/useEntranceAnimation.ts:22:  const translateY = useSharedValue(50);
+src/hooks/animations/useEntranceAnimation.ts:23:  const translateX = useSharedValue(-50);
+src/hooks/animations/useEntranceAnimation.ts:24:  const scale = useSharedValue(0.8);
+src/hooks/animations/useEntranceAnimation.ts:30:          opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
+src/hooks/animations/useEntranceAnimation.ts:35:            withSpring(0, PREMIUM_ANIMATIONS.spring.gentle),
+src/hooks/animations/useEntranceAnimation.ts:37:          opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
+src/hooks/animations/useEntranceAnimation.ts:42:            withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy),
+src/hooks/animations/useEntranceAnimation.ts:44:          opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
+src/hooks/animations/useEntranceAnimation.ts:50:              withTiming(1.2, { duration: 300 }),
+src/hooks/animations/useEntranceAnimation.ts:51:              withTiming(0.9, { duration: 200 }),
+src/hooks/animations/useEntranceAnimation.ts:52:              withTiming(1, { duration: 300 }),
+src/hooks/animations/useEntranceAnimation.ts:55:          opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
+src/hooks/animations/useEntranceAnimation.ts:63:  const entranceStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useEntranceAnimation.ts:76:        opacity.value = withTiming(1, { duration: 500 });
+src/hooks/animations/useEntranceAnimation.ts:79:        translateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+src/hooks/animations/useEntranceAnimation.ts:80:        opacity.value = withTiming(1, { duration: 500 });
+src/hooks/animations/useEntranceAnimation.ts:83:        scale.value = withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy);
+src/hooks/animations/useEntranceAnimation.ts:84:        opacity.value = withTiming(1, { duration: 500 });
+src/hooks/animations/useEntranceAnimation.ts:88:          withTiming(1.2, { duration: 300 }),
+src/hooks/animations/useEntranceAnimation.ts:89:          withTiming(0.9, { duration: 200 }),
+src/hooks/animations/useEntranceAnimation.ts:90:          withTiming(1, { duration: 300 }),
+src/hooks/animations/useEntranceAnimation.ts:92:        opacity.value = withTiming(1, { duration: 500 });
+src/screens/MemoryWeaveScreen.tsx:106:      <Animated.View
+src/screens/MemoryWeaveScreen.tsx:190:      </Animated.View>
+src/screens/MemoryWeaveScreen.tsx:265:        <Animated.View
+src/screens/MemoryWeaveScreen.tsx:299:        </Animated.View>
+src/screens/MemoryWeaveScreen.tsx:303:      <Animated.View
+src/screens/MemoryWeaveScreen.tsx:329:      </Animated.View>
+src/screens/MemoryWeaveScreen.tsx:332:      <Animated.View
+src/screens/MemoryWeaveScreen.tsx:339:      </Animated.View>
+src/screens/MemoryWeaveScreen.tsx:342:      <Animated.View
+src/screens/MemoryWeaveScreen.tsx:353:      </Animated.View>
+src/hooks/animations/usePulseEffect.ts:8:  useSharedValue,
+src/hooks/animations/usePulseEffect.ts:9:  useAnimatedStyle,
+src/hooks/animations/usePulseEffect.ts:12:  withTiming,
+src/hooks/animations/usePulseEffect.ts:13:} from "react-native-reanimated";
+src/hooks/animations/usePulseEffect.ts:16:  const pulseScale = useSharedValue(1);
+src/hooks/animations/usePulseEffect.ts:22:          withTiming(1.05, { duration: 1000 }),
+src/hooks/animations/usePulseEffect.ts:23:          withTiming(1, { duration: 1000 }),
+src/hooks/animations/usePulseEffect.ts:31:  const pulseStyle = useAnimatedStyle(() => ({
+src/screens/MapScreen.tsx:141:      <Animated.View
+src/screens/MapScreen.tsx:153:      </Animated.View>
+src/hooks/animations/useSwipeGesture.ts:4:  useSharedValue,
+src/hooks/animations/useSwipeGesture.ts:5:  useAnimatedStyle,
+src/hooks/animations/useSwipeGesture.ts:9:  withSpring,
+src/hooks/animations/useSwipeGesture.ts:10:  withTiming,
+src/hooks/animations/useSwipeGesture.ts:12:} from "react-native-reanimated";
+src/hooks/animations/useSwipeGesture.ts:27:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/animations/useSwipeGesture.ts:28:  translateX: ReturnType<typeof useSharedValue<number>>;
+src/hooks/animations/useSwipeGesture.ts:29:  translateY: ReturnType<typeof useSharedValue<number>>;
+src/hooks/animations/useSwipeGesture.ts:38:  const translateX = useSharedValue(0);
+src/hooks/animations/useSwipeGesture.ts:39:  const translateY = useSharedValue(0);
+src/hooks/animations/useSwipeGesture.ts:40:  const opacity = useSharedValue(1);
+src/hooks/animations/useSwipeGesture.ts:60:          translateX.value = withTiming(SCREEN_WIDTH + 100, {
+src/hooks/animations/useSwipeGesture.ts:63:          opacity.value = withTiming(0, { duration: TIMING_CONFIGS.standard });
+src/hooks/animations/useSwipeGesture.ts:67:          translateX.value = withTiming(-SCREEN_WIDTH - 100, {
+src/hooks/animations/useSwipeGesture.ts:70:          opacity.value = withTiming(0, { duration: TIMING_CONFIGS.standard });
+src/hooks/animations/useSwipeGesture.ts:75:        translateY.value = withTiming(-SCREEN_HEIGHT - 100, {
+src/hooks/animations/useSwipeGesture.ts:78:        opacity.value = withTiming(0, { duration: TIMING_CONFIGS.standard });
+src/hooks/animations/useSwipeGesture.ts:82:        translateX.value = withSpring(0, SPRING_CONFIGS.standard);
+src/hooks/animations/useSwipeGesture.ts:83:        translateY.value = withSpring(0, SPRING_CONFIGS.standard);
+src/hooks/animations/useSwipeGesture.ts:88:  const animatedStyle = useAnimatedStyle(() => {
+src/screens/premium/SubscriptionSuccessScreen.tsx:24:  const animatedValue = useRef(new Animated.Value(0)).current;
+src/screens/premium/SubscriptionSuccessScreen.tsx:28:    Animated.sequence([
+src/screens/premium/SubscriptionSuccessScreen.tsx:29:      Animated.timing(animatedValue, {
+src/screens/premium/SubscriptionSuccessScreen.tsx:35:      Animated.timing(animatedValue, {
+src/screens/premium/SubscriptionSuccessScreen.tsx:41:      Animated.timing(animatedValue, {
+src/screens/premium/SubscriptionSuccessScreen.tsx:68:      <Animated.View
+src/screens/premium/SubscriptionSuccessScreen.tsx:85:      </Animated.View>
+src/hooks/animations/useStaggeredAnimation.ts:8:  useSharedValue,
+src/hooks/animations/useStaggeredAnimation.ts:9:  useAnimatedStyle,
+src/hooks/animations/useStaggeredAnimation.ts:11:  withTiming,
+src/hooks/animations/useStaggeredAnimation.ts:12:} from "react-native-reanimated";
+src/hooks/animations/useStaggeredAnimation.ts:20:  const opacity = useSharedValue(0);
+src/hooks/animations/useStaggeredAnimation.ts:23:    opacity.value = withDelay(0, withTiming(1, { duration: 500 }));
+src/hooks/animations/useStaggeredAnimation.ts:26:  const getAnimatedStyle = useAnimatedStyle(() => ({
+src/hooks/animations/usePressAnimation.ts:3:  useSharedValue,
+src/hooks/animations/usePressAnimation.ts:4:  useAnimatedStyle,
+src/hooks/animations/usePressAnimation.ts:5:  withSpring,
+src/hooks/animations/usePressAnimation.ts:6:} from "react-native-reanimated";
+src/hooks/animations/usePressAnimation.ts:18:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/animations/usePressAnimation.ts:24:  const scale = useSharedValue(1);
+src/hooks/animations/usePressAnimation.ts:25:  const opacity = useSharedValue(1);
+src/hooks/animations/usePressAnimation.ts:30:    scale.value = withSpring(0.96, SPRING_CONFIGS[config]);
+src/hooks/animations/usePressAnimation.ts:31:    opacity.value = withSpring(0.8, SPRING_CONFIGS[config]);
+src/hooks/animations/usePressAnimation.ts:37:    scale.value = withSpring(1, SPRING_CONFIGS[config]);
+src/hooks/animations/usePressAnimation.ts:38:    opacity.value = withSpring(1, SPRING_CONFIGS[config]);
+src/hooks/animations/usePressAnimation.ts:41:  const animatedStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useMagneticEffect.ts:7:  useSharedValue,
+src/hooks/animations/useMagneticEffect.ts:8:  useAnimatedStyle,
+src/hooks/animations/useMagneticEffect.ts:9:  withSpring,
+src/hooks/animations/useMagneticEffect.ts:12:} from "react-native-reanimated";
+src/hooks/animations/useMagneticEffect.ts:16:  const rotateX = useSharedValue(0);
+src/hooks/animations/useMagneticEffect.ts:17:  const rotateY = useSharedValue(0);
+src/hooks/animations/useMagneticEffect.ts:18:  const scale = useSharedValue(1);
+src/hooks/animations/useMagneticEffect.ts:23:    rotateX.value = withSpring(
+src/hooks/animations/useMagneticEffect.ts:27:    rotateY.value = withSpring(
+src/hooks/animations/useMagneticEffect.ts:35:    rotateX.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+src/hooks/animations/useMagneticEffect.ts:36:    rotateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+src/hooks/animations/useMagneticEffect.ts:39:  const magneticStyle = useAnimatedStyle(() => ({
+src/hooks/animations/useGlowEffect.ts:8:  useSharedValue,
+src/hooks/animations/useGlowEffect.ts:9:  useAnimatedStyle,
+src/hooks/animations/useGlowEffect.ts:12:  withTiming,
+src/hooks/animations/useGlowEffect.ts:13:} from "react-native-reanimated";
+src/hooks/animations/useGlowEffect.ts:16:  const glowIntensity = useSharedValue(1);
+src/hooks/animations/useGlowEffect.ts:22:          withTiming(1.5, { duration: 1000 }),
+src/hooks/animations/useGlowEffect.ts:23:          withTiming(1, { duration: 1000 }),
+src/hooks/animations/useGlowEffect.ts:31:  const glowStyle = useAnimatedStyle(() => ({
+src/screens/calling/__tests__/IncomingCallScreen.test.tsx:27:      View: "Animated.View",
+src/screens/calling/__tests__/IncomingCallScreen.test.tsx:28:      Text: "Animated.Text",
+src/screens/calling/__tests__/IncomingCallScreen.test.tsx:202:    expect(require("react-native").Animated.loop).toHaveBeenCalled();
+src/screens/calling/__tests__/IncomingCallScreen.test.tsx:203:    expect(require("react-native").Animated.timing).toHaveBeenCalled();
+src/screens/calling/IncomingCallScreen.tsx:33:  const [pulseAnim] = useState(new Animated.Value(1));
+src/screens/calling/IncomingCallScreen.tsx:34:  const [slideAnim] = useState(new Animated.Value(0));
+src/screens/calling/IncomingCallScreen.tsx:38:    const pulseAnimation = Animated.loop(
+src/screens/calling/IncomingCallScreen.tsx:39:      Animated.sequence([
+src/screens/calling/IncomingCallScreen.tsx:40:        Animated.timing(pulseAnim, {
+src/screens/calling/IncomingCallScreen.tsx:45:        Animated.timing(pulseAnim, {
+src/screens/calling/IncomingCallScreen.tsx:54:    const slideAnimation = Animated.timing(slideAnim, {
+src/screens/calling/IncomingCallScreen.tsx:106:        <Animated.View
+src/screens/calling/IncomingCallScreen.tsx:125:        </Animated.View>
+src/screens/calling/IncomingCallScreen.tsx:128:        <Animated.View
+src/screens/calling/IncomingCallScreen.tsx:144:          <Animated.View
+src/screens/calling/IncomingCallScreen.tsx:163:          </Animated.View>
+src/screens/calling/IncomingCallScreen.tsx:167:        </Animated.View>
+src/screens/calling/IncomingCallScreen.tsx:170:        <Animated.View
+src/screens/calling/IncomingCallScreen.tsx:225:        </Animated.View>
+src/screens/calling/IncomingCallScreen.tsx:228:        <Animated.View
+src/screens/calling/IncomingCallScreen.tsx:245:        </Animated.View>
+src/hooks/swipe/__tests__/useSwipeGestures.test.ts:19:// Mock react-native-reanimated
+src/hooks/swipe/__tests__/useSwipeGestures.test.ts:20:jest.mock("react-native-reanimated", () => ({
+src/hooks/swipe/__tests__/useSwipeGestures.test.ts:21:  useSharedValue: jest.fn((initial) => ({ value: initial })),
+src/hooks/swipe/__tests__/useSwipeGestures.test.ts:24:  withTiming: jest.fn((value) => value),
+src/hooks/swipe/__tests__/useSwipeGestures.test.ts:25:  withSpring: jest.fn((value) => value),
+src/screens/calling/ActiveCallScreen.tsx:43:  const fadeAnim = useRef(new Animated.Value(1)).current;
+src/screens/calling/ActiveCallScreen.tsx:45:    new Animated.ValueXY({ x: 20, y: 100 }),
+src/screens/calling/ActiveCallScreen.tsx:65:    onPanResponderMove: Animated.event(
+src/screens/calling/ActiveCallScreen.tsx:75:      Animated.spring(localVideoAnim, {
+src/screens/calling/ActiveCallScreen.tsx:86:    Animated.timing(fadeAnim, {
+src/screens/calling/ActiveCallScreen.tsx:94:    Animated.timing(fadeAnim, {
+src/screens/calling/ActiveCallScreen.tsx:130:        <Animated.View
+src/screens/calling/ActiveCallScreen.tsx:151:        </Animated.View>
+src/screens/calling/ActiveCallScreen.tsx:209:      <Animated.View
+src/screens/calling/ActiveCallScreen.tsx:295:      </Animated.View>
+src/hooks/swipe/useSwipeAnimations.ts:9:    position: Animated.ValueXY,
+src/hooks/swipe/useSwipeAnimations.ts:20:      position: Animated.ValueXY,
+src/hooks/swipe/useSwipeAnimations.ts:26:        Animated.timing(position, {
+src/hooks/swipe/useSwipeGestures.ts:7:  position: Animated.ValueXY;
+src/hooks/swipe/useSwipeGestures.ts:8:  rotate: Animated.AnimatedInterpolation<string>;
+src/hooks/swipe/useSwipeGestures.ts:9:  likeOpacity: Animated.AnimatedInterpolation<string | number>;
+src/hooks/swipe/useSwipeGestures.ts:10:  nopeOpacity: Animated.AnimatedInterpolation<string | number>;
+src/hooks/swipe/useSwipeGestures.ts:29:  const position = useRef(new Animated.ValueXY()).current;
+src/hooks/swipe/useSwipeGestures.ts:54:    Animated.spring(position, {
+src/hooks/swipe/useSwipeGestures.ts:64:    onPanResponderMove: Animated.event(
+src/screens/StoriesScreen.tsx:161:              <Animated.View
+src/screens/onboarding/PreferencesSetupScreen.tsx:16:  useAnimatedStyle,
+src/screens/onboarding/PreferencesSetupScreen.tsx:17:  useSharedValue,
+src/screens/onboarding/PreferencesSetupScreen.tsx:18:  withSpring,
+src/screens/onboarding/PreferencesSetupScreen.tsx:19:  withTiming,
+src/screens/onboarding/PreferencesSetupScreen.tsx:20:} from "react-native-reanimated";
+src/screens/onboarding/PreferencesSetupScreen.tsx:79:  const scaleValue = useSharedValue(1);
+src/screens/onboarding/PreferencesSetupScreen.tsx:80:  const opacity = useSharedValue(0);
+src/screens/onboarding/PreferencesSetupScreen.tsx:83:    opacity.value = withTiming(1, { duration: 800 });
+src/screens/onboarding/PreferencesSetupScreen.tsx:86:  const animatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/PreferencesSetupScreen.tsx:148:      scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
+src/screens/onboarding/PreferencesSetupScreen.tsx:149:        scaleValue.value = withSpring(1, SPRING_CONFIG);
+src/screens/onboarding/PreferencesSetupScreen.tsx:164:        <Animated.View
+src/screens/onboarding/PreferencesSetupScreen.tsx:378:        </Animated.View>
+src/screens/onboarding/WelcomeScreen.tsx:12:  useAnimatedStyle,
+src/screens/onboarding/WelcomeScreen.tsx:13:  useSharedValue,
+src/screens/onboarding/WelcomeScreen.tsx:14:  withSpring,
+src/screens/onboarding/WelcomeScreen.tsx:15:  withTiming,
+src/screens/onboarding/WelcomeScreen.tsx:19:} from "react-native-reanimated";
+src/screens/onboarding/WelcomeScreen.tsx:79:  const logoScale = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:80:  const logoOpacity = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:81:  const titleOpacity = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:82:  const titleTranslateY = useSharedValue(30);
+src/screens/onboarding/WelcomeScreen.tsx:83:  const subtitleOpacity = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:84:  const subtitleTranslateY = useSharedValue(30);
+src/screens/onboarding/WelcomeScreen.tsx:85:  const featuresOpacity = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:86:  const featuresTranslateY = useSharedValue(30);
+src/screens/onboarding/WelcomeScreen.tsx:87:  const buttonOpacity = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:88:  const buttonScale = useSharedValue(0.8);
+src/screens/onboarding/WelcomeScreen.tsx:89:  const confettiScale = useSharedValue(0);
+src/screens/onboarding/WelcomeScreen.tsx:97:      logoScale.value = withSpring(1, SPRING_BOUNCY);
+src/screens/onboarding/WelcomeScreen.tsx:98:      logoOpacity.value = withTiming(1, TIMING);
+src/screens/onboarding/WelcomeScreen.tsx:101:      titleOpacity.value = withDelay(300, withTiming(1, TIMING));
+src/screens/onboarding/WelcomeScreen.tsx:102:      titleTranslateY.value = withDelay(300, withSpring(0, SPRING));
+src/screens/onboarding/WelcomeScreen.tsx:105:      subtitleOpacity.value = withDelay(600, withTiming(1, TIMING));
+src/screens/onboarding/WelcomeScreen.tsx:106:      subtitleTranslateY.value = withDelay(600, withSpring(0, SPRING));
+src/screens/onboarding/WelcomeScreen.tsx:109:      featuresOpacity.value = withDelay(900, withTiming(1, TIMING));
+src/screens/onboarding/WelcomeScreen.tsx:110:      featuresTranslateY.value = withDelay(900, withSpring(0, SPRING));
+src/screens/onboarding/WelcomeScreen.tsx:113:      buttonOpacity.value = withDelay(1200, withTiming(1, TIMING));
+src/screens/onboarding/WelcomeScreen.tsx:114:      buttonScale.value = withDelay(1200, withSpring(1, SPRING_BOUNCY));
+src/screens/onboarding/WelcomeScreen.tsx:119:        withSequence(withSpring(1.3, SPRING_BOUNCY), withSpring(1, SPRING)),
+src/screens/onboarding/WelcomeScreen.tsx:124:  const logoAnimatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/WelcomeScreen.tsx:129:  const titleAnimatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/WelcomeScreen.tsx:134:  const subtitleAnimatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/WelcomeScreen.tsx:139:  const featuresAnimatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/WelcomeScreen.tsx:144:  const buttonAnimatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/WelcomeScreen.tsx:149:  const confettiAnimatedStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/WelcomeScreen.tsx:167:        withSpring(1.5, SPRING_BOUNCY),
+src/screens/onboarding/WelcomeScreen.tsx:168:        withSpring(1, SPRING),
+src/screens/onboarding/WelcomeScreen.tsx:205:        <Animated.View
+src/screens/onboarding/WelcomeScreen.tsx:225:        </Animated.View>
+src/screens/onboarding/WelcomeScreen.tsx:229:          <Animated.View
+src/screens/onboarding/WelcomeScreen.tsx:243:          </Animated.View>
+src/screens/onboarding/WelcomeScreen.tsx:246:          <Animated.View style={titleAnimatedStyle}>
+src/screens/onboarding/WelcomeScreen.tsx:249:          </Animated.View>
+src/screens/onboarding/WelcomeScreen.tsx:252:          <Animated.View style={subtitleAnimatedStyle}>
+src/screens/onboarding/WelcomeScreen.tsx:263:          </Animated.View>
+src/screens/onboarding/WelcomeScreen.tsx:266:          <Animated.View
+src/screens/onboarding/WelcomeScreen.tsx:385:          </Animated.View>
+src/screens/onboarding/WelcomeScreen.tsx:441:        <Animated.View
+src/screens/onboarding/WelcomeScreen.tsx:464:        </Animated.View>
+src/hooks/useAnimations.ts:7:  useSharedValue,
+src/hooks/useAnimations.ts:8:  useAnimatedStyle,
+src/hooks/useAnimations.ts:9:  withSpring,
+src/hooks/useAnimations.ts:10:  withTiming,
+src/hooks/useAnimations.ts:16:} from "react-native-reanimated";
+src/hooks/useAnimations.ts:47:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:54:  const scale = useSharedValue(1);
+src/hooks/useAnimations.ts:55:  const translateY = useSharedValue(0);
+src/hooks/useAnimations.ts:56:  const shadowOpacity = useSharedValue(0.1);
+src/hooks/useAnimations.ts:58:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:72:    scale.value = withSpring(1.05, AnimationConfigs.springBouncy);
+src/hooks/useAnimations.ts:73:    translateY.value = withSpring(-8, AnimationConfigs.springBouncy);
+src/hooks/useAnimations.ts:74:    shadowOpacity.value = withTiming(0.3, AnimationConfigs.timingFast);
+src/hooks/useAnimations.ts:78:    scale.value = withSpring(1, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:79:    translateY.value = withSpring(0, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:80:    shadowOpacity.value = withTiming(0.1, AnimationConfigs.timingFast);
+src/hooks/useAnimations.ts:87:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:93:  const opacity = useSharedValue(1);
+src/hooks/useAnimations.ts:95:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:103:      withTiming(0.8, { duration: 1000 }),
+src/hooks/useAnimations.ts:104:      withTiming(1, { duration: 1000 }),
+src/hooks/useAnimations.ts:112:  swipeRightStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:113:  swipeLeftStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:121:  const translateX = useSharedValue(0);
+src/hooks/useAnimations.ts:122:  const rotate = useSharedValue(0);
+src/hooks/useAnimations.ts:123:  const opacity = useSharedValue(1);
+src/hooks/useAnimations.ts:125:  const swipeRightStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:135:  const swipeLeftStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:146:    translateX.value = withTiming(300, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:147:    rotate.value = withTiming(15, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:148:    opacity.value = withTiming(0, AnimationConfigs.timing, () => {
+src/hooks/useAnimations.ts:154:    translateX.value = withTiming(-300, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:155:    rotate.value = withTiming(-15, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:156:    opacity.value = withTiming(0, AnimationConfigs.timing, () => {
+src/hooks/useAnimations.ts:162:    translateX.value = withSpring(0, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:163:    rotate.value = withSpring(0, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:164:    opacity.value = withSpring(1, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:177:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:185:  const scale = useSharedValue(1);
+src/hooks/useAnimations.ts:186:  const translateY = useSharedValue(0);
+src/hooks/useAnimations.ts:188:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:195:    scale.value = withSpring(0.98, AnimationConfigs.springBouncy);
+src/hooks/useAnimations.ts:196:    translateY.value = withSpring(2, AnimationConfigs.springBouncy);
+src/hooks/useAnimations.ts:203:    scale.value = withSpring(1, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:204:    translateY.value = withSpring(0, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:208:    scale.value = withSpring(1.02, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:209:    translateY.value = withSpring(-2, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:216:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:222:  const opacity = useSharedValue(0);
+src/hooks/useAnimations.ts:223:  const translateY = useSharedValue(30);
+src/hooks/useAnimations.ts:224:  const scale = useSharedValue(0.95);
+src/hooks/useAnimations.ts:226:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:234:    opacity.value = withDelay(delay, withTiming(1, { duration: 600 }));
+src/hooks/useAnimations.ts:235:    translateY.value = withDelay(delay, withTiming(0, { duration: 600 }));
+src/hooks/useAnimations.ts:236:    scale.value = withDelay(delay, withTiming(1, { duration: 600 }));
+src/hooks/useAnimations.ts:243:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:249:  const translateX = useSharedValue(-200);
+src/hooks/useAnimations.ts:251:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:258:    translateX.value = withTiming(200, { duration: 2000 });
+src/hooks/useAnimations.ts:265:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:271:  const scale = useSharedValue(0.3);
+src/hooks/useAnimations.ts:272:  const opacity = useSharedValue(0);
+src/hooks/useAnimations.ts:274:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:283:      withTiming(1.05, { duration: 250 }),
+src/hooks/useAnimations.ts:284:      withTiming(0.9, { duration: 100 }),
+src/hooks/useAnimations.ts:285:      withTiming(1, { duration: 150 }),
+src/hooks/useAnimations.ts:287:    opacity.value = withTiming(1, { duration: 250 });
+src/hooks/useAnimations.ts:294:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:301:  const shadowOpacity = useSharedValue(0);
+src/hooks/useAnimations.ts:302:  const shadowRadius = useSharedValue(0);
+src/hooks/useAnimations.ts:304:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:312:    shadowOpacity.value = withTiming(0.4, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:313:    shadowRadius.value = withTiming(20, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:317:    shadowOpacity.value = withTiming(0, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:318:    shadowRadius.value = withTiming(0, AnimationConfigs.timing);
+src/hooks/useAnimations.ts:325:  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+src/hooks/useAnimations.ts:332:  const scale = useSharedValue(1);
+src/hooks/useAnimations.ts:334:  const animatedStyle = useAnimatedStyle(() => {
+src/hooks/useAnimations.ts:341:    scale.value = withSpring(1.05, AnimationConfigs.springGentle);
+src/hooks/useAnimations.ts:345:    scale.value = withSpring(1, AnimationConfigs.springGentle);
+src/screens/onboarding/PetProfileSetupScreen.tsx:58:  useSharedValue,
+src/screens/onboarding/PetProfileSetupScreen.tsx:59:  useAnimatedStyle,
+src/screens/onboarding/PetProfileSetupScreen.tsx:60:  withSpring,
+src/screens/onboarding/PetProfileSetupScreen.tsx:61:  withTiming,
+src/screens/onboarding/PetProfileSetupScreen.tsx:62:} from "react-native-reanimated";
+src/screens/onboarding/PetProfileSetupScreen.tsx:124:  const progressValue = useSharedValue(0);
+src/screens/onboarding/PetProfileSetupScreen.tsx:125:  const slideValue = useSharedValue(0);
+src/screens/onboarding/PetProfileSetupScreen.tsx:128:    progressValue.value = withTiming((currentStep + 1) / 4, { duration: 300 });
+src/screens/onboarding/PetProfileSetupScreen.tsx:131:  const progressStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/PetProfileSetupScreen.tsx:507:              <Animated.View
+src/screens/ChatScreen.tsx:9:  LayoutAnimation,
+src/screens/ChatScreen.tsx:31:// Enable LayoutAnimation on Android
+src/screens/ChatScreen.tsx:34:  UIManager.setLayoutAnimationEnabledExperimental
+src/screens/ChatScreen.tsx:36:  UIManager.setLayoutAnimationEnabledExperimental(true);
+src/screens/ChatScreen.tsx:62:  const typingAnimation = useRef(new Animated.Value(0)).current;
+src/screens/ChatScreen.tsx:140:    Animated.loop(
+src/screens/ChatScreen.tsx:141:      Animated.stagger(200, [
+src/screens/ChatScreen.tsx:142:        Animated.sequence([
+src/screens/ChatScreen.tsx:143:          Animated.timing(typingAnimation, {
+src/screens/ChatScreen.tsx:149:          Animated.timing(typingAnimation, {
+src/screens/ChatScreen.tsx:170:    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+src/screens/onboarding/UserIntentScreen.tsx:17:  useSharedValue,
+src/screens/onboarding/UserIntentScreen.tsx:18:  useAnimatedStyle,
+src/screens/onboarding/UserIntentScreen.tsx:19:  withSpring,
+src/screens/onboarding/UserIntentScreen.tsx:20:  withTiming,
+src/screens/onboarding/UserIntentScreen.tsx:25:} from "react-native-reanimated";
+src/screens/onboarding/UserIntentScreen.tsx:59:  const scale1 = useSharedValue(0.8);
+src/screens/onboarding/UserIntentScreen.tsx:60:  const scale2 = useSharedValue(0.8);
+src/screens/onboarding/UserIntentScreen.tsx:61:  const opacity = useSharedValue(0);
+src/screens/onboarding/UserIntentScreen.tsx:62:  const translateY = useSharedValue(100);
+src/screens/onboarding/UserIntentScreen.tsx:63:  const headerOpacity = useSharedValue(0);
+src/screens/onboarding/UserIntentScreen.tsx:64:  const headerTranslateY = useSharedValue(-50);
+src/screens/onboarding/UserIntentScreen.tsx:65:  const card1Opacity = useSharedValue(0);
+src/screens/onboarding/UserIntentScreen.tsx:66:  const card2Opacity = useSharedValue(0);
+src/screens/onboarding/UserIntentScreen.tsx:67:  const footerOpacity = useSharedValue(0);
+src/screens/onboarding/UserIntentScreen.tsx:75:      headerOpacity.value = withTiming(1, ELITE_TIMING_CONFIG);
+src/screens/onboarding/UserIntentScreen.tsx:76:      headerTranslateY.value = withSpring(0, SPRING_CONFIG);
+src/screens/onboarding/UserIntentScreen.tsx:79:      card1Opacity.value = withDelay(200, withTiming(1, ELITE_TIMING_CONFIG));
+src/screens/onboarding/UserIntentScreen.tsx:80:      scale1.value = withDelay(200, withSpring(1, SPRING_CONFIG));
+src/screens/onboarding/UserIntentScreen.tsx:82:      card2Opacity.value = withDelay(400, withTiming(1, ELITE_TIMING_CONFIG));
+src/screens/onboarding/UserIntentScreen.tsx:83:      scale2.value = withDelay(400, withSpring(1, SPRING_CONFIG));
+src/screens/onboarding/UserIntentScreen.tsx:86:      footerOpacity.value = withDelay(600, withTiming(1, ELITE_TIMING_CONFIG));
+src/screens/onboarding/UserIntentScreen.tsx:89:      opacity.value = withTiming(1, { duration: 800 });
+src/screens/onboarding/UserIntentScreen.tsx:90:      translateY.value = withSpring(0, SPRING_CONFIG);
+src/screens/onboarding/UserIntentScreen.tsx:94:  const animatedContainerStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/UserIntentScreen.tsx:99:  const animatedCard1Style = useAnimatedStyle(() => ({
+src/screens/onboarding/UserIntentScreen.tsx:104:  const animatedCard2Style = useAnimatedStyle(() => ({
+src/screens/onboarding/UserIntentScreen.tsx:109:  const animatedHeaderStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/UserIntentScreen.tsx:114:  const animatedFooterStyle = useAnimatedStyle(() => ({
+src/screens/onboarding/UserIntentScreen.tsx:133:      withTiming(0.92, { duration: 100 }),
+src/screens/onboarding/UserIntentScreen.tsx:134:      withSpring(1.05, { ...SPRING_CONFIG, damping: 15 }),
+src/screens/onboarding/UserIntentScreen.tsx:135:      withSpring(1, SPRING_CONFIG),
+src/screens/onboarding/UserIntentScreen.tsx:142:    otherScale.value = withTiming(0.9, ELITE_TIMING_CONFIG);
+src/screens/onboarding/UserIntentScreen.tsx:143:    otherOpacity.value = withTiming(0.3, ELITE_TIMING_CONFIG);
+src/screens/onboarding/UserIntentScreen.tsx:169:          <Animated.View
+src/screens/onboarding/UserIntentScreen.tsx:173:            <Animated.View
+src/screens/onboarding/UserIntentScreen.tsx:183:            </Animated.View>
+src/screens/onboarding/UserIntentScreen.tsx:188:              <Animated.View
+src/screens/onboarding/UserIntentScreen.tsx:255:              </Animated.View>
+src/screens/onboarding/UserIntentScreen.tsx:258:              <Animated.View
+src/screens/onboarding/UserIntentScreen.tsx:323:              </Animated.View>
+src/screens/onboarding/UserIntentScreen.tsx:327:            <Animated.View
+src/screens/onboarding/UserIntentScreen.tsx:342:            </Animated.View>
+src/screens/onboarding/UserIntentScreen.tsx:343:          </Animated.View>
+src/screens/SwipeScreen.tsx:40:  const position = useRef(new Animated.ValueXY()).current;
+src/screens/SwipeScreen.tsx:51:    onPanResponderMove: Animated.event(
+src/screens/SwipeScreen.tsx:59:        Animated.timing(position, {
+src/screens/SwipeScreen.tsx:70:        Animated.timing(position, {
+src/screens/SwipeScreen.tsx:80:        Animated.spring(position, {
+src/screens/SwipeScreen.tsx:152:        <Animated.View
+src/screens/SwipeScreen.tsx:174:        </Animated.View>
+src/hooks/screens/useMapScreen.ts:65:  filterPanelHeight: Animated.Value;
+src/hooks/screens/useMapScreen.ts:66:  statsOpacity: Animated.Value;
+src/hooks/screens/useMapScreen.ts:121:  const [filterPanelHeight] = useState(new Animated.Value(0));
+src/hooks/screens/useMapScreen.ts:122:  const [statsOpacity] = useState(new Animated.Value(1));
+src/hooks/screens/useMapScreen.ts:212:    Animated.spring(filterPanelHeight, {
+src/hooks/domains/social/useMemoryWeave.ts:31:  scrollX: Animated.Value;
+src/hooks/domains/social/useMemoryWeave.ts:32:  fadeAnim: Animated.Value;
+src/hooks/domains/social/useMemoryWeave.ts:33:  scaleAnim: Animated.Value;
+src/hooks/domains/social/useMemoryWeave.ts:58:  const scrollX = useRef(new Animated.Value(0)).current;
+src/hooks/domains/social/useMemoryWeave.ts:59:  const fadeAnim = useRef(new Animated.Value(0)).current;
+src/hooks/domains/social/useMemoryWeave.ts:60:  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+src/hooks/domains/social/useMemoryWeave.ts:65:    Animated.parallel([
+src/hooks/domains/social/useMemoryWeave.ts:66:      Animated.timing(fadeAnim, {
+src/hooks/domains/social/useMemoryWeave.ts:71:      Animated.spring(scaleAnim, {
+src/hooks/domains/onboarding/useWelcome.ts:8:  useSharedValue,
+src/hooks/domains/onboarding/useWelcome.ts:9:  withSpring,
+src/hooks/domains/onboarding/useWelcome.ts:10:  withTiming,
+src/hooks/domains/onboarding/useWelcome.ts:12:} from "react-native-reanimated";
+src/hooks/domains/onboarding/useWelcome.ts:41:  const logoScale = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:42:  const logoOpacity = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:43:  const titleOpacity = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:44:  const titleTranslateY = useSharedValue(30);
+src/hooks/domains/onboarding/useWelcome.ts:45:  const subtitleOpacity = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:46:  const subtitleTranslateY = useSharedValue(30);
+src/hooks/domains/onboarding/useWelcome.ts:47:  const featuresOpacity = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:48:  const featuresTranslateY = useSharedValue(30);
+src/hooks/domains/onboarding/useWelcome.ts:49:  const buttonOpacity = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:50:  const buttonScale = useSharedValue(0.8);
+src/hooks/domains/onboarding/useWelcome.ts:51:  const confettiScale = useSharedValue(0);
+src/hooks/domains/onboarding/useWelcome.ts:62:        logoScale.value = withSpring(1, AnimationConfigs.springBouncy);
+src/hooks/domains/onboarding/useWelcome.ts:63:        logoOpacity.value = withTiming(1, AnimationConfigs.timing);
+src/hooks/domains/onboarding/useWelcome.ts:68:          withTiming(1, AnimationConfigs.timing),
+src/hooks/domains/onboarding/useWelcome.ts:72:          withSpring(0, AnimationConfigs.spring),
+src/hooks/domains/onboarding/useWelcome.ts:78:          withTiming(1, AnimationConfigs.timing),
+src/hooks/domains/onboarding/useWelcome.ts:82:          withSpring(0, AnimationConfigs.spring),
+src/hooks/domains/onboarding/useWelcome.ts:88:          withTiming(1, AnimationConfigs.timing),
+src/hooks/domains/onboarding/useWelcome.ts:92:          withSpring(0, AnimationConfigs.spring),
+src/hooks/domains/onboarding/useWelcome.ts:98:          withTiming(1, AnimationConfigs.timing),
+src/hooks/domains/onboarding/useWelcome.ts:102:          withSpring(1, AnimationConfigs.spring),
+src/hooks/domains/onboarding/useWelcome.ts:108:          withSpring(1, AnimationConfigs.spring),
+src/hooks/useHelpSupportData.ts:6:  useAnimatedStyle,
+src/hooks/useHelpSupportData.ts:7:  useSharedValue,
+src/hooks/useHelpSupportData.ts:9:  withSpring,
+src/hooks/useHelpSupportData.ts:10:} from "react-native-reanimated";
+src/hooks/useHelpSupportData.ts:22:  animatedStyles: Array<ReturnType<typeof useAnimatedStyle>>;
+src/hooks/useHelpSupportData.ts:69:  const optionAnim1 = useSharedValue(0);
+src/hooks/useHelpSupportData.ts:70:  const optionAnim2 = useSharedValue(0);
+src/hooks/useHelpSupportData.ts:71:  const optionAnim3 = useSharedValue(0);
+src/hooks/useHelpSupportData.ts:72:  const optionAnim4 = useSharedValue(0);
+src/hooks/useHelpSupportData.ts:78:      withSpring(1, { damping: 15, stiffness: 200 }),
+src/hooks/useHelpSupportData.ts:82:      withSpring(1, { damping: 15, stiffness: 200 }),
+src/hooks/useHelpSupportData.ts:86:      withSpring(1, { damping: 15, stiffness: 200 }),
+src/hooks/useHelpSupportData.ts:90:      withSpring(1, { damping: 15, stiffness: 200 }),
+src/hooks/useHelpSupportData.ts:96:    useAnimatedStyle(() => ({
+src/hooks/useHelpSupportData.ts:102:    useAnimatedStyle(() => ({
+src/hooks/useHelpSupportData.ts:108:    useAnimatedStyle(() => ({
+src/hooks/useHelpSupportData.ts:114:    useAnimatedStyle(() => ({
+src/styles/EnhancedDesignTokens.tsx:259:    // Legacy spring (Animated.spring w/ tension/friction)
+src/screens/adoption/AdoptionManagerScreen.tsx:16:  useSharedValue,
+src/screens/adoption/AdoptionManagerScreen.tsx:17:  useAnimatedStyle,
+src/screens/adoption/AdoptionManagerScreen.tsx:18:  withSpring,
+src/screens/adoption/AdoptionManagerScreen.tsx:19:  withTiming,
+src/screens/adoption/AdoptionManagerScreen.tsx:20:} from "react-native-reanimated";
+src/screens/adoption/AdoptionManagerScreen.tsx:187:  const tabScale1 = useSharedValue(1);
+src/screens/adoption/AdoptionManagerScreen.tsx:188:  const tabScale2 = useSharedValue(1);
+src/screens/adoption/AdoptionManagerScreen.tsx:190:  const tabAnimatedStyle1 = useAnimatedStyle(() => ({
+src/screens/adoption/AdoptionManagerScreen.tsx:194:  const tabAnimatedStyle2 = useAnimatedStyle(() => ({
+src/screens/adoption/AdoptionManagerScreen.tsx:206:    scaleValue: import("react-native-reanimated").SharedValue<number>,
+src/screens/adoption/AdoptionManagerScreen.tsx:209:    scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
+src/screens/adoption/AdoptionManagerScreen.tsx:210:      scaleValue.value = withSpring(1, SPRING_CONFIG);
+src/screens/adoption/AdoptionManagerScreen.tsx:567:        <Animated.View style={tabAnimatedStyle1}>
+src/screens/adoption/AdoptionManagerScreen.tsx:591:        </Animated.View>
+src/screens/adoption/AdoptionManagerScreen.tsx:593:        <Animated.View style={tabAnimatedStyle2}>
+src/screens/adoption/AdoptionManagerScreen.tsx:619:        </Animated.View>
+src/__mocks__/react-native.js:75:    View: 'Animated.View',
+src/__mocks__/react-native.js:76:    Text: 'Animated.Text',
+src/__mocks__/react-native.js:77:    Image: 'Animated.Image',
+src/__mocks__/react-native.js:78:    ScrollView: 'Animated.ScrollView',
+src/__mocks__/react-native.js:122:      this.x = new module.exports.Animated.Value(initial ? initial.x : 0);
+src/__mocks__/react-native.js:123:      this.y = new module.exports.Animated.Value(initial ? initial.y : 0);
+src/hooks/useMotionSystem.ts:4:  useSharedValue,
+src/hooks/useMotionSystem.ts:5:  useAnimatedStyle,
+src/hooks/useMotionSystem.ts:6:  withTiming,
+src/hooks/useMotionSystem.ts:7:  withSpring,
+src/hooks/useMotionSystem.ts:13:} from "react-native-reanimated";
+src/hooks/useMotionSystem.ts:51:  const animatedValue = useSharedValue(initialValue);
+src/hooks/useMotionSystem.ts:60:      animatedValue.value = withTiming(toValue, { duration: 200 });
+src/hooks/useMotionSystem.ts:64:    // Convert Animated.spring config to Reanimated 2 withSpring config
+src/hooks/useMotionSystem.ts:75:    animatedValue.value = withSpring(toValue, springConfig);
+src/hooks/useMotionSystem.ts:122:    Array.from({ length: itemCount }, () => new Animated.Value(0)),
+src/hooks/useMotionSystem.ts:148:      Animated.spring(animatedValue, {
+src/hooks/useMotionSystem.ts:156:    return Animated.stagger(delay, animations);
+src/hooks/useMotionSystem.ts:353:  const scaleAnim = useRef(new Animated.Value(0)).current;
+src/hooks/useMotionSystem.ts:354:  const opacityAnim = useRef(new Animated.Value(1)).current;
+src/hooks/useMotionSystem.ts:357:    Animated.parallel([
+src/hooks/useMotionSystem.ts:358:      Animated.timing(scaleAnim, {
+src/hooks/useMotionSystem.ts:364:      Animated.timing(opacityAnim, {
+src/hooks/useMotionSystem.ts:388:  const glowAnim = useRef(new Animated.Value(0)).current;
+src/hooks/useMotionSystem.ts:392:      Animated.loop(
+src/hooks/useMotionSystem.ts:393:        Animated.sequence([
+src/hooks/useMotionSystem.ts:394:          Animated.timing(glowAnim, {
+src/hooks/useMotionSystem.ts:400:          Animated.timing(glowAnim, {
+src/__tests__/components/AnimatedSplash.test.tsx:25:  RN.Animated.timing = () => ({
+src/__tests__/components/AnimatedSplash.test.tsx:30:  RN.Animated.spring = () => ({
+src/__tests__/components/AnimatedSplash.test.tsx:35:  RN.Animated.sequence = () => ({
+src/__tests__/components/AnimatedSplash.test.tsx:40:  RN.Animated.parallel = () => ({
+src/__tests__/components/AnimatedSplash.test.tsx:45:  RN.Animated.delay = () => ({
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:23:    const mockAnimatedValue = new Animated.Value(0);
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:38:      Animated.timing(mockAnimatedValue, {
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:58:    const mockAnimatedValue = new Animated.Value(0);
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:71:      Animated.timing(mockAnimatedValue, {
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:187:      translateX: new Animated.Value(0),
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:188:      translateY: new Animated.Value(0),
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:189:      rotate: new Animated.Value(0),
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:190:      opacity: new Animated.Value(1),
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:195:      Animated.parallel([
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:196:        Animated.timing(animationValues.translateX, {
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:201:        Animated.timing(animationValues.rotate, {
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:206:        Animated.timing(animationValues.opacity, {
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:348:    const mockAnimatedValue = new Animated.Value(150); // Mid-swipe position
+src/hooks/__tests__/integration/swipe-match.integration.test.ts:352:      Animated.spring(mockAnimatedValue, {
+src/types/expo-components.d.ts:184:declare module "react-native-reanimated" {
+src/types/expo-components.d.ts:209:  export function useSharedValue<T>(value: T): { value: T };
+src/types/expo-components.d.ts:210:  export function useAnimatedStyle<T>(updater: () => T): T;
+src/types/expo-components.d.ts:211:  export function withTiming<T>(value: T, config?: unknown): T;
+src/types/expo-components.d.ts:212:  export function withSpring<T>(value: T, config?: unknown): T;
+src/components/Footer.tsx:10:  useAnimatedStyle,
+src/components/Footer.tsx:11:  useSharedValue,
+src/components/Footer.tsx:13:  withSpring,
+src/components/Footer.tsx:14:  withTiming,
+src/components/Footer.tsx:15:} from "react-native-reanimated";
+src/components/Footer.tsx:43:  const opacity = useSharedValue(0);
+src/components/Footer.tsx:44:  const translateY = useSharedValue(20);
+src/components/Footer.tsx:47:    opacity.value = withDelay(300, withTiming(1, { duration: 600 }));
+src/components/Footer.tsx:50:      withSpring(0, { damping: 15, stiffness: 100 }),
+src/components/Footer.tsx:54:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/Footer.tsx:90:    <Animated.View
+src/components/Footer.tsx:214:    </Animated.View>
+src/components/Footer.tsx:218:    <Animated.View
+src/components/Footer.tsx:246:    </Animated.View>
+src/components/Footer.tsx:250:    <Animated.View style={animatedStyle as any}>
+src/components/Footer.tsx:333:    </Animated.View>
+src/components/map/MapStatsPanel.tsx:14:  opacity: Animated.Value;
+src/components/map/MapStatsPanel.tsx:22:    <Animated.View style={[styles.statsContainer, { opacity }]}>
+src/components/map/MapStatsPanel.tsx:35:    </Animated.View>
+src/components/EnhancedTabBar.tsx:7:  useAnimatedStyle,
+src/components/EnhancedTabBar.tsx:8:  useSharedValue,
+src/components/EnhancedTabBar.tsx:9:  withSpring,
+src/components/EnhancedTabBar.tsx:10:  withTiming,
+src/components/EnhancedTabBar.tsx:11:} from "react-native-reanimated";
+src/components/EnhancedTabBar.tsx:30:  const scale = useSharedValue(1);
+src/components/EnhancedTabBar.tsx:31:  const badgeOpacity = useSharedValue(showBadge ? 1 : 0);
+src/components/EnhancedTabBar.tsx:32:  const badgeScale = useSharedValue(showBadge ? 1 : 0);
+src/components/EnhancedTabBar.tsx:36:      scale.value = withSpring(1.1, { damping: 15, stiffness: 200 });
+src/components/EnhancedTabBar.tsx:38:      scale.value = withSpring(1, { damping: 15, stiffness: 200 });
+src/components/EnhancedTabBar.tsx:44:      badgeOpacity.value = withTiming(1, { duration: 300 });
+src/components/EnhancedTabBar.tsx:45:      badgeScale.value = withSpring(1, { damping: 10, stiffness: 200 });
+src/components/EnhancedTabBar.tsx:47:      badgeOpacity.value = withTiming(0, { duration: 200 });
+src/components/EnhancedTabBar.tsx:48:      badgeScale.value = withTiming(0, { duration: 200 });
+src/components/EnhancedTabBar.tsx:73:  const animatedIconStyle = useAnimatedStyle(() => ({
+src/components/EnhancedTabBar.tsx:77:  const animatedBadgeStyle = useAnimatedStyle(() => ({
+src/components/EnhancedTabBar.tsx:84:      <Animated.View style={animatedIconStyle}>
+src/components/EnhancedTabBar.tsx:86:      </Animated.View>
+src/components/EnhancedTabBar.tsx:89:        <Animated.View
+src/components/EnhancedTabBar.tsx:95:        </Animated.View>
+src/components/feedback/Toast.tsx:4:  useAnimatedStyle,
+src/components/feedback/Toast.tsx:5:  useSharedValue,
+src/components/feedback/Toast.tsx:6:  withSpring,
+src/components/feedback/Toast.tsx:7:  withTiming,
+src/components/feedback/Toast.tsx:8:} from "react-native-reanimated";
+src/components/feedback/Toast.tsx:28:  const translateY = useSharedValue(-100);
+src/components/feedback/Toast.tsx:29:  const opacity = useSharedValue(0);
+src/components/feedback/Toast.tsx:34:      translateY.value = withSpring(0, { stiffness: 300, damping: 30 });
+src/components/feedback/Toast.tsx:35:      opacity.value = withTiming(1, { duration: 300 });
+src/components/feedback/Toast.tsx:38:        translateY.value = withSpring(-100, { stiffness: 300, damping: 30 });
+src/components/feedback/Toast.tsx:41:        opacity.value = withTiming(0, { duration: 300 });
+src/components/feedback/Toast.tsx:48:      translateY.value = withSpring(-100, { stiffness: 300, damping: 30 });
+src/components/feedback/Toast.tsx:49:      opacity.value = withTiming(0, { duration: 300 });
+src/components/feedback/Toast.tsx:57:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/feedback/Toast.tsx:76:    <Animated.View
+src/components/feedback/Toast.tsx:85:    </Animated.View>
+src/components/PremiumTypography.tsx:12:  useSharedValue,
+src/components/PremiumTypography.tsx:13:  useAnimatedStyle,
+src/components/PremiumTypography.tsx:14:  withTiming,
+src/components/PremiumTypography.tsx:19:} from "react-native-reanimated";
+src/components/PremiumTypography.tsx:108:  const shimmerOffset = useSharedValue(-100);
+src/components/PremiumTypography.tsx:109:  const glowIntensity = useSharedValue(1);
+src/components/PremiumTypography.tsx:110:  const scale = useSharedValue(1);
+src/components/PremiumTypography.tsx:116:        withTiming(100, { duration: 2000 }),
+src/components/PremiumTypography.tsx:117:        withDelay(1000, withTiming(-100, { duration: 0 })),
+src/components/PremiumTypography.tsx:126:        withTiming(1.5, { duration: 1000 }),
+src/components/PremiumTypography.tsx:127:        withTiming(1, { duration: 1000 }),
+src/components/PremiumTypography.tsx:135:      scale.value = withDelay(200, withTiming(1, { duration: 500 }));
+src/components/PremiumTypography.tsx:184:  const shimmerStyle = useAnimatedStyle(() => ({
+src/components/PremiumTypography.tsx:188:  const glowStyle = useAnimatedStyle(() => ({
+src/components/PremiumTypography.tsx:192:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/PremiumTypography.tsx:206:      <Animated.View style={animated ? animatedStyle : undefined}>
+src/components/PremiumTypography.tsx:215:              <Animated.View
+src/components/PremiumTypography.tsx:234:      </Animated.View>
+src/components/PremiumTypography.tsx:240:    <Animated.View style={animated ? animatedStyle : undefined}>
+src/components/PremiumTypography.tsx:261:              <Animated.View
+src/components/PremiumTypography.tsx:283:    </Animated.View>
+src/components/PremiumTypography.tsx:305:  const opacity = useSharedValue(0);
+src/components/PremiumTypography.tsx:306:  const translateY = useSharedValue(50);
+src/components/PremiumTypography.tsx:307:  const translateX = useSharedValue(-50);
+src/components/PremiumTypography.tsx:308:  const scale = useSharedValue(0.8);
+src/components/PremiumTypography.tsx:309:  const typewriterProgress = useSharedValue(0);
+src/components/PremiumTypography.tsx:315:          opacity.value = withDelay(delay, withTiming(1, { duration }));
+src/components/PremiumTypography.tsx:318:          translateY.value = withDelay(delay, withTiming(0, { duration }));
+src/components/PremiumTypography.tsx:319:          opacity.value = withDelay(delay, withTiming(1, { duration }));
+src/components/PremiumTypography.tsx:322:          scale.value = withDelay(delay, withTiming(1, { duration }));
+src/components/PremiumTypography.tsx:323:          opacity.value = withDelay(delay, withTiming(1, { duration }));
+src/components/PremiumTypography.tsx:328:            withTiming(1, { duration }),
+src/components/PremiumTypography.tsx:330:          opacity.value = withDelay(delay, withTiming(1, { duration }));
+src/components/PremiumTypography.tsx:336:              withTiming(1.2, { duration: duration * 0.3 }),
+src/components/PremiumTypography.tsx:337:              withTiming(0.9, { duration: duration * 0.2 }),
+src/components/PremiumTypography.tsx:338:              withTiming(1, { duration: duration * 0.5 }),
+src/components/PremiumTypography.tsx:341:          opacity.value = withDelay(delay, withTiming(1, { duration }));
+src/components/PremiumTypography.tsx:349:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/PremiumTypography.tsx:359:    <Animated.Text style={StyleSheet.flatten([style, animatedStyle])}>
+src/components/PremiumTypography.tsx:361:    </Animated.Text>
+src/components/typography/ModernTypography.tsx:19:import Animated, { useAnimatedStyle } from "react-native-reanimated";
+src/components/typography/ModernTypography.tsx:213:        <Animated.View style={entranceStyle}>
+src/components/typography/ModernTypography.tsx:215:        </Animated.View>
+src/components/typography/ModernTypography.tsx:225:      <Animated.Text
+src/components/typography/ModernTypography.tsx:230:      </Animated.Text>
+src/components/phoenix/PhoenixCard.tsx:17:  useSharedValue,
+src/components/phoenix/PhoenixCard.tsx:18:  useAnimatedStyle,
+src/components/phoenix/PhoenixCard.tsx:19:  withSpring,
+src/components/phoenix/PhoenixCard.tsx:20:  withTiming,
+src/components/phoenix/PhoenixCard.tsx:22:} from "react-native-reanimated";
+src/components/phoenix/PhoenixCard.tsx:23:import Animated from "react-native-reanimated";
+src/components/phoenix/PhoenixCard.tsx:70:  const scale = useSharedValue(1);
+src/components/phoenix/PhoenixCard.tsx:71:  const glowIntensity = useSharedValue(1);
+src/components/phoenix/PhoenixCard.tsx:72:  const elevation = useSharedValue(1);
+src/components/phoenix/PhoenixCard.tsx:75:  const animatedStyle = useAnimatedStyle(
+src/components/phoenix/PhoenixCard.tsx:87:    scale.value = withSpring(0.98, AnimationConfigs.spring);
+src/components/phoenix/PhoenixCard.tsx:88:    glowIntensity.value = withSpring(1.3, AnimationConfigs.spring);
+src/components/phoenix/PhoenixCard.tsx:89:    elevation.value = withSpring(1.2, AnimationConfigs.spring);
+src/components/phoenix/PhoenixCard.tsx:97:    scale.value = withSpring(1, AnimationConfigs.spring);
+src/components/phoenix/PhoenixCard.tsx:98:    glowIntensity.value = withSpring(1, AnimationConfigs.spring);
+src/components/phoenix/PhoenixCard.tsx:99:    elevation.value = withSpring(1, AnimationConfigs.spring);
+src/components/phoenix/PhoenixCard.tsx:195:      <Animated.View style={StyleSheet.flatten([animatedStyle, style])}>
+src/components/phoenix/PhoenixCard.tsx:224:      </Animated.View>
+src/components/phoenix/PhoenixCard.tsx:230:    <Animated.View
+src/components/phoenix/PhoenixCard.tsx:256:    </Animated.View>
+src/components/MotionPrimitives.tsx:25:    children.map(() => new Animated.Value(0)),
+src/components/MotionPrimitives.tsx:30:      Animated.spring(animatedValue, {
+src/components/MotionPrimitives.tsx:40:    Animated.stagger(delay, animations).start();
+src/components/MotionPrimitives.tsx:49:          <Animated.View
+src/components/MotionPrimitives.tsx:67:          </Animated.View>
+src/components/MotionPrimitives.tsx:88:  const animatedValue = useRef(new Animated.Value(0)).current;
+src/components/MotionPrimitives.tsx:92:      Animated.spring(animatedValue, {
+src/components/MotionPrimitives.tsx:104:    <Animated.View
+src/components/MotionPrimitives.tsx:121:    </Animated.View>
+src/components/MotionPrimitives.tsx:139:  const animatedValue = useRef(new Animated.Value(0)).current;
+src/components/MotionPrimitives.tsx:142:    Animated.timing(animatedValue, {
+src/components/MotionPrimitives.tsx:223:    <Animated.View style={StyleSheet.flatten([getTransitionStyle(), style])}>
+src/components/MotionPrimitives.tsx:225:    </Animated.View>
+src/components/MotionPrimitives.tsx:267:  const animatedValues = useRef<Map<number, Animated.Value>>(new Map()).current;
+src/components/MotionPrimitives.tsx:274:      animatedValue = new Animated.Value(0);
+src/components/MotionPrimitives.tsx:278:      Animated.spring(animatedValue, {
+src/components/MotionPrimitives.tsx:332:        <Animated.View style={getAnimatedStyle(info.index)}>
+src/components/MotionPrimitives.tsx:334:        </Animated.View>
+src/components/MotionPrimitives.tsx:356:  const animatedValue = useRef(new Animated.Value(0)).current;
+src/components/MotionPrimitives.tsx:362:    if (!hasAnimated.current) {
+src/components/MotionPrimitives.tsx:363:      hasAnimated.current = true;
+src/components/MotionPrimitives.tsx:364:      Animated.sequence([
+src/components/MotionPrimitives.tsx:365:        Animated.delay(delay),
+src/components/MotionPrimitives.tsx:366:        Animated.spring(animatedValue, {
+src/components/MotionPrimitives.tsx:439:    <Animated.View style={StyleSheet.flatten([getAnimationStyle(), style])}>
+src/components/MotionPrimitives.tsx:441:    </Animated.View>
+src/components/Premium/PremiumButton.tsx:68:  const animatedScale = useRef(new Animated.Value(1)).current;
+src/components/Premium/PremiumButton.tsx:69:  const animatedGlow = useRef(new Animated.Value(0)).current;
+src/components/Premium/PremiumButton.tsx:103:      Animated.spring(animatedScale, {
+src/components/Premium/PremiumButton.tsx:113:        Animated.timing(animatedGlow, {
+src/components/Premium/PremiumButton.tsx:121:    Animated.parallel(animations).start();
+src/components/Premium/PremiumButton.tsx:129:      Animated.spring(animatedScale, {
+src/components/Premium/PremiumButton.tsx:139:        Animated.timing(animatedGlow, {
+src/components/Premium/PremiumButton.tsx:147:    Animated.parallel(animations).start();
+src/components/Premium/PremiumButton.tsx:248:      <Animated.View
+src/components/Premium/PremiumButton.tsx:294:      </Animated.View>
+src/components/Premium/PremiumButton.tsx:301:      <Animated.View
+src/components/Premium/PremiumButton.tsx:346:      </Animated.View>
+src/components/Premium/PremiumButton.tsx:352:    <Animated.View
+src/components/Premium/PremiumButton.tsx:398:    </Animated.View>
+src/components/glass/GlassButton.tsx:4:  useSharedValue,
+src/components/glass/GlassButton.tsx:5:  useAnimatedStyle,
+src/components/glass/GlassButton.tsx:6:  withSpring,
+src/components/glass/GlassButton.tsx:7:} from "react-native-reanimated";
+src/components/glass/GlassButton.tsx:8:import Animated from "react-native-reanimated";
+src/components/glass/GlassButton.tsx:42:  const scale = useSharedValue(1);
+src/components/glass/GlassButton.tsx:43:  const opacity = useSharedValue(1);
+src/components/glass/GlassButton.tsx:101:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/glass/GlassButton.tsx:107:    scale.value = withSpring(0.95);
+src/components/glass/GlassButton.tsx:108:    opacity.value = withSpring(0.8);
+src/components/glass/GlassButton.tsx:112:    scale.value = withSpring(1);
+src/components/glass/GlassButton.tsx:113:    opacity.value = withSpring(1);
+src/components/glass/GlassButton.tsx:120:    <Animated.View
+src/components/glass/GlassButton.tsx:144:    </Animated.View>
+src/components/Advanced/AdvancedInteractionSystem.tsx:133:  const scale = useRef(new Animated.Value(1)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:134:  const opacity = useRef(new Animated.Value(1)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:135:  const rotation = useRef(new Animated.Value(0)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:136:  const glow = useRef(new Animated.Value(0)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:137:  const elevation = useRef(new Animated.Value(4)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:138:  const tiltX = useRef(new Animated.Value(0)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:139:  const tiltY = useRef(new Animated.Value(0)).current;
+src/components/Advanced/AdvancedInteractionSystem.tsx:185:      const animations: Animated.CompositeAnimation[] = [];
+src/components/Advanced/AdvancedInteractionSystem.tsx:189:          Animated.spring(scale, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:198:          Animated.timing(glow, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:208:          Animated.spring(elevation, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:216:        Animated.parallel(animations).start();
+src/components/Advanced/AdvancedInteractionSystem.tsx:242:      const animations: Animated.CompositeAnimation[] = [];
+src/components/Advanced/AdvancedInteractionSystem.tsx:246:          Animated.spring(scale, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:255:          Animated.timing(glow, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:264:        Animated.parallel(animations).start();
+src/components/Advanced/AdvancedInteractionSystem.tsx:299:        Animated.parallel([
+src/components/Advanced/AdvancedInteractionSystem.tsx:300:          Animated.spring(tiltX, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:304:          Animated.spring(tiltY, {
+src/components/Advanced/AdvancedInteractionSystem.tsx:488:      <Animated.View style={buttonStyle}>
+src/components/Advanced/AdvancedInteractionSystem.tsx:491:          <Animated.View
+src/components/Advanced/AdvancedInteractionSystem.tsx:545:            <Animated.View
+src/components/Advanced/AdvancedInteractionSystem.tsx:562:      </Animated.View>
+src/components/Advanced/AdvancedInteractionSystem.tsx:593:      const rotationAnimation = Animated.loop(
+src/components/Advanced/AdvancedInteractionSystem.tsx:594:        Animated.timing(rotation, {
+src/components/glass/GlassContainer.tsx:6:  useSharedValue,
+src/components/glass/GlassContainer.tsx:7:  useAnimatedStyle,
+src/components/glass/GlassContainer.tsx:8:  withSpring,
+src/components/glass/GlassContainer.tsx:9:} from "react-native-reanimated";
+src/components/glass/GlassContainer.tsx:10:import Animated from "react-native-reanimated";
+src/components/glass/GlassContainer.tsx:49:  const scale = useSharedValue(1);
+src/components/glass/GlassContainer.tsx:50:  const opacity = useSharedValue(1);
+src/components/glass/GlassContainer.tsx:52:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/glass/GlassContainer.tsx:59:      scale.value = withSpring(0.98);
+src/components/glass/GlassContainer.tsx:60:      opacity.value = withSpring(0.9);
+src/components/glass/GlassContainer.tsx:66:      scale.value = withSpring(1);
+src/components/glass/GlassContainer.tsx:67:      opacity.value = withSpring(1);
+src/components/glass/GlassContainer.tsx:85:    <Animated.View
+src/components/glass/GlassContainer.tsx:114:    </Animated.View>
+src/components/Premium/PremiumCard.tsx:55:  const animatedScale = useRef(new Animated.Value(1)).current;
+src/components/Premium/PremiumCard.tsx:56:  const animatedRotateX = useRef(new Animated.Value(0)).current;
+src/components/Premium/PremiumCard.tsx:57:  const animatedRotateY = useRef(new Animated.Value(0)).current;
+src/components/Premium/PremiumCard.tsx:58:  const animatedElevation = useRef(new Animated.Value(4)).current;
+src/components/Premium/PremiumCard.tsx:59:  const animatedGlow = useRef(new Animated.Value(0)).current;
+src/components/Premium/PremiumCard.tsx:90:        Animated.timing(animatedElevation, {
+src/components/Premium/PremiumCard.tsx:98:        Animated.parallel([
+src/components/Premium/PremiumCard.tsx:99:          Animated.spring(animatedRotateX, {
+src/components/Premium/PremiumCard.tsx:105:          Animated.spring(animatedRotateY, {
+src/components/Premium/PremiumCard.tsx:111:          Animated.timing(animatedElevation, {
+src/components/Premium/PremiumCard.tsx:130:      Animated.spring(animatedScale, {
+src/components/Premium/PremiumCard.tsx:140:        Animated.timing(animatedGlow, {
+src/components/Premium/PremiumCard.tsx:148:    Animated.parallel(animations).start();
+src/components/Premium/PremiumCard.tsx:153:      Animated.spring(animatedScale, {
+src/components/Premium/PremiumCard.tsx:163:        Animated.timing(animatedGlow, {
+src/components/Premium/PremiumCard.tsx:171:    Animated.parallel(animations).start();
+src/components/Premium/PremiumCard.tsx:218:    Animated.sequence([
+src/components/Premium/PremiumCard.tsx:219:      Animated.timing(animatedScale, {
+src/components/Premium/PremiumCard.tsx:224:      Animated.spring(animatedScale, {
+src/components/Premium/PremiumCard.tsx:305:      <Animated.View
+src/components/Premium/PremiumCard.tsx:351:      </Animated.View>
+src/components/Premium/PremiumCard.tsx:363:      <Animated.View
+src/components/Premium/PremiumCard.tsx:414:          <Animated.View
+src/components/Premium/PremiumCard.tsx:429:      </Animated.View>
+src/components/Premium/PremiumCard.tsx:435:    <Animated.View
+src/components/Premium/PremiumCard.tsx:473:    </Animated.View>
+src/components/glass/GlassModal.tsx:4:  useSharedValue,
+src/components/glass/GlassModal.tsx:5:  useAnimatedStyle,
+src/components/glass/GlassModal.tsx:6:  withTiming,
+src/components/glass/GlassModal.tsx:7:  withSpring,
+src/components/glass/GlassModal.tsx:8:} from "react-native-reanimated";
+src/components/glass/GlassModal.tsx:9:import Animated from "react-native-reanimated";
+src/components/glass/GlassModal.tsx:32:  const opacity = useSharedValue(0);
+src/components/glass/GlassModal.tsx:33:  const scale = useSharedValue(0.8);
+src/components/glass/GlassModal.tsx:37:      opacity.value = withTiming(1, { duration: 300 });
+src/components/glass/GlassModal.tsx:38:      scale.value = withSpring(1);
+src/components/glass/GlassModal.tsx:40:      opacity.value = withTiming(0, { duration: 300 });
+src/components/glass/GlassModal.tsx:41:      scale.value = withTiming(0.8, { duration: 300 });
+src/components/glass/GlassModal.tsx:45:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/glass/GlassModal.tsx:53:    <Animated.View
+src/components/glass/GlassModal.tsx:84:    </Animated.View>
+src/components/buttons/EffectWrappers.tsx:18:import Animated, { type AnimatedStyleProp } from "react-native-reanimated";
+src/components/buttons/EffectWrappers.tsx:45:export const WithGlowFX = forwardRef<Animated.View, WithGlowFXProps>(
+src/components/buttons/EffectWrappers.tsx:55:    ref: Ref<Animated.View>,
+src/components/buttons/EffectWrappers.tsx:64:      <Animated.View ref={ref} style={[glowStyle as AnimatedStyleProp<ViewStyle>, style]}>
+src/components/buttons/EffectWrappers.tsx:66:      </Animated.View>
+src/components/buttons/EffectWrappers.tsx:79:export const WithMagneticFX = forwardRef<Animated.View, WithMagneticFXProps>(
+src/components/buttons/EffectWrappers.tsx:82:    ref: Ref<Animated.View>,
+src/components/buttons/EffectWrappers.tsx:91:      <Animated.View
+src/components/buttons/EffectWrappers.tsx:96:      </Animated.View>
+src/components/buttons/EffectWrappers.tsx:125:          <Animated.View
+src/components/buttons/EffectWrappers.tsx:173:          <Animated.View
+src/components/buttons/EffectWrappers.tsx:200:export const WithPressFX = forwardRef<Animated.View, WithPressFXProps>(
+src/components/buttons/EffectWrappers.tsx:201:  ({ children, config = "snappy", style, disabled = false }, ref: Ref<Animated.View>) => {
+src/components/buttons/EffectWrappers.tsx:209:      <Animated.View
+src/components/buttons/EffectWrappers.tsx:216:      </Animated.View>
+src/components/ThemeToggle.tsx:33:    new Animated.Value(isDark ? 1 : 0),
+src/components/ThemeToggle.tsx:37:    Animated.timing(animatedValue, {
+src/components/ThemeToggle.tsx:80:        <Animated.View>
+src/components/ThemeToggle.tsx:86:        </Animated.View>
+src/components/ShimmerPlaceholder.tsx:21:  const animatedValue = useRef(new Animated.Value(0)).current;
+src/components/ShimmerPlaceholder.tsx:39:    Animated.loop(
+src/components/ShimmerPlaceholder.tsx:40:      Animated.sequence([
+src/components/ShimmerPlaceholder.tsx:41:        Animated.timing(animatedValue, {
+src/components/ShimmerPlaceholder.tsx:46:        Animated.timing(animatedValue, {
+src/components/ShimmerPlaceholder.tsx:80:      <Animated.View
+src/components/ShimmerPlaceholder.tsx:96:      </Animated.View>
+src/components/Advanced/Card/CardAnimations.tsx:37:  const scale = useRef(new Animated.Value(1)).current;
+src/components/Advanced/Card/CardAnimations.tsx:38:  const opacity = useRef(new Animated.Value(1)).current;
+src/components/Advanced/Card/CardAnimations.tsx:39:  const rotation = useRef(new Animated.Value(0)).current;
+src/components/Advanced/Card/CardAnimations.tsx:40:  const glow = useRef(new Animated.Value(0)).current;
+src/components/Advanced/Card/CardAnimations.tsx:41:  const elevation = useRef(new Animated.Value(4)).current;
+src/components/Advanced/Card/CardAnimations.tsx:42:  const tiltX = useRef(new Animated.Value(0)).current;
+src/components/Advanced/Card/CardAnimations.tsx:43:  const tiltY = useRef(new Animated.Value(0)).current;
+src/components/Advanced/Card/CardAnimations.tsx:44:  const shimmer = useRef(new Animated.Value(0)).current;
+src/components/Advanced/Card/CardAnimations.tsx:78:      const animations: Animated.CompositeAnimation[] = [];
+src/components/Advanced/Card/CardAnimations.tsx:82:          Animated.spring(scale, {
+src/components/Advanced/Card/CardAnimations.tsx:93:          Animated.timing(glow, {
+src/components/Advanced/Card/CardAnimations.tsx:103:          Animated.spring(elevation, {
+src/components/Advanced/Card/CardAnimations.tsx:113:        Animated.parallel(animations).start();
+src/components/Advanced/Card/CardAnimations.tsx:139:      const animations: Animated.CompositeAnimation[] = [];
+src/components/Advanced/Card/CardAnimations.tsx:143:          Animated.spring(scale, {
+src/components/Advanced/Card/CardAnimations.tsx:154:          Animated.timing(glow, {
+src/components/Advanced/Card/CardAnimations.tsx:163:        Animated.parallel(animations).start();
+src/components/Advanced/AdvancedHeader.tsx:112:  const headerOpacity = useRef(new Animated.Value(1)).current;
+src/components/Advanced/AdvancedHeader.tsx:113:  const headerTranslateY = useRef(new Animated.Value(0)).current;
+src/components/Advanced/AdvancedHeader.tsx:114:  const buttonScale = useRef(new Animated.Value(1)).current;
+src/components/Advanced/AdvancedHeader.tsx:115:  const titleScale = useRef(new Animated.Value(1)).current;
+src/components/Advanced/AdvancedHeader.tsx:335:      <Animated.View
+src/components/Advanced/AdvancedHeader.tsx:367:          <Animated.View
+src/components/Advanced/AdvancedHeader.tsx:394:          </Animated.View>
+src/components/Advanced/AdvancedHeader.tsx:405:      </Animated.View>
+src/components/SwipeCard.tsx:130:      pan: new Animated.ValueXY(),
+src/components/SwipeCard.tsx:131:      scale: new Animated.Value(isTopCard ? 1 : 0.95),
+src/components/SwipeCard.tsx:132:      opacity: new Animated.Value(isTopCard ? 1 : 0.8),
+src/components/SwipeCard.tsx:133:      likeOpacity: new Animated.Value(0),
+src/components/SwipeCard.tsx:134:      nopeOpacity: new Animated.Value(0),
+src/components/SwipeCard.tsx:135:      superLikeOpacity: new Animated.Value(0),
+src/components/SwipeCard.tsx:158:          ((pan.x as Animated.Value & { _value: number })._value) || 0;
+src/components/SwipeCard.tsx:160:          ((pan.y as Animated.Value & { _value: number })._value) || 0;
+src/components/SwipeCard.tsx:245:      Animated.timing(pan, {
+src/components/SwipeCard.tsx:252:      Animated.timing(opacity, {
+src/components/SwipeCard.tsx:261:    Animated.parallel(animations).start(async () => {
+src/components/SwipeCard.tsx:284:      Animated.timing(pan, {
+src/components/SwipeCard.tsx:291:      Animated.timing(opacity, {
+src/components/SwipeCard.tsx:300:    Animated.parallel(animations).start(async () => {
+src/components/SwipeCard.tsx:323:      Animated.timing(pan, {
+src/components/SwipeCard.tsx:328:      Animated.timing(opacity, {
+src/components/SwipeCard.tsx:333:      Animated.timing(scale, {
+src/components/SwipeCard.tsx:340:    Animated.parallel(animations).start(async () => {
+src/components/SwipeCard.tsx:359:      Animated.spring(pan, {
+src/components/SwipeCard.tsx:365:      Animated.timing(likeOpacity, {
+src/components/SwipeCard.tsx:370:      Animated.timing(nopeOpacity, {
+src/components/SwipeCard.tsx:375:      Animated.timing(superLikeOpacity, {
+src/components/SwipeCard.tsx:382:    Animated.parallel(animations).start();
+src/components/SwipeCard.tsx:392:      }) as unknown as Animated.AnimatedInterpolation<string>,
+src/components/SwipeCard.tsx:410:    <Animated.View
+src/components/SwipeCard.tsx:517:        <Animated.View
+src/components/SwipeCard.tsx:525:        </Animated.View>
+src/components/SwipeCard.tsx:527:        <Animated.View
+src/components/SwipeCard.tsx:535:        </Animated.View>
+src/components/SwipeCard.tsx:537:        <Animated.View
+src/components/SwipeCard.tsx:545:        </Animated.View>
+src/components/SwipeCard.tsx:607:    </Animated.View>
+src/components/Advanced/AdvancedCard.tsx:351:    <Animated.View style={cardStyle}>
+src/components/Advanced/AdvancedCard.tsx:361:        <Animated.View
+src/components/Advanced/AdvancedCard.tsx:379:        <Animated.View
+src/components/Advanced/AdvancedCard.tsx:410:    </Animated.View>
+src/components/animations/EnhancedAnimations.tsx:11:  const animatedValue = useRef(new Animated.Value(initialValue)).current;
+src/components/animations/EnhancedAnimations.tsx:14:    return Animated.spring(animatedValue, {
+src/components/animations/EnhancedAnimations.tsx:28:  const createSequence = (animations: Animated.CompositeAnimation[]) => {
+src/components/animations/EnhancedAnimations.tsx:29:    return Animated.sequence(animations);
+src/components/animations/EnhancedAnimations.tsx:33:    animations: Animated.CompositeAnimation[],
+src/components/animations/EnhancedAnimations.tsx:36:    return Animated.stagger(delay, animations);
+src/components/animations/EnhancedAnimations.tsx:43:  const pulseAnim = useRef(new Animated.Value(1)).current;
+src/components/animations/EnhancedAnimations.tsx:46:    const pulse = Animated.loop(
+src/components/animations/EnhancedAnimations.tsx:47:      Animated.sequence([
+src/components/animations/EnhancedAnimations.tsx:48:        Animated.timing(pulseAnim, {
+src/components/animations/EnhancedAnimations.tsx:54:        Animated.timing(pulseAnim, {
+src/components/animations/EnhancedAnimations.tsx:73:  const floatAnim = useRef(new Animated.Value(0)).current;
+src/components/animations/EnhancedAnimations.tsx:76:    const float = Animated.loop(
+src/components/animations/EnhancedAnimations.tsx:77:      Animated.sequence([
+src/components/animations/EnhancedAnimations.tsx:78:        Animated.timing(floatAnim, {
+src/components/animations/EnhancedAnimations.tsx:84:        Animated.timing(floatAnim, {
+src/components/animations/EnhancedAnimations.tsx:108:  const shimmerAnim = useRef(new Animated.Value(0)).current;
+src/components/animations/EnhancedAnimations.tsx:111:    const shimmer = Animated.loop(
+src/components/animations/EnhancedAnimations.tsx:112:      Animated.timing(shimmerAnim, {
+src/components/animations/EnhancedAnimations.tsx:135:  const scrollY = useRef(new Animated.Value(0)).current;
+src/components/animations/EnhancedAnimations.tsx:167:  const fadeAnim = useRef(new Animated.Value(0)).current;
+src/components/animations/EnhancedAnimations.tsx:171:      Animated.timing(fadeAnim, {
+src/components/animations/EnhancedAnimations.tsx:185:    <Animated.View style={StyleSheet.flatten([style, { opacity: fadeAnim }])}>
+src/components/animations/EnhancedAnimations.tsx:187:    </Animated.View>
+src/components/animations/EnhancedAnimations.tsx:208:  const slideAnim = useRef(new Animated.Value(1)).current;
+src/components/animations/EnhancedAnimations.tsx:212:      Animated.timing(slideAnim, {
+src/components/animations/EnhancedAnimations.tsx:269:    <Animated.View
+src/components/animations/EnhancedAnimations.tsx:273:    </Animated.View>
+src/components/animations/EnhancedAnimations.tsx:292:  const scaleAnim = useRef(new Animated.Value(initialScale)).current;
+src/components/animations/EnhancedAnimations.tsx:296:      Animated.spring(scaleAnim, {
+src/components/animations/EnhancedAnimations.tsx:310:    <Animated.View
+src/components/animations/EnhancedAnimations.tsx:314:    </Animated.View>
+src/components/animations/EnhancedAnimations.tsx:333:  const rotateAnim = useRef(new Animated.Value(0)).current;
+src/components/animations/EnhancedAnimations.tsx:337:      Animated.timing(rotateAnim, {
+src/components/animations/EnhancedAnimations.tsx:356:    <Animated.View
+src/components/animations/EnhancedAnimations.tsx:360:    </Animated.View>
+src/components/animations/EnhancedAnimations.tsx:412:    <Animated.Text style={style}>
+src/components/animations/EnhancedAnimations.tsx:415:        <Animated.Text
+src/components/animations/EnhancedAnimations.tsx:422:        </Animated.Text>
+src/components/animations/EnhancedAnimations.tsx:424:    </Animated.Text>
+src/components/animations/EnhancedAnimations.tsx:482:  const translateX = new Animated.Value(0);
+src/components/animations/EnhancedAnimations.tsx:483:  const opacity = new Animated.Value(1);
+src/components/animations/EnhancedAnimations.tsx:494:      Animated.parallel([
+src/components/animations/EnhancedAnimations.tsx:495:        Animated.timing(translateX, {
+src/components/animations/EnhancedAnimations.tsx:501:        Animated.timing(opacity, {
+src/components/animations/EnhancedAnimations.tsx:511:      Animated.spring(translateX, {
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:16:// Mock react-native-reanimated
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:17:jest.mock("react-native-reanimated", () => ({
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:19:    View: "Animated.View",
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:20:    Text: "Animated.Text",
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:21:    ScrollView: "Animated.ScrollView",
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:25:  withSpring: jest.fn((value) => value),
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:26:  withTiming: jest.fn((value) => value),
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:27:  useSharedValue: jest.fn(() => ({ value: 0 })),
+src/components/filters/__tests__/AdvancedPetFilters.test.tsx:28:  useAnimatedStyle: jest.fn(() => ({})),
+src/components/PhotoUploadComponent.tsx:14:  useAnimatedStyle,
+src/components/PhotoUploadComponent.tsx:15:  useSharedValue,
+src/components/PhotoUploadComponent.tsx:16:  withSpring,
+src/components/PhotoUploadComponent.tsx:17:} from "react-native-reanimated";
+src/components/PhotoUploadComponent.tsx:48:  const scaleValue = useSharedValue(1);
+src/components/PhotoUploadComponent.tsx:50:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/PhotoUploadComponent.tsx:80:    scaleValue.value = withSpring(0.95, SPRING_CONFIG);
+src/components/PhotoUploadComponent.tsx:104:      scaleValue.value = withSpring(1, SPRING_CONFIG);
+src/components/PhotoUploadComponent.tsx:232:        <Animated.View
+src/components/PhotoUploadComponent.tsx:245:        </Animated.View>
+src/components/filters/AdvancedPetFilters.tsx:9:  useAnimatedStyle,
+src/components/filters/AdvancedPetFilters.tsx:10:  useSharedValue,
+src/components/filters/AdvancedPetFilters.tsx:11:  withSpring,
+src/components/filters/AdvancedPetFilters.tsx:12:  withTiming,
+src/components/filters/AdvancedPetFilters.tsx:13:} from "react-native-reanimated";
+src/components/filters/AdvancedPetFilters.tsx:31:  const slideIn = useSharedValue(0);
+src/components/filters/AdvancedPetFilters.tsx:32:  const fadeIn = useSharedValue(0);
+src/components/filters/AdvancedPetFilters.tsx:35:    slideIn.value = withSpring(1, { stiffness: 300, damping: 30 });
+src/components/filters/AdvancedPetFilters.tsx:36:    fadeIn.value = withTiming(1, { duration: 500 });
+src/components/filters/AdvancedPetFilters.tsx:39:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/filters/AdvancedPetFilters.tsx:67:    <Animated.View style={animatedStyle}>
+src/components/filters/AdvancedPetFilters.tsx:172:    </Animated.View>
+src/components/containers/FXContainer.tsx:22:  useAnimatedStyle,
+src/components/containers/FXContainer.tsx:24:} from "react-native-reanimated";
+src/components/containers/FXContainer.tsx:166:          <Animated.View
+src/components/containers/FXContainer.tsx:204:  const AnimatedContainer = Animated.View;
+src/components/HolographicEffects.tsx:5:  useSharedValue,
+src/components/HolographicEffects.tsx:6:  useAnimatedStyle,
+src/components/HolographicEffects.tsx:9:  withTiming,
+src/components/HolographicEffects.tsx:13:} from "react-native-reanimated";
+src/components/HolographicEffects.tsx:116:  const gradientRotation = useSharedValue(0);
+src/components/HolographicEffects.tsx:117:  const shimmerOffset = useSharedValue(-100);
+src/components/HolographicEffects.tsx:118:  const glowIntensity = useSharedValue(1);
+src/components/HolographicEffects.tsx:124:        withTiming(360, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] }),
+src/components/HolographicEffects.tsx:136:          withTiming(100, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] }),
+src/components/HolographicEffects.tsx:137:          withDelay(500, withTiming(-100, { duration: 0 })),
+src/components/HolographicEffects.tsx:150:          withTiming(1.5, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
+src/components/HolographicEffects.tsx:151:          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
+src/components/HolographicEffects.tsx:159:  const gradientStyle = useAnimatedStyle(() => ({
+src/components/HolographicEffects.tsx:163:  const shimmerStyle = useAnimatedStyle(() => ({
+src/components/HolographicEffects.tsx:167:  const glowStyle = useAnimatedStyle(() => ({
+src/components/HolographicEffects.tsx:175:    <Animated.View
+src/components/HolographicEffects.tsx:188:      <Animated.View
+src/components/HolographicEffects.tsx:209:      </Animated.View>
+src/components/HolographicEffects.tsx:213:        <Animated.View
+src/components/HolographicEffects.tsx:238:    </Animated.View>
+src/components/HolographicEffects.tsx:311:  const scale = useSharedValue(1);
+src/components/HolographicEffects.tsx:312:  const opacity = useSharedValue(1);
+src/components/HolographicEffects.tsx:337:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/HolographicEffects.tsx:343:    scale.value = withTiming(0.95, { duration: 150 });
+src/components/HolographicEffects.tsx:344:    opacity.value = withTiming(0.8, { duration: 150 });
+src/components/HolographicEffects.tsx:348:    scale.value = withTiming(1, { duration: 150 });
+src/components/HolographicEffects.tsx:349:    opacity.value = withTiming(1, { duration: 150 });
+src/components/HolographicEffects.tsx:355:    <Animated.View
+src/components/HolographicEffects.tsx:379:    </Animated.View>
+src/components/HolographicEffects.tsx:401:  const gradientRotation = useSharedValue(0);
+src/components/HolographicEffects.tsx:406:        withTiming(360, { duration: 2000 }),
+src/components/HolographicEffects.tsx:413:  const gradientStyle = useAnimatedStyle(() => ({
+src/components/HolographicEffects.tsx:421:      <Animated.View
+src/components/HolographicEffects.tsx:441:      </Animated.View>
+src/components/HolographicEffects.tsx:475:    x: useSharedValue(Math.random() * 100),
+src/components/HolographicEffects.tsx:476:    y: useSharedValue(Math.random() * 100),
+src/components/HolographicEffects.tsx:477:    scale: useSharedValue(Math.random() * 0.5 + 0.5),
+src/components/HolographicEffects.tsx:478:    opacity: useSharedValue(Math.random() * 0.5 + 0.5),
+src/components/HolographicEffects.tsx:485:          withTiming(Math.random() * 100, {
+src/components/HolographicEffects.tsx:488:          withTiming(Math.random() * 100, {
+src/components/HolographicEffects.tsx:498:          withTiming(Math.random() * 100, {
+src/components/HolographicEffects.tsx:501:          withTiming(Math.random() * 100, {
+src/components/HolographicEffects.tsx:511:          withTiming(0, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
+src/components/HolographicEffects.tsx:512:          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
+src/components/HolographicEffects.tsx:538:        const particleStyle = useAnimatedStyle(() => ({
+src/components/HolographicEffects.tsx:550:          <Animated.View key={particle.id} style={particleStyle}>
+src/components/HolographicEffects.tsx:560:          </Animated.View>
+src/components/AnimatedSplash.tsx:37:  const pawScale = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:38:  const pawOpacity = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:39:  const textOpacity = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:40:  const textTranslateY = useRef(new Animated.Value(30)).current;
+src/components/AnimatedSplash.tsx:41:  const backgroundOpacity = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:45:    const animationSequence = Animated.sequence([
+src/components/AnimatedSplash.tsx:47:      Animated.timing(backgroundOpacity, {
+src/components/AnimatedSplash.tsx:54:      Animated.parallel([
+src/components/AnimatedSplash.tsx:55:        Animated.spring(pawScale, {
+src/components/AnimatedSplash.tsx:61:        Animated.timing(pawOpacity, {
+src/components/AnimatedSplash.tsx:69:      Animated.parallel([
+src/components/AnimatedSplash.tsx:70:        Animated.timing(textOpacity, {
+src/components/AnimatedSplash.tsx:75:        Animated.timing(textTranslateY, {
+src/components/AnimatedSplash.tsx:83:      Animated.delay(800),
+src/components/AnimatedSplash.tsx:111:      <Animated.View
+src/components/AnimatedSplash.tsx:123:      </Animated.View>
+src/components/AnimatedSplash.tsx:132:        <Animated.View
+src/components/AnimatedSplash.tsx:144:        </Animated.View>
+src/components/AnimatedSplash.tsx:147:        <Animated.View
+src/components/AnimatedSplash.tsx:160:        </Animated.View>
+src/components/AnimatedSplash.tsx:175:  const dot1 = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:176:  const dot2 = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:177:  const dot3 = useRef(new Animated.Value(0)).current;
+src/components/AnimatedSplash.tsx:180:    const createDotAnimation = (dot: Animated.Value, delay: number) => {
+src/components/AnimatedSplash.tsx:181:      return Animated.loop(
+src/components/AnimatedSplash.tsx:182:        Animated.sequence([
+src/components/AnimatedSplash.tsx:183:          Animated.delay(delay),
+src/components/AnimatedSplash.tsx:184:          Animated.timing(dot, {
+src/components/AnimatedSplash.tsx:189:          Animated.timing(dot, {
+src/components/AnimatedSplash.tsx:218:        <Animated.View
+src/components/ModernSwipeCard.tsx:6: * - react-native-reanimated for 60fps animations
+src/components/ModernSwipeCard.tsx:29:  useAnimatedStyle,
+src/components/ModernSwipeCard.tsx:33:} from "react-native-reanimated";
+src/components/ModernSwipeCard.tsx:212:  const swipeOverlayStyle = useAnimatedStyle(() => {
+src/components/ModernSwipeCard.tsx:225:  const nopeOverlayStyle = useAnimatedStyle(() => {
+src/components/ModernSwipeCard.tsx:238:  const superLikeOverlayStyle = useAnimatedStyle(() => {
+src/components/ModernSwipeCard.tsx:275:      <Animated.View
+src/components/ModernSwipeCard.tsx:336:          <Animated.View
+src/components/ModernSwipeCard.tsx:344:          </Animated.View>
+src/components/ModernSwipeCard.tsx:346:          <Animated.View
+src/components/ModernSwipeCard.tsx:354:          </Animated.View>
+src/components/ModernSwipeCard.tsx:356:          <Animated.View
+src/components/ModernSwipeCard.tsx:364:          </Animated.View>
+src/components/ModernSwipeCard.tsx:426:      </Animated.View>
+src/components/elite/buttons/EliteButton.tsx:14:  useSharedValue,
+src/components/elite/buttons/EliteButton.tsx:15:  useAnimatedStyle,
+src/components/elite/buttons/EliteButton.tsx:16:  withSpring,
+src/components/elite/buttons/EliteButton.tsx:17:  withTiming,
+src/components/elite/buttons/EliteButton.tsx:22:} from "react-native-reanimated";
+src/components/elite/buttons/EliteButton.tsx:24:import Animated from "react-native-reanimated";
+src/components/elite/buttons/EliteButton.tsx:76:  const scale = useSharedValue(1);
+src/components/elite/buttons/EliteButton.tsx:77:  const shimmerOffset = useSharedValue(-100);
+src/components/elite/buttons/EliteButton.tsx:78:  const rippleScale = useSharedValue(0);
+src/components/elite/buttons/EliteButton.tsx:79:  const rippleOpacity = useSharedValue(0);
+src/components/elite/buttons/EliteButton.tsx:80:  const glowIntensity = useSharedValue(1);
+src/components/elite/buttons/EliteButton.tsx:86:        withTiming(100, { duration: 2000 }),
+src/components/elite/buttons/EliteButton.tsx:87:        withDelay(1000, withTiming(-100, { duration: 0 })),
+src/components/elite/buttons/EliteButton.tsx:92:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/elite/buttons/EliteButton.tsx:96:  const shimmerStyle = useAnimatedStyle(() => ({
+src/components/elite/buttons/EliteButton.tsx:100:  const rippleStyle = useAnimatedStyle(() => ({
+src/components/elite/buttons/EliteButton.tsx:105:  const glowStyle = useAnimatedStyle(() => ({
+src/components/elite/buttons/EliteButton.tsx:111:    scale.value = withSpring(0.96, AnimationConfigs.spring);
+src/components/elite/buttons/EliteButton.tsx:112:    glowIntensity.value = withSpring(1.2, AnimationConfigs.spring);
+src/components/elite/buttons/EliteButton.tsx:117:      rippleScale.value = withTiming(2, { duration: 300 });
+src/components/elite/buttons/EliteButton.tsx:118:      rippleOpacity.value = withTiming(0, { duration: 300 });
+src/components/elite/buttons/EliteButton.tsx:125:    scale.value = withSpring(1, AnimationConfigs.spring);
+src/components/elite/buttons/EliteButton.tsx:126:    glowIntensity.value = withSpring(1, AnimationConfigs.spring);
+src/components/elite/buttons/EliteButton.tsx:295:    <Animated.View style={animatedStyle as AnimatedStyleProp<ViewStyle>}>
+src/components/elite/buttons/EliteButton.tsx:310:          <Animated.View
+src/components/elite/buttons/EliteButton.tsx:330:          <Animated.View
+src/components/elite/buttons/EliteButton.tsx:360:    </Animated.View>
+src/components/matches/MatchCard.tsx:7:  useAnimatedStyle,
+src/components/matches/MatchCard.tsx:8:  useSharedValue,
+src/components/matches/MatchCard.tsx:9:  withSpring,
+src/components/matches/MatchCard.tsx:10:  withTiming,
+src/components/matches/MatchCard.tsx:11:} from "react-native-reanimated";
+src/components/matches/MatchCard.tsx:33:  const scale = useSharedValue(1);
+src/components/matches/MatchCard.tsx:34:  const opacity = useSharedValue(1);
+src/components/matches/MatchCard.tsx:42:    scale.value = withSpring(0.95, { stiffness: 300, damping: 20 });
+src/components/matches/MatchCard.tsx:43:    opacity.value = withTiming(0.8, { duration: 100 });
+src/components/matches/MatchCard.tsx:47:    scale.value = withSpring(1, { stiffness: 300, damping: 20 });
+src/components/matches/MatchCard.tsx:48:    opacity.value = withTiming(1, { duration: 100 });
+src/components/matches/MatchCard.tsx:85:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/matches/MatchCard.tsx:95:    <Animated.View style={animatedStyle}>
+src/components/matches/MatchCard.tsx:176:    </Animated.View>
+src/components/GlowShadowSystem.tsx:4:  useSharedValue,
+src/components/GlowShadowSystem.tsx:5:  useAnimatedStyle,
+src/components/GlowShadowSystem.tsx:8:  withTiming,
+src/components/GlowShadowSystem.tsx:11:} from "react-native-reanimated";
+src/components/GlowShadowSystem.tsx:153:  const glowIntensity = useSharedValue(1);
+src/components/GlowShadowSystem.tsx:159:          withTiming(GLOW_SHADOW_CONFIGS.glowIntensities[intensity], {
+src/components/GlowShadowSystem.tsx:162:          withTiming(1, {
+src/components/GlowShadowSystem.tsx:172:  const glowStyle = useAnimatedStyle(() => {
+src/components/GlowShadowSystem.tsx:184:    <Animated.View
+src/components/GlowShadowSystem.tsx:196:    </Animated.View>
+src/components/GlowShadowSystem.tsx:241:  const borderOpacity = useSharedValue(1);
+src/components/GlowShadowSystem.tsx:247:          withTiming(0.3, {
+src/components/GlowShadowSystem.tsx:250:          withTiming(1, {
+src/components/GlowShadowSystem.tsx:260:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/GlowShadowSystem.tsx:273:    <Animated.View
+src/components/GlowShadowSystem.tsx:282:    </Animated.View>
+src/components/GlowShadowSystem.tsx:343:  const pulseScale = useSharedValue(1);
+src/components/GlowShadowSystem.tsx:344:  const glowIntensity = useSharedValue(1);
+src/components/GlowShadowSystem.tsx:349:        withTiming(1.05, {
+src/components/GlowShadowSystem.tsx:352:        withTiming(1, {
+src/components/GlowShadowSystem.tsx:362:        withTiming(GLOW_SHADOW_CONFIGS.glowIntensities[intensity], {
+src/components/GlowShadowSystem.tsx:365:        withTiming(1, {
+src/components/GlowShadowSystem.tsx:374:  const animatedStyle = useAnimatedStyle(() => {
+src/components/GlowShadowSystem.tsx:387:    <Animated.View
+src/components/GlowShadowSystem.tsx:399:    </Animated.View>
+src/components/GlowShadowSystem.tsx:491:  const translateY = useSharedValue(0);
+src/components/GlowShadowSystem.tsx:497:          withTiming(-8, { duration: 2000 }),
+src/components/GlowShadowSystem.tsx:498:          withTiming(0, { duration: 2000 }),
+src/components/GlowShadowSystem.tsx:506:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/GlowShadowSystem.tsx:514:    <Animated.View
+src/components/GlowShadowSystem.tsx:530:    </Animated.View>
+src/components/PerformanceTestSuite.tsx:12:  useSharedValue,
+src/components/PerformanceTestSuite.tsx:13:  useAnimatedStyle,
+src/components/PerformanceTestSuite.tsx:14:  withSpring,
+src/components/PerformanceTestSuite.tsx:16:  withTiming,
+src/components/PerformanceTestSuite.tsx:17:} from "react-native-reanimated";
+src/components/PerformanceTestSuite.tsx:66:  const testAnimationValue = useSharedValue(0);
+src/components/PerformanceTestSuite.tsx:67:  const testScaleValue = useSharedValue(1);
+src/components/PerformanceTestSuite.tsx:68:  const testRotationValue = useSharedValue(0);
+src/components/PerformanceTestSuite.tsx:91:        withSpring(100, { damping: 15, stiffness: 150 }),
+src/components/PerformanceTestSuite.tsx:97:        withSpring(1.2, { damping: 20, stiffness: 200 }),
+src/components/PerformanceTestSuite.tsx:103:        withTiming(360, { duration: 2000 }),
+src/components/PerformanceTestSuite.tsx:110:        testAnimationValue.value = withSpring(0);
+src/components/PerformanceTestSuite.tsx:111:        testScaleValue.value = withSpring(1);
+src/components/PerformanceTestSuite.tsx:112:        testRotationValue.value = withSpring(0);
+src/components/PerformanceTestSuite.tsx:130:          testAnimationValue.value = withSpring(Math.random() * 50, {
+src/components/PerformanceTestSuite.tsx:138:          testAnimationValue.value = withSpring(0);
+src/components/PerformanceTestSuite.tsx:248:  const animatedTestStyle = useAnimatedStyle(() => ({
+src/components/PerformanceTestSuite.tsx:317:        <Animated.View
+src/components/elite/animations/FadeInUp.tsx:3:  useSharedValue,
+src/components/elite/animations/FadeInUp.tsx:4:  useAnimatedStyle,
+src/components/elite/animations/FadeInUp.tsx:5:  withTiming,
+src/components/elite/animations/FadeInUp.tsx:6:} from "react-native-reanimated";
+src/components/elite/animations/FadeInUp.tsx:7:import Animated from "react-native-reanimated";
+src/components/elite/animations/FadeInUp.tsx:20:  const opacity = useSharedValue(0);
+src/components/elite/animations/FadeInUp.tsx:21:  const translateY = useSharedValue(20);
+src/components/elite/animations/FadeInUp.tsx:25:      opacity.value = withTiming(1, { duration: 300 });
+src/components/elite/animations/FadeInUp.tsx:26:      translateY.value = withTiming(0, { duration: 300 });
+src/components/elite/animations/FadeInUp.tsx:30:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/elite/animations/FadeInUp.tsx:35:  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+src/components/ModernPhotoUpload.tsx:162:      const AnimatedView = require("react-native-reanimated").default.View;
+src/components/ModernPhotoUpload.tsx:228:    const AnimatedView = require("react-native-reanimated").default.View;
+src/components/PawPullToRefresh.tsx:45:  const pawRotation = useRef(new Animated.Value(0)).current;
+src/components/PawPullToRefresh.tsx:46:  const pawScale = useRef(new Animated.Value(1)).current;
+src/components/PawPullToRefresh.tsx:47:  const pawOpacity = useRef(new Animated.Value(0.7)).current;
+src/components/PawPullToRefresh.tsx:48:  const scratchOffset = useRef(new Animated.Value(0)).current;
+src/components/PawPullToRefresh.tsx:57:      const scratchAnimation = Animated.loop(
+src/components/PawPullToRefresh.tsx:58:        Animated.sequence([
+src/components/PawPullToRefresh.tsx:60:          Animated.parallel([
+src/components/PawPullToRefresh.tsx:61:            Animated.timing(pawRotation, {
+src/components/PawPullToRefresh.tsx:66:            Animated.timing(scratchOffset, {
+src/components/PawPullToRefresh.tsx:71:            Animated.timing(pawScale, {
+src/components/PawPullToRefresh.tsx:79:          Animated.parallel([
+src/components/PawPullToRefresh.tsx:80:            Animated.timing(pawRotation, {
+src/components/PawPullToRefresh.tsx:85:            Animated.timing(scratchOffset, {
+src/components/PawPullToRefresh.tsx:90:            Animated.timing(pawScale, {
+src/components/PawPullToRefresh.tsx:98:          Animated.delay(200),
+src/components/PawPullToRefresh.tsx:109:      Animated.parallel([
+src/components/PawPullToRefresh.tsx:110:        Animated.timing(pawRotation, {
+src/components/PawPullToRefresh.tsx:115:        Animated.timing(scratchOffset, {
+src/components/PawPullToRefresh.tsx:120:        Animated.timing(pawScale, {
+src/components/PawPullToRefresh.tsx:170:          <Animated.View
+src/components/PawPullToRefresh.tsx:185:          </Animated.View>
+src/components/PawPullToRefresh.tsx:190:              <Animated.View
+src/components/elite/animations/ScaleIn.tsx:3:  useSharedValue,
+src/components/elite/animations/ScaleIn.tsx:4:  useAnimatedStyle,
+src/components/elite/animations/ScaleIn.tsx:5:  withSpring,
+src/components/elite/animations/ScaleIn.tsx:6:  withTiming,
+src/components/elite/animations/ScaleIn.tsx:7:} from "react-native-reanimated";
+src/components/elite/animations/ScaleIn.tsx:8:import Animated from "react-native-reanimated";
+src/components/elite/animations/ScaleIn.tsx:21:  const scale = useSharedValue(0.8);
+src/components/elite/animations/ScaleIn.tsx:22:  const opacity = useSharedValue(0);
+src/components/elite/animations/ScaleIn.tsx:26:      scale.value = withSpring(1, { damping: 15 });
+src/components/elite/animations/ScaleIn.tsx:27:      opacity.value = withTiming(1, { duration: 300 });
+src/components/elite/animations/ScaleIn.tsx:31:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/elite/animations/ScaleIn.tsx:36:  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+src/components/library/cards/MemoryCard.tsx:6:import Animated from "react-native-reanimated";
+src/components/library/cards/MemoryCard.tsx:28:  scrollX: Animated.SharedValue<number>;
+src/components/library/cards/MemoryCard.tsx:67:    <Animated.View
+src/components/library/cards/MemoryCard.tsx:151:    </Animated.View>
+src/components/swipe/SwipeCard.tsx:25:  position: Animated.ValueXY;
+src/components/swipe/SwipeCard.tsx:26:  rotate: Animated.AnimatedInterpolation<number>;
+src/components/swipe/SwipeCard.tsx:27:  likeOpacity: Animated.AnimatedInterpolation<number>;
+src/components/swipe/SwipeCard.tsx:28:  nopeOpacity: Animated.AnimatedInterpolation<number>;
+src/components/swipe/SwipeCard.tsx:45:    <Animated.View
+src/components/swipe/SwipeCard.tsx:59:      <Animated.View
+src/components/swipe/SwipeCard.tsx:70:      </Animated.View>
+src/components/swipe/SwipeCard.tsx:71:      <Animated.View
+src/components/swipe/SwipeCard.tsx:87:      </Animated.View>
+src/components/swipe/SwipeCard.tsx:140:    </Animated.View>
+src/components/elite/cards/EliteCard.tsx:11:  useSharedValue,
+src/components/elite/cards/EliteCard.tsx:12:  useAnimatedStyle,
+src/components/elite/cards/EliteCard.tsx:13:  withSpring,
+src/components/elite/cards/EliteCard.tsx:15:  withTiming,
+src/components/elite/cards/EliteCard.tsx:18:} from "react-native-reanimated";
+src/components/elite/cards/EliteCard.tsx:20:import Animated from "react-native-reanimated";
+src/components/elite/cards/EliteCard.tsx:58:  const scale = useSharedValue(1);
+src/components/elite/cards/EliteCard.tsx:59:  const shimmerOffset = useSharedValue(-100);
+src/components/elite/cards/EliteCard.tsx:65:        withTiming(100, { duration: 2000 }),
+src/components/elite/cards/EliteCard.tsx:66:        withDelay(1000, withTiming(-100, { duration: 0 })),
+src/components/elite/cards/EliteCard.tsx:71:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/elite/cards/EliteCard.tsx:75:  const shimmerStyle = useAnimatedStyle(() => ({
+src/components/elite/cards/EliteCard.tsx:80:    scale.value = withSpring(0.98, AnimationConfigs.spring);
+src/components/elite/cards/EliteCard.tsx:87:    scale.value = withSpring(1, AnimationConfigs.spring);
+src/components/elite/cards/EliteCard.tsx:155:      <Animated.View style={animatedStyle}>
+src/components/elite/cards/EliteCard.tsx:164:            <Animated.View
+src/components/elite/cards/EliteCard.tsx:216:      </Animated.View>
+src/components/elite/cards/EliteCard.tsx:221:    <Animated.View
+src/components/elite/cards/EliteCard.tsx:225:        <Animated.View
+src/components/elite/cards/EliteCard.tsx:276:    </Animated.View>
+src/components/chat/MessageInput.tsx:50:  const messageEntryAnimation = useRef(new Animated.Value(0)).current;
+src/components/chat/MessageInput.tsx:51:  const sendButtonScale = useRef(new Animated.Value(1)).current;
+src/components/chat/MessageInput.tsx:73:    Animated.timing(messageEntryAnimation, {
+src/components/chat/MessageInput.tsx:83:    Animated.timing(messageEntryAnimation, {
+src/components/chat/MessageInput.tsx:97:    Animated.sequence([
+src/components/chat/MessageInput.tsx:98:      Animated.timing(sendButtonScale, {
+src/components/chat/MessageInput.tsx:103:      Animated.timing(sendButtonScale, {
+src/components/chat/MessageInput.tsx:310:            <Animated.View
+src/components/chat/MessageInput.tsx:323:            </Animated.View>
+src/components/chat/MessageInput.tsx:336:        <Animated.View style={{ transform: [{ scale: sendButtonScale }] }}>
+src/components/chat/MessageInput.tsx:350:        </Animated.View>
+src/components/library/navigation/ConnectionPath.tsx:3:import Animated from "react-native-reanimated";
+src/components/ImmersiveCard.tsx:196:        <Animated.View
+src/components/ImmersiveCard.tsx:207:          <Animated.View
+src/components/ImmersiveCard.tsx:214:        </Animated.View>
+src/components/ImmersiveCard.tsx:269:      <Animated.View
+src/components/ImmersiveCard.tsx:280:      </Animated.View>
+src/components/ImmersiveCard.tsx:294:          <Animated.View>
+src/components/ImmersiveCard.tsx:305:          </Animated.View>
+src/components/chat/TypingIndicator.tsx:10:  animationValue?: Animated.Value;
+src/components/chat/TypingIndicator.tsx:37:            <Animated.View
+src/components/InteractiveButton.tsx:313:        <Animated.View
+src/components/InteractiveButton.tsx:342:          <Animated.View
+src/components/InteractiveButton.tsx:363:        </Animated.View>
+src/components/AnimatedButton.tsx:15:  useAnimatedStyle,
+src/components/AnimatedButton.tsx:16:  useSharedValue,
+src/components/AnimatedButton.tsx:18:  withSpring,
+src/components/AnimatedButton.tsx:19:  withTiming,
+src/components/AnimatedButton.tsx:20:} from "react-native-reanimated";
+src/components/AnimatedButton.tsx:54:  const scale = useSharedValue(1);
+src/components/AnimatedButton.tsx:55:  const opacity = useSharedValue(1);
+src/components/AnimatedButton.tsx:56:  const rotation = useSharedValue(0);
+src/components/AnimatedButton.tsx:57:  const shimmer = useSharedValue(0);
+src/components/AnimatedButton.tsx:130:      scale.value = withTiming(buttonConfig.pressScale, { duration: 80 });
+src/components/AnimatedButton.tsx:131:      scale.value = withTiming(1, { duration: 80 });
+src/components/AnimatedButton.tsx:135:        withSpring(buttonConfig.pressScale, {
+src/components/AnimatedButton.tsx:139:        withSpring(buttonConfig.bounceScale, {
+src/components/AnimatedButton.tsx:143:        withSpring(1, {
+src/components/AnimatedButton.tsx:151:        withTiming(-buttonConfig.rotationDegrees, { duration: 50 }),
+src/components/AnimatedButton.tsx:152:        withTiming(buttonConfig.rotationDegrees, { duration: 100 }),
+src/components/AnimatedButton.tsx:153:        withTiming(0, { duration: 50 }),
+src/components/AnimatedButton.tsx:159:          withTiming(1, { duration: 300 }),
+src/components/AnimatedButton.tsx:160:          withTiming(0, { duration: 300 }),
+src/components/AnimatedButton.tsx:179:  const animatedStyle = useAnimatedStyle(() => {
+src/components/AnimatedButton.tsx:207:        withTiming(360, { duration: 1000 }),
+src/components/AnimatedButton.tsx:208:        withTiming(0, { duration: 0 }),
+src/components/AnimatedButton.tsx:227:    <Animated.View
+src/components/AnimatedButton.tsx:270:    </Animated.View>
+src/components/elite/headers/EliteHeader.tsx:10:import { runOnJS } from "react-native-reanimated";
+src/components/help/HelpOptionCard.tsx:5:import Animated from "react-native-reanimated";
+src/components/help/HelpOptionCard.tsx:22:    <Animated.View
+src/components/help/HelpOptionCard.tsx:52:    </Animated.View>
+src/components/elite/headers/ElitePageHeader.tsx:3:import Animated from "react-native-reanimated";
+src/components/elite/headers/ElitePageHeader.tsx:25:    <Animated.View style={GlobalStyles.header}>
+src/components/elite/headers/ElitePageHeader.tsx:35:    </Animated.View>
+src/components/Gestures/DoubleTapLike.tsx:10:  useSharedValue,
+src/components/Gestures/DoubleTapLike.tsx:11:  withSpring,
+src/components/Gestures/DoubleTapLike.tsx:12:  useAnimatedStyle,
+src/components/Gestures/DoubleTapLike.tsx:16:} from "react-native-reanimated";
+src/components/Gestures/DoubleTapLike.tsx:85:  const scale = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:86:  const heartScale = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:87:  const heartOpacity = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:88:  const heartRotation = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:91:  const lastTapTime = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:92:  const tapCount = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:121:    heartScale.value = withSpring(1, {
+src/components/Gestures/DoubleTapLike.tsx:127:    heartOpacity.value = withSpring(1, {
+src/components/Gestures/DoubleTapLike.tsx:133:    heartRotation.value = withSpring(360, {
+src/components/Gestures/DoubleTapLike.tsx:141:      heartOpacity.value = withSpring(0, {
+src/components/Gestures/DoubleTapLike.tsx:147:      heartScale.value = withSpring(0, {
+src/components/Gestures/DoubleTapLike.tsx:159:    scale.value = withSpring(0.95, scaleConfig, () => {
+src/components/Gestures/DoubleTapLike.tsx:160:      scale.value = withSpring(1, scaleConfig);
+src/components/Gestures/DoubleTapLike.tsx:202:  const containerStyle = useAnimatedStyle(() => ({
+src/components/Gestures/DoubleTapLike.tsx:206:  const heartStyle = useAnimatedStyle(() => ({
+src/components/Gestures/DoubleTapLike.tsx:216:      <Animated.View
+src/components/Gestures/DoubleTapLike.tsx:222:        <Animated.View
+src/components/Gestures/DoubleTapLike.tsx:236:        </Animated.View>
+src/components/Gestures/DoubleTapLike.tsx:237:      </Animated.View>
+src/components/Gestures/DoubleTapLike.tsx:254:  const scale = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:255:  const heartScale = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:256:  const heartOpacity = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:262:    scale.value = withSpring(
+src/components/Gestures/DoubleTapLike.tsx:270:        scale.value = withSpring(1, {
+src/components/Gestures/DoubleTapLike.tsx:279:    heartScale.value = withSpring(1, {
+src/components/Gestures/DoubleTapLike.tsx:285:    heartOpacity.value = withSpring(1, {
+src/components/Gestures/DoubleTapLike.tsx:293:      heartOpacity.value = withSpring(0, {
+src/components/Gestures/DoubleTapLike.tsx:299:      heartScale.value = withSpring(0, {
+src/components/Gestures/DoubleTapLike.tsx:317:  const containerStyle = useAnimatedStyle(() => ({
+src/components/Gestures/DoubleTapLike.tsx:321:  const heartStyle = useAnimatedStyle(() => ({
+src/components/Gestures/DoubleTapLike.tsx:328:      <Animated.View
+src/components/Gestures/DoubleTapLike.tsx:334:          <Animated.View
+src/components/Gestures/DoubleTapLike.tsx:338:          </Animated.View>
+src/components/Gestures/DoubleTapLike.tsx:340:      </Animated.View>
+src/components/Gestures/DoubleTapLike.tsx:353:  const lastTapTime = useSharedValue(0);
+src/components/Gestures/DoubleTapLike.tsx:354:  const tapCount = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:10:  useSharedValue,
+src/components/Gestures/PinchZoom.tsx:11:  withDecay,
+src/components/Gestures/PinchZoom.tsx:12:  useAnimatedStyle,
+src/components/Gestures/PinchZoom.tsx:16:  withSpring,
+src/components/Gestures/PinchZoom.tsx:17:  withTiming,
+src/components/Gestures/PinchZoom.tsx:18:} from "react-native-reanimated";
+src/components/Gestures/PinchZoom.tsx:102:  const scale = useSharedValue(initialScale);
+src/components/Gestures/PinchZoom.tsx:103:  const translateX = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:104:  const translateY = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:105:  const focalX = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:106:  const focalY = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:109:  const isZooming = useSharedValue(false);
+src/components/Gestures/PinchZoom.tsx:110:  const lastScale = useSharedValue(initialScale);
+src/components/Gestures/PinchZoom.tsx:111:  const lastTranslateX = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:112:  const lastTranslateY = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:206:        const momentumScale = withDecay({
+src/components/Gestures/PinchZoom.tsx:222:          scale.value = withSpring(minScale, {
+src/components/Gestures/PinchZoom.tsx:228:          scale.value = withSpring(maxScale, {
+src/components/Gestures/PinchZoom.tsx:237:          scale.value = withSpring(minScale, {
+src/components/Gestures/PinchZoom.tsx:243:          scale.value = withSpring(maxScale, {
+src/components/Gestures/PinchZoom.tsx:287:        translateX.value = withDecay({
+src/components/Gestures/PinchZoom.tsx:295:        translateY.value = withDecay({
+src/components/Gestures/PinchZoom.tsx:311:      scale.value = withSpring(initialScale, {
+src/components/Gestures/PinchZoom.tsx:317:      translateX.value = withSpring(0, {
+src/components/Gestures/PinchZoom.tsx:323:      translateY.value = withSpring(0, {
+src/components/Gestures/PinchZoom.tsx:340:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/Gestures/PinchZoom.tsx:348:  const containerStyle = useAnimatedStyle(() => ({
+src/components/Gestures/PinchZoom.tsx:363:      <Animated.View
+src/components/Gestures/PinchZoom.tsx:371:        <Animated.View
+src/components/Gestures/PinchZoom.tsx:379:        </Animated.View>
+src/components/Gestures/PinchZoom.tsx:380:      </Animated.View>
+src/components/Gestures/PinchZoom.tsx:399:  const scale = useSharedValue(initialScale);
+src/components/Gestures/PinchZoom.tsx:400:  const translateX = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:401:  const translateY = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:410:        scale.value = withSpring(minScale);
+src/components/Gestures/PinchZoom.tsx:412:        scale.value = withSpring(maxScale);
+src/components/Gestures/PinchZoom.tsx:423:  const animatedStyle = useAnimatedStyle(() => ({
+src/components/Gestures/PinchZoom.tsx:433:      <Animated.View
+src/components/Gestures/PinchZoom.tsx:436:        <Animated.View
+src/components/Gestures/PinchZoom.tsx:440:        </Animated.View>
+src/components/Gestures/PinchZoom.tsx:441:      </Animated.View>
+src/components/Gestures/PinchZoom.tsx:454:  const scale = useSharedValue(initialScale);
+src/components/Gestures/PinchZoom.tsx:455:  const translateX = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:456:  const translateY = useSharedValue(0);
+src/components/Gestures/PinchZoom.tsx:459:    scale.value = withSpring(initialScale);
+src/components/Gestures/PinchZoom.tsx:460:    translateX.value = withSpring(0);
+src/components/Gestures/PinchZoom.tsx:461:    translateY.value = withSpring(0);
+src/components/Gestures/PinchZoom.tsx:467:      scale.value = withSpring(clampedScale);

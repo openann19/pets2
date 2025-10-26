@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Alert } from "react-native";
-import { gdprService } from "../../../services/gdprService";
-import { logger } from "../../../services/logger";
+import gdprService from "../../../services/gdprService";
+import { logger } from "@pawfectmatch/core";
 
 export interface UseDataExportReturn {
   isExporting: boolean;

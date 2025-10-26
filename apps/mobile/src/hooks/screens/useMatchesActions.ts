@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { Alert } from "react-native";
-import { logger } from "../services/logger";
-import type { Match } from "../types/api";
-import { matchesAPI } from "../services/api";
+import { logger } from "@pawfectmatch/core";
+import type { Match } from "@pawfectmatch/core";
+import { matchesAPI } from "../../services/api";
 
 export interface UseMatchesActionsOptions {
   onMatchRemoved?: (matchId: string) => void;

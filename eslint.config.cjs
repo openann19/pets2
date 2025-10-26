@@ -102,6 +102,43 @@ module.exports = [
       // Disable rules that are stylistic or handled by Prettier
       'arrow-body-style': 'off',
       'react/prop-types': 'off', // Not needed with TypeScript
+
+      // Prevent deprecated imports (Mobile Consistency Remediation)
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/contexts/ThemeContext*'],
+              message: 'Use theme/Provider instead',
+            },
+            {
+              group: ['**/theme/UnifiedThemeProvider*'],
+              message: 'Use theme/Provider instead',
+            },
+            {
+              group: ['**/theme/ThemeProvider*'],
+              message: 'Use theme/Provider instead',
+            },
+            {
+              group: ['**/constants/design-tokens*'],
+              message: 'Use @pawfectmatch/design-tokens instead',
+            },
+            {
+              group: ['**/styles/EnhancedDesignTokens*'],
+              message: 'Use theme/Provider wrapper instead',
+            },
+            {
+              group: ['**/hooks/animations/**', '**/styles/GlobalStyles*'],
+              message: 'Use animation/index.ts instead',
+            },
+            {
+              group: ['**/components/index.tsx', '**/components/NewComponents*', '**/components/EliteComponents*'],
+              message: 'Import from components/index instead',
+            },
+          ],
+        },
+      ],
     },
     settings: {
       react: {

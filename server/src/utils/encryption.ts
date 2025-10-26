@@ -6,13 +6,12 @@
  * - Salt management
  * - Proper IV handling
  */
-
 import crypto from 'crypto';
 import { promisify } from 'util';
 import logger from './logger';
 
 // Modern encryption constants
-const ALGORITHM = 'aes-256-gcm' as const;
+const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;          // GCM recommended 12 bytes
 const KEY_LENGTH = 32;         // 256 bits
 const SALT_LENGTH = 16;        // 128 bits
@@ -20,18 +19,15 @@ const TAG_LENGTH = 16;         // 128 bits
 const VERSION = 1;             // For future algorithm upgrades
 const CURRENT_KEY_VERSION = 1; // For key rotation
 
-// Promisify crypto functions for async usage
-const scryptAsync = promisify(crypto.scrypt);
-
-/**
- * Encryption info returned by getEncryptionInfo
- */
-export interface IEncryptionInfo {
-  isEncrypted: boolean;
-  version?: number;
-  keyVersion?: number;
-  contentLength?: number;
+interface ScryptOptions {
+  cost?: number;
+  blockSize?: number;
+  parallelization?: number;
+  maxmem?: number;
 }
+
+// Promisify crypto functions for async usage
+const scryptAsync = promisify<Buffer, Buffer, Buffer, number, ScryptOptions, Buffer>(crypto.scrypt);
 
 /**
  * Get encryption key with rotation support
@@ -57,7 +53,7 @@ async function getKey(version: number = CURRENT_KEY_VERSION): Promise<Buffer> {
     throw new Error(`Missing encryption key for version ${version}`);
   }
   
-  return Buffer.from(keyString, 'utf8');
+  return Buffer.from(keyString);
 }
 
 /**
@@ -68,11 +64,15 @@ async function getKey(version: number = CURRENT_KEY_VERSION): Promise<Buffer> {
  */
 async function deriveKey(key: Buffer, salt: Buffer): Promise<Buffer> {
   try {
-    // Use scrypt with secure parameters
-    // Note: Node.js crypto.scrypt uses default secure parameters internally
-    return await scryptAsync(key, salt, KEY_LENGTH) as Buffer;
-  } catch (error) {
-    logger.error('Key derivation failed', { error: (error as Error).message });
+    // Use scrypt with secure parameters (N=32768, r=8, p=1)
+    return await scryptAsync(key, salt, KEY_LENGTH, {
+      cost: 32768,  // N parameter (CPU/memory cost)
+      blockSize: 8, // r parameter (block size)
+      parallelization: 1, // p parameter (parallelization)
+      maxmem: 64 * 1024 * 1024 // 64MB - prevent DOS attacks
+    });
+  } catch (error: any) {
+    logger.error('Key derivation failed', { error: error.message });
     throw new Error('Encryption key derivation failed');
   }
 }
@@ -119,8 +119,8 @@ export async function encrypt(text: string, keyVersion: number = CURRENT_KEY_VER
       tag,
       encrypted
     ]).toString('base64');
-  } catch (error) {  
-    logger.error('Encryption failed', { error: (error as Error).message });
+  } catch (error: any) {  
+    logger.error('Encryption failed', { error: error.message });
     throw new Error('Encryption failed');
   }
 }
@@ -165,8 +165,8 @@ export async function decrypt(enc: string): Promise<string> {
     
     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
     return decrypted.toString('utf8');
-  } catch (error) {
-    logger.error('Decryption failed', { error: (error as Error).message });
+  } catch (error: any) {
+    logger.error('Decryption failed', { error: error.message });
     throw new Error('Decryption failed. Data may be corrupted or tampered with.');
   }
 }
@@ -190,7 +190,7 @@ export async function rotateKey(encryptedData: string, newKeyVersion: number = C
  * @param value - Value to check
  * @returns True if the value is likely encrypted
  */
-export function isEncrypted(value: unknown): boolean {
+export function isEncrypted(value: any): boolean {
   if (!value || typeof value !== 'string') return false;
   
   try {
@@ -205,12 +205,19 @@ export function isEncrypted(value: unknown): boolean {
   }
 }
 
+interface EncryptionInfo {
+  isEncrypted: boolean;
+  version?: number;
+  keyVersion?: number;
+  contentLength?: number;
+}
+
 /**
  * Gets information about encrypted data without decrypting it
  * @param encryptedData - Encrypted data
  * @returns Information about the encrypted data
  */
-export function getEncryptionInfo(encryptedData: string): IEncryptionInfo {
+export function getEncryptionInfo(encryptedData: string): EncryptionInfo {
   if (!encryptedData || !isEncrypted(encryptedData)) {
     return { isEncrypted: false };
   }
@@ -227,4 +234,3 @@ export function getEncryptionInfo(encryptedData: string): IEncryptionInfo {
     return { isEncrypted: false };
   }
 }
-

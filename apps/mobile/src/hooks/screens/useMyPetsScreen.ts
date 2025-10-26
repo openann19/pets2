@@ -13,8 +13,8 @@ export function useMyPetsScreen() {
   const loadPets = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await matchesAPI.getMyPets();
-      setPets(response.data || []);
+      const response = await matchesAPI.getUserPets();
+      setPets(response || []);
     } catch (error) {
       logger.error("Error loading pets:", { error });
       Alert.alert("Connection Error", "Network error");

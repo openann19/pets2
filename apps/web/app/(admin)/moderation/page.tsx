@@ -121,14 +121,12 @@ export default function ModerationDashboard() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionLoading, currentIndex]);
 
   useEffect(() => {
     loadQueue();
     loadStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter]);
+  }, [filter, loadQueue, loadStats]);
 
   const loadQueue = async () => {
     try {

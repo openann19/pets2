@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme, getExtendedColors } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -115,7 +115,8 @@ interface AnalyticsData {
 export default function AdminAnalyticsScreen({
   navigation,
 }: AdminScreenProps<"AdminAnalytics">): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { user: _user } = useAuthStore();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -168,11 +169,11 @@ export default function AdminAnalyticsScreen({
   const getTrendColor = (trend: "up" | "down" | "stable"): string => {
     switch (trend) {
       case "up":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "down":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -264,7 +265,7 @@ export default function AdminAnalyticsScreen({
                     styles.periodText,
                     {
                       color:
-                        selectedPeriod === period ? "#FFFFFF" : colors.text,
+                        selectedPeriod === period ? "Theme.colors.neutral[0]" : colors.text,
                     },
                   ])}
                 >
@@ -295,7 +296,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="people" size={20} color="#3B82F6" />
+                    <Ionicons name="people" size={20} color="Theme.colors.status.info" />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -338,7 +339,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="heart" size={20} color="#EC4899" />
+                    <Ionicons name="heart" size={20} color="Theme.colors.primary[500]" />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -381,7 +382,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color="#8B5CF6" />
+                    <Ionicons name="chatbubble" size={20} color="Theme.colors.secondary[500]" />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -424,7 +425,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="cash" size={20} color="#10B981" />
+                    <Ionicons name="cash" size={20} color="Theme.colors.status.success" />
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -635,7 +636,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueValue,
-                      { color: "#EF4444" },
+                      { color: "Theme.colors.status.error" },
                     ])}
                   >
                     {analytics.revenue.churnRate.toFixed(1)}%
@@ -661,7 +662,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="warning" size={20} color="#F59E0B" />
+                  <Ionicons name="warning" size={20} color="Theme.colors.status.warning" />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -685,7 +686,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="shield" size={20} color="#EF4444" />
+                  <Ionicons name="shield" size={20} color="Theme.colors.status.error" />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -709,7 +710,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="flag" size={20} color="#8B5CF6" />
+                  <Ionicons name="flag" size={20} color="Theme.colors.secondary[500]" />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -733,7 +734,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="ban" size={20} color="#EF4444" />
+                  <Ionicons name="ban" size={20} color="Theme.colors.status.error" />
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -931,7 +932,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -975,7 +976,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -999,7 +1000,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1024,7 +1025,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1049,7 +1050,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,

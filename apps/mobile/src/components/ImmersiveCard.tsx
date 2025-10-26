@@ -17,7 +17,7 @@ import {
   EnhancedShadows,
   SemanticColors,
   EnhancedTypography,
-} from "../styles/EnhancedDesignTokens";
+} from "../theme/Provider";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
@@ -37,7 +37,7 @@ export interface ImmersiveCardProps extends TouchableOpacityProps {
   tiltEnabled?: boolean;
   magneticHover?: boolean;
   shimmerEffect?: boolean;
-  entranceAnimation?: "fadeInUp" | "scaleIn" | "slideInLeft" | "none";
+  entranceAnimation?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" | "none";
   gradientName?: keyof typeof DynamicColors.gradients;
   glowColor?: keyof typeof EnhancedShadows.glow;
   style?: ViewStyle;
@@ -95,7 +95,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
     // Animation hooks
     const gyroscope = useGyroscopeTilt(0.3, 10);
     const entrance = useEntranceAnimation(
-      entranceAnimation !== "none" ? entranceAnimation : "fadeInUp",
+      entranceAnimation !== "none" ? entranceAnimation : "slideIn",
     );
 
     // Size config

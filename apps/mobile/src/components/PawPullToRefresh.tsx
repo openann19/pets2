@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import { Theme } from '../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

@@ -12,8 +12,8 @@
  */
 
 // Re-export all animation hooks and constants from the modular structure
+// NOTE: This file is a compatibility layer. New code should import directly from hooks/animations/ or animation/index
 export {
-  PREMIUM_ANIMATIONS,
   useMagneticEffect,
   useRippleEffect,
   useShimmerEffect,
@@ -26,7 +26,10 @@ export {
   usePageTransition,
   useLoadingAnimation,
   useParallaxEffect,
-} from "./animations";
+} from "./animations/index";
+
+// Export PREMIUM_ANIMATIONS constants if needed (consider importing from animation/index.ts)
+export { PREMIUM_ANIMATIONS } from "./animations/constants";
 
 // Default export for backward compatibility
 import {

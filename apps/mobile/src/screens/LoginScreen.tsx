@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLoginScreen } from "../hooks/screens/useLoginScreen";
 import type { RootStackScreenProps } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 type LoginScreenProps = RootStackScreenProps<"Login">;
 
@@ -103,7 +104,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   keyboardView: {
     flex: 1,
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#ec4899", // pink-600
+    color: "Theme.colors.primary[500]", // pink-600
     marginBottom: 8,
   },
   tagline: {
@@ -128,10 +129,10 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   form: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -153,15 +154,15 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
   },
   errorText: {
-    color: "#ef4444",
+    color: "Theme.colors.status.error",
     fontSize: 12,
     marginTop: 4,
   },
@@ -170,18 +171,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   forgotPasswordText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontSize: 14,
   },
   button: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 8,
     padding: 15,
     alignItems: "center",
     marginVertical: 16,
   },
   buttonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   registerLink: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "bold",
   },
 });

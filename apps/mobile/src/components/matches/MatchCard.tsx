@@ -13,6 +13,7 @@ import Animated, {
 import type { Match } from "../../hooks/useMatchesData";
 import * as Haptics from "expo-haptics";
 import OptimizedImage from "../OptimizedImage";
+import { Theme } from '../theme/unified-theme';
 
 interface MatchCardProps {
   match: Match;
@@ -101,7 +102,7 @@ function MatchCardBase({
         accessibilityLabel={`View match with ${match.petName}`}
       >
         <LinearGradient
-          colors={["#fceabb", "#f8b500", "#ec4899", "#a21caf"]}
+          colors={["#fceabb", "#f8b500", "Theme.colors.primary[500]", "#a21caf"]}
           style={styles.gradient}
         >
           <OptimizedImage
@@ -140,7 +141,7 @@ function MatchCardBase({
                   onPress={handleReport}
                   accessibilityLabel="Report match"
                 >
-                  <Ionicons name="flag-outline" size={20} color="#f59e0b" />
+                  <Ionicons name="flag-outline" size={20} color="Theme.colors.status.warning" />
                 </TouchableOpacity>
               )}
               {onArchive && (
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 24,
     margin: 12,
-    shadowColor: "#ec4899",
+    shadowColor: "Theme.colors.primary[500]",
     shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 8,
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 13,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 2,
   },
   matchedAt: {

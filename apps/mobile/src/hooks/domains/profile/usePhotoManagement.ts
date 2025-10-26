@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import { matchesAPI } from "../../services/api";
-import { logger } from "../../services/logger";
+import { matchesAPI } from "../../../services/api";
+import { logger } from "@pawfectmatch/core";
 
 export interface PhotoData {
   uri: string;
@@ -82,9 +82,10 @@ export function usePhotoManagement({
 
   const removePhoto = useCallback((index: number) => {
     setPhotos((prev) => {
+      const photoToRemove = prev[index];
       const newPhotos = prev.filter((_, i) => i !== index);
       // If we removed the primary photo, make the first remaining photo primary
-      if (prev[index].isPrimary && newPhotos.length > 0) {
+      if (photoToRemove?.isPrimary && newPhotos.length > 0 && newPhotos[0]) {
         newPhotos[0].isPrimary = true;
       }
       return newPhotos;

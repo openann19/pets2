@@ -252,7 +252,7 @@ export const OptimizedImage = React.forwardRef(({ src, alt, options = {}, classN
             onError();
     }, [isLoaded, isError, onLoad, onError]);
     return (<div className={`relative ${className}`} style={style}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- Using native img for advanced optimization features */}
+      {/* Using native img for advanced optimization features that next/image doesn't support */}
       <img ref={ref} src={optimizedSrc} alt={alt} className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`} loading={options.lazy ? 'lazy' : 'eager'}/>
 
       {/* Loading placeholder */}
@@ -280,7 +280,7 @@ export const ResponsiveImage = ({ src, alt, widths = [320, 640, 1024, 1280, 1920
     const srcSet = ImageOptimizer.generateSrcSet(src, widths, effectiveFormat);
     const fallbackSrc = ImageOptimizer.generateOptimizedUrl(src, { format: 'jpeg' });
     return (
-    /* eslint-disable-next-line @next/next/no-img-element -- Using native img for responsive srcset optimization */
+    /* Using native img for responsive srcset optimization */
     <img src={fallbackSrc} srcSet={srcSet} sizes={sizes} alt={alt} className={className} style={style} loading="lazy"/>);
 };
 // ====== EXPORTS ======

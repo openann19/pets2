@@ -87,7 +87,7 @@ export interface AdminAnalyticsScreenState {
 
   // Actions
   onRefresh: () => Promise<void>;
-  onTimeRangeChange: (range: typeof timeRange) => void;
+  onTimeRangeChange: (range: "7d" | "30d" | "90d" | "1y") => void;
   onExportData: (format: "csv" | "pdf") => Promise<void>;
   onBackPress: () => void;
 }

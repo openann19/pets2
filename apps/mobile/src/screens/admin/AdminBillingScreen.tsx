@@ -18,9 +18,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
+import { Theme } from '../theme/unified-theme';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface Subscription {
@@ -201,17 +202,17 @@ export default function AdminBillingScreen({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "canceled":
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
       case "past_due":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "trialing":
-        return "#3B82F6";
+        return "Theme.colors.status.info";
       case "incomplete":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -235,13 +236,13 @@ export default function AdminBillingScreen({
   const getPlanColor = (planId: string) => {
     switch (planId) {
       case "basic":
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
       case "premium":
-        return "#3B82F6";
+        return "Theme.colors.status.info";
       case "ultimate":
-        return "#8B5CF6";
+        return "Theme.colors.secondary[500]";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -317,7 +318,7 @@ export default function AdminBillingScreen({
                   <Ionicons
                     name={getStatusIcon(item.status)}
                     size={12}
-                    color="#FFFFFF"
+                    color="Theme.colors.neutral[0]"
                   />
                   <Text style={styles.statusText}>
                     {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
@@ -332,30 +333,30 @@ export default function AdminBillingScreen({
               <TouchableOpacity
                 style={StyleSheet.flatten([
                   styles.actionButton,
-                  { backgroundColor: "#10B981" },
+                  { backgroundColor: "Theme.colors.status.success" },
                 ])}
                 onPress={() => handleReactivateSubscription(item.id)}
                 disabled={isActionLoading}
               >
                 {isActionLoading ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
                 ) : (
-                  <Ionicons name="play" size={16} color="#FFFFFF" />
+                  <Ionicons name="play" size={16} color="Theme.colors.neutral[0]" />
                 )}
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 style={StyleSheet.flatten([
                   styles.actionButton,
-                  { backgroundColor: "#F59E0B" },
+                  { backgroundColor: "Theme.colors.status.warning" },
                 ])}
                 onPress={() => handleCancelSubscription(item.id)}
                 disabled={isActionLoading}
               >
                 {isActionLoading ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
                 ) : (
-                  <Ionicons name="pause" size={16} color="#FFFFFF" />
+                  <Ionicons name="pause" size={16} color="Theme.colors.neutral[0]" />
                 )}
               </TouchableOpacity>
             )}
@@ -364,7 +365,7 @@ export default function AdminBillingScreen({
 
         <View style={styles.subscriptionStats}>
           <View style={styles.statItem}>
-            <Ionicons name="cash" size={16} color="#10B981" />
+            <Ionicons name="cash" size={16} color="Theme.colors.status.success" />
             <Text
               style={StyleSheet.flatten([
                 styles.statText,
@@ -375,7 +376,7 @@ export default function AdminBillingScreen({
             </Text>
           </View>
           <View style={styles.statItem}>
-            <Ionicons name="calendar" size={16} color="#3B82F6" />
+            <Ionicons name="calendar" size={16} color="Theme.colors.status.info" />
             <Text
               style={StyleSheet.flatten([
                 styles.statText,
@@ -386,7 +387,7 @@ export default function AdminBillingScreen({
             </Text>
           </View>
           <View style={styles.statItem}>
-            <Ionicons name="time" size={16} color="#6B7280" />
+            <Ionicons name="time" size={16} color="Theme.colors.neutral[500]" />
             <Text
               style={StyleSheet.flatten([
                 styles.statText,
@@ -455,7 +456,7 @@ export default function AdminBillingScreen({
             onPress={onRefresh}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color="#FFFFFF" />
+            <Ionicons name="refresh" size={20} color="Theme.colors.neutral[0]" />
           </TouchableOpacity>
         </View>
       </View>
@@ -479,7 +480,7 @@ export default function AdminBillingScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="cash" size={20} color="#10B981" />
+                <Ionicons name="cash" size={20} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -506,7 +507,7 @@ export default function AdminBillingScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="trending-up" size={20} color="#3B82F6" />
+                <Ionicons name="trending-up" size={20} color="Theme.colors.status.info" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -533,7 +534,7 @@ export default function AdminBillingScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="people" size={20} color="#8B5CF6" />
+                <Ionicons name="people" size={20} color="Theme.colors.secondary[500]" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -560,7 +561,7 @@ export default function AdminBillingScreen({
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                <Ionicons name="checkmark-circle" size={20} color="Theme.colors.status.success" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -622,7 +623,7 @@ export default function AdminBillingScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.secondaryMetricValue,
-                  { color: "#EF4444" },
+                  { color: "Theme.colors.status.error" },
                 ])}
               >
                 {metrics.churnRate.toFixed(1)}%
@@ -645,7 +646,7 @@ export default function AdminBillingScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.secondaryMetricValue,
-                  { color: metrics.revenueGrowth > 0 ? "#10B981" : "#EF4444" },
+                  { color: metrics.revenueGrowth > 0 ? "Theme.colors.status.success" : "Theme.colors.status.error" },
                 ])}
               >
                 {metrics.revenueGrowth > 0 ? "+" : ""}
@@ -697,7 +698,7 @@ export default function AdminBillingScreen({
                     styles.filterText,
                     {
                       color:
-                        selectedStatus === status ? "#FFFFFF" : colors.text,
+                        selectedStatus === status ? "Theme.colors.neutral[0]" : colors.text,
                     },
                   ])}
                 >
@@ -736,7 +737,7 @@ export default function AdminBillingScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.filterText,
-                    { color: selectedPlan === plan ? "#FFFFFF" : colors.text },
+                    { color: selectedPlan === plan ? "Theme.colors.neutral[0]" : colors.text },
                   ])}
                 >
                   {plan.charAt(0).toUpperCase() + plan.slice(1)}
@@ -827,7 +828,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -856,7 +857,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -911,7 +912,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -932,7 +933,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -963,7 +964,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   planText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 10,
     fontWeight: "600",
   },
@@ -976,7 +977,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statusText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 10,
     fontWeight: "600",
   },

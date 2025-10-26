@@ -30,6 +30,7 @@ interface UseHomeScreenReturn {
   handleMessagesPress: () => void;
   handleMyPetsPress: () => void;
   handleCreatePetPress: () => void;
+  handleCommunityPress: () => void;
 }
 
 export const useHomeScreen = (): UseHomeScreenReturn => {
@@ -90,6 +91,9 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
           case "create-pet":
             navigation.navigate("CreatePet");
             break;
+          case "community":
+            navigation.navigate("Community");
+            break;
           case "premium":
             navigation.navigate("Profile");
             break;
@@ -131,6 +135,10 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     handleQuickAction("create-pet");
   }, [handleQuickAction]);
 
+  const handleCommunityPress = useCallback(() => {
+    handleQuickAction("community");
+  }, [handleQuickAction]);
+
   return {
     stats,
     refreshing,
@@ -143,5 +151,6 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
     handleMessagesPress,
     handleMyPetsPress,
     handleCreatePetPress,
+    handleCommunityPress,
   };
 };
