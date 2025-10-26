@@ -58,6 +58,7 @@ export interface UseMapScreenReturn {
   filteredPins: PulsePin[];
   filters: MapFilters;
   stats: MapStats;
+  heatmapPoints: { latitude: number; longitude: number; weight?: number }[];
 
   // State
   showFilters: boolean;
@@ -76,7 +77,6 @@ export interface UseMapScreenReturn {
   getCurrentLocation: () => void;
   toggleFilterPanel: () => void;
   handlePinPress: (pin: PulsePin) => void;
-  handleStatistics: () => void;
   toggleActivity: (activityId: string) => void;
   getMarkerColor: (activity: string, isMatch?: boolean) => string;
   getStableMatchFlag: (pin: PulsePin) => boolean;
@@ -121,6 +121,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
   const [filterPanelHeight] = useState(new Animated.Value(0));
   const [statsOpacity] = useState(new Animated.Value(1));
   const socketRef = useRef<Socket | null>(null);
+  const [heatmapPoints, setHeatmapPoints] = useState<{ latitude: number; longitude: number; weight?: number }[]>([]);
 
   // Activity types configuration
   const activityTypes = useMemo<ActivityType[]>(
@@ -289,19 +290,22 @@ export const useMapScreen = (): UseMapScreenReturn => {
     return hash % 10 >= 7;
   }, []);
 
-  // Handle statistics
-  const handleStatistics = useCallback(() => {
-    // Update stats based on filtered pins
+  // Handle statistics (auto-computed on filteredPins change)
+  useEffect(() => {
+    const now = Date.now();
+    const recent = filteredPins.filter((p) => {
+      const ts = new Date(p.timestamp || p.createdAt || Date.now()).getTime();
+      return now - ts < 60 * 60 * 1000; // last hour
+    });
+    const matches = filteredPins.filter((p) => getStableMatchFlag(p)).length;
+
     setStats({
       totalPets: filteredPins.length,
-      activePets: filteredPins.filter((p) => {
-        const timeDiff = Date.now() - new Date(p.timestamp).getTime();
-        return timeDiff < 3600000; // Last hour
-      }).length,
-      nearbyMatches: filteredPins.length,
-      recentActivity: filteredPins.length,
+      activePets: recent.length,
+      nearbyMatches: matches,
+      recentActivity: recent.length,
     });
-  }, [filteredPins]);
+  }, [filteredPins, getStableMatchFlag]);
 
   // Socket connection for real-time updates
   useEffect(() => {
@@ -317,18 +321,25 @@ export const useMapScreen = (): UseMapScreenReturn => {
       socket.emit("join_map", { userId: user._id });
     });
 
-    socket.on("pulse_update", (data: PulsePin) => {
+    // Fixed: use pin:update event (matches server)
+    function onPinUpdate(pin: PulsePin) {
       setPins((prev) => {
-        // Update existing pin or add new one
-        const existingIndex = prev.findIndex((p) => p._id === data._id);
-        if (existingIndex >= 0) {
-          const updated = [...prev];
-          updated[existingIndex] = data;
-          return updated;
+        const idx = prev.findIndex((p) => p._id === pin._id);
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = { ...prev[idx], ...pin };
+          return next;
         }
-        return [...prev, data];
+        return [pin, ...prev];
       });
-    });
+    }
+    socket.on("pin:update", onPinUpdate);
+
+    // Heatmap updates
+    function onHeatmapUpdate(data: { lat: number; lng: number; w?: number }[]) {
+      setHeatmapPoints(data.map((d) => ({ latitude: d.lat, longitude: d.lng, weight: d.w ?? 1 })));
+    }
+    socket.on("heatmap:update", onHeatmapUpdate);
 
     socket.on("disconnect", () => {
       logger.info("MapSocket disconnected");
@@ -337,6 +348,8 @@ export const useMapScreen = (): UseMapScreenReturn => {
     socketRef.current = socket;
 
     return () => {
+      socket.off("pin:update", onPinUpdate);
+      socket.off("heatmap:update", onHeatmapUpdate);
       socket.emit("leave_map", { userId: user._id });
       socket.disconnect();
     };
@@ -355,6 +368,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
     filteredPins,
     filters,
     stats,
+    heatmapPoints,
 
     // State
     showFilters,
@@ -373,7 +387,6 @@ export const useMapScreen = (): UseMapScreenReturn => {
     getCurrentLocation,
     toggleFilterPanel,
     handlePinPress,
-    handleStatistics,
     toggleActivity,
     getMarkerColor,
     getStableMatchFlag,

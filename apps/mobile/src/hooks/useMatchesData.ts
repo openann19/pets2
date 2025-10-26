@@ -6,6 +6,7 @@ import { Alert } from "react-native";
 import type { FlatList } from "react-native";
 
 import { matchesAPI } from "../services/api";
+import type { MatchesFilter } from "../components/matches/MatchesFilterModal";
 
 export interface Match {
   _id: string;
@@ -31,10 +32,12 @@ export interface UseMatchesDataReturn {
   refreshing: boolean;
   isLoading: boolean;
   initialOffset: number;
+  filter: MatchesFilter;
   listRef: React.RefObject<FlatList<Match>>;
   loadMatches: () => Promise<void>;
   onRefresh: () => Promise<void>;
   setSelectedTab: (tab: "matches" | "likedYou") => void;
+  setFilter: (filter: MatchesFilter) => void;
   handleScroll: (offset: number) => Promise<void>;
 }
 
@@ -44,21 +47,39 @@ export function useMatchesData(): UseMatchesDataReturn {
   );
   const [refreshing, setRefreshing] = useState(false);
   const [initialOffset, setInitialOffset] = useState<number>(0);
+  const [filter, setFilter] = useState<MatchesFilter>({ sort: "newest" });
   const listRef = useRef<FlatList<Match>>(null);
   const queryClient = useQueryClient();
 
-  // Query for matches data
+  // Query for matches data with filter
   const {
     data: matchesData,
     isLoading,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["matches"],
+    queryKey: ["matches", filter],
     queryFn: async () => {
       try {
-        const realMatches = await matchesAPI.getMatches();
-        return realMatches as Match[];
+        const params = new URLSearchParams();
+        Object.entries(filter).forEach(([k, v]) => {
+          if (v !== undefined && v !== "") params.append(k, String(v));
+        });
+        const { data } = await matchesAPI.getMatchesWithFilter(params.toString());
+        const matches = (data.matches || data) as unknown as any[];
+        // Map core Match to local Match type if needed
+        return Array.isArray(matches) ? matches.map(m => ({
+          ...m,
+          petId: (m as any).petId || (m as any).pet?._id || "",
+          petName: (m as any).petName || (m as any).pet?.name || "",
+          petPhoto: (m as any).petPhoto || (m as any).pet?.photos?.[0] || "",
+          petAge: (m as any).petAge || (m as any).pet?.age || 0,
+          petBreed: (m as any).petBreed || (m as any).pet?.breed || "",
+          lastMessage: (m as any).lastMessage || { content: "", timestamp: "", senderId: "" },
+          isOnline: (m as any).isOnline || false,
+          matchedAt: (m as any).matchedAt || (m as any).createdAt || "",
+          unreadCount: (m as any).unreadCount || 0,
+        })) as Match[] : [];
       } catch (error) {
         logger.error("Failed to load matches:", { error });
         throw error;
@@ -94,7 +115,19 @@ export function useMatchesData(): UseMatchesDataReturn {
   const refreshMutation = useMutation({
     mutationFn: async () => {
       const realMatches = await matchesAPI.getMatches();
-      return realMatches as Match[];
+      // Map core Match to local Match type if needed
+      return realMatches.map(m => ({
+        ...m,
+        petId: (m as any).petId || (m as any).pet._id || "",
+        petName: (m as any).petName || (m as any).pet?.name || "",
+        petPhoto: (m as any).petPhoto || (m as any).pet?.photos?.[0] || "",
+        petAge: (m as any).petAge || (m as any).pet?.age || 0,
+        petBreed: (m as any).petBreed || (m as any).pet?.breed || "",
+        lastMessage: (m as any).lastMessage || { content: "", timestamp: "", senderId: "" },
+        isOnline: (m as any).isOnline || false,
+        matchedAt: (m as any).matchedAt || (m as any).createdAt || "",
+        unreadCount: (m as any).unreadCount || 0,
+      })) as Match[];
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["matches"], data);
@@ -153,7 +186,19 @@ export function useMatchesData(): UseMatchesDataReturn {
     queryFn: async () => {
       try {
         const likedYouMatches = await matchesAPI.getLikedYou();
-        return likedYouMatches as Match[];
+        // Map core Match to local Match type if needed
+        return likedYouMatches.map(m => ({
+          ...m,
+          petId: (m as any).petId || (m as any).pet?._id || "",
+          petName: (m as any).petName || (m as any).pet?.name || "",
+          petPhoto: (m as any).petPhoto || (m as any).pet?.photos?.[0] || "",
+          petAge: (m as any).petAge || (m as any).pet?.age || 0,
+          petBreed: (m as any).petBreed || (m as any).pet?.breed || "",
+          lastMessage: (m as any).lastMessage || { content: "", timestamp: "", senderId: "" },
+          isOnline: (m as any).isOnline || false,
+          matchedAt: (m as any).matchedAt || (m as any).createdAt || "",
+          unreadCount: (m as any).unreadCount || 0,
+        })) as Match[];
       } catch (error) {
         logger.error("Failed to load liked you:", { error });
         return [];
@@ -172,10 +217,12 @@ export function useMatchesData(): UseMatchesDataReturn {
     refreshing: refreshing || refreshMutation.isPending,
     isLoading,
     initialOffset,
+    filter,
     listRef,
     loadMatches,
     onRefresh,
     setSelectedTab,
+    setFilter,
     handleScroll,
   };
 }

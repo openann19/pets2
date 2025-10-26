@@ -18,13 +18,15 @@ export interface UndoPillProps {
   onUndo: () => void;
   /** top-level style override */
   style?: any;
+  /** testID for testing */
+  testID?: string;
 }
 
 /**
  * Animated pill that slides in, shows a shrinking progress bar, and slides out.
  * Fully UI-thread driven (no JS timers). Exposes an imperative .trigger() via ref.
  */
-export default function UndoPill({ duration = 2000, onUndo, style }: UndoPillProps) {
+export default function UndoPill({ duration = 2000, onUndo, style, testID }: UndoPillProps) {
   const visible = useSharedValue(0); // 0 hidden, 1 shown
   const progress = useSharedValue(0); // 0..1
 
@@ -36,13 +38,13 @@ export default function UndoPill({ duration = 2000, onUndo, style }: UndoPillPro
   useAnimatedReaction(
     () => visible.value,
     (v, prev) => {
-      if (v === 1 && prev !== 1) {
+      if (v === 1 && prev !== undefined && prev !== 1) {
         // slide in
         // progress goes 1->0 over duration; when reaches 0, auto-hide + finalize
         progress.value = 1;
         progress.value = withTiming(0, { duration });
 
-      } else if (v === 0 && prev !== 1) {
+      } else if (v === 0 && prev !== undefined && prev !== 1) {
         // reset progress for next time
         progress.value = 0;
       }
@@ -63,15 +65,20 @@ export default function UndoPill({ duration = 2000, onUndo, style }: UndoPillPro
     opacity: withTiming(visible.value ? 1 : 0, { duration: 120 }),
   }));
 
-  const barStyle = useAnimatedStyle(() => ({
-    width: `${Math.max(0, progress.value * 100)}%`,
-  }));
+  const barWidth = useAnimatedStyle(() => {
+    const percentage = progress.value * 100;
+    return {
+      flexGrow: percentage,
+      flexShrink: 0,
+      flexBasis: 0,
+    };
+  });
 
   // Detect auto-dismiss (progress reached 0)
   useAnimatedReaction(
     () => progress.value,
     (val, prev) => {
-      if (prev !== undefined && prev > 0 && val <= 0) {
+      if (prev && prev > 0 && val <= 0) {
         // time's up — hide
         visible.value = 0;
       }
@@ -117,7 +124,7 @@ export default function UndoPill({ duration = 2000, onUndo, style }: UndoPillPro
   }, [visible]);
 
   return (
-    <Animated.View style={[styles.wrap, style, wrapStyle]} pointerEvents="box-none">
+    <Animated.View style={[styles.wrap, style, wrapStyle]} pointerEvents="box-none" testID={testID}>
       <View style={styles.pill}>
         <Text style={styles.txt}>Liked • </Text>
         <Pressable onPress={onPressUndo} hitSlop={8} accessibilityRole="button" accessibilityLabel="Undo like">
@@ -126,7 +133,7 @@ export default function UndoPill({ duration = 2000, onUndo, style }: UndoPillPro
       </View>
 
       <View style={styles.progressTrack}>
-        <Animated.View style={[styles.progressBar, barStyle]} />
+        <Animated.View style={[styles.progressBar, barWidth]} />
       </View>
     </Animated.View>
   );

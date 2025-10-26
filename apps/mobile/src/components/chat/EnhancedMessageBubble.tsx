@@ -140,7 +140,7 @@ export function EnhancedMessageBubble({
             colors={
               isOwnMessage
                 ? ["#FF6B6B", "#FF8E8E"]
-                : [colors.card, colors.background]
+                : [colors.bgElevated, colors.bg]
             }
             style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
             start={{ x: 0, y: 0 }}

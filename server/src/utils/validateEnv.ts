@@ -7,34 +7,7 @@
  * - Secret entropy checking
  */
 
-// Note: Avoid requiring optional deps in early boot paths
-// to keep tests and minimal environments lightweight.
-
-interface ValidationError {
-  variable: string;
-  message: string;
-  severity: 'critical' | 'warning';
-  value?: string;
-}
-
-interface ValidationWarning {
-  variable: string;
-  message: string;
-  severity: 'warning';
-}
-
-interface EnvSchemaEntry {
-  type: string;
-  required?: boolean | 'production';
-  default?: string;
-  minLength?: number;
-  min?: number;
-  max?: number;
-  pattern?: RegExp;
-  values?: string[];
-}
-
-type EnvSchema = Record<string, EnvSchemaEntry>;
+// Note: Avoid requiring optional deps in early boot paths to keep tests and minimal environments lightweight.
 
 // Simple console logger for validation (before full logger is initialized)
 const validationLogger = {
@@ -43,10 +16,21 @@ const validationLogger = {
   error: (msg: string) => console.error(`[ERROR] ${msg}`)
 };
 
+interface EnvSchema {
+  type: string;
+  values?: string[];
+  required?: boolean | string;
+  default?: string;
+  minLength?: number;
+  pattern?: RegExp;
+  min?: number;
+  max?: number;
+}
+
 /**
  * Environment schema definition - strict validation of environment variables
  */
-const envSchema: EnvSchema = {
+const envSchema: Record<string, EnvSchema> = {
   // Core environment
   NODE_ENV: { type: 'enum', values: ['development', 'test', 'staging', 'production'], required: false, default: 'development' },
   PORT: { type: 'port', required: false, default: '5000' },
@@ -100,7 +84,7 @@ const envSchema: EnvSchema = {
 };
 
 // Type validation functions
-const validators: Record<string, (value: string, schema?: EnvSchemaEntry) => boolean> = {
+const validators: Record<string, (value: string, schema?: EnvSchema) => boolean> = {
   string: (value: string) => typeof value === 'string',
   number: (value: string) => !isNaN(Number(value)),
   float: (value: string) => !isNaN(parseFloat(value)),
@@ -116,11 +100,8 @@ const validators: Record<string, (value: string, schema?: EnvSchemaEntry) => boo
   },
   email: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
   duration: (value: string) => /^\d+(\.\d+)?(ms|s|m|h|d|w|y)$/.test(value),
-  enum: (value: string, schema?: EnvSchemaEntry) => {
-    if (!schema || !schema.values) return false;
-    return schema.values.includes(value);
-  },
-  secret: (value: string, schema?: EnvSchemaEntry) => {
+  enum: (value: string, schema: EnvSchema) => schema.values?.includes(value) || false,
+  secret: (value: string, schema?: EnvSchema) => {
     if (schema?.minLength && value.length < schema.minLength) return false;
     // Check entropy (variety of characters)
     const hasLowerCase = /[a-z]/.test(value);
@@ -134,16 +115,23 @@ const validators: Record<string, (value: string, schema?: EnvSchemaEntry) => boo
   redis: (value: string) => /^redis:\/\//.test(value)
 };
 
+interface ValidationError {
+  variable: string;
+  message: string;
+  severity: string;
+  value?: string;
+}
+
 /**
  * Enhanced environment variable validation using schema-based approach
  * @returns Validated environment variables
  * @throws {Error} If required variables are missing or invalid
  */
-export default function validateEnv(): Record<string, string> {
+export function validateEnv(): Record<string, string> {
   validationLogger.info('Starting environment variable validation');
 
   const errors: ValidationError[] = [];
-  const warnings: ValidationWarning[] = [];
+  const warnings: ValidationError[] = [];
   const validatedEnv: Record<string, string> = {};
   const isProduction = process.env.NODE_ENV === 'production';
   const isTest = process.env.NODE_ENV === 'test';
@@ -346,3 +334,5 @@ export default function validateEnv(): Record<string, string> {
 
   return validatedEnv;
 }
+
+export default validateEnv;

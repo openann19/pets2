@@ -26,6 +26,8 @@
   "private": true,
   "type": "commonjs",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.917.0",
+    "@aws-sdk/s3-request-presigner": "^3.917.0",
     "@pawfectmatch/core": "workspace:*",
     "@sentry/node": "^10.17.0",
     "@sentry/profiling-node": "^10.17.0",
@@ -43,6 +45,7 @@
     "ioredis": "^5.4.1",
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
+    "mime": "^4.1.0",
     "mongodb-memory-server": "^10.2.1",
     "mongoose": "^8.18.2",
     "morgan": "^1.10.1",

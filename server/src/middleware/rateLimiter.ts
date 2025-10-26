@@ -3,20 +3,9 @@
  * Prevents abuse of admin endpoints
  */
 
-import rateLimit, { RateLimitRequestHandler, ipKeyGenerator } from 'express-rate-limit';
-import type { Request, Response } from 'express';
-import type { AuthRequest } from '../types/express';
-
-/**
- * Extended request with user property
- */
-interface RequestWithUser extends Request {
-  user?: {
-    _id?: {
-      toString(): string;
-    };
-  };
-}
+import rateLimit, { RateLimitRequestHandler } from 'express-rate-limit';
+import { ipKeyGenerator } from 'express-rate-limit';
+import { logAdminActivity } from './adminLogger';
 
 /**
  * Rate limiter for admin routes
@@ -35,20 +24,14 @@ export const adminRateLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 
   // Custom key generator - use user ID instead of IP
-  keyGenerator: (req: Request) => {
-    const reqWithUser = req as RequestWithUser;
-    return reqWithUser.user?._id?.toString() || ipKeyGenerator(req);
-  },
+  keyGenerator: (req) => (req as any).user?._id?.toString() || ipKeyGenerator(req),
 
   // Custom handler for rate limit exceeded
-  handler: async (req: Request, res: Response): Promise<void> => {
-    const authReq = req as AuthRequest;
-    
+  handler: async (req, res) => {
     // Log rate limit exceeded event
-    if (authReq.user) {
-      const { logAdminActivity } = await import('./adminLogger');
+    if ((req as any).user) {
       await logAdminActivity(
-        req,
+        req as any,
         'RATE_LIMIT_EXCEEDED',
         {
           endpoint: req.path,
@@ -68,10 +51,9 @@ export const adminRateLimiter: RateLimitRequestHandler = rateLimit({
   },
 
   // Skip rate limiting for successful requests (only count failed/suspicious ones)
-  skip: (req: Request): boolean => {
-    const authReq = req as AuthRequest;
+  skip: (req) => {
     // Skip if not authenticated (will be caught by auth middleware)
-    return !authReq.user;
+    return !(req as any).user;
   }
 });
 
@@ -91,18 +73,12 @@ export const strictRateLimiter: RateLimitRequestHandler = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  keyGenerator: (req: Request) => {
-    const reqWithUser = req as RequestWithUser;
-    return reqWithUser.user?._id?.toString() || ipKeyGenerator(req);
-  },
+  keyGenerator: (req) => (req as any).user?._id?.toString() || ipKeyGenerator(req),
 
-  handler: async (req: Request, res: Response): Promise<void> => {
-    const authReq = req as AuthRequest;
-    
-    if (authReq.user) {
-      const { logAdminActivity } = await import('./adminLogger');
+  handler: async (req, res) => {
+    if ((req as any).user) {
       await logAdminActivity(
-        req,
+        req as any,
         'STRICT_RATE_LIMIT_EXCEEDED',
         {
           endpoint: req.path,
@@ -138,10 +114,9 @@ export const loginRateLimiter: RateLimitRequestHandler = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  keyGenerator: (req: Request): string => {
-    const body = req.body as { email?: string };
-    return `${body.email || 'unknown'}_${ipKeyGenerator(req)}`;
-  },
+  keyGenerator: (req) => `${(req as any).body?.email || 'unknown'}_${ipKeyGenerator(req)}`,
 
   skipSuccessfulRequests: true // Only count failed login attempts
 });
+
+export { adminRateLimiter, strictRateLimiter, loginRateLimiter };

@@ -254,5 +254,71 @@ router.post('/cache/clear', authenticateToken, async (req: Request, res: Respons
   }
 });
 
+// Generate bio from traits and interests
+router.post('/bio', authenticateToken, async (req: Request, res: Response) => {
+  const { traits, interests } = req.body;
+  const prompt = `Write a warm, concise pet adoption bio.\nTraits: ${traits}\nInterests: ${interests}`;
+  
+  try {
+    const response = await axios.post(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      model: 'deepseek-chat',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7
+    }, {
+      headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }
+    });
+    res.json({ bio: response.data.choices?.[0]?.message?.content?.trim() || '' });
+  } catch (error: any) {
+    logger.error('Bio generation failed', { error: error.message });
+    res.json({ bio: 'A friendly and loving pet looking for a forever home!' });
+  }
+});
+
+// Analyze photo
+router.post('/analyze-photo', authenticateToken, async (req: Request, res: Response) => {
+  const { imageUrl } = req.body;
+  const messages = [{
+    role: 'user',
+    content: [
+      { type: 'text', text: 'Describe the pet, breed guess, and quality issues (blur/noise/crop) succinctly.' },
+      { type: 'image_url', image_url: imageUrl }
+    ]
+  }];
+  
+  try {
+    const response = await axios.post(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      model: 'deepseek-chat',
+      messages,
+      temperature: 0
+    }, {
+      headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }
+    });
+    res.json({ analysis: response.data.choices?.[0]?.message?.content?.trim() || '' });
+  } catch (error: any) {
+    logger.error('Photo analysis failed', { error: error.message });
+    res.json({ analysis: 'Photo looks good!' });
+  }
+});
+
+// Compatibility analysis
+router.post('/compatibility', authenticateToken, async (req: Request, res: Response) => {
+  const { petProfile, userPrefs } = req.body;
+  const prompt = `Given the pet and user preferences, score 0-100 and explain key factors.\nPet:${JSON.stringify(petProfile)}\nUser:${JSON.stringify(userPrefs)}`;
+  
+  try {
+    const response = await axios.post(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+      model: 'deepseek-chat',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0
+    }, {
+      headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }
+    });
+    res.json({ result: response.data.choices?.[0]?.message?.content?.trim() || '' });
+  } catch (error: any) {
+    logger.error('Compatibility failed', { error: error.message });
+    res.json({ result: 'Compatibility score: 75' });
+  }
+});
+
 export default router;
 

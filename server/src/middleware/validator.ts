@@ -1,14 +1,30 @@
-import { body, validationResult, ValidationChain, Request, ValidationError } from 'express-validator';
-import type { Request as ExpressRequest, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { body, ValidationChain, validationResult } from 'express-validator';
 
 /**
- * Type for validation chains
+ * Validate API requests using express-validator
  */
-type ValidationChainArray = ValidationChain[];
+export function validate(validations: ValidationChain[]) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    // Execute all validations
+    await Promise.all(validations.map(validation => validation.run(req)));
+    
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+      return next();
+    }
+    
+    // Return validation errors
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array()
+    });
+  };
+}
 
-/**
- * Validation patterns for common use cases
- */
+// Common validation patterns
 export const patterns = {
   stripeSecretKey: /^sk_(test|live)_[0-9a-zA-Z]{24,}$/,
   stripePublishableKey: /^pk_(test|live)_[0-9a-zA-Z]{24,}$/,
@@ -19,34 +35,7 @@ export const patterns = {
   url: /^(https?:\/\/)[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,}(:[0-9]{1,5})?(\/[^\s]*)?$/
 };
 
-/**
- * Validator middleware
- * Executes validations and returns errors if any
- */
-export const validate = (validations: ValidationChainArray) => {
-  return async (req: ExpressRequest, res: Response, next: NextFunction): Promise<void> => {
-    // Execute all validations
-    await Promise.all(validations.map(validation => validation.run(req)));
-    
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      next();
-      return;
-    }
-    
-    // Return validation errors
-    res.status(400).json({
-      success: false,
-      message: 'Validation failed',
-      errors: errors.array()
-    });
-  };
-};
-
-/**
- * Common validation schemas
- */
+// Common validation schemas
 export const schemas = {
   stripeConfig: [
     body('secretKey')

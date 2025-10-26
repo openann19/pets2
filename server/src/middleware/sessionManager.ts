@@ -3,26 +3,19 @@
  * Handles admin session timeout and tracking
  */
 
-import type { Request, Response, NextFunction } from 'express';
-import type { AuthRequest } from '../types/express';
-import { randomBytes } from 'crypto';
+import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
+import crypto from 'crypto';
 
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-/**
- * Session metadata interface
- */
 interface SessionMetadata {
   userAgent?: string;
   ip?: string;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
-/**
- * Session data structure
- */
 interface Session {
   userId: string;
   sessionId: string;
@@ -31,9 +24,6 @@ interface Session {
   metadata: SessionMetadata;
 }
 
-/**
- * Session validation result
- */
 interface SessionValidation {
   valid: boolean;
   reason?: string;
@@ -41,21 +31,10 @@ interface SessionValidation {
   timeRemaining?: number;
 }
 
-/**
- * Session statistics
- */
 interface SessionStats {
   total: number;
   active: number;
   expiringSoon: number;
-}
-
-/**
- * Request with session
- */
-interface RequestWithSession extends AuthRequest {
-  session?: Session;
-  sessionTimeRemaining?: number;
 }
 
 class SessionManager {
@@ -145,19 +124,8 @@ class SessionManager {
   /**
    * Get all active sessions for a user
    */
-  getUserSessions(userId: string): Array<{
-    sessionId: string;
-    createdAt: number;
-    lastActivity: number;
-    metadata: SessionMetadata;
-  }> {
-    const userSessions: Array<{
-      sessionId: string;
-      createdAt: number;
-      lastActivity: number;
-      metadata: SessionMetadata;
-    }> = [];
-    
+  getUserSessions(userId: string): Array<Omit<Session, 'userId'>> {
+    const userSessions: Array<Omit<Session, 'userId'>> = [];
     for (const [sessionId, session] of this.sessions.entries()) {
       if (session.userId === userId) {
         userSessions.push({
@@ -243,36 +211,39 @@ class SessionManager {
   /**
    * Generate secure session ID
    */
-  private generateSessionId(): string {
-    return randomBytes(32).toString('hex');
+  generateSessionId(): string {
+    return crypto.randomBytes(32).toString('hex');
   }
 }
 
 // Create singleton instance
-const sessionManager = new SessionManager();
+export const sessionManager = new SessionManager();
+
+interface SessionRequest extends Request {
+  user?: any;
+  session?: Session;
+  sessionTimeRemaining?: number;
+}
 
 /**
  * Middleware to track session activity
  */
-export const trackSession = (req: Request, res: Response, next: NextFunction): void => {
-  const reqWithSession = req as RequestWithSession;
-  
-  if (reqWithSession.user && req.headers['x-session-id']) {
+export const trackSession = (req: SessionRequest, res: Response, next: NextFunction): Response | void => {
+  if (req.user && req.headers['x-session-id']) {
     const sessionId = req.headers['x-session-id'] as string;
     const validation = sessionManager.validateSession(sessionId);
 
     if (!validation.valid) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
         error: 'Session expired',
         message: validation.reason
       });
-      return;
     }
 
     // Attach session info to request
-    reqWithSession.session = validation.session;
-    reqWithSession.sessionTimeRemaining = validation.timeRemaining;
+    req.session = validation.session;
+    req.sessionTimeRemaining = validation.timeRemaining;
   }
 
   next();
@@ -281,35 +252,30 @@ export const trackSession = (req: Request, res: Response, next: NextFunction): v
 /**
  * Middleware to require valid session
  */
-export const requireSession = (req: Request, res: Response, next: NextFunction): void => {
-  const reqWithSession = req as RequestWithSession;
-  
+export const requireSession = (req: SessionRequest, res: Response, next: NextFunction): Response | void => {
   const sessionId = req.headers['x-session-id'] as string | undefined;
 
   if (!sessionId) {
-    res.status(401).json({
+    return res.status(401).json({
       success: false,
       error: 'No session',
       message: 'Session ID required'
     });
-    return;
   }
 
   const validation = sessionManager.validateSession(sessionId);
 
   if (!validation.valid) {
-    res.status(401).json({
+    return res.status(401).json({
       success: false,
       error: 'Session expired',
       message: validation.reason
     });
-    return;
   }
 
-  reqWithSession.session = validation.session;
-  reqWithSession.sessionTimeRemaining = validation.timeRemaining;
+  req.session = validation.session;
+  req.sessionTimeRemaining = validation.timeRemaining;
   next();
 };
 
-export { sessionManager, SESSION_TIMEOUT };
-export type { Session, SessionMetadata, SessionValidation, SessionStats };
+export { SESSION_TIMEOUT };

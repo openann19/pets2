@@ -33,7 +33,7 @@ export function MapFiltersModal({
   }, [filters.radius]);
 
   return (
-    <BlurView style={styles.filterBlur} intensity={50} tint="light">
+    <BlurView testID="filters-modal" style={styles.filterBlur} intensity={50} tint="light">
       <ScrollView style={styles.filterContent}>
         <Text style={styles.filterTitle}>Map Filters</Text>
 

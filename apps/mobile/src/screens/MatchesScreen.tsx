@@ -1,7 +1,7 @@
 import { FlatList, RefreshControl, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { FlatList as FlatListType } from "react-native";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import {
   AdvancedHeader,
@@ -9,6 +9,7 @@ import {
 } from "../components/Advanced/AdvancedHeader";
 import { MatchCard } from "../components/matches/MatchCard";
 import { MatchesTabs } from "../components/matches/MatchesTabs";
+import MatchesFilterModal from "../components/matches/MatchesFilterModal";
 import { useMatchesData } from "../hooks/useMatchesData";
 import { logger } from "../services/logger";
 import type { Match } from "../hooks/useMatchesData";
@@ -34,7 +35,10 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
     onRefresh,
     setSelectedTab,
     handleScroll,
+    filter,
+    setFilter,
   } = useMatchesData();
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const listRef = useRef<FlatListType<Match>>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();

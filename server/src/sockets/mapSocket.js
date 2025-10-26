@@ -71,6 +71,7 @@ class MapSocketServer {
         
         // Broadcast to all connected clients
         this.io.emit('pin:update', pin);
+        this.io.emit('pulse_update', pin); // backward compatibility
         
         logger.info('Location update', { userEmail: socket.userEmail, activity, latitude, longitude });
       });
@@ -104,6 +105,7 @@ class MapSocketServer {
 
         this.activePins.set(pin._id, pin);
         this.io.emit('pin:update', pin);
+        this.io.emit('pulse_update', pin); // backward compatibility
         
         logger.info('Activity started', { activity, petId });
       });
@@ -223,6 +225,7 @@ class MapSocketServer {
 
         this.activePins.set(pin._id, pin);
         this.io.emit('pin:update', pin);
+        this.io.emit('pulse_update', pin); // backward compatibility
       }
 
       // Clean up expired pins

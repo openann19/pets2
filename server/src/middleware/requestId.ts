@@ -3,55 +3,44 @@
  * Generates and attaches unique request IDs for tracing and correlation
  */
 
-import { randomBytes } from 'crypto';
-import type { Request, Response, NextFunction } from 'express';
-
-/**
- * Extended request with request ID
- */
-interface RequestWithId extends Request {
-  id?: string;
-  requestId?: string;
-  log?: {
-    child: (context: { requestId: string }) => unknown;
-  };
-}
+import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 
 /**
  * Generate a unique request ID
  */
 export function generateRequestId(): string {
-  return randomBytes(16).toString('hex');
+  return crypto.randomBytes(16).toString('hex');
+}
+
+interface RequestWithId extends Request {
+  id?: string;
+  requestId?: string;
 }
 
 /**
  * Request ID middleware
  * Attaches a unique ID to each request for logging and tracing
  */
-export function requestIdMiddleware(req: Request, res: Response, next: NextFunction): void {
-  const reqWithId = req as RequestWithId;
-  
+export function requestIdMiddleware(req: RequestWithId, res: Response, next: NextFunction): void {
   // Use existing request ID from header if present, otherwise generate new
-  const requestId = reqWithId.headers['x-request-id'] as string || 
-                    reqWithId.headers['x-correlation-id'] as string || 
+  const requestId = (req.headers['x-request-id'] as string) || 
+                    (req.headers['x-correlation-id'] as string) || 
                     generateRequestId();
   
   // Attach to request object
-  reqWithId.id = requestId;
-  reqWithId.requestId = requestId;
+  req.id = requestId;
+  req.requestId = requestId;
   
   // Set response header
   res.setHeader('X-Request-ID', requestId);
   
   // Attach to logger context if available
-  if (reqWithId.log) {
-    reqWithId.log = reqWithId.log.child({ requestId }) as typeof reqWithId.log;
+  if ((req as any).log) {
+    (req as any).log = (req as any).log.child({ requestId });
   }
   
   next();
 }
 
-/**
- * Default export for backward compatibility
- */
-export default requestIdMiddleware;
+export { requestIdMiddleware };

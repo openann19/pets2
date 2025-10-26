@@ -87,7 +87,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color={colors.textSecondary} />
+                <Ionicons name="close" size={24} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
             {/* Content */}
@@ -127,7 +127,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.description,
-                  { color: colors.textSecondary },
+                  { color: colors.textMuted },
                 ])}
               >
                 {description}
@@ -144,7 +144,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textSecondary },
+                      { color: colors.textMuted },
                     ])}
                   >
                     Unlimited access to all features
@@ -159,7 +159,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textSecondary },
+                      { color: colors.textMuted },
                     ])}
                   >
                     Priority customer support
@@ -174,7 +174,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textSecondary },
+                      { color: colors.textMuted },
                     ])}
                   >
                     Advanced AI matching
@@ -211,7 +211,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.laterButtonText,
-                      { color: colors.textSecondary },
+                      { color: colors.textMuted },
                     ])}
                   >
                     Maybe Later

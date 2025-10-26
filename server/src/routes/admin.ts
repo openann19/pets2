@@ -6,6 +6,8 @@
 import express, { Request, Response } from 'express';
 import stripe from 'stripe';
 const Configuration = require('../models/Configuration');
+const Report = require('../models/Report');
+const SecurityAlert = require('../models/SecurityAlert');
 const { encrypt } = require('../utils/encryption');
 const { logAdminActivity, adminActionLogger } = require('../middleware/adminLogger');
 const { validate, schemas } = require('../middleware/validator');
@@ -1417,77 +1419,47 @@ router.get('/reports', checkPermission('reports:read'), async (req: Request, res
     const sortOptions = {};
     sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
 
-    // For now, return mock data until Report model is created
-    const mockReports = [
-      {
-        id: '1',
-        title: 'Monthly User Analytics Report',
-        description: 'Comprehensive analysis of user engagement and platform metrics',
-        type: 'analytics',
-        status: 'completed',
-        priority: 'high',
-        createdBy: {
-          id: '1',
-          name: 'Admin User',
-          email: 'admin@pawfectmatch.com',
-          avatar: null,
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        completedAt: new Date().toISOString(),
-        parameters: {
-          dateRange: {
-            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-            end: new Date().toISOString(),
+    // Build aggregation pipeline for reports
+    const pipeline = [];
+    pipeline.push({ $match: query });
+    pipeline.push({ $sort: sortOptions });
+    pipeline.push({
+      $facet: {
+        total: [{ $count: 'count' }],
+        reports: [
+          { $skip: (parseInt(page as string) - 1) * parseInt(limit as string) },
+          { $limit: parseInt(limit as string) },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'reportedUserId',
+              foreignField: '_id',
+              as: 'reportedUser',
+              pipeline: [{ $project: { firstName: 1, lastName: 1, email: 1, avatar: 1 } }]
+            }
           },
-          filters: {},
-          metrics: ['users', 'engagement', 'revenue'],
-          format: 'pdf',
-        },
-        fileSize: 2048576,
-        downloadUrl: null,
-        views: 45,
-        isPublic: false,
-        tags: ['monthly', 'analytics', 'users'],
-        recipients: [],
-        schedule: null,
-      },
-      {
-        id: '2',
-        title: 'Security Incident Report',
-        description: 'Analysis of recent security events and threat patterns',
-        type: 'security',
-        status: 'running',
-        priority: 'urgent',
-        createdBy: {
-          id: '1',
-          name: 'Admin User',
-          email: 'admin@pawfectmatch.com',
-          avatar: null,
-        },
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        updatedAt: new Date(Date.now() - 3600000).toISOString(),
-        parameters: {
-          dateRange: {
-            start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-            end: new Date().toISOString(),
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'reporterId',
+              foreignField: '_id',
+              as: 'reporter',
+              pipeline: [{ $project: { firstName: 1, lastName: 1, email: 1 } }]
+            }
           },
-          filters: { severity: 'high' },
-          metrics: ['incidents', 'response_time'],
-          format: 'pdf',
-        },
-        fileSize: null,
-        downloadUrl: null,
-        views: 12,
-        isPublic: false,
-        tags: ['security', 'incidents'],
-        recipients: [],
-        schedule: null,
-      },
-    ];
+          {
+            $addFields: {
+              reportedUser: { $arrayElemAt: ['$reportedUser', 0] },
+              reporter: { $arrayElemAt: ['$reporter', 0] }
+            }
+          }
+        ]
+      }
+    });
 
-    const total = mockReports.length;
-    const reports = mockReports.slice((page - 1) * limit, page * limit);
+    const result = await Report.aggregate(pipeline);
+    const total = result[0]?.total[0]?.count || 0;
+    const reports = result[0]?.reports || [];
 
     await logAdminActivity(req, 'VIEW_REPORTS', { query });
 
@@ -1532,41 +1504,33 @@ router.post('/reports', checkPermission('reports:create'), async (req: Request, 
       });
     }
 
-    // For now, return mock response until Report model is implemented
-    const newReport = {
-      id: Date.now().toString(),
-      title,
-      description,
-      type,
-      status: 'draft',
+    // Create report document
+    const reportData: any = {
+      reporterId: req.user._id,
+      category: type,
+      type: 'analytics',
+      reason: description,
+      description: title,
       priority,
-      createdBy: {
-        id: req.user._id,
-        name: req.user.firstName + ' ' + req.user.lastName,
-        email: req.user.email,
-        avatar: req.user.avatar,
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      parameters: parameters || {
-        dateRange: {
-          start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          end: new Date().toISOString(),
+      status: 'pending',
+      metadata: {
+        parameters: parameters || {
+          dateRange: {
+            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+            end: new Date()
+          },
+          filters: {},
+          metrics: ['users']
         },
-        filters: {},
-        metrics: ['users'],
-        format: 'pdf',
-      },
-      fileSize: null,
-      downloadUrl: null,
-      views: 0,
-      isPublic,
-      tags,
-      recipients: [],
-      schedule: schedule || null,
+        isPublic,
+        tags,
+        schedule
+      }
     };
 
-    await logAdminActivity(req, 'CREATE_REPORT', { reportId: newReport.id, type });
+    const newReport = await Report.create(reportData);
+
+    await logAdminActivity(req, 'CREATE_REPORT', { reportId: newReport._id, type });
 
     res.status(201).json({
       success: true,
@@ -1588,12 +1552,19 @@ router.put('/reports/:id', checkPermission('reports:update'), async (req: Reques
     const { id } = req.params;
     const updates = req.body;
 
-    // For now, return mock response until Report model is implemented
-    const updatedReport = {
+    // Update report in database
+    const updatedReport = await Report.findByIdAndUpdate(
       id,
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
+      { ...updates, updatedAt: new Date() },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedReport) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found'
+      });
+    }
 
     await logAdminActivity(req, 'UPDATE_REPORT', { reportId: id, updates });
 
@@ -1616,7 +1587,16 @@ router.delete('/reports/:id', checkPermission('reports:delete'), async (req: Req
   try {
     const { id } = req.params;
 
-    // For now, return mock response until Report model is implemented
+    // Delete report from database
+    const report = await Report.findByIdAndDelete(id);
+    
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found'
+      });
+    }
+
     await logAdminActivity(req, 'DELETE_REPORT', { reportId: id });
 
     res.json({
@@ -1645,13 +1625,30 @@ router.post('/reports/:id/schedule', checkPermission('reports:update'), async (r
       });
     }
 
-    // For now, return mock response until Report model is implemented
-    const schedule = {
+    // Update report with schedule
+    const report = await Report.findById(id);
+    
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found'
+      });
+    }
+
+    if (!report.metadata) {
+      report.metadata = {};
+    }
+    
+    report.metadata.schedule = {
       frequency,
       time,
       timezone,
-      enabled: enabled !== false,
+      enabled: enabled !== false
     };
+    
+    await report.save();
+
+    const schedule = report.metadata.schedule;
 
     await logAdminActivity(req, 'SCHEDULE_REPORT', { reportId: id, schedule });
 
@@ -1675,12 +1672,23 @@ router.post('/reports/:id/export', checkPermission('reports:export'), async (req
     const { id } = req.params;
     const { format = 'pdf' } = req.body;
 
-    // For now, return mock response until Report model is implemented
+    // Generate export for report
+    const report = await Report.findById(id);
+    
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found'
+      });
+    }
+
     const exportResult = {
       reportId: id,
       format,
-      downloadUrl: `/api/admin/reports/${id}/download?format=${format}`,
+      downloadUrl: `/api/admin/reports/${id}/download?format=${format}&token=${Buffer.from(id + Date.now().toString()).toString('base64')}`,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+      fileSize: null,
+      createdAt: new Date().toISOString()
     };
 
     await logAdminActivity(req, 'EXPORT_REPORT', { reportId: id, format });
@@ -1705,8 +1713,15 @@ router.get('/reports/:id/download', checkPermission('reports:read'), async (req:
     const { id } = req.params;
     const { format = 'pdf' } = req.query;
 
-    // For now, return mock file until Report model is implemented
-    const mockContent = `Mock ${format.toUpperCase()} Report - ID: ${id}\nGenerated: ${new Date().toISOString()}`;
+    // Retrieve report and generate export
+    const report = await Report.findById(id).populate('reporterId', 'firstName lastName email').populate('reportedUserId', 'firstName lastName email');
+    
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: 'Report not found'
+      });
+    }
 
     const mimeType = format === 'pdf' ? 'application/pdf' :
       format === 'csv' ? 'text/csv' :
@@ -1717,7 +1732,19 @@ router.get('/reports/:id/download', checkPermission('reports:read'), async (req:
 
     await logAdminActivity(req, 'DOWNLOAD_REPORT', { reportId: id, format });
 
-    res.send(mockContent);
+    // Generate actual export based on format
+    let content = '';
+    
+    if (format === 'json') {
+      content = JSON.stringify(report, null, 2);
+    } else if (format === 'csv') {
+      content = `Report ID,Type,Status,Priority,Reason,Submitted At\n`;
+      content += `${report._id},${report.type},${report.status},${report.priority},${report.reason},${report.submittedAt}\n`;
+    } else {
+      content = `Report Details:\nID: ${report._id}\nType: ${report.type}\nStatus: ${report.status}\nPriority: ${report.priority}\nReason: ${report.reason}\nSubmitted: ${report.submittedAt}\n`;
+    }
+
+    res.send(content);
   } catch (error) {
     logger.error('Failed to download report', { error, reportId: req.params.id });
     res.status(500).json({
@@ -1742,7 +1769,52 @@ router.get('/security/alerts', checkPermission('security:read'), async (req: Req
       sortOrder = 'desc'
     } = req.query;
 
-    // For now, return mock data until Alert model is created
+    // Build query for security alerts
+    const query: any = {};
+    if (status) query.status = status;
+    if (severity) query.severity = severity;
+    if (type) query.type = type;
+    if (assignedTo) query['assignedTo.id'] = assignedTo;
+
+    const sortOptions: any = {};
+    sortOptions[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
+
+    const alerts = await SecurityAlert.find(query)
+      .populate('assignedTo.id', 'firstName lastName email')
+      .populate('acknowledgedBy.id', 'firstName lastName email')
+      .populate('resolvedBy.id', 'firstName lastName email')
+      .sort(sortOptions)
+      .skip((parseInt(page as string) - 1) * parseInt(limit as string))
+      .limit(parseInt(limit as string));
+
+    const total = await SecurityAlert.countDocuments(query);
+
+    await logAdminActivity(req, 'VIEW_SECURITY_ALERTS', { query: req.query });
+
+    res.json({
+      success: true,
+      alerts,
+      pagination: {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        total,
+        pages: Math.ceil(total / parseInt(limit as string))
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to fetch security alerts', { error });
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch security alerts',
+      message: error.message
+    });
+  }
+});
+
+// Redirect to avoid duplicate code
+router.get('/security/alerts/backup', checkPermission('security:read'), async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Old implementation with mock data backup
     const mockAlerts = [
       {
         id: '1',

@@ -9,9 +9,9 @@
  * @param input - The input string to sanitize
  * @returns The sanitized string
  */
-export function sanitizeInput(input: string): string {
+export function sanitizeInput(input: any): any {
     if (typeof input !== 'string') {
-        return input as any;
+        return input;
     }
 
     return input
@@ -55,10 +55,12 @@ export function sanitizeObject(obj: any): any {
         return obj.map(item => sanitizeObject(item));
     }
 
-    const sanitized: any = {};
+    const sanitized: Record<string, any> = {};
     for (const [key, value] of Object.entries(obj)) {
         sanitized[key] = sanitizeObject(value);
     }
 
     return sanitized;
 }
+
+export { sanitizeInput, sanitizeObject };

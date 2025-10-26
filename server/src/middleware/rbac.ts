@@ -3,14 +3,18 @@
  * Implements fine-grained permission system for admin panel
  */
 
-import type { Request, Response, NextFunction } from 'express';
-import type { AuthRequest } from '../types/express';
+import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 
-/**
- * Permissions mapping for different roles
- */
-export const permissions: Record<string, string[]> = {
+interface AuthRequest extends Request {
+  user?: any;
+}
+
+export interface Permissions {
+  [role: string]: string[];
+}
+
+export const permissions: Permissions = {
   administrator: ['*'], // Full access to everything
   moderator: [
     'users:read', 'users:suspend', 'users:activate', 'users:ban',
@@ -45,6 +49,9 @@ export const permissions: Record<string, string[]> = {
 
 /**
  * Check if a user has a specific permission
+ * @param userRole - The user's role
+ * @param requiredPermission - The permission to check (format: "resource:action")
+ * @returns True if user has permission
  */
 export const hasPermission = (userRole: string, requiredPermission: string): boolean => {
   const userPermissions = permissions[userRole] || [];
@@ -70,23 +77,22 @@ export const hasPermission = (userRole: string, requiredPermission: string): boo
 
 /**
  * Middleware to check if user has required permission
+ * @param requiredPermission - The permission required (format: "resource:action")
+ * @returns Express middleware function
  */
 export const checkPermission = (requiredPermission: string) => {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
-      const authReq = req as AuthRequest;
-      
       // Ensure user is authenticated
-      if (!authReq.user) {
-        res.status(401).json({ 
+      if (!req.user) {
+        return res.status(401).json({ 
           success: false,
           error: 'Unauthorized',
           message: 'Authentication required' 
         });
-        return;
       }
 
-      const userRole = authReq.user.role;
+      const userRole = req.user.role;
 
       // Check if user has the required permission
       if (!hasPermission(userRole, requiredPermission)) {
@@ -100,20 +106,19 @@ export const checkPermission = (requiredPermission: string) => {
           `User lacks permission: ${requiredPermission}`
         );
 
-        res.status(403).json({ 
+        return res.status(403).json({ 
           success: false,
           error: 'Forbidden',
           message: 'Insufficient permissions to perform this action',
           requiredPermission
         });
-        return;
       }
 
       // User has permission, proceed
       next();
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Permission check error', { error });
-      res.status(500).json({ 
+      return res.status(500).json({ 
         success: false,
         error: 'Internal server error',
         message: 'Failed to verify permissions' 
@@ -124,22 +129,21 @@ export const checkPermission = (requiredPermission: string) => {
 
 /**
  * Middleware to check if user has ANY of the specified permissions
+ * @param requiredPermissions - Array of permissions (user needs at least one)
+ * @returns Express middleware function
  */
 export const checkAnyPermission = (requiredPermissions: string[]) => {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
-      const authReq = req as AuthRequest;
-      
-      if (!authReq.user) {
-        res.status(401).json({ 
+      if (!req.user) {
+        return res.status(401).json({ 
           success: false,
           error: 'Unauthorized',
           message: 'Authentication required' 
         });
-        return;
       }
 
-      const userRole = authReq.user.role;
+      const userRole = req.user.role;
       const hasAnyPermission = requiredPermissions.some(permission => 
         hasPermission(userRole, permission)
       );
@@ -151,22 +155,21 @@ export const checkAnyPermission = (requiredPermissions: string[]) => {
           'UNAUTHORIZED_ACCESS_ATTEMPT', 
           { requiredPermissions, userRole },
           false,
-          'User lacks any of the required permissions'
+          `User lacks any of the required permissions`
         );
 
-        res.status(403).json({ 
+        return res.status(403).json({ 
           success: false,
           error: 'Forbidden',
           message: 'Insufficient permissions to perform this action',
           requiredPermissions
         });
-        return;
       }
 
       next();
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Permission check error', { error });
-      res.status(500).json({ 
+      return res.status(500).json({ 
         success: false,
         error: 'Internal server error',
         message: 'Failed to verify permissions' 
@@ -177,22 +180,21 @@ export const checkAnyPermission = (requiredPermissions: string[]) => {
 
 /**
  * Middleware to check if user has ALL of the specified permissions
+ * @param requiredPermissions - Array of permissions (user needs all)
+ * @returns Express middleware function
  */
 export const checkAllPermissions = (requiredPermissions: string[]) => {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
-      const authReq = req as AuthRequest;
-      
-      if (!authReq.user) {
-        res.status(401).json({ 
+      if (!req.user) {
+        return res.status(401).json({ 
           success: false,
           error: 'Unauthorized',
           message: 'Authentication required' 
         });
-        return;
       }
 
-      const userRole = authReq.user.role;
+      const userRole = req.user.role;
       const hasAllPermissions = requiredPermissions.every(permission => 
         hasPermission(userRole, permission)
       );
@@ -204,22 +206,21 @@ export const checkAllPermissions = (requiredPermissions: string[]) => {
           'UNAUTHORIZED_ACCESS_ATTEMPT', 
           { requiredPermissions, userRole },
           false,
-          'User lacks all required permissions'
+          `User lacks all required permissions`
         );
 
-        res.status(403).json({ 
+        return res.status(403).json({ 
           success: false,
           error: 'Forbidden',
           message: 'Insufficient permissions to perform this action',
           requiredPermissions
         });
-        return;
       }
 
       next();
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Permission check error', { error });
-      res.status(500).json({ 
+      return res.status(500).json({ 
         success: false,
         error: 'Internal server error',
         message: 'Failed to verify permissions' 
@@ -230,6 +231,8 @@ export const checkAllPermissions = (requiredPermissions: string[]) => {
 
 /**
  * Get all permissions for a role
+ * @param role - The role to get permissions for
+ * @returns Array of permissions
  */
 export const getRolePermissions = (role: string): string[] => {
   return permissions[role] || [];
@@ -237,7 +240,10 @@ export const getRolePermissions = (role: string): string[] => {
 
 /**
  * Get all available roles
+ * @returns Array of role names
  */
 export const getAllRoles = (): string[] => {
   return Object.keys(permissions);
 };
+
+export { permissions, hasPermission, checkPermission, checkAnyPermission, checkAllPermissions, getRolePermissions, getAllRoles };

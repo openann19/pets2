@@ -3,47 +3,23 @@
  * Creates indexes for all frequently queried fields to eliminate N+1 queries
  */
 
-import mongoose from 'mongoose';
+import User from '../models/User';
+import Pet from '../models/Pet';
+import Match from '../models/Match';
 import logger from './logger';
 
-// Dynamic imports for optional models
-let User: mongoose.Model<any>;
-let Pet: mongoose.Model<any>;
-let Match: mongoose.Model<any>;
-let Message: mongoose.Model<any> | undefined;
-let AuditLog: mongoose.Model<any> | undefined;
-
+let Message: any;
 try {
-  User = require('../models/User').default || mongoose.model('User');
-} catch (error: any) {
-  logger.error('Failed to load User model', { error: error.message });
-  throw error;
-}
-
-try {
-  Pet = require('../models/Pet').default || mongoose.model('Pet');
-} catch (error: any) {
-  logger.error('Failed to load Pet model', { error: error.message });
-  throw error;
-}
-
-try {
-  Match = require('../models/Match').default || mongoose.model('Match');
-} catch (error: any) {
-  logger.error('Failed to load Match model', { error: error.message });
-  throw error;
-}
-
-try {
-  Message = require('../models/Message')?.default || mongoose.models.Message;
+  Message = require('../models/Message');
 } catch (error: any) {
   logger.warn('Optional Message model not available for index management', {
     error: error.message
   });
 }
 
+let AuditLog: any;
 try {
-  AuditLog = require('../models/AdminActivityLog')?.default || mongoose.models.AdminActivityLog;
+  AuditLog = require('../models/AdminActivityLog');
 } catch (error: any) {
   logger.warn('Optional AdminActivityLog model not available for index management', {
     error: error.message
@@ -58,7 +34,7 @@ export const createIndexes = async (): Promise<void> => {
     await User.collection.createIndex({ email: 1 }, { unique: true });
     await User.collection.createIndex({ role: 1 });
     await User.collection.createIndex({ status: 1 });
-    await User.collection.createIndex({ isVerified: 1 });
+    await User.collection.createIndex({ isEmailVerified: 1 });
     await User.collection.createIndex({ createdAt: -1 });
     await User.collection.createIndex({ 'firstName': 'text', 'lastName': 'text', 'email': 'text' });
     await User.collection.createIndex({ 'location.coordinates': '2dsphere' });
@@ -101,7 +77,7 @@ export const createIndexes = async (): Promise<void> => {
 
     // Compound indexes for complex queries
     await User.collection.createIndex({ role: 1, status: 1 });
-    await User.collection.createIndex({ isVerified: 1, createdAt: -1 });
+    await User.collection.createIndex({ isEmailVerified: 1, createdAt: -1 });
     await Match.collection.createIndex({ status: 1, createdAt: -1 });
     if (Message && Message.collection) {
       await Message.collection.createIndex({ matchId: 1, read: 1, createdAt: -1 });
@@ -146,7 +122,7 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
       { model: Match, name: 'matches' },
       Message && { model: Message, name: 'messages' },
       AuditLog && { model: AuditLog, name: 'auditlogs' }
-    ].filter(Boolean) as Array<{ model: mongoose.Model<any>; name: string }>;
+    ].filter(Boolean) as Array<{ model: any; name: string }>;
 
     for (const { model, name } of collections) {
       const indexes = await model.collection.indexes();
@@ -159,3 +135,5 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
     throw error;
   }
 };
+
+export { createIndexes, dropIndexes, getIndexStats };

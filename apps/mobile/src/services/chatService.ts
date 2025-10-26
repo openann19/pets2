@@ -6,6 +6,7 @@
 import { logger } from "@pawfectmatch/core";
 import type { Message } from "@pawfectmatch/core";
 import { request } from "./api";
+import * as FileSystem from "expo-file-system";
 
 export interface ChatReaction {
   emoji: string;
@@ -206,3 +207,29 @@ class ChatService {
 }
 
 export const chatService = new ChatService();
+
+// Native voice note upload helper
+export async function sendVoiceNoteNative(matchId: string, p: { fileUri: string; duration: number }) {
+  // presign
+  const presign = await request("/uploads/voice/presign", {
+    method: "POST",
+    body: { contentType: "audio/webm" },
+  });
+  const { url, key } = presign;
+
+  // PUT to S3
+  await FileSystem.uploadAsync(url, p.fileUri, {
+    httpMethod: "PUT",
+    headers: { "Content-Type": "audio/webm" },
+    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+  });
+
+  // register message
+  await request(`/chat/${matchId}/voice-note`, {
+    method: "POST",
+    body: { key, duration: p.duration, waveform: [] },
+  });
+}
+
+// Inject to chatService
+(chatService as any).sendVoiceNoteNative = sendVoiceNoteNative;

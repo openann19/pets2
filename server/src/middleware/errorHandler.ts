@@ -1,44 +1,22 @@
-import type { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 import { sendAdminNotification } from '../services/adminNotificationService';
 
-/**
- * Custom error type with status code
- */
-interface AppError {
-  name?: string;
+interface Error {
+  name: string;
   message: string;
+  stack?: string;
   statusCode?: number;
   code?: number | string;
-  status?: number;
-  retryAfter?: number;
-  keyValue?: Record<string, unknown>;
   type?: string;
-  details?: string[];
-  stack?: string;
-  errors?: unknown;
-}
-
-/**
- * Error response type
- */
-interface ErrorResponse {
-  success: false;
-  message: string;
-  errorId: string;
-  timestamp: string;
-  details?: string[];
+  status?: number;
+  errors?: any;
+  keyValue?: Record<string, any>;
   retryAfter?: number;
-  stack?: string;
-  originalError?: string;
-  errorType?: string;
 }
 
-/**
- * Enhanced error handler with extensive logging and admin notifications
- */
-export const errorHandler = (err: AppError, req: Request, res: Response, _next: NextFunction): void => {
-  let error: AppError = { ...err };
+export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction): void => {
+  let error: any = { ...err };
   error.message = err.message;
 
   // Generate unique error ID for tracking
@@ -53,33 +31,33 @@ export const errorHandler = (err: AppError, req: Request, res: Response, _next: 
     url: req.url,
     ip: req.ip,
     userAgent: req.get('User-Agent'),
-    userId: (req as Request & { user?: { id: string } }).user?.id,
+    userId: (req as any).user?.id,
     body: req.method === 'POST' ? req.body : undefined,
     query: req.query,
     params: req.params,
   });
 
   // Send admin notification for critical errors
-  const shouldNotifyAdmin = (err.statusCode && err.statusCode >= 500) || 
+  const shouldNotifyAdmin = (err as any).statusCode >= 500 || 
                            err.name === 'MongoNetworkError' || 
                            err.name === 'MongoTimeoutError' ||
-                           err.type === 'StripeCardError' ||
+                           (err as any).type === 'StripeCardError' ||
                            err.message?.includes('AI service');
 
   if (shouldNotifyAdmin) {
     sendAdminNotification({
       type: 'error',
-      severity: (err.statusCode && err.statusCode >= 500) ? 'critical' : 'high',
+      severity: (err as any).statusCode >= 500 ? 'critical' : 'high',
       title: 'Server Error Alert',
       message: `Error ${errorId}: ${err.message}`,
       metadata: {
         errorId,
         method: req.method,
         url: req.url,
-        userId: (req as Request & { user?: { id: string } }).user?.id,
+        userId: (req as any).user?.id,
         stack: err.stack,
       },
-    }).catch((notificationError: Error) => {
+    }).catch((notificationError: any) => {
       logger.error('Failed to send admin notification', {
         originalError: err.message,
         notificationError: notificationError.message,
@@ -90,31 +68,29 @@ export const errorHandler = (err: AppError, req: Request, res: Response, _next: 
   // Enhanced error type handling
   if (err.name === 'CastError') {
     const message = 'Invalid ID format provided';
-    error = { message, statusCode: 400, name: 'CastError' };
+    error = { message, statusCode: 400 };
   }
 
   if (err.code === 11000) {
     let message = 'Duplicate entry detected';
     
-    const keyValue = err.keyValue || {};
-    const field = Object.keys(keyValue)[0];
+    const field = Object.keys((err as any).keyValue || {})[0];
     const fieldMessages: Record<string, string> = {
       email: 'An account with this email already exists',
       username: 'This username is already taken',
       phone: 'This phone number is already registered',
     };
     
-    message = field ? fieldMessages[field] || message : message;
-    error = { message, statusCode: 409, name: 'DuplicateError' }; // Conflict
+    message = fieldMessages[field] || message;
+    error = { message, statusCode: 409 }; // Conflict
   }
 
   if (err.name === 'ValidationError') {
-    const details = err.message ? [err.message] : [];
+    const messages = Object.values((err as any).errors).map((val: any) => val.message);
     error = { 
       message: 'Validation failed', 
       statusCode: 422,
-      details,
-      name: 'ValidationError',
+      details: messages,
     };
   }
 
@@ -143,11 +119,11 @@ export const errorHandler = (err: AppError, req: Request, res: Response, _next: 
   }
 
   // Rate limiting errors
-  if (err.status === 429) {
+  if ((err as any).status === 429) {
     error = {
       message: 'Too many requests. Please slow down and try again later',
       statusCode: 429,
-      retryAfter: err.retryAfter || 60,
+      retryAfter: (err as any).retryAfter || 60,
     };
   }
 
@@ -168,7 +144,7 @@ export const errorHandler = (err: AppError, req: Request, res: Response, _next: 
   }
 
   // Payment processing errors
-  if (err.type === 'StripeCardError') {
+  if ((err as any).type === 'StripeCardError') {
     error = {
       message: 'Payment failed. Please check your card details',
       statusCode: 402,
@@ -180,7 +156,7 @@ export const errorHandler = (err: AppError, req: Request, res: Response, _next: 
   const message = error.message || 'An unexpected error occurred';
 
   // Enhanced response with more context
-  const response: ErrorResponse = {
+  const response: any = {
     success: false,
     message,
     errorId,
@@ -209,3 +185,5 @@ export const errorHandler = (err: AppError, req: Request, res: Response, _next: 
 
   res.status(statusCode).json(response);
 };
+
+export default errorHandler;

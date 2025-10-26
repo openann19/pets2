@@ -19,15 +19,8 @@ const TAG_LENGTH = 16;         // 128 bits
 const VERSION = 1;             // For future algorithm upgrades
 const CURRENT_KEY_VERSION = 1; // For key rotation
 
-interface ScryptOptions {
-  cost?: number;
-  blockSize?: number;
-  parallelization?: number;
-  maxmem?: number;
-}
-
 // Promisify crypto functions for async usage
-const scryptAsync = promisify<Buffer, Buffer, Buffer, number, ScryptOptions, Buffer>(crypto.scrypt);
+const scryptAsync = promisify(crypto.scrypt);
 
 /**
  * Get encryption key with rotation support
@@ -70,7 +63,7 @@ async function deriveKey(key: Buffer, salt: Buffer): Promise<Buffer> {
       blockSize: 8, // r parameter (block size)
       parallelization: 1, // p parameter (parallelization)
       maxmem: 64 * 1024 * 1024 // 64MB - prevent DOS attacks
-    });
+    }) as Buffer;
   } catch (error: any) {
     logger.error('Key derivation failed', { error: error.message });
     throw new Error('Encryption key derivation failed');
@@ -190,7 +183,7 @@ export async function rotateKey(encryptedData: string, newKeyVersion: number = C
  * @param value - Value to check
  * @returns True if the value is likely encrypted
  */
-export function isEncrypted(value: any): boolean {
+export function isEncrypted(value: string): boolean {
   if (!value || typeof value !== 'string') return false;
   
   try {
@@ -205,19 +198,17 @@ export function isEncrypted(value: any): boolean {
   }
 }
 
-interface EncryptionInfo {
-  isEncrypted: boolean;
-  version?: number;
-  keyVersion?: number;
-  contentLength?: number;
-}
-
 /**
  * Gets information about encrypted data without decrypting it
  * @param encryptedData - Encrypted data
  * @returns Information about the encrypted data
  */
-export function getEncryptionInfo(encryptedData: string): EncryptionInfo {
+export function getEncryptionInfo(encryptedData: string): {
+  isEncrypted: boolean;
+  version?: number;
+  keyVersion?: number;
+  contentLength?: number;
+} {
   if (!encryptedData || !isEncrypted(encryptedData)) {
     return { isEncrypted: false };
   }
@@ -234,3 +225,11 @@ export function getEncryptionInfo(encryptedData: string): EncryptionInfo {
     return { isEncrypted: false };
   }
 }
+
+export { 
+  encrypt, 
+  decrypt,
+  rotateKey,
+  isEncrypted,
+  getEncryptionInfo
+};

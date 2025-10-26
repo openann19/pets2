@@ -72,7 +72,7 @@ import AdoptionApplicationScreen from "./screens/adoption/AdoptionApplicationScr
 
 // Advanced Feature Screens
 import MemoryWeaveScreen from "./screens/MemoryWeaveScreen";
-// import ARScentTrailsScreen from "./screens/ARScentTrailsScreen";
+import ARScentTrailsScreen from "./screens/ARScentTrailsScreen";
 import StoriesScreen from "./screens/StoriesScreen";
 import LeaderboardScreen from "./screens/leaderboard/LeaderboardScreen";
 import CommunityScreen from "./screens/CommunityScreen";
@@ -186,6 +186,7 @@ const AppNavigator = (): React.ReactElement => (
 
     {/* Advanced Feature Screens */}
     <Stack.Screen name="MemoryWeave" component={MemoryWeaveScreen} />
+    <Stack.Screen name="ARScentTrails" component={ARScentTrailsScreen} options={screenTransitions.fluid} />
     <Stack.Screen name="Stories" component={StoriesScreen} />
     <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
     <Stack.Screen name="Community" component={CommunityScreen} />

@@ -137,7 +137,7 @@ export function MobileVoiceRecorder({
         <View
           style={StyleSheet.flatten([
             styles.container,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.bgElevated },
           ])}
         >
           {/* Header */}
