@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useExtendedTheme } from "../../hooks/useExtendedTheme";
 import { MessageBubbleEnhanced } from "./MessageBubbleEnhanced";
-import { MobileVoiceRecorder } from "./MobileVoiceRecorder";
+import { MessageInput } from "./MessageInput";
 import { SendSparkle, type SendSparkleHandle } from "../feedback/SendSparkle";
 import { useShake } from "../../hooks/useShake";
 import { useThreadJump } from "../../hooks/useThreadJump";
@@ -16,6 +16,7 @@ interface MobileChatProps {
   onSendMessage: (content: string, type?: Message["messageType"], replyTo?: { _id: string; author?: string; text?: string }) => void;
   currentUserId: string;
   otherUserName: string;
+  matchId: string; // Added for attachments and voice notes
   onReply?: (message: Message) => void;
   onCopy?: (message: Message) => void;
   onReact?: (message: Message) => void;
@@ -30,6 +31,7 @@ export function MobileChat({
   onSendMessage, 
   currentUserId, 
   otherUserName,
+  matchId,
   onReply,
   onCopy,
   onReact,
@@ -147,8 +149,8 @@ export function MobileChat({
   }, [onSendMessage]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.card }]}>
+    <View style={[styles.container, { backgroundColor: colors.bg }]}>
+      <View style={[styles.header, { backgroundColor: colors.bgElevated }]}>
         <Text style={[styles.headerTitle, { color: colors.text }]}>{otherUserName}</Text>
       </View>
 
@@ -160,7 +162,7 @@ export function MobileChat({
         getItemLayout={getItemLayout}
         inverted
         showsVerticalScrollIndicator={false}
-        style={{ backgroundColor: colors.background }}
+        style={{ backgroundColor: colors.bg }}
         contentContainerStyle={styles.messagesContent}
         onScroll={onScroll}
         scrollEventThrottle={16}
@@ -171,7 +173,7 @@ export function MobileChat({
         removeClippedSubviews
       />
 
-      <View style={[styles.inputContainer, { backgroundColor: colors.card }]}>
+      <View style={[styles.inputContainer, { backgroundColor: colors.bgElevated }]}>
         {/* Reply Preview Bar */}
         {replyTarget ? (
           <ReplyPreviewBar
@@ -188,39 +190,24 @@ export function MobileChat({
           />
         ) : null}
 
-        <Animated.View style={[styles.inputRow, inputShakeStyle]}>
-          <TextInput
-            style={[styles.textInput, { backgroundColor: colors.background, color: colors.text }]}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder={`Message ${otherUserName}...`}
-            placeholderTextColor={colors.gray500}
-            multiline
-            maxLength={500}
-          />
-          <TouchableOpacity style={[styles.voiceButton, { backgroundColor: colors.primary }]} onPress={() => setShowVoiceRecorder(true)}>
-            <Ionicons name="mic" size={20} color="white" />
-          </TouchableOpacity>
-          <Animated.View style={sendBtnStyle}>
-            <TouchableOpacity
-              style={[styles.sendButton, { backgroundColor: inputText.trim() ? colors.primary : colors.gray400 }]}
-              onPress={handleSendText}
-              disabled={!inputText.trim()}
-            >
-              <Ionicons name="send" size={20} color="white" />
-              {/* Sparkles anchored to the bottom-right of the button */}
-              <SendSparkle ref={sparkleRef} />
-            </TouchableOpacity>
-          </Animated.View>
-        </Animated.View>
-      </View>
-
-      {showVoiceRecorder && (
-        <MobileVoiceRecorder
-          onSend={handleVoiceMessage}
-          onCancel={() => setShowVoiceRecorder(false)}
+        {/* Enhanced Message Input with Attachments & Voice Notes */}
+        <MessageInput
+          value={inputText}
+          onChangeText={setInputText}
+          onSend={handleSendText}
+          placeholder={`Message ${otherUserName}...`}
+          matchId={matchId}
+          onAttachmentSent={() => {
+            sparkleRef.current?.burst();
+          }}
+          onVoiceNoteSent={() => {
+            sparkleRef.current?.burst();
+          }}
         />
-      )}
+        
+        {/* Send Sparkle Effect */}
+        <SendSparkle ref={sparkleRef} />
+      </View>
     </View>
   );
 }

@@ -220,6 +220,13 @@ export const matchesAPI = {
       "Failed to fetch matches",
     );
   },
+  // Get user's matches with filter
+  getMatchesWithFilter: async (queryString: string): Promise<{ data: { matches: Match[]; pagination: any } }> => {
+    return resolveData(
+      apiClient.get<{ matches: Match[]; pagination: any }>(`/matches?${queryString}`),
+      "Failed to fetch matches",
+    );
+  },
   getMatch: async (matchId: string): Promise<Match> => {
     return resolveData(
       apiClient.get<Match>(`/matches/${matchId}`),
@@ -233,6 +240,18 @@ export const matchesAPI = {
       apiClient.post<Match>("/matches", { petId, targetPetId }),
       "Failed to create match",
     );
+  },
+
+  // Like a user
+  likeUser: async (userId: string): Promise<{ success: boolean }> => {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || "";
+    const res = await fetch(`${API_URL}/api/matches/like-user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    if (!res.ok) throw new Error("likeUser failed");
+    return res.json();
   },
 
   // Get chat messages for a match
@@ -869,11 +888,27 @@ export const aiAPI = {
   },
 };
 
+export async function presignVoice(contentType: string) {
+  return resolveData(
+    apiClient.post<{ key: string; url: string }>("/uploads/voice/presign", { contentType }),
+    "Failed to get presign URL",
+  );
+}
+
+export async function presignPhoto(contentType: string) {
+  return resolveData(
+    apiClient.post<{ key: string; url: string }>("/uploads/photos/presign", { contentType }),
+    "Failed to get presign URL",
+  );
+}
+
 export const api = {
   ...matchesAPI,
   chat: matchesAPI.chat,
   ai: aiAPI,
   request,
+  presignVoice,
+  presignPhoto,
 };
 
 // Re-export admin API for backwards compatibility

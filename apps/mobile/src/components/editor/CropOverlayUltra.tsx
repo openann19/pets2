@@ -11,7 +11,7 @@
  */
 
 import React, { useMemo, useRef, useState } from "react";
-import { PanResponder, StyleSheet, View } from "react-native";
+import { PanResponder, StyleSheet, View, Text } from "react-native";
 
 export type Ratio = "1:1" | "4:5" | "9:16" | "3:2";
 
@@ -118,6 +118,38 @@ export function CropOverlayUltra({
   );
 }
 
+/**
+ * Badge overlay for auto-straighten angle and HDR clipping warning
+ */
+export function CropBadges({
+  angleDeg,
+  hdrWarning,
+}: {
+  angleDeg?: number;
+  hdrWarning?: boolean;
+}) {
+  return (
+    <View style={styles.badgeWrap} pointerEvents="none">
+      {typeof angleDeg === "number" && Math.abs(angleDeg) > 0.3 && (
+        <View
+          style={[styles.badge, { backgroundColor: "rgba(14,165,233,0.85)" }]}
+        >
+          <Text style={styles.badgeTxt}>
+            {angleDeg > 0 ? "↶" : "↷"} {Math.abs(angleDeg).toFixed(1)}°
+          </Text>
+        </View>
+      )}
+      {hdrWarning && (
+        <View
+          style={[styles.badge, { backgroundColor: "rgba(239,68,68,0.9)" }]}
+        >
+          <Text style={styles.badgeTxt}>HDR CLIP</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
 const ratioToBox = (ratio: string) => {
   switch (ratio) {
     case "1:1":
@@ -192,6 +224,22 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: "15%",
     backgroundColor: "rgba(0,0,0,0.18)",
+  },
+  badgeWrap: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    gap: 8,
+  },
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  badgeTxt: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 12,
   },
 });
 

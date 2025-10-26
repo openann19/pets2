@@ -3,58 +3,31 @@
  * Implements double-submit cookie pattern for cookie-based authentication
  */
 
-import { randomBytes, timingSafeEqual } from 'crypto';
-import type { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 import logger from '../utils/logger';
 
 /**
  * Generate CSRF token
  */
 export function generateCsrfToken(): string {
-  return randomBytes(32).toString('hex');
-}
-
-/**
- * Cookie map interface
- */
-interface CookieMap {
-  [key: string]: string;
-}
-
-/**
- * Extract CSRF token from cookie header
- */
-function getCsrfTokenFromCookie(cookieHeader: string | undefined): string | null {
-  if (!cookieHeader) return null;
-  
-  try {
-    const cookies = cookieHeader.split(';').reduce((acc: CookieMap, cookie: string) => {
-      const [key, value] = cookie.trim().split('=');
-      if (key) acc[key] = decodeURIComponent(value || '');
-      return acc;
-    }, {});
-    return cookies['csrf-token'] || cookies['XSRF-TOKEN'] || null;
-  } catch {
-    return null;
-  }
+  return crypto.randomBytes(32).toString('hex');
 }
 
 /**
  * CSRF protection middleware
  * Validates CSRF token for state-changing operations when using cookie auth
  */
-export function csrfProtection(req: Request, res: Response, next: NextFunction): void {
+export function csrfProtection(req: Request, res: Response, next: NextFunction): Response | void {
   // Skip for safe methods
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-    next();
-    return;
+    return next();
   }
 
   // Skip if using Authorization header (Bearer token)
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    next();
-    return;
+    return next();
   }
 
   // If using cookie auth, require CSRF token
@@ -72,28 +45,26 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction):
         hasCookie: !!csrfTokenFromCookie
       });
 
-      res.status(403).json({
+      return res.status(403).json({
         success: false,
         message: 'CSRF token required'
       });
-      return;
     }
 
     // Constant-time comparison to prevent timing attacks
     const headerBuf = Buffer.from(csrfTokenFromHeader);
     const cookieBuf = Buffer.from(csrfTokenFromCookie);
-    if (headerBuf.length !== cookieBuf.length || !timingSafeEqual(headerBuf, cookieBuf)) {
+    if (headerBuf.length !== cookieBuf.length || !crypto.timingSafeEqual(headerBuf, cookieBuf)) {
       logger.security('CSRF token mismatch', {
         method: req.method,
         path: req.path,
         ip: req.ip
       });
 
-      res.status(403).json({
+      return res.status(403).json({
         success: false,
         message: 'Invalid CSRF token'
       });
-      return;
     }
 
     // Additional Origin/Referer validation
@@ -103,32 +74,35 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction):
       process.env.ADMIN_URL,
       'http://localhost:3000',
       'http://localhost:3001'
-    ].filter((origin): origin is string => Boolean(origin));
+    ].filter(Boolean) as string[];
 
     if (origin) {
-      const originUrl = new URL(origin);
-      const isAllowed = allowedOrigins.some(allowed => {
-        try {
-          const allowedUrl = new URL(allowed);
-          return originUrl.origin === allowedUrl.origin;
-        } catch {
-          return false;
+      try {
+        const originUrl = new URL(origin);
+        const isAllowed = allowedOrigins.some(allowed => {
+          try {
+            const allowedUrl = new URL(allowed);
+            return originUrl.origin === allowedUrl.origin;
+          } catch {
+            return false;
+          }
+        });
+
+        if (!isAllowed) {
+          logger.security('CSRF origin validation failed', {
+            method: req.method,
+            path: req.path,
+            origin,
+            ip: req.ip
+          });
+
+          return res.status(403).json({
+            success: false,
+            message: 'Invalid origin'
+          });
         }
-      });
-
-      if (!isAllowed) {
-        logger.security('CSRF origin validation failed', {
-          method: req.method,
-          path: req.path,
-          origin,
-          ip: req.ip
-        });
-
-        res.status(403).json({
-          success: false,
-          message: 'Invalid origin'
-        });
-        return;
+      } catch {
+        // Invalid origin format
       }
     }
   }
@@ -137,30 +111,32 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction):
 }
 
 /**
- * Extended response with cookie support
+ * Extract CSRF token from cookie header
  */
-interface ResponseWithCookie extends Response {
-  cookie(name: string, value: string, options?: {
-    httpOnly?: boolean;
-    secure?: boolean;
-    sameSite?: string;
-    maxAge?: number;
-  }): void;
+function getCsrfTokenFromCookie(cookieHeader: string): string | null {
+  try {
+    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=');
+      if (key) acc[key] = decodeURIComponent(value || '');
+      return acc;
+    }, {} as Record<string, string>);
+    return cookies['csrf-token'] || cookies['XSRF-TOKEN'] || null;
+  } catch {
+    return null;
+  }
 }
 
 /**
  * Middleware to set CSRF token cookie
  */
 export function setCsrfToken(req: Request, res: Response, next: NextFunction): void {
-  const resWithCookie = res as ResponseWithCookie;
-  
   // Generate token if not present
-  const existingToken = getCsrfTokenFromCookie(req.headers.cookie);
+  const existingToken = getCsrfTokenFromCookie(req.headers.cookie || '');
   const token = existingToken || generateCsrfToken();
 
   if (!existingToken) {
     // Set CSRF token cookie
-    resWithCookie.cookie('csrf-token', token, {
+    res.cookie('csrf-token', token, {
       httpOnly: false, // Must be readable by client JS
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -173,3 +149,5 @@ export function setCsrfToken(req: Request, res: Response, next: NextFunction): v
 
   next();
 }
+
+export { csrfProtection, setCsrfToken, generateCsrfToken };

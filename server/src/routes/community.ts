@@ -2,6 +2,7 @@ import express, { type Request, type Response, Router } from 'express';
 import { requireAuth } from '../middleware/adminAuth';
 import logger from '../utils/logger';
 import { type IUserDocument } from '../models/User';
+const CommunityPost = require('../models/CommunityPost');
 
 interface AuthenticatedRequest extends Request {
   user?: IUserDocument;
@@ -25,72 +26,50 @@ router.get('/posts', async (req: Request, res: Response) => {
       type
     } = req.query;
 
-    // For now, return mock data until CommunityPost model is implemented
-    const mockPosts = [
-      {
-        _id: '1',
-        author: {
-          _id: 'user1',
-          name: 'Sarah Johnson',
-          avatar: '/avatar1.jpg',
-        },
-        content: 'Just had an amazing walk with Max in Central Park! The weather was perfect and we met some wonderful dogs. 🐕🌳 #DogWalk #CentralPark',
-        images: ['/park-photo1.jpg'],
-        likes: 12,
-        liked: false,
-        comments: [
-          {
-            _id: 'c1',
-            author: { _id: 'user2', name: 'Mike Chen', avatar: '/avatar2.jpg' },
-            content: 'Looks like a perfect day! Max is such a handsome boy 😍',
-            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          },
-        ],
-        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-        packId: 'pack1',
-        packName: 'Central Park Paws',
-        type: 'post',
-      },
-      {
-        _id: '2',
-        author: {
-          _id: 'user3',
-          name: 'Emma Davis',
-          avatar: '/avatar3.jpg',
-        },
-        content: '📅 Upcoming Pack Activity: Beach Day at Santa Monica!\n\nJoin us this Saturday for a fun day at the beach. Dogs are welcome (leashed please) and there will be plenty of space to play and socialize.\n\nTime: 10 AM - 4 PM\nLocation: Santa Monica Beach\nBring: Water, sunscreen, waste bags\n\nRSVP by Friday!',
-        images: ['/beach-activity.jpg'],
-        likes: 25,
-        liked: false,
-        comments: [],
-        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-        packId: 'pack2',
-        packName: 'Beach Buddies',
-        type: 'activity',
-        activityDetails: {
-          date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
-          location: 'Santa Monica Beach, CA',
-          maxAttendees: 30,
-          currentAttendees: 18,
-          attending: false,
-        },
-      },
-    ];
+    // Build query for community posts
+    const query: any = {
+      moderationStatus: 'approved',
+      isArchived: false
+    };
+    
+    if (packId) query.packId = packId;
+    if (userId) query.author = userId;
+    if (type) query.type = type;
 
-    const total = mockPosts.length;
-    const posts = mockPosts
-      .filter(post => {
-        if (packId && post.packId !== packId) return false;
-        if (userId && post.author._id !== userId) return false;
-        if (type && post.type !== type) return false;
-        return true;
-      })
-      .slice((Number(page) - 1) * Number(limit), Number(page) * Number(limit));
-    const filteredTotal = posts.length;
+    // Execute database query
+    const posts = await CommunityPost.find(query)
+      .populate('author', 'firstName lastName avatar')
+      .populate('packId', 'name')
+      .sort({ isPinned: -1, createdAt: -1 })
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit))
+      .lean();
+
+    const total = await CommunityPost.countDocuments(query);
+
+    // Transform posts to match expected format
+    const transformedPosts = posts.map((post: any) => ({
+      _id: post._id,
+      author: {
+        _id: post.author?._id || post.author,
+        name: `${post.author?.firstName || ''} ${post.author?.lastName || ''}`.trim(),
+        avatar: post.author?.avatar,
+      },
+      content: post.content,
+      images: post.images,
+      likes: post.likes?.length || 0,
+      liked: false, // This would be calculated based on current user
+      comments: post.comments || [],
+      createdAt: post.createdAt,
+      packId: post.packId,
+      packName: post.packId?.name,
+      type: post.type,
+      activityDetails: post.activityDetails
+    }));
 
     res.json({
       success: true,
-      posts,
+      posts: transformedPosts,
       pagination: {
         page: parseInt(page as string, 10),
         limit: parseInt(limit as string, 10),
@@ -128,27 +107,43 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // For now, return mock response until CommunityPost model is implemented
-    const newPost = {
-      _id: `post-${Date.now()}`,
-      author: {
-        _id: req.user?._id || 'unknown',
-        name: req.user ? `${req.user.firstName} ${req.user.lastName}` : 'Unknown User',
-        avatar: req.user?.avatar || '/user-avatar.jpg',
-      },
+    // Create new community post
+    const postData: any = {
+      author: req.user?._id,
       content: content.trim(),
       images,
-      likes: 0,
-      comments: [],
-      createdAt: new Date().toISOString(),
       packId,
       type,
       activityDetails: type === 'activity' ? activityDetails : undefined,
+      moderationStatus: 'approved', // Auto-approve initially
+      likes: [],
+      comments: [],
+      shares: []
     };
+
+    const newPost = await CommunityPost.create(postData);
+    await newPost.populate('author', 'firstName lastName avatar');
+    await newPost.populate('packId', 'name');
 
     res.status(201).json({
       success: true,
-      post: newPost,
+      post: {
+        _id: newPost._id,
+        author: {
+          _id: (newPost.author as any)?._id || req.user?._id,
+          name: req.user ? `${req.user.firstName} ${req.user.lastName}` : 'Unknown User',
+          avatar: (newPost.author as any)?.avatar || req.user?.avatar,
+        },
+        content: newPost.content,
+        images: newPost.images,
+        likes: 0,
+        comments: [],
+        createdAt: newPost.createdAt,
+        packId: newPost.packId,
+        packName: (newPost.packId as any)?.name,
+        type: newPost.type,
+        activityDetails: newPost.activityDetails
+      },
       message: 'Post created successfully'
     });
   } catch (error) {
@@ -169,15 +164,26 @@ router.post('/posts/:id/like', async (req: AuthenticatedRequest, res: Response) 
     const { id } = req.params;
     const { liked } = req.body; // Check if already liked to toggle
 
-    // For now, return mock response until CommunityPost model is implemented
-    // Toggle liked status
-    const wasLiked = liked || false;
-    const nowLiked = !wasLiked;
+    // Toggle like on post
+    const post = await CommunityPost.findById(id);
+    
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    const wasLiked = post.toggleLike(req.user?._id);
+    
+    await post.save();
+    
+    await post.populate('author', 'firstName lastName avatar');
     
     const updatedPost = {
-      _id: id,
-      likes: nowLiked ? (wasLiked ? 12 : 13) : (wasLiked ? 12 : 11), // Toggle count
-      liked: nowLiked,
+      _id: post._id,
+      likes: post.likes?.length || 0,
+      liked: wasLiked,
     };
 
     res.json({

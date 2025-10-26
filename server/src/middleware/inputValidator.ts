@@ -1,11 +1,10 @@
-import Joi, { Schema, ValidationError, SchemaLike } from 'joi';
-import type { Request, Response, NextFunction } from 'express';
+import Joi from 'joi';
+import { Request, Response, NextFunction } from 'express';
+import { Schema } from 'joi';
 
-/**
- * Joi validation middleware
- */
+// Custom validation middleware using Joi
 export const validateRequest = (schema: Schema) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): Response | void => {
     const { error } = schema.validate(req.body, { abortEarly: false });
     
     if (error) {
@@ -14,21 +13,18 @@ export const validateRequest = (schema: Schema) => {
         message: detail.message
       }));
       
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: 'Validation failed',
         errors
       });
-      return;
     }
     
     next();
   };
 };
 
-/**
- * Common validation schemas
- */
+// Common validation schemas
 export const schemas = {
   // Stripe configuration schema
   stripeConfig: Joi.object({
@@ -83,3 +79,5 @@ export const schemas = {
     isActive: Joi.boolean().optional()
   })
 };
+
+export { validateRequest, schemas };

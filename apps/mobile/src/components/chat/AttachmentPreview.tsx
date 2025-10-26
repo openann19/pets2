@@ -96,7 +96,7 @@ export function AttachmentPreview({
         <Text
           style={StyleSheet.flatten([
             styles.fileName,
-            { color: colors.textSecondary },
+            { color: colors.textMuted },
           ])}
         >
           {name}
@@ -107,7 +107,7 @@ export function AttachmentPreview({
         <Text
           style={StyleSheet.flatten([
             styles.fileSize,
-            { color: colors.textSecondary },
+            { color: colors.textMuted },
           ])}
         >
           {formatFileSize(size)}

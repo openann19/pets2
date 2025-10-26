@@ -41,6 +41,11 @@ interface GetMatchesRequest extends AuthenticatedRequest {
     limit?: string;
     sortBy?: string;
     order?: string;
+    q?: string;
+    species?: string;
+    minDist?: string;
+    maxDist?: string;
+    sort?: string;
   };
 }
 
@@ -285,7 +290,7 @@ export const recordSwipe = async (
 };
 
 /**
- * @desc    Get user's matches
+ * @desc    Get user's matches with search/filter/sort
  * @route   GET /api/matches
  * @access  Private
  */
@@ -299,7 +304,12 @@ export const getMatches = async (
       page = '1',
       limit = '20',
       sortBy = 'lastActivity',
-      order = 'desc'
+      order = 'desc',
+      q,
+      species,
+      minDist,
+      maxDist,
+      sort
     } = req.query;
 
     const query: any = {
@@ -310,9 +320,14 @@ export const getMatches = async (
     const sortOrder = order === 'desc' ? -1 : 1;
     const sortField = sortBy === 'lastActivity' ? 'lastActivity' : 'createdAt';
 
-    // Use aggregation to properly handle user-specific archived status
-    const matches = await Match.aggregate([
+    // Build aggregation pipeline - lookup pets first to enable filtering
+    const pipeline: any[] = [
       { $match: query },
+      // Join pets early for filtering
+      { $lookup: { from: "pets", localField: "pet1", foreignField: "_id", as: "pet1" } },
+      { $lookup: { from: "pets", localField: "pet2", foreignField: "_id", as: "pet2" } },
+      { $unwind: "$pet1" },
+      { $unwind: "$pet2" },
       {
         $addFields: {
           isArchivedByCurrentUser: {
@@ -345,26 +360,66 @@ export const getMatches = async (
         $match: {
           isArchivedByCurrentUser: status === 'archived' ? true : { $ne: true }
         }
-      },
-      { $sort: { [sortField]: sortOrder } },
-      { $skip: (parseInt(page) - 1) * parseInt(limit) },
-      { $limit: parseInt(limit) },
-      {
-        $lookup: {
-          from: 'pets',
-          localField: 'pet1',
-          foreignField: '_id',
-          as: 'pet1'
+      }
+    ];
+
+    // Apply species filter if provided
+    if (species) {
+      pipeline.push({
+        $match: {
+          $or: [{ "pet1.species": species }, { "pet2.species": species }]
         }
-      },
-      {
-        $lookup: {
-          from: 'pets',
-          localField: 'pet2',
-          foreignField: '_id',
-          as: 'pet2'
+      });
+    }
+
+    // Apply search filter if provided
+    if (q) {
+      pipeline.push({
+        $match: {
+          $or: [
+            { "pet1.name": { $regex: q, $options: "i" } },
+            { "pet2.name": { $regex: q, $options: "i" } }
+          ]
         }
-      },
+      });
+    }
+
+    // Distance filter (if location is available)
+    // Note: This requires user location to be stored in the user model
+    if (minDist || maxDist) {
+      // For now, this is a placeholder - implement actual distance calculation if needed
+      // pipeline.unshift({
+      //   $geoNear: {
+      //     near: { type: "Point", coordinates: [req.user?.lng || 0, req.user?.lat || 0] },
+      //     distanceField: "distance",
+      //     spherical: true,
+      //   },
+      // });
+      // if (minDist) pipeline.push({ $match: { distance: { $gte: Number(minDist) } } });
+      // if (maxDist) pipeline.push({ $match: { distance: { $lte: Number(maxDist) } } });
+    }
+
+    // Apply sorting based on sort parameter
+    switch (sort) {
+      case "oldest":
+        pipeline.push({ $sort: { createdAt: 1 } });
+        break;
+      case "alpha":
+        pipeline.push(
+          { $addFields: { sortName: { $toLower: "$pet2.name" } } },
+          { $sort: { sortName: 1 } }
+        );
+        break;
+      default: // "newest" or default
+        pipeline.push({ $sort: { createdAt: -1 } });
+    }
+
+    // Add pagination
+    pipeline.push({ $skip: (parseInt(page) - 1) * parseInt(limit) });
+    pipeline.push({ $limit: parseInt(limit) });
+
+    // Add user lookups
+    pipeline.push(
       {
         $lookup: {
           from: 'users',
@@ -387,11 +442,11 @@ export const getMatches = async (
           ]
         }
       },
-      { $unwind: '$pet1' },
-      { $unwind: '$pet2' },
       { $unwind: '$user1' },
       { $unwind: '$user2' }
-    ]);
+    );
+
+    const matches = await Match.aggregate(pipeline);
 
     res.json({
       success: true,

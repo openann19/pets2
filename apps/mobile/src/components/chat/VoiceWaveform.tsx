@@ -1,6 +1,6 @@
 /**
  * Voice Waveform Component
- * Visualizes voice message waveforms with animations
+ * Visualizes voice message waveforms with animations and seek support
  */
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -8,18 +8,17 @@ import {
   View,
   StyleSheet,
   Animated,
-  Dimensions,
 } from 'react-native';
 import { Theme } from '../../theme/unified-theme';
 
 export interface VoiceWaveformProps {
   waveform: number[];
   isPlaying: boolean;
-  progress: number; // 0 to 1
-  duration: number; // in seconds
+  progress: number;
+  duration: number;
   color?: string;
   height?: number;
-  onSeek?: (position: number) => void;
+  onSeek?: (pos01: number) => void;
 }
 
 const BAR_WIDTH = 3;
@@ -136,18 +135,25 @@ export function VoiceWaveform({
     return visibleWaveform.map((value, index) => renderBar(index, value));
   };
 
-  const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
   return (
     <View style={styles.container}>
       <View
         style={[styles.waveform, { height }]}
         onLayout={(event) => {
           setContainerWidth(event.nativeEvent.layout.width);
+        }}
+        onStartShouldSetResponder={() => !!onSeek}
+        onResponderGrant={(e) => {
+          if (!onSeek) return;
+          const x = e.nativeEvent.locationX;
+          const pct = Math.max(0, Math.min(1, x / containerWidth));
+          onSeek(pct);
+        }}
+        onResponderMove={(e) => {
+          if (!onSeek) return;
+          const x = e.nativeEvent.locationX;
+          const pct = Math.max(0, Math.min(1, x / containerWidth));
+          onSeek(pct);
         }}
       >
         {renderWaveform()}
@@ -165,7 +171,8 @@ export function CompactVoiceWaveform({
   progress,
   duration,
   color = Theme.colors.primary[500],
-}: Omit<VoiceWaveformProps, 'height'>): JSX.Element {
+  onSeek,
+}: VoiceWaveformProps): JSX.Element {
   return (
     <VoiceWaveform
       waveform={waveform}
@@ -174,6 +181,7 @@ export function CompactVoiceWaveform({
       duration={duration}
       color={color}
       height={24}
+      onSeek={onSeek}
     />
   );
 }
@@ -210,12 +218,4 @@ const styles = StyleSheet.create({
   bar: {
     borderRadius: BAR_WIDTH / 2,
   },
-  duration: {
-    marginLeft: Theme.spacing.sm,
-  },
-  durationText: {
-    fontSize: Theme.typography.fontSize.xs,
-    color: Theme.colors.text.secondary,
-  },
 });
-

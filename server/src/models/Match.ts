@@ -1,37 +1,24 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
-import {
-  IMatch,
-  IMatchMethods,
-  IMatchModel,
-  IMatchMessage,
-  IMatchMessageAttachment,
-  IMatchMeeting,
-  IMatchUserActions,
-  IMatchOutcome
-} from '../types/mongoose.d';
+import mongoose from 'mongoose';
 
-/**
- * Match Schema
- */
-const matchSchema = new Schema<IMatch, IMatchModel, IMatchMethods>({
+const matchSchema = new mongoose.Schema({
   // Match Participants
   pet1: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Pet',
     required: [true, 'First pet is required']
   },
   pet2: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Pet',
     required: [true, 'Second pet is required']
   },
   user1: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'First user is required']
   },
   user2: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Second user is required']
   },
@@ -63,7 +50,7 @@ const matchSchema = new Schema<IMatch, IMatchModel, IMatchMethods>({
   // Communication
   messages: [{
     sender: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
     },
@@ -84,7 +71,7 @@ const matchSchema = new Schema<IMatch, IMatchModel, IMatchMethods>({
     }],
     readBy: [{
       user: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       },
       readAt: {
@@ -110,7 +97,7 @@ const matchSchema = new Schema<IMatch, IMatchModel, IMatchMethods>({
   // Meeting Planning
   meetings: [{
     proposedBy: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
     },
@@ -142,7 +129,7 @@ const matchSchema = new Schema<IMatch, IMatchModel, IMatchMethods>({
     },
     responses: [{
       user: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       },
       response: {
@@ -222,37 +209,37 @@ matchSchema.index({ matchType: 1 });
 matchSchema.index({ compatibilityScore: -1 });
 
 // Virtual for getting the other user
-matchSchema.virtual('getOtherUser').get(function(this: any) {
-  return (currentUserId: string) => {
+matchSchema.virtual('getOtherUser').get(function() {
+  return (currentUserId: any) => {
     return this.user1.toString() === currentUserId.toString() ? this.user2 : this.user1;
   };
 });
 
 // Virtual for getting the other pet
-matchSchema.virtual('getOtherPet').get(function(this: any) {
-  return (currentUserId: string) => {
+matchSchema.virtual('getOtherPet').get(function() {
+  return (currentUserId: any) => {
     return this.user1.toString() === currentUserId.toString() ? this.pet2 : this.pet1;
   };
 });
 
 // Virtual for unread message count
-matchSchema.virtual('getUnreadCount').get(function(this: any) {
-  return (userId: string) => {
-    return this.messages.filter((message: IMatchMessage) => 
+matchSchema.virtual('getUnreadCount').get(function() {
+  return (userId: any) => {
+    return this.messages.filter((message: any) => 
       message.sender.toString() !== userId.toString() &&
-      !message.readBy.some(read => read.user.toString() === userId.toString())
+      !message.readBy.some((read: any) => read.user.toString() === userId.toString())
     ).length;
   };
 });
 
 // Pre-save middleware
-matchSchema.pre('save', function(this: any, next) {
+matchSchema.pre('save', function(next) {
   // Update message count
   this.messageCount = this.messages.length;
   
   // Update last message timestamp
   if (this.messages.length > 0) {
-    this.lastMessageAt = this.messages[this.messages.length - 1].sentAt;
+    this.lastMessageAt = (this.messages[this.messages.length - 1] as any).sentAt;
   }
   
   // Update last activity
@@ -264,7 +251,7 @@ matchSchema.pre('save', function(this: any, next) {
 });
 
 // Instance methods
-matchSchema.methods.addMessage = function(this: any, senderId: string, content: string, messageType: string = 'text', attachments: IMatchMessageAttachment[] = []): Promise<any> {
+matchSchema.methods.addMessage = function(senderId: any, content: string, messageType = 'text', attachments: any[] = []) {
   const message = {
     sender: senderId,
     content,
@@ -280,13 +267,13 @@ matchSchema.methods.addMessage = function(this: any, senderId: string, content: 
   return this.save();
 };
 
-matchSchema.methods.markMessagesAsRead = function(this: any, userId: string): Promise<any> {
-  const unreadMessages = this.messages.filter((message: IMatchMessage) => 
+matchSchema.methods.markMessagesAsRead = function(userId: any) {
+  const unreadMessages = this.messages.filter((message: any) => 
     message.sender.toString() !== userId.toString() &&
-    !message.readBy.some(read => read.user.toString() === userId.toString())
+    !(message.readBy as any[]).some((read: any) => read.user.toString() === userId.toString())
   );
   
-  unreadMessages.forEach((message: IMatchMessage) => {
+  unreadMessages.forEach((message: any) => {
     message.readBy.push({
       user: userId,
       readAt: new Date()
@@ -300,27 +287,27 @@ matchSchema.methods.markMessagesAsRead = function(this: any, userId: string): Pr
   return this.save();
 };
 
-matchSchema.methods.isUserBlocked = function(this: any, userId: string): boolean {
+matchSchema.methods.isUserBlocked = function(userId: any) {
   const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
   const otherUserKey = userKey === 'user1' ? 'user2' : 'user1';
   
-  return this.userActions[userKey].isBlocked || this.userActions[otherUserKey].isBlocked;
+  return (this.userActions as any)[userKey].isBlocked || (this.userActions as any)[otherUserKey].isBlocked;
 };
 
-matchSchema.methods.toggleArchive = function(this: any, userId: string): Promise<any> {
+matchSchema.methods.toggleArchive = function(userId: any) {
   const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
-  this.userActions[userKey].isArchived = !this.userActions[userKey].isArchived;
+  (this.userActions as any)[userKey].isArchived = !(this.userActions as any)[userKey].isArchived;
   return this.save();
 };
 
-matchSchema.methods.toggleFavorite = function(this: any, userId: string): Promise<any> {
+matchSchema.methods.toggleFavorite = function(userId: any) {
   const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
-  this.userActions[userKey].isFavorite = !this.userActions[userKey].isFavorite;
+  (this.userActions as any)[userKey].isFavorite = !(this.userActions as any)[userKey].isFavorite;
   return this.save();
 };
 
 // Static methods
-matchSchema.statics.findActiveMatchesForUser = function(userId: string) {
+matchSchema.statics.findActiveMatchesForUser = function(userId: any) {
   return this.find({
     status: 'active',
     $or: [
@@ -330,7 +317,7 @@ matchSchema.statics.findActiveMatchesForUser = function(userId: string) {
   }).populate('pet1 pet2 user1 user2', '-password -refreshTokens');
 };
 
-matchSchema.statics.findByPets = function(pet1Id: string, pet2Id: string) {
+matchSchema.statics.findByPets = function(pet1Id: any, pet2Id: any) {
   return this.findOne({
     $or: [
       { pet1: pet1Id, pet2: pet2Id },
@@ -339,9 +326,4 @@ matchSchema.statics.findByPets = function(pet1Id: string, pet2Id: string) {
   });
 };
 
-export type IMatchDocument = HydratedDocument<IMatch, IMatchMethods>;
-
-// Export the model
-const Match = mongoose.model<IMatch, IMatchModel>('Match', matchSchema);
-
-export default Match;
+export default mongoose.model('Match', matchSchema);

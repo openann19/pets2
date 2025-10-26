@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 import { logger } from "@pawfectmatch/core";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Haptics from "expo-haptics";
 import React, { useRef } from "react";
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -51,10 +52,11 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     nearTopAction: "none", // Just scroll to top, no refresh
   });
 
-  const handleProfileLike = () => {
-    startInteraction('profileLike', { userId: user?._id });
-    // Add some fun feedback for profile self-appreciation
-    Alert.alert('Self Love! 💖', 'You liked your own profile! Confidence is key! 🌟');
+  const handleProfileLike = async () => {
+    if (!user?._id) return;
+    startInteraction('profileLike', { userId: user._id });
+    await matchesAPI.likeUser(user._id).catch(() => null);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     endInteraction('profileLike', true);
   };
 

@@ -1,197 +1,240 @@
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
+  View,
   Text,
   TouchableOpacity,
-  View,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
+import { analyzePhotoFromUri, PhotoAnalysisResult } from "../services/aiPhotoService";
+import { useNavigation } from "@react-navigation/native";
 
-import { useAIPhotoAnalyzerScreen } from "../hooks/screens/useAIPhotoAnalyzerScreen";
-import { useTheme } from "../theme/Provider";
-import type { NavigationProp } from "../navigation/types";
-import {
-  PhotoUploadSection,
-  AnalysisResultsSection,
-} from "./ai/photoanalyzer";
+export default function AIPhotoAnalyzerScreen() {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<PhotoAnalysisResult | null>(null);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
 
-import { Theme } from '../theme/unified-theme';
-
-const { width: screenWidth } = Dimensions.get("window");
-
-interface AIPhotoAnalyzerScreenProps {
-  navigation: NavigationProp;
-}
-
-interface PhotoAnalysisResult {
-  breed_analysis: {
-    primary_breed: string;
-    confidence: number;
-    secondary_breeds?: Array<{ breed: string; confidence: number }>;
+  const pickPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission needed", "Please grant photo library access");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setPhotoUri(result.assets[0].uri);
+      setResult(null);
+    }
   };
-  health_assessment: {
-    age_estimate: number;
-    health_score: number;
-    recommendations: string[];
-  };
-  photo_quality: {
-    overall_score: number;
-    lighting_score: number;
-    composition_score: number;
-    clarity_score: number;
-  };
-  matchability_score: number;
-  ai_insights: string[];
-}
 
-export default function AIPhotoAnalyzerScreen({
-  navigation,
-}: AIPhotoAnalyzerScreenProps) {
-  const { isDark, colors } = useTheme();
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission needed", "Please grant camera access");
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setPhotoUri(result.assets[0].uri);
+      setResult(null);
+    }
+  };
 
-  const {
-    isAnalyzing,
-    analysisResult,
-    error,
-    selectedPhotos,
-    pickImages,
-    takePhoto,
-    analyzePhotos,
-    removePhoto,
-    resetAnalysis,
-    clearError,
-  } = useAIPhotoAnalyzerScreen();
+  async function onAnalyze() {
+    if (!photoUri) return;
+    setLoading(true);
+    try {
+      const r = await analyzePhotoFromUri(photoUri, "image/jpeg");
+      setResult(r);
+    } catch (error: any) {
+      Alert.alert("Analysis Failed", error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <SafeAreaView
-      style={StyleSheet.flatten([
-        styles.container,
-        { backgroundColor: colors.background },
-      ])}
-    >
-      <LinearGradient
-        colors={isDark ? ["#1a1a2e", "#16213e"] : ["#667eea", "#764ba2"]}
-        style={styles.header}
-      >
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>AI Photo Analyzer</Text>
+        <Text style={styles.subtitle}>Get insights on your pet's photos</Text>
+      </View>
+
+      <View style={styles.buttonGroup}>
+        <TouchableOpacity style={styles.button} onPress={pickPhoto}>
+          <Text style={styles.buttonText}>Pick from Library</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>AI Photo Analyzer</Text>
-        <View style={styles.headerRight} />
-      </LinearGradient>
+        <TouchableOpacity style={styles.button} onPress={takePhoto}>
+          <Text style={styles.buttonText}>Take Photo</Text>
+        </TouchableOpacity>
+      </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {!analysisResult ? (
-          <>
-            <PhotoUploadSection
-              selectedImage={selectedPhotos[0] || null}
-              onImageSelected={pickImages}
-              colors={colors}
-            />
-
-            {selectedPhotos.length > 0 && (
-              <TouchableOpacity
-                style={StyleSheet.flatten([
-                  styles.analyzeButton,
-                  { opacity: isAnalyzing ? 0.7 : 1 },
-                ])}
-                onPress={analyzePhotos}
-                disabled={isAnalyzing}
-              >
-                {isAnalyzing ? (
-                  <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
-                ) : (
-                  <Ionicons name="analytics" size={20} color="Theme.colors.neutral[0]" />
-                )}
-                <Text style={styles.analyzeButtonText}>
-                  {isAnalyzing ? "Analyzing..." : "Analyze Photos"}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </>
+      <TouchableOpacity
+        onPress={onAnalyze}
+        disabled={!photoUri || loading}
+        style={[styles.analyzeButton, (!photoUri || loading) && styles.disabled]}
+        testID="btn-analyze"
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
         ) : (
-          <AnalysisResultsSection result={analysisResult} colors={colors} />
+          <Text style={styles.analyzeButtonText}>
+            {loading ? "Analyzing..." : "Analyze Photo"}
+          </Text>
         )}
+      </TouchableOpacity>
 
-        {error && (
-          <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle" size={24} color="#ff4444" />
-            <TouchableOpacity onPress={clearError} style={styles.errorDismiss}>
-              <Ionicons name="close" size={20} color="#c62828" />
-            </TouchableOpacity>
-            <Text style={styles.errorText}>{error}</Text>
+      {result && (
+        <View testID="analysis-result" style={styles.resultCard}>
+          <Text style={styles.resultTitle}>Analysis Results</Text>
+          
+          <View style={styles.metricRow}>
+            <Text style={styles.metricLabel}>Overall Score:</Text>
+            <Text style={styles.metricValue}>{result.overall}/100</Text>
           </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+
+          <View style={styles.metricRow}>
+            <Text style={styles.metricLabel}>Sharpness:</Text>
+            <Text style={styles.metricValue}>{(result.quality.sharpness * 100).toFixed(1)}%</Text>
+          </View>
+
+          <View style={styles.metricRow}>
+            <Text style={styles.metricLabel}>Exposure:</Text>
+            <Text style={styles.metricValue}>{(result.quality.exposure * 100).toFixed(1)}%</Text>
+          </View>
+
+          <View style={styles.metricRow}>
+            <Text style={styles.metricLabel}>Contrast:</Text>
+            <Text style={styles.metricValue}>{(result.quality.contrast * 100).toFixed(1)}%</Text>
+          </View>
+
+          <Text style={styles.sectionTitle}>Detected Breeds:</Text>
+          <Text style={styles.breeds}>
+            {result.breedCandidates.map(b => b.name).join(", ") || "No breed detected"}
+          </Text>
+
+          {result.suggestions.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Suggestions:</Text>
+              {result.suggestions.map((s, idx) => (
+                <Text key={idx} style={styles.suggestion}>
+                  • {s}
+                </Text>
+              ))}
+            </>
+          )}
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5",
+    padding: 16,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    paddingTop: 50,
+    marginBottom: 24,
   },
-  backButton: {
-    padding: 5,
-  },
-  headerTitle: {
-    fontSize: 18,
+  title: {
+    fontSize: 28,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: "#333",
+    marginBottom: 8,
   },
-  headerRight: {
-    width: 34,
+  subtitle: {
+    fontSize: 16,
+    color: "#666",
   },
-  content: {
+  buttonGroup: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 16,
+  },
+  button: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#007AFF",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
   analyzeButton: {
-    flexDirection: "row",
+    backgroundColor: "#34C759",
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#9C27B0",
-    paddingVertical: 15,
-    borderRadius: 25,
-    marginTop: 10,
+    marginBottom: 24,
+  },
+  disabled: {
+    backgroundColor: "#ccc",
   },
   analyzeButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  resultCard: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  resultTitle: {
+    fontSize: 22,
     fontWeight: "bold",
-    fontSize: 16,
-    marginLeft: 8,
+    marginBottom: 16,
+    color: "#333",
   },
-  errorContainer: {
+  metricRow: {
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffebee",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
+    justifyContent: "space-between",
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
-  errorDismiss: {
-    marginRight: 8,
+  metricLabel: {
+    fontSize: 16,
+    color: "#666",
   },
-  errorText: {
-    color: "#c62828",
-    flex: 1,
+  metricValue: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 16,
+    marginBottom: 8,
+    color: "#333",
+  },
+  breeds: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 16,
+  },
+  suggestion: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+    lineHeight: 20,
   },
 });

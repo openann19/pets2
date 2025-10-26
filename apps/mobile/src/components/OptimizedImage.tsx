@@ -134,7 +134,7 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           style={StyleSheet.flatten([
             styles.overlay,
             styles.errorOverlay,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.bgElevated },
           ])}
           accessible={true}
           accessibilityLabel="Image failed to load"

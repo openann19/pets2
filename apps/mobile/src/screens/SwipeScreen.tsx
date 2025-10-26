@@ -20,6 +20,8 @@ import {
 import type { RootStackScreenProps } from "../navigation/types";
 import { useSwipeData } from "../hooks/useSwipeData";
 import { useTabDoublePress } from "../hooks/navigation/useTabDoublePress";
+import { useSwipeUndo } from "../hooks/useSwipeUndo";
+import UndoPill from "../components/feedback/UndoPill";
 import { Theme } from '../theme/unified-theme';
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -42,6 +44,14 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   useTabDoublePress(() => {
     refreshPets();
   });
+
+  // Undo functionality
+  const { capture, undo, busy } = useSwipeUndo();
+
+  const onSwipeWithCapture = async (gestureDir: "left" | "right" | "up", actionDir: "like" | "pass" | "superlike", petId: string, index: number) => {
+    capture({ petId, direction: gestureDir, index });
+    await handleSwipe(actionDir);
+  };
 
   // Animation values for gestures
   const position = useRef(new Animated.ValueXY()).current;
@@ -68,7 +78,9 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
           duration: 300,
           useNativeDriver: false,
         }).start(async () => {
-          await handleSwipe("like");
+          if (currentPet) {
+            await onSwipeWithCapture("right", "like", currentPet._id, currentIndex);
+          }
           position.setValue({ x: 0, y: 0 });
         });
       } else if (gestureState.dx < -120) {
@@ -79,7 +91,9 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
           duration: 300,
           useNativeDriver: false,
         }).start(async () => {
-          await handleSwipe("pass");
+          if (currentPet) {
+            await onSwipeWithCapture("left", "pass", currentPet._id, currentIndex);
+          }
           position.setValue({ x: 0, y: 0 });
         });
       } else {
@@ -157,6 +171,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
       <View style={styles.cardContainer}>
         <Animated.View
+          testID={`swipe-card-${currentIndex}`}
           style={StyleSheet.flatten([
             styles.card,
             {
@@ -206,6 +221,18 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
           <Text style={styles.actionButtonText}>Like</Text>
         </TouchableOpacity>
       </View>
+
+      <UndoPill
+        onUndo={async () => {
+          const restoredPet = await undo();
+          if (restoredPet) {
+            // put the card back to front of stack
+            // Note: This would require updating pets state
+            // You'd need to add this capability to useSwipeData
+          }
+        }}
+        testID="undo-pill"
+      />
     </View>
   );
 }

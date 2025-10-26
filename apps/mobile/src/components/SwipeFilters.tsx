@@ -40,13 +40,13 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
       <View
         style={StyleSheet.flatten([
           styles.modalContainer,
-          { backgroundColor: colors.background },
+          { backgroundColor: colors.bg },
         ])}
       >
         <View
           style={StyleSheet.flatten([
             styles.modalContent,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.bgElevated },
           ])}
         >
           <View style={styles.modalHeader}>
@@ -83,7 +83,7 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                       {
                         backgroundColor: filters.species.includes(species)
                           ? colors.primary
-                          : colors.card,
+                          : colors.bgElevated,
                         borderColor: colors.border,
                       },
                     ])}

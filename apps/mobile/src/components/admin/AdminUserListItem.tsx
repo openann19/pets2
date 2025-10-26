@@ -121,7 +121,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
             <Text
               style={StyleSheet.flatten([
                 styles.email,
-                { color: colors.textSecondary },
+                { color: colors.textMuted },
               ])}
             >
               {data.email}

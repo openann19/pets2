@@ -1,21 +1,7 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import {
-  IUser,
-  IUserMethods,
-  IUserModel,
-  IUserPreferences,
-  IUserLocation,
-  IUserPremium,
-  IUserAnalytics,
-  ISwipedPet,
-  IPushToken
-} from '../types/mongoose.d';
 
-/**
- * User Schema
- */
-const userSchema = new Schema<IUser, IUserModel, IUserMethods>({
+const userSchema = new mongoose.Schema({
   // Basic Info
   email: {
     type: String,
@@ -129,13 +115,13 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>({
 
   // Activity
   pets: [{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Pet'
   }],
 
   swipedPets: [{
     petId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Pet',
       required: true
     },
@@ -151,7 +137,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>({
   }],
 
   matches: [{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Match'
   }],
 
@@ -275,12 +261,12 @@ userSchema.pre('save', function (next) {
 });
 
 // Instance methods
-userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidatePassword: string) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-userSchema.methods.toJSON = function (): Partial<IUser> {
-  const user = this.toObject() as any;
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
   delete user.password;
   delete user.refreshTokens;
   delete user.passwordResetToken;
@@ -302,10 +288,4 @@ userSchema.statics.findPremiumUsers = function () {
   });
 };
 
-export type IUserDocument = HydratedDocument<IUser, IUserMethods>;
-
-// Export the model
-const User = mongoose.model<IUser, IUserModel>('User', userSchema);
-
-export default User;
-
+export default mongoose.model('User', userSchema);

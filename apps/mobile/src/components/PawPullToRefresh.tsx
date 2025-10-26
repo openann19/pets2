@@ -134,7 +134,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
         onRefresh={onRefresh}
         tintColor={colors.primary}
         colors={[colors.primary]}
-        progressBackgroundColor={colors.background}
+        progressBackgroundColor={colors.bg}
         // Hide default spinner since we have custom animation
         style={{ opacity: 0 }}
       />

@@ -316,7 +316,7 @@ export function MessageInput({
               <PremiumBody
                 size="sm"
                 weight="regular"
-                style={{ color: isOverLimit ? colors.error : colors.gray500 }}
+                style={{ color: isOverLimit ? colors.danger : colors.gray500 }}
               >
                 {characterCount}/{maxLength}
               </PremiumBody>

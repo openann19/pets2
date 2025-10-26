@@ -61,4 +61,11 @@ router.patch('/:matchId/favorite', wrapHandler(favoriteMatch));
 router.get('/recommendations/ai', requirePremiumFeature('aiMatching'), wrapHandler(getRecommendations));
 router.get('/who-liked-me', requirePremiumFeature('seeWhoLiked'), wrapHandler(getMatches)); // Show who liked the user
 
+// Like user endpoint
+router.post('/like-user', async (req: Request, res: Response) => {
+  const { userId } = req.body;
+  // TODO: Implement actual like logic
+  res.json({ success: true });
+});
+
 export default router;

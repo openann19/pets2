@@ -177,6 +177,52 @@ router.post('/attachments', upload.single('file'), async (req: Request, res: Res
 });
 
 // Voice notes route
+router.post('/:matchId/voice-note', async (req: Request, res: Response) => {
+  try {
+    const { key, duration, waveform } = req.body as { key: string; duration: number; waveform: number[] };
+    
+    // In a real implementation, you would:
+    // 1. Save the message to the match's messages array
+    // 2. Emit to the match's socket room
+    // 3. Update lastActivity timestamp
+    
+    const match = await (await import('../models/Match')).default.findOne({
+      _id: req.params.matchId,
+      $or: [{ user1: req.userId }, { user2: req.userId }]
+    });
+    
+    if (!match) {
+      return res.status(404).json({ success: false, message: 'Match not found' });
+    }
+    
+    const message = {
+      sender: req.userId,
+      type: 'voice',
+      voice: { s3Key: key, duration, waveform },
+      createdAt: new Date(),
+    };
+    
+    (match as any).messages.push(message);
+    (match as any).lastActivity = new Date();
+    await match.save();
+    
+    // Emit to other user via socket.io if available
+    const io = (global as any).io;
+    if (io) {
+      io.to(req.params.matchId).emit('message:new', message);
+    }
+    
+    res.json({ success: true, message });
+  } catch (error) {
+    console.error('Voice note error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_ERROR',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 router.post('/voice', async (req: Request, res: Response) => {
   try {
     const { matchId, duration } = req.body;

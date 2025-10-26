@@ -5,10 +5,8 @@
 
 import winston from 'winston';
 import path from 'path';
-import { createHash } from 'crypto';
-import { createSentryTransport } from 'winston-transport-sentry-node';
 import fs from 'fs';
-import os from 'os';
+import { createHash } from 'crypto';
 
 // Define secured log format
 const logFormat = winston.format.combine(
@@ -25,7 +23,7 @@ const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'HH:mm:ss.SSS' }),
   winston.format.printf(({ timestamp, level, message, metadata }) => {
     // Sanitize sensitive data
-    const sanitizedMeta = sanitizeLogData(metadata);
+    const sanitizedMeta = sanitizeLogData(metadata as Record<string, any>);
     
     let msg = `${timestamp} [${level}] ${message}`;
     if (sanitizedMeta && Object.keys(sanitizedMeta).length > 0) {
@@ -36,7 +34,7 @@ const consoleFormat = winston.format.combine(
 );
 
 // Sanitize sensitive data
-function sanitizeLogData(data: any): any {
+function sanitizeLogData(data: Record<string, any> | undefined): Record<string, any> {
   if (!data) return {};
   
   // Create a deep copy to avoid modifying the original
@@ -81,7 +79,7 @@ const logger = winston.createLogger({
     service: 'pawfectmatch-api',
     environment: process.env.NODE_ENV || 'development',
     version: process.env.APP_VERSION || '1.0.0',
-    hostname: os.hostname()
+    hostname: require('os').hostname()
   },
   transports: [
     // Write all logs to combined.log with rotation
@@ -159,6 +157,8 @@ if (process.env.NODE_ENV !== 'production') {
 if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
   // Note: Requires @sentry/node and winston-transport-sentry-node packages
   try {
+    const { createSentryTransport } = require('winston-transport-sentry-node');
+    
     logger.add(createSentryTransport({
       sentry: {
         dsn: process.env.SENTRY_DSN,
@@ -172,42 +172,35 @@ if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
   }
 }
 
-interface Request {
-  method?: string;
-  path?: string;
-  url?: string;
-  ip?: string;
-  headers?: { [key: string]: any };
-  id?: string;
-  userId?: string;
-  user?: { id?: string };
-  query?: any;
-  duration?: number;
-}
-
-interface Error {
-  name?: string;
-  message?: string;
-  stack?: string;
-}
-
 // Generate unique request ID
 function generateRequestId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
 }
 
-// Extended logger with custom methods
-interface ExtendedLogger extends winston.Logger {
-  request: (req: Request, message: string, additionalMeta?: any) => string;
-  apiError: (req: Request, error: Error, statusCode?: number, additionalMeta?: any) => string;
-  security: (event: string, data?: any) => void;
-  performance: (operation: string, durationMs: number, meta?: any) => void;
+// Create logs directory if it doesn't exist
+const logsDir = path.join(process.cwd(), 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir);
+}
+
+// Type definitions for Express Request
+interface RequestMetadata {
+  method?: string;
+  path?: string;
+  url?: string;
+  ip?: string;
+  headers?: Record<string, any>;
+  id?: string;
+  user?: any;
+  userId?: string;
+  duration?: number;
+  query?: Record<string, any>;
 }
 
 // Enhanced convenience methods with 2025 standardized fields
-(logger as ExtendedLogger).request = (req: Request, message: string, additionalMeta: any = {}): string => {
+logger.request = (req: any, message: string, additionalMeta: Record<string, any> = {}) => {
   // Extract basic request data safely
-  const meta = {
+  const meta: Record<string, any> = {
     method: req?.method,
     path: req?.path || req?.url,
     ip: req?.ip || req?.headers?.['x-forwarded-for'] || 'unknown',
@@ -223,8 +216,8 @@ interface ExtendedLogger extends winston.Logger {
   return meta.requestId; // Return requestId for correlation
 };
 
-(logger as ExtendedLogger).apiError = (req: Request, error: Error, statusCode: number = 500, additionalMeta: any = {}): string => {
-  const errorMeta = {
+logger.apiError = (req: any, error: any, statusCode: number = 500, additionalMeta: Record<string, any> = {}) => {
+  const errorMeta: Record<string, any> = {
     method: req?.method,
     path: req?.path || req?.url,
     statusCode,
@@ -241,7 +234,7 @@ interface ExtendedLogger extends winston.Logger {
 };
 
 // Security event logging
-(logger as ExtendedLogger).security = (event: string, data: any = {}): void => {
+logger.security = (event: string, data: Record<string, any> = {}) => {
   logger.warn(`Security: ${event}`, {
     securityEvent: true,
     timestamp: new Date().toISOString(),
@@ -251,7 +244,7 @@ interface ExtendedLogger extends winston.Logger {
 };
 
 // Performance monitoring
-(logger as ExtendedLogger).performance = (operation: string, durationMs: number, meta: any = {}): void => {
+logger.performance = (operation: string, durationMs: number, meta: Record<string, any> = {}) => {
   logger.info(`Performance: ${operation}`, {
     performance: true,
     operation,
@@ -260,10 +253,5 @@ interface ExtendedLogger extends winston.Logger {
   });
 };
 
-// Create logs directory if it doesn't exist
-const logsDir = path.join(process.cwd(), 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir);
-}
-
-export default logger as ExtendedLogger;
+// Export logger with enhanced types
+export default logger;

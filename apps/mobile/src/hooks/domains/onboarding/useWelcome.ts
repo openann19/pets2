@@ -11,21 +11,11 @@ import {
   withDelay,
 } from "react-native-reanimated";
 import { logger } from "@pawfectmatch/core";
-import { AnimationConfigs } from "../../../animation";
+import { SPRING, DUR } from "../../../animation";
 
-interface UseWelcomeReturn {
-  // Animation values
-  logoScale: any;
-  logoOpacity: any;
-  titleOpacity: any;
-  titleTranslateY: any;
-  subtitleOpacity: any;
-  subtitleTranslateY: any;
-  featuresOpacity: any;
-  featuresTranslateY: any;
-  buttonOpacity: any;
-  buttonScale: any;
-  confettiScale: any;
+import type { WelcomeAnimationValues } from '../../../types/animations';
+
+interface UseWelcomeReturn extends WelcomeAnimationValues {
 
   // State
   isReady: boolean;
@@ -59,53 +49,53 @@ export const useWelcome = (): UseWelcomeReturn => {
     InteractionManager.runAfterInteractions(() => {
       try {
         // Logo entrance with bounce
-        logoScale.value = withSpring(1, AnimationConfigs.springBouncy);
-        logoOpacity.value = withTiming(1, AnimationConfigs.timing);
+        logoScale.value = withSpring(1, SPRING.stiff);
+        logoOpacity.value = withTiming(1, { duration: DUR.normal });
 
         // Title with elegant slide-up
         titleOpacity.value = withDelay(
           300,
-          withTiming(1, AnimationConfigs.timing),
+          withTiming(1, { duration: DUR.normal }),
         );
         titleTranslateY.value = withDelay(
           300,
-          withSpring(0, AnimationConfigs.spring),
+          withSpring(0, SPRING.soft),
         );
 
         // Subtitle follows smoothly
         subtitleOpacity.value = withDelay(
           600,
-          withTiming(1, AnimationConfigs.timing),
+          withTiming(1, { duration: DUR.normal }),
         );
         subtitleTranslateY.value = withDelay(
           600,
-          withSpring(0, AnimationConfigs.spring),
+          withSpring(0, SPRING.soft),
         );
 
         // Features with subtle delay
         featuresOpacity.value = withDelay(
           900,
-          withTiming(1, AnimationConfigs.timing),
+          withTiming(1, { duration: DUR.normal }),
         );
         featuresTranslateY.value = withDelay(
           900,
-          withSpring(0, AnimationConfigs.spring),
+          withSpring(0, SPRING.soft),
         );
 
         // Button with scale animation
         buttonOpacity.value = withDelay(
           1200,
-          withTiming(1, AnimationConfigs.timing),
+          withTiming(1, { duration: DUR.normal }),
         );
         buttonScale.value = withDelay(
           1200,
-          withSpring(1, AnimationConfigs.spring),
+          withSpring(1, SPRING.soft),
         );
 
         // Confetti effect
         confettiScale.value = withDelay(
           1500,
-          withSpring(1, AnimationConfigs.spring),
+          withSpring(1, SPRING.soft),
         );
 
         logger.info("Welcome screen animations initialized");

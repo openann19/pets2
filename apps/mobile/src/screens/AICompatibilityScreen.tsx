@@ -1,204 +1,190 @@
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
+  View,
   Text,
   TouchableOpacity,
-  View,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { getCompatibility, CompatibilityResult } from "../services/aiCompatService";
+import { useNavigation } from "@react-navigation/native";
 
-import { useAICompatibilityScreen } from "../hooks/screens/useAICompatibilityScreen";
-import { useTheme } from "../theme/Provider";
-import type { NavigationProp, RouteProp } from "../navigation/types";
-import {
-  PetSelectionSection,
-  AnalysisResultsSection,
-} from "./ai/compatibility";
-
-import { Theme } from '../theme/unified-theme';
-
-const { width: screenWidth } = Dimensions.get("window");
-
-interface AICompatibilityScreenProps {
-  navigation: NavigationProp;
-  route?: RouteProp;
+interface Pet {
+  _id: string;
+  name: string;
 }
 
-export default function AICompatibilityScreen({
-  navigation,
-  route,
-}: AICompatibilityScreenProps): React.JSX.Element {
-  const { isDark, colors } = useTheme();
+export default function AICompatibilityScreen() {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<CompatibilityResult | null>(null);
+  const [selectedA, setSelectedA] = useState<Pet | null>(null);
+  const [selectedB, setSelectedB] = useState<Pet | null>(null);
 
-  const {
-    isAnalyzing,
-    compatibilityResult,
-    error,
-    availablePets,
-    isLoadingPets,
-    selectedPet1,
-    selectedPet2,
-    setSelectedPet1,
-    setSelectedPet2,
-    analyzeCompatibility,
-    resetAnalysis,
-    clearError,
-  } = useAICompatibilityScreen(route);
+  // This would be replaced with actual pet selection logic
+  const handleSelectPets = () => {
+    // Placeholder - would normally show a pet picker
+    Alert.alert("Select Pets", "Choose two pets to compare");
+  };
 
-  if (isLoadingPets) {
-    return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
-      >
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
-            Loading pets...
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const run = async () => {
+    if (!selectedA || !selectedB) {
+      Alert.alert("Error", "Please select two pets");
+      return;
+    }
+    setLoading(true);
+    try {
+      const r = await getCompatibility(selectedA._id, selectedB._id);
+      setResult(r);
+    } catch (error: any) {
+      Alert.alert("Analysis Failed", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
-      <LinearGradient
-        colors={isDark ? ["#1a1a2e", "#16213e"] : ["#667eea", "#764ba2"]}
-        style={styles.header}
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>AI Compatibility</Text>
+        <Text style={styles.subtitle}>See how two pets would get along</Text>
+      </View>
+
+      <TouchableOpacity style={styles.selectButton} onPress={handleSelectPets}>
+        <Text style={styles.selectButtonText}>
+          {selectedA && selectedB 
+            ? `${selectedA.name} & ${selectedB.name}` 
+            : "Select Two Pets"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={run}
+        disabled={!selectedA || !selectedB || loading}
+        style={[styles.analyzeButton, (!selectedA || !selectedB || loading) && styles.disabled]}
       >
-        <TouchableOpacity style={styles.backButton} onPress={navigation.goBack}>
-          <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>AI Compatibility</Text>
-        <View style={styles.headerRight} />
-      </LinearGradient>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {!compatibilityResult ? (
-          <>
-            <PetSelectionSection
-              selectedPet1={selectedPet1}
-              selectedPet2={selectedPet2}
-              availablePets={availablePets}
-              colors={colors}
-              screenWidth={screenWidth}
-              onSelectPet1={setSelectedPet1}
-              onSelectPet2={setSelectedPet2}
-            />
-
-            {selectedPet1 && selectedPet2 && (
-              <TouchableOpacity
-                style={[
-                  styles.analyzeButton,
-                  { opacity: isAnalyzing ? 0.7 : 1 },
-                ]}
-                onPress={analyzeCompatibility}
-                disabled={isAnalyzing}
-              >
-                {isAnalyzing ? (
-                  <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
-                ) : (
-                  <Ionicons name="analytics" size={20} color="Theme.colors.neutral[0]" />
-                )}
-                <Text style={styles.analyzeButtonText}>
-                  {isAnalyzing ? "Analyzing..." : "Analyze Compatibility"}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
         ) : (
-          <AnalysisResultsSection
-            compatibilityResult={compatibilityResult}
-            colors={colors}
-            onReset={resetAnalysis}
-          />
+          <Text style={styles.analyzeButtonText}>Analyze Compatibility</Text>
         )}
+      </TouchableOpacity>
 
-        {error && (
-          <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle" size={24} color="#ff4444" />
-            <TouchableOpacity onPress={clearError} style={styles.errorDismiss}>
-              <Ionicons name="close" size={20} color="#c62828" />
-            </TouchableOpacity>
-            <Text style={styles.errorText}>{error}</Text>
+      {result && (
+        <View testID="compat-result" style={styles.resultCard}>
+          <View style={styles.scoreHeader}>
+            <Text style={styles.scoreValue}>{result.value}%</Text>
+            <Text style={styles.compatibilityStatus}>
+              {result.compatible ? "✅ Compatible" : "⚠️ Maybe Compatible"}
+            </Text>
           </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+
+          <Text style={styles.sectionTitle}>Breakdown:</Text>
+          {Object.entries(result.breakdown).map(([key, value]) => (
+            <View key={key} style={styles.breakdownRow}>
+              <Text style={styles.breakdownLabel}>{key}</Text>
+              <Text style={styles.breakdownValue}>{Math.round(value * 100)}%</Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5",
+    padding: 16,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    paddingTop: 50,
+    marginBottom: 24,
   },
-  backButton: {
-    padding: 5,
-  },
-  headerTitle: {
-    fontSize: 18,
+  title: {
+    fontSize: 28,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: "#333",
+    marginBottom: 8,
   },
-  headerRight: {
-    width: 34,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
+  subtitle: {
     fontSize: 16,
+    color: "#666",
+  },
+  selectButton: {
+    backgroundColor: "#007AFF",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  selectButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
   analyzeButton: {
-    flexDirection: "row",
+    backgroundColor: "#34C759",
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#9C27B0",
-    paddingVertical: 15,
-    borderRadius: 25,
-    marginTop: 20,
+    marginBottom: 24,
+  },
+  disabled: {
+    backgroundColor: "#ccc",
   },
   analyzeButtonText: {
-    color: "Theme.colors.neutral[0]",
-    fontWeight: "bold",
-    fontSize: 16,
-    marginLeft: 8,
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
   },
-  errorContainer: {
-    flexDirection: "row",
+  resultCard: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  scoreHeader: {
     alignItems: "center",
-    backgroundColor: "#ffebee",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
+    marginBottom: 24,
+    paddingBottom: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
-  errorDismiss: {
-    marginRight: 8,
+  scoreValue: {
+    fontSize: 48,
+    fontWeight: "bold",
+    color: "#007AFF",
+    marginBottom: 8,
   },
-  errorText: {
-    color: "#c62828",
-    flex: 1,
+  compatibilityStatus: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#666",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 16,
+    color: "#333",
+  },
+  breakdownRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  breakdownLabel: {
+    fontSize: 16,
+    color: "#666",
+    textTransform: "capitalize",
+  },
+  breakdownValue: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
   },
 });

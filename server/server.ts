@@ -104,9 +104,12 @@ const petRoutes = await import('./src/routes/pets');
 const matchRoutes = await import('./src/routes/matches');
 const chatRoutes = await import('./src/routes/chat');
 const aiRoutes = await import('./src/routes/ai');
+const aiPhotoRoutes = await import('./src/routes/ai.photo');
+const aiCompatRoutes = await import('./src/routes/ai.compat');
 const premiumRoutes = await import('./src/routes/premium');
 const analyticsRoutes = await import('./src/routes/analytics');
 const adminRoutes = await import('./src/routes/admin');
+const adminAnalyticsRoutes = await import('./src/routes/admin.analytics');
 const accountRoutes = await import('./src/routes/account');
 const memoriesRoutes = await import('./src/routes/memories');
 const webhookRoutes = await import('./src/routes/webhooks');
@@ -116,7 +119,7 @@ const notificationRoutes = await import('./src/routes/notifications');
 // Manual moderation routes
 const moderationRoutes = await import('./routes/moderationRoutes');
 const moderationUserRoutes = await import('./src/routes/moderation');
-const uploadRoutes = await import('./routes/uploadRoutes');
+const oldUploadRoutes = await import('./routes/uploadRoutes');
 const adminEnhancedFeaturesRoutes = await import('./src/routes/adminEnhancedFeatures');
 const moderationAdminRoutes = await import('./src/routes/moderationAdmin');
 const communityRoutes = await import('./src/routes/community'); // Import community routes
@@ -128,6 +131,11 @@ const storiesRoutes = await import('./routes/stories');
 const conversationsRoutes = await import('./src/routes/conversations');
 const profileRoutes = await import('./src/routes/profile');
 const adoptionRoutes = await import('./src/routes/adoption');
+const petActivityRoutes = await import('./src/routes/petActivity');
+// New routes for map feature
+const homeRoutes = await import('./src/routes/home');
+const settingsRoutes = await import('./src/routes/settings');
+const revenuecatRoutes = await import('./src/routes/revenuecat');
 
 // Import middleware
 const errorHandler = await import('./src/middleware/errorHandler');
@@ -499,6 +507,8 @@ app.use('/api/pets', authenticateToken, petRoutes.default);
 app.use('/api/matches', authenticateToken, matchRoutes.default);
 app.use('/api/chat', authenticateToken, chatRoutes.default);
 app.use('/api/ai', authenticateToken, aiRoutes.default);
+app.use('/api/ai', authenticateToken, aiPhotoRoutes.default);
+app.use('/api/ai', authenticateToken, aiCompatRoutes.default);
 app.use('/api/premium', authenticateToken, premiumRoutes.default);
 app.use('/api/analytics', authenticateToken, analyticsRoutes.default);
 app.use('/api/account', authenticateToken, accountRoutes.default);
@@ -508,25 +518,33 @@ app.use('/api/events', authenticateToken, (await import('./src/routes/events')).
 app.use('/api/personality', authenticateToken, (await import('./src/routes/personality')).default);
 app.use('/api/dashboard', authenticateToken, (await import('./src/routes/dashboard')).default);
 app.use('/api/admin', authenticateToken, requireAdmin, adminRoutes.default);
+app.use('/api/admin/analytics', authenticateToken, requireAdmin, adminAnalyticsRoutes.default);
 // Manual moderation endpoints (with CSRF protection for cookie auth)
 app.use('/api/moderation', csrfProtection, authenticateToken, requireAdmin, moderationRoutes.default);
 app.use('/api/user/moderation', csrfProtection, moderationUserRoutes.default);
 app.use('/api/admin/moderation', csrfProtection, moderationAdminRoutes.default);
 app.use('/api/ai/moderation', authenticateToken, aiModerationRoutes.default);
 app.use('/api/admin/ai/moderation', csrfProtection, aiModerationAdminRoutes.default);
-app.use('/api/upload', csrfProtection, authenticateToken, uploadRoutes.default);
+app.use('/api/upload', authenticateToken, (await import('./src/routes/upload')).default);
+app.use('/api/uploads', (await import('./src/routes/uploads')).default);
 app.use('/api/community', authenticateToken, communityRoutes.default); // Register community routes
 app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route
 app.use('/api/stories', authenticateToken, storiesRoutes.default);
 app.use('/api/conversations', conversationsRoutes.default);
 app.use('/api/profile', profileRoutes.default); // Profile routes (handles auth internally)
 app.use('/api/adoption', adoptionRoutes.default); // Adoption routes (handles auth internally)
+app.use('/api', petActivityRoutes.default); // Pet activity routes
 
 // Enhanced 2025 Features Routes
 app.use('/api/auth/biometric', biometricRoutes.default);
 app.use('/api/leaderboard', leaderboardRoutes.default);
 app.use('/api/user/notifications', notificationRoutes.default);
 app.use('/api/notifications', notificationRoutes.default);
+
+// Map feature routes
+app.use('/api', homeRoutes.default);
+app.use('/api', settingsRoutes.default);
+app.use('/api', revenuecatRoutes.default);
 
 // Admin Enhanced Features Routes
 app.use('/api/admin/enhanced-features', adminEnhancedFeaturesRoutes.default);
