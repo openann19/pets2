@@ -7,8 +7,8 @@ import type {
   ViewStyle,
   TextStyle,
   ColorValue,
-  StyleSheet,
 } from "react-native";
+import { StyleSheet } from "react-native";
 import { Easing } from "react-native";
 import React from "react";
 
