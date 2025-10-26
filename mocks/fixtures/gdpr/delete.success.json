@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "message": "Your account deletion has been scheduled. You have 30 days to cancel before your data is permanently deleted.",
+  "gracePeriodEndsAt": "2025-02-19T12:00:00.000Z",
+  "deletionId": "del_abc123",
+  "cancellationToken": "token_xyz789"
+}
+

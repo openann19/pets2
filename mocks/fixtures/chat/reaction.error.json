@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "error": "MESSAGE_NOT_FOUND",
+  "message": "The message you're trying to react to doesn't exist."
+}
+

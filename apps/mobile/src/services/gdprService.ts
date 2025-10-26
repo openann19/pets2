@@ -35,21 +35,37 @@ export interface DataExportResult {
 class GDPRService {
   /**
    * Request account deletion with 30-day grace period
+   * @param password User password for authentication
+   * @param reason Optional reason for deletion
+   * @param feedback Optional feedback about why leaving
    */
-  async requestAccountDeletion(reason?: string): Promise<{
+  async requestAccountDeletion(
+    password: string,
+    reason?: string,
+    feedback?: string,
+  ): Promise<{
     success: boolean;
     message: string;
-    requestId: string;
-    scheduledDeletionDate: string;
-    canCancel: boolean;
+    gracePeriodEndsAt: string;
+    deletionId: string;
   }> {
     try {
-      const response = await api.requestAccountDeletion({ reason });
-      logger.info("Account deletion requested", {
-        requestId: response.requestId,
-        canCancel: response.canCancel,
+      const response = await api.delete("/users/delete-account", {
+        password,
+        reason,
+        feedback,
       });
-      return response;
+      
+      logger.info("Account deletion requested", {
+        deletionId: response.deletionId,
+      });
+      
+      return {
+        success: response.success,
+        message: response.message,
+        gracePeriodEndsAt: response.gracePeriodEndsAt,
+        deletionId: response.deletionId,
+      };
     } catch (error) {
       logger.error("Failed to request account deletion", { error });
       throw error;
@@ -58,19 +74,34 @@ class GDPRService {
 
   /**
    * Cancel account deletion (within grace period)
+   * @param token Cancellation token from deletion request
    */
-  async cancelAccountDeletion(
-    requestId?: string,
-  ): Promise<{ success: boolean; message: string }> {
+  async cancelDeletion(token: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.cancelAccountDeletion({ requestId });
-      logger.info("Account deletion cancelled", { requestId });
+      const response = await api.post("/users/cancel-deletion", { token });
+      logger.info("Account deletion cancelled", { token });
       return response;
     } catch (error) {
       logger.error("Failed to cancel account deletion", { error });
       throw error;
     }
   }
+
+  /**
+   * Confirm and complete account deletion
+   * @param token Confirmation token
+   */
+  async confirmDeletion(token: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await api.post("/users/confirm-deletion", { token });
+      logger.info("Account deletion confirmed", { token });
+      return response;
+    } catch (error) {
+      logger.error("Failed to confirm account deletion", { error });
+      throw error;
+    }
+  }
+
 
   /**
    * Get account deletion status

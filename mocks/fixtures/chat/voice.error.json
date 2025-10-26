@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "error": "INVALID_FORMAT",
+  "message": "Audio format not supported. Please record in a supported format."
+}
+

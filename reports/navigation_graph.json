@@ -1,0 +1,127 @@
+{
+  "navigation": {
+    "root": "RootStackNavigator",
+    "tabs": "MainTabNavigator",
+    "authStack": "AuthStackNavigator",
+    "adminStack": "AdminStackNavigator",
+    "screens": [
+      {
+        "name": "Login",
+        "route": "Login",
+        "params": {},
+        "guards": ["!isAuthenticated"],
+        "category": "auth"
+      },
+      {
+        "name": "Register",
+        "route": "Register",
+        "params": {},
+        "guards": ["!isAuthenticated"],
+        "category": "auth"
+      },
+      {
+        "name": "Home",
+        "route": "Home",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "main"
+      },
+      {
+        "name": "Swipe",
+        "route": "Swipe",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "main"
+      },
+      {
+        "name": "Matches",
+        "route": "Matches",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "main"
+      },
+      {
+        "name": "Chat",
+        "route": "Chat",
+        "params": { "matchId": "string", "petName": "string" },
+        "guards": ["isAuthenticated"],
+        "category": "main"
+      },
+      {
+        "name": "Settings",
+        "route": "Settings",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "settings"
+      },
+      {
+        "name": "Premium",
+        "route": "Premium",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "premium"
+      },
+      {
+        "name": "AIBio",
+        "route": "AIBio",
+        "params": {},
+        "guards": ["isAuthenticated", "hasPremium"],
+        "category": "ai"
+      },
+      {
+        "name": "AIPhotoAnalyzer",
+        "route": "AIPhotoAnalyzer",
+        "params": {},
+        "guards": ["isAuthenticated", "hasPremium"],
+        "category": "ai"
+      },
+      {
+        "name": "AICompatibility",
+        "route": "AICompatibility",
+        "params": { "petAId": "string?", "petBId": "string?" },
+        "guards": ["isAuthenticated", "hasPremium"],
+        "category": "ai"
+      },
+      {
+        "name": "MyPets",
+        "route": "MyPets",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "pets"
+      },
+      {
+        "name": "CreatePet",
+        "route": "CreatePet",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "pets"
+      },
+      {
+        "name": "SettingsScreen",
+        "route": "Settings",
+        "sections": [
+          "NotificationSettings",
+          "AccountSettings",
+          "ProfileSummary",
+          "DangerZone"
+        ],
+        "category": "settings"
+      },
+      {
+        "name": "PrivacySettings",
+        "route": "PrivacySettings",
+        "params": {},
+        "guards": ["isAuthenticated"],
+        "category": "settings",
+        "gdprFeatures": ["export-data", "delete-account"]
+      },
+      {
+        "name": "AdminDashboard",
+        "route": "AdminDashboard",
+        "params": {},
+        "guards": ["isAuthenticated", "isAdmin"],
+        "category": "admin"
+      }
+    ]
+  }
+}

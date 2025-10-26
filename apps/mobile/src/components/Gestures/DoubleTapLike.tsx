@@ -299,11 +299,15 @@ export function DoubleTapLikeCustom({
       });
     }, 600);
 
-    runOnJS(onDoubleTap)?.();
+    if (onDoubleTap) {
+      runOnJS(onDoubleTap)();
+    }
   }, [onDoubleTap]);
 
   const singleTap = Gesture.Tap().onEnd(() => {
-    runOnJS(onSingleTap)?.();
+    if (onSingleTap) {
+      runOnJS(onSingleTap)();
+    }
   });
 
   const containerStyle = useAnimatedStyle(() => ({

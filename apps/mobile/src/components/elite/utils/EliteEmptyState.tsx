@@ -1,6 +1,6 @@
-import React from "react";
+import React, { type ComponentProps } from "react";
 import { View, Text } from "react-native";
-import { Ionicons, type ComponentProps } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Colors, Spacing } from "../../../styles/GlobalStyles";
 
