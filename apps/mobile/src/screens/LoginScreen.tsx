@@ -1,6 +1,5 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import React, { useState } from "react";
+import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,45 +12,23 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useLoginScreen } from "../hooks/screens/useLoginScreen";
 import type { RootStackScreenProps } from "../navigation/types";
 
 type LoginScreenProps = RootStackScreenProps<"Login">;
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {},
-  );
+  const {
+    values,
+    errors,
+    setValue,
+    handleSubmit,
+    navigateToRegister,
+    navigateToForgotPassword,
+  } = useLoginScreen({ navigation });
 
-  const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {};
-
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email format is invalid";
-    }
-
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = () => {
-    if (validateForm()) {
-      // Handle login logic here
-      logger.info("Login with:", { email, password });
-
-      // For demo purposes, navigate to Home
-      // In a real app, you would authenticate first
-      navigation.navigate("Home");
-    }
+  const handleForgotPassword = () => {
+    navigateToForgotPassword();
   };
 
   return (
@@ -73,8 +50,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <Text style={styles.label}>Email</Text>
               <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={setEmail}
+                value={values.email}
+                onChangeText={(text) => setValue("email", text)}
                 placeholder="your@email.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -89,8 +66,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <Text style={styles.label}>Password</Text>
               <TextInput
                 style={styles.input}
-                value={password}
-                onChangeText={setPassword}
+                value={values.password}
+                onChangeText={(text) => setValue("password", text)}
                 placeholder="********"
                 secureTextEntry
               />
@@ -99,17 +76,17 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               )}
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword}>
+            <TouchableOpacity style={styles.forgotPassword} onPress={handleForgotPassword}>
               <Text style={styles.forgotPasswordText}>Forgot password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
 
             <View style={styles.registerContainer}>
               <Text style={styles.registerText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+              <TouchableOpacity onPress={navigateToRegister}>
                 <Text style={styles.registerLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>

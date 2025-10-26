@@ -300,13 +300,13 @@ export function DoubleTapLikeCustom({
     }, 600);
 
     if (onDoubleTap) {
-      runOnJS(onDoubleTap)();
+      runOnJS(onDoubleTap as () => void)();
     }
   }, [onDoubleTap]);
 
   const singleTap = Gesture.Tap().onEnd(() => {
     if (onSingleTap) {
-      runOnJS(onSingleTap)();
+      runOnJS(onSingleTap as () => void)();
     }
   });
 

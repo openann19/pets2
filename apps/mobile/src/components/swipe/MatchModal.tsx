@@ -6,9 +6,9 @@ import { HolographicContainer, ParticleEffect } from "../HolographicEffects";
 import { GlowContainer } from "../GlowShadowSystem";
 import { PremiumHeading, PremiumBody } from "../PremiumTypography";
 import type { Pet } from "../../types/api";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { Dimensions } from "react-native";
 
-const { width: screenWidth } = tokens.dimensions.screen;
+const { width: screenWidth } = Dimensions.get("window");
 
 interface MatchModalProps {
   matchedPet: Pet;
@@ -72,7 +72,6 @@ export function MatchModal({
               title="Keep Swiping"
               variant="glass"
               size="lg"
-              magnetic={true}
               ripple={true}
               onPress={onKeepSwiping}
             />
@@ -81,7 +80,6 @@ export function MatchModal({
               variant="holographic"
               size="lg"
               icon="chatbubble"
-              magnetic={true}
               ripple={true}
               glow={true}
               shimmer={true}

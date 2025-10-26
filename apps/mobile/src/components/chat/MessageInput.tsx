@@ -2,11 +2,14 @@ import React, { useCallback, useRef, useState } from "react";
 import { View, TextInput, StyleSheet, Alert } from "react-native";
 import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
+import * as ImagePicker from "expo-image-picker";
 import { EliteButton } from "../EliteComponents";
 import { GlassContainer } from "../GlassMorphism";
 import { PremiumBody } from "../PremiumTypography";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../contexts/ThemeContext";
+import { chatService } from "../../services/chatService";
+import { VoiceRecorder } from "./VoiceRecorder";
 
 interface MessageInputProps {
   value: string;
@@ -17,6 +20,9 @@ interface MessageInputProps {
   maxLength?: number;
   placeholder?: string;
   inputRef?: React.RefObject<TextInput>;
+  matchId: string;
+  onAttachmentSent?: () => void;
+  onVoiceNoteSent?: () => void;
 }
 
 const MAX_MESSAGE_LENGTH = 500;
@@ -30,10 +36,15 @@ export function MessageInput({
   maxLength = MAX_MESSAGE_LENGTH,
   placeholder = "Type a message...",
   inputRef,
+  matchId,
+  onAttachmentSent,
+  onVoiceNoteSent,
 }: MessageInputProps): React.JSX.Element {
   const { colors } = useTheme();
   const [characterCount, setCharacterCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
 
   const messageEntryAnimation = useRef(new Animated.Value(0)).current;
   const sendButtonScale = useRef(new Animated.Value(1)).current;
@@ -98,15 +109,116 @@ export function MessageInput({
     onSend();
   }, [value, isSending, onSend, sendButtonScale]);
 
-  const handleAttachPress = useCallback(() => {
+  const handleAttachPress = useCallback(async () => {
+    if (isUploading) return;
+    
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Attach Media", "Photo and file sharing coming soon!");
-  }, []);
+    
+    try {
+      // Request permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission Needed", "Please grant photo library access to send attachments.");
+        return;
+      }
+
+      // Show attachment options
+      Alert.alert(
+        "Add Attachment",
+        "Choose an option",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Photo Library", onPress: async () => {
+            setIsUploading(true);
+            try {
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 0.8,
+                allowsMultipleSelection: false,
+              });
+
+              if (!result.canceled && result.assets && result.assets[0]) {
+                const asset = result.assets[0];
+                // Convert URI to Blob for upload
+                const response = await fetch(asset.uri);
+                const blob = await response.blob();
+                
+                // Send attachment using chatService
+                await chatService.sendAttachment({
+                  matchId,
+                  attachmentType: "image",
+                  file: blob,
+                });
+                
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                onAttachmentSent?.();
+              }
+            } catch (error) {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              Alert.alert("Error", "Failed to send attachment. Please try again.");
+            } finally {
+              setIsUploading(false);
+            }
+          }},
+          { text: "Take Photo", onPress: async () => {
+            setIsUploading(true);
+            try {
+              const { status } = await ImagePicker.requestCameraPermissionsAsync();
+              if (status !== "granted") {
+                Alert.alert("Permission Needed", "Camera access required to take photos.");
+                setIsUploading(false);
+                return;
+              }
+
+              const result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                quality: 0.8,
+              });
+
+              if (!result.canceled && result.assets && result.assets[0]) {
+                const asset = result.assets[0];
+                const response = await fetch(asset.uri);
+                const blob = await response.blob();
+                
+                await chatService.sendAttachment({
+                  matchId,
+                  attachmentType: "image",
+                  file: blob,
+                });
+                
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                onAttachmentSent?.();
+              }
+            } catch (error) {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              Alert.alert("Error", "Failed to take photo. Please try again.");
+            } finally {
+              setIsUploading(false);
+            }
+          }},
+        ],
+        { cancelable: true }
+      );
+    } catch (error) {
+      Alert.alert("Error", "Failed to open photo picker.");
+    }
+  }, [isUploading, matchId, onAttachmentSent]);
 
   const handleEmojiPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Alert.alert("Emoji Picker", "Emoji picker coming soon! 😊");
   }, []);
+
+  const handleVoicePress = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowVoiceRecorder(true);
+  }, []);
+
+  const handleVoiceNoteSent = useCallback(() => {
+    setShowVoiceRecorder(false);
+    onVoiceNoteSent?.();
+  }, [onVoiceNoteSent]);
 
   const isNearLimit = characterCount > maxLength * 0.9;
   const isOverLimit = characterCount > maxLength;
@@ -123,10 +235,10 @@ export function MessageInput({
           title=""
           variant="glass"
           size="sm"
-          icon="add"
-          magnetic={true}
+          icon={isUploading ? "hourglass" : "add"}
           ripple={true}
           onPress={handleAttachPress}
+          disabled={isUploading}
         />
 
         <View style={styles.inputWrapper}>
@@ -176,7 +288,7 @@ export function MessageInput({
               ]}
             >
               <PremiumBody
-                size="xs"
+                size="sm"
                 weight="regular"
                 style={{ color: isOverLimit ? colors.error : colors.gray500 }}
               >
@@ -191,7 +303,6 @@ export function MessageInput({
           variant="glass"
           size="sm"
           icon="happy-outline"
-          magnetic={true}
           ripple={true}
           onPress={handleEmojiPress}
         />
@@ -199,18 +310,25 @@ export function MessageInput({
         <Animated.View style={{ transform: [{ scale: sendButtonScale }] }}>
           <EliteButton
             title=""
-            variant={value.trim() ? "primary" : "glass"}
+            variant={value.trim() || isUploading ? "primary" : "glass"}
             size="sm"
-            icon={isSending ? "hourglass" : "send"}
-            magnetic={true}
+            icon={isSending || isUploading ? "hourglass" : "send"}
             ripple={true}
-            glow={value.trim()}
-            shimmer={isSending}
+            glow={!!(value.trim() || isUploading)}
+            shimmer={!!(isSending || isUploading)}
             onPress={handleSend}
-            disabled={!value.trim() || isSending}
+            disabled={(!value.trim() && !isUploading) || isSending || isUploading}
           />
         </Animated.View>
       </View>
+
+      {/* Voice Recorder */}
+      {showVoiceRecorder && (
+        <VoiceRecorder
+          matchId={matchId}
+          onVoiceNoteSent={handleVoiceNoteSent}
+        />
+      )}
     </GlassContainer>
   );
 }

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import { EliteHeader, EliteButton } from "../EliteComponents";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { Spacing } from "../../styles/GlobalStyles";
 
 interface ChatHeaderProps {
   petName: string;
@@ -43,7 +43,6 @@ export function ChatHeader({
         variant="glass"
         size="sm"
         icon="call"
-        magnetic={true}
         ripple={true}
         glow={true}
         onPress={handleVoiceCall}
@@ -53,7 +52,6 @@ export function ChatHeader({
         variant="glass"
         size="sm"
         icon="videocam"
-        magnetic={true}
         ripple={true}
         glow={true}
         onPress={handleVideoCall}
@@ -63,7 +61,6 @@ export function ChatHeader({
         variant="glass"
         size="sm"
         icon="ellipsis-vertical"
-        magnetic={true}
         ripple={true}
         onPress={handleMoreOptions}
       />
@@ -84,6 +81,6 @@ export function ChatHeader({
 const styles = StyleSheet.create({
   rightComponent: {
     flexDirection: "row",
-    gap: tokens.spacing.xs,
+    gap: Spacing.xs,
   },
 });

@@ -1,10 +1,12 @@
 {
   "success": true,
-  "messageId": "msg_123",
+  "messageId": "msg_abc123",
   "reactions": {
-    "👍": ["user_456"],
-    "❤️": ["user_456", "user_789"]
+    "👍": 5,
+    "❤️": 3,
+    "😂": 2,
+    "😊": 1
   },
-  "totalReactions": 3
+  "totalReactions": 11,
+  "timestamp": "2025-01-20T10:30:00Z"
 }
-

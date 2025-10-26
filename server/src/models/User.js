@@ -209,7 +209,15 @@ const userSchema = new mongoose.Schema({
   biometricToken: String,
   biometricTokenExpiry: Date,
   // WebAuthn challenge (temporary storage during registration)
-  webauthnChallenge: { type: String, default: null }
+  webauthnChallenge: { type: String, default: null },
+
+  // GDPR Deletion Fields
+  deletionRequestedAt: { type: Date, default: null },
+  deletionRequestId: { type: String, default: null },
+  deletionReason: { type: String, default: null },
+  deletionFeedback: { type: String, default: null },
+  deletionGracePeriodEndsAt: { type: Date, default: null },
+  deletionCompletedAt: { type: Date, default: null }
 
 }, {
   timestamps: true,

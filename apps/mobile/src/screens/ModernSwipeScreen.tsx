@@ -70,8 +70,8 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   const handleLike = useCallback(async (pet: Pet) => {
     try {
       // Create a match (like action)
-      if (user?.pets?.[0] && pet._id) {
-        const currentPetId = user.pets[0];
+      if (user?.activePetId && pet._id) {
+        const currentPetId = user.activePetId ?? "";
         const match = await matchesAPI.createMatch(currentPetId, pet._id);
         
         if (match) {

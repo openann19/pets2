@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const { body } = require('express-validator');
 const { validate } = require('../middleware/validation');
 const { authenticateToken } = require('../middleware/auth');
@@ -15,6 +16,33 @@ const {
   searchMessages,
   getChatStats
 } = require('../controllers/chatController');
+
+// Multer configuration for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept images, videos, and audio files
+    const allowedMimes = [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'video/mp4',
+      'video/quicktime',
+      'audio/m4a',
+      'audio/mp3',
+    ];
+    
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('File type not allowed'), false);
+    }
+  },
+});
 
 const router = express.Router();
 
@@ -73,6 +101,98 @@ router.get('/:matchId/search', searchValidation, validate, searchMessages);
 
 // Chat statistics
 router.get('/stats', getChatStats);
+
+// Chat reactions route (simple version for mobile compatibility)
+router.post('/reactions', async (req, res) => {
+  try {
+    const { matchId, messageId, reaction } = req.body;
+    
+    if (!matchId || !messageId || !reaction) {
+      return res.status(400).json({
+        success: false,
+        error: 'MISSING_PARAMS',
+        message: 'Missing required parameters'
+      });
+    }
+    
+    // In real implementation, add reaction to message
+    res.json({
+      success: true,
+      messageId,
+      reactions: [{ emoji: reaction, userId: req.userId, timestamp: new Date().toISOString() }]
+    });
+  } catch (error) {
+    console.error('Reaction error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_ERROR',
+      message: error.message
+    });
+  }
+});
+
+// Chat attachments route
+router.post('/attachments', upload.single('file'), async (req, res) => {
+  try {
+    const file = req.file;
+    
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        error: 'MISSING_FILE',
+        message: 'No file provided'
+      });
+    }
+    
+    // In real implementation, upload to cloud storage
+    const mockUrl = `https://storage.pawfectmatch.com/uploads/${req.userId}/${Date.now()}-${file.originalname}`;
+    
+    res.json({
+      success: true,
+      url: mockUrl,
+      type: file.mimetype.startsWith('image') ? 'image' : 
+            file.mimetype.startsWith('video') ? 'video' : 'file'
+    });
+  } catch (error) {
+    console.error('Attachment upload error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'UPLOAD_FAILED',
+      message: error.message
+    });
+  }
+});
+
+// Voice notes route
+router.post('/voice', async (req, res) => {
+  try {
+    const { matchId, duration } = req.body;
+    
+    if (!matchId || !duration) {
+      return res.status(400).json({
+        success: false,
+        error: 'MISSING_PARAMS',
+        message: 'Missing required parameters'
+      });
+    }
+    
+    // In real implementation, upload audio blob
+    const mockUrl = `https://storage.pawfectmatch.com/voice/${req.userId}/${Date.now()}.m4a`;
+    
+    res.json({
+      success: true,
+      url: mockUrl,
+      duration: parseFloat(duration)
+    });
+  } catch (error) {
+    console.error('Voice note error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'VOICE_UPLOAD_FAILED',
+      message: error.message
+    });
+  }
+});
 
 // Legacy routes (for backward compatibility)
 router.post('/:matchId/send', messageValidation, validate, sendMessage);

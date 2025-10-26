@@ -69,8 +69,35 @@ export const useEntranceAnimation = (
     ],
   }));
 
+  const start = () => {
+    // Animation already started in useEffect, but this can be used to restart
+    switch (type) {
+      case "fadeIn":
+        opacity.value = withTiming(1, { duration: 500 });
+        break;
+      case "slideIn":
+        translateY.value = withSpring(0, PREMIUM_ANIMATIONS.spring.gentle);
+        opacity.value = withTiming(1, { duration: 500 });
+        break;
+      case "scaleIn":
+        scale.value = withSpring(1, PREMIUM_ANIMATIONS.spring.bouncy);
+        opacity.value = withTiming(1, { duration: 500 });
+        break;
+      case "bounceIn":
+        scale.value = withSequence(
+          withTiming(1.2, { duration: 300 }),
+          withTiming(0.9, { duration: 200 }),
+          withTiming(1, { duration: 300 }),
+        );
+        opacity.value = withTiming(1, { duration: 500 });
+        break;
+    }
+  };
+
   return {
     entranceStyle,
+    animatedStyle: entranceStyle,
+    start,
   };
 };
 

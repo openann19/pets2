@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../contexts/ThemeContext";
 import type { RootStackParamList } from "../navigation/types";
-import { _subscriptionAPI as premiumAPI } from "../services/api";
+import { premiumAPI } from "../services/api";
 
 type ManageSubscriptionScreenProps = NativeStackScreenProps<
   RootStackParamList,

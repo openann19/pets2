@@ -7,7 +7,8 @@ const {
   requestDataExport,
   cancelAccountDeletion,
   initiateAccountDeletion,
-  getProfileStats
+  getProfileStats,
+  confirmAccountDeletion
 } = require('../controllers/accountController');
 
 const router = express.Router();
@@ -34,8 +35,20 @@ router.get('/status', getAccountStatus);
 router.post('/export-data', dataExportValidation, validate, requestDataExport);
 router.post('/cancel-deletion', deletionValidation, validate, cancelAccountDeletion);
 router.post('/delete', [
-  body('reason').optional().isString().withMessage('Reason must be a string')
+  body('password').notEmpty().withMessage('Password is required'),
+  body('reason').optional().isString().withMessage('Reason must be a string'),
+  body('feedback').optional().isString().withMessage('Feedback must be a string')
 ], validate, initiateAccountDeletion);
+
+router.delete('/delete-account', [
+  body('password').notEmpty().withMessage('Password is required'),
+  body('reason').optional().isString().withMessage('Reason must be a string'),
+  body('feedback').optional().isString().withMessage('Feedback must be a string')
+], validate, initiateAccountDeletion);
+
+router.post('/confirm-deletion', [
+  body('token').notEmpty().withMessage('Confirmation token is required')
+], validate, confirmAccountDeletion);
 
 // Profile stats (different from user stats - includes pets, matches, messages counts)
 router.get('/profile-stats', getProfileStats);

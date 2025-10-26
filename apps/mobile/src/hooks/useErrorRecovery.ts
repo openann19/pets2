@@ -67,16 +67,11 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
 
         if (!networkState.isConnected && enableOfflineRetry) {
           // Handle offline scenario
-          return await offlineRetry.executeWithRetry(async (signal) => {
+          return await offlineRetry.executeWithRetry(async () => {
             // Check connectivity again
             const currentState = await NetInfo.fetch();
             if (!currentState.isConnected) {
               throw new Error("No internet connection");
-            }
-
-            // Abort if operation was cancelled
-            if (signal?.aborted) {
-              throw new Error("Operation cancelled");
             }
 
             return await operation();
@@ -85,12 +80,7 @@ export const useErrorRecovery = (options: RecoveryOptions = {}) => {
 
         // Normal operation with network retry
         if (enableNetworkRetry) {
-          return await networkRetry.executeWithRetry(async (signal) => {
-            // Abort if operation was cancelled
-            if (signal?.aborted) {
-              throw new Error("Operation cancelled");
-            }
-
+          return await networkRetry.executeWithRetry(async () => {
             return await operation();
           });
         }

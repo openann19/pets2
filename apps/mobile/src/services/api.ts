@@ -213,16 +213,6 @@ export const matchesAPI = {
     );
   },
 
-  // Get matches
-
-  // Get liked you (pets that liked current user)
-  getLikedYou: async (): Promise<Match[]> => {
-    return resolveData(
-      apiClient.get<Match[]>("/matches/liked-you"),
-      "Failed to fetch liked you",
-    );
-  },
-
   // Get user's matches
   getMatches: async (): Promise<Match[]> => {
     return resolveData(
@@ -259,6 +249,28 @@ export const matchesAPI = {
       apiClient.post<Message>(`/matches/${matchId}/messages`, { content }),
       "Failed to send message",
     );
+  },
+
+  // Chat methods
+  chat: {
+    // Send typing indicator
+    sendTypingIndicator: async (
+      matchId: string,
+      isTyping: boolean,
+    ): Promise<void> => {
+      return resolveData(
+        apiClient.post(`/matches/${matchId}/typing`, { isTyping }),
+        "Failed to send typing indicator",
+      );
+    },
+
+    // Mark messages as read
+    markAsRead: async (matchId: string, messageIds: string[]): Promise<void> => {
+      return resolveData(
+        apiClient.put(`/matches/${matchId}/messages/read`, { messageIds }),
+        "Failed to mark messages as read",
+      );
+    },
   },
 
   // Get pets for swiping
@@ -655,6 +667,62 @@ export const matchesAPI = {
   },
 };
 
+// Premium/Subscription API
+export const premiumAPI = {
+  getCurrentSubscription: async (): Promise<{
+    id: string;
+    status: string;
+    plan: string;
+    currentPeriodEnd: string;
+  } | null> => {
+    try {
+      return await resolveData(
+        apiClient.get("/premium/subscription"),
+        "Failed to get current subscription",
+      );
+    } catch {
+      return null;
+    }
+  },
+  cancelSubscription: async (): Promise<boolean> => {
+    return resolveBoolean(
+      apiClient.post("/premium/subscription/cancel"),
+      "Failed to cancel subscription",
+    );
+  },
+};
+
+// Adoption API
+export const adoptionAPI = {
+  getListings: async (): Promise<Pet[]> => {
+    return resolveData(
+      apiClient.get("/adoption/listings"),
+      "Failed to get adoption listings",
+    );
+  },
+  getApplications: async (): Promise<AdoptionApplication[]> => {
+    return resolveData(
+      apiClient.get("/adoption/applications"),
+      "Failed to get adoption applications",
+    );
+  },
+};
+
+// Subscription API for Stripe checkout
+export const _subscriptionAPI = {
+  createCheckoutSession: async (data: {
+    priceId: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, string>;
+  }): Promise<{ url: string }> => {
+    return resolveData(
+      apiClient.post("/subscription/checkout", data),
+      "Failed to create checkout session",
+    );
+  },
+};
+
 // Export the main API service instance
 // AI Service API
 export const aiAPI = {
@@ -758,6 +826,7 @@ export const aiAPI = {
 
 export const api = {
   ...matchesAPI,
+  chat: matchesAPI.chat,
   ai: aiAPI,
   request,
 };

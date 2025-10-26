@@ -1,8 +1,15 @@
 {
   "success": true,
-  "url": "https://storage.example.com/attachments/msg_abc/image.jpg",
-  "type": "image/jpeg",
-  "size": 245678,
-  "thumbnailUrl": "https://storage.example.com/attachments/msg_abc/image_thumb.jpg"
+  "messageId": "msg_xyz789",
+  "attachment": {
+    "id": "att_001",
+    "type": "image",
+    "url": "https://pawfectmatch.com/uploads/messages/att_001.jpg",
+    "thumbnailUrl": "https://pawfectmatch.com/uploads/messages/att_001_thumb.jpg",
+    "filename": "pet-photo.jpg",
+    "mimeType": "image/jpeg",
+    "size": 2456789,
+    "uploadedAt": "2025-01-20T10:35:00Z"
+  },
+  "url": "https://pawfectmatch.com/uploads/messages/att_001.jpg"
 }
-

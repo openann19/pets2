@@ -289,13 +289,32 @@ const cancelAccountDeletion = async (req, res) => {
 const initiateAccountDeletion = async (req, res) => {
   try {
     const userId = req.userId;
-    const { reason = 'User requested' } = req.body;
+    const { password, reason, feedback } = req.body;
 
-    const user = await User.findById(userId);
+    // Validate password is provided
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_PASSWORD',
+        message: 'Password is required to delete account'
+      });
+    }
+
+    const user = await User.findById(userId).select('+password');
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
+      });
+    }
+
+    // Validate password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        error: 'INVALID_PASSWORD',
+        message: 'Invalid password provided'
       });
     }
 
@@ -316,21 +335,42 @@ const initiateAccountDeletion = async (req, res) => {
       }
     }
 
+    // Check if deletion already requested
+    if (user.deletionRequestedAt) {
+      const now = new Date();
+      const requestedAt = new Date(user.deletionRequestedAt);
+      const scheduledDeletionDate = new Date(requestedAt.getTime() + (30 * 24 * 60 * 60 * 1000));
+
+      if (now < scheduledDeletionDate) {
+        return res.status(400).json({
+          success: false,
+          error: 'ALREADY_DELETING',
+          message: 'Account deletion already requested',
+          gracePeriodEndsAt: scheduledDeletionDate.toISOString(),
+          requestId: user.deletionRequestId
+        });
+      }
+    }
+
     // Initiate deletion request
     const requestId = `del_${userId}_${Date.now()}`;
+    const gracePeriodEndsAt = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000));
+    
     user.deletionRequestedAt = new Date();
     user.deletionRequestId = requestId;
+    user.deletionGracePeriodEndsAt = gracePeriodEndsAt;
+    user.deletionReason = reason || null;
+    user.deletionFeedback = feedback || null;
+    
     await user.save();
-
-    // TODO: Send confirmation email to user
 
     logger.info(`Account deletion initiated for user ${userId}, reason: ${reason}`);
 
     res.json({
       success: true,
       message: 'Account deletion request initiated. Your account will be deleted in 30 days.',
-      requestId,
-      scheduledDeletionDate: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toISOString(),
+      deletionId: requestId,
+      gracePeriodEndsAt: gracePeriodEndsAt.toISOString(),
       canCancel: true
     });
 

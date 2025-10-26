@@ -1,8 +1,11 @@
 {
   "success": true,
-  "url": "https://storage.example.com/voice/msg_xyz.opus",
-  "duration": 15,
-  "format": "opus",
-  "size": 89234
+  "messageId": "msg_voice456",
+  "voiceNote": {
+    "audioUrl": "https://pawfectmatch.com/uploads/voice/msg_voice456.ogg",
+    "duration": 3.5,
+    "waveform": [0.2, 0.5, 0.8, 0.6, 0.4, 0.3, 0.2],
+    "transcribedText": "Let's meet at the dog park tomorrow!"
+  },
+  "timestamp": "2025-01-20T10:40:00Z"
 }
-

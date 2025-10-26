@@ -118,11 +118,11 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
     { children, color = "rgba(255, 255, 255, 0.3)", style, disabled = false },
     ref,
   ) => {
-    const { startRipple, animatedStyle: rippleStyle } = useRippleEffect();
+    const { triggerRipple, rippleStyle } = useRippleEffect();
 
     const handlePressIn = () => {
       if (!disabled) {
-        startRipple();
+        triggerRipple();
       }
     };
 
@@ -172,8 +172,8 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
     },
     ref,
   ) => {
-    const { animatedStyle: shimmerStyle } = useShimmerEffect(
-      disabled ? 0 : duration,
+    const { shimmerStyle } = useShimmerEffect(
+      !disabled && duration > 0,
     );
 
     return (
@@ -241,9 +241,8 @@ export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
   ({ children, gradient, colors, angle = 135, style }, ref) => {
     const { LinearGradient } = require("expo-linear-gradient");
 
-    const gradientConfig = gradient ? Theme.gradients[gradient] : null;
-    const gradientColors = colors ||
-      gradientConfig?.colors || [
+    const gradientConfig = gradient ? (Theme.gradients as any)[gradient] : null;
+    const gradientColors = colors || Array.isArray(gradientConfig?.colors) ? gradientConfig?.colors : [
         Theme.colors.primary[500],
         Theme.colors.primary[400],
       ];

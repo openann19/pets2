@@ -6,4 +6,5 @@
 export { ProfileSummarySection } from './ProfileSummarySection';
 export { NotificationSettingsSection } from './NotificationSettingsSection';
 export { AccountSettingsSection } from './AccountSettingsSection';
+export { DangerZoneSection } from './DangerZoneSection';
 

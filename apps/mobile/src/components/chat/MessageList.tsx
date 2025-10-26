@@ -3,7 +3,7 @@ import { FlatList, View, StyleSheet } from "react-native";
 import type { Message } from "../../hooks/useChatData";
 import { MessageItem } from "./MessageItem";
 import { TypingIndicator } from "./TypingIndicator";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { Spacing, BorderRadius } from "../../styles/GlobalStyles";
 
 interface MessageListProps {
   messages: Message[];
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    paddingBottom: tokens.spacing.lg,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    paddingBottom: Spacing.lg,
   },
 });

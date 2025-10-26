@@ -26,7 +26,25 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function SwipeScreen({ navigation }: SwipeScreenProps) {
-  const { data, actions } = useSwipeData();
+  const {
+    pets,
+    isLoading,
+    error,
+    currentIndex,
+    filters,
+    showFilters,
+    showMatchModal,
+    matchedPet,
+    loadPets,
+    handleSwipe,
+    handleButtonSwipe,
+    setCurrentIndex,
+    setShowFilters,
+    setShowMatchModal,
+    setMatchedPet,
+    setFilters,
+    refreshPets,
+  } = useSwipeData();
 
   // Animation values
   const position = useRef(new Animated.ValueXY()).current;

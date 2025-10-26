@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Animated } from "react-native";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { Spacing, BorderRadius } from "../../styles/GlobalStyles";
 import { useTheme } from "../../contexts/ThemeContext";
 
 interface TypingIndicatorProps {
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: tokens.spacing.lg,
-    marginBottom: tokens.spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   avatar: {
     width: 32,
@@ -83,17 +83,17 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   typingBubble: {
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    borderRadius: tokens.borderRadius.xl,
-    borderBottomLeftRadius: tokens.borderRadius.sm,
-    marginLeft: tokens.spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    borderBottomLeftRadius: BorderRadius.sm,
+    marginLeft: Spacing.xs,
     borderWidth: 0.5,
   },
   typingDots: {
     flexDirection: "row",
     alignItems: "center",
-    gap: tokens.spacing.xs,
+    gap: Spacing.xs,
   },
   typingDot: {
     width: 8,
@@ -103,6 +103,6 @@ const styles = StyleSheet.create({
   typingText: {
     fontSize: tokens.typography.caption.fontSize,
     fontStyle: "italic",
-    marginTop: tokens.spacing.xs,
+    marginTop: Spacing.xs,
   },
 });

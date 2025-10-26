@@ -5,7 +5,7 @@ import { BlurView } from "expo-blur";
 import { runOnJS } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { Colors, Spacing, GlobalStyles } from "../../../styles/GlobalStyles";
+import { Colors, Spacing, GlobalStyles, Shadows } from "../../../styles/GlobalStyles";
 
 /**
  * EliteHeader Component
@@ -21,11 +21,11 @@ const styles = StyleSheet.create({
     justifyContent: "center" as const,
     alignItems: "center" as const,
     marginRight: Spacing.md,
-    ...GlobalStyles.shadows?.sm,
+    ...Shadows.sm,
   },
   headerContainer: {
     backgroundColor: Colors.white,
-    ...GlobalStyles.shadows?.sm,
+    ...Shadows.sm,
   },
   headerTitleContainer: {
     flex: 1,

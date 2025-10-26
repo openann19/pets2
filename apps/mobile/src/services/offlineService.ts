@@ -171,7 +171,7 @@ class OfflineService {
 
     for (const action of actionsToSync) {
       try {
-        this.executePendingAction(action);
+        await this.executePendingAction(action);
 
         // Remove successful action
         this.offlineData.pendingActions =
@@ -199,7 +199,7 @@ class OfflineService {
   /**
    * Execute a pending action
    */
-  private executePendingAction(_action: PendingAction): void {
+  private async executePendingAction(_action: PendingAction): Promise<void> {
     // const actionData = action.data as Record<string, unknown>;
     switch (_action.type) {
       case "swipe":
