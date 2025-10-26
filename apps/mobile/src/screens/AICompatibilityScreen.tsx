@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { api } from "../services/api";
+import { api, matchesAPI } from "../services/api";
 import { useTheme } from "../contexts/ThemeContext";
 import type { NavigationProp, RouteProp } from "../navigation/types";
 
@@ -88,58 +88,15 @@ export default function AICompatibilityScreen({
   const loadAvailablePets = async () => {
     try {
       setIsLoadingPets(true);
-      // This would typically fetch pets from the API
-      // For now, we'll use mock data
-      const mockPets: Pet[] = [
-        {
-          _id: "1",
-          name: "Buddy",
-          photos: [
-            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=200",
-          ],
-          breed: "Golden Retriever",
-          age: 3,
-          species: "dog",
-          owner: { _id: user?._id || "1", name: user?.name || "You" },
-        },
-        {
-          _id: "2",
-          name: "Luna",
-          photos: [
-            "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200",
-          ],
-          breed: "Labrador",
-          age: 2,
-          species: "dog",
-          owner: { _id: "2", name: "Sarah" },
-        },
-        {
-          _id: "3",
-          name: "Max",
-          photos: [
-            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=200",
-          ],
-          breed: "German Shepherd",
-          age: 4,
-          species: "dog",
-          owner: { _id: "3", name: "Mike" },
-        },
-        {
-          _id: "4",
-          name: "Bella",
-          photos: [
-            "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=200",
-          ],
-          breed: "Border Collie",
-          age: 1,
-          species: "dog",
-          owner: { _id: "4", name: "Emma" },
-        },
-      ];
-
-      setAvailablePets(mockPets);
-    } catch (err: any) {
-      logger.error("Error loading pets:", { error });
+      // Fetch real pets from API
+      const pets = await matchesAPI.getPets();
+      
+      // Filter out current user's pets
+      const availablePets = pets.filter((pet) => pet.owner?._id !== user?._id);
+      
+      setAvailablePets(availablePets);
+    } catch (err: unknown) {
+      logger.error("Error loading pets:", { error: err });
       setError("Failed to load pets. Please try again.");
     } finally {
       setIsLoadingPets(false);
@@ -158,8 +115,8 @@ export default function AICompatibilityScreen({
         // Auto-analyze if both pets are selected
         setTimeout(() => analyzeCompatibility(), 500);
       }
-    } catch (err: any) {
-      logger.error("Error loading specific pets:", { error });
+    } catch (err: unknown) {
+      logger.error("Error loading specific pets:", { error: err });
       setError("Failed to load pet information.");
     }
   };
@@ -182,11 +139,10 @@ export default function AICompatibilityScreen({
         pet2Id: selectedPet2._id,
       });
       setCompatibilityResult(result);
-    } catch (err: any) {
-      logger.error("Compatibility analysis error:", { error });
-      setError(
-        err.message || "Failed to analyze compatibility. Please try again.",
-      );
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to analyze compatibility. Please try again.";
+      logger.error("Compatibility analysis error:", { error: err });
+      setError(message);
     } finally {
       setIsAnalyzing(false);
     }

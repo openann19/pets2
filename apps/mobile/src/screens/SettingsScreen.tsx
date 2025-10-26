@@ -1,7 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, type IoniconsProps } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { useState, useEffect, type ComponentProps } from "react";
 import {
   View,
   Text,
@@ -21,17 +20,10 @@ import {
 import { AdvancedButton } from "../components/Advanced/AdvancedInteractionSystem";
 import { matchesAPI } from "../services/api";
 import { useAuthStore } from "@pawfectmatch/core";
+import { gdprService } from "../services/gdprService";
+import type { RootStackScreenProps } from "../navigation/types";
 
-type RootStackParamList = {
-  Settings: undefined;
-  Home: undefined;
-  Profile: undefined;
-};
-
-type SettingsScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Settings"
->;
+type SettingsScreenProps = RootStackScreenProps<"Settings">;
 
 interface SettingItem {
   id: string;
@@ -56,6 +48,29 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     analytics: false,
     darkMode: false,
   });
+
+  const [deletionStatus, setDeletionStatus] = useState<{
+    isPending: boolean;
+    daysRemaining: number | null;
+  }>({ isPending: false, daysRemaining: null });
+
+  // Check deletion status on mount
+  useEffect(() => {
+    const checkDeletionStatus = async () => {
+      try {
+        const isPending = await gdprService.isDeletionPending();
+        const daysRemaining = await gdprService.getDaysUntilDeletion();
+        setDeletionStatus({
+          isPending,
+          daysRemaining: daysRemaining ?? null,
+        });
+      } catch (error) {
+        logger.error("Failed to check deletion status:", { error });
+      }
+    };
+
+    void checkDeletionStatus();
+  }, []);
 
   const notificationSettings: SettingItem[] = [
     {
@@ -169,6 +184,13 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
   const dangerSettings: SettingItem[] = [
     {
+      id: "export-data",
+      title: "Export My Data",
+      subtitle: "Download a copy of your data (GDPR)",
+      icon: "download",
+      type: "action",
+    },
+    {
       id: "logout",
       title: "Log Out",
       subtitle: "Sign out of your account",
@@ -177,11 +199,15 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     },
     {
       id: "delete",
-      title: "Delete Account",
-      subtitle: "Permanently delete your account",
-      icon: "trash",
+      title: deletionStatus.isPending
+        ? `Cancel Account Deletion (${deletionStatus.daysRemaining} days left)`
+        : "Request Account Deletion",
+      subtitle: deletionStatus.isPending
+        ? "Cancel your pending deletion request"
+        : "Permanently delete your account (30-day grace period)",
+      icon: deletionStatus.isPending ? "close-circle" : "trash",
       type: "action",
-      destructive: true,
+      destructive: !deletionStatus.isPending,
     },
   ];
 
@@ -196,13 +222,13 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         // Update API
         await matchesAPI.updateUserSettings({
           notifications: { ...notifications, [id]: value },
-        } as any);
+        });
       } else {
         setPreferences((prev) => ({ ...prev, [id]: value }));
         // Update API
         await matchesAPI.updateUserSettings({
           preferences: { ...preferences, [id]: value },
-        } as any);
+        });
       }
     } catch (error) {
       logger.error("Failed to update settings:", { error });
@@ -213,7 +239,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const handleNavigation = (id: string) => {
     switch (id) {
       case "profile":
-        navigation.navigate("Profile" as any);
+        navigation.navigate("Profile");
         break;
       case "privacy":
       case "subscription":
@@ -230,8 +256,55 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     }
   };
 
-  const handleAction = (id: string) => {
+  const handleAction = async (id: string) => {
     switch (id) {
+      case "export-data":
+        Alert.alert(
+          "Export Your Data",
+          "This will download a copy of all your data. This may take a few minutes.",
+          [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Export JSON",
+              onPress: async () => {
+                try {
+                  Alert.alert(
+                    "Exporting Data",
+                    "Please wait while we prepare your data...",
+                  );
+                  const result = await gdprService.exportAllUserData("json");
+                  Alert.alert("Export Complete", result.message);
+                } catch (error) {
+                  logger.error("Data export failed:", { error });
+                  Alert.alert(
+                    "Error",
+                    "Failed to export your data. Please try again.",
+                  );
+                }
+              },
+            },
+            {
+              text: "Export CSV",
+              onPress: async () => {
+                try {
+                  Alert.alert(
+                    "Exporting Data",
+                    "Please wait while we prepare your data...",
+                  );
+                  const result = await gdprService.exportAllUserData("csv");
+                  Alert.alert("Export Complete", result.message);
+                } catch (error) {
+                  logger.error("Data export failed:", { error });
+                  Alert.alert(
+                    "Error",
+                    "Failed to export your data. Please try again.",
+                  );
+                }
+              },
+            },
+          ],
+        );
+        break;
       case "logout":
         Alert.alert("Log Out", "Are you sure you want to log out?", [
           { text: "Cancel", style: "cancel" },
@@ -241,13 +314,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
             onPress: async () => {
               try {
                 // Implement logout
-                await matchesAPI.auth.logout();
                 useAuthStore.getState().logout();
                 Alert.alert(
                   "Logged Out",
                   "You have been logged out successfully",
                 );
-                navigation.navigate("Home" as any);
+                navigation.navigate("Home");
               } catch (error) {
                 logger.error("Logout failed:", { error });
                 Alert.alert("Error", "Failed to log out. Please try again.");
@@ -257,35 +329,69 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         ]);
         break;
       case "delete":
-        Alert.alert(
-          "Delete Account",
-          "This action cannot be undone. All your data will be permanently deleted.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Delete Account",
-              style: "destructive",
-              onPress: async () => {
-                try {
-                  // Implement account deletion
-                  await matchesAPI.user.deleteAccount();
-                  useAuthStore.getState().logout();
-                  Alert.alert(
-                    "Account Deleted",
-                    "Your account has been deleted",
-                  );
-                  navigation.navigate("Home" as any);
-                } catch (error) {
-                  logger.error("Account deletion failed:", { error });
-                  Alert.alert(
-                    "Error",
-                    "Failed to delete account. Please try again.",
-                  );
-                }
+        if (deletionStatus.isPending) {
+          // Cancel deletion
+          Alert.alert(
+            "Cancel Account Deletion",
+            "Are you sure you want to cancel your account deletion?",
+            [
+              { text: "Keep Scheduled", style: "cancel" },
+              {
+                text: "Cancel Deletion",
+                onPress: async () => {
+                  try {
+                    await gdprService.cancelAccountDeletion();
+                    setDeletionStatus({ isPending: false, daysRemaining: null });
+                    Alert.alert(
+                      "Deletion Cancelled",
+                      "Your account will NOT be deleted.",
+                    );
+                  } catch (error) {
+                    logger.error("Failed to cancel deletion:", { error });
+                    Alert.alert(
+                      "Error",
+                      "Failed to cancel deletion. Please try again.",
+                    );
+                  }
+                },
               },
-            },
-          ],
-        );
+            ],
+          );
+        } else {
+          // Request deletion
+          Alert.alert(
+            "Request Account Deletion",
+            "Your account will be scheduled for deletion in 30 days. You can cancel anytime during this period. All your data will be permanently deleted after 30 days.",
+            [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "Request Deletion",
+                style: "destructive",
+                onPress: async () => {
+                  try {
+                    const result = await gdprService.requestAccountDeletion();
+                    setDeletionStatus({
+                      isPending: true,
+                      daysRemaining: 30,
+                    });
+                    Alert.alert(
+                      "Deletion Scheduled",
+                      `Your account will be deleted on ${new Date(
+                        result.scheduledDeletionDate,
+                      ).toLocaleDateString()}. You have 30 days to cancel.`,
+                    );
+                  } catch (error) {
+                    logger.error("Account deletion failed:", { error });
+                    Alert.alert(
+                      "Error",
+                      "Failed to schedule account deletion. Please try again.",
+                    );
+                  }
+                },
+              },
+            ],
+          );
+        }
         break;
     }
   };
@@ -317,7 +423,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           ]}
         >
           <Ionicons
-            name={item.icon as any}
+            name={item.icon as ComponentProps<typeof Ionicons>['name']}
             size={20}
             color={item.destructive ? "#EF4444" : "#6B7280"}
           />

@@ -590,6 +590,69 @@ export const matchesAPI = {
       "Failed to fetch app version",
     );
   },
+
+  // ===== GDPR Compliance Methods =====
+  // Request account deletion with grace period
+  requestAccountDeletion: async (data: {
+    reason?: string;
+  }): Promise<{
+    success: boolean;
+    message: string;
+    requestId: string;
+    scheduledDeletionDate: string;
+    canCancel: boolean;
+  }> => {
+    return resolveData(
+      apiClient.post("/account/delete", { reason: data.reason }),
+      "Failed to request account deletion",
+    );
+  },
+
+  // Cancel account deletion (within grace period)
+  cancelAccountDeletion: async (data?: {
+    requestId?: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    return resolveData(
+      apiClient.post("/account/cancel-deletion", data ?? {}),
+      "Failed to cancel account deletion",
+    );
+  },
+
+  // Get account deletion status
+  getAccountDeletionStatus: async (): Promise<{
+    success: boolean;
+    status: "pending" | "processing" | "completed" | "not-found";
+    requestedAt?: string;
+    scheduledDeletionDate?: string;
+    daysRemaining?: number;
+    canCancel?: boolean;
+    requestId?: string;
+  }> => {
+    return resolveData(
+      apiClient.get("/account/status"),
+      "Failed to get account status",
+    );
+  },
+
+  // Export user data (GDPR Article 20)
+  exportUserData: async (options: {
+    format?: "json" | "csv";
+    includeMessages?: boolean;
+    includeMatches?: boolean;
+    includeProfileData?: boolean;
+    includePreferences?: boolean;
+  }): Promise<{
+    success: boolean;
+    exportId: string;
+    estimatedTime: string;
+    message: string;
+    exportData?: unknown;
+  }> => {
+    return resolveData(
+      apiClient.post("/account/export-data", options),
+      "Failed to export user data",
+    );
+  },
 };
 
 // Export the main API service instance
@@ -701,6 +764,11 @@ export const api = {
 
 // Export adoption API (alias for now, can be extended later)
 export const adoptionAPI = matchesAPI;
+
+// Re-export admin API for backwards compatibility
+export { _adminAPI } from "./adminAPI";
+export { api as _petAPI };
+export { adoptionAPI as _subscriptionAPI };
 
 // ===== SECURITY CONTROLS =====
 

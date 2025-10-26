@@ -14,18 +14,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Define the navigation props type
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  ForgotPassword: undefined;
-  ResetPassword: { token: string };
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type ResetPasswordScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ResetPassword"
->;
+type ResetPasswordScreenProps = RootStackScreenProps<"ResetPassword">;
 
 function ResetPasswordScreen({
   navigation,

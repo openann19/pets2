@@ -3,8 +3,9 @@ import React, { type ReactNode, useEffect } from "react";
 import {
   Text,
   View,
+  Platform,
   type TextStyle,
-  type ViewStyle
+  type ViewStyle,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -17,7 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Colors, Spacing, BorderRadius } from "../styles/GlobalStyles";
-import MaskedView from "@react-native-masked-view/masked-view";
+import MaskedViewIOS from "@react-native-masked-view/masked-view";
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = {
@@ -198,7 +199,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
   };
 
   // For iOS, use MaskedViewIOS for gradient text
-  if (React.Platform.OS === "ios") {
+  if (Platform.OS === "ios") {
     return (
       <Animated.View style={animated ? animatedStyle : undefined}>
         <MaskedViewIOS maskElement={<Text style={textStyle}>{children}</Text>}>
@@ -482,6 +483,8 @@ export const PremiumLabel: React.FC<PremiumLabelProps> = ({
     </AnimatedText>
   );
 };
+
+export { TEXT_GRADIENTS, TEXT_SHADOWS };
 
 export default {
   GradientText,

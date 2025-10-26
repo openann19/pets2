@@ -240,7 +240,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
       shadow={config.shadow}
       animated={animated}
       hover={hover}
-      style={[sizeConfig, style]}
+      style={[{ ...sizeConfig }, style]}
       {...props}
     >
       {children}
@@ -358,7 +358,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
         shadow={config.shadow}
         borderRadius="xl"
         style={[
-          sizeConfig,
+          { ...sizeConfig },
           {
             justifyContent: "center",
             alignItems: "center",
@@ -395,7 +395,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
       borderRadius="none"
       style={[
         {
-          position: "absolute",
+          position: "absolute" as const,
           top: 0,
           left: 0,
           right: 0,
@@ -449,7 +449,7 @@ export const GlassModal: React.FC<GlassModalProps> = ({
     <Animated.View
       style={[
         {
-          position: "absolute",
+          position: "absolute" as const,
           top: 0,
           left: 0,
           right: 0,
@@ -501,7 +501,7 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
       borderRadius="none"
       style={[
         {
-          position: "absolute",
+          position: "absolute" as const,
           bottom: 0,
           left: 0,
           right: 0,

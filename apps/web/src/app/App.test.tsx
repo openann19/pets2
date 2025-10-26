@@ -11,12 +11,12 @@ jest.mock('../services/feedbackService', () => ({
 }));
 
 jest.mock('../contexts/AuthContext', () => ({
-  AuthProvider: ({ children }: any) => <div data-testid="auth-provider">{children}</div>,
+  AuthProvider: ({ children }: React.PropsWithChildren) => <div data-testid="auth-provider">{children}</div>,
   useAuth: () => ({ user: null, loading: false }),
 }));
 
 jest.mock('../contexts/SocketContext', () => ({
-  SocketProvider: ({ children }: any) => <div data-testid="socket-provider">{children}</div>,
+  SocketProvider: ({ children }: React.PropsWithChildren) => <div data-testid="socket-provider">{children}</div>,
 }));
 
 test('App component exists', () => {

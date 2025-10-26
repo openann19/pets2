@@ -3,11 +3,12 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { PetFormData } from "../../hooks/usePetForm";
+import type { FormFieldValue } from "../../types/forms";
 
 interface PetIntentHealthSectionProps {
   formData: PetFormData;
   errors: Record<string, string>;
-  onUpdateFormData: (field: string, value: any) => void;
+  onUpdateFormData: (field: string, value: FormFieldValue) => void;
 }
 
 const intentOptions = [

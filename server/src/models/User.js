@@ -187,6 +187,15 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
   emailVerificationToken: String,
   emailVerificationExpires: Date,
+
+  // Push notification tokens for mobile devices
+  pushTokens: [{
+    token: { type: String, required: true },
+    platform: { type: String, enum: ['ios', 'android', 'web'], default: 'unknown' },
+    deviceId: { type: String, required: true },
+    registeredAt: { type: Date, default: Date.now },
+    lastUsedAt: { type: Date, default: Date.now }
+  }],
   lastLoginAt: { type: Date },
   lastLoginIP: { type: String },
   // Two-Factor Authentication

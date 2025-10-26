@@ -35,8 +35,8 @@ export interface BaseButtonProps extends TouchableOpacityProps {
   size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
-  leftIcon?: keyof typeof Ionicons.glyphMap;
-  rightIcon?: keyof typeof Ionicons.glyphMap;
+  leftIcon?: string;
+  rightIcon?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
   onPress?: () => void;

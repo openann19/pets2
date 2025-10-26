@@ -680,6 +680,6 @@ export const Device = {
 };
 
 // Export utility objects for use by other files (e.g., DarkTheme.ts)
-export { Typography, Spacing, BorderRadius, Shadows };
+export { Colors, Typography, Spacing, BorderRadius, Shadows };
 
 export default GlobalStyles;

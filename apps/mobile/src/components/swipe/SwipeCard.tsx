@@ -1,14 +1,20 @@
 import React from "react";
-import { Animated, Dimensions, Image, StyleSheet, View } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  Image,
+  StyleSheet,
+  View,
+  type GestureResponderHandlers,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-import { EliteButton } from "../components/EliteButton";
-import { GlowContainer } from "../components/GlowContainer";
-import { GlassContainer } from "../components/GlassContainer";
-import { GradientText } from "../components/GradientText";
-import { PremiumBody } from "../components/PremiumBody";
-import { Pet } from "../types/api";
+import { EliteButton } from "../EliteComponents";
+import { GlowContainer } from "../GlowShadowSystem";
+import { GlassContainer } from "../GlassMorphism";
+import { GradientText, PremiumBody } from "../PremiumTypography";
+import type { Pet } from "../../types/api";
 import { tokens } from "@pawfectmatch/design-tokens";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -19,7 +25,7 @@ interface SwipeCardProps {
   rotate: Animated.AnimatedInterpolation;
   likeOpacity: Animated.AnimatedInterpolation;
   nopeOpacity: Animated.AnimatedInterpolation;
-  panHandlers: any;
+  panHandlers: GestureResponderHandlers;
 }
 
 export function SwipeCard({

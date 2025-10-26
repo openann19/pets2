@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 // Mock framer-motion to test animation logic without actual animations
 jest.mock('framer-motion', () => ({
   motion: {
-    div: React.forwardRef(({ children, whileHover, whileTap, variants, layoutId, ...props }: any, ref: any) => (
+    div: React.forwardRef<HTMLDivElement, React.ComponentProps<'div'> & { whileHover?: unknown; whileTap?: unknown; variants?: unknown; layoutId?: string }>(({ children, whileHover, whileTap, variants, layoutId, ...props }, ref) => (
       <div 
         ref={ref}
         data-testid="motion-div"
@@ -18,7 +18,7 @@ jest.mock('framer-motion', () => ({
         {children}
       </div>
     )),
-    button: React.forwardRef(({ children, whileHover, whileTap, ...props }: any, ref: any) => (
+    button: React.forwardRef<HTMLButtonElement, React.ComponentProps<'button'> & { whileHover?: unknown; whileTap?: unknown }>(({ children, whileHover, whileTap, ...props }, ref) => (
       <button 
         ref={ref}
         data-testid="motion-button"
@@ -30,7 +30,7 @@ jest.mock('framer-motion', () => ({
       </button>
     )),
   },
-  AnimatePresence: ({ children }: any) => <div data-testid="animate-presence">{children}</div>,
+  AnimatePresence: ({ children }: React.PropsWithChildren) => <div data-testid="animate-presence">{children}</div>,
 }));
 
 // Test component that uses our premium animation patterns

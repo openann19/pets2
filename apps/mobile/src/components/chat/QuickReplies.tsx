@@ -1,7 +1,6 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
-import { EliteButton } from "../EliteButton";
-import { FadeInUp } from "../FadeInUp";
+import { EliteButton, FadeInUp } from "../EliteComponents";
 import { tokens } from "@pawfectmatch/design-tokens";
 
 interface QuickRepliesProps {

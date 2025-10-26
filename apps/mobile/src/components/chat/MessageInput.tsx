@@ -2,9 +2,9 @@ import React, { useCallback, useRef, useState } from "react";
 import { View, TextInput, StyleSheet, Alert } from "react-native";
 import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
-import { EliteButton } from "../EliteButton";
-import { GlassContainer } from "../GlassContainer";
-import { PremiumBody } from "../PremiumBody";
+import { EliteButton } from "../EliteComponents";
+import { GlassContainer } from "../GlassMorphism";
+import { PremiumBody } from "../PremiumTypography";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -230,11 +230,11 @@ const styles = StyleSheet.create({
     maxHeight: 120,
   },
   textInput: {
-    borderRadius: tokens.borderRadius.xl,
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    fontSize: tokens.typography.body.fontSize,
-    lineHeight: tokens.typography.body.lineHeight,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    fontSize: 16,
+    lineHeight: 24,
     borderWidth: 1,
     textAlignVertical: "center",
   },
@@ -250,11 +250,11 @@ const styles = StyleSheet.create({
   },
   characterCountContainer: {
     position: "absolute",
-    bottom: tokens.spacing.xs,
-    right: tokens.spacing.sm,
+    bottom: 4,
+    right: 8,
     backgroundColor: "rgba(255,255,255,0.95)",
-    paddingHorizontal: tokens.spacing.xs,
-    paddingVertical: tokens.spacing.xs,
-    borderRadius: tokens.borderRadius.sm,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
 });

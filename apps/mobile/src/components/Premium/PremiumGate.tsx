@@ -3,7 +3,7 @@
  * Controls access to premium features with elegant upgrade prompts
  */
 
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, type ComponentProps } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
@@ -105,7 +105,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   { backgroundColor: `${colors.primary}20` },
                 ]}
               >
-                <Ionicons name={icon as any} size={40} color={colors.primary} />
+                <Ionicons name={icon as ComponentProps<typeof Ionicons>['name']} size={40} color={colors.primary} />
               </View>
 
               {/* Text Content */}

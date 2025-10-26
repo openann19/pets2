@@ -16,15 +16,22 @@ export { default as UnifiedAnimations } from "../hooks/useUnifiedAnimations";
 export {
   useSpringAnimation,
   useEntranceAnimation,
-  useStaggeredAnimation,
   usePressAnimation,
   useGlowAnimation,
   useMagneticEffect,
   useSwipeGesture,
+} from "../hooks/useUnifiedAnimations";
+
+// Export premium animation hooks from usePremiumAnimations
+export {
   useRippleEffect,
   useShimmerEffect,
-  useScrollAnimation,
-} from "../hooks/useUnifiedAnimations";
+  useStaggeredAnimation,
+  useGlowEffect,
+  usePulseEffect,
+  useFloatingEffect,
+  useParallaxEffect,
+} from "../hooks/usePremiumAnimations";
 
 // === BUTTON SYSTEM ===
 export { default as BaseButton } from "./buttons/BaseButton";

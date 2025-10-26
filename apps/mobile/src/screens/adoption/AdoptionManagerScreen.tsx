@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Haptics from "expo-haptics";
 import React, { useState, useEffect } from "react";
 import {
@@ -35,18 +34,9 @@ import {
   Spacing,
   Shadows,
 } from "../../styles/GlobalStyles";
+import type { RootStackScreenProps } from "../../navigation/types";
 
-type AdoptionStackParamList = {
-  AdoptionManager: undefined;
-  PetDetails: { petId: string };
-  ApplicationReview: { applicationId: string };
-  CreateListing: undefined;
-};
-
-type AdoptionManagerScreenProps = NativeStackScreenProps<
-  AdoptionStackParamList,
-  "AdoptionManager"
->;
+type AdoptionManagerScreenProps = RootStackScreenProps<"AdoptionManager">;
 
 interface PetListing {
   id: string;
@@ -111,9 +101,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
         const applicationsData = await adoptionAPI.getApplications();
         setApplications(applicationsData as AdoptionApplication[]);
       }
-    } catch (err: any) {
-      logger.error("Failed to load adoption data:", { error });
-      setError(err.message || "Failed to load data. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to load data. Please try again.";
+      logger.error("Failed to load adoption data:", { error: err });
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -138,7 +129,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
 
   const handleTabPress = (
     tab: "listings" | "applications",
-    scaleValue: any,
+    scaleValue: import("react-native-reanimated").SharedValue<number>,
   ) => {
     setActiveTab(tab);
     scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
@@ -149,7 +140,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const handleStatusChange = (pet: PetListing, newStatus: string) => {
     setPetListings((prev) =>
       prev.map((p) =>
-        p.id === pet.id ? { ...p, status: newStatus as any } : p,
+        p.id === pet.id ? { ...p, status: newStatus as PetListing['status'] } : p,
       ),
     );
     setShowStatusModal(false);

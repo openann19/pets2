@@ -22,7 +22,9 @@
     "allowJs": true,
     "noEmit": true, // Metro handles bundling
     "isolatedModules": true,
-    "skipLibCheck": true // Skip type checking of declaration files to avoid conflicts
+    "skipLibCheck": true, // Skip type checking of declaration files to avoid conflicts
+    "module": "esnext", // Enable dynamic imports for lazy loading
+    "moduleResolution": "bundler"
   },
   "include": [
     "src/**/*.ts",

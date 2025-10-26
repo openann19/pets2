@@ -22,9 +22,9 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import {
   useGlowAnimation,
-  useShimmerEffect,
   useEntranceAnimation,
 } from "../../hooks/useUnifiedAnimations";
+import { useShimmerEffect } from "../../hooks/usePremiumAnimations";
 import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===

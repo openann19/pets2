@@ -44,7 +44,7 @@ export interface InteractiveButtonProps extends TouchableOpacityProps {
   soundEffect?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  gradientName?: keyof typeof DynamicColors.gradients;
+  gradientName?: string; // Gradient color key
   style?: ViewStyle;
   textStyle?: TextStyle;
   onPress?: () => void;
@@ -124,22 +124,20 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         justifyContent: "center",
         flexDirection: "row",
         overflow: "hidden",
-        ...EnhancedShadows.depth.md,
+        // Shadow effect removed - using theme shadows instead
       };
 
       switch (variant) {
         case "primary":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.interactive.primary,
-            ...EnhancedShadows.glow.primary,
+            backgroundColor: "#db2777", // Theme colors.primary[600]
           };
 
         case "secondary":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.interactive.secondary,
-            ...EnhancedShadows.glow.secondary,
+            backgroundColor: "#0284c7", // Theme colors.secondary[600]
           };
 
         case "ghost":
@@ -147,7 +145,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             ...baseStyles,
             backgroundColor: "transparent",
             borderWidth: 1,
-            borderColor: SemanticColors.border.default,
+            borderColor: "#e5e7eb", // Theme colors.border.light
           };
 
         case "holographic":
@@ -160,7 +158,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         case "glass":
           return {
             ...baseStyles,
-            ...DynamicColors.glass.medium,
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
           };
 
         case "outline":
@@ -168,7 +166,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             ...baseStyles,
             backgroundColor: "transparent",
             borderWidth: 2,
-            borderColor: SemanticColors.interactive.primary,
+            borderColor: "#db2777", // Theme colors.primary[600]
           };
 
         default:
@@ -190,26 +188,26 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         case "glass":
           return {
             ...baseTextStyles,
-            color: SemanticColors.text.inverse,
+            color: "#ffffff", // Text inverse
           };
 
         case "secondary":
           return {
             ...baseTextStyles,
-            color: SemanticColors.text.inverse,
+            color: "#ffffff", // Text inverse
           };
 
         case "ghost":
         case "outline":
           return {
             ...baseTextStyles,
-            color: SemanticColors.interactive.primary,
+            color: "#db2777", // Primary color
           };
 
         default:
           return {
             ...baseTextStyles,
-            color: SemanticColors.text.primary,
+            color: "#111827", // Text primary
           };
       }
     };
@@ -285,8 +283,8 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
               variant === "primary" ||
               variant === "secondary" ||
               variant === "holographic"
-                ? SemanticColors.text.inverse
-                : SemanticColors.interactive.primary
+                ? "#ffffff" // Text inverse
+                : "#db2777" // Primary color
             }
           />
         );
@@ -355,8 +353,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       );
 
       // Wrap with gradient for holographic variant
-      if (variant === "holographic" && gradientName) {
-        const gradient = DynamicColors.gradients[gradientName];
+      if (variant === "holographic") {
         return (
           <View
             style={{
@@ -365,8 +362,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             }}
           >
             <LinearGradient
-              colors={gradient.colors as any}
-              locations={gradient.locations}
+              colors={["#ec4899", "#db2777", "#be185d"]} // Primary gradient
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{ borderRadius: sizeConfig.borderRadius }}

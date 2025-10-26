@@ -14,6 +14,10 @@ const {
   markNotificationRead
 } = require('../controllers/notificationController');
 
+// Add push token registration controllers
+const registerPushToken = require('../controllers/pushTokenController').registerPushToken;
+const unregisterPushToken = require('../controllers/pushTokenController').unregisterPushToken;
+
 const router = express.Router();
 
 // Validation rules
@@ -137,6 +141,40 @@ router.put('/:notificationId/read', authenticateToken, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to mark notification as read',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @route   POST /api/notifications/register-token
+ * @desc    Register push notification token for device
+ * @access  Private
+ */
+router.post('/register-token', authenticateToken, async (req, res) => {
+  try {
+    await registerPushToken(req, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to register push token',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * @route   DELETE /api/notifications/unregister-token
+ * @desc    Unregister push notification token for device
+ * @access  Private
+ */
+router.delete('/unregister-token', authenticateToken, async (req, res) => {
+  try {
+    await unregisterPushToken(req, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to unregister push token',
       error: error.message
     });
   }

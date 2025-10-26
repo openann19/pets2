@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import AnimatedButton from "../components/AnimatedButton";
+import { EliteButton } from "../EliteComponents";
 
 interface HelpContactCardProps {
   onPress: () => void;
@@ -12,12 +12,11 @@ export const HelpContactCard: React.FC<HelpContactCardProps> = ({
   onPress,
 }) => {
   return (
-    <AnimatedButton
+    <EliteButton
       style={styles.contactCard}
       onPress={onPress}
       variant="primary"
       size="lg"
-      hapticFeedback
     >
       <BlurView intensity={20} style={styles.contactBlur}>
         <View style={styles.contactContent}>
@@ -35,7 +34,7 @@ export const HelpContactCard: React.FC<HelpContactCardProps> = ({
           />
         </View>
       </BlurView>
-    </AnimatedButton>
+    </EliteButton>
   );
 };
 

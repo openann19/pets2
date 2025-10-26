@@ -15,18 +15,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 
-// Define the navigation props type
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  ForgotPassword: undefined;
-  ResetPassword: { token: string };
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type ForgotPasswordScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ForgotPassword"
->;
+type ForgotPasswordScreenProps = RootStackScreenProps<"ForgotPassword">;
 
 function ForgotPasswordScreen({
   navigation,

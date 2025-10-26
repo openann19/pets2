@@ -16,11 +16,9 @@ import {
   View,
 } from "react-native";
 import { _subscriptionAPI as subscriptionApi } from "../../services/api";
+import type { RootStackParamList } from "../../navigation/types";
 
-type RootStackParamList = {
-  Premium: undefined;
-  [key: string]: undefined | object;
-};
+type NavigationProp = NavigationProp<RootStackParamList>;
 
 interface Subscription {
   id: string;

@@ -43,13 +43,23 @@ module.exports = function attachWebRTCNamespace(io) {
         const { callId: extractedCallId, matchId, callerId, callerName, callType } = callData;
         callId = extractedCallId;
         
-        // Get the match to find the other user
-        // In a real implementation, you'd query your database
-        // For now, we'll simulate finding the other user
-        const otherUserId = await getOtherUserFromMatch(matchId, callerId);
+        // Get the match to find the other user from database
+        const Match = require('../models/Match');
+        const match = await Match.findById(matchId);
+        
+        if (!match) {
+          socket.emit('call-error', { message: 'Match not found' });
+          return;
+        }
+
+        // Determine the other user ID based on which participant is the caller
+        const otherUserId = match.user1?.toString() === callerId 
+          ? match.user2?.toString() 
+          : match.user1?.toString();
         
         if (!otherUserId) {
-          socket.emit('call-error', { message: 'User not found' });
+          logger.error('Could not determine other user from match', { matchId, callerId });
+          socket.emit('call-error', { message: 'Could not find call recipient' });
           return;
         }
 

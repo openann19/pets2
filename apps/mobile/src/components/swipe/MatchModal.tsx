@@ -1,15 +1,11 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 
-import { EliteButton } from "../EliteButton";
-import { HolographicContainer } from "../HolographicContainer";
-import { GlowContainer } from "../GlowContainer";
-import { PremiumHeading } from "../PremiumHeading";
-import { PremiumBody } from "../PremiumBody";
-import { ParticleEffect } from "../ParticleEffect";
-import { ScaleIn } from "../ScaleIn";
-import { FadeInUp } from "../FadeInUp";
-import { Pet } from "../../types/api";
+import { EliteButton, ScaleIn, FadeInUp } from "../EliteComponents";
+import { HolographicContainer, ParticleEffect } from "../HolographicEffects";
+import { GlowContainer } from "../GlowShadowSystem";
+import { PremiumHeading, PremiumBody } from "../PremiumTypography";
+import type { Pet } from "../../types/api";
 import { tokens } from "@pawfectmatch/design-tokens";
 
 const { width: screenWidth } = tokens.dimensions.screen;

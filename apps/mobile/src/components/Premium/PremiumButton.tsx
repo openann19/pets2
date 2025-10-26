@@ -19,7 +19,7 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  TextStyle,
+  type TextStyle,
 } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -31,7 +31,7 @@ interface PremiumButtonProps {
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   iconPosition?: "left" | "right";
   fullWidth?: boolean;
   haptic?: "light" | "medium" | "heavy";

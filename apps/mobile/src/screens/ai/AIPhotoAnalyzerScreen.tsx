@@ -23,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { AIScreenProps } from "../../navigation/types";
 import { logger } from "../../services/logger";
+import { api } from "../../services/api";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -156,65 +157,15 @@ export default function AIPhotoAnalyzerScreen({
 
     setIsAnalyzing(true);
     try {
-      // Create FormData for image upload
-      const formData = new FormData();
-      formData.append(
-        "image",
-        JSON.stringify({
-          uri: selectedImage,
-          type: "image/jpeg",
-          name: "pet-photo.jpg",
-        }),
-      );
-      formData.append("userId", "unknown");
+      // Call real AI photo analysis API
+      const photos = [selectedImage];
+      const analysis = await api.ai.analyzePhotos(photos);
 
-      // Mock API call for demo purposes
-      const response = {
-        success: true,
-        data: {
-          breed: {
-            primary: "Mixed Breed",
-            confidence: 0.75,
-          },
-          health: {
-            overall: "good" as const,
-            score: 85,
-            indicators: {
-              coat: "Healthy and shiny",
-              eyes: "Bright and alert",
-              posture: "Confident stance",
-              energy: "Energetic appearance",
-            },
-          },
-          quality: {
-            score: 88,
-            factors: {
-              lighting: 90,
-              clarity: 85,
-              composition: 88,
-              expression: 92,
-            },
-          },
-          characteristics: {
-            age: "Adult",
-            size: "Medium",
-            temperament: ["Friendly", "Playful"],
-            features: ["Well-groomed", "Alert expression"],
-          },
-          suggestions: [
-            "Great photo! Consider adding more variety in poses",
-            "Try capturing different angles to show personality",
-            "Natural lighting works well for this pet",
-          ],
-          tags: ["cute", "friendly", "well-groomed"],
-        },
-      };
-
-      if (response.success) {
+      if (analysis) {
         const result: PhotoAnalysisResult = {
-          breed: response.data.breed ?? {
-            primary: "Mixed Breed",
-            confidence: 0.7,
+          breed: {
+            primary: analysis.breed_analysis.primary_breed,
+            confidence: analysis.breed_analysis.confidence,
           },
           health: response.data.health ?? {
             overall: "good" as const,

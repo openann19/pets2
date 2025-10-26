@@ -6,9 +6,9 @@ import { AdvancedPetFilters } from '../AdvancedPetFilters';
 // Mock framer-motion to avoid animation issues in tests
 jest.mock('framer-motion', () => ({
     motion: {
-        form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+        form: ({ children, ...props }: React.ComponentProps<'form'>) => <form {...props}>{children}</form>,
+        div: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
+        button: ({ children, ...props }: React.ComponentProps<'button'>) => <button {...props}>{children}</button>,
     },
 }));
 

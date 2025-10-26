@@ -37,16 +37,9 @@ import {
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 
-type RootStackParamList = {
-  CreatePet: undefined;
-  MyPets: undefined;
-  Home: undefined;
-};
+import type { RootStackScreenProps } from "../../navigation/types";
 
-type CreatePetScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "CreatePet"
->;
+type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 
 interface PhotoItem {
   id: string;

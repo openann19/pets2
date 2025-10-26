@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, type ComponentProps } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -217,7 +217,7 @@ export const ElitePageHeader: React.FC<ElitePageHeaderProps> = ({
 };
 
 // === PREMIUM GRADIENT COLORS ===
-const PREMIUM_GRADIENTS = {
+export const PREMIUM_GRADIENTS = {
   primary: ["#ec4899", "#f472b6", "#f9a8d4"],
   secondary: ["#0ea5e9", "#38bdf8", "#7dd3fc"],
   premium: ["#a855f7", "#c084fc", "#d8b4fe"],
@@ -229,7 +229,7 @@ const PREMIUM_GRADIENTS = {
 };
 
 // === PREMIUM SHADOWS ===
-const PREMIUM_SHADOWS = {
+export const PREMIUM_SHADOWS = {
   primaryGlow: {
     shadowColor: "#ec4899",
     shadowOffset: { width: 0, height: 8 },
@@ -272,7 +272,7 @@ interface EliteButtonProps extends TouchableOpacityProps {
     | "holographic"
     | "neon";
   size?: "sm" | "md" | "lg" | "xl";
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   loading?: boolean;
   gradient?: string[];
   ripple?: boolean;
@@ -812,6 +812,134 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   );
 };
 
+// === ANIMATION COMPONENTS ===
+
+interface FadeInUpProps {
+  children: ReactNode;
+  delay?: number;
+}
+
+export const FadeInUp: React.FC<FadeInUpProps> = ({ children, delay = 0 }) => {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+
+  useEffect(() => {
+    setTimeout(() => {
+      opacity.value = withTiming(1, { duration: 300 });
+      translateY.value = withTiming(0, { duration: 300 });
+    }, delay);
+  }, [delay]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+};
+
+interface ScaleInProps {
+  children: ReactNode;
+  delay?: number;
+}
+
+export const ScaleIn: React.FC<ScaleInProps> = ({ children, delay = 0 }) => {
+  const scale = useSharedValue(0.8);
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    setTimeout(() => {
+      scale.value = withSpring(1, { damping: 15 });
+      opacity.value = withTiming(1, { duration: 300 });
+    }, delay);
+  }, [delay]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+};
+
+interface StaggeredContainerProps {
+  children: ReactNode;
+  delay?: number;
+}
+
+export const StaggeredContainer: React.FC<StaggeredContainerProps> = ({ 
+  children, 
+  delay = 100 
+}) => {
+  return <View>{children}</View>;
+};
+
+interface GestureWrapperProps {
+  children: ReactNode;
+  onSwipe?: (direction: string) => void;
+}
+
+export const GestureWrapper: React.FC<GestureWrapperProps> = ({ 
+  children, 
+  onSwipe 
+}) => {
+  return <View>{children}</View>;
+};
+
+// === ELITE LOADING COMPONENT ===
+interface EliteLoadingProps {
+  size?: "small" | "large";
+  color?: string;
+}
+
+export const EliteLoading: React.FC<EliteLoadingProps> = ({
+  size = "large",
+  color = Colors.primary,
+}) => {
+  return (
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <ActivityIndicator size={size} color={color} />
+    </View>
+  );
+};
+
+// === ELITE EMPTY STATE COMPONENT ===
+interface EliteEmptyStateProps {
+  icon?: string;
+  title: string;
+  message: string;
+}
+
+export const EliteEmptyState: React.FC<EliteEmptyStateProps> = ({
+  icon = "ellipse-outline",
+  title,
+  message,
+}) => {
+  const { colors } = useTheme();
+
+  return (
+    <View style={{ alignItems: "center", justifyContent: "center", padding: Spacing.xl }}>
+      <Ionicons name={icon as ComponentProps<typeof Ionicons>['name']} size={64} color={Colors.gray400} />
+      <Text style={{ 
+        fontSize: 20, 
+        fontWeight: "bold", 
+        marginTop: Spacing.lg,
+        color: Colors.gray700 
+      }}>
+        {title}
+      </Text>
+      <Text style={{ 
+        fontSize: 14, 
+        marginTop: Spacing.sm,
+        color: Colors.gray600,
+        textAlign: "center" 
+      }}>
+        {message}
+      </Text>
+    </View>
+  );
+};
+
 export default {
   EliteContainer,
   EliteScrollContainer,
@@ -819,6 +947,12 @@ export default {
   ElitePageHeader,
   EliteCard,
   EliteButton,
+  EliteLoading,
+  EliteEmptyState,
+  FadeInUp,
+  ScaleIn,
+  StaggeredContainer,
+  GestureWrapper,
   PREMIUM_GRADIENTS,
   PREMIUM_SHADOWS,
 };

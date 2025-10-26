@@ -90,9 +90,15 @@ export const Theme = {
       "3xl": 30,
       "4xl": 36,
       "5xl": 48,
+      "6xl": 60,
+      "7xl": 72,
+      "8xl": 96,
+      "9xl": 128,
     },
 
     fontWeight: {
+      thin: "100" as const,
+      extralight: "200" as const,
       light: "300" as const,
       normal: "400" as const,
       medium: "500" as const,
@@ -103,15 +109,39 @@ export const Theme = {
     },
 
     lineHeight: {
+      none: 1,
       tight: 1.25,
       normal: 1.5,
       relaxed: 1.75,
+      loose: 2,
     },
 
     letterSpacing: {
+      tighter: -0.05,
       tight: -0.025,
       normal: 0,
       wide: 0.025,
+      wider: 0.05,
+      widest: 0.1,
+    },
+
+    // Common text styles
+    body: {
+      fontSize: 16,
+      lineHeight: 24,
+      fontWeight: "400" as const,
+    },
+
+    caption: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontWeight: "400" as const,
+    },
+
+    heading: {
+      fontSize: 24,
+      lineHeight: 32,
+      fontWeight: "700" as const,
     },
   },
 

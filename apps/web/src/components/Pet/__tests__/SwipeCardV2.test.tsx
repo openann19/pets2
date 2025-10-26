@@ -11,19 +11,19 @@ import SwipeCardV2, { type PetCardData } from '../SwipeCardV2';
 // Mock framer-motion for testing
 jest.mock('framer-motion', () => ({
   motion: {
-    article: ({ children, ...props }: any) => <article {...props}>{children}</article>,
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    article: ({ children, ...props }: React.ComponentProps<'article'>) => <article {...props}>{children}</article>,
+    div: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
+    button: ({ children, ...props }: React.ComponentProps<'button'>) => <button {...props}>{children}</button>,
   },
   useMotionValue: () => ({ get: () => 0, set: jest.fn() }),
   useTransform: () => 0,
-  AnimatePresence: ({ children }: any) => children,
+  AnimatePresence: ({ children }: React.PropsWithChildren) => children,
 }));
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => (
+  default: ({ src, alt, ...props }: React.ComponentProps<'img'>) => (
     <img src={src} alt={alt} {...props} />
   ),
 }));

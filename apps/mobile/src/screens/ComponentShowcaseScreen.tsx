@@ -32,15 +32,9 @@ import {
 // Import legacy components for comparison
 import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 
-type RootStackParamList = {
-  ComponentShowcase: undefined;
-  Home: undefined;
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type ComponentShowcaseScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ComponentShowcase"
->;
+type ComponentShowcaseScreenProps = RootStackScreenProps<"ComponentShowcase">;
 
 // Mock data for demonstration
 const mockPet = {
