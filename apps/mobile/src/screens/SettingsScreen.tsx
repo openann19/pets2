@@ -1,4 +1,4 @@
-import { Ionicons, type IoniconsProps } from "@expo/vector-icons";
+import { Ionicons, type IconProps } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import React, { useState, useEffect, type ComponentProps } from "react";
 import {
@@ -37,16 +37,17 @@ interface SettingItem {
 
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   const [notifications, setNotifications] = useState({
+    email: true,
+    push: true,
     matches: true,
     messages: true,
-    likes: false,
-    reminders: true,
   });
 
   const [preferences, setPreferences] = useState({
-    locationServices: true,
-    analytics: false,
-    darkMode: false,
+    maxDistance: 50,
+    ageRange: { min: 0, max: 30 },
+    species: [] as string[],
+    intents: [] as string[],
   });
 
   const [deletionStatus, setDeletionStatus] = useState<{
@@ -74,6 +75,22 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
   const notificationSettings: SettingItem[] = [
     {
+      id: "email",
+      title: "Email Notifications",
+      subtitle: "Receive notifications via email",
+      icon: "mail",
+      type: "toggle",
+      value: notifications.email,
+    },
+    {
+      id: "push",
+      title: "Push Notifications",
+      subtitle: "Receive push notifications",
+      icon: "notifications",
+      type: "toggle",
+      value: notifications.push,
+    },
+    {
       id: "matches",
       title: "New Matches",
       subtitle: "Get notified when you have a new match",
@@ -89,48 +106,17 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       type: "toggle",
       value: notifications.messages,
     },
-    {
-      id: "likes",
-      title: "Likes & Super Likes",
-      subtitle: "Notifications for likes and super likes",
-      icon: "thumbs-up",
-      type: "toggle",
-      value: notifications.likes,
-    },
-    {
-      id: "reminders",
-      title: "Reminders",
-      subtitle: "Daily reminders to check your matches",
-      icon: "notifications",
-      type: "toggle",
-      value: notifications.reminders,
-    },
   ];
 
+  // Note: These are examples only - the actual preferences structure is for match filtering
   const preferenceSettings: SettingItem[] = [
+    // Add UI preferences here as needed - but won't be in User["preferences"]
     {
-      id: "locationServices",
-      title: "Location Services",
-      subtitle: "Allow access to location for better matches",
-      icon: "location",
-      type: "toggle",
-      value: preferences.locationServices,
-    },
-    {
-      id: "analytics",
-      title: "Analytics",
-      subtitle: "Help improve the app with usage data",
-      icon: "analytics",
-      type: "toggle",
-      value: preferences.analytics,
-    },
-    {
-      id: "darkMode",
-      title: "Dark Mode",
-      subtitle: "Switch to dark theme",
-      icon: "moon",
-      type: "toggle",
-      value: preferences.darkMode,
+      id: "placeholder",
+      title: "Preferences",
+      subtitle: "Coming soon",
+      icon: "settings",
+      type: "navigation",
     },
   ];
 
@@ -218,17 +204,20 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   ) => {
     try {
       if (category === "notifications") {
-        setNotifications((prev) => ({ ...prev, [id]: value }));
-        // Update API
+        const updatedNotifications = { ...notifications, [id]: value };
+        setNotifications(updatedNotifications);
+        // Update API - send full User["preferences"] structure
         await matchesAPI.updateUserSettings({
-          notifications: { ...notifications, [id]: value },
+          maxDistance: preferences.maxDistance,
+          ageRange: preferences.ageRange,
+          species: preferences.species,
+          intents: preferences.intents,
+          notifications: updatedNotifications,
         });
       } else {
-        setPreferences((prev) => ({ ...prev, [id]: value }));
-        // Update API
-        await matchesAPI.updateUserSettings({
-          preferences: { ...preferences, [id]: value },
-        });
+        // Preferences are already in the right structure
+        const updatedPreferences = { ...preferences, [id]: value };
+        setPreferences(updatedPreferences);
       }
     } catch (error) {
       logger.error("Failed to update settings:", { error });

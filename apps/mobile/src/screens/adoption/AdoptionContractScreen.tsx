@@ -59,7 +59,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const updateContractTerms = (field: string, value: any) => {
+  const updateContractTerms = (field: string, value: import("../../types/forms").FormFieldValue) => {
     setContractTerms((prev) => ({ ...prev, [field]: value }));
   };
 
