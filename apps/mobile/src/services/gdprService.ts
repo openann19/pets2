@@ -4,7 +4,11 @@
  */
 
 import { logger } from "@pawfectmatch/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "./api";
+
+const DELETION_TOKEN_KEY = "gdpr_deletion_token";
+const DELETION_REQUEST_KEY = "gdpr_deletion_request";
 
 export interface AccountDeletionStatus {
   success: boolean;
@@ -50,15 +54,38 @@ class GDPRService {
     deletionId: string;
   }> {
     try {
-      const response = await api.delete("/users/delete-account", {
-        password,
-        reason,
-        feedback,
+      const response = await api.request<{
+        success: boolean;
+        message: string;
+        gracePeriodEndsAt: string;
+        deletionId: string;
+      }>("/users/delete-account", {
+        method: "DELETE",
+        body: {
+          password,
+          reason,
+          feedback,
+        },
       });
       
       logger.info("Account deletion requested", {
         deletionId: response.deletionId,
       });
+
+      // Store deletion token and request info in AsyncStorage
+      try {
+        await AsyncStorage.setItem(DELETION_TOKEN_KEY, response.deletionId);
+        await AsyncStorage.setItem(
+          DELETION_REQUEST_KEY,
+          JSON.stringify({
+            deletionId: response.deletionId,
+            gracePeriodEndsAt: response.gracePeriodEndsAt,
+            requestedAt: new Date().toISOString(),
+          }),
+        );
+      } catch (storageError) {
+        logger.error("Failed to store deletion token", { storageError });
+      }
       
       return {
         success: response.success,
@@ -78,7 +105,10 @@ class GDPRService {
    */
   async cancelDeletion(token: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.post("/users/cancel-deletion", { token });
+      const response = await api.request<{ success: boolean; message: string }>("/users/cancel-deletion", {
+        method: "POST",
+        body: { token },
+      });
       logger.info("Account deletion cancelled", { token });
       return response;
     } catch (error) {
@@ -93,7 +123,10 @@ class GDPRService {
    */
   async confirmDeletion(token: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.post("/users/confirm-deletion", { token });
+      const response = await api.request<{ success: boolean; message: string }>("/users/confirm-deletion", {
+        method: "POST",
+        body: { token },
+      });
       logger.info("Account deletion confirmed", { token });
       return response;
     } catch (error) {
@@ -169,6 +202,49 @@ class GDPRService {
       return status.daysRemaining ?? null;
     } catch {
       return null;
+    }
+  }
+
+  /**
+   * Get stored deletion token from AsyncStorage
+   */
+  async getStoredDeletionToken(): Promise<string | null> {
+    try {
+      const token = await AsyncStorage.getItem(DELETION_TOKEN_KEY);
+      return token;
+    } catch (error) {
+      logger.error("Failed to get deletion token from storage", { error });
+      return null;
+    }
+  }
+
+  /**
+   * Get stored deletion request info from AsyncStorage
+   */
+  async getStoredDeletionRequest(): Promise<{
+    deletionId: string;
+    gracePeriodEndsAt: string;
+    requestedAt: string;
+  } | null> {
+    try {
+      const requestStr = await AsyncStorage.getItem(DELETION_REQUEST_KEY);
+      if (!requestStr) return null;
+      return JSON.parse(requestStr);
+    } catch (error) {
+      logger.error("Failed to get deletion request from storage", { error });
+      return null;
+    }
+  }
+
+  /**
+   * Clear stored deletion data from AsyncStorage
+   */
+  async clearStoredDeletionData(): Promise<void> {
+    try {
+      await AsyncStorage.multiRemove([DELETION_TOKEN_KEY, DELETION_REQUEST_KEY]);
+      logger.info("Deletion data cleared from storage");
+    } catch (error) {
+      logger.error("Failed to clear deletion data from storage", { error });
     }
   }
 }

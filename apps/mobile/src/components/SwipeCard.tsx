@@ -27,6 +27,7 @@ import {
   PanResponder,
   Platform,
   AccessibilityInfo,
+  type AnimatedInterpolation,
 } from "react-native";
 
 import { useTheme } from "../contexts/ThemeContext";
@@ -156,9 +157,13 @@ const SwipeCard = React.memo(function SwipeCard({
         return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
       },
       onPanResponderGrant: () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const xValue = (pan.x as Animated.Value & { _value: number })._value || 0;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const yValue = (pan.y as Animated.Value & { _value: number })._value || 0;
         pan.setOffset({
-          x: (pan.x as any)._value,
-          y: (pan.y as any)._value,
+          x: xValue,
+          y: yValue,
         });
         pan.setValue({ x: 0, y: 0 });
 
@@ -383,11 +388,11 @@ const SwipeCard = React.memo(function SwipeCard({
   // Calculate rotation based on pan position - memoized for performance
   const rotate = useMemo(
     () =>
-      pan.x.interpolate({
+      (pan.x.interpolate({
         inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
         outputRange: ["-10deg", "0deg", "10deg"],
         extrapolate: "clamp",
-      }),
+      }) as unknown as Animated.AnimatedInterpolation<string>),
     [pan.x],
   );
 

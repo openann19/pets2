@@ -55,9 +55,9 @@ export function useSwipeData(): SwipeData & SwipeActions {
   const filters: SwipeFilters = {
     species: filterStoreFilters.species ?? "",
     breed: filterStoreFilters.breed ?? "",
-    ageMin: filterStoreFilters.ageMin ?? 0,
-    ageMax: filterStoreFilters.ageMax ?? 20,
-    distance: filterStoreFilters.distance ?? 50,
+    ageMin: filterStoreFilters.minAge ?? 0,
+    ageMax: filterStoreFilters.maxAge ?? 20,
+    distance: filterStoreFilters.maxDistance ?? 50,
   };
 
   // Load pets from API

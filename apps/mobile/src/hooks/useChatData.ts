@@ -8,13 +8,16 @@ import { useSocket } from "./useSocket";
 
 export interface Message {
   _id: string;
+  matchId?: string;
   content: string;
   senderId: string;
   timestamp: string;
   read: boolean;
-  type: "text" | "image" | "emoji";
+  type: "text" | "image" | "emoji" | "voice";
   status?: "sending" | "sent" | "failed";
   error?: boolean;
+  audioUrl?: string;
+  duration?: number;
 }
 
 export interface ChatData {

@@ -38,7 +38,7 @@ export type TextVariant =
   | "label";
 
 export type TextWeight = keyof typeof Theme.typography.fontWeight;
-export type TextColor = keyof typeof Theme.semantic.text;
+export type TextColor = keyof typeof Theme.colors.text;
 
 export interface ModernTextProps extends TextProps {
   variant?: TextVariant;

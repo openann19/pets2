@@ -94,7 +94,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
         return {
           ...styles,
           backgroundColor: Theme.colors.neutral[0],
-          ...Theme.glow.primary,
+          ...Theme.glow.md,
         };
 
       case "holographic":
@@ -156,11 +156,11 @@ const FXContainer: React.FC<FXContainerProps> = ({
     const styles: ViewStyle = {};
 
     if (hasGlow && !disabled) {
-      Object.assign(styles, glowStyle.value);
+      Object.assign(styles, glowStyle);
     }
 
     if (hasEntrance && !disabled) {
-      Object.assign(styles, entranceStyle.value);
+      Object.assign(styles, entranceStyle);
     }
 
     return styles;
@@ -193,7 +193,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
     if (type === "gradient" || type === "holographic") {
       const gradient = gradientName ? Theme.gradients[gradientName] : null;
       const colors = gradientColors ||
-        gradient?.colors || [
+        (Array.isArray(gradient) ? gradient : null) || [
           Theme.colors.primary[500],
           Theme.colors.primary[400],
         ];

@@ -139,7 +139,6 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
               name="paw"
               size={80}
               color="#ffffff"
-              style={styles.pawIcon}
             />
           </View>
         </Animated.View>
@@ -266,11 +265,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-  },
-  pawIcon: {
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
   },
   textContainer: {
     alignItems: "center",

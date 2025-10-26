@@ -1,5 +1,6 @@
 import { Ionicons, type IconProps } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect, type ComponentProps } from "react";
 import {
   View,
@@ -22,6 +23,12 @@ import { matchesAPI } from "../services/api";
 import { useAuthStore } from "@pawfectmatch/core";
 import { gdprService } from "../services/gdprService";
 import type { RootStackScreenProps } from "../navigation/types";
+import {
+  ProfileSummarySection,
+  NotificationSettingsSection,
+  AccountSettingsSection,
+  DangerZoneSection
+} from './settings';
 
 type SettingsScreenProps = RootStackScreenProps<"Settings">;
 
@@ -329,11 +336,21 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                 text: "Cancel Deletion",
                 onPress: async () => {
                   try {
-                    await gdprService.cancelAccountDeletion();
+                    // Get the cancellation token from AsyncStorage
+                    const token = await AsyncStorage.getItem('gdpr_deletion_token') || '';
+                    if (!token) {
+                      Alert.alert("Error", "No deletion token found");
+                      return;
+                    }
+                    const result = await gdprService.cancelDeletion(token);
+                    
+                    // Clear the token
+                    await AsyncStorage.removeItem('gdpr_deletion_token');
+                    
                     setDeletionStatus({ isPending: false, daysRemaining: null });
                     Alert.alert(
                       "Deletion Cancelled",
-                      "Your account will NOT be deleted.",
+                      result.message || "Your account will NOT be deleted.",
                     );
                   } catch (error) {
                     logger.error("Failed to cancel deletion:", { error });
@@ -358,16 +375,53 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                 style: "destructive",
                 onPress: async () => {
                   try {
-                    const result = await gdprService.requestAccountDeletion();
-                    setDeletionStatus({
-                      isPending: true,
-                      daysRemaining: 30,
-                    });
-                    Alert.alert(
-                      "Deletion Scheduled",
-                      `Your account will be deleted on ${new Date(
-                        result.scheduledDeletionDate,
-                      ).toLocaleDateString()}. You have 30 days to cancel.`,
+                    // TODO: Show password input modal instead of Alert.prompt
+                    Alert.prompt(
+                      "Enter Password",
+                      "Please enter your password to confirm deletion:",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Delete",
+                          onPress: async (password) => {
+                            if (!password) {
+                              Alert.alert("Error", "Password is required");
+                              return;
+                            }
+                            try {
+                              const result = await gdprService.requestAccountDeletion(
+                                password,
+                                "User requested deletion",
+                                "No additional feedback"
+                              );
+                              
+                              // Store cancellation token in AsyncStorage
+                              await AsyncStorage.setItem('gdpr_deletion_token', result.deletionId);
+                              
+                              setDeletionStatus({
+                                isPending: true,
+                                daysRemaining: Math.ceil(
+                                  (new Date(result.gracePeriodEndsAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+                                ),
+                              });
+                              
+                              Alert.alert(
+                                "Deletion Scheduled",
+                                `Your account will be deleted on ${new Date(
+                                  result.gracePeriodEndsAt,
+                                ).toLocaleDateString()}. You have 30 days to cancel.`,
+                              );
+                            } catch (error) {
+                              logger.error("Account deletion failed:", { error });
+                              Alert.alert(
+                                "Error",
+                                "Failed to schedule account deletion. Please try again.",
+                              );
+                            }
+                          },
+                        },
+                      ],
+                      "secure-text"
                     );
                   } catch (error) {
                     logger.error("Account deletion failed:", { error });
@@ -500,50 +554,25 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Summary */}
-        <View style={styles.profileSection}>
-          <AdvancedCard
-            {...CardConfigs.glass({
-              interactions: ["hover", "press", "glow"],
-              haptic: "light",
-              apiAction: async () => {
-                const userProfile = await matchesAPI.getUserProfile();
-                logger.info("Loaded user profile:", { userProfile });
-              },
-              actions: [
-                {
-                  icon: "pencil",
-                  title: "Edit",
-                  variant: "minimal",
-                  onPress: () => {
-                    handleNavigation("profile");
-                  },
-                },
-              ],
-            })}
-            style={styles.profileCard}
-          >
-            <View style={styles.profileCardContent}>
-              <View style={styles.profileAvatar}>
-                <Ionicons name="person" size={32} color="#9CA3AF" />
-              </View>
-              <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>John Doe</Text>
-                <Text style={styles.profileEmail}>john@example.com</Text>
-                <View style={styles.profileStatus}>
-                  <View style={styles.statusDot} />
-                  <Text style={styles.statusText}>Free Plan</Text>
-                </View>
-              </View>
-            </View>
-          </AdvancedCard>
-        </View>
+        <ProfileSummarySection
+          onEditProfile={() => handleNavigation('profile')}
+        />
 
         {/* Settings Sections */}
-        {renderSection("Notifications", notificationSettings, "notifications")}
+        <NotificationSettingsSection
+          settings={notificationSettings}
+          onToggle={(id, value) => handleToggle('notifications', id, value)}
+        />
         {renderSection("Preferences", preferenceSettings, "preferences")}
-        {renderSection("Account", accountSettings)}
+        <AccountSettingsSection
+          settings={accountSettings}
+          onNavigate={handleNavigation}
+        />
         {renderSection("Support", supportSettings)}
-        {renderSection("Account Actions", dangerSettings)}
+        <DangerZoneSection
+          settings={dangerSettings}
+          onAction={handleAction}
+        />
 
         {/* App Version */}
         <View style={styles.versionSection}>

@@ -22,9 +22,9 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 interface SwipeCardProps {
   pet: Pet;
   position: Animated.ValueXY;
-  rotate: Animated.AnimatedInterpolation;
-  likeOpacity: Animated.AnimatedInterpolation;
-  nopeOpacity: Animated.AnimatedInterpolation;
+  rotate: Animated.AnimatedInterpolation<number>;
+  likeOpacity: Animated.AnimatedInterpolation<number>;
+  nopeOpacity: Animated.AnimatedInterpolation<number>;
   panHandlers: GestureResponderHandlers;
 }
 
@@ -56,15 +56,15 @@ export function SwipeCard({
     >
       {/* Premium Like/Nope Indicators */}
       <Animated.View style={[styles.likeIndicator, { opacity: likeOpacity }]}>
-        <GlowContainer color="success" intensity="heavy" animated={true}>
-          <GradientText gradient="success" size="lg" weight="bold" glow={true}>
+        <GlowContainer color="primary" intensity="heavy" animated={true}>
+          <GradientText gradient="primary" size="lg" weight="bold" glow={true}>
             LIKE
           </GradientText>
         </GlowContainer>
       </Animated.View>
       <Animated.View style={[styles.nopeIndicator, { opacity: nopeOpacity }]}>
-        <GlowContainer color="error" intensity="heavy" animated={true}>
-          <GradientText gradient="error" size="lg" weight="bold" glow={true}>
+        <GlowContainer color="secondary" intensity="heavy" animated={true}>
+          <GradientText gradient="secondary" size="lg" weight="bold" glow={true}>
             NOPE
           </GradientText>
         </GlowContainer>
@@ -114,9 +114,11 @@ export function SwipeCard({
           <PremiumBody size="base" weight="medium" gradient="primary">
             {pet.breed}
           </PremiumBody>
-          <PremiumBody size="sm" weight="regular">
-            {pet.distance} km away
-          </PremiumBody>
+          {pet.location?.coordinates && (
+            <PremiumBody size="sm" weight="regular">
+              Location available
+            </PremiumBody>
+          )}
         </View>
       </LinearGradient>
     </Animated.View>

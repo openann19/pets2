@@ -155,7 +155,9 @@ export function PinchZoom({
       lastTranslateY.value = translateY.value;
 
       runOnJS(triggerHaptic)("start");
-      runOnJS(onZoomStart)?.();
+      if (onZoomStart) {
+        runOnJS(onZoomStart as () => void)();
+      }
     })
     .onUpdate((event) => {
       if (disabled) return;
@@ -246,7 +248,9 @@ export function PinchZoom({
       }
 
       runOnJS(triggerHaptic)("end");
-      runOnJS(onZoomEnd)?.();
+      if (onZoomEnd) {
+        runOnJS(onZoomEnd as () => void)();
+      }
       runOnJS(handleScaleChange)(scale.value);
     });
 

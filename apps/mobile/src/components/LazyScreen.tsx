@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, type ComponentType } from "react";
+import React, { Suspense, lazy, type ComponentType, type ReactNode } from "react";
 import { logger } from "@pawfectmatch/core";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
@@ -97,11 +97,11 @@ class LazyScreenErrorBoundary extends React.Component<
     this.state = { hasError: false, error: null };
   }
 
-  static override getDerivedStateFromError(error: Error) {
+  static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
 
-  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     logger.error("LazyScreen Error:", { error, errorInfo });
   }
 

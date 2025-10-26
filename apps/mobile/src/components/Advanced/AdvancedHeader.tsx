@@ -154,8 +154,9 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         }
 
         // Execute API action from props
-        if (apiActions[button.type]) {
-          await apiActions[button.type]();
+        const action = apiActions?.[button.type];
+        if (action) {
+          await action();
         }
       } catch (error) {
         logger.error("Header button action failed:", { error });
@@ -243,10 +244,10 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         onPress={() => handleButtonPress(button)}
         disabled={button.disabled}
         loading={button.loading || isLoading}
-        style={[
+        style={StyleSheet.flatten([
           styles.headerButton,
           isLeft ? styles.leftButton : styles.rightButton,
-        ]}
+        ])}
         glowColor={variant === "primary" ? "#ec4899" : "#6b7280"}
       >
         {button.badge && button.badge > 0 && (
@@ -434,7 +435,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
       ]}
-      edges={["top"] as const}
+      edges={["top"]}
     >
       <StatusBar
         barStyle={

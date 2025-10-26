@@ -62,6 +62,16 @@ export function LottieAnimation({
 
   if (!visible) return null;
 
+  useEffect(() => {
+    if (animationRef.current && isLoaded) {
+      if (autoPlay) {
+        animationRef.current.play();
+      }
+    }
+  }, [autoPlay, isLoaded]);
+
+  if (!visible) return null;
+
   return (
     <View style={[styles.container, style]}>
       <LottieView
@@ -73,9 +83,6 @@ export function LottieAnimation({
         speed={speed}
         onAnimationFinish={handleAnimationFinish}
         colorFilters={colorFilters}
-        onLoad={() => {
-          setIsLoaded(true);
-        }}
         resizeMode="contain"
       />
     </View>

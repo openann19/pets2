@@ -184,7 +184,6 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
               name="paw"
               size={24}
               color={colors.primary}
-              style={styles.pawIcon}
             />
           </Animated.View>
 
@@ -257,11 +256,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  pawIcon: {
-    textShadowColor: "rgba(0, 0, 0, 0.1)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   scratchMarks: {
     position: "absolute",

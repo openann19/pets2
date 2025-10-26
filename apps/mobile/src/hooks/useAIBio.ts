@@ -129,25 +129,31 @@ export function useAIBio(): UseAIBioReturn {
         tone: params.tone,
       });
 
-      const response = await api.generatePetBio(params);
+      const response = await api.ai.generateBio({
+        petName: params.petName,
+        keywords: [params.petBreed, params.petAge, params.petPersonality].filter(Boolean),
+        tone: params.tone as "playful" | "professional" | "casual" | "romantic" | "funny" | undefined,
+        length: "medium",
+        petType: "pet",
+      });
 
-      if (response.success && response.data) {
-        const newBio: GeneratedBio = {
-          ...response.data,
-          createdAt: new Date().toISOString(),
-        };
+      // The API returns the response directly, not wrapped in success/data
+      const newBio: GeneratedBio = {
+        bio: response.bio,
+        keywords: response.keywords,
+        sentiment: response.sentiment,
+        matchScore: response.matchScore,
+        createdAt: new Date().toISOString(),
+      };
 
-        setGeneratedBio(newBio);
-        setBioHistory((prev) => [newBio, ...prev.slice(0, 9)]); // Keep last 10
+      setGeneratedBio(newBio);
+      setBioHistory((prev) => [newBio, ...prev.slice(0, 9)]); // Keep last 10
 
-        logger.info("AI bio generated successfully", {
-          bioLength: newBio.bio.length,
-          keywordsCount: newBio.keywords.length,
-          matchScore: newBio.matchScore,
-        });
-      } else {
-        throw new Error(response.error || "Failed to generate bio");
-      }
+      logger.info("AI bio generated successfully", {
+        bioLength: newBio.bio.length,
+        keywordsCount: newBio.keywords.length,
+        matchScore: newBio.matchScore,
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";

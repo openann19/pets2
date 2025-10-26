@@ -1,7 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { EliteButton, FadeInUp } from "../EliteComponents";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { Spacing, BorderRadius } from "../../styles/GlobalStyles";
 
 interface QuickRepliesProps {
   replies: string[];
@@ -59,18 +59,18 @@ export function QuickReplies({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: tokens.spacing.sm,
-    paddingHorizontal: tokens.spacing.md,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
   },
   repliesList: {
-    paddingHorizontal: tokens.spacing.xs,
+    paddingHorizontal: Spacing.xs,
   },
   quickReply: {
     backgroundColor: "#fff",
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    borderRadius: tokens.borderRadius.xl,
-    marginRight: tokens.spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    marginRight: Spacing.sm,
     borderWidth: 1,
     borderColor: "#e0e0e0",
     shadowColor: "#000",

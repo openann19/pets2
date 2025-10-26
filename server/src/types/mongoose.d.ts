@@ -368,12 +368,154 @@ export interface IPetModel extends Model<IPet, Record<string, never>, IPetMethod
 export type IPetDocument = HydratedDocument<IPet, IPetMethods>;
 
 /**
- * Match interface (placeholder - will be expanded from Match model)
+ * Match message attachment
  */
-export interface IMatch extends Document {
-  participants: string[];
+export interface IMatchMessageAttachment {
+  type: string;
+  fileType?: string;
+  fileName?: string;
+}
+
+/**
+ * Match message read status
+ */
+export interface IMatchMessageRead {
+  user: string;
+  readAt: Date;
+}
+
+/**
+ * Match message
+ */
+export interface IMatchMessage {
+  sender: string;
+  content: string;
+  messageType: 'text' | 'image' | 'location' | 'system';
+  attachments: IMatchMessageAttachment[];
+  readBy: IMatchMessageRead[];
+  sentAt: Date;
+  editedAt?: Date;
+  isEdited: boolean;
+  isDeleted: boolean;
+}
+
+/**
+ * Meeting location
+ */
+export interface IMeetingLocation {
+  name?: string;
+  address?: string;
+  coordinates?: [number, number];
+}
+
+/**
+ * Meeting response
+ */
+export interface IMeetingResponse {
+  user: string;
+  response: 'accepted' | 'declined' | 'maybe';
+  respondedAt: Date;
+  note?: string;
+}
+
+/**
+ * Match meeting
+ */
+export interface IMatchMeeting {
+  proposedBy: string;
+  title: string;
+  description?: string;
+  proposedDate: Date;
+  location?: IMeetingLocation;
+  status: 'proposed' | 'accepted' | 'declined' | 'completed' | 'cancelled';
+  responses: IMeetingResponse[];
   createdAt: Date;
 }
 
-export type IMatchDocument = HydratedDocument<IMatch>;
+/**
+ * User actions on match
+ */
+export interface IMatchUserActions {
+  isArchived: boolean;
+  isBlocked: boolean;
+  isFavorite: boolean;
+  muteNotifications: boolean;
+  lastSeen?: Date;
+}
+
+/**
+ * Match outcome rating
+ */
+export interface IMatchOutcomeRating {
+  user1Rating?: number;
+  user2Rating?: number;
+}
+
+/**
+ * Match outcome feedback
+ */
+export interface IMatchOutcomeFeedback {
+  user1Feedback?: string;
+  user2Feedback?: string;
+}
+
+/**
+ * Match outcome
+ */
+export interface IMatchOutcome {
+  result?: 'pending' | 'met' | 'adopted' | 'mated' | 'no-show' | 'incompatible';
+  completedAt?: Date;
+  rating: IMatchOutcomeRating;
+  feedback: IMatchOutcomeFeedback;
+}
+
+/**
+ * Match document interface
+ */
+export interface IMatch extends Document {
+  pet1: string;
+  pet2: string;
+  user1: string;
+  user2: string;
+  matchType: 'adoption' | 'mating' | 'playdate' | 'general';
+  compatibilityScore: number;
+  aiRecommendationReason?: string;
+  status: 'active' | 'archived' | 'blocked' | 'deleted' | 'completed';
+  messages: IMatchMessage[];
+  meetings: IMatchMeeting[];
+  lastActivity: Date;
+  lastMessageAt?: Date;
+  messageCount: number;
+  userActions: {
+    user1: IMatchUserActions;
+    user2: IMatchUserActions;
+  };
+  outcome: IMatchOutcome;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Match methods (instance methods)
+ */
+export interface IMatchMethods {
+  addMessage(senderId: string, content: string, messageType?: string, attachments?: IMatchMessageAttachment[]): Promise<any>;
+  markMessagesAsRead(userId: string): Promise<any>;
+  isUserBlocked(userId: string): boolean;
+  toggleArchive(userId: string): Promise<any>;
+  toggleFavorite(userId: string): Promise<any>;
+}
+
+/**
+ * Match statics (model methods)
+ */
+export interface IMatchModel extends Model<IMatch, Record<string, never>, IMatchMethods> {
+  findActiveMatchesForUser(userId: string): ReturnType<Model<IMatch>['find']>;
+  findByPets(pet1Id: string, pet2Id: string): ReturnType<Model<IMatch>['findOne']>;
+}
+
+/**
+ * Fully typed Match document
+ */
+export type IMatchDocument = HydratedDocument<IMatch, IMatchMethods>;
 

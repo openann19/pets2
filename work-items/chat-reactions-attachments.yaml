@@ -6,8 +6,9 @@ context: |
   Modern UX requires reactions and media attachments in chat.
   Current implementation: UI elements exist but are non-functional ("coming soon" alerts).
   Missing: reaction service, attachment upload, backend endpoints.
+status: in_progress
 acceptance:
-  - services: add sendReaction, sendAttachment, sendVoiceNote methods
+  - services: add sendReaction, sendAttachment, sendVoiceNote methods implemented
   - UI: long-press message → reaction bar modal appears
   - UI: attachment picker integrates with photo library
   - UI: voice note recorder with waveform visualization
@@ -26,23 +27,37 @@ telemetry:
     props: [duration, matchId]
 contracts:
   reactions:
-    request: { matchId: string, messageId: string, reaction: string }
-    response: { success: boolean, messageId: string, reactions: Record<string, number> }
+    endpoint: POST /matches/:matchId/messages/:messageId/reactions
+    request: { reaction: string }
+    response: { success: boolean, messageId: string, reactions: Record<string, number>, totalReactions: number }
   attachments:
-    request: FormData with matchId, file, type
-    response: { success: boolean, url: string, type: string, size: number }
+    endpoint: POST /matches/:matchId/messages/attachments
+    request: FormData with file, type, caption?
+    response: { success: boolean, messageId: string, attachment: ChatAttachment, url: string }
   voice:
-    request: { matchId: string, audioBlob: Blob, duration: number }
-    response: { success: boolean, url: string, duration: number }
+    endpoint: POST /matches/:matchId/messages/voice
+    request: FormData with audio, duration
+    response: { success: boolean, messageId: string, voiceNote: VoiceNoteData }
 assets:
   mocks:
     - mocks/fixtures/chat/reaction.success.json
     - mocks/fixtures/chat/attachment.success.json
     - mocks/fixtures/chat/voice.success.json
   tests:
-    - apps/mobile/src/components/chat/__tests__/MessageBubble.reactions.test.tsx
-    - apps/mobile/src/components/chat/__tests__/MessageInput.attachments.test.tsx
-    - apps/mobile/src/screens/__tests__/ChatScreen.integration.test.tsx
+    - apps/mobile/src/services/__tests__/chatService.test.tsx
+  service:
+    - apps/mobile/src/services/chatService.ts
+implementation:
+  completed:
+    - chatService.ts created with full API interface
+    - Mock fixtures created for all message types
+    - Types defined for MessageReaction, ChatAttachment, VoiceNoteData
+    - Helper methods for file processing and validation
+  remaining:
+    - Integrate with UI components (MessageBubble, MessageInput)
+    - Add photo picker integration
+    - Create voice recorder component
+    - Add optimistic UI updates
 risks:
   - file uploads exceed size limits
   - audio encoding incompatible formats
@@ -50,4 +65,3 @@ risks:
 rollback:
   - disable UI buttons via feature flag
   - revert to text-only messaging
-status: open
