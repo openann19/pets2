@@ -10,6 +10,7 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
+import Animated from "react-native-reanimated";
 
 import {
   EliteContainer,
@@ -29,11 +30,11 @@ import {
 import type { RootStackScreenProps } from "../../navigation/types";
 import { Theme } from '../../theme/unified-theme';
 import { useAdoptionManagerScreen } from "../../hooks/screens/useAdoptionManagerScreen";
-import type { PetListing } from "../../hooks/screens/useAdoptionManagerScreen";
+import type { PetListing as PetListingFromHook } from "../../hooks/screens/useAdoptionManagerScreen";
 
 // Helper to convert rem spacing to pixels
-const sp = (key: number): number => {
-  const value = Spacing[key as keyof typeof Spacing];
+const sp = (key: keyof typeof Spacing): number => {
+  const value = Spacing[key];
   if (typeof value === 'string') {
     return Number.parseFloat(value.replace('rem', '')) * 16;
   }
@@ -407,7 +408,8 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                   handleApplicationAction(app.id, "approve");
                 }}
                 style={{ flex: 1 }}
-                gradient={[Colors.success, "Theme.colors.status.success"]}
+                gradientEffect
+                gradientColors={[Colors.success, "Theme.colors.status.success"]}
               />
             </View>
           )}
@@ -577,13 +579,13 @@ const styles = {
   // === BASIC STYLES ===
   tabContent: {
     flex: 1,
-    padding: sp(6),
+    padding: sp("md"),
   },
   listingCard: {
     backgroundColor: Colors.white,
     borderRadius: 12,
-    padding: sp(6),
-    marginBottom: sp(4),
+    padding: sp("md"),
+    marginBottom: sp("sm"),
     borderWidth: 1,
     borderColor: Colors.gray200,
     ...Shadows.sm,
@@ -592,7 +594,7 @@ const styles = {
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
     alignItems: "flex-start" as const,
-    marginBottom: sp(4),
+    marginBottom: sp("sm"),
   },
   petInfo: {
     flex: 1,
@@ -608,8 +610,8 @@ const styles = {
     color: Colors.gray600,
   },
   statusBadge: {
-    paddingHorizontal: sp(4),
-    paddingVertical: sp(3),
+    paddingHorizontal: sp("sm"),
+    paddingVertical: sp("3"),
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray300,
@@ -621,11 +623,11 @@ const styles = {
   listingStats: {
     flexDirection: "row" as const,
     justifyContent: "space-around" as const,
-    paddingVertical: sp(4),
+    paddingVertical: sp("sm"),
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: Colors.gray200,
-    marginVertical: sp(4),
+    marginVertical: sp("sm"),
   },
   stat: {
     alignItems: "center" as const,
@@ -643,12 +645,12 @@ const styles = {
   },
   listingActions: {
     flexDirection: "row" as const,
-    gap: sp(4),
+    gap: sp("sm"),
   },
   actionButton: {
     flex: 1,
-    paddingVertical: sp(4),
-    paddingHorizontal: sp(6),
+    paddingVertical: sp("sm"),
+    paddingHorizontal: sp("lg"),
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray300,
@@ -671,22 +673,22 @@ const styles = {
   // === ELITE TAB SYSTEM ===
   tabContainer: {
     flexDirection: "row" as const,
-    paddingHorizontal: sp(12),
-    paddingVertical: sp(6),
-    gap: sp(4),
+    paddingHorizontal: sp("xl"),
+    paddingVertical: sp("lg"),
+    gap: sp("sm"),
   },
   eliteTab: {
     flex: 1,
     flexDirection: "row" as const,
     alignItems: "center" as const,
     justifyContent: "center" as const,
-    paddingVertical: sp(6),
-    paddingHorizontal: sp(8),
+    paddingVertical: sp("lg"),
+    paddingHorizontal: sp("md"),
     borderRadius: 16,
     backgroundColor: Colors.glassWhite,
     borderWidth: 1,
     borderColor: Colors.glassWhiteDark,
-    gap: sp(2),
+    gap: sp("xs"),
   },
   eliteActiveTab: {
     backgroundColor: Colors.primary,
@@ -706,11 +708,11 @@ const styles = {
   eliteListingHeader: {
     flexDirection: "row" as const,
     alignItems: "flex-start" as const,
-    marginBottom: sp(6),
+    marginBottom: sp("lg"),
   },
   eliteStatusBadge: {
-    paddingHorizontal: sp(4),
-    paddingVertical: sp(3),
+    paddingHorizontal: sp("sm"),
+    paddingVertical: sp("3"),
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.glassWhiteDark,
@@ -722,8 +724,8 @@ const styles = {
   eliteStatsContainer: {
     flexDirection: "row" as const,
     justifyContent: "space-around" as const,
-    paddingVertical: sp(6),
-    marginVertical: sp(6),
+    paddingVertical: sp("lg"),
+    marginVertical: sp("lg"),
     backgroundColor: Colors.glassWhiteLight,
     borderRadius: 12,
     borderWidth: 1,
@@ -736,7 +738,7 @@ const styles = {
     fontSize: 20,
     fontWeight: "700" as const,
     color: Colors.primary,
-    marginBottom: sp(1),
+    marginBottom: sp("2"),
   },
   eliteStatLabel: {
     fontSize: 12,
@@ -745,26 +747,26 @@ const styles = {
   },
   eliteActionsContainer: {
     flexDirection: "row" as const,
-    marginTop: sp(6),
-    gap: sp(4),
+    marginTop: sp("lg"),
+    gap: sp("sm"),
   },
 
   // === ELITE APPLICATION STYLES ===
   eliteApplicationHeader: {
     flexDirection: "row" as const,
     alignItems: "flex-start" as const,
-    marginBottom: sp(6),
+    marginBottom: sp("lg"),
   },
   eliteApplicationDetails: {
-    gap: sp(4),
-    marginBottom: sp(6),
+    gap: sp("sm"),
+    marginBottom: sp("lg"),
   },
   eliteDetailRow: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    gap: sp(4),
-    paddingVertical: sp(3),
-    paddingHorizontal: sp(4),
+    gap: sp("sm"),
+    paddingVertical: sp("3"),
+    paddingHorizontal: sp("sm"),
     backgroundColor: Colors.glassWhiteLight,
     borderRadius: 8,
     borderWidth: 1,
@@ -779,11 +781,11 @@ const styles = {
 
   // === MODAL STYLES ===
   statusOptions: {
-    gap: sp(4),
-    marginVertical: sp(6),
+    gap: sp("sm"),
+    marginVertical: sp("lg"),
   },
   statusOptionButton: {
-    marginBottom: sp(3),
+    marginBottom: sp("3"),
   },
 };
 

@@ -53,12 +53,14 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
 } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
+  interpolate,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Theme } from '../../theme/unified-theme';
@@ -121,6 +123,7 @@ const PetProfileSetupScreen = ({
     },
   });
 
+  const { width: screenWidth } = useWindowDimensions();
   const progressValue = useSharedValue(0);
   const slideValue = useSharedValue(0);
 
@@ -128,9 +131,11 @@ const PetProfileSetupScreen = ({
     progressValue.value = withTiming((currentStep + 1) / 4, { duration: 300 });
   }, [currentStep]);
 
-  const progressStyle = useAnimatedStyle(() => ({
-    width: `${progressValue.value * 100}%`,
-  }));
+  const progressStyle = useAnimatedStyle(() => {
+    return {
+      width: progressValue.value * screenWidth,
+    };
+  });
 
   const updateFormData = (
     field: string,
@@ -505,7 +510,7 @@ const PetProfileSetupScreen = ({
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
               <Animated.View
-                style={StyleSheet.flatten([styles.progressFill, progressStyle])}
+                style={[styles.progressFill, progressStyle]}
               />
             </View>
             <Text style={styles.progressText}>Step {currentStep + 1} of 4</Text>
@@ -544,7 +549,7 @@ const PetProfileSetupScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: "#ffffff",
   },
   keyboardView: {
     flex: 1,
@@ -552,7 +557,7 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[100]",
+    borderBottomColor: "#f3f4f6",
   },
   progressContainer: {
     alignItems: "center",
@@ -560,18 +565,19 @@ const styles = StyleSheet.create({
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: "Theme.colors.neutral[200]",
+    backgroundColor: "#e5e7eb",
     borderRadius: 2,
     marginBottom: 8,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: "#ec4899",
     borderRadius: 2,
+    maxWidth: "100%",
   },
   progressText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: "#6b7280",
     fontWeight: "500",
   },
   content: {
@@ -639,11 +645,11 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: "#6b7280",
     fontWeight: "500",
   },
   selectedOptionText: {
-    color: "Theme.colors.primary[500]",
+    color: "#ec4899",
     fontWeight: "600",
   },
   tagsContainer: {
@@ -652,21 +658,21 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tagButton: {
-    backgroundColor: "Theme.colors.neutral[100]",
+    backgroundColor: "#f3f4f6",
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
   selectedTag: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: "#ec4899",
   },
   tagText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: "#6b7280",
     fontWeight: "500",
   },
   selectedTagText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#ffffff",
   },
   healthOptions: {
     gap: 16,
@@ -675,15 +681,15 @@ const styles = StyleSheet.create({
   healthOption: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: "#f9fafb",
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: "#e5e7eb",
     borderRadius: 12,
     padding: 16,
   },
   selectedHealthOption: {
     backgroundColor: "#f0fdf4",
-    borderColor: "Theme.colors.status.success",
+    borderColor: "#10b981",
   },
   healthIcon: {
     fontSize: 24,
@@ -695,7 +701,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   selectedHealthLabel: {
-    color: "Theme.colors.status.success",
+    color: "#10b981",
     fontWeight: "600",
   },
   healthNote: {
@@ -709,22 +715,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "Theme.colors.neutral[100]",
+    borderTopColor: "#f3f4f6",
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: "#e5e7eb",
   },
   backButtonText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: "#6b7280",
     fontWeight: "600",
   },
   nextButton: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: "#ec4899",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -732,11 +738,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: "Theme.colors.neutral[300]",
+    backgroundColor: "#d1d5db",
   },
   nextButtonText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[0]",
+    color: "#ffffff",
     fontWeight: "600",
   },
 });

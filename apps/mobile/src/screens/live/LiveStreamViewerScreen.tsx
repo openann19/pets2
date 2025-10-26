@@ -13,6 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { VideoView } from 'livekit-react-native';
+import type { RemoteParticipant } from 'livekit-client';
 import { useLiveStream } from '../../hooks/useLiveStream';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -113,14 +114,14 @@ export function LiveStreamViewerScreen() {
       {/* Video streams */}
       <View style={styles.videoContainer}>
         {participants.length > 0 ? (
-          participants.map((participant) => {
+          participants.map((participant: RemoteParticipant) => {
             const videoTrack = participant.videoTrackPublications.values().next().value?.track;
             return (
-              videoTrack ? (
+              videoTrack && videoTrack.kind === 'video' ? (
                 <VideoView
                   key={participant.sid}
                   style={styles.videoStream}
-                  track={videoTrack}
+                  videoTrack={videoTrack as any}
                 />
               ) : (
                 <View key={participant.sid} style={styles.noStreamView}>
