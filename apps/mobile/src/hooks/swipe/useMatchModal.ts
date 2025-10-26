@@ -17,7 +17,9 @@ export interface UseMatchModalReturn {
 /**
  * Hook for managing match modal state and actions
  */
-export function useMatchModal({ onSendMessage }: UseMatchModalOptions): UseMatchModalReturn {
+export function useMatchModal({
+  onSendMessage,
+}: UseMatchModalOptions): UseMatchModalReturn {
   const [isOpen, setIsOpen] = useState(false);
   const [matchedPet, setMatchedPet] = useState<Pet | null>(null);
 

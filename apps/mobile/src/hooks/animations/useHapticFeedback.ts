@@ -41,4 +41,3 @@ export const useHapticFeedback = () => {
 };
 
 export default useHapticFeedback;
-

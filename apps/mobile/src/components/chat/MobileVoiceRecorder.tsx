@@ -133,10 +133,17 @@ export function MobileVoiceRecorder({
   return (
     <Modal visible animationType="slide" transparent onRequestClose={onCancel}>
       <View style={styles.overlay}>
-        <View style={[styles.container, { backgroundColor: colors.card }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.container,
+            { backgroundColor: colors.card },
+          ])}
+        >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            >
               {isRecording ? "Recording..." : "Voice Message"}
             </Text>
             <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
@@ -151,13 +158,13 @@ export function MobileVoiceRecorder({
                 Array.from({ length: 20 }).map((_, i) => (
                   <View
                     key={i}
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.waveBar,
                       {
                         backgroundColor: colors.primary,
                         height: `${Math.random() * 60 + 20}%`,
                       },
-                    ]}
+                    ])}
                   />
                 ))
               ) : (
@@ -166,11 +173,21 @@ export function MobileVoiceRecorder({
             </View>
 
             {/* Duration */}
-            <Text style={[styles.duration, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.duration,
+                { color: colors.text },
+              ])}
+            >
               {formatDuration(duration)}
             </Text>
 
-            <Text style={[styles.hint, { color: colors.gray500 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.hint,
+                { color: colors.gray500 },
+              ])}
+            >
               {isRecording
                 ? "Tap stop when finished (max 60 seconds)"
                 : "Ready to send"}
@@ -181,7 +198,10 @@ export function MobileVoiceRecorder({
           <View style={styles.controls}>
             {isRecording ? (
               <TouchableOpacity
-                style={[styles.recordButton, { backgroundColor: "#ef4444" }]}
+                style={StyleSheet.flatten([
+                  styles.recordButton,
+                  { backgroundColor: "#ef4444" },
+                ])}
                 onPress={stopRecording}
               >
                 <Ionicons name="stop" size={24} color="white" />
@@ -189,18 +209,26 @@ export function MobileVoiceRecorder({
             ) : (
               <>
                 <TouchableOpacity
-                  style={[styles.cancelButton, { borderColor: colors.gray400 }]}
+                  style={StyleSheet.flatten([
+                    styles.cancelButton,
+                    { borderColor: colors.gray400 },
+                  ])}
                   onPress={onCancel}
                 >
-                  <Text style={[styles.cancelText, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.cancelText,
+                      { color: colors.text },
+                    ])}
+                  >
                     Cancel
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.sendButton,
                     { backgroundColor: colors.primary },
-                  ]}
+                  ])}
                   onPress={() => {
                     // This would normally send the recorded audio
                     onCancel();

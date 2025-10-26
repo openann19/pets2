@@ -21,22 +21,36 @@ export const EliteEmptyState: React.FC<EliteEmptyStateProps> = ({
   message,
 }) => {
   return (
-    <View style={{ alignItems: "center", justifyContent: "center", padding: Spacing.xl }}>
-      <Ionicons name={icon as ComponentProps<typeof Ionicons>['name']} size={64} color={Colors.gray400} />
-      <Text style={{ 
-        fontSize: 20, 
-        fontWeight: "bold", 
-        marginTop: Spacing.lg,
-        color: Colors.gray700 
-      }}>
+    <View
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        padding: Spacing.xl,
+      }}
+    >
+      <Ionicons
+        name={icon as ComponentProps<typeof Ionicons>["name"]}
+        size={64}
+        color={Colors.gray400}
+      />
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          marginTop: Spacing.lg,
+          color: Colors.gray700,
+        }}
+      >
         {title}
       </Text>
-      <Text style={{ 
-        fontSize: 14, 
-        marginTop: Spacing.sm,
-        color: Colors.gray600,
-        textAlign: "center" 
-      }}>
+      <Text
+        style={{
+          fontSize: 14,
+          marginTop: Spacing.sm,
+          color: Colors.gray600,
+          textAlign: "center",
+        }}
+      >
         {message}
       </Text>
     </View>
@@ -44,4 +58,3 @@ export const EliteEmptyState: React.FC<EliteEmptyStateProps> = ({
 };
 
 export default EliteEmptyState;
-

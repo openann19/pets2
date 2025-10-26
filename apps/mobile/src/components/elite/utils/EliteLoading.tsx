@@ -25,4 +25,3 @@ export const EliteLoading: React.FC<EliteLoadingProps> = ({
 };
 
 export default EliteLoading;
-

@@ -3,7 +3,13 @@
  * Page transition animations
  */
 
-import { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  runOnJS,
+} from "react-native-reanimated";
 import { PREMIUM_ANIMATIONS } from "./constants";
 
 export const usePageTransition = () => {
@@ -41,4 +47,3 @@ export const usePageTransition = () => {
 };
 
 export default usePageTransition;
-

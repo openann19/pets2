@@ -18,7 +18,6 @@ import NetInfo from "@react-native-community/netinfo";
 import {
   UnifiedAPIClient,
   type APIClientConfig,
-  type UnifiedRequestConfig,
 } from "@pawfectmatch/core/api/UnifiedAPIClient";
 
 const envApiBaseUrl = process.env["EXPO_PUBLIC_API_URL"];
@@ -127,7 +126,7 @@ class ApiClient {
     });
 
     // Initial network state check
-    NetInfo.fetch().then((state) => {
+    void NetInfo.fetch().then((state) => {
       const isOnline = state.isConnected ?? false;
       this.unifiedClient.setOnlineStatus(isOnline);
     });

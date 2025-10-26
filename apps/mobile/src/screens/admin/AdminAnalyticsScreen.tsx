@@ -191,11 +191,19 @@ export default function AdminAnalyticsScreen({
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading analytics...
           </Text>
         </View>
@@ -205,7 +213,10 @@ export default function AdminAnalyticsScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <ScrollView
         style={styles.scrollView}
@@ -227,33 +238,35 @@ export default function AdminAnalyticsScreen({
           >
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+          >
             Analytics Dashboard
           </Text>
           <View style={styles.periodSelector}>
             {(["7d", "30d", "90d"] as const).map((period) => (
               <TouchableOpacity
                 key={period}
-                style={[
+                style={StyleSheet.flatten([
                   styles.periodButton,
                   selectedPeriod === period && styles.periodButtonActive,
                   {
                     backgroundColor:
                       selectedPeriod === period ? colors.primary : colors.card,
                   },
-                ]}
+                ])}
                 onPress={() => {
                   handlePeriodChange(period);
                 }}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.periodText,
                     {
                       color:
                         selectedPeriod === period ? "#FFFFFF" : colors.text,
                     },
-                  ]}
+                  ])}
                 >
                   {period}
                 </Text>
@@ -266,20 +279,38 @@ export default function AdminAnalyticsScreen({
           <>
             {/* Key Metrics */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.sectionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Key Metrics
               </Text>
               <View style={styles.metricsGrid}>
                 <View
-                  style={[styles.metricCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.metricCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <View style={styles.metricHeader}>
                     <Ionicons name="people" size={20} color="#3B82F6" />
-                    <Text style={[styles.metricTitle, { color: colors.text }]}>
+                    <Text
+                      style={StyleSheet.flatten([
+                        styles.metricTitle,
+                        { color: colors.text },
+                      ])}
+                    >
                       Users
                     </Text>
                   </View>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.metricValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {formatNumber(analytics.users.total)}
                   </Text>
                   <View style={styles.metricTrend}>
@@ -289,10 +320,10 @@ export default function AdminAnalyticsScreen({
                       color={getTrendColor(analytics.users.trend)}
                     />
                     <Text
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.metricTrendText,
                         { color: getTrendColor(analytics.users.trend) },
-                      ]}
+                      ])}
                     >
                       {analytics.users.growth > 0 ? "+" : ""}
                       {analytics.users.growth}%
@@ -301,15 +332,28 @@ export default function AdminAnalyticsScreen({
                 </View>
 
                 <View
-                  style={[styles.metricCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.metricCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <View style={styles.metricHeader}>
                     <Ionicons name="heart" size={20} color="#EC4899" />
-                    <Text style={[styles.metricTitle, { color: colors.text }]}>
+                    <Text
+                      style={StyleSheet.flatten([
+                        styles.metricTitle,
+                        { color: colors.text },
+                      ])}
+                    >
                       Matches
                     </Text>
                   </View>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.metricValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {formatNumber(analytics.matches.total)}
                   </Text>
                   <View style={styles.metricTrend}>
@@ -319,10 +363,10 @@ export default function AdminAnalyticsScreen({
                       color={getTrendColor(analytics.matches.trend)}
                     />
                     <Text
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.metricTrendText,
                         { color: getTrendColor(analytics.matches.trend) },
-                      ]}
+                      ])}
                     >
                       {analytics.matches.growth > 0 ? "+" : ""}
                       {analytics.matches.growth}%
@@ -331,15 +375,28 @@ export default function AdminAnalyticsScreen({
                 </View>
 
                 <View
-                  style={[styles.metricCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.metricCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <View style={styles.metricHeader}>
                     <Ionicons name="chatbubble" size={20} color="#8B5CF6" />
-                    <Text style={[styles.metricTitle, { color: colors.text }]}>
+                    <Text
+                      style={StyleSheet.flatten([
+                        styles.metricTitle,
+                        { color: colors.text },
+                      ])}
+                    >
                       Messages
                     </Text>
                   </View>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.metricValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {formatNumber(analytics.messages.total)}
                   </Text>
                   <View style={styles.metricTrend}>
@@ -349,10 +406,10 @@ export default function AdminAnalyticsScreen({
                       color={getTrendColor(analytics.messages.trend)}
                     />
                     <Text
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.metricTrendText,
                         { color: getTrendColor(analytics.messages.trend) },
-                      ]}
+                      ])}
                     >
                       {analytics.messages.growth > 0 ? "+" : ""}
                       {analytics.messages.growth}%
@@ -361,22 +418,35 @@ export default function AdminAnalyticsScreen({
                 </View>
 
                 <View
-                  style={[styles.metricCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.metricCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <View style={styles.metricHeader}>
                     <Ionicons name="cash" size={20} color="#10B981" />
-                    <Text style={[styles.metricTitle, { color: colors.text }]}>
+                    <Text
+                      style={StyleSheet.flatten([
+                        styles.metricTitle,
+                        { color: colors.text },
+                      ])}
+                    >
                       Revenue
                     </Text>
                   </View>
-                  <Text style={[styles.metricValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.metricValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {formatCurrency(analytics.revenue.totalRevenue)}
                   </Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.metricSubtext,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     MRR:{" "}
                     {formatCurrency(analytics.revenue.monthlyRecurringRevenue)}
@@ -387,86 +457,103 @@ export default function AdminAnalyticsScreen({
 
             {/* Engagement Metrics */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.sectionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Engagement
               </Text>
               <View style={styles.engagementGrid}>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.engagementCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.engagementLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     DAU
                   </Text>
                   <Text
-                    style={[styles.engagementValue, { color: colors.text }]}
+                    style={StyleSheet.flatten([
+                      styles.engagementValue,
+                      { color: colors.text },
+                    ])}
                   >
                     {formatNumber(analytics.engagement.dailyActiveUsers)}
                   </Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.engagementCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.engagementLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     WAU
                   </Text>
                   <Text
-                    style={[styles.engagementValue, { color: colors.text }]}
+                    style={StyleSheet.flatten([
+                      styles.engagementValue,
+                      { color: colors.text },
+                    ])}
                   >
                     {formatNumber(analytics.engagement.weeklyActiveUsers)}
                   </Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.engagementCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.engagementLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     MAU
                   </Text>
                   <Text
-                    style={[styles.engagementValue, { color: colors.text }]}
+                    style={StyleSheet.flatten([
+                      styles.engagementValue,
+                      { color: colors.text },
+                    ])}
                   >
                     {formatNumber(analytics.engagement.monthlyActiveUsers)}
                   </Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.engagementCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.engagementLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Session
                   </Text>
                   <Text
-                    style={[styles.engagementValue, { color: colors.text }]}
+                    style={StyleSheet.flatten([
+                      styles.engagementValue,
+                      { color: colors.text },
+                    ])}
                   >
                     {Math.round(analytics.engagement.averageSessionDuration)}m
                   </Text>
@@ -476,52 +563,81 @@ export default function AdminAnalyticsScreen({
 
             {/* Revenue Metrics */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.sectionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Revenue Analytics
               </Text>
               <View style={styles.revenueGrid}>
                 <View
-                  style={[styles.revenueCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.revenueCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.revenueLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     ARPU
                   </Text>
-                  <Text style={[styles.revenueValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.revenueValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {formatCurrency(analytics.revenue.averageRevenuePerUser)}
                   </Text>
                 </View>
                 <View
-                  style={[styles.revenueCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.revenueCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.revenueLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Conversion
                   </Text>
-                  <Text style={[styles.revenueValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.revenueValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {analytics.revenue.conversionRate.toFixed(1)}%
                   </Text>
                 </View>
                 <View
-                  style={[styles.revenueCard, { backgroundColor: colors.card }]}
+                  style={StyleSheet.flatten([
+                    styles.revenueCard,
+                    { backgroundColor: colors.card },
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.revenueLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Churn
                   </Text>
-                  <Text style={[styles.revenueValue, { color: "#EF4444" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.revenueValue,
+                      { color: "#EF4444" },
+                    ])}
+                  >
                     {analytics.revenue.churnRate.toFixed(1)}%
                   </Text>
                 </View>
@@ -530,83 +646,108 @@ export default function AdminAnalyticsScreen({
 
             {/* Security Metrics */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.sectionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Security Overview
               </Text>
               <View style={styles.securityGrid}>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.securityCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Ionicons name="warning" size={20} color="#F59E0B" />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.securityLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Suspicious Logins
                   </Text>
-                  <Text style={[styles.securityValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.securityValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {analytics.security.suspiciousLogins}
                   </Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.securityCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Ionicons name="shield" size={20} color="#EF4444" />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.securityLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Blocked IPs
                   </Text>
-                  <Text style={[styles.securityValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.securityValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {analytics.security.blockedIPs}
                   </Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.securityCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Ionicons name="flag" size={20} color="#8B5CF6" />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.securityLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Reported Content
                   </Text>
-                  <Text style={[styles.securityValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.securityValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {analytics.security.reportedContent}
                   </Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.securityCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Ionicons name="ban" size={20} color="#EF4444" />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.securityLabel,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Banned Users
                   </Text>
-                  <Text style={[styles.securityValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.securityValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {analytics.security.bannedUsers}
                   </Text>
                 </View>
@@ -615,18 +756,26 @@ export default function AdminAnalyticsScreen({
 
             {/* Top Performers */}
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.sectionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Top Performers
               </Text>
               <View style={styles.performersGrid}>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.performersCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[styles.performersTitle, { color: colors.text }]}
+                    style={StyleSheet.flatten([
+                      styles.performersTitle,
+                      { color: colors.text },
+                    ])}
                   >
                     Top Users
                   </Text>
@@ -635,23 +784,26 @@ export default function AdminAnalyticsScreen({
                     .map((user, index) => (
                       <View key={user.id} style={styles.performerItem}>
                         <Text
-                          style={[
+                          style={StyleSheet.flatten([
                             styles.performerRank,
                             { color: colors.textSecondary },
-                          ]}
+                          ])}
                         >
                           #{index + 1}
                         </Text>
                         <Text
-                          style={[styles.performerName, { color: colors.text }]}
+                          style={StyleSheet.flatten([
+                            styles.performerName,
+                            { color: colors.text },
+                          ])}
                         >
                           {user.name}
                         </Text>
                         <Text
-                          style={[
+                          style={StyleSheet.flatten([
                             styles.performerStats,
                             { color: colors.textSecondary },
-                          ]}
+                          ])}
                         >
                           {user.matches} matches
                         </Text>
@@ -659,13 +811,16 @@ export default function AdminAnalyticsScreen({
                     ))}
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.performersCard,
                     { backgroundColor: colors.card },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[styles.performersTitle, { color: colors.text }]}
+                    style={StyleSheet.flatten([
+                      styles.performersTitle,
+                      { color: colors.text },
+                    ])}
                   >
                     Top Pets
                   </Text>
@@ -674,23 +829,26 @@ export default function AdminAnalyticsScreen({
                     .map((pet, index) => (
                       <View key={pet.id} style={styles.performerItem}>
                         <Text
-                          style={[
+                          style={StyleSheet.flatten([
                             styles.performerRank,
                             { color: colors.textSecondary },
-                          ]}
+                          ])}
                         >
                           #{index + 1}
                         </Text>
                         <Text
-                          style={[styles.performerName, { color: colors.text }]}
+                          style={StyleSheet.flatten([
+                            styles.performerName,
+                            { color: colors.text },
+                          ])}
                         >
                           {pet.name}
                         </Text>
                         <Text
-                          style={[
+                          style={StyleSheet.flatten([
                             styles.performerStats,
                             { color: colors.textSecondary },
-                          ]}
+                          ])}
                         >
                           {pet.matches} matches
                         </Text>

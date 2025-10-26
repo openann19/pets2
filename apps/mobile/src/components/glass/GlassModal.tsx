@@ -1,6 +1,11 @@
 import React, { type ReactNode } from "react";
-import { View, type ViewProps, type ViewStyle } from "react-native";
-import { useSharedValue, useAnimatedStyle, withTiming, withSpring } from "react-native-reanimated";
+import { View, type ViewProps, type ViewStyle, StyleSheet } from "react-native";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+} from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
 import { GlassCard } from "./GlassCard";
@@ -46,7 +51,7 @@ export const GlassModal: React.FC<GlassModalProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
           position: "absolute" as const,
           top: 0,
@@ -59,19 +64,19 @@ export const GlassModal: React.FC<GlassModalProps> = ({
           zIndex: 9999,
         },
         animatedStyle,
-      ]}
+      ])}
       onTouchStart={onClose}
     >
       <GlassCard
         variant="premium"
         size="lg"
-        style={[
+        style={StyleSheet.flatten([
           {
             maxWidth: "90%",
             maxHeight: "80%",
           },
           style,
-        ]}
+        ])}
         {...props}
       >
         {children}
@@ -81,4 +86,3 @@ export const GlassModal: React.FC<GlassModalProps> = ({
 };
 
 export default GlassModal;
-

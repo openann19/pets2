@@ -332,13 +332,13 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
 
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           headerStyle,
           {
             opacity: headerOpacity,
             transform: [{ translateY: headerTranslateY }],
           },
-        ]}
+        ])}
       >
         {/* Left Section */}
         <View style={styles.leftSection}>
@@ -369,13 +369,23 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
             }}
           >
             {title && (
-              <Text style={[styles.title, { color: textColor }, titleStyle]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.title,
+                  { color: textColor },
+                  titleStyle,
+                ])}
+              >
                 {title}
               </Text>
             )}
             {subtitle && (
               <Text
-                style={[styles.subtitle, { color: textColor }, subtitleStyle]}
+                style={StyleSheet.flatten([
+                  styles.subtitle,
+                  { color: textColor },
+                  subtitleStyle,
+                ])}
               >
                 {subtitle}
               </Text>
@@ -430,11 +440,11 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
 
   return (
     <SafeAreaView
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
-      ]}
+      ])}
       edges={["top"]}
     >
       <StatusBar

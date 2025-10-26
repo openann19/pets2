@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { type ViewProps, type ViewStyle } from "react-native";
+import { type ViewProps, type ViewStyle, StyleSheet } from "react-native";
 import { GlassContainer } from "./GlassContainer";
 import { BLUR_CONFIGS } from "./configs";
 
@@ -25,7 +25,7 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
       border="light"
       shadow="medium"
       borderRadius="none"
-      style={[
+      style={StyleSheet.flatten([
         {
           position: "absolute" as const,
           bottom: 0,
@@ -34,7 +34,7 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
           zIndex: 1000,
         },
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}
@@ -43,4 +43,3 @@ export const GlassNavigation: React.FC<GlassNavigationProps> = ({
 };
 
 export default GlassNavigation;
-

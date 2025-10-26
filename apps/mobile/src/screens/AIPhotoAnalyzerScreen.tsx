@@ -20,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "../services/api";
 import { useTheme } from "../contexts/ThemeContext";
 import type { NavigationProp } from "../navigation/types";
-import { PhotoUploadSection, AnalysisResultsSection } from './ai/photoanalyzer';
+import { PhotoUploadSection, AnalysisResultsSection } from "./ai/photoanalyzer";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -139,7 +139,10 @@ export default function AIPhotoAnalyzerScreen({
       const result = await api.ai.analyzePhotos(selectedPhotos);
       setAnalysisResult(result);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to analyze photos. Please try again.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to analyze photos. Please try again.";
       logger.error("Photo analysis error:", { error: err });
       setError(message);
     } finally {
@@ -157,10 +160,12 @@ export default function AIPhotoAnalyzerScreen({
     setError(null);
   };
 
-
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <LinearGradient
         colors={isDark ? ["#1a1a2e", "#16213e"] : ["#667eea", "#764ba2"]}
@@ -168,7 +173,9 @@ export default function AIPhotoAnalyzerScreen({
       >
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => { navigation.goBack(); }}
+          onPress={() => {
+            navigation.goBack();
+          }}
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
@@ -187,10 +194,10 @@ export default function AIPhotoAnalyzerScreen({
 
             {selectedPhotos.length > 0 && (
               <TouchableOpacity
-                style={[
+                style={StyleSheet.flatten([
                   styles.analyzeButton,
                   { opacity: isAnalyzing ? 0.7 : 1 },
-                ]}
+                ])}
                 onPress={analyzePhotos}
                 disabled={isAnalyzing}
               >

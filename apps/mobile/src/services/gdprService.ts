@@ -67,7 +67,7 @@ class GDPRService {
           feedback,
         },
       });
-      
+
       logger.info("Account deletion requested", {
         deletionId: response.deletionId,
       });
@@ -86,7 +86,7 @@ class GDPRService {
       } catch (storageError) {
         logger.error("Failed to store deletion token", { storageError });
       }
-      
+
       return {
         success: response.success,
         message: response.message,
@@ -103,12 +103,17 @@ class GDPRService {
    * Cancel account deletion (within grace period)
    * @param token Cancellation token from deletion request
    */
-  async cancelDeletion(token: string): Promise<{ success: boolean; message: string }> {
+  async cancelDeletion(
+    token: string,
+  ): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.request<{ success: boolean; message: string }>("/users/cancel-deletion", {
-        method: "POST",
-        body: { token },
-      });
+      const response = await api.request<{ success: boolean; message: string }>(
+        "/users/cancel-deletion",
+        {
+          method: "POST",
+          body: { token },
+        },
+      );
       logger.info("Account deletion cancelled", { token });
       return response;
     } catch (error) {
@@ -121,12 +126,17 @@ class GDPRService {
    * Confirm and complete account deletion
    * @param token Confirmation token
    */
-  async confirmDeletion(token: string): Promise<{ success: boolean; message: string }> {
+  async confirmDeletion(
+    token: string,
+  ): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.request<{ success: boolean; message: string }>("/users/confirm-deletion", {
-        method: "POST",
-        body: { token },
-      });
+      const response = await api.request<{ success: boolean; message: string }>(
+        "/users/confirm-deletion",
+        {
+          method: "POST",
+          body: { token },
+        },
+      );
       logger.info("Account deletion confirmed", { token });
       return response;
     } catch (error) {
@@ -134,7 +144,6 @@ class GDPRService {
       throw error;
     }
   }
-
 
   /**
    * Get account deletion status
@@ -171,7 +180,9 @@ class GDPRService {
   /**
    * Export all user data (convenience method)
    */
-  async exportAllUserData(format: "json" | "csv" = "json"): Promise<DataExportResult> {
+  async exportAllUserData(
+    format: "json" | "csv" = "json",
+  ): Promise<DataExportResult> {
     return this.exportUserData({
       format,
       includeMessages: true,
@@ -229,7 +240,11 @@ class GDPRService {
     try {
       const requestStr = await AsyncStorage.getItem(DELETION_REQUEST_KEY);
       if (!requestStr) return null;
-      return JSON.parse(requestStr);
+      return JSON.parse(requestStr) as {
+        deletionId: string;
+        gracePeriodEndsAt: string;
+        requestedAt: string;
+      };
     } catch (error) {
       logger.error("Failed to get deletion request from storage", { error });
       return null;
@@ -241,7 +256,10 @@ class GDPRService {
    */
   async clearStoredDeletionData(): Promise<void> {
     try {
-      await AsyncStorage.multiRemove([DELETION_TOKEN_KEY, DELETION_REQUEST_KEY]);
+      await AsyncStorage.multiRemove([
+        DELETION_TOKEN_KEY,
+        DELETION_REQUEST_KEY,
+      ]);
       logger.info("Deletion data cleared from storage");
     } catch (error) {
       logger.error("Failed to clear deletion data from storage", { error });
@@ -252,4 +270,3 @@ class GDPRService {
 // Export singleton instance
 export const gdprService = new GDPRService();
 export default gdprService;
-

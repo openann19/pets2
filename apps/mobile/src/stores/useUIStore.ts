@@ -16,7 +16,9 @@ interface UIState {
   isDark: boolean;
   setTheme: (theme: string) => void;
   setThemeMode: (mode: ThemeMode) => void;
-  setSystemColorScheme: (colorScheme: "light" | "dark" | null | undefined) => void;
+  setSystemColorScheme: (
+    colorScheme: "light" | "dark" | null | undefined,
+  ) => void;
   toggleTheme: () => void;
   isLoading: boolean;
   setLoading: (loading: boolean) => void;
@@ -24,7 +26,10 @@ interface UIState {
   setError: (error: string | null) => void;
   notificationCounts: NotificationCounts;
   updateNotificationCounts: (counts: Partial<NotificationCounts>) => void;
-  updateNotificationCount: (type: keyof NotificationCounts, count: number) => void;
+  updateNotificationCount: (
+    type: keyof NotificationCounts,
+    count: number,
+  ) => void;
   incrementNotificationCount: (type: keyof NotificationCounts) => void;
   decrementNotificationCount: (type: keyof NotificationCounts) => void;
   clearNotificationCount: (type: keyof NotificationCounts) => void;
@@ -36,9 +41,11 @@ export const useUIStore = create<UIState>((set, get) => ({
   theme: "",
   themeMode: "light",
   isDark: false,
-  setTheme: (theme) => { set({ theme }); },
-  setThemeMode: (mode) => { 
-    set({ themeMode: mode, isDark: mode === "dark" }); 
+  setTheme: (theme) => {
+    set({ theme });
+  },
+  setThemeMode: (mode) => {
+    set({ themeMode: mode, isDark: mode === "dark" });
   },
   setSystemColorScheme: (colorScheme) => {
     const state = get();
@@ -46,19 +53,23 @@ export const useUIStore = create<UIState>((set, get) => ({
       set({ isDark: colorScheme === "dark" });
     }
   },
-  toggleTheme: () => { 
+  toggleTheme: () => {
     set((state) => {
       const newMode = state.themeMode === "light" ? "dark" : "light";
       return { themeMode: newMode, isDark: newMode === "dark" };
-    }); 
+    });
   },
   isLoading: false,
-  setLoading: (loading) => { set({ isLoading: loading }); },
+  setLoading: (loading) => {
+    set({ isLoading: loading });
+  },
   error: null,
-  setError: (error) => { set({ error }); },
+  setError: (error) => {
+    set({ error });
+  },
   notificationCounts: { messages: 0, matches: 0, likes: 0 },
-  updateNotificationCounts: (counts) => { 
-    set((state) => { 
+  updateNotificationCounts: (counts) => {
+    set((state) => {
       const updated = { ...state.notificationCounts };
       for (const [key, value] of Object.entries(counts)) {
         if (value !== undefined) {
@@ -66,39 +77,42 @@ export const useUIStore = create<UIState>((set, get) => ({
         }
       }
       return { notificationCounts: updated };
-    }); 
+    });
   },
   updateNotificationCount: (type, count) => {
     set((state) => ({
-      notificationCounts: { ...state.notificationCounts, [type]: count }
+      notificationCounts: { ...state.notificationCounts, [type]: count },
     }));
   },
   incrementNotificationCount: (type) => {
     set((state) => ({
       notificationCounts: {
         ...state.notificationCounts,
-        [type]: (state.notificationCounts[type] || 0) + 1
-      }
+        [type]: (state.notificationCounts[type] || 0) + 1,
+      },
     }));
   },
   decrementNotificationCount: (type) => {
     set((state) => ({
       notificationCounts: {
         ...state.notificationCounts,
-        [type]: Math.max(0, (state.notificationCounts[type] || 0) - 1)
-      }
+        [type]: Math.max(0, (state.notificationCounts[type] || 0) - 1),
+      },
     }));
   },
   clearNotificationCount: (type) => {
     set((state) => ({
-      notificationCounts: { ...state.notificationCounts, [type]: 0 }
+      notificationCounts: { ...state.notificationCounts, [type]: 0 },
     }));
   },
   getTotalNotificationCount: () => {
     const state = get();
-    return Object.values(state.notificationCounts).reduce((sum, count) => sum + count, 0);
+    return Object.values(state.notificationCounts).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
   },
-  clearAllNotificationCounts: () => { 
-    set({ notificationCounts: { messages: 0, matches: 0, likes: 0 } }); 
+  clearAllNotificationCounts: () => {
+    set({ notificationCounts: { messages: 0, matches: 0, likes: 0 } });
   },
 }));

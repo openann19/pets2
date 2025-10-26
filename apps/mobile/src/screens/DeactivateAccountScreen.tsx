@@ -126,10 +126,10 @@ function DeactivateAccountScreen({
           {reasons.map((item) => (
             <TouchableOpacity
               key={item}
-              style={[
+              style={StyleSheet.flatten([
                 styles.reasonCard,
                 reason === item && styles.reasonCardSelected,
-              ]}
+              ])}
               onPress={() => {
                 selectReason(item);
               }}
@@ -139,10 +139,10 @@ function DeactivateAccountScreen({
                 style={styles.reasonBlur}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.reasonText,
                     reason === item && styles.reasonTextSelected,
-                  ]}
+                  ])}
                 >
                   {item}
                 </Text>
@@ -188,7 +188,7 @@ function DeactivateAccountScreen({
           {/* Action Buttons */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+              style={StyleSheet.flatten([styles.button, styles.cancelButton])}
               onPress={() => {
                 navigation.goBack();
               }}
@@ -197,14 +197,14 @@ function DeactivateAccountScreen({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.button,
                 styles.deactivateButton,
                 (!reason ||
                   confirmText.toLowerCase() !== "deactivate" ||
                   loading) &&
                   styles.buttonDisabled,
-              ]}
+              ])}
               onPress={handleDeactivate}
               disabled={
                 !reason || confirmText.toLowerCase() !== "deactivate" || loading

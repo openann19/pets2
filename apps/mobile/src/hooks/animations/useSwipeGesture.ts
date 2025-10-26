@@ -112,4 +112,3 @@ export function useSwipeGesture(
 }
 
 export default useSwipeGesture;
-

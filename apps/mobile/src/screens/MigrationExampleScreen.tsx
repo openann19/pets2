@@ -1,35 +1,19 @@
 /**
- * PROJECT HYPERION: MIGRATION EXAMPLE SCREEN
+ * PROJECT HYPERION: MIGRATION EXAMPLE SCREEN (SIMPLIFIED)
  *
- * This screen demonstrates how to gradually migrate from legacy components
- * to the new architecture. It shows both old and new approaches side by side
- * for easy comparison and gradual migration.
+ * Simplified migration example screen to demonstrate basic patterns
+ * without complex component dependencies.
  */
 
-import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-
-// Import both old and new components
 import {
-  // New architecture
-  Theme,
-  EliteButton,
-  EliteButtonPresets,
-  FXContainer,
-  FXContainerPresets,
-  ModernText,
-  Heading1,
-  Heading2,
-  Body,
-  useStaggeredAnimation,
-  useEntranceAnimation,
-} from "../components";
-
-// Legacy components (to be migrated)
-import { EliteContainer, EliteHeader } from "../components/EliteComponents";
-import { EliteButton as LegacyEliteButton } from "../components/EliteComponents";
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function MigrationExampleScreen() {
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
@@ -37,499 +21,236 @@ export default function MigrationExampleScreen() {
     "buttons" | "containers" | "typography"
   >("buttons");
 
-  // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(3, 100, "gentle");
-
-  const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "standard");
-
-  React.useEffect(() => {
-    startStaggeredAnimation();
-    startEntrance();
-  }, [startStaggeredAnimation, startEntrance]);
-
   const renderButtonExamples = () => (
     <View style={styles.exampleSection}>
-      <Heading2 style={styles.exampleTitle}>
+      <Text style={styles.exampleTitle}>
         {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
-      </Heading2>
+      </Text>
 
-      {useNewArchitecture ? (
-        // NEW ARCHITECTURE - Composition Pattern
-        <View style={styles.buttonGrid}>
-          <View style={getAnimatedStyle(0)}>
-            <EliteButtonPresets.premium
-              title="Premium Button"
-              leftIcon="star"
-              onPress={() => {
-                logger.info("Premium pressed");
-              }}
-            />
-          </View>
+      <TouchableOpacity style={styles.button} onPress={() => {}}>
+        <Text style={styles.buttonText}>Primary Button</Text>
+      </TouchableOpacity>
 
-          <View style={getAnimatedStyle(1)}>
-            <EliteButtonPresets.holographic
-              title="Holographic"
-              leftIcon="sparkles"
-              onPress={() => {
-                logger.info("Holographic pressed");
-              }}
-            />
-          </View>
-
-          <View style={getAnimatedStyle(2)}>
-            <EliteButtonPresets.magnetic
-              title="Magnetic"
-              leftIcon="magnet"
-              onPress={() => {
-                logger.info("Magnetic pressed");
-              }}
-            />
-          </View>
-        </View>
-      ) : (
-        // LEGACY ARCHITECTURE - Monolithic Pattern
-        <View style={styles.buttonGrid}>
-          <View style={getAnimatedStyle(0)}>
-            <LegacyEliteButton
-              title="Premium Button"
-              variant="primary"
-              size="md"
-              icon="star"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              onPress={() => {
-                logger.info("Legacy premium pressed");
-              }}
-            />
-          </View>
-
-          <View style={getAnimatedStyle(1)}>
-            <LegacyEliteButton
-              title="Holographic"
-              variant="holographic"
-              size="md"
-              icon="sparkles"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              shimmer={true}
-              onPress={() => {
-                logger.info("Legacy holographic pressed");
-              }}
-            />
-          </View>
-
-          <View style={getAnimatedStyle(2)}>
-            <LegacyEliteButton
-              title="Magnetic"
-              variant="primary"
-              size="md"
-              icon="magnet"
-              magnetic={true}
-              ripple={true}
-              glow={true}
-              onPress={() => {
-                logger.info("Legacy magnetic pressed");
-              }}
-            />
-          </View>
-        </View>
-      )}
+      <TouchableOpacity
+        style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
+        onPress={() => {}}
+      >
+        <Text style={styles.buttonText}>Secondary Button</Text>
+      </TouchableOpacity>
     </View>
   );
 
   const renderContainerExamples = () => (
     <View style={styles.exampleSection}>
-      <Heading2 style={styles.exampleTitle}>
-        {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
-      </Heading2>
+      <Text style={styles.exampleTitle}>Container Examples</Text>
 
-      {useNewArchitecture ? (
-        // NEW ARCHITECTURE - Unified FXContainer
-        <View style={styles.containerGrid}>
-          <View style={getAnimatedStyle(0)}>
-            <FXContainerPresets.glass style={styles.exampleContainer}>
-              <Body>Glass Container</Body>
-            </FXContainerPresets.glass>
-          </View>
+      <View style={styles.container}>
+        <Text>Basic Container</Text>
+      </View>
 
-          <View style={getAnimatedStyle(1)}>
-            <FXContainerPresets.holographic style={styles.exampleContainer}>
-              <Body>Holographic Container</Body>
-            </FXContainerPresets.holographic>
-          </View>
-
-          <View style={getAnimatedStyle(2)}>
-            <FXContainerPresets.glow style={styles.exampleContainer}>
-              <Body>Glow Container</Body>
-            </FXContainerPresets.glow>
-          </View>
-        </View>
-      ) : (
-        // LEGACY ARCHITECTURE - Scattered Containers
-        <View style={styles.containerGrid}>
-          <View style={getAnimatedStyle(0)}>
-            <View style={[styles.legacyContainer, styles.glassContainer]}>
-              <Body>Legacy Glass Container</Body>
-            </View>
-          </View>
-
-          <View style={getAnimatedStyle(1)}>
-            <View style={[styles.legacyContainer, styles.holographicContainer]}>
-              <Body>Legacy Holographic Container</Body>
-            </View>
-          </View>
-
-          <View style={getAnimatedStyle(2)}>
-            <View style={[styles.legacyContainer, styles.glowContainer]}>
-              <Body>Legacy Glow Container</Body>
-            </View>
-          </View>
-        </View>
-      )}
+      <View
+        style={StyleSheet.flatten([styles.container, styles.elevatedContainer])}
+      >
+        <Text>Elevated Container</Text>
+      </View>
     </View>
   );
 
   const renderTypographyExamples = () => (
     <View style={styles.exampleSection}>
-      <Heading2 style={styles.exampleTitle}>
-        {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
-      </Heading2>
+      <Text style={styles.exampleTitle}>Typography Examples</Text>
 
-      {useNewArchitecture ? (
-        // NEW ARCHITECTURE - Unified Typography
-        <View style={styles.typographyGrid}>
-          <View style={getAnimatedStyle(0)}>
-            <Heading1>Heading 1</Heading1>
-            <Heading2>Heading 2</Heading2>
-            <Body>Body text with consistent styling</Body>
-            <BodySmall>Small body text</BodySmall>
-          </View>
-
-          <View style={getAnimatedStyle(1)}>
-            <ModernText variant="h1" gradient="primary">
-              Gradient Heading
-            </ModernText>
-            <ModernText variant="body" gradient="secondary">
-              Gradient Body Text
-            </ModernText>
-          </View>
-
-          <View style={getAnimatedStyle(2)}>
-            <ModernText variant="h2" animated={true}>
-              Animated Heading
-            </ModernText>
-            <ModernText variant="body" animated={true}>
-              Animated body text
-            </ModernText>
-          </View>
-        </View>
-      ) : (
-        // LEGACY ARCHITECTURE - Scattered Typography
-        <View style={styles.typographyGrid}>
-          <View style={getAnimatedStyle(0)}>
-            <Text style={styles.legacyHeading1}>Legacy Heading 1</Text>
-            <Text style={styles.legacyHeading2}>Legacy Heading 2</Text>
-            <Text style={styles.legacyBody}>Legacy body text</Text>
-            <Text style={styles.legacyBodySmall}>Legacy small text</Text>
-          </View>
-
-          <View style={getAnimatedStyle(1)}>
-            <Text style={[styles.legacyHeading1, styles.legacyGradient]}>
-              Legacy Gradient Heading
-            </Text>
-            <Text style={[styles.legacyBody, styles.legacyGradient]}>
-              Legacy gradient body text
-            </Text>
-          </View>
-
-          <View style={getAnimatedStyle(2)}>
-            <Text style={styles.legacyHeading2}>Legacy Animated Heading</Text>
-            <Text style={styles.legacyBody}>Legacy animated body text</Text>
-          </View>
-        </View>
-      )}
+      <Text style={styles.heading1}>Heading 1</Text>
+      <Text style={styles.heading2}>Heading 2</Text>
+      <Text style={styles.body}>Body text example</Text>
+      <Text style={styles.caption}>Caption text</Text>
     </View>
   );
 
+  const renderCurrentExample = () => {
+    switch (selectedExample) {
+      case "buttons":
+        return renderButtonExamples();
+      case "containers":
+        return renderContainerExamples();
+      case "typography":
+        return renderTypographyExamples();
+      default:
+        return renderButtonExamples();
+    }
+  };
+
   return (
-    <EliteContainer gradient="primary">
-      <EliteHeader
-        title="Migration Example"
-        subtitle="Compare old vs new architecture"
-        rightComponent={
-          <EliteButton
-            title={useNewArchitecture ? "Legacy" : "New"}
-            variant="outline"
-            size="sm"
-            leftIcon={useNewArchitecture ? "arrow-back" : "arrow-forward"}
-            onPress={() => {
-              setUseNewArchitecture(!useNewArchitecture);
-            }}
-          />
-        }
-      />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <View style={styles.header}>
+        <Text style={styles.title}>Migration Example</Text>
+        <Text style={styles.subtitle}>Compare old vs new architecture</Text>
+      </View>
 
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-      >
-        {/* Architecture Toggle */}
-        <View style={styles.toggleSection}>
-          <FXContainerPresets.glass style={styles.toggleContainer}>
-            <Heading2 style={styles.toggleTitle}>
-              Architecture Comparison
-            </Heading2>
-            <Body style={styles.toggleDescription}>
-              Toggle between legacy and new architecture to see the differences.
-              The new architecture provides better performance, maintainability,
-              and consistency.
-            </Body>
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={StyleSheet.flatten([
+            styles.toggleButton,
+            useNewArchitecture && styles.activeToggle,
+          ])}
+          onPress={() => setUseNewArchitecture(true)}
+        >
+          <Text style={styles.toggleText}>New Architecture</Text>
+        </TouchableOpacity>
 
-            <View style={styles.toggleButtons}>
-              <EliteButton
-                title="Legacy"
-                variant={!useNewArchitecture ? "primary" : "outline"}
-                size="sm"
-                onPress={() => {
-                  setUseNewArchitecture(false);
-                }}
-              />
-              <EliteButton
-                title="New Architecture"
-                variant={useNewArchitecture ? "primary" : "outline"}
-                size="sm"
-                onPress={() => {
-                  setUseNewArchitecture(true);
-                }}
-              />
-            </View>
-          </FXContainerPresets.glass>
-        </View>
+        <TouchableOpacity
+          style={StyleSheet.flatten([
+            styles.toggleButton,
+            !useNewArchitecture && styles.activeToggle,
+          ])}
+          onPress={() => setUseNewArchitecture(false)}
+        >
+          <Text style={styles.toggleText}>Legacy</Text>
+        </TouchableOpacity>
+      </View>
 
-        {/* Example Selector */}
-        <View style={styles.selectorSection}>
-          <View style={styles.selectorButtons}>
-            {[
-              { key: "buttons", label: "Buttons", icon: "radio-button-on" },
-              { key: "containers", label: "Containers", icon: "square" },
-              { key: "typography", label: "Typography", icon: "text" },
-            ].map(({ key, label, icon }) => (
-              <EliteButton
-                key={key}
-                title={label}
-                variant={selectedExample === key ? "primary" : "outline"}
-                size="sm"
-                leftIcon={icon as any}
-                onPress={() => {
-                  setSelectedExample(key as any);
-                }}
-              />
-            ))}
-          </View>
-        </View>
+      <View style={styles.tabContainer}>
+        {(["buttons", "containers", "typography"] as const).map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={StyleSheet.flatten([
+              styles.tab,
+              selectedExample === tab && styles.activeTab,
+            ])}
+            onPress={() => setSelectedExample(tab)}
+          >
+            <Text style={styles.tabText}>
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-        {/* Examples */}
-        {selectedExample === "buttons" && renderButtonExamples()}
-        {selectedExample === "containers" && renderContainerExamples()}
-        {selectedExample === "typography" && renderTypographyExamples()}
-
-        {/* Migration Benefits */}
-        <View style={styles.benefitsSection}>
-          <FXContainerPresets.glass style={styles.benefitsContainer}>
-            <Heading2 style={styles.benefitsTitle}>Migration Benefits</Heading2>
-
-            <View style={styles.benefitItem}>
-              <Ionicons
-                name="flash"
-                size={24}
-                color={Theme.colors.primary[500]}
-              />
-              <View style={styles.benefitContent}>
-                <Body style={styles.benefitTitle}>Performance</Body>
-                <BodySmall style={styles.benefitDescription}>
-                  All animations run on UI thread for guaranteed 60fps
-                </BodySmall>
-              </View>
-            </View>
-
-            <View style={styles.benefitItem}>
-              <Ionicons
-                name="construct"
-                size={24}
-                color={Theme.colors.primary[500]}
-              />
-              <View style={styles.benefitContent}>
-                <Body style={styles.benefitTitle}>Maintainability</Body>
-                <BodySmall style={styles.benefitDescription}>
-                  Single source of truth for design tokens and components
-                </BodySmall>
-              </View>
-            </View>
-
-            <View style={styles.benefitItem}>
-              <Ionicons
-                name="layers"
-                size={24}
-                color={Theme.colors.primary[500]}
-              />
-              <View style={styles.benefitContent}>
-                <Body style={styles.benefitTitle}>Composition</Body>
-                <BodySmall style={styles.benefitDescription}>
-                  Build complex components from simple, reusable parts
-                </BodySmall>
-              </View>
-            </View>
-
-            <View style={styles.benefitItem}>
-              <Ionicons
-                name="accessibility"
-                size={24}
-                color={Theme.colors.primary[500]}
-              />
-              <View style={styles.benefitContent}>
-                <Body style={styles.benefitTitle}>Accessibility</Body>
-                <BodySmall style={styles.benefitDescription}>
-                  Built-in accessibility support and reduced motion awareness
-                </BodySmall>
-              </View>
-            </View>
-          </FXContainerPresets.glass>
-        </View>
-      </ScrollView>
-    </EliteContainer>
+      {renderCurrentExample()}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5",
   },
-  content: {
-    padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing["4xl"],
+  contentContainer: {
+    padding: 16,
   },
-  toggleSection: {
-    marginBottom: Theme.spacing.xl,
+  header: {
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#666",
   },
   toggleContainer: {
-    padding: Theme.spacing.xl,
-  },
-  toggleTitle: {
-    marginBottom: Theme.spacing.sm,
-  },
-  toggleDescription: {
-    marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
-  },
-  toggleButtons: {
     flexDirection: "row",
-    gap: Theme.spacing.sm,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 8,
+    padding: 4,
+    marginBottom: 24,
   },
-  selectorSection: {
-    marginBottom: Theme.spacing.xl,
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderRadius: 6,
   },
-  selectorButtons: {
+  activeToggle: {
+    backgroundColor: "#007AFF",
+  },
+  toggleText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  tabContainer: {
     flexDirection: "row",
-    gap: Theme.spacing.sm,
+    marginBottom: 24,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  activeTab: {
+    borderBottomColor: "#007AFF",
+  },
+  tabText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#333",
   },
   exampleSection: {
-    marginBottom: Theme.spacing.xl,
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 16,
   },
   exampleTitle: {
-    marginBottom: Theme.spacing.lg,
-    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 16,
   },
-  buttonGrid: {
-    gap: Theme.spacing.lg,
-  },
-  containerGrid: {
-    gap: Theme.spacing.lg,
-  },
-  exampleContainer: {
-    padding: Theme.spacing.lg,
-    minHeight: 80,
-    justifyContent: "center",
+  button: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginBottom: 12,
     alignItems: "center",
   },
-  legacyContainer: {
-    padding: Theme.spacing.lg,
-    minHeight: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: Theme.borderRadius.lg,
-    ...Theme.shadows.depth.md,
+  secondaryButton: {
+    backgroundColor: "#6c757d",
   },
-  glassContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
-  holographicContainer: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: Theme.colors.primary[500],
+  elevatedContainer: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  glowContainer: {
-    backgroundColor: Theme.colors.neutral[0],
-    ...Theme.glow.primary,
+  heading1: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
   },
-  typographyGrid: {
-    gap: Theme.spacing.lg,
+  heading2: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
   },
-  legacyHeading1: {
-    fontSize: Theme.typography.fontSize["4xl"],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary.primary,
-    marginBottom: Theme.spacing.sm,
+  body: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 8,
+    lineHeight: 24,
   },
-  legacyHeading2: {
-    fontSize: Theme.typography.fontSize["2xl"],
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary.primary,
-    marginBottom: Theme.spacing.sm,
-  },
-  legacyBody: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.primary,
-    marginBottom: Theme.spacing.sm,
-  },
-  legacyBodySmall: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.sm,
-  },
-  legacyGradient: {
-    // This would be a complex gradient implementation in legacy
-    color: Theme.colors.primary[500],
-  },
-  benefitsSection: {
-    marginTop: Theme.spacing.xl,
-  },
-  benefitsContainer: {
-    padding: Theme.spacing.xl,
-  },
-  benefitsTitle: {
-    marginBottom: Theme.spacing.lg,
-    textAlign: "center",
-  },
-  benefitItem: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: Theme.spacing.lg,
-  },
-  benefitContent: {
-    flex: 1,
-    marginLeft: Theme.spacing.md,
-  },
-  benefitTitle: {
-    fontWeight: Theme.typography.fontWeight.semibold,
-    marginBottom: Theme.spacing.xs,
-  },
-  benefitDescription: {
-    color: Theme.colors.text.secondary,
+  caption: {
+    fontSize: 14,
+    color: "#666",
+    fontStyle: "italic",
   },
 });

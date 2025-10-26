@@ -265,7 +265,10 @@ export const matchesAPI = {
     },
 
     // Mark messages as read
-    markAsRead: async (matchId: string, messageIds: string[]): Promise<void> => {
+    markAsRead: async (
+      matchId: string,
+      messageIds: string[],
+    ): Promise<void> => {
       return resolveData(
         apiClient.put(`/matches/${matchId}/messages/read`, { messageIds }),
         "Failed to mark messages as read",
@@ -831,13 +834,9 @@ export const api = {
   request,
 };
 
-// Export adoption API (alias for now, can be extended later)
-export const adoptionAPI = matchesAPI;
-
 // Re-export admin API for backwards compatibility
 export { _adminAPI } from "./adminAPI";
 export { api as _petAPI };
-export { adoptionAPI as _subscriptionAPI };
 
 // ===== SECURITY CONTROLS =====
 

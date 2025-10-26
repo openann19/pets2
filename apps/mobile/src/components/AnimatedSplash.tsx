@@ -108,7 +108,10 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
       <StatusBar barStyle="light-content" backgroundColor="#ec4899" />
 
       <Animated.View
-        style={[styles.backgroundContainer, { opacity: backgroundOpacity }]}
+        style={StyleSheet.flatten([
+          styles.backgroundContainer,
+          { opacity: backgroundOpacity },
+        ])}
       >
         <LinearGradient
           colors={["#ec4899", "#f97316", "#eab308"]}
@@ -126,32 +129,28 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
       >
         {/* Animated Paw Icon */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.pawContainer,
             {
               transform: [{ scale: pawScale }],
               opacity: pawOpacity,
             },
-          ]}
+          ])}
         >
           <View style={styles.pawIconContainer}>
-            <Ionicons
-              name="paw"
-              size={80}
-              color="#ffffff"
-            />
+            <Ionicons name="paw" size={80} color="#ffffff" />
           </View>
         </Animated.View>
 
         {/* Animated Text */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.textContainer,
             {
               opacity: textOpacity,
               transform: [{ translateY: textTranslateY }],
             },
-          ]}
+          ])}
         >
           <Text style={styles.brandText}>PawfectMatch</Text>
           <Text style={styles.taglineText}>
@@ -217,12 +216,12 @@ const LoadingDots: React.FC = () => {
       {[dot1, dot2, dot3].map((dot, index) => (
         <Animated.View
           key={index}
-          style={[
+          style={StyleSheet.flatten([
             styles.dot,
             {
               opacity: dot,
             },
-          ]}
+          ])}
         />
       ))}
     </View>

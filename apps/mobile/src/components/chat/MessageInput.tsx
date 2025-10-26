@@ -111,14 +111,18 @@ export function MessageInput({
 
   const handleAttachPress = useCallback(async () => {
     if (isUploading) return;
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     try {
       // Request permissions
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission Needed", "Please grant photo library access to send attachments.");
+        Alert.alert(
+          "Permission Needed",
+          "Please grant photo library access to send attachments.",
+        );
         return;
       }
 
@@ -128,77 +132,98 @@ export function MessageInput({
         "Choose an option",
         [
           { text: "Cancel", style: "cancel" },
-          { text: "Photo Library", onPress: async () => {
-            setIsUploading(true);
-            try {
-              const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                quality: 0.8,
-                allowsMultipleSelection: false,
-              });
-
-              if (!result.canceled && result.assets && result.assets[0]) {
-                const asset = result.assets[0];
-                // Convert URI to Blob for upload
-                const response = await fetch(asset.uri);
-                const blob = await response.blob();
-                
-                // Send attachment using chatService
-                await chatService.sendAttachment({
-                  matchId,
-                  attachmentType: "image",
-                  file: blob,
+          {
+            text: "Photo Library",
+            onPress: async () => {
+              setIsUploading(true);
+              try {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 0.8,
+                  allowsMultipleSelection: false,
                 });
-                
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                onAttachmentSent?.();
-              }
-            } catch (error) {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-              Alert.alert("Error", "Failed to send attachment. Please try again.");
-            } finally {
-              setIsUploading(false);
-            }
-          }},
-          { text: "Take Photo", onPress: async () => {
-            setIsUploading(true);
-            try {
-              const { status } = await ImagePicker.requestCameraPermissionsAsync();
-              if (status !== "granted") {
-                Alert.alert("Permission Needed", "Camera access required to take photos.");
+
+                if (!result.canceled && result.assets && result.assets[0]) {
+                  const asset = result.assets[0];
+                  // Convert URI to Blob for upload
+                  const response = await fetch(asset.uri);
+                  const blob = await response.blob();
+
+                  // Send attachment using chatService
+                  await chatService.sendAttachment({
+                    matchId,
+                    attachmentType: "image",
+                    file: blob,
+                  });
+
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success,
+                  );
+                  onAttachmentSent?.();
+                }
+              } catch (error) {
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Error,
+                );
+                Alert.alert(
+                  "Error",
+                  "Failed to send attachment. Please try again.",
+                );
+              } finally {
                 setIsUploading(false);
-                return;
               }
+            },
+          },
+          {
+            text: "Take Photo",
+            onPress: async () => {
+              setIsUploading(true);
+              try {
+                const { status } =
+                  await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== "granted") {
+                  Alert.alert(
+                    "Permission Needed",
+                    "Camera access required to take photos.",
+                  );
+                  setIsUploading(false);
+                  return;
+                }
 
-              const result = await ImagePicker.launchCameraAsync({
-                allowsEditing: true,
-                quality: 0.8,
-              });
-
-              if (!result.canceled && result.assets && result.assets[0]) {
-                const asset = result.assets[0];
-                const response = await fetch(asset.uri);
-                const blob = await response.blob();
-                
-                await chatService.sendAttachment({
-                  matchId,
-                  attachmentType: "image",
-                  file: blob,
+                const result = await ImagePicker.launchCameraAsync({
+                  allowsEditing: true,
+                  quality: 0.8,
                 });
-                
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                onAttachmentSent?.();
+
+                if (!result.canceled && result.assets && result.assets[0]) {
+                  const asset = result.assets[0];
+                  const response = await fetch(asset.uri);
+                  const blob = await response.blob();
+
+                  await chatService.sendAttachment({
+                    matchId,
+                    attachmentType: "image",
+                    file: blob,
+                  });
+
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success,
+                  );
+                  onAttachmentSent?.();
+                }
+              } catch (error) {
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Error,
+                );
+                Alert.alert("Error", "Failed to take photo. Please try again.");
+              } finally {
+                setIsUploading(false);
               }
-            } catch (error) {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-              Alert.alert("Error", "Failed to take photo. Please try again.");
-            } finally {
-              setIsUploading(false);
-            }
-          }},
+            },
+          },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } catch (error) {
       Alert.alert("Error", "Failed to open photo picker.");
@@ -244,7 +269,7 @@ export function MessageInput({
         <View style={styles.inputWrapper}>
           <TextInput
             ref={inputRef}
-            style={[
+            style={StyleSheet.flatten([
               styles.textInput,
               {
                 backgroundColor: "rgba(255,255,255,0.1)",
@@ -265,7 +290,7 @@ export function MessageInput({
                   backgroundColor: "rgba(245,158,11,0.1)",
                 },
               ],
-            ]}
+            ])}
             value={value}
             onChangeText={handleTextChange}
             placeholder={placeholder}
@@ -282,10 +307,10 @@ export function MessageInput({
           {/* Character Counter */}
           {characterCount > maxLength * 0.8 && (
             <Animated.View
-              style={[
+              style={StyleSheet.flatten([
                 styles.characterCountContainer,
                 { opacity: messageEntryAnimation },
-              ]}
+              ])}
             >
               <PremiumBody
                 size="sm"
@@ -317,7 +342,9 @@ export function MessageInput({
             glow={!!(value.trim() || isUploading)}
             shimmer={!!(isSending || isUploading)}
             onPress={handleSend}
-            disabled={(!value.trim() && !isUploading) || isSending || isUploading}
+            disabled={
+              (!value.trim() && !isUploading) || isSending || isUploading
+            }
           />
         </Animated.View>
       </View>

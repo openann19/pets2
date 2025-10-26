@@ -23,4 +23,3 @@ export const useParallaxEffect = (speed = 0.5) => {
 };
 
 export default useParallaxEffect;
-

@@ -272,7 +272,7 @@ function ModernSwipeCardComponent({
       enabled={!disabled && isTopCard}
     >
       <Animated.View
-        style={[...cardStyle, ...combinedAnimatedStyle]}
+        style={StyleSheet.flatten([...cardStyle, ...combinedAnimatedStyle])}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel={`Pet profile for ${pet.name}, ${pet.age} years old ${pet.breed}`}
@@ -291,7 +291,7 @@ function ModernSwipeCardComponent({
             {pet.photos.map((_, index) => (
               <View
                 key={index}
-                style={[
+                style={StyleSheet.flatten([
                   styles.photoDot,
                   {
                     backgroundColor:
@@ -299,7 +299,7 @@ function ModernSwipeCardComponent({
                         ? Theme.colors.neutral[0]
                         : "rgba(255,255,255,0.4)",
                   },
-                ]}
+                ])}
               />
             ))}
           </View>
@@ -328,23 +328,31 @@ function ModernSwipeCardComponent({
 
           {/* Swipe Overlays */}
           <Animated.View
-            style={[styles.overlay, styles.likeOverlay, swipeOverlayStyle]}
+            style={StyleSheet.flatten([
+              styles.overlay,
+              styles.likeOverlay,
+              swipeOverlayStyle,
+            ])}
           >
             <Text style={styles.overlayText}>LIKE</Text>
           </Animated.View>
 
           <Animated.View
-            style={[styles.overlay, styles.nopeOverlay, nopeOverlayStyle]}
+            style={StyleSheet.flatten([
+              styles.overlay,
+              styles.nopeOverlay,
+              nopeOverlayStyle,
+            ])}
           >
             <Text style={styles.overlayText}>NOPE</Text>
           </Animated.View>
 
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               styles.overlay,
               styles.superLikeOverlay,
               superLikeOverlayStyle,
-            ]}
+            ])}
           >
             <Text style={styles.overlayText}>SUPER LIKE</Text>
           </Animated.View>
@@ -367,13 +375,13 @@ function ModernSwipeCardComponent({
             <View style={styles.compatibilityContainer}>
               <View style={styles.compatibilityBar}>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.compatibilityFill,
                     {
                       width: `${pet.compatibility}%`,
                       backgroundColor: Theme.colors.primary[500],
                     },
-                  ]}
+                  ])}
                 />
               </View>
               <Text style={styles.compatibilityText}>
@@ -386,16 +394,16 @@ function ModernSwipeCardComponent({
               {pet.tags.slice(0, 3).map((tag, index) => (
                 <View
                   key={index}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.tag,
                     { backgroundColor: `${Theme.colors.primary[500]}20` },
-                  ]}
+                  ])}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.tagText,
                       { color: Theme.colors.primary[500] },
-                    ]}
+                    ])}
                   >
                     {tag}
                   </Text>

@@ -422,22 +422,22 @@ function AdvancedButtonComponent({
       <View style={styles.contentContainer}>
         {icon && (
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.icon,
               textStyle,
               { fontSize: getSizeStyles().minHeight * 0.4 },
-            ]}
+            ])}
           >
             {icon}
           </Text>
         )}
         {title && (
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.title,
               textStyle,
               { fontSize: getSizeStyles().minHeight * 0.35 },
-            ]}
+            ])}
           >
             {title}
           </Text>
@@ -488,7 +488,7 @@ function AdvancedButtonComponent({
         {/* Glow Overlay */}
         {interactions.includes("glow") && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               StyleSheet.absoluteFillObject,
               {
                 backgroundColor: glowColor,
@@ -498,7 +498,7 @@ function AdvancedButtonComponent({
                 }),
                 borderRadius: getVariantStyles().borderRadius,
               },
-            ]}
+            ])}
             pointerEvents="none"
           />
         )}
@@ -542,7 +542,7 @@ function AdvancedButtonComponent({
         {(loading || isLoading) && (
           <View style={styles.loadingOverlay}>
             <Animated.View
-              style={[
+              style={StyleSheet.flatten([
                 styles.loadingSpinner,
                 {
                   transform: [
@@ -554,7 +554,7 @@ function AdvancedButtonComponent({
                     },
                   ],
                 },
-              ]}
+              ])}
             />
           </View>
         )}
@@ -650,7 +650,12 @@ export function AdvancedCard({
       gradientColors={gradientColors}
       blurIntensity={blurIntensity}
     >
-      <View style={[styles.cardContent, { padding: getPaddingValue(padding) }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.cardContent,
+          { padding: getPaddingValue(padding) },
+        ])}
+      >
         {children}
       </View>
     </AdvancedButton>

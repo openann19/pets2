@@ -131,7 +131,10 @@ const PetProfileSetupScreen = ({
     width: `${progressValue.value * 100}%`,
   }));
 
-  const updateFormData = (field: string, value: import("../../types/forms").FormFieldValue) => {
+  const updateFormData = (
+    field: string,
+    value: import("../../types/forms").FormFieldValue,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -248,20 +251,20 @@ const PetProfileSetupScreen = ({
           {SPECIES_OPTIONS.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.species === option.value && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("species", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.species === option.value &&
                     styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -310,19 +313,19 @@ const PetProfileSetupScreen = ({
           {["male", "female"].map((gender) => (
             <TouchableOpacity
               key={gender}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.gender === gender && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("gender", gender);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.gender === gender && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {gender.charAt(0).toUpperCase() + gender.slice(1)}
               </Text>
@@ -337,19 +340,19 @@ const PetProfileSetupScreen = ({
           {SIZE_OPTIONS.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.size === option.value && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("size", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.size === option.value && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -371,19 +374,19 @@ const PetProfileSetupScreen = ({
           {INTENT_OPTIONS.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.intent === option.value && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("intent", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.intent === option.value && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -400,20 +403,20 @@ const PetProfileSetupScreen = ({
           {PERSONALITY_TAGS.slice(0, 12).map((tag) => (
             <TouchableOpacity
               key={tag}
-              style={[
+              style={StyleSheet.flatten([
                 styles.tagButton,
                 formData.personalityTags.includes(tag) && styles.selectedTag,
-              ]}
+              ])}
               onPress={() => {
                 togglePersonalityTag(tag);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.tagText,
                   formData.personalityTags.includes(tag) &&
                     styles.selectedTagText,
-                ]}
+                ])}
               >
                 {tag}
               </Text>
@@ -425,7 +428,7 @@ const PetProfileSetupScreen = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Description (Optional)</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={StyleSheet.flatten([styles.input, styles.textArea])}
           value={formData.description}
           onChangeText={(text) => {
             updateFormData("description", text);
@@ -453,12 +456,12 @@ const PetProfileSetupScreen = ({
         ].map((option) => (
           <TouchableOpacity
             key={option.key}
-            style={[
+            style={StyleSheet.flatten([
               styles.healthOption,
               formData.healthInfo[
                 option.key as keyof typeof formData.healthInfo
               ] && styles.selectedHealthOption,
-            ]}
+            ])}
             onPress={() => {
               updateHealthInfo(
                 option.key,
@@ -470,12 +473,12 @@ const PetProfileSetupScreen = ({
           >
             <Text style={styles.healthIcon}>{option.icon}</Text>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.healthLabel,
                 formData.healthInfo[
                   option.key as keyof typeof formData.healthInfo
                 ] && styles.selectedHealthLabel,
-              ]}
+              ])}
             >
               {option.label}
             </Text>
@@ -500,7 +503,9 @@ const PetProfileSetupScreen = ({
         <View style={styles.header}>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
-              <Animated.View style={[styles.progressFill, progressStyle]} />
+              <Animated.View
+                style={StyleSheet.flatten([styles.progressFill, progressStyle])}
+              />
             </View>
             <Text style={styles.progressText}>Step {currentStep + 1} of 4</Text>
           </View>
@@ -518,10 +523,10 @@ const PetProfileSetupScreen = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.nextButton,
               !validateStep() && styles.disabledButton,
-            ]}
+            ])}
             onPress={handleNext}
             disabled={!validateStep()}
           >

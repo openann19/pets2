@@ -165,9 +165,13 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
           showsVerticalScrollIndicator={false}
           bounces={true}
         >
-          <Animated.View style={[styles.content, animatedContainerStyle]}>
+          <Animated.View
+            style={StyleSheet.flatten([styles.content, animatedContainerStyle])}
+          >
             {/* Elite Header with Glassmorphic Design */}
-            <Animated.View style={[styles.header, animatedHeaderStyle]}>
+            <Animated.View
+              style={StyleSheet.flatten([styles.header, animatedHeaderStyle])}
+            >
               <BlurView intensity={20} style={styles.logoContainer}>
                 <Text style={styles.logo}>🐾 PawfectMatch</Text>
               </BlurView>
@@ -180,12 +184,17 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
             {/* Elite Intent Cards */}
             <View style={styles.intentCards}>
               {/* Adopt a Pet Card */}
-              <Animated.View style={[styles.intentCard, animatedCard1Style]}>
+              <Animated.View
+                style={StyleSheet.flatten([
+                  styles.intentCard,
+                  animatedCard1Style,
+                ])}
+              >
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.cardButton,
                     selectedIntent === "adopt" && styles.selectedCard,
-                  ]}
+                  ])}
                   onPress={() => {
                     handleIntentSelect("adopt", scale1);
                   }}
@@ -245,12 +254,17 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
               </Animated.View>
 
               {/* List Pets Card */}
-              <Animated.View style={[styles.intentCard, animatedCard2Style]}>
+              <Animated.View
+                style={StyleSheet.flatten([
+                  styles.intentCard,
+                  animatedCard2Style,
+                ])}
+              >
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.cardButton,
                     selectedIntent === "list" && styles.selectedCard,
-                  ]}
+                  ])}
                   onPress={() => {
                     handleIntentSelect("list", scale2);
                   }}
@@ -310,7 +324,10 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
 
             {/* Elite Footer */}
             <Animated.View
-              style={[styles.additionalOptions, animatedFooterStyle]}
+              style={StyleSheet.flatten([
+                styles.additionalOptions,
+                animatedFooterStyle,
+              ])}
             >
               <BlurView intensity={25} style={styles.footerBlur}>
                 <Text style={styles.optionsTitle}>

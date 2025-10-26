@@ -1,12 +1,30 @@
 import React, { useEffect, type ReactNode } from "react";
-import { View, TouchableOpacity, type ViewStyle } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  type ViewStyle,
+  StyleSheet,
+} from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSharedValue, useAnimatedStyle, withSpring, withSequence, withTiming, withDelay, runOnJS } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+  withDelay,
+  runOnJS,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import Animated from "react-native-reanimated";
 
-import { GlobalStyles, BorderRadius, AnimationConfigs, Shadows } from "../../../styles/GlobalStyles";
+import {
+  GlobalStyles,
+  BorderRadius,
+  AnimationConfigs,
+  Shadows,
+} from "../../../styles/GlobalStyles";
 import { PREMIUM_GRADIENTS } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
 
@@ -123,7 +141,9 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   };
 
   const CardContent = (
-    <View style={[GlobalStyles.cardContent, style]}>{children}</View>
+    <View style={StyleSheet.flatten([GlobalStyles.cardContent, style])}>
+      {children}
+    </View>
   );
 
   const cardStyle = getCardStyle();
@@ -133,7 +153,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
     return (
       <Animated.View style={animatedStyle}>
         <TouchableOpacity
-          style={[cardStyle, style]}
+          style={StyleSheet.flatten([cardStyle, style])}
           onPress={onPress}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
@@ -141,7 +161,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
         >
           {shimmer && (
             <Animated.View
-              style={[
+              style={StyleSheet.flatten([
                 {
                   position: "absolute",
                   top: 0,
@@ -152,7 +172,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
                   zIndex: 1,
                 },
                 shimmerStyle,
-              ]}
+              ])}
             />
           )}
 
@@ -197,10 +217,12 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   }
 
   return (
-    <Animated.View style={[cardStyle, animatedStyle, style]}>
+    <Animated.View
+      style={StyleSheet.flatten([cardStyle, animatedStyle, style])}
+    >
       {shimmer && (
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             {
               position: "absolute",
               top: 0,
@@ -211,7 +233,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
               zIndex: 1,
             },
             shimmerStyle,
-          ]}
+          ])}
         />
       )}
 
@@ -255,4 +277,3 @@ export const EliteCard: React.FC<EliteCardProps> = ({
 };
 
 export default EliteCard;
-

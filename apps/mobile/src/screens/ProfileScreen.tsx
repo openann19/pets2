@@ -255,11 +255,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                   colors={[`${item.color}20`, `${item.color}10`]}
                   style={styles.menuIcon}
                 >
-                  <Ionicons
-                    name={item.icon}
-                    size={24}
-                    color={item.color}
-                  />
+                  <Ionicons name={item.icon} size={24} color={item.color} />
                 </LinearGradient>
                 <Text style={styles.menuText}>{item.title}</Text>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />

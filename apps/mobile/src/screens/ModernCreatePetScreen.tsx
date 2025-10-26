@@ -309,7 +309,7 @@ export default function ModernCreatePetScreen({
           showsVerticalScrollIndicator={false}
         >
           {/* Photo Upload Section */}
-          <View style={getAnimatedStyle(0)}>
+          <View style={getAnimatedStyle?.(0) || {}}>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Pet Photos</Heading2>
               <BodySmall style={styles.sectionSubtitle}>
@@ -319,12 +319,13 @@ export default function ModernCreatePetScreen({
                 photos={photos}
                 onPhotosChange={setPhotos}
                 maxPhotos={6}
+                style={styles.photoUpload}
               />
             </FXContainerPresets.glass>
           </View>
 
           {/* Basic Information */}
-          <View style={getAnimatedStyle(1)}>
+          <View style={getAnimatedStyle?.(1) || {}}>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Basic Information</Heading2>
 
@@ -419,13 +420,13 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Description */}
-          <View style={getAnimatedStyle(2)}>
+          <View style={getAnimatedStyle?.(2) || {}}>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Description</Heading2>
               <View style={styles.formGroup}>
                 <Label>Tell us about your pet *</Label>
                 <TextInput
-                  style={[styles.input, styles.textArea]}
+                  style={StyleSheet.flatten([styles.input, styles.textArea])}
                   value={formData.description}
                   onChangeText={handleDescriptionChange}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
@@ -438,7 +439,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Intent */}
-          <View style={getAnimatedStyle(3)}>
+          <View style={getAnimatedStyle?.(3) || {}}>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>Intent</Heading2>
               <View style={styles.formGroup}>
@@ -447,14 +448,13 @@ export default function ModernCreatePetScreen({
                   {intentOptions.map((intent) => (
                     <EliteButton
                       key={intent}
-                      title={intent}
+                      title={intent.charAt(0).toUpperCase() + intent.slice(1)}
                       variant={
                         formData.intent === intent ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => {
-                        handleIntentChange(intent);
-                      }}
+                      onPress={() => updateFormData("intent", intent)}
+                      style={styles.optionButton}
                     />
                   ))}
                 </View>
@@ -463,27 +463,26 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Personality Tags */}
-          <View style={getAnimatedStyle(4)}>
+          <View style={getAnimatedStyle?.(4) || {}}>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>
                 Personality & Traits
               </Heading2>
               <View style={styles.formGroup}>
                 <Label>Select traits that describe your pet</Label>
-                <View style={styles.tagsContainer}>
-                  {personalityTagOptions.map((tag) => (
+                <View style={styles.optionsContainer}>
+                  {personalityTags.map((tag) => (
                     <EliteButton
                       key={tag}
                       title={tag}
                       variant={
                         formData.personalityTags.includes(tag)
-                          ? "secondary"
+                          ? "primary"
                           : "outline"
                       }
                       size="sm"
-                      onPress={() => {
-                        togglePersonalityTag(tag);
-                      }}
+                      onPress={() => handlePersonalityTagToggle(tag)}
+                      style={styles.optionButton}
                     />
                   ))}
                 </View>
@@ -492,7 +491,7 @@ export default function ModernCreatePetScreen({
           </View>
 
           {/* Contact Information */}
-          <View style={getAnimatedStyle(5)}>
+          <View style={getAnimatedStyle?.(5) || {}}>
             <FXContainerPresets.glass style={styles.section}>
               <Heading2 style={styles.sectionTitle}>
                 Contact Information
@@ -574,9 +573,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.md,
     fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.text.primary,
     borderWidth: 1,
-    borderColor: Theme.colors.border.light.default,
+    borderColor: Theme.colors.border.light,
     ...Theme.shadows.depth.sm,
   },
   textArea: {

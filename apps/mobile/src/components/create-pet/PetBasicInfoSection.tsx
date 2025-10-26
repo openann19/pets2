@@ -45,7 +45,10 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, errors.name && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            errors.name && styles.inputError,
+          ])}
           value={formData.name}
           onChangeText={(value) => {
             onUpdateFormData("name", value);
@@ -62,22 +65,22 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           {speciesOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.species === option.value &&
                   styles.optionButtonSelected,
-              ]}
+              ])}
               onPress={() => {
                 onUpdateFormData("species", option.value);
               }}
             >
               <Text style={styles.optionEmoji}>{option.emoji}</Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.species === option.value &&
                     styles.optionTextSelected,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -92,7 +95,10 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Breed *</Text>
         <TextInput
-          style={[styles.input, errors.breed && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            errors.breed && styles.inputError,
+          ])}
           value={formData.breed}
           onChangeText={(value) => {
             onUpdateFormData("breed", value);
@@ -104,10 +110,13 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       </View>
 
       <View style={styles.row}>
-        <View style={[styles.inputGroup, styles.flex1]}>
+        <View style={StyleSheet.flatten([styles.inputGroup, styles.flex1])}>
           <Text style={styles.label}>Age (years) *</Text>
           <TextInput
-            style={[styles.input, errors.age && styles.inputError]}
+            style={StyleSheet.flatten([
+              styles.input,
+              errors.age && styles.inputError,
+            ])}
             value={formData.age}
             onChangeText={(value) => {
               onUpdateFormData("age", value);
@@ -119,7 +128,13 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           {errors.age && <Text style={styles.errorText}>{errors.age}</Text>}
         </View>
 
-        <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.inputGroup,
+            styles.flex1,
+            styles.marginLeft,
+          ])}
+        >
           <Text style={styles.label}>Gender *</Text>
           <View style={styles.genderOptions}>
             {[
@@ -128,22 +143,22 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             ].map((option) => (
               <TouchableOpacity
                 key={option.value}
-                style={[
+                style={StyleSheet.flatten([
                   styles.genderButton,
                   formData.gender === option.value &&
                     styles.genderButtonSelected,
-                ]}
+                ])}
                 onPress={() => {
                   onUpdateFormData("gender", option.value);
                 }}
               >
                 <Text style={styles.genderEmoji}>{option.emoji}</Text>
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.genderText,
                     formData.gender === option.value &&
                       styles.genderTextSelected,
-                  ]}
+                  ])}
                 >
                   {option.label}
                 </Text>
@@ -162,27 +177,27 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           {sizeOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.sizeButton,
                 formData.size === option.value && styles.sizeButtonSelected,
-              ]}
+              ])}
               onPress={() => {
                 onUpdateFormData("size", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.sizeLabel,
                   formData.size === option.value && styles.sizeLabelSelected,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.sizeDesc,
                   formData.size === option.value && styles.sizeDescSelected,
-                ]}
+                ])}
               >
                 {option.desc}
               </Text>
@@ -195,7 +210,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Description</Text>
         <TextInput
-          style={[styles.textArea]}
+          style={StyleSheet.flatten([styles.textArea])}
           value={formData.description}
           onChangeText={(value) => {
             onUpdateFormData("description", value);

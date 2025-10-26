@@ -169,19 +169,19 @@ export default function LeaderboardScreen() {
       contentContainerStyle={styles.categoryTabsContent}
     >
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.categoryTab,
           selectedCategory === "all" && styles.categoryTabActive,
-        ]}
+        ])}
         onPress={() => {
           handleCategoryChange("all");
         }}
       >
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.categoryTabText,
             selectedCategory === "all" && styles.categoryTabTextActive,
-          ]}
+          ])}
         >
           All
         </Text>
@@ -190,10 +190,10 @@ export default function LeaderboardScreen() {
       {categories.map((category) => (
         <TouchableOpacity
           key={category.id}
-          style={[
+          style={StyleSheet.flatten([
             styles.categoryTab,
             selectedCategory === category.id && styles.categoryTabActive,
-          ]}
+          ])}
           onPress={() => {
             handleCategoryChange(category.id);
           }}
@@ -205,10 +205,10 @@ export default function LeaderboardScreen() {
             style={styles.categoryTabIcon}
           />
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.categoryTabText,
               selectedCategory === category.id && styles.categoryTabTextActive,
-            ]}
+            ])}
           >
             {category.name}
           </Text>
@@ -222,19 +222,19 @@ export default function LeaderboardScreen() {
       {(["daily", "weekly", "monthly", "all_time"] as const).map((period) => (
         <TouchableOpacity
           key={period}
-          style={[
+          style={StyleSheet.flatten([
             styles.periodTab,
             selectedPeriod === period && styles.periodTabActive,
-          ]}
+          ])}
           onPress={() => {
             handlePeriodChange(period);
           }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.periodTabText,
               selectedPeriod === period && styles.periodTabTextActive,
-            ]}
+            ])}
           >
             {period.replace("_", " ").toUpperCase()}
           </Text>
@@ -280,7 +280,10 @@ export default function LeaderboardScreen() {
         <View style={styles.entryRank}>
           {isTopThree ? (
             <View
-              style={[styles.rankBadge, { backgroundColor: rankColors[index] }]}
+              style={StyleSheet.flatten([
+                styles.rankBadge,
+                { backgroundColor: rankColors[index] },
+              ])}
             >
               <Ionicons name="trophy" size={16} color="#fff" />
             </View>
@@ -313,7 +316,10 @@ export default function LeaderboardScreen() {
             {entry.badges.slice(0, 3).map((badge) => (
               <View
                 key={badge.id}
-                style={[styles.badge, { backgroundColor: badge.color }]}
+                style={StyleSheet.flatten([
+                  styles.badge,
+                  { backgroundColor: badge.color },
+                ])}
               >
                 <Ionicons name="star" size={12} color="#fff" />
               </View>

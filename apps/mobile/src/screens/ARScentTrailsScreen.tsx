@@ -214,18 +214,18 @@ const ARScentTrailsScreen = ({ navigation }: ARScentTrailsScreenProps) => {
                   <View style={styles.trailHeader}>
                     <Text style={styles.petName}>{trail.petName}</Text>
                     <View
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.intensityBadge,
                         {
                           backgroundColor: `${getIntensityColor(trail.intensity)}20`,
                         },
-                      ]}
+                      ])}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.intensityText,
                           { color: getIntensityColor(trail.intensity) },
-                        ]}
+                        ])}
                       >
                         {trail.intensity.toUpperCase()}
                       </Text>

@@ -87,7 +87,10 @@ const PreferencesSetupScreen = ({
     transform: [{ scale: scaleValue.value }],
   }));
 
-  const updatePreferences = (field: string, value: import("../../types/forms").FormFieldValue) => {
+  const updatePreferences = (
+    field: string,
+    value: import("../../types/forms").FormFieldValue,
+  ) => {
     setPreferences((prev) => ({
       ...prev,
       [field]: value,
@@ -157,7 +160,9 @@ const PreferencesSetupScreen = ({
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Animated.View style={[styles.animatedContainer, animatedStyle]}>
+        <Animated.View
+          style={StyleSheet.flatten([styles.animatedContainer, animatedStyle])}
+        >
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Set Your Preferences</Text>
@@ -247,21 +252,21 @@ const PreferencesSetupScreen = ({
               {SPECIES_OPTIONS.map((option) => (
                 <TouchableOpacity
                   key={option.value}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.optionButton,
                     preferences.species.includes(option.value) &&
                       styles.selectedOption,
-                  ]}
+                  ])}
                   onPress={() => {
                     toggleSpecies(option.value);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.optionText,
                       preferences.species.includes(option.value) &&
                         styles.selectedOptionText,
-                    ]}
+                    ])}
                   >
                     {option.label}
                   </Text>
@@ -280,21 +285,21 @@ const PreferencesSetupScreen = ({
               {INTENT_OPTIONS.map((option) => (
                 <TouchableOpacity
                   key={option.value}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.optionButton,
                     preferences.intents.includes(option.value) &&
                       styles.selectedOption,
-                  ]}
+                  ])}
                   onPress={() => {
                     toggleIntent(option.value);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.optionText,
                       preferences.intents.includes(option.value) &&
                         styles.selectedOptionText,
-                    ]}
+                    ])}
                   >
                     {option.label}
                   </Text>

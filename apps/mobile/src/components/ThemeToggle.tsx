@@ -69,12 +69,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={toggleTheme}
-        style={[
+        style={StyleSheet.flatten([
           themeStyles.iconContainer,
           buttonSizes[size],
           { backgroundColor: colors.glassWhiteLight },
           style,
-        ]}
+        ])}
         activeOpacity={0.7}
       >
         <Animated.View>
@@ -85,7 +85,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           />
         </Animated.View>
         {showLabel && (
-          <Text style={[themeStyles.label, { color: colors.gray600 }]}>
+          <Text
+            style={StyleSheet.flatten([
+              themeStyles.label,
+              { color: colors.gray600 },
+            ])}
+          >
             {isDark ? "Dark" : "Light"}
           </Text>
         )}
@@ -97,12 +102,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={toggleTheme}
-        style={[
+        style={StyleSheet.flatten([
           themeStyles.buttonContainer,
           buttonSizes[size],
           styles.buttonSecondary,
           style,
-        ]}
+        ])}
         activeOpacity={0.8}
       >
         <View style={themeStyles.buttonContent}>
@@ -111,7 +116,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
             size={iconSizes[size]}
             color={colors.primary}
           />
-          <Text style={[themeStyles.buttonText, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              themeStyles.buttonText,
+              { color: colors.primary },
+            ])}
+          >
             {isDark ? "Dark Mode" : "Light Mode"}
           </Text>
         </View>
@@ -129,7 +139,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={showThemeSelector}
-        style={[
+        style={StyleSheet.flatten([
           themeStyles.selectorContainer,
           buttonSizes[size],
           {
@@ -137,7 +147,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
             borderColor: colors.gray300,
           },
           style,
-        ]}
+        ])}
         activeOpacity={0.8}
       >
         <View style={themeStyles.selectorContent}>
@@ -153,7 +163,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
               size={iconSizes[size]}
               color={colors.primary}
             />
-            <Text style={[themeStyles.selectorText, { color: colors.gray700 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                themeStyles.selectorText,
+                { color: colors.gray700 },
+              ])}
+            >
               Theme: {themeLabels[themeMode]}
             </Text>
           </View>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import type { ViewStyle, FlatListProps } from "react-native";
+import { StyleSheet } from "react-native";
 import { View, Animated, ScrollView, FlatList } from "react-native";
 import { Theme } from "../theme/unified-theme";
 
@@ -27,7 +28,9 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   useEffect(() => {
     const animations = animatedValues.map((animatedValue, index) =>
       Animated.spring(animatedValue, {
-        damping: 25, stiffness: 300, mass: 1,
+        damping: 25,
+        stiffness: 300,
+        mass: 1,
         toValue: 1,
         delay: index * delay,
         useNativeDriver: true,
@@ -38,13 +41,13 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   }, [animatedValues, delay]);
 
   return (
-    <View style={[containerStyle]}>
+    <View style={StyleSheet.flatten([containerStyle])}>
       {children.map((child, index) => {
         const animatedValue = animatedValues[index];
         return (
           <Animated.View
             key={index}
-            style={[
+            style={StyleSheet.flatten([
               {
                 opacity: animatedValue,
                 transform: [
@@ -57,7 +60,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
                 ],
               },
               style,
-            ]}
+            ])}
           >
             {child}
           </Animated.View>
@@ -86,7 +89,9 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
   useEffect(() => {
     if (trigger) {
       Animated.spring(animatedValue, {
-        damping: 10, stiffness: 600, mass: 0.5,
+        damping: 10,
+        stiffness: 600,
+        mass: 0.5,
         toValue: 1,
         delay,
         useNativeDriver: true,
@@ -96,7 +101,7 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
           opacity: animatedValue,
           transform: [
@@ -109,7 +114,7 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
           ],
         },
         style,
-      ]}
+      ])}
     >
       {children}
     </Animated.View>
@@ -214,7 +219,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   };
 
   return (
-    <Animated.View style={[getTransitionStyle(), style]}>
+    <Animated.View style={StyleSheet.flatten([getTransitionStyle(), style])}>
       {children}
     </Animated.View>
   );
@@ -270,7 +275,9 @@ export function AnimatedFlatList<T>({
 
       // Trigger animation
       Animated.spring(animatedValue, {
-        damping: 25, stiffness: 300, mass: 1,
+        damping: 25,
+        stiffness: 300,
+        mass: 1,
         toValue: 1,
         delay: index * animationDelay,
         useNativeDriver: true,
@@ -356,7 +363,9 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
       Animated.sequence([
         Animated.delay(delay),
         Animated.spring(animatedValue, {
-          damping: 20, stiffness: 400, mass: 0.8,
+          damping: 20,
+          stiffness: 400,
+          mass: 0.8,
           toValue: 1,
           useNativeDriver: true,
         }),
@@ -426,7 +435,7 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
   };
 
   return (
-    <Animated.View style={[getAnimationStyle(), style]}>
+    <Animated.View style={StyleSheet.flatten([getAnimationStyle(), style])}>
       {children}
     </Animated.View>
   );

@@ -10,4 +10,3 @@ export const BLUR_CONFIGS = {
 } as const;
 
 export type BlurIntensity = keyof typeof BLUR_CONFIGS;
-

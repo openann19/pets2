@@ -28,13 +28,65 @@ import {
   useStaggeredFadeIn,
   useGlowEffect,
 } from "../hooks/useMotionSystem";
-// import {
-//   DynamicColors,
-//   EnhancedShadows,
-//   SemanticColors,
-//   EnhancedTypography,
-//   MotionSystem,
-// } from '../styles/EnhancedDesignTokens'; // Hooks
+
+// Define fallback design tokens
+const DynamicColors = {
+  gradients: {
+    primary: ["#007AFF", "#5856D6"],
+    secondary: ["#FF3B30", "#FF9500"],
+    premium: ["#FFD700", "#FFA500"],
+    sunset: ["#FF6B6B", "#FFE66D"],
+    ocean: ["#4ECDC4", "#44A08D"],
+  },
+  glass: {
+    colors: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"],
+    locations: [0, 1],
+  },
+};
+
+const EnhancedTypography = {
+  effects: {
+    gradient: {
+      primary: {
+        color: "#007AFF",
+        fontWeight: "700" as const,
+      },
+      secondary: {
+        color: "#5856D6",
+        fontWeight: "700" as const,
+      },
+    },
+    shadow: {
+      text: {
+        textShadowColor: "rgba(0, 0, 0, 0.3)",
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
+      },
+    },
+  },
+};
+
+const SemanticColors = {
+  premium: {
+    gold: "#FFD700",
+    platinum: "#E5E4E2",
+    diamond: "#B9F2FF",
+  },
+  interactive: {
+    primary: "#007AFF",
+    secondary: "#5856D6",
+  },
+  text: {
+    primary: "#000000",
+    secondary: "#666666",
+    inverse: "#FFFFFF",
+  },
+  background: {
+    primary: "#FFFFFF",
+    secondary: "#F8F9FA",
+    dark: "#000000",
+  },
+};
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 

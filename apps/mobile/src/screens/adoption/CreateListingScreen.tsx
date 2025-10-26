@@ -225,21 +225,21 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   {["dog", "cat"].map((species) => (
                     <TouchableOpacity
                       key={species}
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.species === species &&
                           styles.radioButtonActive,
-                      ]}
+                      ])}
                       onPress={() => {
                         handleInputChange("species", species);
                       }}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.radioText,
                           formData.species === species &&
                             styles.radioTextActive,
-                        ]}
+                        ])}
                       >
                         {species.charAt(0).toUpperCase() + species.slice(1)}
                       </Text>
@@ -254,19 +254,19 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   {["male", "female"].map((gender) => (
                     <TouchableOpacity
                       key={gender}
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.gender === gender && styles.radioButtonActive,
-                      ]}
+                      ])}
                       onPress={() => {
                         handleInputChange("gender", gender);
                       }}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.radioText,
                           formData.gender === gender && styles.radioTextActive,
-                        ]}
+                        ])}
                       >
                         {gender.charAt(0).toUpperCase() + gender.slice(1)}
                       </Text>
@@ -310,19 +310,19 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   {["small", "medium", "large"].map((size) => (
                     <TouchableOpacity
                       key={size}
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.size === size && styles.radioButtonActive,
-                      ]}
+                      ])}
                       onPress={() => {
                         handleInputChange("size", size);
                       }}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.radioText,
                           formData.size === size && styles.radioTextActive,
-                        ]}
+                        ])}
                       >
                         {size.charAt(0).toUpperCase() + size.slice(1)}
                       </Text>
@@ -339,7 +339,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
           <Text style={styles.sectionTitle}>Description *</Text>
           <BlurView intensity={20} style={styles.sectionCard}>
             <TextInput
-              style={[styles.textInput, styles.textArea]}
+              style={StyleSheet.flatten([styles.textInput, styles.textArea])}
               value={formData.description}
               onChangeText={(value) => {
                 handleInputChange("description", value);
@@ -364,20 +364,20 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               {personalityOptions.map((tag) => (
                 <TouchableOpacity
                   key={tag}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.tag,
                     formData.personalityTags.includes(tag) && styles.tagActive,
-                  ]}
+                  ])}
                   onPress={() => {
                     handlePersonalityToggle(tag);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.tagText,
                       formData.personalityTags.includes(tag) &&
                         styles.tagTextActive,
-                    ]}
+                    ])}
                   >
                     {tag}
                   </Text>
@@ -401,10 +401,10 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   }}
                 >
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.healthCheckbox,
                       value && styles.healthCheckboxActive,
-                    ]}
+                    ])}
                   >
                     {value && (
                       <Ionicons name="checkmark" size={16} color="#fff" />
@@ -422,10 +422,10 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Submit Button */}
         <View style={styles.section}>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.submitButton,
               isSubmitting && styles.submitButtonDisabled,
-            ]}
+            ])}
             onPress={handleSubmit}
             disabled={isSubmitting}
           >

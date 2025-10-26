@@ -1,5 +1,9 @@
 import { useCallback } from "react";
-import { useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import {
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 import { SPRING_CONFIGS } from "./configs/springConfigs";
 import { TIMING_CONFIGS } from "./configs/timingConfigs";
@@ -58,4 +62,3 @@ export function useSpringAnimation(
 }
 
 export default useSpringAnimation;
-

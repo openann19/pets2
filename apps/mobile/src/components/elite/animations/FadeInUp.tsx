@@ -1,5 +1,9 @@
 import React, { useEffect, type ReactNode } from "react";
-import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
 /**
@@ -32,4 +36,3 @@ export const FadeInUp: React.FC<FadeInUpProps> = ({ children, delay = 0 }) => {
 };
 
 export default FadeInUp;
-

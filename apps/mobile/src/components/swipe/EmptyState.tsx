@@ -4,7 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { EliteButton } from "../EliteComponents";
 import { GlowContainer } from "../GlowShadowSystem";
-import { PremiumHeading, PremiumBody } from "../PremiumTypography";
+import PremiumTypography from "../PremiumTypography";
+
+const { PremiumHeading, PremiumBody } = PremiumTypography;
 
 interface EmptyStateProps {
   type: "error" | "empty";

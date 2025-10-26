@@ -40,12 +40,18 @@ export function usePhotoManagement({
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== "granted") {
-      Alert.alert("Permission needed", "Please grant permission to access your photos");
+      Alert.alert(
+        "Permission needed",
+        "Please grant permission to access your photos",
+      );
       return;
     }
 
     if (photos.length >= maxPhotos) {
-      Alert.alert("Maximum photos reached", `You can only add up to ${maxPhotos} photos`);
+      Alert.alert(
+        "Maximum photos reached",
+        `You can only add up to ${maxPhotos} photos`,
+      );
       return;
     }
 
@@ -90,7 +96,7 @@ export function usePhotoManagement({
       prev.map((photo, i) => ({
         ...photo,
         isPrimary: i === index,
-      }))
+      })),
     );
   }, []);
 
@@ -118,7 +124,10 @@ export function usePhotoManagement({
         });
 
         await matchesAPI.uploadPetPhotos(petId, formData);
-        logger.info("Photos uploaded successfully", { petId, photoCount: photos.length });
+        logger.info("Photos uploaded successfully", {
+          petId,
+          photoCount: photos.length,
+        });
         return true;
       } catch (err) {
         logger.error("Failed to upload photos", { error: err, petId });
@@ -128,7 +137,7 @@ export function usePhotoManagement({
         setIsLoading(false);
       }
     },
-    [photos]
+    [photos],
   );
 
   const clearPhotos = useCallback(() => {

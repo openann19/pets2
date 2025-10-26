@@ -10,7 +10,10 @@ export interface UseMessageActionsOptions {
 }
 
 export interface UseMessageActionsReturn {
-  retryMessage: (messageId: string, currentMessages: Message[]) => Promise<void>;
+  retryMessage: (
+    messageId: string,
+    currentMessages: Message[],
+  ) => Promise<void>;
   deleteMessage: (messageId: string) => Promise<void>;
 }
 
@@ -36,7 +39,7 @@ export function useMessageActions({
         throw error;
       }
     },
-    [matchId, onMessageRetried]
+    [matchId, onMessageRetried],
   );
 
   const deleteMessage = useCallback(
@@ -50,7 +53,7 @@ export function useMessageActions({
         throw error;
       }
     },
-    [matchId, onMessageDeleted]
+    [matchId, onMessageDeleted],
   );
 
   return {

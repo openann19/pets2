@@ -272,7 +272,7 @@ export default function PerformanceTestSuite({
           <View style={styles.metricRow}>
             <Label style={styles.metricLabel}>FPS:</Label>
             <Body
-              style={[
+              style={StyleSheet.flatten([
                 styles.metricValue,
                 {
                   color:
@@ -280,7 +280,7 @@ export default function PerformanceTestSuite({
                       ? Theme.colors.status.success
                       : Theme.colors.status.error,
                 },
-              ]}
+              ])}
             >
               {metrics.fps}
             </Body>
@@ -306,7 +306,10 @@ export default function PerformanceTestSuite({
           <Label style={styles.progressLabel}>{testState.currentTest}</Label>
           <View style={styles.progressBar}>
             <View
-              style={[styles.progressFill, { width: `${testState.progress}%` }]}
+              style={StyleSheet.flatten([
+                styles.progressFill,
+                { width: `${testState.progress}%` },
+              ])}
             />
           </View>
           <BodySmall style={styles.progressText}>
@@ -317,7 +320,9 @@ export default function PerformanceTestSuite({
 
       {/* Test Visualization */}
       <View style={styles.testVisualization}>
-        <Animated.View style={[styles.testBox, animatedTestStyle]} />
+        <Animated.View
+          style={StyleSheet.flatten([styles.testBox, animatedTestStyle])}
+        />
       </View>
 
       {/* Test Controls */}
@@ -341,10 +346,10 @@ export default function PerformanceTestSuite({
           <View style={styles.resultItem}>
             <Label style={styles.resultLabel}>Overall Grade:</Label>
             <Body
-              style={[
+              style={StyleSheet.flatten([
                 styles.resultValue,
                 { color: getGradeColor(testState.results.overallGrade) },
-              ]}
+              ])}
             >
               {testState.results.overallGrade}
             </Body>

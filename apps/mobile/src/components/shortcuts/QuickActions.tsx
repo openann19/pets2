@@ -24,7 +24,10 @@ export function QuickActions({
         {actions.map((action) => (
           <TouchableOpacity
             key={action.id}
-            style={[styles.actionButton, { backgroundColor: action.color }]}
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              { backgroundColor: action.color },
+            ])}
             onPress={action.onPress}
           >
             <Ionicons name={action.icon} size={24} color="white" />

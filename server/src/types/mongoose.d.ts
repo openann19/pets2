@@ -519,3 +519,184 @@ export interface IMatchModel extends Model<IMatch, Record<string, never>, IMatch
  */
 export type IMatchDocument = HydratedDocument<IMatch, IMatchMethods>;
 
+/**
+ * Conversation message read receipt
+ */
+export interface IConversationMessageRead {
+  user: string;
+  readAt: Date;
+}
+
+/**
+ * Conversation message
+ */
+export interface IConversationMessage {
+  _id?: string;
+  sender: string;
+  content: string;
+  attachments: string[];
+  sentAt: Date;
+  readBy: IConversationMessageRead[];
+}
+
+/**
+ * Conversation document interface
+ */
+export interface IConversation extends Document {
+  participants: string[];
+  lastMessageAt: Date;
+  messages: IConversationMessage[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Conversation methods (instance methods)
+ */
+export interface IConversationMethods {
+  addMessage(senderId: string, content: string, attachments?: string[]): Promise<any>;
+  markMessagesAsRead(userId: string): Promise<boolean>;
+}
+
+/**
+ * Conversation statics (model methods)
+ */
+export interface IConversationModel extends Model<IConversation, Record<string, never>, IConversationMethods> {
+  findOrCreateOneToOne(userA: string, userB: string): Promise<any>;
+  getMessagesPage(conversationId: string, options: { before?: string; limit?: number }): Promise<any>;
+}
+
+/**
+ * Fully typed Conversation document
+ */
+export type IConversationDocument = HydratedDocument<IConversation, IConversationMethods>;
+
+/**
+ * Story view
+ */
+export interface IStoryView {
+  userId: string;
+  viewedAt: Date;
+}
+
+/**
+ * Story reply
+ */
+export interface IStoryReply {
+  _id?: string;
+  userId: string;
+  message: string;
+  createdAt: Date;
+}
+
+/**
+ * Story document interface
+ */
+export interface IStory extends Document {
+  userId: string;
+  mediaType: 'photo' | 'video';
+  mediaUrl: string;
+  thumbnailUrl?: string;
+  caption?: string;
+  duration: number;
+  views: IStoryView[];
+  viewCount: number;
+  replies: IStoryReply[];
+  replyCount: number;
+  createdAt: Date;
+  expiresAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Story methods (instance methods)
+ */
+export interface IStoryMethods {
+  addView(userId: string): boolean;
+  addReply(userId: string, message: string): void;
+  isExpired(): boolean;
+  hasUserViewed(userId: string): boolean;
+}
+
+/**
+ * Story statics (model methods)
+ */
+export interface IStoryModel extends Model<IStory, Record<string, never>, IStoryMethods> {
+  getActiveFeedStories(userId: string, followingIds?: string[], options?: Record<string, unknown>): Promise<any>;
+  getUserActiveStories(userId: string, options?: Record<string, unknown>): Promise<any>;
+  getStoriesGroupedByUser(userId: string, followingIds?: string[], options?: Record<string, unknown>): Promise<any>;
+  deleteExpiredStories(): Promise<number>;
+}
+
+/**
+ * Fully typed Story document
+ */
+export type IStoryDocument = HydratedDocument<IStory, IStoryMethods>;
+
+/**
+ * Notification document interface
+ */
+export interface INotification extends Document {
+  userId: string;
+  type: 'match' | 'message' | 'like' | 'super_like' | 'reminder' | 'system' | 'test';
+  title: string;
+  body: string;
+  data: Record<string, unknown>;
+  read: boolean;
+  readAt?: Date;
+  actionUrl?: string;
+  priority: 'low' | 'normal' | 'high';
+  expiresAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Notification methods (instance methods)
+ */
+export interface INotificationMethods {
+  markAsRead(): Promise<any>;
+}
+
+/**
+ * Notification statics (model methods)
+ */
+export interface INotificationModel extends Model<INotification, Record<string, never>, INotificationMethods> {
+  getUnreadCount(userId: string): Promise<number>;
+  markAllAsRead(userId: string): Promise<any>;
+}
+
+/**
+ * Fully typed Notification document
+ */
+export type INotificationDocument = HydratedDocument<INotification, INotificationMethods>;
+
+/**
+ * Favorite document interface
+ */
+export interface IFavorite extends Document {
+  userId: string;
+  petId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Favorite methods (instance methods)
+ */
+export interface IFavoriteMethods {}
+
+/**
+ * Favorite statics (model methods)
+ */
+export interface IFavoriteModel extends Model<IFavorite, Record<string, never>, IFavoriteMethods> {
+  getUserFavorites(userId: string, pageOrOptions?: Record<string, unknown> | number, perPage?: number): Promise<any>;
+  isFavorited(userId: string, petId: string): Promise<boolean>;
+  getPetFavoriteCount(petId: string): Promise<number>;
+  getUserFavoriteCount(userId: string): Promise<number>;
+}
+
+/**
+ * Fully typed Favorite document
+ */
+export type IFavoriteDocument = HydratedDocument<IFavorite, IFavoriteMethods>;

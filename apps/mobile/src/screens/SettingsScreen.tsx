@@ -27,8 +27,8 @@ import {
   ProfileSummarySection,
   NotificationSettingsSection,
   AccountSettingsSection,
-  DangerZoneSection
-} from './settings';
+  DangerZoneSection,
+} from "./settings";
 
 type SettingsScreenProps = RootStackScreenProps<"Settings">;
 
@@ -337,17 +337,21 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                 onPress: async () => {
                   try {
                     // Get the cancellation token from AsyncStorage
-                    const token = await AsyncStorage.getItem('gdpr_deletion_token') || '';
+                    const token =
+                      (await AsyncStorage.getItem("gdpr_deletion_token")) || "";
                     if (!token) {
                       Alert.alert("Error", "No deletion token found");
                       return;
                     }
                     const result = await gdprService.cancelDeletion(token);
-                    
+
                     // Clear the token
-                    await AsyncStorage.removeItem('gdpr_deletion_token');
-                    
-                    setDeletionStatus({ isPending: false, daysRemaining: null });
+                    await AsyncStorage.removeItem("gdpr_deletion_token");
+
+                    setDeletionStatus({
+                      isPending: false,
+                      daysRemaining: null,
+                    });
                     Alert.alert(
                       "Deletion Cancelled",
                       result.message || "Your account will NOT be deleted.",
@@ -389,22 +393,30 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                               return;
                             }
                             try {
-                              const result = await gdprService.requestAccountDeletion(
-                                password,
-                                "User requested deletion",
-                                "No additional feedback"
-                              );
-                              
+                              const result =
+                                await gdprService.requestAccountDeletion(
+                                  password,
+                                  "User requested deletion",
+                                  "No additional feedback",
+                                );
+
                               // Store cancellation token in AsyncStorage
-                              await AsyncStorage.setItem('gdpr_deletion_token', result.deletionId);
-                              
+                              await AsyncStorage.setItem(
+                                "gdpr_deletion_token",
+                                result.deletionId,
+                              );
+
                               setDeletionStatus({
                                 isPending: true,
                                 daysRemaining: Math.ceil(
-                                  (new Date(result.gracePeriodEndsAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+                                  (new Date(
+                                    result.gracePeriodEndsAt,
+                                  ).getTime() -
+                                    new Date().getTime()) /
+                                    (1000 * 60 * 60 * 24),
                                 ),
                               });
-                              
+
                               Alert.alert(
                                 "Deletion Scheduled",
                                 `Your account will be deleted on ${new Date(
@@ -412,7 +424,9 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                                 ).toLocaleDateString()}. You have 30 days to cancel.`,
                               );
                             } catch (error) {
-                              logger.error("Account deletion failed:", { error });
+                              logger.error("Account deletion failed:", {
+                                error,
+                              });
                               Alert.alert(
                                 "Error",
                                 "Failed to schedule account deletion. Please try again.",
@@ -421,7 +435,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                           },
                         },
                       ],
-                      "secure-text"
+                      "secure-text",
                     );
                   } catch (error) {
                     logger.error("Account deletion failed:", { error });
@@ -445,10 +459,10 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   ) => (
     <TouchableOpacity
       key={item.id}
-      style={[
+      style={StyleSheet.flatten([
         styles.settingItem,
         item.destructive && styles.settingItemDestructive,
-      ]}
+      ])}
       onPress={() => {
         if (item.type === "navigation") {
           handleNavigation(item.id);
@@ -460,32 +474,32 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     >
       <View style={styles.settingLeft}>
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.settingIcon,
             item.destructive && styles.settingIconDestructive,
-          ]}
+          ])}
         >
           <Ionicons
-            name={item.icon as ComponentProps<typeof Ionicons>['name']}
+            name={item.icon as ComponentProps<typeof Ionicons>["name"]}
             size={20}
             color={item.destructive ? "#EF4444" : "#6B7280"}
           />
         </View>
         <View style={styles.settingText}>
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.settingTitle,
               item.destructive && styles.settingTitleDestructive,
-            ]}
+            ])}
           >
             {item.title}
           </Text>
           {item.subtitle && (
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.settingSubtitle,
                 item.destructive && styles.settingSubtitleDestructive,
-              ]}
+              ])}
             >
               {item.subtitle}
             </Text>
@@ -555,13 +569,13 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       >
         {/* Profile Summary */}
         <ProfileSummarySection
-          onEditProfile={() => handleNavigation('profile')}
+          onEditProfile={() => handleNavigation("profile")}
         />
 
         {/* Settings Sections */}
         <NotificationSettingsSection
           settings={notificationSettings}
-          onToggle={(id, value) => handleToggle('notifications', id, value)}
+          onToggle={(id, value) => handleToggle("notifications", id, value)}
         />
         {renderSection("Preferences", preferenceSettings, "preferences")}
         <AccountSettingsSection
@@ -569,10 +583,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           onNavigate={handleNavigation}
         />
         {renderSection("Support", supportSettings)}
-        <DangerZoneSection
-          settings={dangerSettings}
-          onAction={handleAction}
-        />
+        <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
 
         {/* App Version */}
         <View style={styles.versionSection}>

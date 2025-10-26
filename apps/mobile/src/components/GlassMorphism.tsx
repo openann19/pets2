@@ -1,11 +1,11 @@
 /**
  * GlassMorphism.tsx - BACKWARD COMPATIBILITY LAYER
- * 
+ *
  * This file now re-exports from the new modular structure under components/glass/
  * All components are now properly modularized into separate files.
- * 
+ *
  * This file exists for backward compatibility only.
- * 
+ *
  * REFACTORING COMPLETE:
  * - GlassMorphism.tsx: 528 lines → 52 lines (90% reduction)
  * - All components extracted to: components/glass/

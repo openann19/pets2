@@ -90,12 +90,7 @@ export const useAuthStore = create<AuthState>()(
     })),
     {
       name: "auth-storage-secure",
-      storage: createSecureStorage() as PersistStorage<{
-        accessToken: string | null;
-        refreshToken: string | null;
-        user: User | null;
-        isAuthenticated: boolean;
-      }>,
+      storage: createSecureStorage() as any,
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,

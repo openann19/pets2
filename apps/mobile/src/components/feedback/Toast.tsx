@@ -73,12 +73,12 @@ export function Toast({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         { top: insets.top + 10 },
         getTypeStyles(),
         animatedStyle,
-      ]}
+      ])}
     >
       <Text style={styles.text}>{message}</Text>
     </Animated.View>

@@ -40,7 +40,7 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
 
       <View style={styles.actions}>
         <TouchableOpacity
-          style={[styles.actionButton, styles.passButton]}
+          style={StyleSheet.flatten([styles.actionButton, styles.passButton])}
           onPress={() => {
             onSwipe("left");
           }}
@@ -49,7 +49,7 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.actionButton, styles.likeButton]}
+          style={StyleSheet.flatten([styles.actionButton, styles.likeButton])}
           onPress={() => {
             onSwipe("right");
           }}

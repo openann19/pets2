@@ -360,12 +360,19 @@ export function PinchZoom({
   return (
     <GestureDetector gesture={composedGesture}>
       <Animated.View
-        style={[styles.container, { width, height }, style, containerStyle]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { width, height },
+          style,
+          containerStyle,
+        ])}
       >
-        <Animated.View style={[styles.imageContainer, animatedStyle]}>
+        <Animated.View
+          style={StyleSheet.flatten([styles.imageContainer, animatedStyle])}
+        >
           <Image
             source={source}
-            style={[styles.image, { width, height }]}
+            style={StyleSheet.flatten([styles.image, { width, height }])}
             resizeMode={resizeMode}
           />
         </Animated.View>
@@ -422,8 +429,12 @@ export function PinchZoomContent({
 
   return (
     <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, panGesture)}>
-      <Animated.View style={[styles.container, { width, height }]}>
-        <Animated.View style={[styles.contentContainer, animatedStyle]}>
+      <Animated.View
+        style={StyleSheet.flatten([styles.container, { width, height }])}
+      >
+        <Animated.View
+          style={StyleSheet.flatten([styles.contentContainer, animatedStyle])}
+        >
           {children}
         </Animated.View>
       </Animated.View>

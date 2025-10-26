@@ -19,10 +19,10 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 
   return (
     <View
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         isDark ? styles.containerDark : styles.containerLight,
-      ]}
+      ])}
     >
       <Ionicons
         name="warning"
@@ -31,22 +31,25 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
       />
 
       <Text
-        style={[styles.title, isDark ? styles.titleDark : styles.titleLight]}
+        style={StyleSheet.flatten([
+          styles.title,
+          isDark ? styles.titleDark : styles.titleLight,
+        ])}
       >
         Something went wrong
       </Text>
 
       <Text
-        style={[
+        style={StyleSheet.flatten([
           styles.message,
           isDark ? styles.messageDark : styles.messageLight,
-        ]}
+        ])}
       >
         Please try again or contact support if the issue persists.
       </Text>
 
       <TouchableOpacity
-        style={[styles.button, styles.retryButton]}
+        style={StyleSheet.flatten([styles.button, styles.retryButton])}
         onPress={resetError}
       >
         <Ionicons name="refresh" size={20} color="#FFFFFF" />

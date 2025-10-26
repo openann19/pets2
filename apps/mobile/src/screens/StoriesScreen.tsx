@@ -16,27 +16,21 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import type { RouteProp } from "@react-navigation/native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { ResizeMode, Video } from "expo-av";
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { StatusBar } from "react-native";
 import {
   ActivityIndicator,
   Animated,
   Dimensions,
   Image,
-  PanResponder,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSocket } from "../hooks/useSocket";
-import apiClient from "../services/apiClient";
+import { useRoute } from "@react-navigation/native";
+import { useRef, useEffect } from "react";
+import { useStoriesScreen } from "../hooks/screens/social";
 
 // Navigation types
 type MainStackParamList = {
@@ -90,194 +84,26 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function StoriesScreen() {
   const route = useRoute<StoriesScreenRouteProp>();
-  const navigation = useNavigation<StoriesScreenNavigationProp>();
   const initialGroupIndex = route.params?.groupIndex ?? 0;
 
-  const [currentGroupIndex, setCurrentGroupIndex] = useState(initialGroupIndex);
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [viewCount, setViewCount] = useState(0);
-  const [_showReplyInput, setShowReplyInput] = useState(false); // Future feature
-
   const videoRef = useRef<Video>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
-  const socket = useSocket();
 
-  // Fetch stories feed
-  const { data: storyGroups } = useQuery({
-    queryKey: ["stories-feed"],
-    queryFn: async () => {
-      const response = await apiClient.get<StoriesFeedResponse>("/stories");
-      return response.stories;
-    },
-  });
-
-  const currentGroup = storyGroups?.[currentGroupIndex];
-  const currentStory = currentGroup?.stories[currentStoryIndex];
-
-  // Mark story as viewed
-  const viewStoryMutation = useMutation({
-    mutationFn: async (storyId: string) => {
-      const response = await apiClient.post<ViewStoryResponse>(
-        `/stories/${storyId}/view`,
-      );
-      return response;
-    },
-    onSuccess: (data: ViewStoryResponse) => {
-      setViewCount(data.viewCount);
-    },
-  });
-
-  // Navigation functions
-  const goToNextStory = useCallback(() => {
-    if (!currentGroup) return;
-
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    if (currentStoryIndex < currentGroup.stories.length - 1) {
-      setCurrentStoryIndex((prev) => prev + 1);
-      setProgress(0);
-    } else if (storyGroups && currentGroupIndex < storyGroups.length - 1) {
-      setCurrentGroupIndex((prev) => prev + 1);
-      setCurrentStoryIndex(0);
-      setProgress(0);
-    } else {
-      navigation.goBack();
-    }
-  }, [
-    currentGroup,
-    currentStoryIndex,
-    currentGroupIndex,
+  const {
     storyGroups,
-    navigation,
-  ]);
-
-  const goToPreviousStory = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    if (currentStoryIndex > 0) {
-      setCurrentStoryIndex((prev) => prev - 1);
-      setProgress(0);
-    } else if (currentGroupIndex > 0 && storyGroups) {
-      const prevGroupIndex = currentGroupIndex - 1;
-      const prevGroup = storyGroups[prevGroupIndex];
-      if (prevGroup) {
-        setCurrentGroupIndex(prevGroupIndex);
-        setCurrentStoryIndex(prevGroup.stories.length - 1);
-        setProgress(0);
-      }
-    }
-  }, [currentStoryIndex, currentGroupIndex, storyGroups]);
-
-  // Pan responder for swipe gestures
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (_evt) => {
-        // Long press detection
-        longPressTimer.current = setTimeout(() => {
-          setIsPaused(true);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        }, 200);
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        // Clear long press timer
-        if (longPressTimer.current) {
-          clearTimeout(longPressTimer.current);
-          longPressTimer.current = null;
-        }
-        setIsPaused(false);
-
-        const { locationX } = evt.nativeEvent;
-        const { dx, dy } = gestureState;
-
-        // Swipe down to close
-        if (dy > 100) {
-          navigation.goBack();
-          return;
-        }
-
-        // Swipe up for reply
-        if (dy < -100) {
-          setShowReplyInput(true);
-          return;
-        }
-
-        // Horizontal swipe or tap
-        if (Math.abs(dx) > 50) {
-          if (dx > 0) {
-            goToPreviousStory();
-          } else {
-            goToNextStory();
-          }
-        } else {
-          // Tap navigation
-          if (locationX < SCREEN_WIDTH / 3) {
-            goToPreviousStory();
-          } else {
-            goToNextStory();
-          }
-        }
-      },
-    }),
-  ).current;
-
-  // Auto-advance timer
-  useEffect(() => {
-    if (!currentStory || isPaused) return;
-
-    const duration = currentStory.duration * 1000;
-    const startTime = Date.now();
-
-    // Progress update interval
-    progressIntervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const newProgress = Math.min((elapsed / duration) * 100, 100);
-      setProgress(newProgress);
-    }, 16); // ~60fps
-
-    // Auto-advance timer
-    timerRef.current = setTimeout(() => {
-      goToNextStory();
-    }, duration);
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (progressIntervalRef.current)
-        clearInterval(progressIntervalRef.current);
-    };
-  }, [currentStory, isPaused, goToNextStory]);
-
-  // Mark story as viewed
-  useEffect(() => {
-    if (currentStory) {
-      viewStoryMutation.mutate(currentStory._id);
-    }
-  }, [currentStory?._id]);
-
-  // Socket.io real-time view updates
-  useEffect(() => {
-    if (!socket || !currentStory) return;
-
-    const handleStoryViewed = (data: {
-      storyId: string;
-      viewCount: number;
-    }) => {
-      if (data.storyId === currentStory._id) {
-        setViewCount(data.viewCount);
-      }
-    };
-
-    socket.on("story:viewed", handleStoryViewed);
-    return () => {
-      socket.off("story:viewed", handleStoryViewed);
-    };
-  }, [socket, currentStory?._id]);
+    isLoading,
+    currentGroupIndex,
+    currentStoryIndex,
+    currentGroup,
+    currentStory,
+    progress,
+    viewCount,
+    isPaused,
+    isMuted,
+    panResponder,
+    setPaused,
+    setMuted,
+    handleGoBack,
+  } = useStoriesScreen(initialGroupIndex);
 
   // Video controls
   useEffect(() => {
@@ -304,7 +130,7 @@ export default function StoriesScreen() {
       <StatusBar barStyle="light-content" />
 
       {/* Story Content */}
-      <View style={styles.storyContainer} {...panResponder.panHandlers}>
+      <View style={styles.storyContainer} {...panResponder.current.panHandlers}>
         {currentStory.mediaType === "photo" ? (
           <Image
             source={{ uri: currentStory.mediaUrl }}
@@ -321,9 +147,7 @@ export default function StoriesScreen() {
             isMuted={isMuted}
             isLooping={false}
             onPlaybackStatusUpdate={(status) => {
-              if ("didJustFinish" in status && status.didJustFinish) {
-                goToNextStory();
-              }
+              // Navigation is handled by the hook's timer
             }}
           />
         )}
@@ -333,7 +157,7 @@ export default function StoriesScreen() {
           {currentGroup.stories.map((story: Story, index: number) => (
             <View key={story._id} style={styles.progressBarBg}>
               <Animated.View
-                style={[
+                style={StyleSheet.flatten([
                   styles.progressBarFill,
                   {
                     width: `${
@@ -344,7 +168,7 @@ export default function StoriesScreen() {
                           : 0
                     }%`,
                   },
-                ]}
+                ])}
               />
             </View>
           ))}
@@ -383,8 +207,7 @@ export default function StoriesScreen() {
             {currentStory.mediaType === "video" && (
               <TouchableOpacity
                 onPress={() => {
-                  setIsMuted(!isMuted);
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setMuted(!isMuted);
                 }}
                 style={styles.iconButton}
               >
@@ -397,10 +220,7 @@ export default function StoriesScreen() {
             )}
 
             {/* Close Button */}
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={styles.iconButton}
-            >
+            <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
               <Ionicons name="close" size={24} color="#fff" />
             </TouchableOpacity>
           </View>

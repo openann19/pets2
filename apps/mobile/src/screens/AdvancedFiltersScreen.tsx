@@ -164,10 +164,10 @@ function AdvancedFiltersScreen({
           {categoryFilters.map((filter) => (
             <TouchableOpacity
               key={filter.id}
-              style={[
+              style={StyleSheet.flatten([
                 styles.filterCard,
                 filter.value && styles.filterCardActive,
-              ]}
+              ])}
               onPress={() => {
                 toggleFilter(filter.id);
               }}
@@ -178,18 +178,18 @@ function AdvancedFiltersScreen({
               >
                 <View style={styles.filterContent}>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.filterLabel,
                       filter.value && styles.filterLabelActive,
-                    ]}
+                    ])}
                   >
                     {filter.label}
                   </Text>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.checkbox,
                       filter.value && styles.checkboxActive,
-                    ]}
+                    ])}
                   >
                     {filter.value && (
                       <Ionicons name="checkmark" size={16} color="white" />

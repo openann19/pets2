@@ -86,13 +86,15 @@ export function BioResults({
             <Ionicons
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
-              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
+              color={
+                copied ? Theme.colors.status.success : Theme.colors.text.primary
+              }
             />
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionText,
                 copied && { color: Theme.colors.status.success },
-              ]}
+              ])}
             >
               {copied ? "Copied!" : "Copy"}
             </Text>
@@ -139,16 +141,16 @@ export function BioResults({
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Match Score</Text>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.metricValue,
                 { color: getMatchScoreColor(generatedBio.matchScore) },
-              ]}
+              ])}
             >
               {generatedBio.matchScore}/100
             </Text>
             <View style={styles.progressBar}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.progressFill,
                   {
                     width: `${generatedBio.matchScore}%`,
@@ -156,7 +158,7 @@ export function BioResults({
                       generatedBio.matchScore,
                     ),
                   },
-                ]}
+                ])}
               />
             </View>
           </View>
@@ -165,10 +167,10 @@ export function BioResults({
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Sentiment</Text>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.metricValue,
                 { color: getSentimentColor(generatedBio.sentiment.score) },
-              ]}
+              ])}
             >
               {generatedBio.sentiment.label}
             </Text>

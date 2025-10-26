@@ -75,6 +75,7 @@ export function toCorePet(legacy: LegacyWebPet): Pet {
 
   const corePet: Pet = {
     _id: legacy.id,
+    id: legacy.id,
     owner: legacy.ownerId != null ? legacy.ownerId : '',
     name: legacy.name.length > 0 ? legacy.name : 'Unknown',
     species,

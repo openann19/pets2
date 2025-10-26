@@ -1,7 +1,12 @@
 import React, { type ReactNode } from "react";
-import { View, type ViewProps, type ViewStyle } from "react-native";
+import { View, type ViewProps, type ViewStyle, StyleSheet } from "react-native";
 import { GlassContainer } from "./GlassContainer";
-import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from "./configs";
+import {
+  BLUR_CONFIGS,
+  TRANSPARENCY_CONFIGS,
+  BORDER_CONFIGS,
+  SHADOW_CONFIGS,
+} from "./configs";
 import { BorderRadius, Spacing } from "../../styles/GlobalStyles";
 
 /**
@@ -84,7 +89,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
       shadow={config.shadow}
       animated={animated}
       hover={hover}
-      style={[{ ...sizeConfig }, style]}
+      style={StyleSheet.flatten([{ ...sizeConfig }, style])}
       {...props}
     >
       {children}
@@ -93,4 +98,3 @@ export const GlassCard: React.FC<GlassCardProps> = ({
 };
 
 export default GlassCard;
-

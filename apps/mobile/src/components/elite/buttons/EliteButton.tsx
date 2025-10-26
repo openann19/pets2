@@ -1,12 +1,33 @@
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, type TouchableOpacityProps } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  type TouchableOpacityProps,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useSharedValue, useAnimatedStyle, withSpring, withTiming, withSequence, withDelay, runOnJS } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withSequence,
+  withDelay,
+  runOnJS,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import Animated from "react-native-reanimated";
 
-import { Colors, Spacing, GlobalStyles, BorderRadius, AnimationConfigs } from "../../../styles/GlobalStyles";
+import {
+  Colors,
+  Spacing,
+  GlobalStyles,
+  BorderRadius,
+  AnimationConfigs,
+} from "../../../styles/GlobalStyles";
 import { PREMIUM_GRADIENTS } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
 
@@ -17,7 +38,13 @@ import { PREMIUM_SHADOWS } from "../constants/shadows";
 
 interface EliteButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: "primary" | "secondary" | "ghost" | "glass" | "holographic" | "neon";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "ghost"
+    | "glass"
+    | "holographic"
+    | "neon";
   size?: "sm" | "md" | "lg" | "xl";
   icon?: string;
   loading?: boolean;
@@ -189,7 +216,12 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   };
 
   const ButtonContent = (
-    <View style={[getSizeStyle(), { opacity: (disabled ?? false) ? 0.6 : 1 }]}>
+    <View
+      style={StyleSheet.flatten([
+        getSizeStyle(),
+        { opacity: (disabled ?? false) ? 0.6 : 1 },
+      ])}
+    >
       {loading ? (
         <View
           style={{
@@ -209,11 +241,11 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
             size="small"
           />
           <Text
-            style={[
+            style={StyleSheet.flatten([
               GlobalStyles.buttonText,
               getTextStyle(),
               { marginLeft: Spacing.sm },
-            ]}
+            ])}
           >
             Loading...
           </Text>
@@ -242,7 +274,14 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
               style={{ marginRight: Spacing.xs }}
             />
           )}
-          <Text style={[GlobalStyles.buttonText, getTextStyle()]}>{title}</Text>
+          <Text
+            style={StyleSheet.flatten([
+              GlobalStyles.buttonText,
+              getTextStyle(),
+            ])}
+          >
+            {title}
+          </Text>
         </>
       )}
     </View>
@@ -251,7 +290,11 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   return (
     <Animated.View style={animatedStyle}>
       <TouchableOpacity
-        style={[getButtonStyle(), glow ? glowStyle : {}, style]}
+        style={StyleSheet.flatten([
+          getButtonStyle(),
+          glow ? glowStyle : {},
+          style,
+        ])}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -261,7 +304,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
         {/* Ripple Effect */}
         {ripple && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               {
                 position: "absolute",
                 top: "50%",
@@ -274,14 +317,14 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
                 marginLeft: -50,
               },
               rippleStyle,
-            ]}
+            ])}
           />
         )}
 
         {/* Shimmer Effect */}
         {shimmer && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               {
                 position: "absolute",
                 top: 0,
@@ -291,7 +334,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
                 backgroundColor: "rgba(255,255,255,0.1)",
               },
               shimmerStyle,
-            ]}
+            ])}
           />
         )}
 
@@ -315,4 +358,3 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
 };
 
 export default EliteButton;
-

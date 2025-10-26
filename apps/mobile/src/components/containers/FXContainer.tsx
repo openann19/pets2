@@ -84,7 +84,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
       case "glass":
         return {
           ...styles,
-          backgroundColor: Theme.glass.light[variant],
+          backgroundColor: Theme.glass.light.backgroundColor,
           borderWidth: 1,
           borderColor: `rgba(255, 255, 255, ${variant === "subtle" ? 0.2 : variant === "strong" ? 0.4 : 0.3})`,
           ...Theme.shadows.depth.md,
@@ -137,12 +137,12 @@ const FXContainer: React.FC<FXContainerProps> = ({
 
   // Shimmer animation
   const { animatedStyle: shimmerStyle } = useShimmerEffect(
-    disabled ? 0 : shimmerDuration,
+    !disabled && hasShimmer && isAnimated,
   );
 
   // Entrance animation
   const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation(entranceType, 0, "gentle");
+    useEntranceAnimation(entranceType, 0);
 
   // Start entrance animation if enabled
   React.useEffect(() => {
@@ -176,13 +176,13 @@ const FXContainer: React.FC<FXContainerProps> = ({
         <View style={StyleSheet.absoluteFill}>
           {content}
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               StyleSheet.absoluteFill,
               {
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
               },
               shimmerStyle,
-            ]}
+            ])}
             pointerEvents="none"
           />
         </View>
@@ -191,12 +191,10 @@ const FXContainer: React.FC<FXContainerProps> = ({
 
     // Apply gradient background
     if (type === "gradient" || type === "holographic") {
-      const gradient = gradientName ? Theme.gradients[gradientName] : null;
-      const colors = gradientColors ||
-        (Array.isArray(gradient) ? gradient : null) || [
-          Theme.colors.primary[500],
-          Theme.colors.primary[400],
-        ];
+      const colors = gradientColors || [
+        Theme.colors.primary[500],
+        Theme.colors.primary[400],
+      ];
 
       content = (
         <LinearGradient
@@ -217,7 +215,13 @@ const FXContainer: React.FC<FXContainerProps> = ({
   const Container = isAnimated ? Animated.View : View;
 
   return (
-    <Container style={[baseStyles, isAnimated && combinedAnimatedStyle, style]}>
+    <Container
+      style={StyleSheet.flatten([
+        baseStyles,
+        isAnimated && combinedAnimatedStyle,
+        style,
+      ])}
+    >
       {renderContent()}
     </Container>
   );

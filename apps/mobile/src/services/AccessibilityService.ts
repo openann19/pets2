@@ -180,7 +180,7 @@ class AccessibilityService {
     try {
       if (Platform.OS === "ios") {
         // iOS specific focus
-        AccessibilityInfo.setAccessibilityFocus(ref);
+        (AccessibilityInfo as any).setAccessibilityFocus(ref);
       } else {
         // Android specific focus
         // Would need additional implementation

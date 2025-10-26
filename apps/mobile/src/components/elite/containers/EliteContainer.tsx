@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { View, type ViewStyle } from "react-native";
+import { View, type ViewStyle, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,7 +29,7 @@ export const EliteContainer: React.FC<EliteContainerProps> = ({
     colors.gradientPrimary;
 
   return (
-    <View style={[GlobalStyles.container, style]}>
+    <View style={StyleSheet.flatten([GlobalStyles.container, style])}>
       <LinearGradient
         colors={gradientColors}
         style={GlobalStyles.backgroundGradient}
@@ -40,4 +40,3 @@ export const EliteContainer: React.FC<EliteContainerProps> = ({
 };
 
 export default EliteContainer;
-

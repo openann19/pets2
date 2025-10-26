@@ -1,6 +1,6 @@
 /**
  * Glass Components Barrel Export
- * 
+ *
  * Centralized export for all glass morphism components
  */
 
@@ -16,4 +16,3 @@ export type { BlurIntensity } from "./configs/blur";
 export type { TransparencyLevel } from "./configs/transparency";
 export type { BorderStyle } from "./configs/borders";
 export type { ShadowStyle } from "./configs/shadows";
-

@@ -60,10 +60,10 @@ export function ReactionPicker({
 
   const renderReaction: ListRenderItem<Reaction> = ({ item }) => (
     <TouchableOpacity
-      style={[
+      style={StyleSheet.flatten([
         styles.reactionButton,
         selectedReaction === item.emoji && styles.selectedReaction,
-      ]}
+      ])}
       onPress={() => handleSelect(item.emoji)}
       accessibilityLabel={`React with ${item.label}`}
       accessibilityRole="button"
@@ -85,14 +85,14 @@ export function ReactionPicker({
         onPress={onClose}
       >
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.container,
             position && {
               position: "absolute",
               top: position.y,
               left: position.x,
             },
-          ]}
+          ])}
         >
           <FlatList
             data={REACTIONS}
@@ -144,4 +144,3 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
-

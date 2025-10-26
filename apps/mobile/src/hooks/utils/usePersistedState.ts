@@ -16,7 +16,7 @@ export interface UsePersistedStateReturn<T> {
 
 /**
  * Hook for persisting state to AsyncStorage
- * 
+ *
  * @example
  * const { value, setValue } = usePersistedState({
  *   key: 'user_preferences',
@@ -45,7 +45,10 @@ export function usePersistedState<T>({
           setValueState(JSON.parse(saved));
         }
       } catch (error) {
-        console.error(`Failed to load persisted state for key "${key}":`, error);
+        console.error(
+          `Failed to load persisted state for key "${key}":`,
+          error,
+        );
       } finally {
         setIsLoading(false);
       }
@@ -58,7 +61,7 @@ export function usePersistedState<T>({
   const setValue = useCallback(
     (newValue: T) => {
       setValueState(newValue);
-      
+
       if (!enabled) return;
 
       try {
@@ -67,7 +70,7 @@ export function usePersistedState<T>({
         console.error(`Failed to persist state for key "${key}":`, error);
       }
     },
-    [key, enabled]
+    [key, enabled],
   );
 
   const clearStorage = useCallback(async () => {

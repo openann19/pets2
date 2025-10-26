@@ -1,6 +1,6 @@
 /**
  * Elite Components Barrel Export
- * 
+ *
  * Centralized export for all elite components.
  * Maintains backward compatibility with EliteComponents.tsx
  */
@@ -18,7 +18,12 @@ export { EliteCard } from "./cards";
 export { EliteButton } from "./buttons";
 
 // === ANIMATIONS ===
-export { FadeInUp, ScaleIn, StaggeredContainer, GestureWrapper } from "./animations";
+export {
+  FadeInUp,
+  ScaleIn,
+  StaggeredContainer,
+  GestureWrapper,
+} from "./animations";
 
 // === UTILITIES ===
 export { EliteLoading, EliteEmptyState } from "./utils";
@@ -27,7 +32,4 @@ export { EliteLoading, EliteEmptyState } from "./utils";
 export { PREMIUM_GRADIENTS, PREMIUM_SHADOWS } from "./constants";
 
 // Default export for backward compatibility
-export {
-  EliteContainer as default
-};
-
+export { EliteContainer as default };

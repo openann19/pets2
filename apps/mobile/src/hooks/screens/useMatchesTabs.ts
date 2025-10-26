@@ -10,7 +10,9 @@ export interface UseMatchesTabsReturn {
 /**
  * Hook for managing MatchesScreen tab state
  */
-export function useMatchesTabs(initialTab: MatchesTab = "matches"): UseMatchesTabsReturn {
+export function useMatchesTabs(
+  initialTab: MatchesTab = "matches",
+): UseMatchesTabsReturn {
   const [activeTab, setActiveTab] = useState<MatchesTab>(initialTab);
 
   return {

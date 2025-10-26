@@ -43,7 +43,8 @@ export function useProfileUpdate(): UseProfileUpdateReturn {
         Alert.alert("Success", "Profile updated successfully!");
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Failed to update profile";
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to update profile";
         setError(errorMessage);
         logger.error("Failed to update profile", { error: errorMessage });
         Alert.alert("Error", errorMessage);
@@ -52,7 +53,7 @@ export function useProfileUpdate(): UseProfileUpdateReturn {
         setIsUpdating(false);
       }
     },
-    [user, updateUser]
+    [user, updateUser],
   );
 
   return {

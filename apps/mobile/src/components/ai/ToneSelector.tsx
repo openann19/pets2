@@ -60,14 +60,14 @@ export function ToneSelector({
         {TONE_DETAILS.map((tone) => (
           <TouchableOpacity
             key={tone.id}
-            style={[
+            style={StyleSheet.flatten([
               styles.toneCard,
               selectedTone === tone.id && styles.selectedCard,
               {
                 borderColor:
                   selectedTone === tone.id ? tone.color : Theme.colors.border,
               },
-            ]}
+            ])}
             onPress={() => {
               onToneSelect(tone.id);
             }}
@@ -75,7 +75,10 @@ export function ToneSelector({
             accessibilityState={{ selected: selectedTone === tone.id }}
           >
             <View
-              style={[styles.iconContainer, { backgroundColor: tone.color }]}
+              style={StyleSheet.flatten([
+                styles.iconContainer,
+                { backgroundColor: tone.color },
+              ])}
             >
               <Text style={styles.icon}>{tone.icon}</Text>
             </View>
@@ -85,10 +88,10 @@ export function ToneSelector({
 
             {selectedTone === tone.id && (
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.selectedIndicator,
                   { backgroundColor: tone.color },
-                ]}
+                ])}
               >
                 <Text style={styles.checkmark}>✓</Text>
               </View>

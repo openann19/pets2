@@ -2,25 +2,25 @@
  * 🎬 ULTRA PREMIUM LOTTIE ANIMATIONS
  * Professional-grade Lottie animations for mobile success/loading states
  * Performance optimized with proper lifecycle management
- * 
+ *
  * This file re-exports from the modular Lottie components for backward compatibility
  */
 
-import { useState } from 'react';
+import { useState } from "react";
 
 // Re-export base component and types
-export { LottieAnimation } from './Lottie/LottieAnimation';
-export type { LottieAnimationProps } from './Lottie/LottieAnimation';
+export { LottieAnimation } from "./Lottie/LottieAnimation";
+export type { LottieAnimationProps } from "./Lottie/LottieAnimation";
 
 // Re-export specific animations with backward-compatible names
-export { SuccessAnimation as SuccessLottie } from './Lottie/SuccessAnimation';
-export { LoadingAnimation as LoadingLottie } from './Lottie/LoadingAnimation';
-export { ErrorAnimation as ErrorLottie } from './Lottie/ErrorAnimation';
+export { SuccessAnimation as SuccessLottie } from "./Lottie/SuccessAnimation";
+export { LoadingAnimation as LoadingLottie } from "./Lottie/LoadingAnimation";
+export { ErrorAnimation as ErrorLottie } from "./Lottie/ErrorAnimation";
 
 // Also export new names for forward compatibility
-export { SuccessAnimation } from './Lottie/SuccessAnimation';
-export { LoadingAnimation } from './Lottie/LoadingAnimation';
-export { ErrorAnimation } from './Lottie/ErrorAnimation';
+export { SuccessAnimation } from "./Lottie/SuccessAnimation";
+export { LoadingAnimation } from "./Lottie/LoadingAnimation";
+export { ErrorAnimation } from "./Lottie/ErrorAnimation";
 
 /**
  * Hook for managing Lottie animations

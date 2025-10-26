@@ -22,7 +22,10 @@ export function MatchesTabs({
     >
       <View style={styles.tabContent}>
         <TouchableOpacity
-          style={[styles.tab, selectedTab === "matches" && styles.activeTab]}
+          style={StyleSheet.flatten([
+            styles.tab,
+            selectedTab === "matches" && styles.activeTab,
+          ])}
           onPress={() => {
             onTabChange("matches");
           }}
@@ -30,16 +33,19 @@ export function MatchesTabs({
           accessibilityState={{ selected: selectedTab === "matches" }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.tabText,
               selectedTab === "matches" && styles.activeTabText,
-            ]}
+            ])}
           >
             Matches
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, selectedTab === "likedYou" && styles.activeTab]}
+          style={StyleSheet.flatten([
+            styles.tab,
+            selectedTab === "likedYou" && styles.activeTab,
+          ])}
           onPress={() => {
             onTabChange("likedYou");
           }}
@@ -47,10 +53,10 @@ export function MatchesTabs({
           accessibilityState={{ selected: selectedTab === "likedYou" }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.tabText,
               selectedTab === "likedYou" && styles.activeTabText,
-            ]}
+            ])}
           >
             Liked You
           </Text>

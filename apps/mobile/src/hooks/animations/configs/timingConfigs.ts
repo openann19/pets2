@@ -9,4 +9,3 @@ export const TIMING_CONFIGS = {
 } as const;
 
 export type TimingConfigKey = keyof typeof TIMING_CONFIGS;
-

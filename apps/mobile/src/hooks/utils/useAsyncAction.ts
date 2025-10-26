@@ -17,7 +17,7 @@ export interface UseAsyncActionReturn<TResult, TArgs extends any[] = []> {
 
 /**
  * Hook for managing async actions with loading, error, and success states
- * 
+ *
  * @example
  * const { data, isLoading, error, execute } = useAsyncAction({
  *   action: async (userId: string) => await api.getUser(userId),
@@ -30,13 +30,21 @@ export function useAsyncAction<TResult, TArgs extends any[] = []>({
   onSuccess,
   onError,
   immediate = false,
-}: UseAsyncActionOptions<TResult, TArgs>): UseAsyncActionReturn<TResult, TArgs> {
+}: UseAsyncActionOptions<TResult, TArgs>): UseAsyncActionReturn<
+  TResult,
+  TArgs
+> {
   const [data, setData] = useState<TResult | null>(null);
   const [isLoading, setIsLoading] = useState(immediate);
   const [error, setError] = useState<Error | null>(null);
 
   const execute = useCallback(
     async (...args: TArgs): Promise<TResult | undefined> => {
+      // Prevent duplicate execution while loading
+      if (isLoading) {
+        return undefined;
+      }
+
       setIsLoading(true);
       setError(null);
 
@@ -54,7 +62,7 @@ export function useAsyncAction<TResult, TArgs extends any[] = []>({
         setIsLoading(false);
       }
     },
-    [action, onSuccess, onError]
+    [action, onSuccess, onError, isLoading],
   );
 
   const reset = useCallback(() => {

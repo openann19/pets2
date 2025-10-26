@@ -1,5 +1,5 @@
 import React, { type ReactNode, useEffect } from "react";
-import { View, type ViewStyle, type ViewProps } from "react-native";
+import { View, type ViewStyle, type ViewProps, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -181,14 +181,14 @@ export const GlowContainer: React.FC<GlowContainerProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
           shadowColor: baseShadow.shadowColor,
           shadowOffset: baseShadow.shadowOffset,
         },
         animated ? glowStyle : baseShadow,
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}
@@ -212,7 +212,7 @@ export const ShadowContainer: React.FC<ShadowContainerProps> = ({
   const shadowStyle = GLOW_SHADOW_CONFIGS.depthShadows[depth];
 
   return (
-    <View style={[shadowStyle, style]} {...props}>
+    <View style={StyleSheet.flatten([shadowStyle, style])} {...props}>
       {children}
     </View>
   );
@@ -264,7 +264,7 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
           borderWidth: width,
           borderColor: baseShadow.shadowColor,
@@ -273,7 +273,7 @@ export const NeonBorder: React.FC<NeonBorderProps> = ({
         },
         animated ? animatedStyle : {},
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}
@@ -305,7 +305,7 @@ export const GlowingCard: React.FC<GlowingCardProps> = ({
       color={glowColor}
       intensity={glowIntensity}
       animated={animated}
-      style={[
+      style={StyleSheet.flatten([
         {
           borderRadius: BorderRadius["2xl"],
           backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -313,7 +313,7 @@ export const GlowingCard: React.FC<GlowingCardProps> = ({
         },
         GLOW_SHADOW_CONFIGS.depthShadows[shadowDepth],
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}
@@ -383,14 +383,14 @@ export const PulsingGlow: React.FC<PulsingGlowProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
           shadowColor: baseShadow.shadowColor,
           shadowOffset: baseShadow.shadowOffset,
         },
         animatedStyle,
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}
@@ -431,12 +431,12 @@ export const MultiLayerShadow: React.FC<MultiLayerShadowProps> = ({
 }) => {
   return (
     <View
-      style={[
+      style={StyleSheet.flatten([
         {
           position: "relative",
         },
         style,
-      ]}
+      ])}
       {...props}
     >
       {/* Shadow layers */}
@@ -510,7 +510,7 @@ export const FloatingShadow: React.FC<FloatingShadowProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
           shadowColor: baseShadow.shadowColor,
           shadowOffset: { width: 0, height: 12 },
@@ -521,7 +521,7 @@ export const FloatingShadow: React.FC<FloatingShadowProps> = ({
         depthShadow,
         animated ? animatedStyle : {},
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}

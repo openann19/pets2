@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import type { ViewStyle, TextStyle } from "react-native";
+import { StyleSheet } from "react-native";
 import { Animated, Easing, Dimensions } from "react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -181,7 +182,7 @@ export const FadeInView: React.FC<FadeInViewProps> = ({
   }, [duration, delay]);
 
   return (
-    <Animated.View style={[style, { opacity: fadeAnim }]}>
+    <Animated.View style={StyleSheet.flatten([style, { opacity: fadeAnim }])}>
       {children}
     </Animated.View>
   );
@@ -265,7 +266,9 @@ export const SlideInView: React.FC<SlideInViewProps> = ({
   };
 
   return (
-    <Animated.View style={[style, { transform: getTransform() }]}>
+    <Animated.View
+      style={StyleSheet.flatten([style, { transform: getTransform() }])}
+    >
       {children}
     </Animated.View>
   );
@@ -304,7 +307,9 @@ export const ScaleInView: React.FC<ScaleInViewProps> = ({
   }, [duration, delay, initialScale]);
 
   return (
-    <Animated.View style={[style, { transform: [{ scale: scaleAnim }] }]}>
+    <Animated.View
+      style={StyleSheet.flatten([style, { transform: [{ scale: scaleAnim }] }])}
+    >
       {children}
     </Animated.View>
   );
@@ -348,7 +353,9 @@ export const RotateInView: React.FC<RotateInViewProps> = ({
   });
 
   return (
-    <Animated.View style={[style, { transform: [{ rotate: rotation }] }]}>
+    <Animated.View
+      style={StyleSheet.flatten([style, { transform: [{ rotate: rotation }] }])}
+    >
       {children}
     </Animated.View>
   );
@@ -405,7 +412,12 @@ export const TypewriterText: React.FC<TypewriterTextProps> = ({
     <Animated.Text style={style}>
       {displayText}
       {currentIndex < text.length && (
-        <Animated.Text style={[style, { opacity: usePulseAnimation(500) }]}>
+        <Animated.Text
+          style={StyleSheet.flatten([
+            style,
+            { opacity: usePulseAnimation(500) },
+          ])}
+        >
           |
         </Animated.Text>
       )}

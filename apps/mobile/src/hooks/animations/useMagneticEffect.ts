@@ -52,4 +52,3 @@ export const useMagneticEffect = (enabled = true) => {
 };
 
 export default useMagneticEffect;
-

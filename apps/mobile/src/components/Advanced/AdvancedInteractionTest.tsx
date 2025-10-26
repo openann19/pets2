@@ -355,13 +355,23 @@ export function AdvancedInteractionTest() {
               <Text style={styles.summaryLabel}>Total Tests</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNumber, { color: "#10b981" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.summaryNumber,
+                  { color: "#10b981" },
+                ])}
+              >
                 {passedTests}
               </Text>
               <Text style={styles.summaryLabel}>Passed</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNumber, { color: "#ef4444" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.summaryNumber,
+                  { color: "#ef4444" },
+                ])}
+              >
                 {failedTests}
               </Text>
               <Text style={styles.summaryLabel}>Failed</Text>

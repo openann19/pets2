@@ -5,7 +5,7 @@
 import { logger } from "@pawfectmatch/core";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { Image } from "react-native";
+import { Image, type ImageSourcePropType } from "react-native";
 
 // Critical assets that should be preloaded
 const CRITICAL_IMAGES: string[] = [
@@ -98,8 +98,10 @@ class AssetPreloader {
    */
   private async preloadImage(source: unknown): Promise<void> {
     return new Promise((resolve) => {
-      const imageSource = Image.resolveAssetSource(source as any);
-      if (imageSource?.uri) {
+      const imageSource = Image.resolveAssetSource(
+        source as ImageSourcePropType,
+      );
+      if (imageSource.uri) {
         Image.prefetch(imageSource.uri)
           .then(() => {
             resolve();
@@ -177,7 +179,9 @@ class AssetPreloader {
 
       // Load screen-specific fonts
       if (assets.fonts !== undefined && Object.keys(assets.fonts).length > 0) {
-        const fontPromise = Font.loadAsync(assets.fonts as Record<string, any>);
+        const fontPromise = Font.loadAsync(
+          assets.fonts as Record<string, Font.FontSource>,
+        );
         promises.push(fontPromise);
       }
 

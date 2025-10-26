@@ -103,7 +103,7 @@ export default function IncomingCallScreen({
       <SafeAreaView style={styles.content}>
         {/* Header */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.header,
             {
               transform: [
@@ -115,7 +115,7 @@ export default function IncomingCallScreen({
                 },
               ],
             },
-          ]}
+          ])}
         >
           <Text style={styles.incomingCallText}>Incoming Call</Text>
           <Text style={styles.callTypeText}>
@@ -125,7 +125,7 @@ export default function IncomingCallScreen({
 
         {/* Caller Info */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.callerInfo,
             {
               transform: [
@@ -137,16 +137,16 @@ export default function IncomingCallScreen({
                 },
               ],
             },
-          ]}
+          ])}
         >
           {/* Avatar with pulsing effect */}
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               styles.avatarContainer,
               {
                 transform: [{ scale: pulseAnim }],
               },
-            ]}
+            ])}
           >
             <View style={styles.avatarRing}>
               <Image
@@ -167,7 +167,7 @@ export default function IncomingCallScreen({
 
         {/* Call Actions */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.actionsContainer,
             {
               transform: [
@@ -179,11 +179,14 @@ export default function IncomingCallScreen({
                 },
               ],
             },
-          ]}
+          ])}
         >
           {/* Reject Button */}
           <TouchableOpacity
-            style={[styles.actionButton, styles.rejectButton]}
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              styles.rejectButton,
+            ])}
             onPress={handleReject}
             activeOpacity={0.8}
             testID="reject-button"
@@ -203,7 +206,10 @@ export default function IncomingCallScreen({
 
           {/* Answer Button */}
           <TouchableOpacity
-            style={[styles.actionButton, styles.answerButton]}
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              styles.answerButton,
+            ])}
             onPress={handleAnswer}
             activeOpacity={0.8}
             testID="answer-button"
@@ -219,12 +225,12 @@ export default function IncomingCallScreen({
 
         {/* Additional Actions */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.additionalActions,
             {
               opacity: slideAnim,
             },
-          ]}
+          ])}
         >
           <TouchableOpacity style={styles.additionalButton}>
             <Ionicons name="chatbubble" size={24} color="#fff" />

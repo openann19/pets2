@@ -10,4 +10,3 @@ export const GLASS_CONFIGS = {
   borders: BORDER_CONFIGS,
   shadows: SHADOW_CONFIGS,
 } as const;
-

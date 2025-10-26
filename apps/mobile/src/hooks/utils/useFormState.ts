@@ -22,12 +22,14 @@ export interface UseFormStateReturn<T> {
   setFieldTouched: (name: keyof T, touched?: boolean) => void;
   validate: () => boolean;
   reset: () => void;
-  handleSubmit: (onSubmit: (values: T) => void | Promise<void>) => (e?: any) => void | Promise<void>;
+  handleSubmit: (
+    onSubmit: (values: T) => void | Promise<void>,
+  ) => (e?: any) => void | Promise<void>;
 }
 
 /**
  * Generic form state management hook with validation
- * 
+ *
  * @example
  * const { values, errors, setValue, handleSubmit } = useFormState({
  *   initialValues: { email: '', password: '' },
@@ -74,16 +76,19 @@ export function useFormState<T extends Record<string, any>>({
     });
   }, []);
 
-  const setFieldTouched = useCallback((name: keyof T, touchedValue: boolean = true) => {
-    setTouched((prev) => ({ ...prev, [name]: touchedValue }));
-  }, []);
+  const setFieldTouched = useCallback(
+    (name: keyof T, touchedValue: boolean = true) => {
+      setTouched((prev) => ({ ...prev, [name]: touchedValue }));
+    },
+    [],
+  );
 
   const validate = useCallback((): boolean => {
     if (!validateFn) return true;
 
     const validationErrors = validateFn(values);
     setErrors(validationErrors);
-    
+
     // Mark all fields as touched when validating
     const allTouched: Partial<Record<keyof T, boolean>> = {};
     Object.keys(values).forEach((key) => {
@@ -101,21 +106,20 @@ export function useFormState<T extends Record<string, any>>({
   }, [initialValues]);
 
   const handleSubmit = useCallback(
-    (onSubmit: (values: T) => void | Promise<void>) =>
-      async (e?: any) => {
-        e?.preventDefault?.();
-        
-        if (!validate()) {
-          return;
-        }
+    (onSubmit: (values: T) => void | Promise<void>) => async (e?: any) => {
+      e?.preventDefault?.();
 
-        try {
-          await onSubmit(values);
-        } catch (error) {
-          console.error("Form submission error:", error);
-        }
-      },
-    [values, validate]
+      if (!validate()) {
+        return;
+      }
+
+      try {
+        await onSubmit(values);
+      } catch (error) {
+        console.error("Form submission error:", error);
+      }
+    },
+    [values, validate],
   );
 
   const isValid = Object.keys(errors).length === 0;

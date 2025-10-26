@@ -42,8 +42,9 @@ export function MessageItem({
     index === messages.length - 1 ||
     !nextMessage ||
     nextMessage.senderId !== message.senderId ||
-    (new Date(nextMessage.timestamp).getTime() - new Date(message.timestamp).getTime() >
-      300000);
+    new Date(nextMessage.timestamp).getTime() -
+      new Date(message.timestamp).getTime() >
+      300000;
   const showDateHeader = shouldShowDateHeader(message, messages[index - 1]);
   const hasError = message.error === true;
 
@@ -94,25 +95,28 @@ export function MessageItem({
     onLongPress?.(message);
   }, [message, onLongPress]);
 
-  const handleReactionSelect = useCallback(async (reaction: string) => {
-    try {
-      if (message.matchId && message._id) {
-        await chatService.sendReaction({
-          matchId: message.matchId,
-          messageId: message._id,
-          reaction,
-        });
+  const handleReactionSelect = useCallback(
+    async (reaction: string) => {
+      try {
+        if (message.matchId && message._id) {
+          await chatService.sendReaction({
+            matchId: message.matchId,
+            messageId: message._id,
+            reaction,
+          });
+        }
+        // Update local reactions
+        setReactions((prev) => ({
+          ...prev,
+          [reaction]: (prev[reaction] || 0) + 1,
+        }));
+      } catch (error) {
+        console.error("Failed to send reaction:", error);
       }
-      // Update local reactions
-      setReactions(prev => ({
-        ...prev,
-        [reaction]: (prev[reaction] || 0) + 1,
-      }));
-    } catch (error) {
-      console.error('Failed to send reaction:', error);
-    }
-    setShowReactionPicker(false);
-  }, [message]);
+      setShowReactionPicker(false);
+    },
+    [message],
+  );
 
   const handleRetry = useCallback(() => {
     onRetry?.(message._id);
@@ -124,7 +128,12 @@ export function MessageItem({
       {showDateHeader && (
         <View style={styles.dateHeader}>
           <BlurView intensity={20} style={styles.dateHeaderBlur}>
-            <Text style={[styles.dateHeaderText, { color: colors.gray600 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.dateHeaderText,
+                { color: colors.gray600 },
+              ])}
+            >
               {getDateHeader(message.timestamp)}
             </Text>
           </BlurView>
@@ -133,10 +142,10 @@ export function MessageItem({
 
       {/* Message Container */}
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.messageContainer,
           isMyMessage && styles.myMessageContainer,
-        ]}
+        ])}
       >
         {/* Avatar */}
         {!isMyMessage && showAvatar && (
@@ -145,14 +154,17 @@ export function MessageItem({
               source={{
                 uri: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=100",
               }}
-              style={[styles.avatar, isOnline && styles.avatarOnline]}
+              style={StyleSheet.flatten([
+                styles.avatar,
+                isOnline && styles.avatarOnline,
+              ])}
             />
             {isOnline && (
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.onlineIndicator,
                   { backgroundColor: colors.success },
-                ]}
+                ])}
               />
             )}
           </TouchableOpacity>
@@ -164,7 +176,7 @@ export function MessageItem({
           activeOpacity={0.8}
           onPress={handlePress}
           onLongPress={handleLongPress}
-          style={[
+          style={StyleSheet.flatten([
             styles.messageBubble,
             isMyMessage
               ? [styles.myMessage, { backgroundColor: colors.primary }]
@@ -182,7 +194,7 @@ export function MessageItem({
                 borderColor: colors.error,
               },
             ],
-          ]}
+          ])}
         >
           {message.type === "image" ? (
             <Image
@@ -191,11 +203,11 @@ export function MessageItem({
             />
           ) : (
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.messageText,
                 { color: isMyMessage ? colors.white : colors.gray800 },
                 hasError && { color: colors.error },
-              ]}
+              ])}
             >
               {message.content}
             </Text>
@@ -206,7 +218,10 @@ export function MessageItem({
             <View style={styles.messageStatus}>
               {message.status === "sending" && (
                 <Text
-                  style={[styles.sendingText, { color: `${colors.white}B3` }]}
+                  style={StyleSheet.flatten([
+                    styles.sendingText,
+                    { color: `${colors.white}B3` },
+                  ])}
                 >
                   Sending...
                 </Text>
@@ -217,7 +232,12 @@ export function MessageItem({
                   onPress={handleRetry}
                 >
                   <Ionicons name="refresh" size={12} color={colors.error} />
-                  <Text style={[styles.retryText, { color: colors.error }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.retryText,
+                      { color: colors.error },
+                    ])}
+                  >
                     Retry
                   </Text>
                 </TouchableOpacity>
@@ -238,15 +258,20 @@ export function MessageItem({
         {/* Time and Read Receipt */}
         {showTime && (
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.timeContainer,
               isMyMessage && {
                 justifyContent: "flex-end",
                 marginRight: Spacing.sm,
               },
-            ]}
+            ])}
           >
-            <Text style={[styles.messageTime, { color: colors.gray500 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.messageTime,
+                { color: colors.gray500 },
+              ])}
+            >
               {formatMessageTime(message.timestamp)}
             </Text>
             {isMyMessage && !hasError && (

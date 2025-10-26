@@ -88,44 +88,59 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
   ({ data, colors, onSelect, onPrimaryAction, onSecondaryAction }) => {
     return (
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.container,
           { backgroundColor: colors.surface },
           data.isSelected && styles.selectedContainer,
-        ]}
+        ])}
         onPress={onSelect}
         accessibilityRole="button"
         accessibilityLabel={`User ${data.fullName}`}
       >
         <View style={styles.headerRow}>
           <View style={styles.avatarContainer}>
-            <Text style={[styles.avatarText, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.avatarText,
+                { color: colors.text },
+              ])}
+            >
               {data.initials}
             </Text>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={[styles.fullName, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.fullName,
+                { color: colors.text },
+              ])}
+            >
               {data.fullName}
             </Text>
-            <Text style={[styles.email, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.email,
+                { color: colors.textSecondary },
+              ])}
+            >
               {data.email}
             </Text>
             <View style={styles.badgeRow}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusBadge,
                   { backgroundColor: data.statusColor },
-                ]}
+                ])}
               >
                 <Ionicons name={data.statusIcon} size={12} color="#FFFFFF" />
                 <Text style={styles.statusText}>{data.statusLabel}</Text>
               </View>
               {data.verified ? (
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.verifiedBadge,
                     { backgroundColor: colors.success },
-                  ]}
+                  ])}
                 >
                   <Ionicons name="checkmark" size={12} color="#FFFFFF" />
                   <Text style={styles.verifiedText}>Verified</Text>
@@ -135,10 +150,10 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           </View>
           <View style={styles.actionColumn}>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 { backgroundColor: data.primaryAction.tint },
-              ]}
+              ])}
               onPress={onPrimaryAction}
               accessibilityRole="button"
               accessibilityLabel={data.primaryAction.accessibilityLabel}
@@ -154,10 +169,10 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
               )}
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 { backgroundColor: data.secondaryAction.tint },
-              ]}
+              ])}
               onPress={onSecondaryAction}
               accessibilityRole="button"
               accessibilityLabel={data.secondaryAction.accessibilityLabel}

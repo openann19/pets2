@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { logger } from "../services/logger";
+import { logger } from "../../services/logger";
 import { useFormState } from "../utils/useFormState";
 import type { RootStackScreenProps } from "../navigation/types";
 
@@ -33,7 +33,9 @@ export function useRegisterScreen({
 }: UseRegisterScreenOptions): UseRegisterScreenReturn {
   // Form validation rules
   const validateForm = useCallback(
-    (values: RegisterFormValues): Partial<Record<keyof RegisterFormValues, string>> => {
+    (
+      values: RegisterFormValues,
+    ): Partial<Record<keyof RegisterFormValues, string>> => {
       const errors: Partial<Record<keyof RegisterFormValues, string>> = {};
 
       // Email validation
@@ -74,7 +76,7 @@ export function useRegisterScreen({
 
       return errors;
     },
-    []
+    [],
   );
 
   // Form state management
@@ -97,22 +99,19 @@ export function useRegisterScreen({
   });
 
   // Handle registration submission
-  const handleRegister = useCallback(
-    async () => {
-      logger.info("Registration attempt:", { email: values.email });
-      
-      // TODO: Implement actual registration
-      // This is a placeholder for the registration logic
-      // In production, you would:
-      // 1. Call AuthService.register(values)
-      // 2. Handle success: navigation.navigate("Login")
-      // 3. Handle error: setError state and display in UI
-      
-      // For demo purposes, navigate to Login
-      navigation.navigate("Login");
-    },
-    [values, navigation]
-  );
+  const handleRegister = useCallback(async () => {
+    logger.info("Registration attempt:", { email: values.email });
+
+    // TODO: Implement actual registration
+    // This is a placeholder for the registration logic
+    // In production, you would:
+    // 1. Call AuthService.register(values)
+    // 2. Handle success: navigation.navigate("Login")
+    // 3. Handle error: setError state and display in UI
+
+    // For demo purposes, navigate to Login
+    navigation.navigate("Login");
+  }, [values, navigation]);
 
   const handleSubmit = handleSubmitForm(handleRegister);
 

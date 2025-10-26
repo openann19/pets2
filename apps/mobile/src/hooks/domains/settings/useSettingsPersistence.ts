@@ -42,7 +42,7 @@ export function useSettingsPersistence({
         logger.error(`Failed to save settings for key "${key}":`, { error });
       }
     },
-    [key]
+    [key],
   );
 
   const clearSettings = useCallback(async (): Promise<void> => {

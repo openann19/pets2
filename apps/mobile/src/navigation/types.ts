@@ -5,6 +5,7 @@
 
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ReactNode } from "react";
 
 // Root Stack Navigator Types
 export type RootStackParamList = {

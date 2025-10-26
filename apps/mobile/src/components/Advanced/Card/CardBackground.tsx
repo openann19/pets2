@@ -3,11 +3,11 @@
  * Renders card background based on variant
  */
 
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
-import type { CardVariant } from './CardVariants';
+import React from "react";
+import { StyleSheet } from "react-native";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import type { CardVariant } from "./CardVariants";
 
 interface CardBackgroundProps {
   variant: CardVariant;
@@ -17,18 +17,18 @@ interface CardBackgroundProps {
 
 export function CardBackground({
   variant,
-  gradientColors = ['#ec4899', '#db2777'],
+  gradientColors = ["#ec4899", "#db2777"],
   blurIntensity = 20,
 }: CardBackgroundProps) {
   switch (variant) {
-    case 'glass':
+    case "glass":
       return (
         <BlurView
           intensity={blurIntensity}
           style={StyleSheet.absoluteFillObject}
         />
       );
-    case 'gradient':
+    case "gradient":
       return (
         <LinearGradient
           colors={gradientColors}
@@ -37,22 +37,22 @@ export function CardBackground({
           end={{ x: 1, y: 1 }}
         />
       );
-    case 'premium':
+    case "premium":
       return (
         <LinearGradient
-          colors={['rgba(139, 92, 246, 0.1)', 'rgba(139, 92, 246, 0.05)']}
+          colors={["rgba(139, 92, 246, 0.1)", "rgba(139, 92, 246, 0.05)"]}
           style={StyleSheet.absoluteFillObject}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         />
       );
-    case 'holographic':
+    case "holographic":
       return (
         <LinearGradient
           colors={[
-            'rgba(255,255,255,0.1)',
-            'rgba(255,255,255,0.05)',
-            'rgba(255,255,255,0.1)',
+            "rgba(255,255,255,0.1)",
+            "rgba(255,255,255,0.05)",
+            "rgba(255,255,255,0.1)",
           ]}
           style={StyleSheet.absoluteFillObject}
           start={{ x: 0, y: 0 }}

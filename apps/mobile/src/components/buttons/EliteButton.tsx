@@ -13,6 +13,7 @@
 
 import React, { forwardRef } from "react";
 import type { View, ViewStyle } from "react-native";
+import { StyleSheet } from "react-native";
 
 import BaseButton, { type BaseButtonProps } from "./BaseButton";
 import {
@@ -190,14 +191,14 @@ export const EliteButtonPresets = {
       glowEffect={true}
       rippleEffect={true}
       pressEffect={true}
-      style={[
+      style={StyleSheet.flatten([
         {
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderWidth: 1,
           borderColor: "rgba(255, 255, 255, 0.2)",
         },
         props.style,
-      ]}
+      ])}
     />
   ),
 

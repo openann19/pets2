@@ -115,7 +115,10 @@ function ForgotPasswordScreen({
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email Address</Text>
               <TextInput
-                style={[styles.input, errors.email && styles.inputError]}
+                style={StyleSheet.flatten([
+                  styles.input,
+                  errors.email && styles.inputError,
+                ])}
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
@@ -133,15 +136,18 @@ function ForgotPasswordScreen({
             </View>
 
             <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
+              style={StyleSheet.flatten([
+                styles.button,
+                loading && styles.buttonDisabled,
+              ])}
               onPress={handleForgotPassword}
               disabled={loading}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.buttonText,
                   loading && styles.buttonTextDisabled,
-                ]}
+                ])}
               >
                 {loading ? "Sending..." : "Send Reset Link"}
               </Text>

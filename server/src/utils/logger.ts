@@ -24,7 +24,7 @@ interface RequestLike {
 }
 
 // Extended logger interface with custom methods
-interface ExtendedLogger extends winston.Logger {
+export interface ExtendedLogger extends winston.Logger {
   request: (req: RequestLike, message: string, additionalMeta?: Record<string, unknown>) => string;
   apiError: (req: RequestLike, error: Error, statusCode?: number, additionalMeta?: Record<string, unknown>) => string;
   security: (event: string, data?: Record<string, unknown>) => void;
@@ -139,9 +139,9 @@ const logger = winston.createLogger({
       maxsize: 10485760,
       maxFiles: 7,
       format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-        winston.format.json(),
-        winston.format.errors({ stack: true })
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
       )
     })
   ],
@@ -151,15 +151,20 @@ const logger = winston.createLogger({
       maxsize: 10485760,
       maxFiles: 7,
       format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-        winston.format.json(),
-        winston.format.errors({ stack: true })
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
       )
     })
   ],
   // Don't exit on handled exceptions
   exitOnError: false
-});
+}) as winston.Logger & {
+  request: (req: RequestLike, message: string, additionalMeta?: Record<string, unknown>) => string;
+  apiError: (req: RequestLike, error: Error, statusCode?: number, additionalMeta?: Record<string, unknown>) => string;
+  security: (event: string, data?: Record<string, unknown>) => void;
+  performance: (operation: string, durationMs: number, meta?: Record<string, unknown>) => void;
+};
 
 // Add enhanced console transport
 if (process.env.NODE_ENV !== 'production') {
@@ -237,8 +242,7 @@ function generateRequestId(): string {
   return String(errorMeta.requestId); // Return requestId for correlation
 };
 
-// Security event logging
-(logger as any).security = (event: string, data: Record<string, unknown> = {}): void => {
+logger.security = (event: string, data: Record<string, unknown> = {}): void => {
   logger.warn(`Security: ${event}`, {
     securityEvent: true,
     timestamp: new Date().toISOString(),
@@ -247,8 +251,7 @@ function generateRequestId(): string {
   });
 };
 
-// Performance monitoring
-(logger as any).performance = (operation: string, durationMs: number, meta: Record<string, unknown> = {}): void => {
+logger.performance = (operation: string, durationMs: number, meta: Record<string, unknown> = {}): void => {
   logger.info(`Performance: ${operation}`, {
     performance: true,
     operation,
@@ -263,5 +266,4 @@ if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir);
 }
 
-export default logger as ExtendedLogger;
-
+export default logger;

@@ -3,7 +3,7 @@
  * Used for GDPR account deletion and other sensitive operations
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Alert,
   Modal,
@@ -13,10 +13,10 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { logger } from '@pawfectmatch/core';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { logger } from "@pawfectmatch/core";
 
 interface PasswordConfirmationModalProps {
   visible: boolean;
@@ -34,34 +34,34 @@ export function PasswordConfirmationModal({
   visible,
   onClose,
   onConfirm,
-  title = 'Confirm Your Password',
-  message = 'Please enter your password to confirm this action',
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  title = "Confirm Your Password",
+  message = "Please enter your password to confirm this action",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   error,
   isLoading = false,
 }: PasswordConfirmationModalProps): React.JSX.Element {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [isSecureTextEntry, setIsSecureTextEntry] = useState(true);
 
   const handleConfirm = async () => {
     if (!password.trim()) {
-      Alert.alert('Error', 'Please enter your password');
+      Alert.alert("Error", "Please enter your password");
       return;
     }
 
     try {
       await onConfirm(password);
-      setPassword('');
+      setPassword("");
       onClose();
     } catch (err) {
       // Error is handled by parent component
-      logger.error('Password confirmation failed', { error: err });
+      logger.error("Password confirmation failed", { error: err });
     }
   };
 
   const handleCancel = () => {
-    setPassword('');
+    setPassword("");
     onClose();
   };
 
@@ -105,7 +105,7 @@ export function PasswordConfirmationModal({
               disabled={isLoading}
             >
               <Ionicons
-                name={isSecureTextEntry ? 'eye-off' : 'eye'}
+                name={isSecureTextEntry ? "eye-off" : "eye"}
                 size={20}
                 color="#6B7280"
               />
@@ -123,7 +123,7 @@ export function PasswordConfirmationModal({
           {/* Actions */}
           <View style={styles.actions}>
             <TouchableOpacity
-              style={[styles.button, styles.cancelButton]}
+              style={StyleSheet.flatten([styles.button, styles.cancelButton])}
               onPress={handleCancel}
               disabled={isLoading}
             >
@@ -131,18 +131,22 @@ export function PasswordConfirmationModal({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.confirmButton]}
+              style={StyleSheet.flatten([styles.button, styles.confirmButton])}
               onPress={handleConfirm}
               disabled={isLoading || !password.trim()}
             >
               <LinearGradient
-                colors={isLoading || !password.trim() ? ['#9CA3AF', '#6B7280'] : ['#EF4444', '#DC2626']}
+                colors={
+                  isLoading || !password.trim()
+                    ? ["#9CA3AF", "#6B7280"]
+                    : ["#EF4444", "#DC2626"]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.gradientButton}
               >
                 <Text style={styles.confirmButtonText}>
-                  {isLoading ? 'Processing...' : confirmText}
+                  {isLoading ? "Processing..." : confirmText}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -156,115 +160,114 @@ export function PasswordConfirmationModal({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    width: '85%',
+    width: "85%",
     maxWidth: 400,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   iconContainer: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#FEF2F2',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#FEF2F2",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 12,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
+    fontWeight: "bold",
+    color: "#111827",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 14,
-    color: '#6B7280',
-    textAlign: 'center',
+    color: "#6B7280",
+    textAlign: "center",
     lineHeight: 20,
   },
   passwordContainer: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 16,
   },
   passwordInput: {
     height: 50,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingRight: 50,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: "#E5E7EB",
   },
   eyeIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 16,
     top: 15,
     padding: 4,
   },
   errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FEF2F2',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FEF2F2",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
   errorText: {
     fontSize: 13,
-    color: '#EF4444',
+    color: "#EF4444",
     marginLeft: 8,
     flex: 1,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   button: {
     flex: 1,
     height: 50,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: "#F3F4F6",
   },
   cancelButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
   },
   confirmButton: {
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   gradientButton: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 12,
   },
   confirmButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });
-

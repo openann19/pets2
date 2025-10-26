@@ -72,7 +72,10 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                 )}
 
                 <TouchableOpacity
-                  style={[styles.photoActionButton, styles.deleteButton]}
+                  style={StyleSheet.flatten([
+                    styles.photoActionButton,
+                    styles.deleteButton,
+                  ])}
                   onPress={() => {
                     onRemovePhoto(index);
                   }}

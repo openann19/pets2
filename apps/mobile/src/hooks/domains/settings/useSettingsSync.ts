@@ -34,7 +34,8 @@ export function useSettingsSync({
         onSyncSuccess?.();
         return true;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Failed to sync settings";
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to sync settings";
         setError(errorMessage);
         logger.error("Failed to sync settings", { error: errorMessage });
         onSyncError?.(err instanceof Error ? err : new Error(errorMessage));
@@ -43,7 +44,7 @@ export function useSettingsSync({
         setIsSyncing(false);
       }
     },
-    [onSyncSuccess, onSyncError]
+    [onSyncSuccess, onSyncError],
   );
 
   return {

@@ -164,10 +164,10 @@ function AboutTermsPrivacyScreen({
               <BlurView intensity={20} style={styles.documentBlur}>
                 <View style={styles.documentContent}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.documentIcon,
                       { backgroundColor: "#8B5CF6" },
-                    ]}
+                    ])}
                   >
                     <Ionicons name={document.icon} size={20} color="white" />
                   </View>
@@ -188,7 +188,9 @@ function AboutTermsPrivacyScreen({
           ))}
 
           {/* Contact Info */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+          <Text
+            style={StyleSheet.flatten([styles.sectionTitle, { marginTop: 32 }])}
+          >
             Contact Information
           </Text>
 

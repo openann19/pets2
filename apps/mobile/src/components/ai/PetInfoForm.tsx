@@ -44,7 +44,10 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petName && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            validationErrors.petName && styles.inputError,
+          ])}
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
@@ -60,7 +63,10 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Breed *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petBreed && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            validationErrors.petBreed && styles.inputError,
+          ])}
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
@@ -76,7 +82,10 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Age *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petAge && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            validationErrors.petAge && styles.inputError,
+          ])}
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
@@ -92,10 +101,10 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Personality *</Text>
         <TextInput
-          style={[
+          style={StyleSheet.flatten([
             styles.textarea,
             validationErrors.petPersonality && styles.inputError,
-          ]}
+          ])}
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"

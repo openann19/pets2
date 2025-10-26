@@ -59,7 +59,10 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const updateContractTerms = (field: string, value: import("../../types/forms").FormFieldValue) => {
+  const updateContractTerms = (
+    field: string,
+    value: import("../../types/forms").FormFieldValue,
+  ) => {
     setContractTerms((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -320,7 +323,10 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
       {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.generateButton, isGenerating && styles.disabledButton]}
+          style={StyleSheet.flatten([
+            styles.generateButton,
+            isGenerating && styles.disabledButton,
+          ])}
           onPress={generateContract}
           disabled={isGenerating}
         >

@@ -40,20 +40,20 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
           {intentOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.intentButton,
                 formData.intent === option.value && styles.intentButtonSelected,
-              ]}
+              ])}
               onPress={() => {
                 onUpdateFormData("intent", option.value);
               }}
             >
               <Text style={styles.intentEmoji}>{option.emoji}</Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.intentText,
                   formData.intent === option.value && styles.intentTextSelected,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -80,12 +80,12 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
               }}
             >
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.checkbox,
                   formData.healthInfo[
                     item.key as keyof typeof formData.healthInfo
                   ] && styles.checkboxChecked,
-                ]}
+                ])}
               >
                 {formData.healthInfo[
                   item.key as keyof typeof formData.healthInfo

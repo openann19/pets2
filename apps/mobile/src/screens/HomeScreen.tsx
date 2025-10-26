@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { logger } from "@pawfectmatch/core";
+import { useAuthStore, type User } from "@pawfectmatch/core";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuthStore } from "@pawfectmatch/core";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
@@ -66,14 +66,10 @@ export default function HomeScreen() {
 
   // Animation hooks
   const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      6, // Number of sections
-      150,
-      "gentle",
-    );
+    useStaggeredAnimation(6, 100);
 
   const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "bouncy");
+    useEntranceAnimation("fadeIn", 0);
 
   // Start animations
   React.useEffect(() => {
@@ -171,17 +167,15 @@ export default function HomeScreen() {
         rightComponent={
           <View style={{ flexDirection: "row", gap: 8 }}>
             <EliteButton
-              title=""
-              variant="glass"
+              title="Profile"
+              variant="secondary"
               size="sm"
-              icon="person"
               onPress={handleProfilePress}
             />
             <EliteButton
-              title=""
-              variant="glass"
+              title="Settings"
+              variant="secondary"
               size="sm"
-              icon="settings"
               onPress={handleSettingsPress}
             />
           </View>
@@ -216,10 +210,10 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
                           { backgroundColor: "#ec4899" },
-                        ]}
+                        ])}
                       >
                         <Ionicons name="heart" size={24} color="#fff" />
                       </View>
@@ -248,10 +242,10 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
                           { backgroundColor: "#10b981" },
-                        ]}
+                        ])}
                       >
                         <Ionicons name="people" size={24} color="#fff" />
                       </View>
@@ -285,10 +279,10 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
                           { backgroundColor: "#3b82f6" },
-                        ]}
+                        ])}
                       >
                         <Ionicons name="chatbubbles" size={24} color="#fff" />
                       </View>
@@ -312,10 +306,6 @@ export default function HomeScreen() {
               <FadeInUp delay={300}>
                 <EliteCard
                   variant="glass"
-                  tilt={true}
-                  magnetic={true}
-                  shimmer={true}
-                  entrance="scaleIn"
                   onPress={() => {
                     handleQuickAction("profile");
                   }}
@@ -328,10 +318,10 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
                           { backgroundColor: "#8b5cf6" },
-                        ]}
+                        ])}
                       >
                         <Ionicons name="person" size={24} color="#fff" />
                       </View>
@@ -387,7 +377,7 @@ export default function HomeScreen() {
                         You and Buddy liked each other
                       </PremiumBody>
                     </View>
-                    <PremiumBody size="xs" weight="regular">
+                    <PremiumBody size="sm" weight="regular">
                       2m ago
                     </PremiumBody>
                   </View>
@@ -416,7 +406,7 @@ export default function HomeScreen() {
                         From Luna: &quot;Hey there! 🐾&quot;
                       </PremiumBody>
                     </View>
-                    <PremiumBody size="xs" weight="regular">
+                    <PremiumBody size="sm" weight="regular">
                       5m ago
                     </PremiumBody>
                   </View>
@@ -453,7 +443,7 @@ export default function HomeScreen() {
                       intensity="heavy"
                       animated={true}
                     >
-                      <Ionicons name="diamond" size={32} color="#fbbf24" />
+                      <Ionicons name="star" size={32} color="#fbbf24" />
                     </GlowContainer>
                     <PremiumHeading
                       level={3}
@@ -471,13 +461,8 @@ export default function HomeScreen() {
                   <View style={styles.premiumActions}>
                     <EliteButton
                       title="Upgrade Now"
-                      variant="holographic"
+                      variant="primary"
                       size="lg"
-                      icon="diamond"
-                      magnetic={true}
-                      ripple={true}
-                      glow={true}
-                      shimmer={true}
                       onPress={() => {
                         handleQuickAction("premium");
                       }}

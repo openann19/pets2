@@ -393,10 +393,7 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
   }, [navigation, userLocation]);
 
   const sliderPosition = useMemo(() => {
-    const percentage = Math.min(
-      100,
-      Math.max(0, (filters.radius / 50) * 100),
-    );
+    const percentage = Math.min(100, Math.max(0, (filters.radius / 50) * 100));
 
     return `${percentage.toFixed(0)}%`;
   }, [filters.radius]);
@@ -425,7 +422,10 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
 
         {/* Stats Bar */}
         <Animated.View
-          style={[styles.statsContainer, { opacity: statsOpacity }]}
+          style={StyleSheet.flatten([
+            styles.statsContainer,
+            { opacity: statsOpacity },
+          ])}
         >
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.activePets}</Text>
@@ -497,7 +497,10 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
 
       {/* Filter Panel */}
       <Animated.View
-        style={[styles.filterPanel, { height: filterPanelHeight }]}
+        style={StyleSheet.flatten([
+          styles.filterPanel,
+          { height: filterPanelHeight },
+        ])}
       >
         <BlurView style={styles.filterBlur} intensity={50} tint="light">
           <ScrollView style={styles.filterContent}>
@@ -509,7 +512,7 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
               {activityTypes.map((activity) => (
                 <TouchableOpacity
                   key={activity.id}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.activityButton,
                     {
                       backgroundColor: filters.activityTypes.includes(
@@ -518,21 +521,21 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
                         ? activity.color
                         : "#F3F4F6",
                     },
-                  ]}
+                  ])}
                   onPress={() => {
                     toggleActivity(activity.id);
                   }}
                 >
                   <Text style={styles.activityEmoji}>{activity.emoji}</Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.activityLabel,
                       {
                         color: filters.activityTypes.includes(activity.id)
                           ? "#FFFFFF"
                           : "#374151",
                       },
-                    ]}
+                    ])}
                   >
                     {activity.label}
                   </Text>
@@ -548,10 +551,10 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
               {/* Simple slider implementation */}
               <View style={styles.sliderTrack}>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.sliderThumb,
                     { left: sliderPosition },
-                  ]}
+                  ])}
                 />
               </View>
             </View>
@@ -562,21 +565,21 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
       {/* Floating Action Buttons */}
       <View style={styles.fabContainer}>
         <TouchableOpacity
-          style={[styles.fab, styles.arFab]}
+          style={StyleSheet.flatten([styles.fab, styles.arFab])}
           onPress={navigateToArScentTrails}
         >
           <Text style={styles.fabIcon}>👁️</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.fab, styles.locationFab]}
+          style={StyleSheet.flatten([styles.fab, styles.locationFab])}
           onPress={getCurrentLocation}
         >
           <Text style={styles.fabIcon}>📍</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.fab, styles.updateFab]}
+          style={StyleSheet.flatten([styles.fab, styles.updateFab])}
           onPress={updateUserLocation}
         >
           <Text style={styles.fabIcon}>📡</Text>
@@ -618,13 +621,19 @@ function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
 
                   <View style={styles.modalActions}>
                     <TouchableOpacity
-                      style={[styles.modalButton, styles.likeButton]}
+                      style={StyleSheet.flatten([
+                        styles.modalButton,
+                        styles.likeButton,
+                      ])}
                     >
                       <Text style={styles.modalButtonText}>❤️ Like</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={[styles.modalButton, styles.chatButton]}
+                      style={StyleSheet.flatten([
+                        styles.modalButton,
+                        styles.chatButton,
+                      ])}
                     >
                       <Text style={styles.modalButtonText}>💬 Chat</Text>
                     </TouchableOpacity>

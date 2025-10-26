@@ -72,7 +72,11 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           onPress={handleBack}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={Theme.colors.text.primary} />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={Theme.colors.text.primary}
+          />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />
@@ -127,10 +131,10 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 
             {/* Generate Button */}
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.generateButton,
                 (!isFormValid || isGenerating) && styles.disabledButton,
-              ]}
+              ])}
               onPress={handleGenerate}
               disabled={!isFormValid || isGenerating}
               accessibilityLabel="Generate AI bio"

@@ -178,7 +178,10 @@ function AdminUploadsScreen({
   const renderUpload = useCallback(
     ({ item }: { item: Upload }) => (
       <TouchableOpacity
-        style={[styles.uploadCard, { backgroundColor: colors.card }]}
+        style={StyleSheet.flatten([
+          styles.uploadCard,
+          { backgroundColor: colors.card },
+        ])}
         onPress={() => {
           setSelectedUpload(item);
         }}
@@ -191,16 +194,21 @@ function AdminUploadsScreen({
 
         <View style={styles.uploadOverlay}>
           {item.flagged ? (
-            <View style={[styles.flagBadge, { backgroundColor: colors.error }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.flagBadge,
+                { backgroundColor: colors.error },
+              ])}
+            >
               <Ionicons name="flag" size={12} color="white" />
             </View>
           ) : null}
 
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.statusBadge,
               { backgroundColor: getStatusColor(item.status) },
-            ]}
+            ])}
           >
             <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
           </View>
@@ -208,12 +216,20 @@ function AdminUploadsScreen({
 
         <View style={styles.uploadInfo}>
           <Text
-            style={[styles.userName, { color: colors.text }]}
+            style={StyleSheet.flatten([
+              styles.userName,
+              { color: colors.text },
+            ])}
             numberOfLines={1}
           >
             {item.userName}
           </Text>
-          <Text style={[styles.uploadType, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.uploadType,
+              { color: colors.textSecondary },
+            ])}
+          >
             {item.type} • {new Date(item.uploadedAt).toLocaleDateString()}
           </Text>
         </View>
@@ -237,21 +253,21 @@ function AdminUploadsScreen({
 
   const renderFilterButton = (filterType: typeof filter, label: string) => (
     <TouchableOpacity
-      style={[
+      style={StyleSheet.flatten([
         styles.filterButton,
         {
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
-      ]}
+      ])}
       onPress={() => {
         setFilter(filterType);
       }}
     >
       <Text
-        style={[
+        style={StyleSheet.flatten([
           styles.filterButtonText,
           { color: filter === filterType ? "white" : colors.text },
-        ]}
+        ])}
       >
         {label}
       </Text>
@@ -263,9 +279,19 @@ function AdminUploadsScreen({
 
     return (
       <View style={styles.modalOverlay}>
-        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.modalContent,
+            { backgroundColor: colors.card },
+          ])}
+        >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.modalTitle,
+                { color: colors.text },
+              ])}
+            >
               Upload Details
             </Text>
             <TouchableOpacity
@@ -284,35 +310,73 @@ function AdminUploadsScreen({
           />
 
           <View style={styles.uploadDetails}>
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.detailLabel,
+                { color: colors.textSecondary },
+              ])}
+            >
               User:
             </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.detailValue,
+                { color: colors.text },
+              ])}
+            >
               {selectedUpload.userName}
             </Text>
 
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.detailLabel,
+                { color: colors.textSecondary },
+              ])}
+            >
               Type:
             </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.detailValue,
+                { color: colors.text },
+              ])}
+            >
               {selectedUpload.type}
             </Text>
 
-            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.detailLabel,
+                { color: colors.textSecondary },
+              ])}
+            >
               Uploaded:
             </Text>
-            <Text style={[styles.detailValue, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.detailValue,
+                { color: colors.text },
+              ])}
+            >
               {new Date(selectedUpload.uploadedAt).toLocaleString()}
             </Text>
 
             {selectedUpload.petName ? (
               <>
                 <Text
-                  style={[styles.detailLabel, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.detailLabel,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Pet:
                 </Text>
-                <Text style={[styles.detailValue, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.detailValue,
+                    { color: colors.text },
+                  ])}
+                >
                   {selectedUpload.petName}
                 </Text>
               </>
@@ -320,10 +384,20 @@ function AdminUploadsScreen({
 
             {selectedUpload.flagReason ? (
               <>
-                <Text style={[styles.detailLabel, { color: colors.error }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.detailLabel,
+                    { color: colors.error },
+                  ])}
+                >
                   Flag Reason:
                 </Text>
-                <Text style={[styles.detailValue, { color: colors.error }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.detailValue,
+                    { color: colors.error },
+                  ])}
+                >
                   {selectedUpload.flagReason}
                 </Text>
               </>
@@ -332,11 +406,19 @@ function AdminUploadsScreen({
             {selectedUpload.metadata ? (
               <>
                 <Text
-                  style={[styles.detailLabel, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.detailLabel,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   File Size:
                 </Text>
-                <Text style={[styles.detailValue, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.detailValue,
+                    { color: colors.text },
+                  ])}
+                >
                   {(selectedUpload.metadata.fileSize / 1024 / 1024).toFixed(2)}{" "}
                   MB
                 </Text>
@@ -347,7 +429,10 @@ function AdminUploadsScreen({
           {selectedUpload.status === "pending" && (
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={[styles.actionButton, styles.approveButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.approveButton,
+                ])}
                 onPress={() => handleUploadAction(selectedUpload.id, "approve")}
               >
                 <Ionicons name="checkmark" size={20} color="white" />
@@ -355,7 +440,10 @@ function AdminUploadsScreen({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.actionButton, styles.rejectButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.rejectButton,
+                ])}
                 onPress={() => {
                   handleRejectWithReason(selectedUpload);
                 }}
@@ -372,10 +460,18 @@ function AdminUploadsScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.header,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
@@ -384,22 +480,35 @@ function AdminUploadsScreen({
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.text },
+          ])}
+        >
           Upload Management
         </Text>
       </View>
 
       {/* Search and Filters */}
-      <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.searchContainer,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.searchInputContainer,
             { backgroundColor: colors.background },
-          ]}
+          ])}
         >
           <Ionicons name="search" size={20} color={colors.textSecondary} />
           <TextInput
-            style={[styles.searchInput, { color: colors.text }]}
+            style={StyleSheet.flatten([
+              styles.searchInput,
+              { color: colors.text },
+            ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search uploads..."
@@ -418,7 +527,12 @@ function AdminUploadsScreen({
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.textSecondary },
+            ])}
+          >
             Loading uploads...
           </Text>
         </View>
@@ -444,7 +558,12 @@ function AdminUploadsScreen({
                 size={64}
                 color={colors.textSecondary}
               />
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.emptyText,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 No uploads found
               </Text>
             </View>

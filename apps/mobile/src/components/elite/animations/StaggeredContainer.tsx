@@ -12,12 +12,11 @@ interface StaggeredContainerProps {
   delay?: number;
 }
 
-export const StaggeredContainer: React.FC<StaggeredContainerProps> = ({ 
-  children, 
-  delay = 100 
+export const StaggeredContainer: React.FC<StaggeredContainerProps> = ({
+  children,
+  delay = 100,
 }) => {
   return <View>{children}</View>;
 };
 
 export default StaggeredContainer;
-

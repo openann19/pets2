@@ -1,7 +1,12 @@
 import React, { type ReactNode } from "react";
-import { type ViewProps, type ViewStyle } from "react-native";
+import { type ViewProps, type ViewStyle, StyleSheet } from "react-native";
 import { GlassContainer } from "./GlassContainer";
-import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from "./configs";
+import {
+  BLUR_CONFIGS,
+  TRANSPARENCY_CONFIGS,
+  BORDER_CONFIGS,
+  SHADOW_CONFIGS,
+} from "./configs";
 
 /**
  * GlassHeader Component
@@ -27,7 +32,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
       border="light"
       shadow="light"
       borderRadius="none"
-      style={[
+      style={StyleSheet.flatten([
         {
           position: "absolute" as const,
           top: 0,
@@ -36,7 +41,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
           zIndex: 1000,
         },
         style,
-      ]}
+      ])}
       {...props}
     >
       {children}
@@ -45,4 +50,3 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
 };
 
 export default GlassHeader;
-

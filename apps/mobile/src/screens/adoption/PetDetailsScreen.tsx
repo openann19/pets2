@@ -90,7 +90,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           text: "Confirm",
           onPress: () => {
             if (pet) {
-              setPet({ ...pet, status: newStatus as PetDetails['status'] });
+              setPet({ ...pet, status: newStatus as PetDetails["status"] });
               Alert.alert("Success", `Status updated to ${newStatus}`);
             }
           },
@@ -195,16 +195,16 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <View style={styles.nameRow}>
             <Text style={styles.petName}>{pet.name}</Text>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.statusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
-              ]}
+              ])}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusText,
                   { color: getStatusColor(pet.status) },
-                ]}
+                ])}
               >
                 {getStatusIcon(pet.status)}{" "}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
@@ -345,19 +345,19 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               {["active", "pending", "adopted", "paused"].map((status) => (
                 <TouchableOpacity
                   key={status}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.statusOption,
                     pet.status === status && styles.statusOptionActive,
-                  ]}
+                  ])}
                   onPress={() => {
                     handleStatusChange(status);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.statusOptionText,
                       pet.status === status && styles.statusOptionTextActive,
-                    ]}
+                    ])}
                   >
                     {getStatusIcon(status)}{" "}
                     {status.charAt(0).toUpperCase() + status.slice(1)}

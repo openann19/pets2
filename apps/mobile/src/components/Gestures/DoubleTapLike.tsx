@@ -213,19 +213,23 @@ export function DoubleTapLike({
 
   return (
     <GestureDetector gesture={singleTap}>
-      <Animated.View style={[styles.container, style, containerStyle]}>
+      <Animated.View
+        style={StyleSheet.flatten([styles.container, style, containerStyle])}
+      >
         {children}
 
         {/* Heart overlay */}
-        <Animated.View style={[styles.heartOverlay, heartStyle]}>
+        <Animated.View
+          style={StyleSheet.flatten([styles.heartOverlay, heartStyle])}
+        >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.heart,
               {
                 fontSize: heartConfig.size,
                 color: heartConfig.color,
               },
-            ]}
+            ])}
           >
             ❤️
           </Text>
@@ -321,11 +325,15 @@ export function DoubleTapLikeCustom({
 
   return (
     <GestureDetector gesture={singleTap}>
-      <Animated.View style={[styles.container, containerStyle]}>
+      <Animated.View
+        style={StyleSheet.flatten([styles.container, containerStyle])}
+      >
         {children}
 
         {heartComponent && (
-          <Animated.View style={[styles.heartOverlay, heartStyle]}>
+          <Animated.View
+            style={StyleSheet.flatten([styles.heartOverlay, heartStyle])}
+          >
             {heartComponent}
           </Animated.View>
         )}

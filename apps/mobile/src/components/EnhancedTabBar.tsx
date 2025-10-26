@@ -87,7 +87,9 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
       </Animated.View>
 
       {showBadge && badgeCount > 0 ? (
-        <Animated.View style={[styles.badge, animatedBadgeStyle]}>
+        <Animated.View
+          style={StyleSheet.flatten([styles.badge, animatedBadgeStyle])}
+        >
           <Text style={styles.badgeText}>
             {badgeCount > 99 ? "99+" : badgeCount.toString()}
           </Text>
@@ -148,7 +150,12 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   };
 
   return (
-    <View style={[styles.tabBar, { backgroundColor: colors.background }]}>
+    <View
+      style={StyleSheet.flatten([
+        styles.tabBar,
+        { backgroundColor: colors.background },
+      ])}
+    >
       {state.routes.map((route: TabRoute, index: number) => {
         const descriptor = descriptors[route.key];
         const options = descriptor?.options ?? {};
@@ -210,13 +217,13 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
               showBadge={showBadge}
             />
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.tabLabel,
                 {
                   color: isFocused ? colors.primary : colors.text,
                   fontWeight: isFocused ? "600" : "400",
                 },
-              ]}
+              ])}
             >
               {label}
             </Text>

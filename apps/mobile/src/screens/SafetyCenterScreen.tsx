@@ -2,9 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useSafetyCenterScreen } from "../hooks/screens/safety";
 
 interface SafetyCenterScreenProps {
   navigation: {
@@ -29,107 +27,15 @@ interface SafetyOption {
   action: () => void;
 }
 
-function SafetyCenterScreen({
-  navigation,
-}: SafetyCenterScreenProps): JSX.Element {
-  const { colors: _colors } = useTheme();
-  const [emergencyMode, setEmergencyMode] = useState(false);
-
-  const safetyOptions: SafetyOption[] = [
-    {
-      id: "report",
-      title: "Report User",
-      description: "Report inappropriate behavior or content",
-      icon: "flag-outline",
-      color: "#EF4444",
-      action: () => {
-        Alert.alert(
-          "Report User",
-          "This feature is coming soon. Please contact support for urgent issues.",
-        );
-      },
-    },
-    {
-      id: "block",
-      title: "Block & Report",
-      description: "Block a user and report their behavior",
-      icon: "person-remove-outline",
-      color: "#F59E0B",
-      action: () => {
-        navigation.goBack(); // Navigate back to profile where blocking is handled
-      },
-    },
-    {
-      id: "privacy",
-      title: "Privacy Settings",
-      description: "Control who can see your profile and contact you",
-      icon: "lock-closed-outline",
-      color: "#10B981",
-      action: () => {
-        Alert.alert(
-          "Privacy Settings",
-          "Navigate to Privacy Settings screen (coming soon)",
-        );
-      },
-    },
-    {
-      id: "emergency",
-      title: "Emergency Contacts",
-      description: "Set up emergency contacts for safety",
-      icon: "call-outline",
-      color: "#8B5CF6",
-      action: () => {
-        Alert.alert(
-          "Emergency Contacts",
-          "Emergency contact setup coming soon",
-        );
-      },
-    },
-    {
-      id: "safety-tips",
-      title: "Safety Tips",
-      description: "Learn about online safety and best practices",
-      icon: "shield-checkmark-outline",
-      color: "#06B6D4",
-      action: () => {
-        Alert.alert(
-          "Safety Tips",
-          "Safety tips and guidelines will be available soon",
-        );
-      },
-    },
-  ];
-
-  const handleEmergencyMode = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {});
-    Alert.alert(
-      emergencyMode ? "Disable Emergency Mode" : "Enable Emergency Mode",
-      emergencyMode
-        ? "This will restore normal app functionality."
-        : "Emergency mode will limit interactions and enhance safety features.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: emergencyMode ? "Disable" : "Enable",
-          style: emergencyMode ? "default" : "destructive",
-          onPress: () => {
-            setEmergencyMode(!emergencyMode);
-            Alert.alert(
-              "Emergency Mode",
-              emergencyMode
-                ? "Emergency mode disabled"
-                : "Emergency mode enabled. Stay safe!",
-            );
-          },
-        },
-      ],
-    );
-  }, [emergencyMode]);
-
-  const handleSafetyOption = useCallback((option: SafetyOption) => {
-    Haptics.selectionAsync().catch(() => {});
-    option.action();
-  }, []);
+function SafetyCenterScreen(): JSX.Element {
+  const {
+    emergencyMode,
+    safetyOptions,
+    colors,
+    toggleEmergencyMode,
+    handleSafetyOption,
+    handleGoBack,
+  } = useSafetyCenterScreen();
 
   return (
     <View style={styles.container}>
@@ -141,15 +47,7 @@ function SafetyCenterScreen({
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                () => {},
-              );
-              navigation.goBack();
-            }}
-          >
+          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
             <BlurView intensity={20} style={styles.backButtonBlur}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </BlurView>
@@ -179,11 +77,11 @@ function SafetyCenterScreen({
               </Text>
             </View>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.emergencyButton,
                 { backgroundColor: emergencyMode ? "#10B981" : "#EF4444" },
-              ]}
-              onPress={handleEmergencyMode}
+              ])}
+              onPress={toggleEmergencyMode}
             >
               <Text style={styles.emergencyButtonText}>
                 {emergencyMode ? "Active" : "Activate"}
@@ -207,10 +105,10 @@ function SafetyCenterScreen({
               <BlurView intensity={20} style={styles.optionBlur}>
                 <View style={styles.optionContent}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.optionIcon,
                       { backgroundColor: option.color },
-                    ]}
+                    ])}
                   >
                     <Ionicons name={option.icon} size={24} color="white" />
                   </View>
@@ -231,7 +129,9 @@ function SafetyCenterScreen({
           ))}
 
           {/* Quick Actions */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+          <Text
+            style={StyleSheet.flatten([styles.sectionTitle, { marginTop: 32 }])}
+          >
             Quick Actions
           </Text>
 

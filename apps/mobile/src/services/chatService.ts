@@ -83,7 +83,7 @@ class ChatService {
    * Send an attachment to a match
    */
   async sendAttachment(params: SendAttachmentParams): Promise<{
-    success: boolean; 
+    success: boolean;
     url: string;
     type: string;
   }> {
@@ -127,12 +127,12 @@ class ChatService {
   }> {
     try {
       const formData = new FormData();
-      
+
       // Create a file-like object for the audio blob
       const audioFile = new File([params.audioBlob], "voice-note.m4a", {
         type: "audio/m4a",
       });
-      
+
       formData.append("audioBlob", audioFile);
       formData.append("matchId", params.matchId);
       formData.append("duration", String(params.duration));

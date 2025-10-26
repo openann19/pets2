@@ -38,4 +38,3 @@ export const usePulseEffect = (enabled = true) => {
 };
 
 export default usePulseEffect;
-

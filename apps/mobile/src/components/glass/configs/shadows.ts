@@ -27,4 +27,3 @@ export const SHADOW_CONFIGS = {
 } as const;
 
 export type ShadowStyle = keyof typeof SHADOW_CONFIGS;
-

@@ -199,7 +199,10 @@ function ModernText({
         end={{ x: 1, y: 1 }}
         style={styles.gradientContainer}
       >
-        <Text style={[textStyle, styles.gradientText, style]} {...props}>
+        <Text
+          style={StyleSheet.flatten([textStyle, styles.gradientText, style])}
+          {...props}
+        >
           {children}
         </Text>
       </LinearGradient>
@@ -219,14 +222,17 @@ function ModernText({
   // Render regular text
   if (animated) {
     return (
-      <Animated.Text style={[textStyle, entranceStyle, style]} {...props}>
+      <Animated.Text
+        style={StyleSheet.flatten([textStyle, entranceStyle, style])}
+        {...props}
+      >
         {children}
       </Animated.Text>
     );
   }
 
   return (
-    <Text style={[textStyle, style]} {...props}>
+    <Text style={StyleSheet.flatten([textStyle, style])} {...props}>
       {children}
     </Text>
   );

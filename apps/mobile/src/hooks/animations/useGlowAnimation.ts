@@ -73,4 +73,3 @@ export function useGlowAnimation(
 }
 
 export default useGlowAnimation;
-

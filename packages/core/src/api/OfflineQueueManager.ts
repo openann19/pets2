@@ -52,8 +52,8 @@ export class OfflineQueueManager {
   private queue: QueueItem[] = [];
   private processing: Set<string> = new Set();
   private storage: Storage | null = null;
-  private syncIntervalId?: NodeJS.Timeout;
-  private isOnline: boolean = true;
+  private syncIntervalId?: ReturnType<typeof setInterval>;
+  protected isOnline: boolean = true;
   private listeners: Array<(stats: QueueStats) => void> = [];
 
   constructor(config: Partial<QueueConfig> = {}) {
@@ -162,8 +162,8 @@ export class OfflineQueueManager {
   /**
    * Process individual item
    */
-  private async processItem(item: QueueItem): Promise<void> {
-    // This would be implemented by the actual API client
+  protected async processItem(item: QueueItem): Promise<void> {
+    // This should be implemented by subclasses
     throw new Error('processItem must be implemented by subclass');
   }
 
@@ -172,7 +172,7 @@ export class OfflineQueueManager {
    */
   getStats(): QueueStats {
     const criticalItems = this.queue.filter(item => item.priority === 'critical').length;
-    const oldestItem = this.queue.length > 0 ? this.queue[0].timestamp : undefined;
+    const oldestItem = this.queue.length > 0 ? this.queue[0]!.timestamp : undefined;
 
     return {
       totalItems: this.queue.length,
@@ -249,7 +249,8 @@ export class OfflineQueueManager {
     
     let insertIndex = this.queue.length;
     for (let i = 0; i < this.queue.length; i++) {
-      if (this.getPriorityValue(this.queue[i].priority) < priorityValue) {
+      const current = this.queue[i]!;
+      if (this.getPriorityValue(current.priority) < priorityValue) {
         insertIndex = i;
         break;
       }

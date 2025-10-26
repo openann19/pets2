@@ -10,6 +10,7 @@ import {
   RefreshControl,
   Alert,
   Modal,
+  StyleSheet,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -102,7 +103,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
         setApplications(applicationsData as AdoptionApplication[]);
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to load data. Please try again.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to load data. Please try again.";
       logger.error("Failed to load adoption data:", { error: err });
       setError(message);
     } finally {
@@ -140,7 +144,9 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   const handleStatusChange = (pet: PetListing, newStatus: string) => {
     setPetListings((prev) =>
       prev.map((p) =>
-        p.id === pet.id ? { ...p, status: newStatus as PetListing['status'] } : p,
+        p.id === pet.id
+          ? { ...p, status: newStatus as PetListing["status"] }
+          : p,
       ),
     );
     setShowStatusModal(false);
@@ -226,20 +232,20 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               </Text>
             </View>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.statusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
-              ]}
+              ])}
               onPress={() => {
                 setSelectedPet(pet);
                 setShowStatusModal(true);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusText,
                   { color: getStatusColor(pet.status) },
-                ]}
+                ])}
               >
                 {getStatusIcon(pet.status)}{" "}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
@@ -272,14 +278,22 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               <Text style={styles.actionButtonText}>View Details</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.actionButton, styles.primaryButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.primaryButton,
+              ])}
               onPress={() =>
                 navigation.navigate("ApplicationReview", {
                   applicationId: pet.id,
                 })
               }
             >
-              <Text style={[styles.actionButtonText, styles.primaryButtonText]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  styles.primaryButtonText,
+                ])}
+              >
                 Review Apps ({pet.applications})
               </Text>
             </TouchableOpacity>
@@ -301,10 +315,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               </Text>
             </View>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.eliteStatusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
-              ]}
+              ])}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setSelectedPet(pet);
@@ -312,10 +326,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.eliteStatusText,
                   { color: getStatusColor(pet.status) },
-                ]}
+                ])}
               >
                 {getStatusIcon(pet.status)}{" "}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
@@ -344,7 +358,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
             <EliteButton
               title="View Details"
               variant="secondary"
-              size="small"
+              size="sm"
               icon="eye"
               onPress={() =>
                 navigation.navigate("PetDetails", { petId: pet.id })
@@ -355,7 +369,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
             <EliteButton
               title={`Review (${pet.applications})`}
               variant="primary"
-              size="small"
+              size="sm"
               icon="document-text"
               onPress={() =>
                 navigation.navigate("ApplicationReview", {
@@ -380,16 +394,16 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               <Text style={GlobalStyles.body}>Applying for: {app.petName}</Text>
             </View>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.eliteStatusBadge,
                 { backgroundColor: `${getStatusColor(app.status)}20` },
-              ]}
+              ])}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.eliteStatusText,
                   { color: getStatusColor(app.status) },
-                ]}
+                ])}
               >
                 {getStatusIcon(app.status)}{" "}
                 {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
@@ -423,18 +437,21 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               <EliteButton
                 title="Reject"
                 variant="ghost"
-                size="small"
+                size="sm"
                 icon="close"
                 onPress={() => {
                   handleApplicationAction(app.id, "reject");
                 }}
-                style={[{ flex: 1 }, { borderColor: Colors.error }]}
+                style={StyleSheet.flatten([
+                  { flex: 1 },
+                  { borderColor: Colors.error },
+                ])}
               />
               <View style={GlobalStyles.mx2} />
               <EliteButton
                 title="Approve"
                 variant="primary"
-                size="small"
+                size="sm"
                 icon="checkmark"
                 onPress={() => {
                   handleApplicationAction(app.id, "approve");
@@ -482,10 +499,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
       <View style={styles.tabContainer}>
         <Animated.View style={tabAnimatedStyle1}>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.eliteTab,
               activeTab === "listings" && styles.eliteActiveTab,
-            ]}
+            ])}
             onPress={() => {
               handleTabPress("listings", tabScale1);
             }}
@@ -496,10 +513,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               color={activeTab === "listings" ? Colors.white : Colors.gray500}
             />
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.eliteTabText,
                 activeTab === "listings" && styles.eliteActiveTabText,
-              ]}
+              ])}
             >
               My Listings ({petListings.length})
             </Text>
@@ -508,10 +525,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
 
         <Animated.View style={tabAnimatedStyle2}>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.eliteTab,
               activeTab === "applications" && styles.eliteActiveTab,
-            ]}
+            ])}
             onPress={() => {
               handleTabPress("applications", tabScale2);
             }}
@@ -524,10 +541,10 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               }
             />
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.eliteTabText,
                 activeTab === "applications" && styles.eliteActiveTabText,
-              ]}
+              ])}
             >
               Applications ({applications.length})
             </Text>
@@ -550,15 +567,13 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <EliteEmptyState
             icon="paw"
             title="No pets listed yet"
-            subtitle="Start by adding your first pet for adoption. It's easy and helps pets find loving homes!"
-            actionTitle="Add Your First Pet"
-            onAction={() => navigation.navigate("CreateListing")}
+            message="Start by adding your first pet for adoption. It's easy and helps pets find loving homes!"
           />
         ) : applications.length === 0 && activeTab === "applications" ? (
           <EliteEmptyState
             icon="document-text"
             title="No applications yet"
-            subtitle="Once people start applying for your pets, you'll see all applications here."
+            message="Once people start applying for your pets, you'll see all applications here."
           />
         ) : activeTab === "listings" ? (
           renderEliteListings()

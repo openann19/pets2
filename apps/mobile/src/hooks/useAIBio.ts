@@ -131,8 +131,18 @@ export function useAIBio(): UseAIBioReturn {
 
       const response = await api.ai.generateBio({
         petName: params.petName,
-        keywords: [params.petBreed, params.petAge, params.petPersonality].filter(Boolean),
-        tone: params.tone as "playful" | "professional" | "casual" | "romantic" | "funny" | undefined,
+        keywords: [
+          params.petBreed,
+          params.petAge,
+          params.petPersonality,
+        ].filter(Boolean),
+        tone: params.tone as
+          | "playful"
+          | "professional"
+          | "casual"
+          | "romantic"
+          | "funny"
+          | undefined,
         length: "medium",
         petType: "pet",
       });

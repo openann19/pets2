@@ -325,12 +325,17 @@ export const SubscriptionManagerScreen = () => {
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Current Plan</Text>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusBadge,
                   { backgroundColor: statusColors.bg },
-                ]}
+                ])}
               >
-                <Text style={[styles.statusText, { color: statusColors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statusText,
+                    { color: statusColors.text },
+                  ])}
+                >
                   {subscription.status.charAt(0).toUpperCase() +
                     subscription.status.slice(1)}
                 </Text>
@@ -382,13 +387,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Swipes</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100))}%`,
+                        width: `${Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100)}%`,
                         backgroundColor: "#7C3AED",
                       },
-                    ]}
+                    ])}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -401,13 +406,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Super Likes</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100))}%`,
+                        width: `${Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100)}%`,
                         backgroundColor: "#0EA5E9",
                       },
-                    ]}
+                    ])}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -420,13 +425,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Boosts</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100))}%`,
+                        width: `${Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100)}%`,
                         backgroundColor: "#F97316",
                       },
-                    ]}
+                    ])}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -458,7 +463,12 @@ export const SubscriptionManagerScreen = () => {
                     size={24}
                     color="#D92D20"
                   />
-                  <Text style={[styles.actionButtonText, { color: "#D92D20" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.actionButtonText,
+                      { color: "#D92D20" },
+                    ])}
+                  >
                     Cancel Subscription
                   </Text>
                 </TouchableOpacity>
@@ -467,11 +477,19 @@ export const SubscriptionManagerScreen = () => {
             {subscription.status === "canceled" ||
             subscription.cancelAtPeriodEnd ? (
               <TouchableOpacity
-                style={[styles.actionButton, styles.reactivateButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.reactivateButton,
+                ])}
                 onPress={() => void handleReactivateSubscription()}
               >
                 <Ionicons name="refresh-outline" size={24} color="#FFFFFF" />
-                <Text style={[styles.actionButtonText, { color: "#FFFFFF" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.actionButtonText,
+                    { color: "#FFFFFF" },
+                  ])}
+                >
                   Reactivate Subscription
                 </Text>
               </TouchableOpacity>
@@ -482,7 +500,12 @@ export const SubscriptionManagerScreen = () => {
               onPress={() => void handleUpdatePaymentMethod()}
             >
               <Ionicons name="card-outline" size={24} color="#6D28D9" />
-              <Text style={[styles.actionButtonText, { color: "#6D28D9" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  { color: "#6D28D9" },
+                ])}
+              >
                 Update Payment Method
               </Text>
             </TouchableOpacity>
@@ -494,7 +517,12 @@ export const SubscriptionManagerScreen = () => {
               }}
             >
               <Ionicons name="pricetag-outline" size={24} color="#6D28D9" />
-              <Text style={[styles.actionButtonText, { color: "#6D28D9" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  { color: "#6D28D9" },
+                ])}
+              >
                 Change Plan
               </Text>
             </TouchableOpacity>

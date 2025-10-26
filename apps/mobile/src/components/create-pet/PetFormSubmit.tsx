@@ -14,10 +14,10 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({
   return (
     <View style={styles.submitContainer}>
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.submitButton,
           isSubmitting && styles.submitButtonDisabled,
-        ]}
+        ])}
         onPress={onSubmit}
         disabled={isSubmitting}
       >

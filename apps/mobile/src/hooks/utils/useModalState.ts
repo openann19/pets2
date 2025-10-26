@@ -9,11 +9,13 @@ export interface UseModalStateReturn {
 
 /**
  * Hook for managing modal open/close state
- * 
+ *
  * @example
  * const { isOpen, open, close } = useModalState();
  */
-export function useModalState(initialOpen: boolean = false): UseModalStateReturn {
+export function useModalState(
+  initialOpen: boolean = false,
+): UseModalStateReturn {
   const [isOpen, setIsOpen] = useState(initialOpen);
 
   const open = useCallback(() => {

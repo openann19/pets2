@@ -26,4 +26,3 @@ export const SPRING_CONFIGS = {
 } as const;
 
 export type SpringConfigKey = keyof typeof SPRING_CONFIGS;
-

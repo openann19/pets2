@@ -37,4 +37,3 @@ export const ElitePageHeader: React.FC<ElitePageHeaderProps> = ({
 };
 
 export default ElitePageHeader;
-

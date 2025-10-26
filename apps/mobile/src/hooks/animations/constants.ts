@@ -53,4 +53,3 @@ export const PREMIUM_ANIMATIONS = {
     slow: 150,
   },
 } as const;
-

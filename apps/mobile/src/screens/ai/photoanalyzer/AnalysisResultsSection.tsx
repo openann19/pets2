@@ -3,9 +3,9 @@
  * Displays photo analysis results from AIPhotoAnalyzerScreen
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 interface PhotoAnalysisResult {
   breed_analysis?: {
@@ -48,35 +48,56 @@ export function AnalysisResultsSection({
 
     return (
       <View style={styles.resultCard}>
-        <Text style={[styles.cardTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+        >
           🧬 Breed Analysis
         </Text>
         {breed_analysis.primary_breed && (
           <View style={styles.resultItem}>
-            <Text style={[styles.resultLabel, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.resultLabel,
+                { color: colors.text },
+              ])}
+            >
               Primary Breed:
             </Text>
-            <Text style={[styles.resultValue, { color: colors.primary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.resultValue,
+                { color: colors.primary },
+              ])}
+            >
               {breed_analysis.primary_breed} (
               {Math.round((breed_analysis.confidence || 0) * 100)}% confidence)
             </Text>
           </View>
         )}
-        {breed_analysis.secondary_breeds && breed_analysis.secondary_breeds.length > 0 && (
-          <View style={styles.secondaryBreeds}>
-            <Text style={[styles.sectionLabel, { color: colors.text }]}>
-              Possible Mixed Breeds:
-            </Text>
-            {breed_analysis.secondary_breeds.map((breed, index) => (
+        {breed_analysis.secondary_breeds &&
+          breed_analysis.secondary_breeds.length > 0 && (
+            <View style={styles.secondaryBreeds}>
               <Text
-                key={index}
-                style={[styles.resultValue, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.sectionLabel,
+                  { color: colors.text },
+                ])}
               >
-                • {breed.breed} ({Math.round(breed.confidence * 100)}%)
+                Possible Mixed Breeds:
               </Text>
-            ))}
-          </View>
-        )}
+              {breed_analysis.secondary_breeds.map((breed, index) => (
+                <Text
+                  key={index}
+                  style={StyleSheet.flatten([
+                    styles.resultValue,
+                    { color: colors.textSecondary },
+                  ])}
+                >
+                  • {breed.breed} ({Math.round(breed.confidence * 100)}%)
+                </Text>
+              ))}
+            </View>
+          )}
       </View>
     );
   };
@@ -88,25 +109,47 @@ export function AnalysisResultsSection({
 
     return (
       <View style={styles.resultCard}>
-        <Text style={[styles.cardTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+        >
           🏥 Health Assessment
         </Text>
         {health_assessment.age_estimate && (
           <View style={styles.resultItem}>
-            <Text style={[styles.resultLabel, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.resultLabel,
+                { color: colors.text },
+              ])}
+            >
               Estimated Age:
             </Text>
-            <Text style={[styles.resultValue, { color: colors.primary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.resultValue,
+                { color: colors.primary },
+              ])}
+            >
               {health_assessment.age_estimate} years
             </Text>
           </View>
         )}
         {health_assessment.health_score !== undefined && (
           <View style={styles.resultItem}>
-            <Text style={[styles.resultLabel, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.resultLabel,
+                { color: colors.text },
+              ])}
+            >
               Health Score:
             </Text>
-            <Text style={[styles.resultValue, { color: colors.primary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.resultValue,
+                { color: colors.primary },
+              ])}
+            >
               {Math.round(health_assessment.health_score * 100)}/100
             </Text>
           </View>
@@ -114,13 +157,21 @@ export function AnalysisResultsSection({
         {health_assessment.recommendations &&
           health_assessment.recommendations.length > 0 && (
             <View style={styles.recommendations}>
-              <Text style={[styles.sectionLabel, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.sectionLabel,
+                  { color: colors.text },
+                ])}
+              >
                 Recommendations:
               </Text>
               {health_assessment.recommendations.map((rec, index) => (
                 <Text
                   key={index}
-                  style={[styles.resultValue, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.resultValue,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   • {rec}
                 </Text>
@@ -138,38 +189,80 @@ export function AnalysisResultsSection({
 
     return (
       <View style={styles.resultCard}>
-        <Text style={[styles.cardTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+        >
           📸 Photo Quality Scores
         </Text>
         <View style={styles.resultItem}>
-          <Text style={[styles.resultLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultLabel,
+              { color: colors.text },
+            ])}
+          >
             Overall:
           </Text>
-          <Text style={[styles.resultValue, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultValue,
+              { color: colors.primary },
+            ])}
+          >
             {Math.round((photo_quality.overall_score || 0) * 100)}/100
           </Text>
         </View>
         <View style={styles.resultItem}>
-          <Text style={[styles.resultLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultLabel,
+              { color: colors.text },
+            ])}
+          >
             Lighting:
           </Text>
-          <Text style={[styles.resultValue, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultValue,
+              { color: colors.primary },
+            ])}
+          >
             {Math.round((photo_quality.lighting_score || 0) * 100)}/100
           </Text>
         </View>
         <View style={styles.resultItem}>
-          <Text style={[styles.resultLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultLabel,
+              { color: colors.text },
+            ])}
+          >
             Composition:
           </Text>
-          <Text style={[styles.resultValue, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultValue,
+              { color: colors.primary },
+            ])}
+          >
             {Math.round((photo_quality.composition_score || 0) * 100)}/100
           </Text>
         </View>
         <View style={styles.resultItem}>
-          <Text style={[styles.resultLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultLabel,
+              { color: colors.text },
+            ])}
+          >
             Clarity:
           </Text>
-          <Text style={[styles.resultValue, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.resultValue,
+              { color: colors.primary },
+            ])}
+          >
             {Math.round((photo_quality.clarity_score || 0) * 100)}/100
           </Text>
         </View>
@@ -182,25 +275,34 @@ export function AnalysisResultsSection({
 
     const score = Math.round(result.matchability_score * 100);
     const getScoreColor = () => {
-      if (score >= 80) return '#4CAF50';
-      if (score >= 60) return '#FF9800';
-      return '#F44336';
+      if (score >= 80) return "#4CAF50";
+      if (score >= 60) return "#FF9800";
+      return "#F44336";
     };
 
     return (
       <View style={styles.resultCard}>
-        <Text style={[styles.cardTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+        >
           💕 Matchability Score
         </Text>
-        <Text style={[styles.score, { color: getScoreColor() }]}>
+        <Text
+          style={StyleSheet.flatten([styles.score, { color: getScoreColor() }])}
+        >
           {score}/100
         </Text>
-        <Text style={[styles.scoreDescription, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.scoreDescription,
+            { color: colors.textSecondary },
+          ])}
+        >
           {score >= 80
-            ? 'Excellent for matching!'
+            ? "Excellent for matching!"
             : score >= 60
-              ? 'Good matching potential'
-              : 'Consider improving photos'}
+              ? "Good matching potential"
+              : "Consider improving photos"}
         </Text>
       </View>
     );
@@ -211,11 +313,19 @@ export function AnalysisResultsSection({
 
     return (
       <View style={styles.resultCard}>
-        <Text style={[styles.cardTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+        >
           🤖 AI Insights
         </Text>
         {result.ai_insights.map((insight, index) => (
-          <Text key={index} style={[styles.insight, { color: colors.textSecondary }]}>
+          <Text
+            key={index}
+            style={StyleSheet.flatten([
+              styles.insight,
+              { color: colors.textSecondary },
+            ])}
+          >
             • {insight}
           </Text>
         ))}
@@ -239,7 +349,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   resultCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     padding: 20,
     borderRadius: 15,
     marginBottom: 20,
@@ -247,12 +357,12 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
   resultItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   resultLabel: {
@@ -261,11 +371,11 @@ const styles = StyleSheet.create({
   },
   resultValue: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   sectionLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 15,
     marginBottom: 10,
   },
@@ -277,13 +387,13 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 48,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 8,
   },
   scoreDescription: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   insight: {
     fontSize: 14,
