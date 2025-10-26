@@ -70,11 +70,14 @@ export default function ActivePillTabBar({
   const indicatorX = useSharedValue(0);
   const indicatorW = useSharedValue(0);
 
-  // icon scale per tab
+  // icon scale per tab - create stable array of shared values
+  const routesLength = state.routes.length;
   const iconScales = useMemo(
-    () => state.routes.map(() => useSharedValue(1)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state.routes.length],
+    () => {
+      // Recreate array only when routes count changes to maintain stable references
+      return state.routes.map(() => useSharedValue(1));
+    },
+    [routesLength],
   );
 
   useEffect(() => {
@@ -94,7 +97,7 @@ export default function ActivePillTabBar({
     }
     // subtle haptic
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-  }, [state.index, state.routes, iconScales, indicatorX, indicatorW]);
+  }, [state.index, iconScales, indicatorX, indicatorW, state.routes]);
 
   const pillStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: indicatorX.value }],

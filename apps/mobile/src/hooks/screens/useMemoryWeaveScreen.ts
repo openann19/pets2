@@ -6,8 +6,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import * as Haptics from "expo-haptics";
+import type { Animated } from "react-native";
+import type { ScrollView } from "react-native";
 import { useTheme } from "../../theme/Provider";
 import { useMemoryWeave } from "../domains/social/useMemoryWeave";
+import type { SemanticColors } from "../../theme/types";
 
 interface MemoryNode {
   id: string;
@@ -26,42 +29,49 @@ interface UseMemoryWeaveScreenReturn {
   // From domain hook
   memories: MemoryNode[];
   currentIndex: number;
-  scrollX: any;
-  fadeAnim: any;
-  scaleAnim: any;
-  scrollViewRef: any;
+  scrollX: Animated.Value;
+  fadeAnim: Animated.Value;
+  scaleAnim: Animated.Value;
+  scrollViewRef: React.RefObject<ScrollView>;
   isAnimating: boolean;
   setCurrentIndex: (index: number) => void;
   scrollToIndex: (index: number) => void;
-  handleScroll: (event: any) => void;
+  handleScroll: (event: { nativeEvent: { contentOffset: { x: number } } }) => void;
   getEmotionColor: (emotion?: string) => string;
   getEmotionEmoji: (emotion?: string) => string;
   formatTimestamp: (timestamp: string) => string;
   petName: string;
   matchId: string;
 
-  // Screen-specific
+  // Screen-specific  
   isDark: boolean;
-  colors: any;
+  colors: SemanticColors;
   handleGoBack: () => void;
   handleShare: () => void;
 }
+
+// Helper to ensure boolean
+const ensureBoolean = (value: boolean | undefined): boolean => {
+  return Boolean(value);
+};
 
 export const useMemoryWeaveScreen = (route: {
   params: { matchId: string; petName: string; memories?: MemoryNode[] };
 }): UseMemoryWeaveScreenReturn => {
   const navigation = useNavigation();
-  const { isDark, colors } = useTheme();
+  const theme = useTheme();
+  const isDark = theme.isDark ?? theme.scheme === "dark";
+  const colors = theme.colors;
   const { matchId, petName, memories: initialMemories } = route.params;
 
   const {
     memories,
     currentIndex,
-    scrollX,
-    fadeAnim,
-    scaleAnim,
+    scrollX: scrollXValue,
+    fadeAnim: fadeAnimValue,
+    scaleAnim: scaleAnimValue,
     scrollViewRef,
-    isAnimating,
+    isAnimating: isAnimatingValue,
     setCurrentIndex,
     scrollToIndex,
     handleScroll,
@@ -92,11 +102,11 @@ export const useMemoryWeaveScreen = (route: {
     // From domain hook
     memories,
     currentIndex,
-    scrollX,
-    fadeAnim,
-    scaleAnim,
+    scrollX: scrollXValue,
+    fadeAnim: fadeAnimValue,
+    scaleAnim: scaleAnimValue,
     scrollViewRef,
-    isAnimating,
+    isAnimating: Boolean(isAnimatingValue),
     setCurrentIndex,
     scrollToIndex,
     handleScroll,
@@ -107,7 +117,7 @@ export const useMemoryWeaveScreen = (route: {
     matchId,
 
     // Screen-specific
-    isDark,
+    isDark: ensureBoolean(isDark),
     colors,
     handleGoBack,
     handleShare,

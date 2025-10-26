@@ -5,11 +5,16 @@ import { renderHook, act, waitFor } from "@testing-library/react-native";
 import { Alert } from "react-native";
 import { usePhotoManager } from "../usePhotoManager";
 import * as ImagePicker from "expo-image-picker";
+import { multipartUpload } from "../../services/multipartUpload";
 
 // Mock ImagePicker
 jest.mock("expo-image-picker", () => ({
   requestMediaLibraryPermissionsAsync: jest.fn(),
   launchImageLibraryAsync: jest.fn(),
+  PermissionStatus: {
+    GRANTED: "granted",
+    DENIED: "denied",
+  },
   MediaTypeOptions: {
     Images: "Images",
   },
@@ -17,6 +22,21 @@ jest.mock("expo-image-picker", () => ({
 
 // Mock Alert
 jest.spyOn(Alert, "alert");
+
+// Mock multipartUpload service
+jest.mock("../../services/multipartUpload", () => ({
+  multipartUpload: jest.fn(),
+}));
+
+// Mock logger
+jest.mock("@pawfectmatch/core", () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+  },
+}));
+
+const mockMultipartUpload = multipartUpload as jest.MockedFunction<typeof multipartUpload>;
 
 describe("usePhotoManager", () => {
   beforeEach(() => {
@@ -358,5 +378,188 @@ describe("usePhotoManager", () => {
     expect(photo).toHaveProperty("type");
     expect(photo).toHaveProperty("fileName");
     expect(photo).toHaveProperty("isPrimary");
+  });
+
+  describe("Multipart Upload Functionality", () => {
+    beforeEach(() => {
+      mockMultipartUpload.mockResolvedValue({
+        url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
+        key: "uploads/photo.jpg",
+        thumbnails: {
+          jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
+          webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
+        },
+      });
+    });
+
+    it("should automatically upload photos when picked", async () => {
+      (
+        ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock
+      ).mockResolvedValue({
+        status: "granted",
+      });
+      (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+        canceled: false,
+        assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
+      });
+
+      const { result } = renderHook(() => usePhotoManager());
+
+      await act(async () => {
+        await result.current.pickImage();
+      });
+
+      await waitFor(() => {
+        expect(mockMultipartUpload).toHaveBeenCalled();
+      });
+    });
+
+    it("should track upload progress", async () => {
+      (
+        ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock
+      ).mockResolvedValue({
+        status: "granted",
+      });
+      (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+        canceled: false,
+        assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
+      });
+
+      mockMultipartUpload.mockImplementation(({ onProgress }) => {
+        if (onProgress) {
+          onProgress(50, 100);
+          onProgress(100, 100);
+        }
+        return Promise.resolve({
+          url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
+          key: "uploads/photo.jpg",
+          thumbnails: {
+            jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
+            webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
+          },
+        });
+      });
+
+      const { result } = renderHook(() => usePhotoManager());
+
+      await act(async () => {
+        await result.current.pickImage();
+      });
+
+      await waitFor(() => {
+        expect(mockMultipartUpload).toHaveBeenCalled();
+      });
+    });
+
+    it("should mark photo as uploaded successfully", async () => {
+      (
+        ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock
+      ).mockResolvedValue({
+        status: "granted",
+      });
+      (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+        canceled: false,
+        assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
+      });
+
+      const { result } = renderHook(() => usePhotoManager());
+
+      await act(async () => {
+        await result.current.pickImage();
+      });
+
+      await waitFor(() => {
+        const photo = result.current.photos[0];
+        expect(photo).toHaveProperty("uploadedUrl");
+        expect(photo).toHaveProperty("thumbnailUrl");
+        expect(photo).toHaveProperty("s3Key");
+        expect(photo.isUploading).toBe(false);
+      });
+    });
+
+    it("should handle upload errors gracefully", async () => {
+      (
+        ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock
+      ).mockResolvedValue({
+        status: "granted",
+      });
+      (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+        canceled: false,
+        assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
+      });
+
+      mockMultipartUpload.mockRejectedValue(new Error("Upload failed"));
+
+      const { result } = renderHook(() => usePhotoManager());
+
+      await act(async () => {
+        await result.current.pickImage();
+      });
+
+      await waitFor(() => {
+        const photo = result.current.photos[0];
+        expect(photo.error).toBe("Upload failed");
+        expect(photo.isUploading).toBe(false);
+      });
+
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Upload Failed",
+        expect.stringContaining("Failed to upload"),
+      );
+    });
+
+    it("should not allow submission when photos are uploading", async () => {
+      (
+        ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock
+      ).mockResolvedValue({
+        status: "granted",
+      });
+      (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+        canceled: false,
+        assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
+      });
+
+      // Mock a slow upload
+      mockMultipartUpload.mockImplementation(
+        ({ onProgress }) =>
+          new Promise((resolve) => {
+            setTimeout(() => {
+              if (onProgress) onProgress(50, 100);
+              resolve({
+                url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
+                key: "uploads/photo.jpg",
+                thumbnails: {
+                  jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
+                  webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
+                },
+              });
+            }, 100);
+          }),
+      );
+
+      const { result } = renderHook(() => usePhotoManager());
+
+      await act(async () => {
+        await result.current.pickImage();
+      });
+
+      // Check immediately after - should still be uploading
+      const photo = result.current.photos[0];
+      expect(photo.isUploading).toBe(true);
+
+      // Wait for upload to complete
+      await waitFor(
+        () => {
+          expect(result.current.photos[0].isUploading).toBe(false);
+        },
+        { timeout: 200 },
+      );
+    });
+
+    it("should provide uploadPendingPhotos method", () => {
+      const { result } = renderHook(() => usePhotoManager());
+      expect(result.current.uploadPendingPhotos).toBeDefined();
+      expect(typeof result.current.uploadPendingPhotos).toBe("function");
+    });
   });
 });

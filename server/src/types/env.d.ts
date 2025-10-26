@@ -30,6 +30,13 @@ export interface IEnvVariables {
   TWILIO_ACCOUNT_SID?: string;
   TWILIO_AUTH_TOKEN?: string;
   TWILIO_PHONE_NUMBER?: string;
+  AWS_REGION?: string;
+  AWS_ACCESS_KEY_ID?: string;
+  AWS_SECRET_ACCESS_KEY?: string;
+  CLOUDINARY_CLOUD?: string;
+  CLOUDINARY_KEY?: string;
+  CLOUDINARY_SECRET?: string;
+  FCM_SERVER_KEY?: string;
 }
 
 declare global {

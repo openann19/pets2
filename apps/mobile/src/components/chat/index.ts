@@ -2,7 +2,6 @@
 export { MessageBubbleEnhanced } from "./MessageBubbleEnhanced";
 // Basic version (legacy)
 export { MessageBubble as BasicMessageBubble } from "./MessageBubble";
-export { MobileChat } from "./MobileChat";
 export { MobileVoiceRecorder } from "./MobileVoiceRecorder";
 export { MessageInput } from "./MessageInput";
 export { MessageList } from "./MessageList";

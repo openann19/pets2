@@ -46,7 +46,7 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>PawfectMatch uses the camera for pet photo uploads and AR discovery features</string>
+    <string>PawfectMatch uses the camera for pet photo uploads, AR discovery features, and live streaming</string>
     <key>NSContactsUsageDescription</key>
     <string>PawfectMatch can sync your contacts to help you find friends who use the app</string>
     <key>NSFaceIDUsageDescription</key>
@@ -58,7 +58,7 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>PawfectMatch uses your location to find compatible pets nearby</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>PawfectMatch uses the microphone for video calls with pet matches</string>
+    <string>PawfectMatch uses the microphone for video calls with pet matches and live streaming</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>PawfectMatch needs access to your photo library to upload pet pictures</string>
     <key>RCTNewArchEnabled</key>

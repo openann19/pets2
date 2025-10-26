@@ -13,7 +13,12 @@ import {
 import { Theme } from '../../theme/unified-theme';
 
 // Mock Siri Shortcuts API for non-iOS platforms
-let ExpoSiriShortcuts: any = null;
+interface ExpoSiriShortcutsModule {
+  getShortcuts: () => Promise<Array<{ identifier: string; title: string; subtitle: string }>>;
+  addShortcut: (shortcut: { identifier: string; title: string; subtitle: string; phrase: string; icon: { name: string; color: string } }) => Promise<void>;
+  removeShortcut: (identifier: string) => Promise<void>;
+}
+let ExpoSiriShortcuts: ExpoSiriShortcutsModule | null = null;
 if (Platform.OS === "ios") {
   try {
     ExpoSiriShortcuts = require("expo-siri-shortcuts");
@@ -85,7 +90,7 @@ export function SiriShortcuts(): React.JSX.Element {
     try {
       const activeShortcuts = await ExpoSiriShortcuts.getShortcuts();
       const activeIds = activeShortcuts.map(
-        (shortcut: any) => shortcut.identifier,
+        (shortcut) => shortcut.identifier,
       );
 
       setShortcuts((prev) =>
@@ -164,7 +169,7 @@ export function SiriShortcuts(): React.JSX.Element {
             <View style={styles.shortcutInfo}>
               <View style={styles.shortcutHeader}>
                 <Ionicons
-                  name={shortcut.icon as any}
+                  name={shortcut.icon as keyof typeof Ionicons.glyphMap}
                   size={20}
                   color="Theme.colors.secondary[500]"
                 />

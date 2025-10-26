@@ -1,200 +1,104 @@
 import { v2 as cloudinary } from 'cloudinary';
-const logger = require('../utils/logger');
+import streamifier from 'streamifier';
+import logger from '../utils/logger';
 
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  cloud_name: process.env.CLOUDINARY_CLOUD,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-// Cloudinary upload result interface
-export interface CloudinaryUploadResult {
-  asset_id: string;
-  public_id: string;
-  version: number;
-  version_id: string;
-  signature: string;
-  width: number;
-  height: number;
-  format: string;
-  resource_type: string;
-  created_at: string;
-  tags: string[];
-  bytes: number;
-  type: string;
-  etag: string;
-  placeholder: boolean;
-  url: string;
-  secure_url: string;
-  access_mode: string;
-  overwritten: boolean;
-  pages?: number;
-  folder: string;
-  path?: string;
-}
-
-// Cloudinary deletion result interface
-export interface CloudinaryDeletionResult {
-  result: 'ok' | 'not found';
-  public_id: string;
-}
-
-// Upload options interface
-export interface CloudinaryUploadOptions {
+export interface UploadOptions {
   folder?: string;
-  resource_type?: 'auto' | 'image' | 'video' | 'raw';
+  resource_type?: 'image' | 'video' | 'raw' | 'auto';
   transformation?: any[];
-  [key: string]: any;
-}
-
-// Image transformations interface
-export interface ImageTransformations {
-  width?: number;
-  height?: number;
-  crop?: string;
-  quality?: string | number;
-  fetch_format?: string;
-  dpr?: string | number;
-  [key: string]: any;
-}
-
-// Image variants interface
-export interface ImageVariants {
-  thumbnail: string;
-  small: string;
-  medium: string;
-  large: string;
-  original: string;
+  format?: string;
 }
 
 /**
- * Upload image to Cloudinary
- * @param fileBuffer - Image buffer
- * @param folder - Cloudinary folder
- * @param options - Additional upload options
- * @returns Promise resolving to upload result
+ * Upload file buffer to Cloudinary
  */
-export const uploadToCloudinary = (
-  fileBuffer: Buffer | string,
-  folder: string = 'pawfectmatch',
-  options: CloudinaryUploadOptions = {}
-): Promise<CloudinaryUploadResult> => {
+export function uploadToCloudinary(
+  buffer: Buffer,
+  options: UploadOptions = {}
+): Promise<cloudinary.UploadApiResponse> {
   return new Promise((resolve, reject) => {
-    const uploadOptions: CloudinaryUploadOptions = {
-      folder,
-      resource_type: 'auto',
-      transformation: [
-        { width: 800, height: 800, crop: 'limit', quality: 'auto:good', dpr: 'auto' },
-        { fetch_format: 'auto' }
-      ],
-      ...options
-    };
-
-    cloudinary.uploader.upload_stream(
-      uploadOptions,
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: options.folder || 'pawfectmatch',
+        resource_type: options.resource_type || 'image',
+        transformation: options.transformation,
+        format: options.format,
+      },
       (error, result) => {
         if (error) {
-          logger.error('Cloudinary upload error:', { error });
+          logger.error('Cloudinary upload error', { error: error.message });
           reject(error);
         } else if (result) {
-          resolve(result as unknown as CloudinaryUploadResult);
+          resolve(result);
         } else {
-          reject(new Error('Upload failed: no result returned'));
+          reject(new Error('Upload failed with no error or result'));
         }
       }
-    ).end(fileBuffer);
+    );
+
+    streamifier.createReadStream(buffer).pipe(uploadStream);
   });
-};
+}
 
 /**
- * Delete image from Cloudinary
- * @param publicId - Cloudinary public ID
- * @returns Promise resolving to deletion result
+ * Upload image file
  */
-export const deleteFromCloudinary = (publicId: string): Promise<CloudinaryDeletionResult> => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.destroy(publicId, (error, result) => {
-      if (error) {
-        logger.error('Cloudinary deletion error:', { error });
-        reject(error);
-      } else if (result) {
-        resolve(result as unknown as CloudinaryDeletionResult);
-      } else {
-        reject(new Error('Deletion failed: no result returned'));
-      }
-    });
-  });
-};
-
-/**
- * Generate optimized image URL
- * @param publicId - Cloudinary public ID
- * @param transformations - Image transformations
- * @returns Optimized image URL
- */
-export const getOptimizedImageUrl = (
-  publicId: string,
-  transformations: ImageTransformations = {}
-): string => {
-  const defaultTransformations: ImageTransformations = {
-    width: 400,
-    height: 400,
-    crop: 'fill',
-    quality: 'auto:good',
-    fetch_format: 'auto',
-    dpr: 'auto'
-  };
-
-  return cloudinary.url(publicId, {
-    ...defaultTransformations,
-    ...transformations
-  });
-};
-
-/**
- * Upload multiple images
- * @param fileBuffers - Array of image buffers
- * @param folder - Cloudinary folder
- * @returns Promise resolving to array of upload results
- */
-export const uploadMultipleImages = async (
-  fileBuffers: Buffer[],
-  folder: string = 'pawfectmatch'
-): Promise<CloudinaryUploadResult[]> => {
-  const uploadPromises = fileBuffers.map(buffer => 
-    uploadToCloudinary(buffer, folder)
-  );
-  
+export async function uploadImage(buffer: Buffer, folder = 'pawfectmatch/photos'): Promise<string> {
   try {
-    return await Promise.all(uploadPromises);
+    const result = await uploadToCloudinary(buffer, {
+      folder,
+      resource_type: 'image',
+      transformation: [
+        { width: 800, height: 800, crop: 'limit', quality: 'auto' },
+        { fetch_format: 'auto' }
+      ],
+    });
+    return result.secure_url;
   } catch (error) {
-    logger.error('Multiple upload error:', { error });
+    logger.error('Image upload failed', { error: (error as Error).message });
     throw error;
   }
-};
+}
 
 /**
- * Create image variants for different use cases
- * @param publicId - Original image public ID
- * @returns Object with URLs for different variants
+ * Upload video/voice note
  */
-export const createImageVariants = (publicId: string): ImageVariants => {
-  return {
-    thumbnail: getOptimizedImageUrl(publicId, { width: 150, height: 150 }),
-    small: getOptimizedImageUrl(publicId, { width: 300, height: 300 }),
-    medium: getOptimizedImageUrl(publicId, { width: 600, height: 600 }),
-    large: getOptimizedImageUrl(publicId, { width: 1000, height: 1000 }),
-    original: cloudinary.url(publicId, { quality: 'auto:best' })
-  };
-};
+export async function uploadVideo(buffer: Buffer, folder = 'pawfectmatch/voice'): Promise<string> {
+  try {
+    const result = await uploadToCloudinary(buffer, {
+      folder,
+      resource_type: 'video',
+      format: 'webm',
+    });
+    return result.secure_url;
+  } catch (error) {
+    logger.error('Video upload failed', { error: (error as Error).message });
+    throw error;
+  }
+}
 
-// Export default object for backward compatibility
+/**
+ * Delete file from Cloudinary
+ */
+export async function deleteFromCloudinary(publicId: string): Promise<void> {
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    logger.error('Cloudinary delete error', { error: (error as Error).message, publicId });
+    throw error;
+  }
+}
+
 export default {
   uploadToCloudinary,
+  uploadImage,
+  uploadVideo,
   deleteFromCloudinary,
-  getOptimizedImageUrl,
-  uploadMultipleImages,
-  createImageVariants
 };
-

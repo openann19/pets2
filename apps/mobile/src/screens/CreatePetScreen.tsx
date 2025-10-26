@@ -5,11 +5,9 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { PetBasicInfoSection } from "../components/create-pet/PetBasicInfoSection";
 import { PetFormSubmit } from "../components/create-pet/PetFormSubmit";
@@ -20,6 +18,9 @@ import { usePetForm } from "../hooks/usePetForm";
 import { usePhotoManager } from "../hooks/usePhotoManager";
 import type { RootStackScreenProps } from "../navigation/types";
 import { Theme } from '../theme/unified-theme';
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { haptic } from '../ui/haptics';
 
 type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 
@@ -30,97 +31,87 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
   const { photos, pickImage, removePhoto, setPrimaryPhoto } = usePhotoManager();
 
   const onSubmit = () => {
+    haptic.confirm();
     handleSubmit(photos, navigation);
   };
 
+  const handleBackPress = () => {
+    haptic.tap();
+    navigation.goBack();
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: 'Create Pet Profile',
+            onBackPress: handleBackPress,
+            showBackButton: true,
+          })}
+        />
+      }
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoid}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          >
-            <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[500]" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Create Pet Profile</Text>
-          <View style={styles.placeholder} />
-        </View>
-
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Form Sections */}
-          <PetBasicInfoSection
-            formData={formData}
-            errors={errors}
-            onUpdateFormData={updateFormData}
-          />
+          <Animated.View entering={FadeInDown.duration(220)}>
+            <PetBasicInfoSection
+              formData={formData}
+              errors={errors}
+              onUpdateFormData={updateFormData}
+            />
+          </Animated.View>
 
-          <PetPersonalitySection
-            formData={formData}
-            onUpdateFormData={updateFormData}
-          />
+          <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+            <PetPersonalitySection
+              formData={formData}
+              onUpdateFormData={updateFormData}
+            />
+          </Animated.View>
 
-          <PetIntentHealthSection
-            formData={formData}
-            errors={errors}
-            onUpdateFormData={updateFormData}
-          />
+          <Animated.View entering={FadeInDown.duration(260).delay(100)}>
+            <PetIntentHealthSection
+              formData={formData}
+              errors={errors}
+              onUpdateFormData={updateFormData}
+            />
+          </Animated.View>
 
-          <PetPhotosSection
-            photos={photos}
-            errors={errors}
-            onPickImage={pickImage}
-            onRemovePhoto={removePhoto}
-            onSetPrimaryPhoto={setPrimaryPhoto}
-          />
+          <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+            <PetPhotosSection
+              photos={photos}
+              errors={errors}
+              onPickImage={pickImage}
+              onRemovePhoto={removePhoto}
+              onSetPrimaryPhoto={setPrimaryPhoto}
+            />
+          </Animated.View>
 
-          <PetFormSubmit isSubmitting={isSubmitting} onSubmit={onSubmit} />
+          <Animated.View entering={FadeInDown.duration(300).delay(200)}>
+            <PetFormSubmit isSubmitting={isSubmitting} onSubmit={onSubmit} />
+          </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "Theme.colors.neutral[0]",
-  },
   keyboardAvoid: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[900]",
-  },
-  placeholder: {
-    width: 40,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
+    padding: Theme.spacing.lg,
   },
 });

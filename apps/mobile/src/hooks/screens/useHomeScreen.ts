@@ -47,24 +47,26 @@ export const useHomeScreen = (): UseHomeScreenReturn => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      const [matches, userStats] = await Promise.all([
-        matchesAPI.getMatches().catch(() => []),
-        matchesAPI
-          .getUserStats()
-          .catch(() => ({ matches: 0, messages: 0, pets: 0 })),
-      ]);
-
+      // Use real home stats API endpoint
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/home/stats`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      
       setStats({
-        matches: matches.length,
-        messages: userStats.messages,
-        pets: userStats.pets,
+        matches: data.matches || 0,
+        messages: data.messages || 0,
+        pets: 0, // Not included in new API
       });
     } catch (error) {
       logger.error("Failed to refresh data:", { error });
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [user?.token]);
 
   const handleQuickAction = useCallback(
     (action: string) => {

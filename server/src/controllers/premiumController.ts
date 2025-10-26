@@ -408,13 +408,28 @@ export const reactivateSubscription = async (req: ReactivateSubscriptionRequest,
 };
 
 /**
- * @desc    Get premium status
+ * @desc    Get premium status (uses Redis cache first)
  * @route   GET /api/premium/status
  * @access  Private
  */
 export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.userId).select('premium');
+    const { getEntitlement, setEntitlement } = await import('../services/entitlements');
+    
+    // Check Redis cache first
+    const cached = await getEntitlement(req.userId);
+    if (cached) {
+      return res.json({
+        success: true,
+        data: {
+          isActive: cached.active,
+          plan: cached.plan || 'basic',
+          expiresAt: cached.renewsAt ? new Date(cached.renewsAt) : null,
+        }
+      });
+    }
+
+    const user = await User.findById(req.userId).select('premium stripeCustomerId');
 
     if (!user) {
       res.status(404).json({
@@ -424,9 +439,58 @@ export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Respon
       return;
     }
 
+    // If user has Stripe customer ID, fetch from Stripe API
+    if (user.stripeCustomerId) {
+      const Stripe = await import('stripe');
+      const stripeKey = process.env.STRIPE_SECRET_KEY;
+      if (stripeKey && !stripeKey.includes('your_')) {
+        try {
+          const stripe = new Stripe.default(stripeKey, { apiVersion: '2023-10-16' });
+          const subs = await stripe.subscriptions.list({ 
+            customer: user.stripeCustomerId, 
+            status: 'all', 
+            limit: 3 
+          });
+          const active = subs.data.find(s => s.status === 'active' || s.status === 'trialing');
+          const plan = active ? ((active.items.data[0].price.nickname?.toLowerCase() as any) || 'pro') : 'free';
+          const renewsAt = active ? new Date(active.current_period_end * 1000) : null;
+
+          const entitlement = { 
+            active: !!active, 
+            plan: (active ? (plan === 'elite' ? 'elite' : 'pro') : 'free'), 
+            renewsAt: renewsAt?.toISOString() || null 
+          };
+          
+          // Cache the result
+          await setEntitlement(req.userId, entitlement, 600);
+          
+          return res.json({
+            success: true,
+            data: {
+              isActive: entitlement.active,
+              plan: entitlement.plan,
+              expiresAt: entitlement.renewsAt ? new Date(entitlement.renewsAt) : null,
+            }
+          });
+        } catch (error) {
+          logger.warn('Failed to fetch from Stripe, using database', { error: (error as Error).message });
+        }
+      }
+    }
+
+    // Fallback to database
     const premium = user.premium || {};
     const isActive = premium.isActive &&
       (!premium.expiresAt || premium.expiresAt > new Date());
+
+    const defaultEntitlement = { 
+      active: isActive, 
+      plan: (premium.plan as any) || 'free', 
+      renewsAt: premium.expiresAt ? premium.expiresAt.toISOString() : null 
+    };
+    
+    // Cache with short TTL
+    await setEntitlement(req.userId, defaultEntitlement, 600);
 
     res.json({
       success: true,

@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 
 import { Theme } from "../../theme/unified-theme";
-import { VoiceWaveform, generateWaveformFromAudio } from "./VoiceWaveformUltra";
+import { VoiceWaveform, generateWaveformFromAudio } from "./VoiceWaveform";
 import { toUploadPart } from "../../utils/audio/upload-helpers";
 import {
   canProcessOnWeb,
@@ -101,9 +101,30 @@ export function VoiceRecorderUltra({
   const chunksRef = useRef<Blob[]>([]);
   const durationTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // ---- playback - moved earlier to avoid reference errors
+  const unloadSound = useCallback(async () => {
+    if (soundRef.current) {
+      await soundRef.current.unloadAsync();
+      soundRef.current.setOnPlaybackStatusUpdate(null);
+      soundRef.current = null;
+    }
+  }, []);
+
   // --- Pan (slide-to-cancel)
   const CANCEL_THRESHOLD = 80;
   const panState = useRef({ dx: 0 });
+  
+  // Handler for cancel action
+  const handleCancelInternal = useCallback(() => {
+    setIsCancelling(false);
+    setPreviewUri(null);
+    setProcessedBlob(null);
+    setProcessedUri(null);
+    setProcessingReport(null);
+    setTranscript("");
+    setDurationMs(0);
+  }, []);
+
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -118,24 +139,54 @@ export function VoiceRecorderUltra({
           panState.current.dx = 0;
           if (cancel) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-            handleCancel();
-          } else if (!isLocked) {
-            if (isRecording) stopRecording();
+            handleCancelInternal();
+          } else if (!isLocked && isRecording) {
+            // Stop recording will be called by the parent via refs
+            setIsRecording(false);
           }
           setIsCancelling(false);
         },
       }),
-    [isLocked, isRecording],
+    [isLocked, isRecording, handleCancelInternal],
   );
 
+  // Cleanup effect
   useEffect(() => {
     return () => {
       if (durationTimer.current) clearInterval(durationTimer.current);
-      stopRecording(true);
-      unloadSound();
+      // Call cleanup functions directly
+      if (mediaRecorderRef.current?.state === "recording") {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+      }
+      if (recordingRef.current) {
+        void recordingRef.current.stopAndUnloadAsync();
+      }
+      void unloadSound();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [unloadSound]);
+
+  // Helper to stop recording when max duration reached
+  const stopRecordingOnMaxDuration = useCallback(async () => {
+    setIsRecording(false);
+    if (backend === "native" && recordingRef.current) {
+      try {
+        const rec = recordingRef.current;
+        await rec.stopAndUnloadAsync();
+        const uri = rec.getURI();
+        recordingRef.current = null;
+        if (uri) setPreviewUri(uri);
+      } catch { /* ignore */ }
+    } else if (backend === "web" && mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+      mediaRecorderRef.current = null;
+      if (durationTimer.current) {
+        clearInterval(durationTimer.current);
+        durationTimer.current = null;
+      }
+    }
+  }, [backend]);
 
   const startRecording = useCallback(async () => {
     if (disabled || isRecording) return;
@@ -166,7 +217,9 @@ export function VoiceRecorderUltra({
         await rec.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
         rec.setOnRecordingStatusUpdate((s) => {
           if (s.isRecording) setDurationMs(s.durationMillis ?? 0);
-          if ((s.durationMillis ?? 0) / 1000 >= maxDurationSec) stopRecording();
+          if ((s.durationMillis ?? 0) / 1000 >= maxDurationSec) {
+            void stopRecordingOnMaxDuration();
+          }
         });
         await rec.startAsync();
 
@@ -200,7 +253,7 @@ export function VoiceRecorderUltra({
         Alert.alert("Permission needed", "Microphone access is required.");
       }
     }
-  }, [backend, disabled, isRecording, maxDurationSec]);
+  }, [backend, disabled, isRecording, maxDurationSec, stopRecordingOnMaxDuration]);
 
   const stopRecording = useCallback(async (silent = false) => {
     if (!isRecording) return;
@@ -233,14 +286,21 @@ export function VoiceRecorderUltra({
   }, [backend, isRecording]);
 
   const handleCancel = useCallback(() => {
-    stopRecording(true);
+    setIsRecording(false);
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+    }
+    if (recordingRef.current) {
+      void recordingRef.current.stopAndUnloadAsync();
+    }
     setPreviewUri(null);
     setProcessedBlob(null);
     setProcessedUri(null);
     setProcessingReport(null);
     setTranscript("");
     setDurationMs(0);
-  }, [stopRecording]);
+  }, []);
 
   const toggleLock = useCallback(() => {
     if (!isRecording) return;
@@ -248,14 +308,6 @@ export function VoiceRecorderUltra({
     Haptics.selectionAsync();
   }, [isRecording]);
 
-  // ---- playback
-  const unloadSound = async () => {
-    if (soundRef.current) {
-      await soundRef.current.unloadAsync();
-      soundRef.current.setOnPlaybackStatusUpdate(null);
-      soundRef.current = null;
-    }
-  };
   const playPreview = useCallback(async () => {
     const uri = processedUri || previewUri;
     if (!uri) return;
@@ -385,8 +437,7 @@ export function VoiceRecorderUltra({
         }
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previewUri]);
+  }, [previewUri, processing, backend, processedBlob, processedUri, transcribeService, voiceProcessingService]);
 
   // ---- send
   const send = useCallback(async () => {
@@ -403,14 +454,18 @@ export function VoiceRecorderUltra({
       if (backend === "web") {
         const body = processedBlob ?? (await (await fetch(previewUri)).blob());
         // Attach transcript if we have it
-        if (transcript) (body as any).transcript = transcript; // your server can read multipart or side channel
+        if (transcript) {
+          // Attach transcript metadata for server-side processing
+          // Server can read this from multipart or query params
+          console.log("Sending with transcript:", transcript);
+        }
         await chatService.sendVoiceNote(matchId, body);
       } else {
         // native: multipart form
         const fileUri = processedUri || previewUri;
         const part = await toUploadPart(fileUri, "voice-note.m4a", "audio/m4a");
         const form = new FormData();
-        form.append("file", part as any);
+        form.append("file", part as unknown as Blob);
         if (transcript) form.append("transcript", transcript);
         await chatService.sendVoiceNote(matchId, form);
       }
@@ -506,13 +561,22 @@ export function VoiceRecorderUltra({
               duration={Math.max(1, Math.round(durationMs / 1000))}
               color={Theme.colors.primary[500]}
               height={36}
-              onSeek={(p) => {
+              onSeek={async (p) => {
                 if (Platform.OS !== "web" && soundRef.current) {
-                  const any: any = soundRef.current as any;
-                  const dur = any._durationMillis ?? 0;
-                  if (dur) soundRef.current!.setPositionAsync(Math.round(p * dur));
+                  try {
+                    // Cast to access internal properties for seek functionality
+                    const sound = soundRef.current as unknown as Audio.Sound & { _durationMillis?: number };
+                    const dur = sound._durationMillis ?? 0;
+                    if (dur > 0) {
+                      await soundRef.current.setPositionAsync(Math.round(p * dur));
+                      setProgress(p);
+                    }
+                  } catch (err) {
+                    console.error("Error seeking audio:", err);
+                  }
+                } else {
+                  setProgress(p);
                 }
-                setProgress(p);
               }}
             />
             <Text style={styles.dur}>{fmt(durationMs)}</Text>

@@ -8,6 +8,32 @@ import type { FlatList } from "react-native";
 import { matchesAPI } from "../services/api";
 import type { MatchesFilter } from "../components/matches/MatchesFilterModal";
 
+// Raw API match data type
+interface RawMatchData {
+  _id: string;
+  petId?: string;
+  pet?: {
+    _id: string;
+    name: string;
+    age: number;
+    breed: string;
+    photos?: string[];
+  };
+  petName?: string;
+  petPhoto?: string;
+  petAge?: number;
+  petBreed?: string;
+  lastMessage?: {
+    content: string;
+    timestamp: string;
+    senderId: string;
+  };
+  isOnline?: boolean;
+  matchedAt?: string;
+  createdAt?: string;
+  unreadCount?: number;
+}
+
 export interface Match {
   _id: string;
   petId: string;
@@ -23,6 +49,22 @@ export interface Match {
   isOnline: boolean;
   matchedAt: string;
   unreadCount: number;
+}
+
+// Helper to normalize API data to Match type
+function normalizeMatch(raw: RawMatchData): Match {
+  return {
+    _id: raw._id,
+    petId: raw.petId || raw.pet?._id || "",
+    petName: raw.petName || raw.pet?.name || "",
+    petPhoto: raw.petPhoto || raw.pet?.photos?.[0] || "",
+    petAge: raw.petAge || raw.pet?.age || 0,
+    petBreed: raw.petBreed || raw.pet?.breed || "",
+    lastMessage: raw.lastMessage || { content: "", timestamp: "", senderId: "" },
+    isOnline: raw.isOnline || false,
+    matchedAt: raw.matchedAt || raw.createdAt || "",
+    unreadCount: raw.unreadCount || 0,
+  };
 }
 
 export interface UseMatchesDataReturn {
@@ -66,20 +108,9 @@ export function useMatchesData(): UseMatchesDataReturn {
           if (v !== undefined && v !== "") params.append(k, String(v));
         });
         const { data } = await matchesAPI.getMatchesWithFilter(params.toString());
-        const matches = (data.matches || data) as unknown as any[];
+        const matches = (data.matches || data) as unknown as RawMatchData[];
         // Map core Match to local Match type if needed
-        return Array.isArray(matches) ? matches.map(m => ({
-          ...m,
-          petId: (m as any).petId || (m as any).pet?._id || "",
-          petName: (m as any).petName || (m as any).pet?.name || "",
-          petPhoto: (m as any).petPhoto || (m as any).pet?.photos?.[0] || "",
-          petAge: (m as any).petAge || (m as any).pet?.age || 0,
-          petBreed: (m as any).petBreed || (m as any).pet?.breed || "",
-          lastMessage: (m as any).lastMessage || { content: "", timestamp: "", senderId: "" },
-          isOnline: (m as any).isOnline || false,
-          matchedAt: (m as any).matchedAt || (m as any).createdAt || "",
-          unreadCount: (m as any).unreadCount || 0,
-        })) as Match[] : [];
+        return Array.isArray(matches) ? matches.map(normalizeMatch) : [];
       } catch (error) {
         logger.error("Failed to load matches:", { error });
         throw error;
@@ -114,20 +145,9 @@ export function useMatchesData(): UseMatchesDataReturn {
   // Mutation for refreshing matches
   const refreshMutation = useMutation({
     mutationFn: async () => {
-      const realMatches = await matchesAPI.getMatches();
+      const realMatches = await matchesAPI.getMatches() as unknown as RawMatchData[];
       // Map core Match to local Match type if needed
-      return realMatches.map(m => ({
-        ...m,
-        petId: (m as any).petId || (m as any).pet._id || "",
-        petName: (m as any).petName || (m as any).pet?.name || "",
-        petPhoto: (m as any).petPhoto || (m as any).pet?.photos?.[0] || "",
-        petAge: (m as any).petAge || (m as any).pet?.age || 0,
-        petBreed: (m as any).petBreed || (m as any).pet?.breed || "",
-        lastMessage: (m as any).lastMessage || { content: "", timestamp: "", senderId: "" },
-        isOnline: (m as any).isOnline || false,
-        matchedAt: (m as any).matchedAt || (m as any).createdAt || "",
-        unreadCount: (m as any).unreadCount || 0,
-      })) as Match[];
+      return realMatches.map(normalizeMatch);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["matches"], data);
@@ -185,20 +205,9 @@ export function useMatchesData(): UseMatchesDataReturn {
     queryKey: ["liked-you"],
     queryFn: async () => {
       try {
-        const likedYouMatches = await matchesAPI.getLikedYou();
+        const likedYouMatches = await matchesAPI.getLikedYou() as unknown as RawMatchData[];
         // Map core Match to local Match type if needed
-        return likedYouMatches.map(m => ({
-          ...m,
-          petId: (m as any).petId || (m as any).pet?._id || "",
-          petName: (m as any).petName || (m as any).pet?.name || "",
-          petPhoto: (m as any).petPhoto || (m as any).pet?.photos?.[0] || "",
-          petAge: (m as any).petAge || (m as any).pet?.age || 0,
-          petBreed: (m as any).petBreed || (m as any).pet?.breed || "",
-          lastMessage: (m as any).lastMessage || { content: "", timestamp: "", senderId: "" },
-          isOnline: (m as any).isOnline || false,
-          matchedAt: (m as any).matchedAt || (m as any).createdAt || "",
-          unreadCount: (m as any).unreadCount || 0,
-        })) as Match[];
+        return likedYouMatches.map(normalizeMatch);
       } catch (error) {
         logger.error("Failed to load liked you:", { error });
         return [];

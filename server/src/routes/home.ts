@@ -4,6 +4,8 @@ import { authenticateToken } from "../middleware/auth";
 import Match from "../models/Match";
 import Conversation from "../models/Conversation";
 import Pet from "../models/Pet";
+import Message from "../models/Message";
+import Activity from "../models/Activity";
 import logger from "../utils/logger";
 
 const r: Router = Router();
@@ -19,20 +21,22 @@ r.get("/home/stats", authenticateToken, async (req: Request, res: Response) => {
       status: "active"
     });
 
-    // Count unread messages in conversations
-    const unreadMessages = await Conversation.countDocuments({
-      participants: userId,
-      "messages.read": false,
-      "messages.sender": { $ne: userId }
+    // Count unread messages
+    const unreadMessages = await Message.countDocuments({
+      recipientId: userId,
+      read: false
     });
 
-    // Count user's pets
-    const pets = await Pet.countDocuments({ owner: userId });
+    // Count recent likes (24 hours)
+    const recentLikes = await Match.countDocuments({
+      likedUserId: userId,
+      createdAt: { $gte: new Date(Date.now() - 24 * 3600 * 1000) }
+    });
 
     res.json({
       matches,
       messages: unreadMessages,
-      pets,
+      recentLikes,
     });
   } catch (error) {
     logger.error("Failed to fetch home stats:", error);
@@ -40,16 +44,37 @@ r.get("/home/stats", authenticateToken, async (req: Request, res: Response) => {
   }
 });
 
-r.get("/home/feed", authenticateToken, (req: Request, res: Response) => {
-  // TODO: Query database for actual activity feed
-  res.json([
-    {
-      id: "1",
-      type: "activity",
-      text: "Luna started a walk nearby",
-      timestamp: new Date().toISOString(),
-    },
-  ]);
+// Get activity feed
+r.get("/home/activity", authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const limit = Math.min(Number(req.query.limit ?? 20), 50);
+    const items = await Activity.find({ 
+      audience: { $in: ["global", (req as any).userId] } 
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+    res.json({ items });
+  } catch (error) {
+    logger.error("Failed to fetch activity feed:", error);
+    res.status(500).json({ error: "Failed to fetch feed" });
+  }
+});
+
+r.get("/home/feed", authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const limit = Math.min(Number(req.query.limit ?? 20), 50);
+    const items = await Activity.find({ 
+      audience: { $in: ["global", (req as any).userId] } 
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+    res.json(items);
+  } catch (error) {
+    logger.error("Failed to fetch activity feed:", error);
+    res.status(500).json({ error: "Failed to fetch feed" });
+  }
 });
 
 export default r;

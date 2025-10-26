@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import type { Message } from "../../hooks/useChatData";
 import { useTheme } from "../../theme/Provider";
+import { getExtendedColors } from "../../theme/adapters";
 import { ReactionPicker } from "./ReactionPicker";
 import { chatService } from "../../services/chatService";
 import { Theme } from '../../theme/unified-theme';
@@ -27,7 +28,8 @@ export function MessageItem({
   onLongPress,
   onRetry,
 }: MessageItemProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [reactions, setReactions] = useState<Record<string, number>>({});
 

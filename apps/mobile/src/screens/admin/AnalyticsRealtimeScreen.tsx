@@ -13,7 +13,7 @@ export default function AnalyticsRealtimeScreen() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const data = await request<{ events: Row[]; errors: any[] }>("/admin/analytics/realtime", { method: "GET" });
+      const data = await request<{ events: Row[]; errors: any[] }>("/api/admin/analytics/realtime", { method: "GET" });
       setEvents(data.events || []);
       setErrors(data.errors || []);
     } finally { 

@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, PanResponder, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { Theme } from "../../theme/unified-theme";
-import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveformUltra";
+import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
 import { canProcessOnWeb, processAudioWeb } from "../../utils/audio/web-processing";
 import type { WebProcessingReport } from "../../utils/audio/web-processing";
 import { TranscriptionBadge } from "../chat/TranscriptionBadge";
@@ -84,6 +84,9 @@ export default function VoiceRecorderUltraWeb({
   // slide-to-cancel
   const CANCEL_THRESHOLD = 80;
   const panState = useRef({ dx: 0 });
+  const handleCancelRef = useRef<() => void>();
+  const stopRecordingRef = useRef<(_?: boolean) => void>();
+  
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -98,9 +101,9 @@ export default function VoiceRecorderUltraWeb({
           panState.current.dx = 0;
           if (cancel) {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-            handleCancel();
+            handleCancelRef.current?.();
           } else if (!isLocked) {
-            if (isRecording) stopRecording();
+            if (isRecording) stopRecordingRef.current?.();
           }
           setIsCancelling(false);
         },
@@ -111,11 +114,15 @@ export default function VoiceRecorderUltraWeb({
   useEffect(() => {
     return () => {
       if (durTimerRef.current) clearInterval(durTimerRef.current);
-      stopRecording(true);
+      stopRecordingRef.current?.(true);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [previewUrl]);
 
   const fmt = (ms: number) => {
     const s = Math.max(0, Math.round(ms / 1000));
@@ -124,8 +131,29 @@ export default function VoiceRecorderUltraWeb({
     return `${m}:${String(sec).padStart(2, "0")}`;
   };
 
-  // --- Recording
-  const startRecording = async () => {
+  // --- Recording handlers
+  const stopRecording = useCallback((silent = false) => {
+    if (!isRecording) return;
+    setIsRecording(false);
+
+    const mr = mediaRecorderRef.current;
+    if (mr?.state === "recording") {
+      mr.stop();
+      mr.stream.getTracks().forEach((t) => t.stop());
+    }
+    mediaRecorderRef.current = null;
+    if (durTimerRef.current) {
+      clearInterval(durTimerRef.current);
+      durTimerRef.current = null;
+    }
+    if (!silent) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  }, [isRecording]);
+
+  useEffect(() => {
+    stopRecordingRef.current = stopRecording;
+  }, [stopRecording]);
+
+  const startRecording = useCallback(async () => {
     if (disabled || isRecording) return;
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -233,26 +261,9 @@ export default function VoiceRecorderUltraWeb({
     } catch {
       Alert.alert("Permission needed", "Microphone access is required.");
     }
-  };
+  }, [disabled, isRecording, maxDurationSec, recogEnabled, transcription?.language, transcription?.interim, processing, stopRecording]);
 
-  const stopRecording = (silent = false) => {
-    if (!isRecording) return;
-    setIsRecording(false);
-
-    const mr = mediaRecorderRef.current;
-    if (mr?.state === "recording") {
-      mr.stop();
-      mr.stream.getTracks().forEach((t) => t.stop());
-    }
-    mediaRecorderRef.current = null;
-    if (durTimerRef.current) {
-      clearInterval(durTimerRef.current);
-      durTimerRef.current = null;
-    }
-    if (!silent) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  };
-
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     stopRecording(true);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
@@ -262,13 +273,17 @@ export default function VoiceRecorderUltraWeb({
     setTranscript("");
     setDurationMs(0);
     setProgress(0);
-  };
+  }, [stopRecording, previewUrl]);
 
-  const toggleLock = () => {
+  useEffect(() => {
+    handleCancelRef.current = handleCancel;
+  }, [handleCancel]);
+
+  const toggleLock = useCallback(() => {
     if (!isRecording) return;
     Haptics.selectionAsync();
     setIsLocked((v) => !v);
-  };
+  }, [isRecording]);
 
   // simple simulated playback progress (we don't reimplement an <audio> UI)
   const playPause = () => {
@@ -296,7 +311,7 @@ export default function VoiceRecorderUltraWeb({
     requestAnimationFrame(tick);
   };
 
-  const send = async () => {
+  const send = useCallback(async () => {
     if (!previewUrl || isSending) return;
 
     const secs = Math.max(1, Math.round(durationMs / 1000));
@@ -328,7 +343,7 @@ export default function VoiceRecorderUltraWeb({
     } finally {
       setIsSending(false);
     }
-  };
+  }, [previewUrl, isSending, durationMs, minDurationSec, processedBlob, rawBlob, transcript, sendVoiceNote, matchId, onVoiceNoteSent]);
 
   const activeProcessing = isProcessingAudio || isTranscribing;
 

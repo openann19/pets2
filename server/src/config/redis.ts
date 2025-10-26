@@ -143,6 +143,13 @@ async function setCache(key: string, value: string, ttl?: number): Promise<boole
 }
 
 /**
+ * Export setCache with TTL for entitlement caching
+ */
+export async function setCacheWithTTL(key: string, value: string, ttl: number): Promise<boolean> {
+  return setCache(key, value, ttl);
+}
+
+/**
  * Get a value by key
  */
 async function getCache(key: string): Promise<string | null> {

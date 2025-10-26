@@ -8,6 +8,7 @@ import { GlassContainer } from "../GlassMorphism";
 import { PremiumBody } from "../PremiumTypography";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../theme/Provider";
+import { getExtendedColors } from "../../theme/adapters";
 import { chatService } from "../../services/chatService";
 import { VoiceRecorder } from "./VoiceRecorder";
 import { Theme } from '../../theme/unified-theme';
@@ -24,6 +25,7 @@ interface MessageInputProps {
   matchId: string;
   onAttachmentSent?: () => void;
   onVoiceNoteSent?: () => void;
+  testID?: string;
 }
 
 const MAX_MESSAGE_LENGTH = 500;
@@ -40,8 +42,10 @@ export function MessageInput({
   matchId,
   onAttachmentSent,
   onVoiceNoteSent,
+  testID,
 }: MessageInputProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const [characterCount, setCharacterCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -255,9 +259,11 @@ export function MessageInput({
       transparency="medium"
       border="light"
       shadow="medium"
+      testID={testID}
     >
       <View style={styles.container}>
         <EliteButton
+          testID="attachment-button"
           title=""
           variant="glass"
           size="sm"
@@ -269,6 +275,7 @@ export function MessageInput({
 
         <View style={styles.inputWrapper}>
           <TextInput
+            testID="message-text-input"
             ref={inputRef}
             style={StyleSheet.flatten([
               styles.textInput,
@@ -325,6 +332,7 @@ export function MessageInput({
         </View>
 
         <EliteButton
+          testID="emoji-button"
           title=""
           variant="glass"
           size="sm"
@@ -335,6 +343,7 @@ export function MessageInput({
 
         <Animated.View style={{ transform: [{ scale: sendButtonScale }] }}>
           <EliteButton
+            testID="send-button"
             title=""
             variant={value.trim() || isUploading ? "primary" : "glass"}
             size="sm"

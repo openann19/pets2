@@ -10,6 +10,17 @@ export interface AuthRequest extends Request {
 }
 
 /**
+ * Extend Express Request to include userId
+ */
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+    }
+  }
+}
+
+/**
  * Extended Express Request with file uploads
  */
 export interface MulterRequest extends Request {

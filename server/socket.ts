@@ -139,6 +139,29 @@ function initializeSocket(httpServer: HTTPServer) {
     io.emit('ping');
   }, 30000);
 
+  // Live streaming chat namespace
+  io.of(/^\/live:.+$/).on('connection', (socket: Socket) => {
+    logger.info(`✅ Live stream connected: ${socket.nsp.name}`);
+    
+    const roomName = socket.nsp.name.replace('/live:', '');
+
+    socket.on('chat:message', (payload: any) => {
+      socket.nsp.emit('chat:message', {
+        userId: (socket as any).data?.userId || 'anon',
+        text: String(payload.text || '').slice(0, 1000),
+        ts: Date.now(),
+      });
+    });
+
+    socket.on('reaction', (emoji: string) => {
+      socket.nsp.emit('reaction', { emoji, ts: Date.now() });
+    });
+
+    socket.on('disconnect', () => {
+      logger.info(`❌ Live stream disconnected: ${socket.nsp.name}`);
+    });
+  });
+
   logger.info('🚀 WebSocket server initialized');
 
   // Return both io instance and cleanup function

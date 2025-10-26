@@ -1,10 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { body, ValidationChain, validationResult } from 'express-validator';
+import { body, validationResult, ValidationChain, Request, Response, NextFunction } from 'express-validator';
 
 /**
  * Validate API requests using express-validator
+ * 
+ * @param {Array} validations - Array of express-validator validations
+ * @returns {Function} - Express middleware function
  */
-export function validate(validations: ValidationChain[]) {
+export const validate = (validations: ValidationChain[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Execute all validations
     await Promise.all(validations.map(validation => validation.run(req)));
@@ -22,7 +24,7 @@ export function validate(validations: ValidationChain[]) {
       errors: errors.array()
     });
   };
-}
+};
 
 // Common validation patterns
 export const patterns = {
@@ -105,3 +107,5 @@ export const schemas = {
       .withMessage('REDIS_URL must be a valid URL')
   ]
 };
+
+export default { validate, patterns, schemas };

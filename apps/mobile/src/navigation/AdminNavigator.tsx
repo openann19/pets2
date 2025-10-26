@@ -14,6 +14,7 @@ import AdminBillingScreen from "../screens/admin/AdminBillingScreen";
 import AdminChatsScreen from "../screens/admin/AdminChatsScreen";
 import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
 import AdminSecurityScreen from "../screens/admin/AdminSecurityScreen";
+import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
 import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
@@ -130,6 +131,16 @@ export default function AdminNavigator(): React.JSX.Element {
         component={AdminVerificationsScreen as React.ComponentType<any>}
         options={{
           title: "Verification Management",
+          headerShown: false,
+        }}
+      />
+
+      {/* Services Management */}
+      <Stack.Screen
+        name="AdminServices"
+        component={AdminServicesScreen as React.ComponentType<any>}
+        options={{
+          title: "Services Management",
           headerShown: false,
         }}
       />

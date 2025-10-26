@@ -49,6 +49,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import PrivacySettingsScreen from "./screens/PrivacySettingsScreen";
 import BlockedUsersScreen from "./screens/BlockedUsersScreen";
 import SafetyCenterScreen from "./screens/SafetyCenterScreen";
+import VerificationCenterScreen from "./screens/VerificationCenterScreen";
 import NotificationPreferencesScreen from "./screens/NotificationPreferencesScreen";
 import HelpSupportScreen from "./screens/HelpSupportScreen";
 import AboutTermsPrivacyScreen from "./screens/AboutTermsPrivacyScreen";
@@ -85,6 +86,11 @@ import ComponentTestScreen from "./screens/ComponentTestScreen";
 import NewComponentsTestScreen from "./screens/NewComponentsTestScreen";
 import MigrationExampleScreen from "./screens/MigrationExampleScreen";
 import PremiumDemoScreen from "./screens/PremiumDemoScreen";
+
+// Live Streaming Screens
+import GoLiveScreen from "./screens/GoLiveScreen";
+import LiveViewerScreen from "./screens/LiveViewerScreen";
+import LiveBrowseScreen from "./screens/LiveBrowseScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -146,6 +152,7 @@ const AppNavigator = (): React.ReactElement => (
     <Stack.Screen name="PrivacySettings" component={PrivacySettingsScreen} />
     <Stack.Screen name="BlockedUsers" component={BlockedUsersScreen} />
     <Stack.Screen name="SafetyCenter" component={SafetyCenterScreen} />
+    <Stack.Screen name="VerificationCenter" component={VerificationCenterScreen} options={screenTransitions.fluid} />
     <Stack.Screen
       name="NotificationPreferences"
       component={NotificationPreferencesScreen}
@@ -199,6 +206,11 @@ const AppNavigator = (): React.ReactElement => (
     />
     <Stack.Screen name="MigrationExample" component={MigrationExampleScreen} />
     <Stack.Screen name="PremiumDemo" component={PremiumDemoScreen} />
+
+    {/* Live Streaming Screens */}
+    <Stack.Screen name="GoLive" component={GoLiveScreen} options={{ presentation: "modal" }} />
+    <Stack.Screen name="LiveViewer" component={LiveViewerScreen} />
+    <Stack.Screen name="LiveBrowse" component={LiveBrowseScreen} />
   </Stack.Navigator>
 );
 

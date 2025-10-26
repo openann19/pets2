@@ -62,7 +62,8 @@
     "migrate:theme": "npx jscodeshift -t ./codemods/theme-to-unified.js src --extensions=ts,tsx --parser=tsx",
     "migrate:animation": "npx jscodeshift -t ./codemods/animation-unify.js src --extensions=ts,tsx --parser=tsx",
     "check:consistency": "ts-node scripts/assert-consistency.ts src",
-    "ci:strict": "pnpm lint && pnpm type-check && pnpm test && pnpm check:consistency",
+    "check:theme-tokens": "bash scripts/check-theme-tokens.sh",
+    "ci:strict": "pnpm lint && pnpm type-check && pnpm test && pnpm check:consistency && pnpm check:theme-tokens",
     "prebuild": "expo prebuild",
     "prebuild:clean": "expo prebuild --clean"
   },
@@ -107,6 +108,8 @@
     "expo-status-bar": "~1.6.0",
     "form-data": "^4.0.4",
     "gzip-size": "^7.0.0",
+    "livekit-client": "^2.15.13",
+    "livekit-react-native": "^0.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "0.72.10",

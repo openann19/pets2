@@ -307,7 +307,10 @@ class AdminAPIService {
   }
 
   // Upload Management
-  async getUploads(params: PaginationParams = {}): Promise<
+  async getUploads(params: PaginationParams & {
+    filter?: "all" | "pending" | "flagged";
+    search?: string;
+  } = {}): Promise<
     AdminAPIResponse<{
       uploads: Upload[];
       pagination: {
@@ -329,6 +332,10 @@ class AdminAPIService {
       params.status !== ""
     )
       queryParams.append("status", params.status);
+    if (params.filter !== undefined)
+      queryParams.append("filter", params.filter);
+    if (params.search !== undefined && params.search !== "")
+      queryParams.append("search", params.search);
 
     return await this.request(`/admin/uploads?${queryParams.toString()}`);
   }
@@ -469,22 +476,20 @@ class AdminAPIService {
     return await this.request(`/admin/analytics${queryParams}`);
   }
 
-  async getSystemHealth(): Promise<
-    AdminAPIResponse<{
+  async getSystemHealth(): Promise<AdminAPIResponse<{
+    status: string;
+    uptime: number;
+    database: {
       status: string;
-      uptime: number;
-      database: {
-        status: string;
-        connected: boolean;
-      };
-      memory: {
-        used: number;
-        total: number;
-        external: number;
-      };
-      environment: string;
-    }>
-  > {
+      connected: boolean;
+    };
+    memory: {
+      used: number;
+      total: number;
+      external: number;
+    };
+    environment: string;
+  }>> {
     return await this.request("/admin/system/health");
   }
 
@@ -574,7 +579,7 @@ class AdminAPIService {
     if (params.search !== undefined && params.search !== "")
       queryParams.append("search", params.search);
 
-    return await this.request(`/admin/chat-messages?${queryParams.toString()}`);
+    return await this.request(`/admin/chats/messages?${queryParams.toString()}`);
   }
 
   // Billing & Subscriptions
@@ -633,9 +638,9 @@ class AdminAPIService {
     }>
   > {
     return await this.request(
-      `/admin/chat-messages/${params.messageId}/moderate`,
+      `/admin/chats/messages/${params.messageId}/moderate`,
       {
-        method: "PUT",
+        method: "POST",
         body: JSON.stringify({ action: params.action }),
       },
     );
@@ -684,22 +689,168 @@ class AdminAPIService {
   }
 
   // Upload Management - Moderate
+  // Safety Moderation Management
+  async getSafetyModerationQueue(params: {
+    status?: string;
+    page?: number;
+    limit?: number;
+  } = {}): Promise<AdminAPIResponse<{
+    uploads: Array<{
+      id: string;
+      userId: string;
+      petId?: string;
+      type: string;
+      status: string;
+      flagged: boolean;
+      flagReason?: string;
+      uploadedAt: string;
+      moderatedBy?: string;
+      moderatedAt?: string;
+      moderationNotes?: string;
+      analysis?: {
+        isPet: boolean;
+        labels: Array<{ label: string; confidence: number }>;
+        safety: {
+          safe: boolean;
+          moderationScore: number;
+          labels: Array<{ label: string; confidence: number }>;
+        };
+      };
+    }>;
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  }>> {
+    const queryParams = new URLSearchParams();
+    if (params.status) queryParams.append("status", params.status);
+    if (params.page) queryParams.append("page", String(params.page));
+    if (params.limit) queryParams.append("limit", String(params.limit));
+
+    return await this.request(`/admin/safety-moderation/queue?${queryParams.toString()}`);
+  }
+
+  async getSafetyModerationDetails(uploadId: string): Promise<AdminAPIResponse<{
+    upload: unknown;
+    analysis: unknown;
+  }>> {
+    return await this.request(`/admin/safety-moderation/uploads/${uploadId}`);
+  }
+
+  async moderateSafetyUpload(params: {
+    uploadId: string;
+    decision: "approve" | "reject";
+    notes?: string;
+  }): Promise<AdminAPIResponse<{ upload: unknown }>> {
+    return await this.request(`/admin/safety-moderation/uploads/${params.uploadId}/moderate`, {
+      method: "POST",
+      body: JSON.stringify({ decision: params.decision, notes: params.notes }),
+    });
+  }
+
+  async batchModerateSafetyUploads(params: {
+    uploadIds: string[];
+    decision: "approve" | "reject";
+    notes?: string;
+  }): Promise<AdminAPIResponse<{ results: Array<{ id: string; success: boolean; error?: string }> }>> {
+    return await this.request(`/admin/safety-moderation/batch-moderate`, {
+      method: "POST",
+      body: JSON.stringify({
+        uploadIds: params.uploadIds,
+        decision: params.decision,
+        notes: params.notes,
+      }),
+    });
+  }
+
+  async getSafetyModerationStats(): Promise<AdminAPIResponse<{
+    stats: {
+      pending: number;
+      approved: number;
+      rejected: number;
+      flagged: number;
+      total: number;
+    };
+    thresholds: {
+      autoApprove: number;
+      requireReview: number;
+      autoReject: number;
+    };
+  }>> {
+    return await this.request(`/admin/safety-moderation/stats`);
+  }
+
+  async getAnalysisDetails(analysisId: string): Promise<AdminAPIResponse<{
+    analysis: unknown;
+    upload: unknown;
+  }>> {
+    return await this.request(`/admin/safety-moderation/analysis/${analysisId}`);
+  }
+
   async moderateUpload(params: {
     uploadId: string;
     action: "approve" | "reject" | "remove";
     reason?: string;
     notes?: string;
   }): Promise<AdminAPIResponse<{ success: boolean; message: string }>> {
-    switch (params.action) {
-      case "approve":
-        return await this.approveUpload(params.uploadId, params.notes);
-      case "reject":
-        return await this.rejectUpload(params.uploadId, params.reason ?? "Violates guidelines", params.notes);
-      case "remove":
-        return await this.deleteUpload(params.uploadId, params.reason ?? "Removed by admin");
-      default:
-        throw new Error(`Unknown action: ${params.action}`);
+    // For approve/reject, use the new moderation endpoint
+    if (params.action === "approve" || params.action === "reject") {
+      return await this.request(`/admin/uploads/${params.uploadId}/moderate`, {
+        method: "POST",
+        body: JSON.stringify({
+          action: params.action,
+          reason: params.reason,
+        }),
+      });
     }
+    
+    // For remove, use the delete endpoint
+    const deleteResult = await this.deleteUpload(params.uploadId, params.reason ?? "Removed by admin");
+    return {
+      ...deleteResult,
+      data: { success: true, message: "Upload deleted" },
+    };
+  }
+
+  // Services Management
+  async getServicesStatus(): Promise<AdminAPIResponse<unknown>> {
+    return await this.request("/admin/services/status");
+  }
+
+  async getServicesStats(params?: { period?: string }): Promise<AdminAPIResponse<unknown>> {
+    const queryParams = params?.period ? `?period=${params.period}` : "";
+    return await this.request(`/admin/services/analytics${queryParams}`);
+  }
+
+  async getCombinedStats(params?: { period?: string }): Promise<AdminAPIResponse<unknown>> {
+    const queryParams = params?.period ? `?period=${params.period}` : "";
+    return await this.request(`/admin/services/combined-stats${queryParams}`);
+  }
+
+  async toggleService(params: { service: string; enabled: boolean }): Promise<AdminAPIResponse<unknown>> {
+    return await this.request("/admin/services/toggle", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
+  }
+
+  // Bulk User Operations
+  async bulkUserAction(params: {
+    userIds: string[];
+    action: "suspend" | "activate" | "ban";
+    reason?: string;
+  }): Promise<AdminAPIResponse<{
+    total: number;
+    successful: number;
+    failed: number;
+    results: Array<{ userId: string; success: boolean; error?: string }>;
+  }>> {
+    return await this.request("/admin/users/bulk-action", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
   }
 }
 
