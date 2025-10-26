@@ -16,10 +16,10 @@ import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 // Onboarding Screens
-import WelcomeScreen from "./screens/onboarding/WelcomeScreen";
-import UserIntentScreen from "./screens/onboarding/UserIntentScreen";
-import PetProfileSetupScreen from "./screens/onboarding/PetProfileSetupScreen";
-import PreferencesSetupScreen from "./screens/onboarding/PreferencesSetupScreen";
+// import WelcomeScreen from "./screens/onboarding/WelcomeScreen";
+// import UserIntentScreen from "./screens/onboarding/UserIntentScreen";
+// import PetProfileSetupScreen from "./screens/onboarding/PetProfileSetupScreen";
+// import PreferencesSetupScreen from "./screens/onboarding/PreferencesSetupScreen";
 
 // Main Screens
 import HomeScreen from "./screens/HomeScreen";
@@ -64,16 +64,16 @@ import AdoptionManagerScreen from "./screens/adoption/AdoptionManagerScreen";
 import AdoptionApplicationScreen from "./screens/adoption/AdoptionApplicationScreen";
 
 // Calling Screens
-import ActiveCallScreen from "./screens/calling/ActiveCallScreen";
-import IncomingCallScreen from "./screens/calling/IncomingCallScreen";
+// import ActiveCallScreen from "./screens/calling/ActiveCallScreen";
+// import IncomingCallScreen from "./screens/calling/IncomingCallScreen";
 
 // Advanced Feature Screens
-import MemoryWeaveScreen from "./screens/MemoryWeaveScreen";
-import ARScentTrailsScreen from "./screens/ARScentTrailsScreen";
+// import MemoryWeaveScreen from "./screens/MemoryWeaveScreen";
+// import ARScentTrailsScreen from "./screens/ARScentTrailsScreen";
 import StoriesScreen from "./screens/StoriesScreen";
 import LeaderboardScreen from "./screens/leaderboard/LeaderboardScreen";
-import ModernSwipeScreen from "./screens/ModernSwipeScreen";
-import ModernCreatePetScreen from "./screens/ModernCreatePetScreen";
+// import ModernSwipeScreen from "./screens/ModernSwipeScreen";
+// import ModernCreatePetScreen from "./screens/ModernCreatePetScreen";
 
 // Test/Demo Screens
 // ComponentShowcaseScreen removed

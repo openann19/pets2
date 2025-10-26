@@ -167,7 +167,8 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
           // If we removed the primary photo, make the first remaining photo primary
           if (
             updatedPhotos.length > 0 &&
-            !updatedPhotos.some((p) => p.isPrimary)
+            !updatedPhotos.some((p) => p.isPrimary) &&
+            updatedPhotos[0]
           ) {
             updatedPhotos[0].isPrimary = true;
           }

@@ -37,4 +37,3 @@ interface UseUserAnalyticsReturn {
  */
 export declare function useUserAnalytics(options?: UseUserAnalyticsOptions): UseUserAnalyticsReturn;
 export {};
-//# sourceMappingURL=useUserAnalytics.d.ts.map

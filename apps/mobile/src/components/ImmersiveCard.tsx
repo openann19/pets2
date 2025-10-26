@@ -3,8 +3,8 @@ import React, { useRef, useState, forwardRef } from "react";
 import type {
   ViewStyle,
   TouchableOpacityProps,
-  StyleSheet,
 } from "react-native";
+import { StyleSheet, TouchableOpacity as RNTouchableOpacity } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import { View, TouchableOpacity, Text, Animated } from "react-native";
 
@@ -69,7 +69,7 @@ const sizeConfigs = {
   },
 };
 
-const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
+const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
   (
     {
       children,
@@ -209,7 +209,6 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
               width: "20%",
               height: "100%",
               backgroundColor: "rgba(255,255,255,0.3)",
-              animation: "shimmer 2s infinite",
             }}
           />
         </Animated.View>
@@ -220,9 +219,11 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     const getGlowStyle = (): ViewStyle => {
       if (!glowColor || !isHovered) return {};
 
-      return {
-        ...EnhancedShadows.glow[glowColor],
-      };
+      const glowShadows = EnhancedShadows.glow;
+      if (glowColor && glowShadows[glowColor]) {
+        return glowShadows[glowColor];
+      }
+      return {};
     };
 
     // Render card content
@@ -263,25 +264,17 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       return content;
     };
 
-    // Main card render
+    // Main card render  
     const cardContent = (
       <Animated.View
-        ref={ref}
-        style={StyleSheet.flatten([
+        style={[
           getVariantStyles(),
           getGlowStyle(),
-          {
-            transform: [
-              ...(tiltEnabled ? [gyroscope.transform] : []),
-              ...(entranceAnimation !== "none"
-                ? [entrance.style.transform]
-                : []),
-              ...(isPressed ? [{ scale: 0.98 }] : []),
-            ],
-            opacity: entranceAnimation !== "none" ? entrance.style.opacity : 1,
-          },
+          tiltEnabled ? gyroscope.transform : undefined,
+          entranceAnimation !== "none" ? entrance.style : undefined,
+          isPressed ? { transform: [{ scale: 0.98 }] } : undefined,
           style,
-        ])}
+        ].filter(Boolean)}
       >
         {renderContent()}
       </Animated.View>

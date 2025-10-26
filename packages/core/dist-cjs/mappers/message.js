@@ -156,4 +156,3 @@ function toCoreMessage(legacy) {
 function toCoreMessages(legacyMessages) {
     return legacyMessages.map(toCoreMessage);
 }
-//# sourceMappingURL=message.js.map

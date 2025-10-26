@@ -1,5 +1,5 @@
 import "@testing-library/jest-native/extend-expect";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 // Declare global variables and types for tests
 declare global {

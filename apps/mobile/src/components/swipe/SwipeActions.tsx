@@ -23,7 +23,6 @@ export function SwipeActions({
             variant="glass"
             size="xl"
             icon="close"
-            magnetic={true}
             ripple={true}
             glow={true}
             onPress={onPass}
@@ -37,7 +36,6 @@ export function SwipeActions({
             variant="primary"
             size="lg"
             icon="star"
-            magnetic={true}
             ripple={true}
             glow={true}
             shimmer={true}
@@ -52,7 +50,6 @@ export function SwipeActions({
             variant="primary"
             size="xl"
             icon="heart"
-            magnetic={true}
             ripple={true}
             glow={true}
             onPress={onLike}

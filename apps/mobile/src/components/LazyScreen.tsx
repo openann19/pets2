@@ -160,7 +160,7 @@ export const createLazyScreen = <P extends object>(
     return (
       <LazyScreenErrorBoundary fallback={ErrorBoundary}>
         <Suspense fallback={<LoadingFallback />}>
-          <LazyComponent {...props} />
+          <LazyComponent {...(props as any)} />
         </Suspense>
       </LazyScreenErrorBoundary>
     );

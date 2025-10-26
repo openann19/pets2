@@ -1,27 +1,18 @@
 import { Ionicons, type IconProps } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect, type ComponentProps } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Switch,
-  Alert,
-} from "react-native";
+import React, { useMemo, type ComponentProps } from "react";
+import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
 import {
   AdvancedHeader,
   HeaderConfigs,
 } from "../components/Advanced/AdvancedHeader";
-import { AdvancedButton } from "../components/Advanced/AdvancedInteractionSystem";
 import { matchesAPI } from "../services/api";
 import { useAuthStore } from "@pawfectmatch/core";
 import { gdprService } from "../services/gdprService";
+import { useSettingsScreen } from "../hooks/screens/useSettingsScreen";
 import type { RootStackScreenProps } from "../navigation/types";
 import {
   ProfileSummarySection,
@@ -43,42 +34,16 @@ interface SettingItem {
 }
 
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
-  const [notifications, setNotifications] = useState({
-    email: true,
-    push: true,
-    matches: true,
-    messages: true,
-  });
-
-  const [preferences, setPreferences] = useState({
-    maxDistance: 50,
-    ageRange: { min: 0, max: 30 },
-    species: [] as string[],
-    intents: [] as string[],
-  });
-
-  const [deletionStatus, setDeletionStatus] = useState<{
-    isPending: boolean;
-    daysRemaining: number | null;
-  }>({ isPending: false, daysRemaining: null });
-
-  // Check deletion status on mount
-  useEffect(() => {
-    const checkDeletionStatus = async () => {
-      try {
-        const isPending = await gdprService.isDeletionPending();
-        const daysRemaining = await gdprService.getDaysUntilDeletion();
-        setDeletionStatus({
-          isPending,
-          daysRemaining: daysRemaining ?? null,
-        });
-      } catch (error) {
-        logger.error("Failed to check deletion status:", { error });
-      }
-    };
-
-    void checkDeletionStatus();
-  }, []);
+  const {
+    notifications,
+    preferences,
+    deletionStatus,
+    setNotifications,
+    setPreferences,
+    handleLogout,
+    handleDeleteAccount,
+    handleExportData,
+  } = useSettingsScreen();
 
   const notificationSettings: SettingItem[] = [
     {

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { PetFormData } from "../../hooks/usePetForm";
+import type { PetFormData } from "../../hooks/usePetForm";
 import type { FormFieldValue } from "../../types/forms";
 
 interface PetPersonalitySectionProps {

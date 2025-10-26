@@ -51,6 +51,7 @@ export interface ThemeColors {
   // Additional UI colors
   background: string;
   surface: string;
+  surfaceElevated: string;
   text: string;
   textSecondary: string;
   border: string;
@@ -58,6 +59,7 @@ export interface ThemeColors {
   card: string;
   tertiary: string;
   inverse: string;
+  shadow: string;
 }
 
 export interface ThemeContextType {

@@ -61,4 +61,3 @@ exports._PAGE_VARIANTS = {
         transition: exports.SPRING_CONFIG
     }
 };
-//# sourceMappingURL=animations.js.map

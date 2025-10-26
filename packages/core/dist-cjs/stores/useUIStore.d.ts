@@ -32,4 +32,3 @@ export interface UIState {
 export declare const useUIStore: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<UIState>, "setState"> & {
     setState(nextStateOrUpdater: UIState | Partial<UIState> | ((state: import("immer").WritableDraft<UIState>) => void), shouldReplace?: boolean | undefined): void;
 }>;
-//# sourceMappingURL=useUIStore.d.ts.map

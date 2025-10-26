@@ -446,13 +446,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
         }}
       >
         {/* Text would go here - this is a placeholder for the actual text implementation */}
-        <View
-          style={{
-            fontSize: size,
-            fontWeight: weight,
-            color: "transparent",
-          }}
-        >
+        <View>
           {children}
         </View>
       </View>
@@ -541,9 +535,9 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
     >
       {particles.map((particle) => {
         const particleStyle = useAnimatedStyle(() => ({
-          position: "absolute",
-          left: `${particle.x.value}%`,
-          top: `${particle.y.value}%`,
+          position: "absolute" as const,
+          left: `${particle.x.value}%` as unknown as number,
+          top: `${particle.y.value}%` as unknown as number,
           width: 4,
           height: 4,
           borderRadius: 2,

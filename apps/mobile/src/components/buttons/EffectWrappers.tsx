@@ -18,13 +18,13 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import {
   useGlowAnimation,
-  useMagneticEffect,
   usePressAnimation,
 } from "../../hooks/useUnifiedAnimations";
 import {
+  useMagneticEffect,
   useRippleEffect,
   useShimmerEffect,
-} from "../../hooks/usePremiumAnimations";
+} from "../../hooks/animations";
 import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
@@ -60,7 +60,7 @@ export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
     );
 
     return (
-      <Animated.View ref={ref} style={StyleSheet.flatten([glowStyle, style])}>
+      <Animated.View ref={ref} style={[glowStyle, style]}>
         {children}
       </Animated.View>
     );
@@ -88,7 +88,7 @@ export const WithMagneticFX = forwardRef<View, WithMagneticFXProps>(
 
     return (
       <Animated.View
-        ref={ref}
+        ref={ref as any}
         style={StyleSheet.flatten([magneticStyle, style])}
         onTouchStart={(event) => {
           if (disabled) return;

@@ -4,7 +4,6 @@ import type {
   ViewStyle,
   TextStyle,
   TouchableOpacityProps,
-  StyleSheet,
 } from "react-native";
 import {
   TouchableOpacity,
@@ -13,6 +12,7 @@ import {
   ActivityIndicator,
   Animated,
   Dimensions,
+  StyleSheet,
 } from "react-native";
 
 import {
@@ -311,7 +311,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       const buttonContent = (
         <TouchableOpacity
           ref={ref}
-          style={StyleSheet.flatten([
+          style={[
             getVariantStyles(),
             {
               paddingHorizontal: sizeConfig.paddingHorizontal,
@@ -324,7 +324,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             },
             glowEffect && glow.glowStyle,
             style,
-          ])}
+          ]}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onPress={handlePress}
@@ -335,7 +335,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         >
           {/* Ripple effect overlay */}
           <Animated.View
-            style={StyleSheet.flatten([
+            style={[
               {
                 position: "absolute",
                 top: 0,
@@ -347,7 +347,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
               },
               ripple.rippleStyle,
               isPressed && { opacity: 0.5 },
-            ])}
+            ]}
           />
 
           {/* Main content */}

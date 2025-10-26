@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { gdprService } from "../../services/gdprService";
-import { logger } from "../../services/logger";
+import { gdprService } from "../../../services/gdprService";
+import { logger } from "../../../services/logger";
 
 export interface GDPRStatus {
   isPending: boolean;

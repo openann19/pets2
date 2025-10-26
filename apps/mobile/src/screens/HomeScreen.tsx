@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore, type User } from "@pawfectmatch/core";
+import React from "react";
+import { useAuthStore } from "@pawfectmatch/core";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   Dimensions,
   RefreshControl,
@@ -14,17 +11,8 @@ import {
 
 // Import new architecture components
 import {
-  Theme,
   EliteButton,
-  EliteButtonPresets,
-  FXContainer,
-  FXContainerPresets,
-  Heading1,
   Heading2,
-  Heading3,
-  Body,
-  BodySmall,
-  Label,
   useStaggeredAnimation,
   useEntranceAnimation,
 } from "../components/NewComponents";
@@ -47,115 +35,35 @@ import {
   GlowContainer,
   ParticleEffect,
 } from "../components/PremiumComponents";
-import { matchesAPI } from "../services/api";
-import type { RootStackParamList } from "../navigation/types";
+import { useHomeScreen } from "../hooks/screens/useHomeScreen";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function HomeScreen() {
-  const navigation = useNavigation<NavigationProp>();
   const { user } = useAuthStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const [stats, setStats] = useState({
-    matches: 0,
-    messages: 0,
-    pets: 0,
-  });
+
+  const {
+    stats,
+    refreshing,
+    onRefresh,
+    handleProfilePress,
+    handleSettingsPress,
+    handleSwipePress,
+    handleMatchesPress,
+    handleMessagesPress,
+    handleMyPetsPress,
+    handleCreatePetPress,
+  } = useHomeScreen();
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(6, 100);
-
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeIn", 0);
+  const { start: startStaggeredAnimation } = useStaggeredAnimation(6, 100);
+  const { start: startEntranceAnimation } = useEntranceAnimation("fadeIn", 0);
 
   // Start animations
   React.useEffect(() => {
     startStaggeredAnimation();
     startEntranceAnimation();
   }, [startStaggeredAnimation, startEntranceAnimation]);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-      // Fetch real data from API
-      const [matches, stats] = await Promise.all([
-        matchesAPI.getMatches().catch(() => []),
-        matchesAPI
-          .getUserStats()
-          .catch(() => ({ matches: 0, messages: 0, pets: 0 })),
-      ]);
-
-      setStats({
-        matches: matches.length,
-        messages: stats.messages,
-        pets: stats.pets,
-      });
-    } catch (error) {
-      logger.error("Failed to refresh data:", { error });
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const handleQuickAction = (action: string) => {
-    try {
-      // ✅ REAL NAVIGATION - Navigate to actual screens
-      switch (action) {
-        case "swipe":
-          navigation.navigate("Swipe");
-          break;
-        case "matches":
-          navigation.navigate("Matches");
-          break;
-        case "messages":
-          // Navigate to Matches screen since Messages is not a separate screen
-          navigation.navigate("Matches");
-          break;
-        case "profile":
-          navigation.navigate("Profile");
-          break;
-        case "settings":
-          navigation.navigate("Settings");
-          break;
-        case "my-pets":
-          navigation.navigate("MyPets");
-          break;
-        case "create-pet":
-          navigation.navigate("CreatePet");
-          break;
-        case "premium":
-          // Navigate to Profile screen since Premium is part of profile
-          navigation.navigate("Profile");
-          break;
-        default:
-          logger.warn(`Unknown action: ${action}`);
-      }
-    } catch (error) {
-      logger.error("Navigation error:", { error });
-    }
-  };
-
-  const handleProfilePress = () => {
-    handleQuickAction("profile");
-  };
-  const handleSettingsPress = () => {
-    handleQuickAction("settings");
-  };
-  const handleSwipePress = () => {
-    handleQuickAction("swipe");
-  };
-  const handleMatchesPress = () => {
-    handleQuickAction("matches");
-  };
-  const handleMessagesPress = () => {
-    handleQuickAction("messages");
-  };
-  const handleAdoptionPress = () => {
-    handleQuickAction("adoption");
-  };
 
   return (
     <EliteContainer gradient="primary">
@@ -306,9 +214,7 @@ export default function HomeScreen() {
               <FadeInUp delay={300}>
                 <EliteCard
                   variant="glass"
-                  onPress={() => {
-                    handleQuickAction("profile");
-                  }}
+                  onPress={handleProfilePress}
                   style={styles.actionCard}
                 >
                   <GlowContainer
@@ -463,9 +369,7 @@ export default function HomeScreen() {
                       title="Upgrade Now"
                       variant="primary"
                       size="lg"
-                      onPress={() => {
-                        handleQuickAction("premium");
-                      }}
+                      onPress={handleProfilePress}
                     />
                   </View>
                 </View>

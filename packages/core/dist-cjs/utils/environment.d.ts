@@ -18,4 +18,3 @@ export declare const removeEventListenerSafely: (target: unknown, type: string, 
 export declare const setLocalStorageValue: (key: string, value: string) => void;
 export declare const removeLocalStorageValue: (key: string) => void;
 export declare const getLocalStorageValue: (key: string) => string | null;
-//# sourceMappingURL=environment.d.ts.map

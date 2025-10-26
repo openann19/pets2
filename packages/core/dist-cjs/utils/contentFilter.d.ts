@@ -7,4 +7,3 @@ export declare function filterContent(input: string, config?: ContentFilterConfi
     output: string;
     matched: string[];
 };
-//# sourceMappingURL=contentFilter.d.ts.map

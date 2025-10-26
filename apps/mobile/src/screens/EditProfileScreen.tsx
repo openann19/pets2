@@ -1,11 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
 import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -18,7 +14,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useEditProfileScreen } from "../hooks/screens/useEditProfileScreen";
+import type { ProfileData } from "../hooks/screens/useEditProfileScreen";
 
 interface EditProfileScreenProps {
   navigation: {
@@ -26,140 +23,38 @@ interface EditProfileScreenProps {
   };
 }
 
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  bio: string;
-  location: string;
-  avatar: string | undefined;
-}
-
 function EditProfileScreen({
   navigation,
 }: EditProfileScreenProps): JSX.Element {
-  const { colors: _colors } = useTheme();
-  const { user } = useAuthStore();
-  const [profileData, setProfileData] = useState<ProfileData>(() => ({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    bio: user?.bio || "",
-    location: user?.location?.address || "",
-    avatar: user?.avatar,
-  }));
-  const [loading, setLoading] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
+  const {
+    profileData,
+    loading,
+    hasChanges,
+    updateField,
+    handleSelectAvatar,
+    handleSave,
+    handleCancel,
+  } = useEditProfileScreen();
 
-  useEffect(() => {
-    // Check if form has changes
-    const originalData = {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      bio: user?.bio || "",
-      location: user?.location?.address || "",
-      avatar: user?.avatar,
-    };
-
-    const changed = Object.keys(profileData).some(
-      (key) =>
-        profileData[key as keyof ProfileData] !==
-        originalData[key as keyof ProfileData],
-    );
-    setHasChanges(changed);
-  }, [profileData, user]);
-
-  const updateField = useCallback((field: keyof ProfileData, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
-  }, []);
-
-  const handleSelectAvatar = useCallback(async () => {
-    try {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert(
-          "Permission required",
-          "Please enable photo library access to change your avatar.",
-        );
-        return;
+  const onSubmit = async () => {
+    const result = await handleSave();
+    if (result?.shouldNavigate) {
+      if (hasChanges) {
+        Alert.alert("Success", "Profile updated successfully!", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        navigation.goBack();
       }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        updateField("avatar", result.assets[0].uri);
-        Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => {});
-      }
-    } catch (error) {
-      logger.error("Error selecting avatar:", { error });
-      Alert.alert("Error", "Failed to select avatar. Please try again.");
     }
-  }, [updateField]);
+  };
 
-  const handleSave = useCallback(async () => {
-    if (!hasChanges) {
-      navigation.goBack();
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // In a real app, this would call an API
-      Alert.alert("Success", "Profile updated successfully!", [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.goBack();
-          },
-        },
-      ]);
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-        () => {},
-      );
-    } catch (error) {
-      logger.error("Error updating profile:", { error });
-      Alert.alert("Error", "Failed to update profile. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [hasChanges, navigation]);
-
-  const handleCancel = useCallback(() => {
-    if (hasChanges) {
-      Alert.alert(
-        "Discard Changes",
-        "Are you sure you want to discard your changes?",
-        [
-          { text: "Keep Editing", style: "cancel" },
-          {
-            text: "Discard",
-            style: "destructive",
-            onPress: () => {
-              navigation.goBack();
-            },
-          },
-        ],
-      );
-    } else {
+  const onCancel = () => {
+    const shouldNavigate = handleCancel();
+    if (shouldNavigate) {
       navigation.goBack();
     }
-  }, [hasChanges, navigation]);
+  };
 
   return (
     <View style={styles.container}>
@@ -171,7 +66,7 @@ function EditProfileScreen({
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
             <Ionicons name="close" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Profile</Text>
@@ -180,7 +75,7 @@ function EditProfileScreen({
               styles.saveButton,
               (!hasChanges || loading) && styles.saveButtonDisabled,
             ])}
-            onPress={handleSave}
+            onPress={onSubmit}
             disabled={!hasChanges || loading}
           >
             <Text

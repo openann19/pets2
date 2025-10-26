@@ -55,6 +55,7 @@ export interface UseMapScreenReturn {
   region: Region;
   userLocation: { latitude: number; longitude: number } | null;
   pins: PulsePin[];
+  filteredPins: PulsePin[];
   filters: MapFilters;
   stats: MapStats;
 
@@ -76,6 +77,9 @@ export interface UseMapScreenReturn {
   toggleFilterPanel: () => void;
   handlePinPress: (pin: PulsePin) => void;
   handleStatistics: () => void;
+  toggleActivity: (activityId: string) => void;
+  getMarkerColor: (activity: string, isMatch?: boolean) => string;
+  getStableMatchFlag: (pin: PulsePin) => boolean;
 }
 
 export const useMapScreen = (): UseMapScreenReturn => {
@@ -218,15 +222,76 @@ export const useMapScreen = (): UseMapScreenReturn => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, []);
 
+  // Helper: Calculate distance between two coordinates
+  const calculateDistance = useCallback(
+    (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const earthRadiusKm = 6371;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+          Math.cos((lat2 * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return earthRadiusKm * c;
+    },
+    [],
+  );
+
+  // Filter pins based on filters
+  const filteredPins = useMemo(() => {
+    return pins.filter((pin) => {
+      if (!filters.activityTypes.includes(pin.activity)) return false;
+      if (userLocation && filters.radius) {
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          pin.latitude,
+          pin.longitude,
+        );
+        return distance <= filters.radius;
+      }
+      return true;
+    });
+  }, [pins, filters, userLocation, calculateDistance]);
+
+  // Toggle activity filter
+  const toggleActivity = useCallback(
+    (activityId: string) => {
+      setFilters((prev) => ({
+        ...prev,
+        activityTypes: prev.activityTypes.includes(activityId)
+          ? prev.activityTypes.filter((a) => a !== activityId)
+          : [...prev.activityTypes, activityId],
+      }));
+    },
+    [],
+  );
+
+  // Get marker color based on activity
+  const getMarkerColor = useCallback(
+    (activity: string, isMatch = false): string => {
+      if (isMatch) return "#EC4899";
+      const activityType = activityTypes.find((a) => a.id === activity);
+      return activityType?.color || "#6B7280";
+    },
+    [activityTypes],
+  );
+
+  // Get stable match flag (for demo purposes)
+  const getStableMatchFlag = useCallback((pin: PulsePin): boolean => {
+    let hash = 0;
+    for (const char of pin._id) {
+      hash += char.codePointAt(0) ?? 0;
+    }
+    return hash % 10 >= 7;
+  }, []);
+
   // Handle statistics
   const handleStatistics = useCallback(() => {
     // Update stats based on filtered pins
-    const filteredPins = pins.filter((pin) => {
-      if (!filters.activityTypes.includes(pin.activity)) return false;
-      // Add distance filtering logic here
-      return true;
-    });
-
     setStats({
       totalPets: filteredPins.length,
       activePets: filteredPins.filter((p) => {
@@ -236,7 +301,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
       nearbyMatches: filteredPins.length,
       recentActivity: filteredPins.length,
     });
-  }, [pins, filters]);
+  }, [filteredPins]);
 
   // Socket connection for real-time updates
   useEffect(() => {
@@ -287,6 +352,7 @@ export const useMapScreen = (): UseMapScreenReturn => {
     region,
     userLocation,
     pins,
+    filteredPins,
     filters,
     stats,
 
@@ -308,5 +374,8 @@ export const useMapScreen = (): UseMapScreenReturn => {
     toggleFilterPanel,
     handlePinPress,
     handleStatistics,
+    toggleActivity,
+    getMarkerColor,
+    getStableMatchFlag,
   };
 };

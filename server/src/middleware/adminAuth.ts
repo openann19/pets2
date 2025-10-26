@@ -236,7 +236,7 @@ export const optionalAuth = async (
       return;
     }
 
-    const token = authHeader.replace('Bearer ', ');
+    const token = authHeader.replace('Bearer ', '');
     
     if (!process.env.JWT_SECRET) {
       next();

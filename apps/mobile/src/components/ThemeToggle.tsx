@@ -102,12 +102,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={toggleTheme}
-        style={StyleSheet.flatten([
+        style={[
           themeStyles.buttonContainer,
           buttonSizes[size],
           styles.buttonSecondary,
           style,
-        ])}
+        ]}
         activeOpacity={0.8}
       >
         <View style={themeStyles.buttonContent}>

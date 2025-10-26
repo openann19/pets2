@@ -32,4 +32,3 @@ export interface MatchState {
 export declare const useMatchStore: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<MatchState>, "setState"> & {
     setState(nextStateOrUpdater: MatchState | Partial<MatchState> | ((state: import("immer").WritableDraft<MatchState>) => void), shouldReplace?: boolean | undefined): void;
 }>;
-//# sourceMappingURL=useMatchStore.d.ts.map

@@ -1,21 +1,40 @@
 import { IUserDocument } from './mongoose';
 
 /**
- * Email service interface
+ * Email service interfaces - Updated to match actual implementation
  */
+export interface EmailResult {
+  success: boolean;
+  messageId?: string;
+  message?: string;
+}
+
+export interface BulkEmailRecipient {
+  email: string;
+  data?: Record<string, any>;
+}
+
+export interface BulkEmailResult {
+  email: string;
+  success: boolean;
+  result?: EmailResult;
+  error?: string;
+}
+
+export interface SendEmailOptions {
+  email: string;
+  template: 'emailVerification' | 'passwordReset' | 'newMatch' | 'premiumWelcome';
+  data: Record<string, any>;
+}
+
 export interface IEmailService {
-  sendEmail(options: {
-    to: string;
-    subject: string;
-    html: string;
-    text?: string;
-  }): Promise<boolean>;
-  
-  sendVerificationEmail(userId: string, email: string, token: string): Promise<boolean>;
-  sendPasswordResetEmail(email: string, token: string): Promise<boolean>;
-  send2FACode(email: string, code: string, method: 'sms' | 'email'): Promise<boolean>;
-  sendWelcomeEmail(email: string, name: string): Promise<boolean>;
-  sendAccountDeletionEmail(email: string, gracePeriodEnds: Date): Promise<boolean>;
+  sendEmail(options: SendEmailOptions): Promise<EmailResult>;
+  sendBulkEmails(
+    recipients: BulkEmailRecipient[],
+    template: 'emailVerification' | 'passwordReset' | 'newMatch' | 'premiumWelcome',
+    commonData?: Record<string, any>
+  ): Promise<BulkEmailResult[]>;
+  sendNotificationEmail(email: string, subject: string, message: string): Promise<EmailResult>;
 }
 
 /**

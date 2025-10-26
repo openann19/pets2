@@ -161,4 +161,3 @@ function hasTouchSupport() {
         ("ontouchstart" in window ||
             (nav.maxTouchPoints != null && nav.maxTouchPoints > 0)));
 }
-//# sourceMappingURL=env.js.map

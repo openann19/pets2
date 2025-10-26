@@ -14,4 +14,3 @@ export declare function generateId(length?: number): string;
 export declare function formatRelativeTime(date: string): string;
 export * from './contentFilter';
 export * from './storage';
-//# sourceMappingURL=index.d.ts.map

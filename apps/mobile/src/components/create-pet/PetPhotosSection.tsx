@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 
-import { PhotoData } from "../../hooks/usePhotoManager";
+import type { PhotoData } from "../../hooks/usePhotoManager";
 
 interface PetPhotosSectionProps {
   photos: PhotoData[];

@@ -44,4 +44,3 @@ declare class AnimationConfigService {
 export declare const animationConfig: AnimationConfigService;
 export declare function useAnimationConfig(): AnimationConfigService | AnimationConfig;
 export {};
-//# sourceMappingURL=animationConfig.d.ts.map

@@ -58,4 +58,3 @@ function formatPressedKeys(event) {
 const isKeyboardEvent = (event) => {
     return 'key' in event;
 };
-//# sourceMappingURL=useKeyboardShortcut.js.map

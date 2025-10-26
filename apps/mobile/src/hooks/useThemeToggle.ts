@@ -4,6 +4,7 @@ import { Alert } from "react-native";
 
 import type { ThemeMode } from "../stores/useUIStore";
 import { useTheme } from "../contexts/ThemeContext";
+import type { ThemeColors } from "../contexts/ThemeContext";
 
 export interface UseThemeToggleReturn {
   isDark: boolean;

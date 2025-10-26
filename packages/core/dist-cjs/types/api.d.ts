@@ -45,4 +45,3 @@ export type AsyncState<T> = {
     isLoading: boolean;
     error: Error | null;
 };
-//# sourceMappingURL=api.d.ts.map
