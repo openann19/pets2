@@ -221,11 +221,12 @@ export const matchesAPI = {
     );
   },
   // Get user's matches with filter
-  getMatchesWithFilter: async (queryString: string): Promise<{ data: { matches: Match[]; pagination: any } }> => {
-    return resolveData(
-      apiClient.get<{ matches: Match[]; pagination: any }>(`/matches?${queryString}`),
+  getMatchesWithFilter: async (queryString: string): Promise<{ data: { matches: Match[]; pagination: { page: number; limit: number; total: number; pages: number } } }> => {
+    const response = await resolveData(
+      apiClient.get<{ matches: Match[]; pagination: { page: number; limit: number; total: number; pages: number } }>(`/matches?${queryString}`),
       "Failed to fetch matches",
     );
+    return { data: response };
   },
   getMatch: async (matchId: string): Promise<Match> => {
     return resolveData(
@@ -909,6 +910,12 @@ export const api = {
   request,
   presignVoice,
   presignPhoto,
+  get: <T = unknown>(url: string, config?: unknown): Promise<T> => {
+    return request<T>(url, { method: "GET", headers: config as Record<string, string> });
+  },
+  post: <T = unknown>(url: string, data?: unknown, config?: unknown): Promise<T> => {
+    return request<T>(url, { method: "POST", body: data, headers: config as Record<string, string> });
+  },
 };
 
 // Re-export admin API for backwards compatibility

@@ -24,7 +24,7 @@ interface UseForgotPasswordScreenReturn {
   isValid: boolean;
   loading: boolean;
   setValue: (name: keyof ForgotPasswordFormValues, value: string) => void;
-  handleSubmit: (e?: any) => Promise<void>;
+  handleSubmit: (e?: any) => void | Promise<void>;
   navigateBack: () => void;
 }
 

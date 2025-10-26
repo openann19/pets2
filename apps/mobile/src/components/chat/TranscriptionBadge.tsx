@@ -9,7 +9,7 @@ import { Theme } from "../../theme/unified-theme";
 
 export const TranscriptionBadge = ({ icon, label }: { icon: string; label: string }) => (
   <View style={styles.badge}>
-    <Ionicons name={icon as any} size={12} color={Theme.colors.primary[500]} />
+    <Ionicons name={icon} size={12} color={Theme.colors.primary[500]} />
     <Text style={styles.text}>{label}</Text>
   </View>
 );

@@ -63,7 +63,6 @@ export type RootStackParamList = {
   BlockedUsers: undefined;
   SafetyCenter: undefined;
   VerificationCenter: undefined;
-  AdminServices: undefined;
   NotificationPreferences: undefined;
   HelpSupport: undefined;
   AboutTermsPrivacy: undefined;

@@ -49,7 +49,7 @@ export async function pickAndUpload(): Promise<PhotoUploadResult | null> {
       uri: asset.uri,
       name: 'photo.jpg',
       type: 'image/jpeg',
-    } as any);
+    } as unknown as Blob);
 
     const uploadResponse = await request<PhotoUploadResult>('/upload', {
       method: 'POST',
@@ -60,10 +60,11 @@ export async function pickAndUpload(): Promise<PhotoUploadResult | null> {
     });
 
     return uploadResponse;
-  } catch (error) {
+  } catch (error: unknown) {
     const { logger } = await import('./logger');
-    logger.error('Photo upload error', { error });
-    throw error;
+    const errorMessage = error instanceof Error ? error : new Error(String(error));
+    logger.error('Photo upload error', { error: errorMessage });
+    throw errorMessage;
   }
 }
 

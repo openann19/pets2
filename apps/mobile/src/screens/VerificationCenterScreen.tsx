@@ -9,9 +9,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Theme } from '../theme/unified-theme';
 import { useTheme } from '../theme/Provider';
 import { getExtendedColors } from '../theme/adapters';
+import { Theme } from '../theme/unified-theme';
 import { logger } from '../services/logger';
 
 interface VerificationBadge {
@@ -19,7 +19,7 @@ interface VerificationBadge {
   name: string;
   description: string;
   unlocked: boolean;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: string; // Ionicons name
 }
 
 interface VerificationStatus {
@@ -33,6 +33,9 @@ interface VerificationStatus {
 export default function VerificationCenterScreen(): React.JSX.Element {
   const theme = useTheme();
   const colors = getExtendedColors(theme);
+  const spacing = theme.spacing;
+  const borderRadius = theme.radius;
+  
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>({
     tier: 'tier0',
     verified: false,
@@ -52,7 +55,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       // const response = await verificationService.getStatus();
       // setVerificationStatus(response);
     } catch (error) {
-      logger.error('Error loading verification status', { error });
+      logger.error('Error loading verification status', { error: error as Error });
     } finally {
       setLoading(false);
     }
@@ -60,13 +63,13 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
   const getTierColor = (tier: string) => {
     const tierColors: Record<string, string> = {
-      tier0: Theme.colors.neutral[500],
-      tier1: Theme.colors.primary,
-      tier2: Theme.colors.secondary,
+      tier0: colors.textMuted,
+      tier1: colors.primary,
+      tier2: colors.secondary || colors.primary,
       tier3: '#4CAF50',
       tier4: '#FF9800',
     };
-    return tierColors[tier] || Theme.colors.neutral[500];
+    return tierColors[tier] || colors.textMuted;
   };
 
   const badges: VerificationBadge[] = [
@@ -157,7 +160,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       <View style={[styles.statusCard, { backgroundColor: colors.surface }]}>
         <View style={styles.statusHeader}>
           <View style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]}>
-            <Ionicons name="shield-checkmark" size={24} color={Theme.colors.neutral[0]} />
+            <Ionicons name="shield-checkmark" size={24} color={colors.white} />
           </View>
           <View style={styles.statusInfo}>
             <Text style={[styles.statusTier, { color: colors.text }]}>{tierName}</Text>
@@ -167,8 +170,8 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
         {verificationStatus.rejectionReason && (
           <View style={styles.rejectionContainer}>
-            <Ionicons name="alert-circle" size={16} color={Theme.colors.status.error} />
-            <Text style={[styles.rejectionText, { color: Theme.colors.status.error }]}>
+            <Ionicons name="alert-circle" size={16} color={colors.error} />
+            <Text style={[styles.rejectionText, { color: colors.error }]}>
               {verificationStatus.rejectionReason}
             </Text>
           </View>
@@ -176,8 +179,8 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
         {verificationStatus.status === 'rejected' && (
           <TouchableOpacity style={[styles.retryButton, { backgroundColor: colors.primary }]} onPress={handleRetry}>
-            <Ionicons name="refresh" size={16} color={Theme.colors.neutral[0]} />
-            <Text style={[styles.retryButtonText, { color: Theme.colors.neutral[0] }]}>Retry Verification</Text>
+            <Ionicons name="refresh" size={16} color={colors.white} />
+            <Text style={[styles.retryButtonText, { color: colors.white }]}>Retry Verification</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -191,9 +194,9 @@ export default function VerificationCenterScreen(): React.JSX.Element {
             <View key={tier} style={styles.tierRow}>
               <View style={[
                 styles.tierBullet,
-                isCompleted ? { backgroundColor: getTierColor(tier) } : { backgroundColor: Theme.colors.neutral[300] }
+                isCompleted ? { backgroundColor: getTierColor(tier) } : { backgroundColor: colors.gray300 }
               ]}>
-                {isCompleted && <Ionicons name="checkmark" size={12} color={Theme.colors.neutral[0]} />}
+                {isCompleted && <Ionicons name="checkmark" size={12} color={colors.white} />}
               </View>
               <Text style={[styles.tierText, { color: isCompleted ? colors.text : colors.textMuted }]}>
                 Tier {index}: {getStatusDisplay().tierName}
@@ -211,17 +214,17 @@ export default function VerificationCenterScreen(): React.JSX.Element {
             key={badge.id}
             style={[
               styles.badgeCard,
-              { backgroundColor: badge.unlocked ? colors.surface : Theme.colors.neutral[100] },
+              { backgroundColor: badge.unlocked ? colors.surface : colors.gray100 },
             ]}
           >
             <View style={[
               styles.badgeIcon,
-              { backgroundColor: badge.unlocked ? Theme.colors.primary : Theme.colors.neutral[300] }
+              { backgroundColor: badge.unlocked ? colors.primary : colors.gray300 }
             ]}>
               <Ionicons
                 name={badge.icon}
                 size={24}
-                color={badge.unlocked ? Theme.colors.neutral[0] : Theme.colors.neutral[600]}
+                color={badge.unlocked ? colors.white : colors.gray600}
               />
             </View>
             <View style={styles.badgeInfo}>
@@ -236,7 +239,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
               </Text>
             </View>
             {badge.unlocked && (
-              <Ionicons name="checkmark-circle" size={24} color={Theme.colors.status.success} />
+              <Ionicons name="checkmark-circle" size={24} color={colors.feedback} />
             )}
           </View>
         ))}
@@ -249,8 +252,8 @@ export default function VerificationCenterScreen(): React.JSX.Element {
             style={[styles.actionButton, { backgroundColor: colors.primary }]}
             onPress={() => handleStartVerification('tier1')}
           >
-            <Ionicons name="shield-checkmark" size={20} color={Theme.colors.neutral[0]} />
-            <Text style={[styles.actionButtonText, { color: Theme.colors.neutral[0] }]}>
+            <Ionicons name="shield-checkmark" size={20} color={colors.white} />
+            <Text style={[styles.actionButtonText, { color: colors.white }]}>
               Start Identity Verification
             </Text>
           </TouchableOpacity>
@@ -261,8 +264,8 @@ export default function VerificationCenterScreen(): React.JSX.Element {
             style={[styles.actionButton, { backgroundColor: colors.secondary }]}
             onPress={() => handleStartVerification('tier2')}
           >
-            <Ionicons name="paw" size={20} color={Theme.colors.neutral[0]} />
-            <Text style={[styles.actionButtonText, { color: Theme.colors.neutral[0] }]}>
+            <Ionicons name="paw" size={20} color={colors.white} />
+            <Text style={[styles.actionButtonText, { color: colors.white }]}>
               Verify Pet Ownership
             </Text>
           </TouchableOpacity>
@@ -271,7 +274,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
       {/* Info Section */}
       <View style={styles.infoContainer}>
-        <Ionicons name="information-circle" size={20} color={Theme.colors.primary} />
+        <Ionicons name="information-circle" size={20} color={colors.primary} />
         <Text style={[styles.infoText, { color: colors.textMuted }]}>
           Verification helps build trust in the PawfectMatch community. All information is encrypted and processed securely in compliance with GDPR regulations.
         </Text>
@@ -285,21 +288,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing.md,
+    padding: 24,
+    paddingBottom: 16,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: Theme.spacing.xs,
+    marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
   },
   statusCard: {
-    margin: Theme.spacing.md,
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.lg,
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -309,7 +312,7 @@ const styles = StyleSheet.create({
   statusHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Theme.spacing.sm,
+    marginBottom: 8,
   },
   statusIcon: {
     width: 48,
@@ -317,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Theme.spacing.md,
+    marginRight: 16,
   },
   statusInfo: {
     flex: 1,
@@ -325,7 +328,7 @@ const styles = StyleSheet.create({
   statusTier: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: Theme.spacing.xs / 2,
+    marginBottom: 4 / 2,
   },
   statusText: {
     fontSize: 14,
@@ -333,13 +336,13 @@ const styles = StyleSheet.create({
   rejectionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: Theme.spacing.sm,
-    padding: Theme.spacing.sm,
-    backgroundColor: `${Theme.colors.status.error}10`,
-    borderRadius: Theme.borderRadius.md,
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: '#e53e3e10',
+    borderRadius: 8,
   },
   rejectionText: {
-    marginLeft: Theme.spacing.xs,
+    marginLeft: 4,
     fontSize: 14,
     flex: 1,
   },
@@ -347,27 +350,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.md,
-    marginTop: Theme.spacing.md,
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 16,
   },
   retryButtonText: {
-    marginLeft: Theme.spacing.xs,
+    marginLeft: 4,
     fontSize: 14,
     fontWeight: '600',
   },
   progressContainer: {
-    margin: Theme.spacing.md,
+    margin: 16,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: Theme.spacing.md,
+    marginBottom: 16,
   },
   tierRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Theme.spacing.md,
+    marginBottom: 16,
   },
   tierBullet: {
     width: 24,
@@ -375,20 +378,20 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Theme.spacing.md,
+    marginRight: 16,
   },
   tierText: {
     fontSize: 14,
   },
   badgesContainer: {
-    margin: Theme.spacing.md,
+    margin: 16,
   },
   badgeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.md,
-    marginBottom: Theme.spacing.md,
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
   },
   badgeIcon: {
     width: 48,
@@ -396,7 +399,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Theme.spacing.md,
+    marginRight: 16,
   },
   badgeInfo: {
     flex: 1,
@@ -404,37 +407,37 @@ const styles = StyleSheet.create({
   badgeName: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: Theme.spacing.xs / 2,
+    marginBottom: 4 / 2,
   },
   badgeDesc: {
     fontSize: 14,
   },
   actionContainer: {
-    margin: Theme.spacing.md,
+    margin: 16,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.md,
-    marginBottom: Theme.spacing.md,
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
   },
   actionButtonText: {
-    marginLeft: Theme.spacing.xs,
+    marginLeft: 4,
     fontSize: 16,
     fontWeight: '600',
   },
   infoContainer: {
     flexDirection: 'row',
-    margin: Theme.spacing.md,
-    padding: Theme.spacing.md,
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.md,
+    margin: 16,
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
   },
   infoText: {
     flex: 1,
-    marginLeft: Theme.spacing.sm,
+    marginLeft: 8,
     fontSize: 14,
     lineHeight: 20,
   },

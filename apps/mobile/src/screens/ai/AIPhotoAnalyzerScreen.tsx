@@ -21,10 +21,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
+import { getExtendedColors } from "../../theme/adapters";
 import type { AIScreenProps } from "../../navigation/types";
 import { logger } from "../../services/logger";
 import { api } from "../../services/api";
-import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -66,7 +66,8 @@ interface PhotoAnalysisResult {
 export default function AIPhotoAnalyzerScreen({
   navigation,
 }: AIScreenProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
   const { user: _user } = useAuthStore();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -325,7 +326,7 @@ export default function AIPhotoAnalyzerScreen({
                   );
                 }}
               >
-                <Ionicons name="time" size={20} color="Theme.colors.neutral[0]" />
+                <Ionicons name="time" size={20} color="#ffffff" />
               </TouchableOpacity>
             )}
           </View>
@@ -355,7 +356,7 @@ export default function AIPhotoAnalyzerScreen({
                 ])}
                 onPress={pickImage}
               >
-                <Ionicons name="camera" size={20} color="Theme.colors.neutral[0]" />
+                <Ionicons name="camera" size={20} color="#ffffff" />
                 <Text style={styles.changeImageText}>Change Photo</Text>
               </TouchableOpacity>
             </View>
@@ -383,7 +384,7 @@ export default function AIPhotoAnalyzerScreen({
                   ])}
                   onPress={pickImage}
                 >
-                  <Ionicons name="image" size={20} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="image" size={20} color="#ffffff" />
                   <Text style={styles.imageButtonText}>Gallery</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -393,7 +394,7 @@ export default function AIPhotoAnalyzerScreen({
                   ])}
                   onPress={takePhoto}
                 >
-                  <Ionicons name="camera" size={20} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="camera" size={20} color="#ffffff" />
                   <Text style={styles.imageButtonText}>Camera</Text>
                 </TouchableOpacity>
               </View>
@@ -415,12 +416,12 @@ export default function AIPhotoAnalyzerScreen({
             >
               {isAnalyzing ? (
                 <>
-                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
+                  <ActivityIndicator size="small" color="#ffffff" />
                   <Text style={styles.analyzeButtonText}>Analyzing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="flash" size={20} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="flash" size={20} color="#ffffff" />
                   <Text style={styles.analyzeButtonText}>Analyze Photo</Text>
                 </>
               )}
@@ -448,7 +449,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="paw" size={24} color="Theme.colors.secondary[500]" />
+                <Ionicons name="paw" size={24} color="#9333ea" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -484,7 +485,7 @@ export default function AIPhotoAnalyzerScreen({
                       {
                         width:
                           `${Math.round(analysisResult.breed.confidence * 100)}%` as const,
-                        backgroundColor: "Theme.colors.secondary[500]",
+                        backgroundColor: "#9333ea",
                       },
                     ])}
                   />
@@ -793,7 +794,7 @@ export default function AIPhotoAnalyzerScreen({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="pricetag" size={24} color="Theme.colors.secondary[500]" />
+                <Ionicons name="pricetag" size={24} color="#9333ea" />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -809,7 +810,7 @@ export default function AIPhotoAnalyzerScreen({
                     key={index}
                     style={StyleSheet.flatten([
                       styles.tag,
-                      { backgroundColor: "Theme.colors.secondary[500]" },
+                      { backgroundColor: "#9333ea" },
                     ])}
                   >
                     <Text style={styles.tagText}>#{tag}</Text>
@@ -884,7 +885,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   changeImageText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#ffffff",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -913,7 +914,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   imageButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#ffffff",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -932,7 +933,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#ffffff",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -1073,7 +1074,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tagText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#ffffff",
     fontSize: 12,
     fontWeight: "600",
   },

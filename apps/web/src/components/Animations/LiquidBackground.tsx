@@ -36,7 +36,7 @@ export function LiquidBackground({
       raf = window.setTimeout(tick, duration * 1000);
     };
     raf = window.setTimeout(tick, duration * 1000);
-    return () => window.clearTimeout(raf);
+    return () => { window.clearTimeout(raf); };
   }, [paths.length, duration, idx]);
 
   const current = useTransform(

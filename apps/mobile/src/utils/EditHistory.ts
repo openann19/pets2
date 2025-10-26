@@ -47,7 +47,7 @@ export class EditHistory {
   undo(): EditState | null {
     if (this.canUndo()) {
       this.currentIndex--;
-      return this.history[this.currentIndex];
+      return this.history[this.currentIndex] ?? null;
     }
     return null;
   }
@@ -58,7 +58,7 @@ export class EditHistory {
   redo(): EditState | null {
     if (this.canRedo()) {
       this.currentIndex++;
-      return this.history[this.currentIndex];
+      return this.history[this.currentIndex] ?? null;
     }
     return null;
   }
@@ -82,7 +82,7 @@ export class EditHistory {
    */
   getCurrent(): EditState | null {
     if (this.currentIndex >= 0 && this.currentIndex < this.history.length) {
-      return this.history[this.currentIndex];
+      return this.history[this.currentIndex] ?? null;
     }
     return null;
   }

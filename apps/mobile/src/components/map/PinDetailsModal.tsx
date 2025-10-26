@@ -14,6 +14,11 @@ export interface MapPin {
   timestamp: string;
 }
 
+export type PulsePin = MapPin & {
+  pulseIntensity?: number;
+  radius?: number;
+};
+
 interface Props {
   visible: boolean;
   pin: MapPin | null;

@@ -122,7 +122,7 @@ export const TwoFactorAuth = ({ onVerify, onSetup, mode, onCancel }) => {
               </div>
             </div>)}
 
-          <button onClick={() => setStep('verify')} className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all">
+          <button onClick={() => { setStep('verify'); }} className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all">
             Continue to Verification
           </button>
         </div>)}
@@ -130,7 +130,7 @@ export const TwoFactorAuth = ({ onVerify, onSetup, mode, onCancel }) => {
       {(mode === 'verify' || step === 'verify') && (<div className="space-y-6">
           {/* Code Input */}
           <div className="flex justify-center space-x-2" onPaste={handlePaste}>
-            {code.map((digit, index) => (<input key={index} ref={(el) => (inputRefs.current[index] = el)} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleCodeChange(index, e.target.value)} onKeyDown={(e) => handleKeyDown(index, e)} className={`w-12 h-14 text-center text-2xl font-bold border-2 rounded-xl transition-all ${error
+            {code.map((digit, index) => (<input key={index} ref={(el) => (inputRefs.current[index] = el)} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => { handleCodeChange(index, e.target.value); }} onKeyDown={(e) => { handleKeyDown(index, e); }} className={`w-12 h-14 text-center text-2xl font-bold border-2 rounded-xl transition-all ${error
                     ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                     : 'border-gray-300 dark:border-gray-600 focus:border-pink-500 dark:focus:border-pink-500'} bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500/20`} disabled={isVerifying} autoFocus={index === 0}/>))}
           </div>

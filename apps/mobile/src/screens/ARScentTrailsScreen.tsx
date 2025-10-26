@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import * as Location from "expo-location";
-import * as DeviceMotion from "expo-sensors";
+import { DeviceMotion } from "expo-sensors";
 import { useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -59,15 +59,15 @@ export default function ARScentTrailsScreen() {
         );
 
         // Watch device motion for heading
-        const motion = DeviceMotion.addListener((d) => {
-          const gamma = d.rotation?.gamma ?? 0;
+        const subscription = DeviceMotion.addListener((data) => {
+          const gamma = data.rotation?.gamma ?? 0;
           const h = gamma * (180 / Math.PI);
           setHeading(((h % 360) + 360) % 360);
         });
 
         return () => {
-          sub.remove();
-          motion.remove();
+          sub?.remove();
+          subscription?.remove();
         };
       } else {
         Alert.alert("Permissions Required", "Camera and location permissions are required");

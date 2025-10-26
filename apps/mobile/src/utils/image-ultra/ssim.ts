@@ -48,9 +48,9 @@ export async function ssimApprox(
         for (let i = 0; i < win && x + i < aa.width; i++) {
           const idx = ((y + j) * aa.width + (x + i)) * 4;
           const la =
-            0.2126 * ai[idx] + 0.7152 * ai[idx + 1] + 0.0722 * ai[idx + 2];
+            0.2126 * (ai[idx] ?? 0) + 0.7152 * (ai[idx + 1] ?? 0) + 0.0722 * (ai[idx + 2] ?? 0);
           const lb =
-            0.2126 * bi[idx] + 0.7152 * bi[idx + 1] + 0.0722 * bi[idx + 2];
+            0.2126 * (bi[idx] ?? 0) + 0.7152 * (bi[idx + 1] ?? 0) + 0.0722 * (bi[idx + 2] ?? 0);
           muA += la;
           muB += lb;
           count++;
@@ -66,10 +66,14 @@ export async function ssimApprox(
       for (let j = 0; j < win && y + j < aa.height; j++) {
         for (let i = 0; i < win && x + i < aa.width; i++) {
           const idx = ((y + j) * aa.width + (x + i)) * 4;
-          const la =
-            0.2126 * ai[idx] + 0.7152 * ai[idx + 1] + 0.0722 * ai[idx + 2];
-          const lb =
-            0.2126 * bi[idx] + 0.7152 * bi[idx + 1] + 0.0722 * bi[idx + 2];
+          const aiR = ai[idx] ?? 0;
+          const aiG = ai[idx + 1] ?? 0;
+          const aiB = ai[idx + 2] ?? 0;
+          const biR = bi[idx] ?? 0;
+          const biG = bi[idx + 1] ?? 0;
+          const biB = bi[idx + 2] ?? 0;
+          const la = 0.2126 * aiR + 0.7152 * aiG + 0.0722 * aiB;
+          const lb = 0.2126 * biR + 0.7152 * biG + 0.0722 * biB;
           sA += (la - muA) * (la - muA);
           sB += (lb - muB) * (lb - muB);
           sAB += (la - muA) * (lb - muB);

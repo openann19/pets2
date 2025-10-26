@@ -4,19 +4,36 @@ module.exports = {
   ...baseConfig,
   // Mobile-specific overrides
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', '<rootDir>/src/setupTests.ts'], // Order matters: jest.setup first
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)',
   ],
-  testTimeout: 15000, // Increase default timeout to 15 seconds
-  maxWorkers: '50%', // Limit workers to prevent resource exhaustion
+  testTimeout: 30000, // Increase default timeout to 30 seconds
+  maxWorkers: '50%', // Use 50% of available CPUs to balance speed vs memory
+  workerIdleMemoryLimit: '1GB', // Increased from 512MB to 1GB for better memory handling
   bail: false, // Continue running tests even if some fail
   verbose: false, // Reduce console noise
+  clearMocks: true, // Auto-clear mocks between tests to prevent memory leaks
+  resetMocks: true, // Reset mock state between tests
+  restoreMocks: true, // Restore original implementations
+  // Expose GC for memory leak detection
+  testEnvironmentOptions: {
+    jest: {
+      exposeGC: true,
+    },
+    customExportConditions: [''],
+  },
+  // Optimize module loading
+  modulePathIgnorePatterns: [
+    '<rootDir>/node_modules',
+    '<rootDir>/dist',
+    '<rootDir>/build',
+  ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.config.cjs' }],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|expo|@expo|expo-secure-store|expo-local-authentication|expo-modules-core|@react-native-community|react-native-keychain|react-native-reanimated|react-native-gesture-handler|@expo/vector-icons|@sentry|@react-native-masked-view)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|expo|@expo|expo-secure-store|expo-local-authentication|expo-modules-core|@react-native-community|react-native-keychain|react-native-reanimated|react-native-gesture-handler|@expo/vector-icons|@sentry|@react-native-masked-view|@react-native-community/slider)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx,js,jsx}',

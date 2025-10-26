@@ -32,7 +32,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     })
     .onUpdate((e) => {
-      const nx = Math.max(0, Math.min(trackW, x.value + e.changeX));
+      const nx = Math.max(0, Math.min(trackW, x.value + (e as any).changeX));
       x.value = nx;
       const p = Math.round((nx / trackW) * 4); // 0..4
       if (p !== lastTick.current) {

@@ -77,7 +77,7 @@ export default function GlobalTodoWidget({ variant = 'compact', showStats = true
     }
     // Compact variant - shows summary with expand option
     if (variant === 'compact' && !isExpanded) {
-        return (<PremiumCard className={`p-4 cursor-pointer ${className}`} onClick={() => setIsExpanded(true)} hover>
+        return (<PremiumCard className={`p-4 cursor-pointer ${className}`} onClick={() => { setIsExpanded(true); }} hover>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ChartBarIcon className="w-5 h-5 text-blue-400"/>
@@ -108,7 +108,7 @@ export default function GlobalTodoWidget({ variant = 'compact', showStats = true
             <h3 className="text-white font-bold text-lg">Global Todo List</h3>
           </div>
           <div className="flex items-center gap-2">
-            {variant === 'compact' && (<button onClick={() => setIsExpanded(false)} className="text-gray-400 hover:text-white transition-colors">
+            {variant === 'compact' && (<button onClick={() => { setIsExpanded(false); }} className="text-gray-400 hover:text-white transition-colors">
                 <XMarkIcon className="w-5 h-5"/>
               </button>)}
           </div>
@@ -137,23 +137,23 @@ export default function GlobalTodoWidget({ variant = 'compact', showStats = true
         {/* Search */}
         <div className="relative mb-4">
           <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
-          <input type="text" placeholder="Search todos..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"/>
+          <input type="text" placeholder="Search todos..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); }} className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"/>
         </div>
 
         {/* Add Todo Form */}
         <AnimatePresence>
           {showAddForm && (<motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-4 p-4 bg-white/5 rounded-lg border border-white/10">
               <div className="space-y-3">
-                <input type="text" placeholder="Task description..." value={newTodo.description} onChange={(e) => setNewTodo({ ...newTodo, description: e.target.value })} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"/>
+                <input type="text" placeholder="Task description..." value={newTodo.description} onChange={(e) => { setNewTodo({ ...newTodo, description: e.target.value }); }} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"/>
                 <div className="flex gap-2">
-                  <select value={newTodo.category} onChange={(e) => setNewTodo({ ...newTodo, category: e.target.value })} className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded text-white focus:outline-none focus:border-blue-400">
+                  <select value={newTodo.category} onChange={(e) => { setNewTodo({ ...newTodo, category: e.target.value }); }} className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded text-white focus:outline-none focus:border-blue-400">
                     <option value="UI/UX TASKS">UI/UX TASKS</option>
                     <option value="TECHNICAL TASKS">TECHNICAL TASKS</option>
                     <option value="TESTING & QUALITY ASSURANCE">TESTING & QUALITY ASSURANCE</option>
                     <option value="DEPLOYMENT & DEVOPS">DEPLOYMENT & DEVOPS</option>
                     <option value="MOBILE DEVELOPMENT">MOBILE DEVELOPMENT</option>
                   </select>
-                  <select value={newTodo.priority} onChange={(e) => setNewTodo({ ...newTodo, priority: e.target.value })} className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white focus:outline-none focus:border-blue-400">
+                  <select value={newTodo.priority} onChange={(e) => { setNewTodo({ ...newTodo, priority: e.target.value }); }} className="px-3 py-2 bg-white/10 border border-white/20 rounded text-white focus:outline-none focus:border-blue-400">
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
                     <option value="low">Low</option>
@@ -163,7 +163,7 @@ export default function GlobalTodoWidget({ variant = 'compact', showStats = true
                   <PremiumButton onClick={handleAddTodo} size="sm" className="flex-1">
                     Add Task
                   </PremiumButton>
-                  <PremiumButton onClick={() => setShowAddForm(false)} variant="outline" size="sm">
+                  <PremiumButton onClick={() => { setShowAddForm(false); }} variant="outline" size="sm">
                     Cancel
                   </PremiumButton>
                 </div>
@@ -201,7 +201,7 @@ export default function GlobalTodoWidget({ variant = 'compact', showStats = true
 
         {/* Add Todo Button */}
         {!showAddForm && (<div className="mt-4">
-            <PremiumButton onClick={() => setShowAddForm(true)} variant="outline" size="sm" className="w-full" icon={<PlusIcon className="w-4 h-4"/>}>
+            <PremiumButton onClick={() => { setShowAddForm(true); }} variant="outline" size="sm" className="w-full" icon={<PlusIcon className="w-4 h-4"/>}>
               Add New Task
             </PremiumButton>
           </div>)}

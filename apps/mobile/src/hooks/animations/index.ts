@@ -20,4 +20,6 @@ export { useStaggeredAnimation } from "./useStaggeredAnimation";
 export { usePageTransition } from "./usePageTransition";
 export { useLoadingAnimation } from "./useLoadingAnimation";
 export { useParallaxEffect } from "./useParallaxEffect";
-export { useSwipeGesture } from "./useSwipeGesture";
+export { useSwipeGestures } from "./useSwipeGesture";
+export { useSwipeGestures as default } from "./useSwipeGesture";
+export type { SwipeGestureState } from "./useSwipeGesture";

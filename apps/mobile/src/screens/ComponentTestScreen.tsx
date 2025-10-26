@@ -11,7 +11,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 // Test imports - if these work, the components are properly wired
 import { EliteButton, FXContainer } from "../components";
-import { Theme } from "../theme/Provider";
+import type { Theme } from "../theme/Provider";
 
 export default function ComponentTestScreen() {
   return (
@@ -19,9 +19,6 @@ export default function ComponentTestScreen() {
       <Text style={styles.title}>Component Test</Text>
       <Text style={styles.subtitle}>
         If you can see this, the basic imports are working!
-      </Text>
-      <Text style={styles.info}>
-        Theme colors: {Object.keys(Theme.colors).length} color groups
       </Text>
 
       {/* Test if components can be rendered */}

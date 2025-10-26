@@ -110,7 +110,7 @@ export default function UniversalHeader({ showNav = true }) {
             <div className="flex items-center gap-3">
               {/* Notifications */}
               <div ref={notificationsRef} className="relative">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setNotificationsOpen(!notificationsOpen)} className="relative p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all" ref={notificationsButtonRef}>
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { setNotificationsOpen(!notificationsOpen); }} className="relative p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all" ref={notificationsButtonRef}>
                   <BellIcon className="w-6 h-6"/>
                   {/* Notification Badge */}
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -134,7 +134,7 @@ export default function UniversalHeader({ showNav = true }) {
 
               {/* Profile Menu */}
               <div ref={profileMenuRef} className="relative">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setProfileMenuOpen(!profileMenuOpen)} className="flex items-center gap-2 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all" ref={profileButtonRef}>
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { setProfileMenuOpen(!profileMenuOpen); }} className="flex items-center gap-2 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all" ref={profileButtonRef}>
                   <SafeImage src={user?.avatar} alt={user?.name || 'User'} fallbackType="user" className="w-8 h-8 rounded-full object-cover"/>
                   <span className="hidden sm:block text-white font-medium text-sm pr-2">
                     {user?.firstName || user?.name || 'User'}
@@ -151,14 +151,14 @@ export default function UniversalHeader({ showNav = true }) {
                       
                       <div className="p-2">
                         <Link href="/profile">
-                          <button onClick={() => setProfileMenuOpen(false)} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white transition-all">
+                          <button onClick={() => { setProfileMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white transition-all">
                             <UserCircleIcon className="w-5 h-5"/>
                             <span className="font-medium">Profile</span>
                           </button>
                         </Link>
                         
                         <Link href="/settings">
-                          <button onClick={() => setProfileMenuOpen(false)} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white transition-all">
+                          <button onClick={() => { setProfileMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white transition-all">
                             <Cog6ToothIcon className="w-5 h-5"/>
                             <span className="font-medium">Settings</span>
                           </button>
@@ -176,7 +176,7 @@ export default function UniversalHeader({ showNav = true }) {
               </div>
 
               {/* Mobile Menu Button */}
-              {showNav && (<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all" ref={mobileMenuButtonRef}>
+              {showNav && (<motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { setMobileMenuOpen(!mobileMenuOpen); }} className="md:hidden p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all" ref={mobileMenuButtonRef}>
                   {mobileMenuOpen ? (<XMarkIcon className="w-6 h-6"/>) : (<Bars3Icon className="w-6 h-6"/>)}
                 </motion.button>)}
             </div>
@@ -191,7 +191,7 @@ export default function UniversalHeader({ showNav = true }) {
                 const Icon = item.icon;
                 const active = isActive(item.href);
                 return (<Link key={item.name} href={item.href}>
-                      <motion.div whileTap={{ scale: 0.98 }} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${active
+                      <motion.div whileTap={{ scale: 0.98 }} onClick={() => { setMobileMenuOpen(false); }} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${active
                         ? 'bg-white/20 text-white'
                         : 'text-white/70 hover:text-white hover:bg-white/10'}`} tabIndex={0}>
                         <Icon className="w-5 h-5"/>

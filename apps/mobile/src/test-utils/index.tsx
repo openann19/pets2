@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import { render, RenderOptions } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
+import type { RenderOptions } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from '../theme/Provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -71,7 +72,7 @@ export function customRender(
   const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const content = (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={testTheme}>
+        <ThemeProvider>
           {children}
         </ThemeProvider>
       </QueryClientProvider>

@@ -33,7 +33,7 @@ export function ScreenShell({ header, children, footer }: ScreenShellProps) {
         colors={[Theme.colors.neutral[50], `${Theme.colors.primary[500]}10`]}
         style={StyleSheet.absoluteFillObject}
       />
-      <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
+      <SafeAreaView style={s.safe}>
         {header}
         <View style={s.body}>{children}</View>
         {footer}

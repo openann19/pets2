@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { matchesAPI } from "../../../services/api";
 import { logger } from "@pawfectmatch/core";
+import type { User } from "@pawfectmatch/core";
 
 export interface UseSettingsSyncOptions {
   onSyncSuccess?: () => void;
@@ -9,7 +10,7 @@ export interface UseSettingsSyncOptions {
 
 export interface UseSettingsSyncReturn {
   isSyncing: boolean;
-  syncSettings: (settings: Record<string, any>) => Promise<boolean>;
+  syncSettings: (settings: User["preferences"]) => Promise<boolean>;
   error: string | null;
 }
 
@@ -24,7 +25,7 @@ export function useSettingsSync({
   const [error, setError] = useState<string | null>(null);
 
   const syncSettings = useCallback(
-    async (settings: Record<string, any>): Promise<boolean> => {
+    async (settings: User["preferences"]): Promise<boolean> => {
       setIsSyncing(true);
       setError(null);
 

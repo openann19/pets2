@@ -345,11 +345,11 @@ export default function APIManagement() {
               <div className="lg:col-span-2">
                 <motion.div className="relative" whileFocus={{ scale: 1.02 }} transition={SPRING_CONFIGS.gentle}>
                   <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
-                  <input type="text" placeholder="Search endpoints..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm"/>
+                  <input type="text" placeholder="Search endpoints..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); }} className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm"/>
                 </motion.div>
               </div>
               
-              <select value={methodFilter} onChange={(e) => setMethodFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+              <select value={methodFilter} onChange={(e) => { setMethodFilter(e.target.value); }} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
                 <option value="all">All Methods</option>
                 <option value="GET">GET</option>
                 <option value="POST">POST</option>
@@ -358,7 +358,7 @@ export default function APIManagement() {
                 <option value="PATCH">PATCH</option>
               </select>
               
-              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+              <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); }} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
@@ -429,10 +429,10 @@ export default function APIManagement() {
             }} className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
                             <EyeIcon className="w-4 h-4"/>
                           </motion.button>
-                          <motion.button onClick={() => handleEndpointAction('test', endpoint.id)} className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
+                          <motion.button onClick={() => { handleEndpointAction('test', endpoint.id); }} className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
                             <PlayIcon className="w-4 h-4"/>
                           </motion.button>
-                          <motion.button onClick={() => handleEndpointAction('edit', endpoint.id)} className="p-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
+                          <motion.button onClick={() => { handleEndpointAction('edit', endpoint.id); }} className="p-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
                             <PencilIcon className="w-4 h-4"/>
                           </motion.button>
                         </div>
@@ -600,7 +600,7 @@ export default function APIManagement() {
                 </motion.div>
                 
                 <nav className="space-y-2">
-                  {tabs.map((tab, index) => (<motion.button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${activeTab === tab.id
+                  {tabs.map((tab, index) => (<motion.button key={tab.id} onClick={() => { setActiveTab(tab.id); }} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${activeTab === tab.id
                 ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-lg border border-purple-200'
                 : 'text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:text-gray-800'}`} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 + index * 0.1, ...SPRING_CONFIGS.gentle }} whileHover={{
                 scale: 1.02,
@@ -636,7 +636,7 @@ export default function APIManagement() {
 
       {/* Endpoint Modal */}
       <AnimatePresence>
-        {showEndpointModal && selectedEndpoint && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowEndpointModal(false)}>
+        {showEndpointModal && selectedEndpoint && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setShowEndpointModal(false); }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-lg font-semibold mb-4">Endpoint Details</h3>
               <div className="space-y-4">
@@ -682,7 +682,7 @@ export default function APIManagement() {
               </div>
               
               <div className="flex justify-end space-x-3 mt-6">
-                <PremiumButton variant="glass" onClick={() => setShowEndpointModal(false)}>
+                <PremiumButton variant="glass" onClick={() => { setShowEndpointModal(false); }}>
                   Close
                 </PremiumButton>
                 <PremiumButton variant="primary" onClick={() => {

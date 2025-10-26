@@ -12,12 +12,34 @@ import {
 
 import { logger } from "./logger";
 import { useAuthStore } from "../stores/useAuthStore";
+import { hasNativeCameraSwitch } from "../types/native-webrtc";
 
 // Extended RTCIceServer with React Native WebRTC compatibility
 interface ExtendedRTCIceServer {
   urls: string | string[];
   username?: string;
   credential?: string;
+}
+
+// Media constraints type for React Native WebRTC
+interface MediaStreamConstraints {
+  video?: boolean | {
+    width?: { min?: number; ideal?: number; max?: number };
+    height?: { min?: number; ideal?: number; max?: number };
+    frameRate?: { min?: number; ideal?: number; max?: number };
+  };
+  audio?: boolean;
+}
+
+// Type-safe video track with extended methods for React Native WebRTC
+interface MediaStreamTrackWithSwitchCamera {
+  _switchCamera?: () => void;
+  enabled: boolean;
+  id: string;
+  kind: string;
+  label: string;
+  muted: boolean;
+  readyState: MediaStreamTrackState;
 }
 
 export interface CallData {
@@ -184,7 +206,7 @@ class WebRTCService extends EventEmitter {
             : false,
       };
 
-      this.localStream = await mediaDevices.getUserMedia(constraints as any);
+      this.localStream = await mediaDevices.getUserMedia(constraints as MediaStreamConstraints);
 
       // Create peer connection
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
@@ -263,7 +285,7 @@ class WebRTCService extends EventEmitter {
             : false,
       };
 
-      this.localStream = await mediaDevices.getUserMedia(constraints as any);
+      this.localStream = await mediaDevices.getUserMedia(constraints as MediaStreamConstraints);
 
       // Create peer connection
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
@@ -429,14 +451,8 @@ class WebRTCService extends EventEmitter {
       const videoTracks = this.localStream.getVideoTracks();
       if (videoTracks.length > 0) {
         const videoTrack = videoTracks[0];
-        if (videoTrack) {
-          // React Native WebRTC specific method
-          if (
-            "_switchCamera" in videoTrack &&
-            typeof (videoTrack as any)._switchCamera === "function"
-          ) {
-            (videoTrack as any)._switchCamera();
-          }
+        if (videoTrack && hasNativeCameraSwitch(videoTrack)) {
+          videoTrack._switchCamera();
         }
       }
     }
@@ -561,7 +577,11 @@ class WebRTCService extends EventEmitter {
   private async handleOffer(data: WebRTCSignalingData) {
     if (this.peerConnection !== null) {
       if (data.offer !== undefined) {
-        await this.peerConnection.setRemoteDescription(data.offer as any);
+        const offer = new RTCSessionDescriptionImpl({
+          sdp: data.offer.sdp ?? '',
+          type: data.offer.type as RTCSdpType,
+        });
+        await this.peerConnection.setRemoteDescription(offer);
       }
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
@@ -578,7 +598,11 @@ class WebRTCService extends EventEmitter {
   private async handleAnswer(data: WebRTCSignalingData) {
     if (this.peerConnection !== null) {
       if (data.answer !== undefined) {
-        await this.peerConnection.setRemoteDescription(data.answer as any);
+        const answer = new RTCSessionDescriptionImpl({
+          sdp: data.answer.sdp ?? '',
+          type: data.answer.type as RTCSdpType,
+        });
+        await this.peerConnection.setRemoteDescription(answer);
       }
     }
   }

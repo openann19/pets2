@@ -34,7 +34,7 @@ export default function UltraAnimationsDemoPage() {
   const handleCelebrate = () => {
     haptics.success();
     setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 1000);
+    setTimeout(() => { setShowConfetti(false); }, 1000);
   };
 
   return (
@@ -268,7 +268,7 @@ export default function UltraAnimationsDemoPage() {
             <button
               onClick={() => {
                 setShowConfetti(true);
-                setTimeout(() => setShowConfetti(false), 100);
+                setTimeout(() => { setShowConfetti(false); }, 100);
               }}
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold"
             >

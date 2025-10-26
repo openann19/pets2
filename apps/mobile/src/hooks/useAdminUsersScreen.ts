@@ -45,14 +45,10 @@ export interface AdminUsersScreenState extends AdminUsersScreenHandlers {
   isBulkProcessing: boolean;
   users: AdminUserListItemViewModel[];
   keyExtractor: (item: AdminUserListItemViewModel) => string;
-  getItemLayout: AdminUserListItemProps["onSelect"] extends (
-    ...args: any
-  ) => void
-    ? (
-        data: AdminUserListItemViewModel[] | null | undefined,
-        index: number,
-      ) => { length: number; offset: number; index: number }
-    : never;
+  getItemLayout: (
+    data: ArrayLike<AdminUserListItemViewModel> | null | undefined,
+    index: number,
+  ) => { length: number; offset: number; index: number };
 }
 
 const STATUS_FILTERS: Array<{ label: string; value: AdminUsersStatusFilter }> =
@@ -465,7 +461,7 @@ export const useAdminUsersScreen = ({
   );
 
   const getItemLayout = useCallback(
-    (_: AdminUserListItemViewModel[] | null | undefined, index: number) => ({
+    (_: ArrayLike<AdminUserListItemViewModel> | null | undefined, index: number) => ({
       length: 152,
       offset: 152 * index,
       index,

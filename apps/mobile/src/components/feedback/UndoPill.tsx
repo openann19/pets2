@@ -11,13 +11,20 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
+import type { ViewStyle } from "react-native";
+
+interface WindowWithUndoPill extends Window {
+  __undoPillShow?: () => void;
+  __undoPillHide?: () => void;
+}
+
 export interface UndoPillProps {
   /** visible window in ms */
   duration?: number;
   /** called if user taps Undo before the window finishes */
   onUndo: () => void;
   /** top-level style override */
-  style?: any;
+  style?: ViewStyle;
   /** testID for testing */
   testID?: string;
 }
@@ -110,16 +117,18 @@ export default function UndoPill({ duration = 2000, onUndo, style, testID }: Und
     const hide = () => {
       visible.value = 0;
     };
-    // @ts-ignore
-    window.__undoPillShow = show;
-    // @ts-ignore
-    window.__undoPillHide = hide;
+    if (typeof window !== "undefined") {
+      const win = window as unknown as WindowWithUndoPill;
+      win.__undoPillShow = show;
+      win.__undoPillHide = hide;
+    }
 
     return () => {
-      // @ts-ignore
-      delete window.__undoPillShow;
-      // @ts-ignore
-      delete window.__undoPillHide;
+      if (typeof window !== "undefined") {
+        const win = window as unknown as WindowWithUndoPill;
+        delete win.__undoPillShow;
+        delete win.__undoPillHide;
+      }
     };
   }, [visible]);
 

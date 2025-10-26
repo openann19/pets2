@@ -219,7 +219,7 @@ export function CompatibilityAnalyzer({ targetPetId, pet1, pet2, interactionType
             { value: 'mating', label: 'Breeding', emoji: '💕' },
             { value: 'adoption', label: 'Adoption', emoji: '🏠' },
             { value: 'cohabitation', label: 'Living Together', emoji: '🏡' }
-        ].map(type => (<motion.button key={type.value} onClick={() => setSelectedInteractionType(type.value)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedInteractionType === type.value
+        ].map(type => (<motion.button key={type.value} onClick={() => { setSelectedInteractionType(type.value); }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedInteractionType === type.value
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
                 : 'bg-white text-gray-700 hover:bg-gray-50'}`}>
                 {type.emoji} {type.label}
@@ -452,7 +452,7 @@ export function CompatibilityAnalyzer({ targetPetId, pet1, pet2, interactionType
 
         {/* Action Buttons */}
         <div className="mt-6 flex gap-3 sm:gap-4">
-          <motion.button onClick={() => setShowDetails(!showDetails)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1 py-3 bg-white text-purple-700 rounded-xl font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center">
+          <motion.button onClick={() => { setShowDetails(!showDetails); }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1 py-3 bg-white text-purple-700 rounded-xl font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center">
             <ChartBarIcon className="h-5 w-5 mr-2"/>
             {showDetails ? 'Hide' : 'Show'} Full Report
           </motion.button>

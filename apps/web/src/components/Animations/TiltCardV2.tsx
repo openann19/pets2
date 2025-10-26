@@ -59,7 +59,7 @@ export function TiltCardV2({
   useEffect(() => {
     measure();
     window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    return () => { window.removeEventListener('resize', measure); };
   }, [measure]);
 
   const rx = useSpring(useTransform(my, [-0.5, 0.5], [maxTilt, -maxTilt]), spring);

@@ -22,7 +22,7 @@ export function SplashScreen({ onComplete, className = '' }) {
                 return newProgress;
             });
         }, 200);
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [onComplete]);
     return (<AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.5 }} className={`fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-primary-500 via-secondary-500 to-purple-600 ${className}`}>

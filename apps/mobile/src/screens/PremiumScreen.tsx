@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "../theme/Provider";
+import { useTheme, getExtendedColors } from "../theme/Provider";
 import { usePremiumScreen } from "../hooks/screens/usePremiumScreen";
 import type { NavigationProp } from "../navigation/types";
 import { Theme } from '../theme/unified-theme';
@@ -22,7 +22,9 @@ interface PremiumScreenProps {
 }
 
 function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
-  const { colors, isDark } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
+  const isDark = theme.scheme === 'dark';
 
   const {
     billingPeriod,

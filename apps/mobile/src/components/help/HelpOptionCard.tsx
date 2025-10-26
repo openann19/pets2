@@ -32,10 +32,10 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
             <View
               style={StyleSheet.flatten([
                 styles.optionIcon,
-                { backgroundColor: "Theme.colors.status.info" },
+                { backgroundColor: Theme.colors.status.info },
               ])}
             >
-              <Ionicons name={option.icon as any} size={20} color="white" />
+              <Ionicons name={option.icon} size={20} color="white" />
             </View>
             <View style={styles.optionText}>
               <Text style={styles.optionTitle}>{option.title}</Text>

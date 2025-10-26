@@ -3,7 +3,7 @@
   "compilerOptions": {
     // --- Overrides & additions for React Native ---
     "lib": ["ES2023"],
-    "types": ["jest", "react-native"],
+    "types": ["react-native"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "paths": {

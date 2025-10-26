@@ -14,9 +14,9 @@ export function MotionProvider({ children }) {
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         setReducedMotion(mediaQuery.matches);
-        const handleChange = (e) => setReducedMotion(e.matches);
+        const handleChange = (e) => { setReducedMotion(e.matches); };
         mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
+        return () => { mediaQuery.removeEventListener('change', handleChange); };
     }, []);
     const value = {
         reducedMotion,

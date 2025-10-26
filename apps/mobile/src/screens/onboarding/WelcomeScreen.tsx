@@ -21,7 +21,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import { EliteButton } from "../../components";
 import { useWelcomeScreen } from "../../hooks/screens/onboarding";
-import { useTheme } from "../../theme/Provider";
+import { useTheme, getExtendedColors } from "../../theme/Provider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { logger } from "@pawfectmatch/core";
@@ -72,7 +72,10 @@ const SPRING_CONFIG = {
 
 const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   // Theme context
-  const { colors, styles, isDark } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
+  const styles = theme.styles || {};
+  const isDark = theme.scheme === 'dark';
   const localStyles = createLocalStyles(colors);
 
   // Animation values
@@ -449,7 +452,8 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
             size="lg"
             icon="rocket"
             onPress={handleGetStarted}
-            gradient={[colors.success, `${colors.success}DD`]}
+            gradientEffect
+            gradientColors={[colors.success, `${colors.success}DD`]}
             style={localStyles.eliteGetStartedButton}
           />
 

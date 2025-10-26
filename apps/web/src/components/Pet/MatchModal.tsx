@@ -15,7 +15,7 @@ const MatchModal = ({ isOpen, onClose, matchId, currentUserPet, matchedPet, matc
             setShowConfetti(true);
             haptics.success(); // Haptic feedback
             const timer = setTimeout(() => setShowConfetti(false), 4000);
-            return () => clearTimeout(timer);
+            return () => { clearTimeout(timer); };
         }
     }, [isOpen, haptics]);
 

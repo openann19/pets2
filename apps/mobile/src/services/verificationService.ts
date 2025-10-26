@@ -8,6 +8,10 @@
 import { request } from './api';
 import { logger } from './logger';
 
+export interface VerificationRequirements {
+  [key: string]: unknown;
+}
+
 export interface VerificationStatus {
   tier: 'tier0' | 'tier1' | 'tier2' | 'tier3' | 'tier4';
   verified: boolean;
@@ -16,7 +20,7 @@ export interface VerificationStatus {
   rejectionReason?: string;
   submittedAt?: Date;
   reviewedAt?: Date;
-  requirements?: Record<string, any>;
+  requirements?: VerificationRequirements;
 }
 
 export interface IdentityVerificationData {
@@ -91,9 +95,10 @@ class VerificationService {
   async getStatus(): Promise<VerificationStatus> {
     try {
       return await request<VerificationStatus>('/verification/status', { method: 'GET' });
-    } catch (error) {
-      logger.error('Error getting verification status', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error getting verification status', { error: errorMessage });
+      throw errorMessage;
     }
   }
 
@@ -103,9 +108,10 @@ class VerificationService {
   async submitIdentityVerification(data: IdentityVerificationData): Promise<VerificationStatus> {
     try {
       return await request<VerificationStatus>('/verification/identity', { method: 'POST', body: data });
-    } catch (error) {
-      logger.error('Error submitting identity verification', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error submitting identity verification', { error: errorMessage });
+      throw errorMessage;
     }
   }
 
@@ -117,9 +123,10 @@ class VerificationService {
   ): Promise<VerificationStatus> {
     try {
       return await request<VerificationStatus>('/verification/pet-ownership', { method: 'POST', body: data });
-    } catch (error) {
-      logger.error('Error submitting pet ownership verification', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error submitting pet ownership verification', { error: errorMessage });
+      throw errorMessage;
     }
   }
 
@@ -131,9 +138,10 @@ class VerificationService {
   ): Promise<VerificationStatus> {
     try {
       return await request<VerificationStatus>('/verification/veterinary', { method: 'POST', body: data });
-    } catch (error) {
-      logger.error('Error submitting veterinary verification', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error submitting veterinary verification', { error: errorMessage });
+      throw errorMessage;
     }
   }
 
@@ -145,9 +153,10 @@ class VerificationService {
   ): Promise<VerificationStatus> {
     try {
       return await request<VerificationStatus>('/verification/organization', { method: 'POST', body: data });
-    } catch (error) {
-      logger.error('Error submitting organization verification', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error submitting organization verification', { error: errorMessage });
+      throw errorMessage;
     }
   }
 
@@ -158,9 +167,10 @@ class VerificationService {
     try {
       const response = await request<{ requirements: string[] }>(`/verification/requirements/${tier}`, { method: 'GET' });
       return response.requirements;
-    } catch (error) {
-      logger.error('Error getting requirements', { error, tier });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error getting requirements', { error: errorMessage, tier });
+      throw errorMessage;
     }
   }
 
@@ -170,9 +180,10 @@ class VerificationService {
   async cancelVerification(verificationId: string): Promise<void> {
     try {
       await request(`/verification/${verificationId}/cancel`, { method: 'POST' });
-    } catch (error) {
-      logger.error('Error canceling verification', { error, verificationId });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error canceling verification', { error: errorMessage, verificationId });
+      throw errorMessage;
     }
   }
 
@@ -183,9 +194,10 @@ class VerificationService {
     try {
       const response = await request<{ badges: string[] }>('/verification/badges', { method: 'GET' });
       return response.badges;
-    } catch (error) {
-      logger.error('Error getting badges', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error getting badges', { error: errorMessage });
+      throw errorMessage;
     }
   }
 
@@ -196,9 +208,10 @@ class VerificationService {
     try {
       const response = await request<{ hasTier: boolean }>(`/verification/has-tier/${requiredTier}`, { method: 'GET' });
       return response.hasTier;
-    } catch (error) {
-      logger.error('Error checking tier', { error, requiredTier });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error checking tier', { error: errorMessage, requiredTier });
+      throw errorMessage;
     }
   }
 
@@ -234,9 +247,10 @@ class VerificationService {
       });
 
       return response.url;
-    } catch (error) {
-      logger.error('Error uploading document', { error, documentType, verificationType });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error uploading document', { error: errorMessage, documentType, verificationType });
+      throw errorMessage;
     }
   }
 
@@ -246,9 +260,10 @@ class VerificationService {
   async requestStatusUpdate(): Promise<void> {
     try {
       await request('/verification/request-update', { method: 'POST' });
-    } catch (error) {
-      logger.error('Error requesting status update', { error });
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error requesting status update', { error: errorMessage });
+      throw errorMessage;
     }
   }
 }

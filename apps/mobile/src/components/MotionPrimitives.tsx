@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import type { ViewStyle, FlatListProps } from "react-native";
+import type { ViewStyle } from "react-native";
 import { StyleSheet, View, AccessibilityInfo } from "react-native";
 import Animated, { FadeInUp, SlideInLeft, SlideInRight, useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
@@ -110,9 +110,57 @@ export const GestureWrapper: React.FC<GestureWrapperProps> = ({
   return <View style={style}>{children}</View>;
 }
 
+interface ScrollTriggerProps {
+  children: React.ReactNode;
+  animation?: "fade" | "slide" | "slideIn" | "scale" | "scaleIn";
+  triggerPoint?: number;
+  style?: ViewStyle;
+}
+
+export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
+  children,
+  animation = "fade",
+  triggerPoint = 0.8,
+  style,
+}) => {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+  const scale = useSharedValue(0.9);
+  
+  useEffect(() => {
+    // Simulate scroll trigger
+    opacity.value = withSpring(1, { damping: 10, stiffness: 100 });
+    if (animation === "slide" || animation === "slideIn") {
+      translateY.value = withSpring(0, { damping: 10, stiffness: 100 });
+    }
+    if (animation === "scale" || animation === "scaleIn") {
+      scale.value = withSpring(1, { damping: 10, stiffness: 100 });
+    }
+  }, [triggerPoint, animation]);
+  
+  const animatedStyle = useAnimatedStyle(() => {
+    if (animation === "slide" || animation === "slideIn") {
+      return { 
+        opacity: opacity.value,
+        transform: [{ translateY: translateY.value }]
+      };
+    }
+    if (animation === "scale" || animation === "scaleIn") {
+      return {
+        opacity: opacity.value,
+        transform: [{ scale: scale.value }]
+      };
+    }
+    return { opacity: opacity.value };
+  });
+  
+  return <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>;
+};
+
 export default {
   StaggeredFadeInUpList,
   PhysicsBasedScaleIn,
   PageTransition,
   GestureWrapper,
+  ScrollTrigger,
 };

@@ -194,11 +194,13 @@ export async function processImagePipeline(
   }
 
   // Simple export
+  const target = opts.export?.target ?? 'png';
+  const quality = opts.export?.quality ?? 0.9;
   const blob = await new Promise<Blob>((r) =>
     canvas.toBlob(
       (b) => r(b!),
-      mime(opts.export.target),
-      opts.export.quality ?? 0.9
+      mime(target),
+      quality
     )
   );
 

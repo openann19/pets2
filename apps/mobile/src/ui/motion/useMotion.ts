@@ -7,7 +7,9 @@
 import { Easing } from 'react-native-reanimated';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
-export const Motion = {
+type EasingFunction = (t: number) => number;
+
+const Motion = {
   // Times tuned for 60fps and our brand feel
   time: { 
     xs: 120, 
@@ -38,44 +40,40 @@ export type MotionPreset =
   | 'fabPop';
 
 export interface MotionConfig {
-  duration: number;
-  easing: typeof Easing.bezier;
+  duration?: number;
+  easing?: EasingFunction;
   dy?: number;
   opacity?: number;
   stagger?: number;
   scaleFrom?: number;
-  spring?: typeof Motion.spring.card;
+  spring?: { damping: number; stiffness: number; mass: number };
 }
 
 export function useMotion(preset: MotionPreset): MotionConfig {
   const reduceMotion = useReducedMotion();
 
-  const config: MotionConfig = (() => {
+  const config: MotionConfig = ((): MotionConfig => {
     switch (preset) {
       case 'enterUp':
         return { 
           duration: Motion.time.md, 
-          easing: Motion.easing.emphasized, 
           dy: 24, 
           opacity: 0 
         };
       case 'enterFade':
         return { 
           duration: Motion.time.sm, 
-          easing: Motion.easing.standard, 
           opacity: 0 
         };
       case 'exitDown':
         return { 
           duration: Motion.time.sm, 
-          easing: Motion.easing.accel, 
           dy: 16, 
           opacity: 0 
         };
       case 'cardStagger':
         return { 
           duration: Motion.time.md, 
-          easing: Motion.easing.emphasized, 
           dy: 16, 
           opacity: 0, 
           stagger: 60 
@@ -95,9 +93,11 @@ export function useMotion(preset: MotionPreset): MotionConfig {
 
   // Respect Reduce Motion
   if (reduceMotion) {
-    config.duration = Motion.time.xs;
+    if (config.duration !== undefined) {
+      config.duration = Motion.time.xs;
+    }
     // Disable parallax effects
-    if (config.dy) {
+    if (config.dy !== undefined) {
       config.dy = 0;
     }
   }
@@ -106,4 +106,5 @@ export function useMotion(preset: MotionPreset): MotionConfig {
 }
 
 export { Motion };
+
 

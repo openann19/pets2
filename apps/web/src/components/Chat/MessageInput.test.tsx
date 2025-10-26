@@ -53,8 +53,8 @@ jest.mock('./StickerPicker', () => ({
 jest.mock('./VoiceRecorder', () => ({
   VoiceRecorder: ({ onSend, onCancel }: { onSend: (blob: Blob, duration: number) => void; onCancel: () => void }) => (
     <div data-testid="voice-recorder">
-      <button onClick={() => onSend(new Blob(['abc'], { type: 'audio/mp3' }), 123)}>Send Voice</button>
-      <button onClick={() => onCancel()}>Cancel</button>
+      <button onClick={() => { onSend(new Blob(['abc'], { type: 'audio/mp3' }), 123); }}>Send Voice</button>
+      <button onClick={() => { onCancel(); }}>Cancel</button>
     </div>
   ),
 }));
@@ -151,7 +151,7 @@ describe('MessageInput', () => {
         longitude: number;
       };
     }
-    (mockGeolocation.getCurrentPosition as jest.Mock).mockImplementation((success: (position: GeolocationPosition) => void) => {
+    (mockGeolocation.getCurrentPosition).mockImplementation((success: (position: GeolocationPosition) => void) => {
       success({ coords: { latitude: 12.345678, longitude: 98.765432 } });
     });
 

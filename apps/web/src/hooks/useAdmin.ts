@@ -356,7 +356,7 @@ export const useAdminSearch = () => {
         const timeoutId = setTimeout(() => {
             performSearch(searchTerm);
         }, 300); // Debounce search
-        return () => clearTimeout(timeoutId);
+        return () => { clearTimeout(timeoutId); };
     }, [searchTerm, performSearch]);
     return {
         searchTerm,

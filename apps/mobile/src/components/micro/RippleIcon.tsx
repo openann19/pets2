@@ -11,7 +11,7 @@ const RippleIcon = memo(function RippleIcon({ size = 36, stroke = 2, trigger, co
     opacity: 1 - t.value,
     transform: [{ scale: interpolate(t.value, [0, 1], [0.4, 2]) }],
     borderColor: color,
-    width: size, height: size, borderWidth: stroke, borderRadius: size / 2, position: "absolute",
+    width: size, height: size, borderWidth: stroke, borderRadius: size / 2, position: "absolute" as const,
   }));
   return <Animated.View pointerEvents="none" style={s} />;
 });

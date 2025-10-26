@@ -23,7 +23,7 @@ export const registerSchema = z.object({
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number'),
     confirmPassword: z.string(),
     phone: z.string().optional(),
-    agreeToTerms: z.boolean().refine(val => val === true, 'You must agree to the terms and conditions')
+    agreeToTerms: z.boolean().refine(val => val, 'You must agree to the terms and conditions')
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],

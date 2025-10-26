@@ -37,10 +37,10 @@ export async function jpegByteSize(
       // Ignore cleanup errors
     }
     
-    return info.size ?? 0;
-  } catch (error) {
+    return (info.exists && typeof (info as any).size === 'number') ? (info as any).size : 0;
+  } catch (err) {
     const { logger } = await import('../services/logger');
-    logger.warn('QualityScore: Failed to compute size', { error });
+    logger.warn('QualityScore: Failed to compute size', { error: err instanceof Error ? err : new Error(String(err)) });
     return 0;
   }
 }
@@ -64,19 +64,31 @@ export async function pickSharpest(
   }
 
   if (uris.length === 1) {
-    return uris[0];
+    const uri = uris[0];
+    if (!uri) {
+      throw new Error("Empty URI provided");
+    }
+    return uri;
   }
 
   let bestUri = uris[0];
+  if (!bestUri) {
+    throw new Error("No valid URI found");
+  }
   let bestSize = -1;
 
   for (const uri of uris) {
+    if (!uri) continue;
     const size = await jpegByteSize(uri, sampleW, quality);
     
     if (size > bestSize) {
       bestSize = size;
       bestUri = uri;
     }
+  }
+
+  if (!bestUri) {
+    throw new Error("Failed to determine best URI");
   }
 
   return bestUri;

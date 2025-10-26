@@ -410,7 +410,7 @@ export function AdvancedInteractionTest() {
               <View style={styles.resultContent}>
                 <View style={styles.resultLeft}>
                   <Ionicons
-                    name={getStatusIcon(test.status) as any}
+                    name={getStatusIcon(test.status)}
                     size={24}
                     color={getStatusColor(test.status)}
                   />

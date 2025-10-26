@@ -106,7 +106,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Pet Name*
         </label>
-        <input type="text" id="name" value={profile.name || ''} onChange={(e) => handleChange('name', e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Your pet's name" required/>
+        <input type="text" id="name" value={profile.name || ''} onChange={(e) => { handleChange('name', e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Your pet's name" required/>
       </div>
 
       {/* Species */}
@@ -117,7 +117,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {speciesOptions.map((option) => (<button key={option.value} type="button" className={`p-2 rounded-lg border text-center transition-colors ${profile.species === option.value
                 ? 'bg-pink-100 dark:bg-pink-900/30 border-pink-500 text-pink-800 dark:text-pink-300'
-                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => handleChange('species', option.value)}>
+                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => { handleChange('species', option.value); }}>
               <span className="text-xl block mb-1">{option.label.split(' ')[0]}</span>
               <span className="text-sm">{option.label.split(' ')[1]}</span>
             </button>))}
@@ -129,7 +129,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <label htmlFor="breed" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Breed
         </label>
-        <input type="text" id="breed" value={profile.breed || ''} onChange={(e) => handleChange('breed', e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="E.g., Golden Retriever"/>
+        <input type="text" id="breed" value={profile.breed || ''} onChange={(e) => { handleChange('breed', e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="E.g., Golden Retriever"/>
       </div>
 
       {/* Age or Birthday */}
@@ -139,8 +139,8 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
             Age
           </label>
           <div className="grid grid-cols-2 gap-2">
-            <input type="number" id="age" min="0" value={profile.age || ''} onChange={(e) => handleChange('age', parseInt(e.target.value) || '')} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Age"/>
-            <select value={profile.ageUnit || 'years'} onChange={(e) => handleChange('ageUnit', e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+            <input type="number" id="age" min="0" value={profile.age || ''} onChange={(e) => { handleChange('age', parseInt(e.target.value) || ''); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Age"/>
+            <select value={profile.ageUnit || 'years'} onChange={(e) => { handleChange('ageUnit', e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
               <option value="days">Days</option>
               <option value="weeks">Weeks</option>
               <option value="months">Months</option>
@@ -153,7 +153,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
           <label htmlFor="birthday" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Birthday
           </label>
-          <input type="date" id="birthday" value={profile.birthday || ''} onChange={(e) => handleChange('birthday', e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+          <input type="date" id="birthday" value={profile.birthday || ''} onChange={(e) => { handleChange('birthday', e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
         </div>
       </div>
 
@@ -165,7 +165,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <div className="grid grid-cols-3 gap-2">
           {genderOptions.map((option) => (<button key={option.value} type="button" className={`p-3 rounded-lg border text-center transition-colors ${profile.gender === option.value
                 ? 'bg-pink-100 dark:bg-pink-900/30 border-pink-500 text-pink-800 dark:text-pink-300'
-                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => handleChange('gender', option.value)}>
+                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => { handleChange('gender', option.value); }}>
               {option.label}
             </button>))}
         </div>
@@ -177,8 +177,8 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
           Weight
         </label>
         <div className="grid grid-cols-2 gap-2">
-          <input type="number" id="weight" min="0" step="0.1" value={profile.weight || ''} onChange={(e) => handleChange('weight', parseFloat(e.target.value) || '')} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Weight"/>
-          <select value={profile.weightUnit || 'lb'} onChange={(e) => handleChange('weightUnit', e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+          <input type="number" id="weight" min="0" step="0.1" value={profile.weight || ''} onChange={(e) => { handleChange('weight', parseFloat(e.target.value) || ''); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="Weight"/>
+          <select value={profile.weightUnit || 'lb'} onChange={(e) => { handleChange('weightUnit', e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent">
             <option value="lb">lb</option>
             <option value="kg">kg</option>
             <option value="g">g</option>
@@ -191,13 +191,13 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <label htmlFor="color" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Color
         </label>
-        <input type="text" id="color" value={profile.color || ''} onChange={(e) => handleChange('color', e.target.value)} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="E.g., Golden, Black & White"/>
+        <input type="text" id="color" value={profile.color || ''} onChange={(e) => { handleChange('color', e.target.value); }} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent" placeholder="E.g., Golden, Black & White"/>
       </div>
     </div>);
     const renderPersonality = () => (<div className="space-y-6">
       {/* Description */}
       <div>
-        <CustomTextarea id="description" value={profile.description || ''} onChange={(e) => handleChange('description', e.target.value)} rows={4} variant="outline" size="medium" maxHeight={200} label="About" placeholder="Tell us about your pet..." showWordCount={true} animateOnFocus={true} className="focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
+        <CustomTextarea id="description" value={profile.description || ''} onChange={(e) => { handleChange('description', e.target.value); }} rows={4} variant="outline" size="medium" maxHeight={200} label="About" placeholder="Tell us about your pet..." showWordCount={true} animateOnFocus={true} className="focus:ring-2 focus:ring-pink-500 focus:border-transparent"/>
       </div>
 
       {/* Personality traits */}
@@ -216,7 +216,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <div className="flex flex-wrap gap-2 mb-2">
           {(profile.personality || []).map((trait, index) => (<span key={index} className="px-3 py-1 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300 rounded-full text-sm flex items-center">
               {trait}
-              <button type="button" onClick={() => handleRemoveStringArrayItem('personality', index)} className="ml-1 text-pink-600 hover:text-pink-800 dark:hover:text-pink-400">
+              <button type="button" onClick={() => { handleRemoveStringArrayItem('personality', index); }} className="ml-1 text-pink-600 hover:text-pink-800 dark:hover:text-pink-400">
                 ×
               </button>
             </span>))}
@@ -247,7 +247,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <div className="space-y-2">
           {activityOptions.map((option) => (<button key={option.value} type="button" className={`w-full p-3 rounded-lg border text-left transition-colors flex items-center ${profile.activityLevel === option.value
                 ? 'bg-pink-100 dark:bg-pink-900/30 border-pink-500 text-pink-800 dark:text-pink-300'
-                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => handleChange('activityLevel', option.value)}>
+                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => { handleChange('activityLevel', option.value); }}>
               <span className="w-4 h-4 mr-2 rounded-full border border-current inline-block"></span>
               {option.label}
             </button>))}
@@ -262,7 +262,7 @@ export const PetProfileEditor = ({ pet, onSave, isLoading = false }) => {
         <div className="space-y-2">
           {socializationOptions.map((option) => (<button key={option.value} type="button" className={`w-full p-3 rounded-lg border text-left transition-colors flex items-center ${profile.socialization === option.value
                 ? 'bg-pink-100 dark:bg-pink-900/30 border-pink-500 text-pink-800 dark:text-pink-300'
-                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => handleChange('socialization', option.value)}>
+                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => { handleChange('socialization', option.value); }}>
               <span className="w-4 h-4 mr-2 rounded-full border border-current inline-block"></span>
               {option.label}
             </button>))}

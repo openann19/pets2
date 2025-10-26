@@ -50,8 +50,11 @@ export class AbortableQueue {
   cancel(id: string) {
     const idx = this.q.findIndex((j) => j.id === id);
     if (idx >= 0) {
-      this.q[idx].ctrl.abort();
-      this.q.splice(idx, 1);
+      const job = this.q[idx];
+      if (job) {
+        job.ctrl.abort();
+        this.q.splice(idx, 1);
+      }
     }
   }
 

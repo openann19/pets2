@@ -4,6 +4,7 @@
  */
 import { useNavigation } from "@react-navigation/native";
 import { useUserIntent } from "../domains/onboarding/useUserIntent";
+import type { OnboardingScreenProps } from "../../navigation/types";
 
 interface UseUserIntentScreenReturn {
   // From domain hook
@@ -19,7 +20,7 @@ interface UseUserIntentScreenReturn {
 }
 
 export const useUserIntentScreen = (): UseUserIntentScreenReturn => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const {
     intents,
@@ -35,7 +36,7 @@ export const useUserIntentScreen = (): UseUserIntentScreenReturn => {
 
     try {
       const intent = await confirmIntent();
-      navigation.navigate("PetProfileSetup" as never, { userIntent: intent });
+      navigation.navigate("PetProfileSetup", { userIntent: intent });
     } catch (error) {
       // Error handling is done in the domain hook
     }

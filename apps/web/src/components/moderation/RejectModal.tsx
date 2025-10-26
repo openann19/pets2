@@ -86,7 +86,7 @@ export default function RejectModal({ isOpen, onClose, onConfirm }) {
             }
         };
         document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
+        return () => { document.removeEventListener('keydown', handleKeyDown); };
     }, [isOpen, onClose]);
     useEffect(() => {
         // Reset state when modal closes
@@ -145,7 +145,7 @@ export default function RejectModal({ isOpen, onClose, onConfirm }) {
 
           {/* Templates Grid */}
           <div className="grid grid-cols-2 gap-3 mb-6">
-            {REJECTION_TEMPLATES.map((template, index) => (<motion.button key={template.category} ref={index === 0 ? firstButtonRef : null} onClick={() => handleTemplateSelect(template.category)} whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }} className={`
+            {REJECTION_TEMPLATES.map((template, index) => (<motion.button key={template.category} ref={index === 0 ? firstButtonRef : null} onClick={() => { handleTemplateSelect(template.category); }} whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }} className={`
                   p-4 rounded-xl border-2 text-left transition-all shadow-sm
                   ${selectedCategory === template.category
                     ? 'ring-2 ring-red-500 border-red-500 bg-red-50 shadow-lg'
@@ -164,7 +164,7 @@ export default function RejectModal({ isOpen, onClose, onConfirm }) {
           {/* Custom Reason Toggle */}
           {selectedCategory && (<div className="mb-4">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={useCustomReason} onChange={(e) => setUseCustomReason(e.target.checked)} className="w-4 h-4 text-red-600 rounded focus:ring-2 focus:ring-red-500"/>
+                <input type="checkbox" checked={useCustomReason} onChange={(e) => { setUseCustomReason(e.target.checked); }} className="w-4 h-4 text-red-600 rounded focus:ring-2 focus:ring-red-500"/>
                 <span className="text-sm font-medium text-gray-700">
                   Customize rejection message
                 </span>
@@ -177,7 +177,7 @@ export default function RejectModal({ isOpen, onClose, onConfirm }) {
                 <Sparkles className="h-4 w-4 text-yellow-500"/>
                 Custom Message (shown to user)
               </label>
-              <textarea id="custom-reason" value={customReason} onChange={(e) => setCustomReason(e.target.value)} rows={4} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none transition-all" placeholder="Enter a custom rejection reason..."/>
+              <textarea id="custom-reason" value={customReason} onChange={(e) => { setCustomReason(e.target.value); }} rows={4} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none transition-all" placeholder="Enter a custom rejection reason..."/>
               <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                 <Sparkles className="h-3 w-3"/>
                 Be specific and constructive. This message will help the user understand what went wrong.

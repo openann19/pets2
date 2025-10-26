@@ -42,8 +42,9 @@ export function useScrollPersistence({
           const offset = Number(saved);
           setInitialOffset(offset);
         }
-      } catch (error) {
-        logger.error('Failed to restore scroll position', { key, error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to restore scroll position', { key, error: err });
       }
     };
 
@@ -69,8 +70,9 @@ export function useScrollPersistence({
 
       try {
         await AsyncStorage.setItem(key, String(offset));
-      } catch (error) {
-        logger.error('Failed to save scroll position', { key, error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to save scroll position', { key, error: err });
       }
     },
     [key, enabled],

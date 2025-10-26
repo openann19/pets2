@@ -1,5 +1,10 @@
 import { useRef } from "react";
 
+interface WindowWithUndo {
+  __undoPillShow?: () => void;
+  __undoPillHide?: () => void;
+}
+
 /**
  * Orchestrates optimistic like + undo.
  * - Calls onLike() immediately (may return a cleanup function).
@@ -21,17 +26,16 @@ export function useLikeWithUndo({
   };
 
   const triggerUndoPill = () => {
-    // Imperative trigger attached in UndoPill
-    // @ts-ignore
-    if (typeof window.__undoPillShow === "function") window.__undoPillShow();
+    const win = window as unknown as WindowWithUndo;
+    if (typeof win.__undoPillShow === "function") win.__undoPillShow();
   };
 
   const undoNow = () => {
     cleanupRef.current?.();
     cleanupRef.current = null;
     onUndo?.();
-    // @ts-ignore
-    if (typeof window.__undoPillHide === "function") window.__undoPillHide();
+    const win = window as unknown as WindowWithUndo;
+    if (typeof win.__undoPillHide === "function") win.__undoPillHide();
   };
 
   return { likeNow, triggerUndoPill, undoNow };

@@ -424,7 +424,7 @@ export function useAnimationBudget(config?: Partial<AnimationBudgetConfig>) {
         setRecommendedSettings(settings);
       }, config?.monitoringInterval || DEFAULT_CONFIG.monitoringInterval);
 
-      return () => clearInterval(interval);
+      return () => { clearInterval(interval); };
     }
   }, [config, manager, detector]);
 

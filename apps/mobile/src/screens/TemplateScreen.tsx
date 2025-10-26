@@ -44,7 +44,7 @@ export default function TemplateScreen() {
       {/* Hero section with animation */}
       <Animated.View entering={FadeInDown.duration(220)}>
         <AdvancedCard 
-          {...CardConfigs.glass()} 
+          {...CardConfigs.glass({})} 
           style={{ 
             padding: Theme.spacing.lg, 
             marginBottom: Theme.spacing.lg 

@@ -16,16 +16,16 @@ export function AccessibilityProvider({ children }) {
         // Reduced motion
         const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         setReducedMotion(motionQuery.matches);
-        const handleMotionChange = (e) => setReducedMotion(e.matches);
+        const handleMotionChange = (e) => { setReducedMotion(e.matches); };
         motionQuery.addEventListener('change', handleMotionChange);
         // High contrast
         const contrastQuery = window.matchMedia('(prefers-contrast: high)');
         setHighContrast(contrastQuery.matches);
-        const handleContrastChange = (e) => setHighContrast(e.matches);
+        const handleContrastChange = (e) => { setHighContrast(e.matches); };
         contrastQuery.addEventListener('change', handleContrastChange);
         // Focus visible
-        const handleFocusIn = () => setFocusVisible(true);
-        const handleMouseDown = () => setFocusVisible(false);
+        const handleFocusIn = () => { setFocusVisible(true); };
+        const handleMouseDown = () => { setFocusVisible(false); };
         document.addEventListener('keydown', handleFocusIn);
         document.addEventListener('mousedown', handleMouseDown);
         return () => {

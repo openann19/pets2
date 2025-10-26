@@ -62,10 +62,12 @@ export default function ActiveCallScreen({
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: Animated.event(
-      [null, { dx: localVideoAnim.x, dy: localVideoAnim.y }],
-      { useNativeDriver: false },
-    ),
+    onPanResponderMove: (evt, gestureState) => {
+      localVideoAnim.setValue({
+        x: 20 + gestureState.dx,
+        y: 100 + gestureState.dy,
+      });
+    },
     onPanResponderRelease: (evt, gestureState) => {
       // Snap to edges
       const { dx, dy } = gestureState;

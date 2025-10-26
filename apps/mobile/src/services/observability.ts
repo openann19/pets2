@@ -61,6 +61,7 @@ class ObservabilityService {
   private config: ObservabilityConfig;
   private performanceMonitor = performanceMonitor;
   private isInitialized = false;
+  private networkUnsubscribe?: () => void;
 
   private constructor() {
     this.config = {
@@ -367,14 +368,18 @@ class ObservabilityService {
     return 0;
   }
 
-  private sanitizeSentryEvent(event: any): any {
+  private sanitizeSentryEvent<T extends Sentry.ErrorEvent>(event: T): T {
     // Remove sensitive data from Sentry events
-    if (event.request?.data) {
-      // Remove passwords, tokens, etc.
-      const sanitized = { ...event.request.data };
-      if (sanitized.password) sanitized.password = "[REDACTED]";
-      if (sanitized.token) sanitized.token = "[REDACTED]";
-      event.request.data = sanitized;
+    const sentryEvent = event as Record<string, unknown>;
+    if (sentryEvent.request && typeof sentryEvent.request === 'object' && 'data' in sentryEvent.request) {
+      const request = sentryEvent.request as { data?: Record<string, unknown> };
+      if (request.data) {
+        // Remove passwords, tokens, etc.
+        const sanitized = { ...request.data };
+        if ('password' in sanitized) sanitized.password = "[REDACTED]";
+        if ('token' in sanitized) sanitized.token = "[REDACTED]";
+        request.data = sanitized;
+      }
     }
 
     return event;
@@ -391,7 +396,7 @@ class ObservabilityService {
       });
 
       // Store unsubscribe function for cleanup
-      (this as any).networkUnsubscribe = unsubscribe;
+      this.networkUnsubscribe = unsubscribe;
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       logger.error("Failed to initialize network monitoring", { error: err });
@@ -404,8 +409,8 @@ class ObservabilityService {
   cleanup(): void {
     // No explicit stop API; rely on GC and app lifecycle
 
-    if ((this as any).networkUnsubscribe) {
-      (this as any).networkUnsubscribe();
+    if (this.networkUnsubscribe) {
+      this.networkUnsubscribe();
     }
   }
 }

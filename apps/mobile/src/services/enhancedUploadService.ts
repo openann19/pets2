@@ -20,12 +20,41 @@ export interface UploadProgress {
   message?: string;
 }
 
+/**
+ * Photo upload analysis result from backend moderation
+ */
+export interface PhotoUploadAnalysis {
+  isPet: boolean;
+  overall: number;
+  labels: Array<{ name: string; confidence: number }>;
+  breedCandidates: Array<{ name: string; confidence: number }>;
+  quality: {
+    dims: { width: number; height: number };
+    exposure: number;
+    contrast: number;
+    sharpness: number;
+  };
+  healthSignals: {
+    coatScore: number;
+    eyesScore: number;
+    postureScore: number;
+    energyScore: number;
+  };
+  safety: {
+    labels: Array<{ label: string; confidence: number }>;
+    safe: boolean;
+    moderationScore: number;
+  };
+  suggestions: string[];
+  analyzedAt?: string;
+}
+
 export interface UploadResult {
   uploadId: string;
   s3Key: string;
   url: string;
   status: string;
-  analysis?: any;
+  analysis?: PhotoUploadAnalysis;
 }
 
 /**
@@ -237,7 +266,7 @@ export class EnhancedUploadService {
             status: string;
             flagReason?: string;
           };
-          analysis?: any;
+          analysis?: PhotoUploadAnalysis;
         }
       }>(`/uploads/${uploadId}`, {
         method: 'GET'

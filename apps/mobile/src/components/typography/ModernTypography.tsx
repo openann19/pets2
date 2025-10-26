@@ -163,7 +163,8 @@ function ModernText({
   const variantConfig = VARIANT_CONFIGS[variant];
 
   // Get text color
-  const textColor = Theme.colors.text.primary[color];
+  const textColorKey = color || 'primary';
+  const textColor = Theme.colors.text[textColorKey as keyof typeof Theme.colors.text];
 
   // Build text style
   const textStyle: TextStyle = {
@@ -174,7 +175,7 @@ function ModernText({
 
   // Entrance animation
   const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation(animationType, 0, "gentle");
+    useEntranceAnimation(animationType);
 
   // Start entrance animation if enabled
   React.useEffect(() => {
@@ -185,9 +186,9 @@ function ModernText({
 
   // Render gradient text
   if (gradient || gradientColors) {
-    const gradientConfig = gradient ? Theme.gradients[gradient] : null;
+    const gradientConfig = gradient ? (Theme.gradients && Theme.gradients[gradient as keyof typeof Theme.gradients]) : null;
     const colors = gradientColors ||
-      gradientConfig?.colors || [
+      (gradientConfig && typeof gradientConfig === 'object' && 'colors' in gradientConfig ? (gradientConfig as any).colors : null) || [
         Theme.colors.primary[500],
         Theme.colors.primary[400],
       ];
@@ -296,15 +297,15 @@ export const Label: React.FC<Omit<ModernTextProps, "variant">> = (props) => (
 // === GRADIENT TEXT COMPONENTS ===
 export const GradientHeading: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText variant="h1" gradient="primary" {...props} />;
+) => <ModernText variant="h1" gradient={("primary" as any)} {...props} />;
 
 export const GradientText: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText gradient="primary" {...props} />;
+) => <ModernText gradient={("primary" as any)} {...props} />;
 
 export const HolographicText: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText gradient="holographic" {...props} />;
+) => <ModernText gradient={("holographic" as any)} {...props} />;
 
 // === ANIMATED TEXT COMPONENTS ===
 export const AnimatedHeading: React.FC<Omit<ModernTextProps, "animated">> = (

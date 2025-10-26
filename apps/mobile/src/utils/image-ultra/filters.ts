@@ -34,9 +34,9 @@ export function medianDenoise(canvas: HTMLCanvasElement, radius = 1) {
           const xx = clamp(x + dx, 0, w - 1);
           const yy = clamp(y + dy, 0, h - 1);
           const idx = (yy * w + xx) * 4;
-          rArr.push(src.data[idx]);
-          gArr.push(src.data[idx + 1]);
-          bArr.push(src.data[idx + 2]);
+          rArr.push(src.data[idx] ?? 0);
+          gArr.push(src.data[idx + 1] ?? 0);
+          bArr.push(src.data[idx + 2] ?? 0);
         }
       }
 
@@ -48,10 +48,10 @@ export function medianDenoise(canvas: HTMLCanvasElement, radius = 1) {
       const mid = win >> 1;
       const i = (y * w + x) * 4;
 
-      dst.data[i] = rArr[mid];
-      dst.data[i + 1] = gArr[mid];
-      dst.data[i + 2] = bArr[mid];
-      dst.data[i + 3] = src.data[i + 3];
+      dst.data[i] = rArr[mid] ?? 0;
+      dst.data[i + 1] = gArr[mid] ?? 0;
+      dst.data[i + 2] = bArr[mid] ?? 0;
+      dst.data[i + 3] = src.data[i + 3] ?? 255;
     }
   }
 
@@ -91,11 +91,13 @@ export function unsharpMask(
 
   for (let i = 0; i < src.data.length; i += 4) {
     for (let c = 0; c < 3; c++) {
-      const diff = src.data[i + c] - blr.data[i + c];
+      const srcVal = src.data[i + c] ?? 0;
+      const blrVal = blr.data[i + c] ?? 0;
+      const diff = srcVal - blrVal;
       const add = Math.abs(diff) > threshold ? diff * amount : 0;
-      out.data[i + c] = clampByte(src.data[i + c] + add);
+      out.data[i + c] = clampByte(srcVal + add);
     }
-    out.data[i + 3] = src.data[i + 3];
+    out.data[i + 3] = src.data[i + 3] ?? 255;
   }
 
   ctx.putImageData(out, 0, 0);

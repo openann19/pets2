@@ -15,9 +15,10 @@ export function computeHistogram(canvas: HTMLCanvasElement): Uint32Array {
 
   for (let i = 0; i < data.length; i += 4) {
     const l = Math.round(
-      0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]
+      0.2126 * (data[i] ?? 0) + 0.7152 * (data[i + 1] ?? 0) + 0.0722 * (data[i + 2] ?? 0)
     );
-    hist[l]++;
+    const idx = Math.min(Math.max(l, 0), 255);
+    hist[idx] = (hist[idx] ?? 0) + 1;
   }
 
   return hist;
@@ -38,7 +39,7 @@ export function highlightClipFraction(
   const total = hist.reduce((a, b) => a + b, 0);
   let clipped = 0;
   for (let i = threshold; i < 256; i++) {
-    clipped += hist[i];
+    clipped += hist[i] ?? 0;
   }
   return total ? clipped / total : 0;
 }

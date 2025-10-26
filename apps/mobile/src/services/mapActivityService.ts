@@ -30,6 +30,12 @@ export interface MapPin {
   updatedAt: string;
 }
 
+export interface MapSearchParams {
+  latitude: number;
+  longitude: number;
+  maxDistance?: number;
+}
+
 export async function startActivity(params: CreateActivityParams): Promise<MapPin> {
   const location = await Location.getCurrentPositionAsync({
     accuracy: Location.Accuracy.Balanced,
@@ -64,12 +70,12 @@ export async function getNearbyPins(
   maxDistance?: number
 ): Promise<MapPin[]> {
   const { request } = await import('./api');
-  const params: any = { latitude, longitude };
+  const params: Record<string, number> = { latitude, longitude };
   if (maxDistance) params.maxDistance = maxDistance;
 
   const response = await request<MapPin[]>('/map/pins', {
     method: 'GET',
-    params,
+    params: params as Record<string, string | number | boolean | null | undefined>,
   });
   return response;
 }

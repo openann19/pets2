@@ -6,14 +6,14 @@
 
 import * as FileSystem from "expo-file-system";
 
-type SkiaTypes = typeof import("@shopify/react-native-skia");
-
 /**
  * Lazy load Skia to avoid bundling if not installed
+ * @shopify/react-native-skia is optional - module may not be present
  */
-async function loadSkia(): Promise<SkiaTypes | null> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadSkia(): Promise<any> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-explicit-any
     return require("@shopify/react-native-skia");
   } catch {
     return null;

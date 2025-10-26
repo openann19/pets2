@@ -350,11 +350,11 @@ export default function KYCManagement() {
               <div className="lg:col-span-2">
                 <motion.div className="relative" whileFocus={{ scale: 1.02 }} transition={SPRING_CONFIGS.gentle}>
                   <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"/>
-                  <input type="text" placeholder="Search by name, email, or ID..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm"/>
+                  <input type="text" placeholder="Search by name, email, or ID..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); }} className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm"/>
                 </motion.div>
               </div>
               
-              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+              <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); }} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
                 <option value="in_review">In Review</option>
@@ -363,7 +363,7 @@ export default function KYCManagement() {
                 <option value="expired">Expired</option>
               </select>
               
-              <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+              <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); }} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
                 <option value="all">All Types</option>
                 <option value="identity">Identity</option>
                 <option value="address">Address</option>
@@ -372,7 +372,7 @@ export default function KYCManagement() {
                 <option value="comprehensive">Comprehensive</option>
               </select>
               
-              <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+              <select value={priorityFilter} onChange={(e) => { setPriorityFilter(e.target.value); }} className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm">
                 <option value="all">All Priority</option>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -456,10 +456,10 @@ export default function KYCManagement() {
             }} className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
                             <EyeIcon className="w-4 h-4"/>
                           </motion.button>
-                          <motion.button onClick={() => handleVerificationAction('approve', verification.id)} className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
+                          <motion.button onClick={() => { handleVerificationAction('approve', verification.id); }} className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
                             <CheckCircleIcon className="w-4 h-4"/>
                           </motion.button>
-                          <motion.button onClick={() => handleVerificationAction('reject', verification.id)} className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
+                          <motion.button onClick={() => { handleVerificationAction('reject', verification.id); }} className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all duration-200" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} transition={SPRING_CONFIGS.gentle}>
                             <XCircleIcon className="w-4 h-4"/>
                           </motion.button>
                         </div>
@@ -566,7 +566,7 @@ export default function KYCManagement() {
                 </motion.div>
                 
                 <nav className="space-y-2">
-                  {tabs.map((tab, index) => (<motion.button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${activeTab === tab.id
+                  {tabs.map((tab, index) => (<motion.button key={tab.id} onClick={() => { setActiveTab(tab.id); }} className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden group ${activeTab === tab.id
                 ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-lg border border-purple-200'
                 : 'text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:text-gray-800'}`} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 + index * 0.1, ...SPRING_CONFIGS.gentle }} whileHover={{
                 scale: 1.02,
@@ -602,7 +602,7 @@ export default function KYCManagement() {
 
       {/* Verification Modal */}
       <AnimatePresence>
-        {showVerificationModal && selectedVerification && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowVerificationModal(false)}>
+        {showVerificationModal && selectedVerification && (<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => { setShowVerificationModal(false); }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <h3 className="text-lg font-semibold mb-4">Verification Details</h3>
               <div className="space-y-4">
@@ -653,7 +653,7 @@ export default function KYCManagement() {
               </div>
               
               <div className="flex justify-end space-x-3 mt-6">
-                <PremiumButton variant="glass" onClick={() => setShowVerificationModal(false)}>
+                <PremiumButton variant="glass" onClick={() => { setShowVerificationModal(false); }}>
                   Close
                 </PremiumButton>
                 <PremiumButton variant="primary" onClick={() => {

@@ -9,6 +9,15 @@ export type {
   PetFilters,
 } from "@pawfectmatch/core";
 
+// Export API response types
+export * from "./api-responses";
+
+// Export navigation types
+export * from "./navigation";
+
+// Export Reanimated types
+export * from "./reanimated";
+
 // Mobile-specific type extensions (if needed in future)
 export interface MobileUserPreferences {
   maxDistance: number;

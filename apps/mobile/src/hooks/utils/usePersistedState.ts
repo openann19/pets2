@@ -45,8 +45,9 @@ export function usePersistedState<T>({
         if (saved !== null) {
           setValueState(JSON.parse(saved));
         }
-      } catch (error) {
-        logger.error('Failed to load persisted state', { key, error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to load persisted state', { key, error: err });
       } finally {
         setIsLoading(false);
       }
@@ -64,8 +65,9 @@ export function usePersistedState<T>({
 
       try {
         void AsyncStorage.setItem(key, JSON.stringify(newValue));
-      } catch (error) {
-        logger.error('Failed to persist state', { key, error });
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error('Failed to persist state', { key, error: err });
       }
     },
     [key, enabled],
@@ -75,8 +77,9 @@ export function usePersistedState<T>({
     try {
       await AsyncStorage.removeItem(key);
       setValueState(initialValue);
-    } catch (error) {
-      logger.error('Failed to clear persisted state', { key, error });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to clear persisted state', { key, error: err });
     }
   }, [key, initialValue]);
 

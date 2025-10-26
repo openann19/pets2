@@ -176,7 +176,7 @@ export function DeleteAccountDialog({ onOpenChange, userEmail, userId, onSuccess
         <Button variant="outline" onClick={() => onOpenChange(false)}>
           Cancel
         </Button>
-        <Button variant="destructive" onClick={() => setStep('export')}>
+        <Button variant="destructive" onClick={() => { setStep('export'); }}>
           Continue
         </Button>
       </DialogFooterComponent>
@@ -216,14 +216,14 @@ export function DeleteAccountDialog({ onOpenChange, userEmail, userId, onSuccess
       </div>
 
       <DialogFooterComponent className="gap-2">
-        <Button variant="outline" onClick={() => setStep('warning')}>
+        <Button variant="outline" onClick={() => { setStep('warning'); }}>
           Back
         </Button>
         {!exportRequested && (<Button variant="outline" onClick={handleExportData} disabled={isProcessing} className="border-blue-600 text-blue-600 hover:bg-blue-50">
             <Download className="h-4 w-4 mr-2"/>
             {isProcessing ? 'Requesting...' : 'Download My Data'}
           </Button>)}
-        <Button variant="destructive" onClick={() => setStep('final')}>
+        <Button variant="destructive" onClick={() => { setStep('final'); }}>
           Skip & Continue
         </Button>
       </DialogFooterComponent>
@@ -239,7 +239,7 @@ export function DeleteAccountDialog({ onOpenChange, userEmail, userId, onSuccess
       <div className="space-y-4 py-4">
         <div className="space-y-2">
           <Label htmlFor="reason">Why are you leaving? (Optional)</Label>
-          <Select value={reason} onValueChange={(value) => setReason(value)}>
+          <Select value={reason} onValueChange={(value) => { setReason(value); }}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -255,20 +255,20 @@ export function DeleteAccountDialog({ onOpenChange, userEmail, userId, onSuccess
 
         <div className="space-y-2">
           <Label htmlFor="feedback">Additional Feedback (Optional)</Label>
-          <Textarea id="feedback" value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Help us improve by sharing your experience..." rows={3}/>
+          <Textarea id="feedback" value={feedback} onChange={(e) => { setFeedback(e.target.value); }} placeholder="Help us improve by sharing your experience..." rows={3}/>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="confirmEmail">
             Confirm your email: <span className="text-red-500">*</span>
           </Label>
-          <Input id="confirmEmail" type="email" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} placeholder={userEmail} required/>
+          <Input id="confirmEmail" type="email" value={confirmEmail} onChange={(e) => { setConfirmEmail(e.target.value); }} placeholder={userEmail} required/>
           {confirmEmail && confirmEmail !== userEmail && (<p className="text-sm text-red-500">Email does not match</p>)}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="twoFactor">Two-Factor Code (if enabled)</Label>
-          <Input id="twoFactor" value={twoFactorCode} onChange={(e) => setTwoFactorCode(e.target.value)} placeholder="000000" maxLength={6}/>
+          <Input id="twoFactor" value={twoFactorCode} onChange={(e) => { setTwoFactorCode(e.target.value); }} placeholder="000000" maxLength={6}/>
         </div>
 
         {error && (<Alert className="border-red-500 bg-red-50">
@@ -286,7 +286,7 @@ export function DeleteAccountDialog({ onOpenChange, userEmail, userId, onSuccess
       </div>
 
       <DialogFooterComponent className="gap-2">
-        <Button variant="outline" onClick={() => setStep('export')}>
+        <Button variant="outline" onClick={() => { setStep('export'); }}>
           Back
         </Button>
         <Button variant="destructive" onClick={handleDeleteAccount} disabled={isProcessing || !confirmEmail || confirmEmail !== userEmail}>

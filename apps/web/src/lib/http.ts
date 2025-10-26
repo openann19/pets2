@@ -53,7 +53,7 @@ class HttpClient {
     async fetchWithTimeout(url, options) {
         const timeout = options.timeout || this.default;
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const timeoutId = setTimeout(() => { controller.abort(); }, timeout);
         try {
             const response = await fetch(url, {
                 ...options,

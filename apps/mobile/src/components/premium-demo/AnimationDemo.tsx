@@ -83,7 +83,7 @@ export default function AnimationDemo() {
         </StaggeredFadeInUpList>
 
         {/* Page Transition Demo */}
-        <PageTransition type="scale" duration={800}>
+        <PageTransition type="fade" duration={800}>
           <View
             style={{
               padding: 20,

@@ -205,6 +205,7 @@ const createRadiusScale = (): RadiusScale => {
     xl: pxToNumber(DESIGN_RADIUS["2xl"]),
     "2xl": pxToNumber(DESIGN_RADIUS["3xl"]),
     full: pxToNumber(DESIGN_RADIUS.full),
+    pill: 9999,
   };
 };
 

@@ -51,17 +51,17 @@ export const SwipeCardActions = ({ onLike, onPass, onSuperLike, hapticFeedback =
     };
     return (<div className="flex justify-center space-x-6 mt-4">
       {/* Pass Button */}
-      <motion.button onClick={() => handleAction('pass', onPass)} className="w-16 h-16 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200" whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.9 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1, type: 'spring', stiffness: 300 }}>
+      <motion.button onClick={() => { handleAction('pass', onPass); }} className="w-16 h-16 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200" whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.9 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1, type: 'spring', stiffness: 300 }}>
         <XMarkIcon className="w-8 h-8"/>
       </motion.button>
 
       {/* Super Like Button */}
-      <motion.button onClick={() => handleAction('superlike', onSuperLike)} className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200" whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.9 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}>
+      <motion.button onClick={() => { handleAction('superlike', onSuperLike); }} className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200" whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.9 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}>
         <SparklesIcon className="w-8 h-8"/>
       </motion.button>
 
       {/* Like Button */}
-      <motion.button onClick={() => handleAction('like', onLike)} className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200" whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.9 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.3, type: 'spring', stiffness: 300 }}>
+      <motion.button onClick={() => { handleAction('like', onLike); }} className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200" whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.9 }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.3, type: 'spring', stiffness: 300 }}>
         <HeartIcon className="w-8 h-8"/>
       </motion.button>
     </div>);

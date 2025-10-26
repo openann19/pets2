@@ -270,7 +270,7 @@ export const useUltraBreedFiltering = () => {
                 discoverPets();
             }
         }, 500);
-        return () => clearTimeout(timer);
+        return () => { clearTimeout(timer); };
     }, [filters, hasActiveFilters, discoverPets]);
     return {
         // State

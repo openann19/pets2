@@ -102,7 +102,7 @@ export function useAdminUploadsScreen({
 
   const [typeFilter, setTypeFilter] = useState<
     "all" | "image" | "video" | "document"
-  >("pending");
+  >("all");
   const [statusFilter, setStatusFilter] = useState<
     "all" | "pending" | "approved" | "rejected" | "flagged"
   >("all");

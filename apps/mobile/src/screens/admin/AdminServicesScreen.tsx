@@ -26,7 +26,7 @@ interface ServiceStatus {
   status: 'operational' | 'degraded' | 'down';
   responseTime: number;
   lastChecked: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: string; // Ionicons name as string
   color: string;
   endpoint?: string;
   description: string;
@@ -119,9 +119,10 @@ export default function AdminServicesScreen({
       ];
 
       setServices(mockServices);
-    } catch (error) {
+    } catch (error: unknown) {
       Alert.alert('Error', 'Failed to load services');
-      logger.error('Failed to load services', { error });
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to load services', { error: errorObj });
     } finally {
       setLoading(false);
     }
@@ -201,7 +202,7 @@ export default function AdminServicesScreen({
           >
             <View style={styles.serviceHeader}>
               <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]}>
-                <Ionicons name={service.icon} size={24} color={service.color} />
+                <Ionicons name={service.icon as any} size={24} color={service.color} />
               </View>
               <View style={styles.serviceInfo}>
                 <Text style={[styles.serviceName, { color: colors.text }]}>

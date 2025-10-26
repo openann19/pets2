@@ -24,13 +24,13 @@ const TestAuthComponent = () => {
     return (<div>
       <div data-testid="loading">{isLoading ? 'Loading' : 'Ready'}</div>
       <div data-testid="error">{error?.message || 'No error'}</div>
-      <button data-testid="login-btn" onClick={() => login({ email: 'test@test.com', password: 'test123' })}>
+      <button data-testid="login-btn" onClick={() => { login({ email: 'test@test.com', password: 'test123' }); }}>
         Login
       </button>
-      <button data-testid="register-btn" onClick={() => register({ email: 'test@test.com', password: 'test123', name: 'Test' })}>
+      <button data-testid="register-btn" onClick={() => { register({ email: 'test@test.com', password: 'test123', name: 'Test' }); }}>
         Register
       </button>
-      <button data-testid="logout-btn" onClick={() => logout()}>
+      <button data-testid="logout-btn" onClick={() => { logout(); }}>
         Logout
       </button>
     </div>);
@@ -51,10 +51,10 @@ const TestSwipeComponent = () => {
       <div data-testid="pets-count">{pets?.length || 0}</div>
       <div data-testid="current-pet">{currentPet?.name || 'No pet'}</div>
       <div data-testid="last-match">{lastMatch ? 'Match!' : 'No match'}</div>
-      <button data-testid="swipe-like" onClick={() => swipe({ petId: 'test-pet', action: 'like', timestamp: new Date().toISOString() })}>
+      <button data-testid="swipe-like" onClick={() => { swipe({ petId: 'test-pet', action: 'like', timestamp: new Date().toISOString() }); }}>
         Like
       </button>
-      <button data-testid="swipe-pass" onClick={() => swipe({ petId: 'test-pet', action: 'pass', timestamp: new Date().toISOString() })}>
+      <button data-testid="swipe-pass" onClick={() => { swipe({ petId: 'test-pet', action: 'pass', timestamp: new Date().toISOString() }); }}>
         Pass
       </button>
     </div>);

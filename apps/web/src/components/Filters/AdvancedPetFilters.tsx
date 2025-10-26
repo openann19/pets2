@@ -16,7 +16,7 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
             }
         };
         document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
+        return () => { document.removeEventListener('keydown', handleKeyDown); };
     }, [onReset, onApply]);
     // Handler helpers with better type safety
     const handleChange = useCallback((field, val) => {
@@ -70,7 +70,7 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
                 <Label htmlFor="species" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Species
                 </Label>
-                <select id="species" value={value.species || ''} onChange={e => handleChange('species', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 hover:border-pink-300" aria-describedby="species-help">
+                <select id="species" value={value.species || ''} onChange={e => { handleChange('species', e.target.value); }} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 hover:border-pink-300" aria-describedby="species-help">
                     <option value="">Any species</option>
                     <option value="dog">Dog</option>
                     <option value="cat">Cat</option>
@@ -89,13 +89,13 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
                     <Label htmlFor="minAge" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         Min Age
                     </Label>
-                    <input id="minAge" type="number" min={0} max={20} value={value.minAge ?? ''} onChange={e => handleChange('minAge', e.target.value ? Number(e.target.value) : undefined)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200" aria-describedby="min-age-help"/>
+                    <input id="minAge" type="number" min={0} max={20} value={value.minAge ?? ''} onChange={e => { handleChange('minAge', e.target.value ? Number(e.target.value) : undefined); }} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200" aria-describedby="min-age-help"/>
                 </div>
                 <div>
                     <Label htmlFor="maxAge" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         Max Age
                     </Label>
-                    <input id="maxAge" type="number" min={0} max={20} value={value.maxAge ?? ''} onChange={e => handleChange('maxAge', e.target.value ? Number(e.target.value) : undefined)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200" aria-describedby="max-age-help"/>
+                    <input id="maxAge" type="number" min={0} max={20} value={value.maxAge ?? ''} onChange={e => { handleChange('maxAge', e.target.value ? Number(e.target.value) : undefined); }} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200" aria-describedby="max-age-help"/>
                 </div>
                 <p id="min-age-help" className="text-xs text-gray-500 dark:text-gray-400 col-span-2">
                     Age range in years (0-20)
@@ -107,7 +107,7 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
                 <Label htmlFor="size" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Size
                 </Label>
-                <select id="size" value={value.size || ''} onChange={e => handleChange('size', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 hover:border-pink-300" aria-describedby="size-help">
+                <select id="size" value={value.size || ''} onChange={e => { handleChange('size', e.target.value); }} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 hover:border-pink-300" aria-describedby="size-help">
                     <option value="">Any size</option>
                     <option value="small">Small</option>
                     <option value="medium">Medium</option>
@@ -124,7 +124,7 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
                 <Label htmlFor="intent" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Intent
                 </Label>
-                <select id="intent" value={value.intent || ''} onChange={e => handleChange('intent', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 hover:border-pink-300" aria-describedby="intent-help">
+                <select id="intent" value={value.intent || ''} onChange={e => { handleChange('intent', e.target.value); }} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 hover:border-pink-300" aria-describedby="intent-help">
                     <option value="">Any intent</option>
                     <option value="adoption">Adoption</option>
                     <option value="mating">Mating</option>
@@ -141,7 +141,7 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
                 <Label htmlFor="maxDistance" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Max Distance: {value.maxDistance || 50} km
                 </Label>
-                <input id="maxDistance" type="range" min={1} max={100} step={1} value={value.maxDistance || 50} onChange={e => handleChange('maxDistance', Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 slider" aria-describedby="distance-help"/>
+                <input id="maxDistance" type="range" min={1} max={100} step={1} value={value.maxDistance || 50} onChange={e => { handleChange('maxDistance', Number(e.target.value)); }} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 slider" aria-describedby="distance-help"/>
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>1 km</span>
                     <span>100 km</span>
@@ -159,7 +159,7 @@ export const AdvancedPetFilters = ({ value, onChange, onReset, onApply }) => {
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Personality preferences">
                     {personalityTags.map((tag) => {
             const isSelected = value.personalityTags?.includes(tag);
-            return (<motion.button key={tag} type="button" onClick={() => handleTagToggle(tag)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={`px-3 py-1.5 text-xs rounded-full border transition-all duration-200 focus:ring-2 focus:ring-pink-500 focus:outline-none ${isSelected
+            return (<motion.button key={tag} type="button" onClick={() => { handleTagToggle(tag); }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className={`px-3 py-1.5 text-xs rounded-full border transition-all duration-200 focus:ring-2 focus:ring-pink-500 focus:outline-none ${isSelected
                     ? 'bg-pink-500 text-white border-pink-500 shadow-md shadow-pink-500/30'
                     : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-pink-300 hover:bg-pink-50 dark:hover:bg-gray-700'}`} aria-pressed={isSelected} aria-label={`${isSelected ? 'Remove' : 'Add'} ${tag} personality tag`}>
                                 {tag}

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import type { Pet } from "../types/api";
+import type { Pet } from "../../types";
 
 export interface UseMatchModalOptions {
   onSendMessage: (matchId: string, petName: string) => void;

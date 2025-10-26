@@ -5,7 +5,8 @@ import { NavigationContainer } from "@react-navigation/native";
 export const mockNavigate = jest.fn();
 
 jest.mock("@react-navigation/native", () => {
-  const actual = jest.requireActual("@react-navigation/native");
+  // @ts-expect-error - jest.requireActual is defined by jest
+  const actual = jest.requireActual("@react-navigation/native") as typeof import("@react-navigation/native");
   return {
     ...actual,
     useNavigation: () => ({ navigate: mockNavigate }),

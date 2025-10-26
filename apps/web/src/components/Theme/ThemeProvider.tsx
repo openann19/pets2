@@ -64,7 +64,7 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
             applyTheme(newResolvedTheme);
         };
         mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
+        return () => { mediaQuery.removeEventListener('change', handleChange); };
     }, [theme]);
     const setTheme = (newTheme) => {
         const resolved = resolveTheme(newTheme);

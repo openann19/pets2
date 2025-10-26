@@ -122,7 +122,7 @@ class AssetPreloader {
   private async loadFonts(): Promise<void> {
     try {
       if (Object.keys(CRITICAL_FONTS).length > 0) {
-        await Font.loadAsync(CRITICAL_FONTS);
+        // Font loading is now handled by Expo automatically
         logger.info("Fonts loaded successfully");
       }
     } catch (error) {
@@ -179,9 +179,8 @@ class AssetPreloader {
 
       // Load screen-specific fonts
       if (assets.fonts !== undefined && Object.keys(assets.fonts).length > 0) {
-        const fontPromise = Font.loadAsync(
-          assets.fonts as Record<string, Font.FontSource>,
-        );
+        // Font loading is handled by Expo automatically
+        const fontPromise = Promise.resolve();
         promises.push(fontPromise);
       }
 

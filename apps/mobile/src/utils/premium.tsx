@@ -9,8 +9,8 @@ export function withPremiumGuard<P>(Comp: React.ComponentType<P>) {
     React.useEffect(() => {
       (async () => {
         try {
-          const { data } = await api.get("/premium/status");
-          setAllowed(!!data.active);
+          const response = await api.request("/premium/status");
+          setAllowed(!!(response as any)?.active);
         } catch {
           setAllowed(false);
         }

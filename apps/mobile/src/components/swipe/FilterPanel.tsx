@@ -6,9 +6,10 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { EliteButton, EliteButtonPresets } from '../EliteButton';
+import { EliteButton } from '../elite/buttons/EliteButton';
+import { EliteButtonPresets } from '../buttons/EliteButton';
 import { FXContainerPresets, Heading2, BodySmall } from '../';
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../../theme/Provider';
 
 export interface FilterPanelProps {
   filters: {
@@ -24,6 +25,8 @@ const BREED_OPTIONS = ['Shiba Inu', 'Golden Retriever', 'Labrador', 'Border Coll
 const SPECIES_OPTIONS = ['All', 'Dogs', 'Cats', 'Birds'];
 
 export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.Element {
+  const theme = useTheme();
+  
   const handleBreedChange = (breed: string) => {
     onFilterChange({
       ...filters,
@@ -39,6 +42,8 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
     });
   };
 
+  const styles = createStyles(theme);
+  
   return (
     <View style={styles.container}>
       <FXContainerPresets.glass style={styles.panel}>
@@ -52,7 +57,7 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
               <EliteButton
                 key={breed}
                 title={breed}
-                variant={filters.breed === breed ? 'primary' : 'outline'}
+                variant={filters.breed === breed ? 'primary' : 'ghost'}
                 size="sm"
                 onPress={() => handleBreedChange(breed)}
               />
@@ -71,7 +76,7 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
                 variant={
                   (species === 'All' ? '' : species.toLowerCase()) === filters.species
                     ? 'secondary'
-                    : 'outline'
+                    : 'ghost'
                 }
                 size="sm"
                 onPress={() => handleSpeciesChange(species)}
@@ -90,28 +95,28 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
-    padding: Theme.spacing.lg,
+    padding: theme.spacing.lg || 32,
   },
   panel: {
-    padding: Theme.spacing.xl,
+    padding: theme.spacing.xl || 48,
   },
   title: {
-    marginBottom: Theme.spacing.lg,
+    marginBottom: theme.spacing.lg || 32,
     textAlign: 'center',
   },
   section: {
-    marginBottom: Theme.spacing.lg,
+    marginBottom: theme.spacing.lg || 32,
   },
   label: {
-    marginBottom: Theme.spacing.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
+    marginBottom: theme.spacing.sm || 8,
+    fontWeight: '600',
   },
   buttons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Theme.spacing.sm,
+    gap: theme.spacing.sm || 8,
   },
 });
 

@@ -35,6 +35,7 @@ export interface BaseButtonProps extends TouchableOpacityProps {
   size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
+  icon?: string;
   leftIcon?: string;
   rightIcon?: string;
   style?: ViewStyle;
@@ -87,6 +88,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       size = "md",
       loading = false,
       disabled = false,
+      icon,
       leftIcon,
       rightIcon,
       style,
@@ -96,6 +98,8 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     },
     ref,
   ) => {
+    // Map icon to leftIcon for convenience
+    const effectiveLeftIcon = icon || leftIcon;
     const sizeConfig = SIZE_CONFIGS[size];
     const isDisabled = disabled || loading;
 
@@ -209,9 +213,9 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
 
       return (
         <>
-          {leftIcon && (
+          {effectiveLeftIcon && (
             <Ionicons
-              name={leftIcon}
+              name={effectiveLeftIcon}
               size={sizeConfig.iconSize}
               color={getIconColor()}
               style={{ marginRight: Theme.spacing.sm }}

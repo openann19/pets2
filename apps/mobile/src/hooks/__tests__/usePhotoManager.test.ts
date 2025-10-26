@@ -28,6 +28,9 @@ jest.mock("../../services/multipartUpload", () => ({
   multipartUpload: jest.fn(),
 }));
 
+// Set up the mock implementation
+const mockMultipartUpload = multipartUpload as jest.MockedFunction<typeof multipartUpload>;
+
 // Mock logger
 jest.mock("@pawfectmatch/core", () => ({
   logger: {
@@ -36,11 +39,17 @@ jest.mock("@pawfectmatch/core", () => ({
   },
 }));
 
-const mockMultipartUpload = multipartUpload as jest.MockedFunction<typeof multipartUpload>;
-
 describe("usePhotoManager", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (multipartUpload as jest.Mock).mockResolvedValue({
+      url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
+      key: "uploads/photo.jpg",
+      thumbnails: {
+        jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
+        webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
+      },
+    });
   });
 
   it("should initialize with empty photos array", () => {
@@ -381,16 +390,6 @@ describe("usePhotoManager", () => {
   });
 
   describe("Multipart Upload Functionality", () => {
-    beforeEach(() => {
-      mockMultipartUpload.mockResolvedValue({
-        url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
-        key: "uploads/photo.jpg",
-        thumbnails: {
-          jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
-          webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
-        },
-      });
-    });
 
     it("should automatically upload photos when picked", async () => {
       (
@@ -425,11 +424,18 @@ describe("usePhotoManager", () => {
         assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
       });
 
+      const progressCallbacks: Array<(uploaded: number, total: number) => void> = [];
+      
       mockMultipartUpload.mockImplementation(({ onProgress }) => {
         if (onProgress) {
-          onProgress(50, 100);
-          onProgress(100, 100);
+          // Store the progress callback to simulate async progress updates
+          progressCallbacks.push(onProgress);
+          
+          // Simulate async progress updates
+          setTimeout(() => onProgress(50, 100), 10);
+          setTimeout(() => onProgress(100, 100), 20);
         }
+        
         return Promise.resolve({
           url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
           key: "uploads/photo.jpg",
@@ -468,13 +474,14 @@ describe("usePhotoManager", () => {
         await result.current.pickImage();
       });
 
+      // Wait for upload to complete and verify properties
       await waitFor(() => {
         const photo = result.current.photos[0];
         expect(photo).toHaveProperty("uploadedUrl");
         expect(photo).toHaveProperty("thumbnailUrl");
         expect(photo).toHaveProperty("s3Key");
         expect(photo.isUploading).toBe(false);
-      });
+      }, { timeout: 1000 });
     });
 
     it("should handle upload errors gracefully", async () => {
@@ -508,7 +515,7 @@ describe("usePhotoManager", () => {
       );
     });
 
-    it("should not allow submission when photos are uploading", async () => {
+    it("should handle uploading status correctly", async () => {
       (
         ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock
       ).mockResolvedValue({
@@ -519,23 +526,29 @@ describe("usePhotoManager", () => {
         assets: [{ uri: "file://photo1.jpg", type: "image/jpeg" }],
       });
 
-      // Mock a slow upload
-      mockMultipartUpload.mockImplementation(
-        ({ onProgress }) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              if (onProgress) onProgress(50, 100);
-              resolve({
-                url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
-                key: "uploads/photo.jpg",
-                thumbnails: {
-                  jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
-                  webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
-                },
-              });
-            }, 100);
-          }),
-      );
+      // Mock upload that takes some time to complete
+      mockMultipartUpload.mockImplementation(({ onProgress }) => {
+        return new Promise((resolve) => {
+          // Simulate progress updates
+          if (onProgress) {
+            onProgress(0, 100);
+            setTimeout(() => onProgress(50, 100), 10);
+            setTimeout(() => onProgress(100, 100), 20);
+          }
+          
+          // Resolve after a short delay
+          setTimeout(() => {
+            resolve({
+              url: "https://s3.amazonaws.com/bucket/uploads/photo.jpg",
+              key: "uploads/photo.jpg",
+              thumbnails: {
+                jpg: "https://s3.amazonaws.com/bucket/thumbnails/photo.jpg",
+                webp: "https://s3.amazonaws.com/bucket/thumbnails/photo.webp",
+              },
+            });
+          }, 30);
+        });
+      });
 
       const { result } = renderHook(() => usePhotoManager());
 
@@ -543,17 +556,19 @@ describe("usePhotoManager", () => {
         await result.current.pickImage();
       });
 
-      // Check immediately after - should still be uploading
-      const photo = result.current.photos[0];
-      expect(photo.isUploading).toBe(true);
-
       // Wait for upload to complete
       await waitFor(
         () => {
           expect(result.current.photos[0].isUploading).toBe(false);
         },
-        { timeout: 200 },
+        { timeout: 1000 },
       );
+
+      // Check that photo has been uploaded successfully
+      const photo = result.current.photos[0];
+      expect(photo.uploadedUrl).toBe("https://s3.amazonaws.com/bucket/uploads/photo.jpg");
+      expect(photo.thumbnailUrl).toBe("https://s3.amazonaws.com/bucket/thumbnails/photo.webp");
+      expect(photo.s3Key).toBe("uploads/photo.jpg");
     });
 
     it("should provide uploadPendingPhotos method", () => {

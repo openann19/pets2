@@ -49,6 +49,16 @@ export interface ExtendedColors extends SemanticColors {
   accentLight: string;
   accentDark: string;
   
+  // Glass effects
+  glass: string;
+  glassLight: string;
+  glassWhite: string;
+  glassWhiteLight: string;
+  glassWhiteDark: string;
+  glassDark: string;
+  glassDarkMedium: string;
+  glassDarkStrong: string;
+  
   // Status colors
   info: string;
   error: string;
@@ -110,6 +120,16 @@ export function getExtendedColors(theme: Theme): ExtendedColors {
     accent: "#10b981",
     accentLight: isDark ? "#dcfce7" : "#059669",
     accentDark: isDark ? "#064e3b" : "#047857",
+    
+    // Glass effects
+    glass: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.8)",
+    glassLight: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.6)",
+    glassWhite: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.9)",
+    glassWhiteLight: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.95)",
+    glassWhiteDark: isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.98)",
+    glassDark: isDark ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.9)",
+    glassDarkMedium: isDark ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.7)",
+    glassDarkStrong: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.5)",
     
     // Status colors
     info: "#3b82f6",

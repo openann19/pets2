@@ -40,22 +40,22 @@ export const toast = {
 };
 // Predefined moderation toasts
 export const moderationToasts = {
-    reportSuccess: () => toast.success('Report submitted', {
+    reportSuccess: () => { toast.success('Report submitted', {
         description: 'Thank you for helping keep our community safe',
-    }),
-    reportError: () => toast.error('Failed to submit report', {
+    }); },
+    reportError: () => { toast.error('Failed to submit report', {
         description: 'Please try again later',
-    }),
-    blockSuccess: (userName) => toast.success('User blocked', {
+    }); },
+    blockSuccess: (userName) => { toast.success('User blocked', {
         description: userName ? `${userName} has been blocked` : 'You will no longer see content from this user',
-    }),
-    blockError: () => toast.error('Failed to block user', {
+    }); },
+    blockError: () => { toast.error('Failed to block user', {
         description: 'Please try again',
-    }),
-    unblockSuccess: (userName) => toast.success('User unblocked', {
+    }); },
+    unblockSuccess: (userName) => { toast.success('User unblocked', {
         description: userName ? `${userName} has been unblocked` : 'User has been unblocked',
-    }),
-    unblockError: () => toast.error('Failed to unblock user'),
+    }); },
+    unblockError: () => { toast.error('Failed to unblock user'); },
     muteSuccess: (duration) => {
         const hours = Math.floor(duration / 60);
         const mins = duration % 60;
@@ -66,8 +66,8 @@ export const moderationToasts = {
             description: `Muted for ${durationText}`,
         });
     },
-    muteError: () => toast.error('Failed to mute user'),
-    unmuteSuccess: () => toast.success('User unmuted'),
-    unmuteError: () => toast.error('Failed to unmute user'),
+    muteError: () => { toast.error('Failed to mute user'); },
+    unmuteSuccess: () => { toast.success('User unmuted'); },
+    unmuteError: () => { toast.error('Failed to unmute user'); },
 };
 //# sourceMappingURL=toast.js.map

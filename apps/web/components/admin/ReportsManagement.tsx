@@ -254,7 +254,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
           {report.fileSize !== undefined && <span>Size: {formatFileSize(report.fileSize)}</span>}
         </div>
         <div className="flex items-center space-x-1">
-          {report.isPublic === true && (
+          {report.isPublic && (
             <span className="text-green-600 dark:text-green-400">Public</span>
           )}
           {report.schedule?.enabled === true && (
@@ -433,7 +433,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
 
         <div className="flex items-center space-x-4">
           <button
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+            onClick={() => { setViewMode(viewMode === 'grid' ? 'list' : 'grid'); }}
             className="p-2 rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             aria-label={`Switch to ${viewMode === 'grid' ? 'list' : 'grid'} view`}
           >
@@ -445,7 +445,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
           </button>
 
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={() => { setShowCreateModal(true); }}
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             aria-label="Create new report"
           >
@@ -470,7 +470,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                 type="text"
                 placeholder="Search reports..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 aria-label="Search reports"
               />
@@ -480,7 +480,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
           {/* Filters */}
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => { setShowFilters(!showFilters); }}
               className={`p-2 rounded-lg transition-colors ${
                 showFilters
                   ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400'
@@ -510,7 +510,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                   <select
                     id="filterType"
                     value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
+                    onChange={(e) => { setSelectedType(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Types</option>
@@ -529,7 +529,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                   <select
                     id="filterStatus"
                     value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    onChange={(e) => { setSelectedStatus(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Statuses</option>
@@ -551,7 +551,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                   <select
                     id="filterPriority"
                     value={selectedPriority}
-                    onChange={(e) => setSelectedPriority(e.target.value)}
+                    onChange={(e) => { setSelectedPriority(e.target.value); }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="all">All Priorities</option>
@@ -574,7 +574,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                     <select
                       id="sortBy"
                       value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as 'createdAt' | 'updatedAt' | 'title' | 'status')}
+                      onChange={(e) => { setSortBy(e.target.value as 'createdAt' | 'updatedAt' | 'title' | 'status'); }}
                       className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
                       <option value="createdAt">Created Date</option>
@@ -583,7 +583,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                       <option value="status">Status</option>
                     </select>
                     <button
-                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      onClick={() => { setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }}
                       className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                       aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
                     >
@@ -611,7 +611,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
           <select
             id="itemsPerPageSelect"
             value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+            onChange={(e) => { setItemsPerPage(Number(e.target.value)); }}
             className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             <option value={10}>10</option>
@@ -652,7 +652,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
         >
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              onClick={() => { setCurrentPage(Math.max(1, currentPage - 1)); }}
               disabled={currentPage === 1}
               className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               aria-label="Previous page"
@@ -668,7 +668,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
                 return (
                   <button
                     key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
+                    onClick={() => { setCurrentPage(pageNum); }}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === pageNum
                         ? 'bg-purple-600 text-white'
@@ -684,7 +684,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
             </div>
 
             <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() => { setCurrentPage(Math.min(totalPages, currentPage + 1)); }}
               disabled={currentPage === totalPages}
               className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               aria-label="Next page"
@@ -719,7 +719,7 @@ const ReportsManagement: React.FC<ReportsManagementProps> = ({
               : 'Get started by creating your first report.'}
           </p>
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={() => { setShowCreateModal(true); }}
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <PlusIcon className="h-5 w-5 mr-2" />

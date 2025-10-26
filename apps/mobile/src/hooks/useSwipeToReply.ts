@@ -2,12 +2,13 @@ import { useCallback } from "react";
 import { Platform } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import Animated, {
-  clamp,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
+  interpolate,
+  Extrapolation,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
@@ -49,7 +50,7 @@ export function useSwipeToReply<T>({
     .activeOffsetX([6, 9999]) // start only on right drag
     .failOffsetY([16, -16])   // keep vertical tolerant
     .onUpdate((e) => {
-      const nx = clamp(e.translationX, 0, maxPull);
+      const nx = Math.min(Math.max(e.translationX, 0), maxPull);
       x.value = nx;
       const p = Math.min(1, nx / threshold);
       if (onProgress) runOnJS(onProgress)(p);

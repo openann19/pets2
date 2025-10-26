@@ -47,7 +47,7 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
 
     socket.on("reaction", ({ emoji, ts }: { emoji: string; ts: number }) => {
       // Handle reaction
-      logger.info("Live reaction received", { emoji, timestamp: ts });
+      logger.info("Live reaction received", { emoji, timestamp: String(ts) });
     });
 
     socketRef.current = socket;

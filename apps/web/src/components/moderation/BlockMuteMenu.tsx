@@ -52,7 +52,7 @@ export function BlockMuteMenu({ userId, userName }) {
             <PremiumButton variant="outline" disabled={isUnblocking} onClick={handleUnblock}>
                 Unblock
             </PremiumButton>
-            <input type="number" min={5} max={60 * 24 * 30} className="w-24 bg-white/10 border border-white/20 rounded p-2 text-black" value={duration} onChange={(e) => setDuration(Number(e.target.value))} aria-label="Mute duration in minutes"/>
+            <input type="number" min={5} max={60 * 24 * 30} className="w-24 bg-white/10 border border-white/20 rounded p-2 text-black" value={duration} onChange={(e) => { setDuration(Number(e.target.value)); }} aria-label="Mute duration in minutes"/>
             <PremiumButton variant="outline" disabled={isMuting} onClick={handleMute}>
                 Mute
             </PremiumButton>

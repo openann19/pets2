@@ -374,10 +374,10 @@ export function createValidationMiddleware(schema: ValidationSchema) {
   return (req: { body: Record<string, unknown> }, res: { status: (code: number) => { json: (data: Record<string, unknown>) => void } }, next: () => void): void => {
     const result = ValidationEngine.validate(req.body, schema);
     if (!result.isValid) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Validation failed',
         details: result.errors,
-      });
+      }); return;
     }
     req.body = result.sanitizedData;
     next();

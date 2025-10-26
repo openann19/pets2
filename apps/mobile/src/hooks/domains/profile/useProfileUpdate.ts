@@ -3,18 +3,12 @@ import { Alert } from "react-native";
 import { logger } from "@pawfectmatch/core";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import { matchesAPI } from "../../../services/api";
+import type { User } from "@pawfectmatch/core";
 
-export interface ProfileUpdateData {
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  location?: string;
-  preferences?: Record<string, any>;
-}
 
 export interface UseProfileUpdateReturn {
   isUpdating: boolean;
-  updateProfile: (data: ProfileUpdateData) => Promise<boolean>;
+  updateProfile: (data: Partial<User>) => Promise<boolean>;
   error: string | null;
 }
 
@@ -27,7 +21,7 @@ export function useProfileUpdate(): UseProfileUpdateReturn {
   const [error, setError] = useState<string | null>(null);
 
   const updateProfile = useCallback(
-    async (data: ProfileUpdateData): Promise<boolean> => {
+    async (data: Partial<User>): Promise<boolean> => {
       if (!user) {
         setError("User not authenticated");
         return false;

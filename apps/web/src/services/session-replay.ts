@@ -93,8 +93,8 @@ class SessionReplayService {
             const script = document.createElement('script');
             script.src = 'https://static.openreplay.com/3.5.0/openreplay.js';
             script.async = true;
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error('Failed to load OpenReplay script'));
+            script.onload = () => { resolve(); };
+            script.onerror = () => { reject(new Error('Failed to load OpenReplay script')); };
             document.head.appendChild(script);
         });
     }

@@ -15,7 +15,6 @@ export interface Settings {
     species?: string[];
     intents?: string[];
   };
-  settings?: any;
 }
 
 export async function getSettings(): Promise<Settings> {

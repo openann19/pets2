@@ -11,7 +11,7 @@ import '@testing-library/jest-dom';
 const MockAnalyticsPage = () => {
   const [isLoading, setIsLoading] = React.useState(true);
   React.useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => { setIsLoading(false); }, 1000);
   }, []);
   
   if (isLoading) {
@@ -30,7 +30,7 @@ const MockLoginForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => setIsSubmitting(false), 2000);
+    setTimeout(() => { setIsSubmitting(false); }, 2000);
   };
   
   return (
@@ -223,7 +223,7 @@ describe('Paw Animations - Real Workflow Integration', () => {
         return (
           <div>
             <button 
-              onClick={() => setIsLoading(prev => !prev)} 
+              onClick={() => { setIsLoading(prev => !prev); }} 
               data-testid="toggle-button"
             >
               {isLoading ? '🐾 Loading...' : 'Idle'}
@@ -252,7 +252,7 @@ describe('Paw Animations - Real Workflow Integration', () => {
         
         return (
           <div>
-            <button onClick={() => setIsLoading(true)} data-testid="start-loading">
+            <button onClick={() => { setIsLoading(true); }} data-testid="start-loading">
               Start
             </button>
             {isLoading && (

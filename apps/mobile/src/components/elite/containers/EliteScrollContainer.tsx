@@ -13,7 +13,7 @@ import { Colors } from "../../../animation";
 
 interface EliteScrollContainerProps extends ScrollViewProps {
   children: ReactNode;
-  gradient?: keyof typeof Colors;
+  gradient?: string;
 }
 
 export const EliteScrollContainer = forwardRef<ScrollViewType, EliteScrollContainerProps>(({

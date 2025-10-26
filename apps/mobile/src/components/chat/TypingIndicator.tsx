@@ -85,14 +85,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: "Theme.colors.neutral[0]",
   },
   typingBubble: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.xl,
-    borderBottomLeftRadius: BorderRadius.sm,
+    borderRadius: 12, // 0.75rem
+    borderBottomLeftRadius: 2, // 0.125rem
     marginLeft: Spacing.xs,
     borderWidth: 0.5,
   },
@@ -105,6 +103,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
+    marginHorizontal: 2,
   },
   typingText: {
     fontSize: 12,

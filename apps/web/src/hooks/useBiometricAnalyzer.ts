@@ -149,12 +149,12 @@ export const useBiometricAnalyzer = (config) => {
                 setCurrentSession(analysis);
             }
         }, 1000);
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [getCurrentBiometricData]);
     // Adjust thresholds periodically
     useEffect(() => {
         const thresholdInterval = setInterval(adjustThresholds, 30000); // Every 30 seconds
-        return () => clearInterval(thresholdInterval);
+        return () => { clearInterval(thresholdInterval); };
     }, [adjustThresholds]);
     return {
         trackKeystroke,

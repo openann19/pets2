@@ -179,10 +179,10 @@ describe('Header Component', () => {
     it('navigates to correct paths', () => {
       render(<Header />);
 
-      expect(screen.getAllByText('Discover')[0].closest('a')!).toHaveAttribute('href', '/swipe');
-      expect(screen.getAllByText('Map')[0].closest('a')!).toHaveAttribute('href', '/map');
-      expect(screen.getAllByText('Matches')[0].closest('a')!).toHaveAttribute('href', '/matches');
-      expect(screen.getAllByText('Profile')[0].closest('a')!).toHaveAttribute('href', '/profile');
+      expect(screen.getAllByText('Discover')[0].closest('a')).toHaveAttribute('href', '/swipe');
+      expect(screen.getAllByText('Map')[0].closest('a')).toHaveAttribute('href', '/map');
+      expect(screen.getAllByText('Matches')[0].closest('a')).toHaveAttribute('href', '/matches');
+      expect(screen.getAllByText('Profile')[0].closest('a')).toHaveAttribute('href', '/profile');
     });
   });
 

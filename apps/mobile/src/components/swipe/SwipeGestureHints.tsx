@@ -3,17 +3,18 @@
  * Shows instructional hints for swipe gestures on first use
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '../../theme/unified-theme';
 import { logger } from '@pawfectmatch/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HINTS_STORAGE_KEY = 'swipe_hints_dismissed';
+export const HINTS_STORAGE_KEY = 'swipe_hints_dismissed';
 
 export interface SwipeGestureHintsProps {
   onDismiss?: () => void;
+  initialDismissed?: boolean; // For testing purposes
 }
 
 interface Hint {
@@ -29,12 +30,18 @@ const hints: Hint[] = [
   { icon: 'arrow-up', text: 'Swipe up to super like', position: 'top', color: '#3B82F6' },
 ];
 
-export function SwipeGestureHints({ onDismiss }: SwipeGestureHintsProps): React.JSX.Element {
+export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureHintsProps): React.JSX.Element {
   const [visible, setVisible] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
-  const opacity = new Animated.Value(0);
+  const [isDismissed, setIsDismissed] = useState(initialDismissed ?? false);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const autoDismissTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Skip if already dismissed (for testing)
+    if (initialDismissed) {
+      return;
+    }
+
     const checkDismissed = async () => {
       try {
         const dismissed = await AsyncStorage.getItem(HINTS_STORAGE_KEY);
@@ -47,7 +54,7 @@ export function SwipeGestureHints({ onDismiss }: SwipeGestureHintsProps): React.
           }).start();
 
           // Auto-dismiss after 5 seconds
-          setTimeout(() => {
+          autoDismissTimeoutRef.current = setTimeout(() => {
             handleDismiss();
           }, 5000);
         }
@@ -57,9 +64,22 @@ export function SwipeGestureHints({ onDismiss }: SwipeGestureHintsProps): React.
     };
 
     checkDismissed();
-  }, [opacity]);
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (autoDismissTimeoutRef.current) {
+        clearTimeout(autoDismissTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleDismiss = async () => {
+    // Clear auto-dismiss timeout if still pending
+    if (autoDismissTimeoutRef.current) {
+      clearTimeout(autoDismissTimeoutRef.current);
+      autoDismissTimeoutRef.current = null;
+    }
+
     try {
       await AsyncStorage.setItem(HINTS_STORAGE_KEY, 'true');
       setIsDismissed(true);

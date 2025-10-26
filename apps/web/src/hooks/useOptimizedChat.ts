@@ -203,9 +203,9 @@ export const useOptimizedChat = (matchId, userId, config = {}, callbacks = {}) =
             return;
         socket.on('new_message', handleNewMessage);
         socket.on('typing', handleTyping);
-        socket.on('connect', () => handleConnectionChange(true));
-        socket.on('disconnect', () => handleConnectionChange(false));
-        socket.on('connect_error', () => handleConnectionChange(false));
+        socket.on('connect', () => { handleConnectionChange(true); });
+        socket.on('disconnect', () => { handleConnectionChange(false); });
+        socket.on('connect_error', () => { handleConnectionChange(false); });
         return () => {
             socket.off('new_message', handleNewMessage);
             socket.off('typing', handleTyping);

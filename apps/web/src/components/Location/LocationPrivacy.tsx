@@ -89,7 +89,7 @@ export const LocationPrivacy = ({ currentSettings, onSettingsChange }) => {
                   </div>
                 </div>
 
-                <button onClick={() => handleSettingChange(option.id, !isEnabled)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isEnabled ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-600'}`}>
+                <button onClick={() => { handleSettingChange(option.id, !isEnabled); }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isEnabled ? 'bg-green-600' : 'bg-gray-200 dark:bg-gray-600'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isEnabled ? 'translate-x-6' : 'translate-x-1'}`}/>
                 </button>
               </div>
@@ -104,7 +104,7 @@ export const LocationPrivacy = ({ currentSettings, onSettingsChange }) => {
         </h4>
         <div className="space-y-2">
           {updateFrequencyOptions.map((option) => (<label key={option.value} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-              <input type="radio" name="updateFrequency" value={option.value} checked={settings.locationUpdateFrequency === option.value} onChange={(e) => handleSettingChange('locationUpdateFrequency', e.target.value)} className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"/>
+              <input type="radio" name="updateFrequency" value={option.value} checked={settings.locationUpdateFrequency === option.value} onChange={(e) => { handleSettingChange('locationUpdateFrequency', e.target.value); }} className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"/>
               <div>
                 <p className="font-medium text-gray-900 dark:text-white">{option.label}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{option.description}</p>
