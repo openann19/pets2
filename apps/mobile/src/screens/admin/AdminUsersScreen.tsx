@@ -28,7 +28,8 @@ const FILTER_BUTTON_HIT_SLOP = {
 } as const;
 
 const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const state = useAdminUsersScreen({ navigation });
 
   const { filters, onStatusChange, users, keyExtractor, getItemLayout } = state;
@@ -46,13 +47,13 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
     ({ item }: { item: AdminUserListItemViewModel }) => (
       <AdminUserListItem
         data={item}
-        colors={colors}
+        colors={theme.colors as any}
         onSelect={item.onSelect}
         onPrimaryAction={item.onPrimaryAction}
         onSecondaryAction={item.onSecondaryAction}
       />
     ),
-    [colors],
+    [theme],
   );
 
   return (
