@@ -53,7 +53,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
     commitment: "",
   });
 
-  const updateFormData = (field: string, value: any) => {
+  const updateFormData = (field: string, value: import("../../types/forms").FormFieldValue) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

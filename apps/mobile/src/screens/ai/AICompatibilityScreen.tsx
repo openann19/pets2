@@ -21,7 +21,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { RootStackParamList } from "../../navigation/types";
-import { _aiAPI, _petAPI } from "../../services/api";
+import { aiAPI, matchesAPI } from "../../services/api";
 import { logger } from "../../services/logger";
 
 interface Pet {
@@ -126,15 +126,11 @@ const AICompatibilityScreen = ({
 
   const loadPets = async (): Promise<void> => {
     try {
-      const response = (await _petAPI.getPets()) as unknown as {
-        success: boolean;
-        data?: Pet[];
-      };
-      if (response?.success && response.data) {
-        setPets(response.data);
-      }
-    } catch (error) {
-      logger.error("Failed to load pets:", { error });
+      const pets = await matchesAPI.getPets();
+      setPets(pets as unknown as Pet[]);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to load pets:", { error: err });
     }
   };
 
@@ -145,10 +141,47 @@ const AICompatibilityScreen = ({
 
     setIsAnalyzing(true);
     try {
-      const response = (await _aiAPI.analyzeCompatibility(petA.id, petB.id, {
-        includeDetailedAnalysis: true,
-        includeRecommendations: true,
-      })) as CompatibilityResponse;
+      const data = await aiAPI.analyzeCompatibility({
+        pet1Id: petA.id,
+        pet2Id: petB.id,
+      });
+      
+      // Map the API response to our expected format
+      const mappedScore: CompatibilityScore = {
+        overall: data.compatibility_score,
+        breakdown: {
+          temperament: data.breakdown.personality_compatibility,
+          activity: data.breakdown.activity_compatibility,
+          size: data.breakdown.social_compatibility,
+          age: data.breakdown.social_compatibility,
+          interests: data.breakdown.lifestyle_compatibility,
+          lifestyle: data.breakdown.environment_compatibility,
+        },
+        factors: {
+          strengths: data.recommendations.meeting_suggestions,
+          concerns: data.recommendations.supervision_requirements,
+          recommendations: data.recommendations.activity_recommendations,
+        },
+        interaction: {
+          playdate: data.recommendations.success_probability * 100,
+          adoption: data.recommendations.success_probability * 90,
+          breeding: data.recommendations.success_probability * 70,
+        },
+      };
+
+      const mappedAnalysis = {
+        summary: data.ai_analysis,
+        detailed: data.ai_analysis,
+        tips: data.recommendations.activity_recommendations,
+      };
+
+      const response: CompatibilityResponse = {
+        success: true,
+        data: {
+          score: mappedScore,
+          analysis: mappedAnalysis,
+        },
+      };
 
       if (response && response.success && response.data) {
         const analysis: CompatibilityAnalysis = {
@@ -202,8 +235,9 @@ const AICompatibilityScreen = ({
           score: analysis.score.overall,
         });
       }
-    } catch (error) {
-      logger.error("Compatibility analysis failed:", { error });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error("Compatibility analysis failed:", { error: err });
 
       // Fallback analysis for demo
       const fallbackAnalysis: CompatibilityAnalysis = {

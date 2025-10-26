@@ -79,9 +79,10 @@ export default function AICompatibilityScreen({
     loadAvailablePets();
 
     // Check if pets were passed via route params
-    if (route?.params?.pet1Id && route?.params?.pet2Id) {
+    const params = route?.params as { petAId?: string; petBId?: string } | undefined;
+    if (params?.petAId && params?.petBId) {
       // Load specific pets for analysis
-      loadSpecificPets(route.params.pet1Id, route.params.pet2Id);
+      loadSpecificPets(params.petAId, params.petBId);
     }
   }, [route?.params]);
 
@@ -92,9 +93,13 @@ export default function AICompatibilityScreen({
       const pets = await matchesAPI.getPets();
       
       // Filter out current user's pets
-      const availablePets = pets.filter((pet) => pet.owner?._id !== user?._id);
+      const userData = user as { _id?: string } | undefined;
+      const availablePets = pets.filter((pet) => {
+        const petOwner = pet.owner as { _id?: string } | undefined;
+        return petOwner?._id !== userData?._id;
+      });
       
-      setAvailablePets(availablePets);
+      setAvailablePets(availablePets as unknown as Pet[]);
     } catch (err: unknown) {
       logger.error("Error loading pets:", { error: err });
       setError("Failed to load pets. Please try again.");
@@ -518,12 +523,12 @@ export default function AICompatibilityScreen({
                   const isSelected =
                     selectedPet1?._id === item._id ||
                     selectedPet2?._id === item._id;
-                  const isDisabled =
+                  const isDisabled: boolean =
                     isSelected ||
-                    (selectedPet1 && selectedPet2) ||
-                    (selectedPet1 &&
+                    Boolean(selectedPet1 && selectedPet2) ||
+                    Boolean(selectedPet1 &&
                       selectedPet1.owner._id === item.owner._id) ||
-                    (selectedPet2 && selectedPet2.owner._id === item.owner._id);
+                    Boolean(selectedPet2 && selectedPet2.owner._id === item.owner._id);
 
                   return (
                     <TouchableOpacity

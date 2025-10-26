@@ -4,13 +4,21 @@
  */
 
 import type { ViewStyle, TextStyle, ColorValue } from 'react-native';
-import { Easing, Text } from 'react-native';
-import MaskedView from '@react-native-masked-view/masked-view';
-import LinearGradient from 'react-native-linear-gradient';
+import { Easing } from 'react-native';
 import React from 'react';
 
-// Import base tokens from design-tokens package
-import { COLORS, TYPOGRAPHY, SHADOWS, SPACING, RADIUS, TRANSITIONS, Z_INDEX, VARIANTS, utils } from '@pawfectmatch/design-tokens';
+// Import base tokens from design-tokens package (React Native optimized)
+import { 
+  COLORS, 
+  TYPOGRAPHY, 
+  SHADOWS, 
+  SPACING, 
+  RADIUS, 
+  TRANSITIONS, 
+  Z_INDEX, 
+  VARIANTS, 
+  utils 
+} from '@pawfectmatch/design-tokens';
 
 // ===== RN-SAFE FACADE WRAPPERS =====
 

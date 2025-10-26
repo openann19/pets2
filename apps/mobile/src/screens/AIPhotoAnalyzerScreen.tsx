@@ -137,9 +137,10 @@ export default function AIPhotoAnalyzerScreen({
     try {
       const result = await api.ai.analyzePhotos(selectedPhotos);
       setAnalysisResult(result);
-    } catch (err: any) {
-      logger.error("Photo analysis error:", { error });
-      setError(err.message || "Failed to analyze photos. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to analyze photos. Please try again.";
+      logger.error("Photo analysis error:", { error: err });
+      setError(message);
     } finally {
       setIsAnalyzing(false);
     }

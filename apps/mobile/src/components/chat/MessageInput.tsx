@@ -219,9 +219,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    gap: tokens.spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
   },
   inputWrapper: {
     flex: 1,
