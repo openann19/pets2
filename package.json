@@ -55,7 +55,8 @@
     "fix:colors": "tsx scripts/fix-color-errors.ts",
     "fix:colors:write": "tsx scripts/fix-color-errors.ts --write",
     "fix:chained": "tsx scripts/fix-chained-properties.ts",
-    "fix:chained:write": "tsx scripts/fix-chained-properties.ts --write"
+    "fix:chained:write": "tsx scripts/fix-chained-properties.ts --write",
+    "mobile:tsc": "cd apps/mobile && pnpm exec tsc --noEmit"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.5",

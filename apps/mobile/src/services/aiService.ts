@@ -1,32 +1,63 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || "";
+import { api } from './api';
 
-export async function generateBio(traits: string, interests: string): Promise<string> {
-  const res = await fetch(`${API_URL}/api/ai/bio`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ traits, interests }),
-  });
-  if (!res.ok) throw new Error("bio failed");
-  return (await res.json()).bio as string;
+export interface BioGenerationParams {
+  petName: string;
+  keywords: string[];
+  tone?: 'playful' | 'professional' | 'casual' | 'romantic' | 'funny';
+  length?: 'short' | 'medium' | 'long';
+  petType?: string;
+  age?: number;
+  breed?: string;
 }
 
-export async function analyzePhoto(imageUrl: string): Promise<string> {
-  const res = await fetch(`${API_URL}/api/ai/analyze-photo`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ imageUrl }),
-  });
-  if (!res.ok) throw new Error("analyze failed");
-  return (await res.json()).analysis as string;
+export interface BioGenerationResult {
+  bio: string;
+  keywords: string[];
+  sentiment: { score: number; label: string };
+  matchScore: number;
 }
 
-export async function compatibility(petProfile: any, userPrefs: any): Promise<string> {
-  const res = await fetch(`${API_URL}/api/ai/compatibility`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ petProfile, userPrefs }),
-  });
-  if (!res.ok) throw new Error("compat failed");
-  return (await res.json()).result as string;
+export interface PhotoAnalysisResult {
+  labels: string[];
+  lighting: number;
+  sharpness: number;
+  score: number;
 }
 
+export interface CompatibilityResult {
+  score: number;
+  breakdown: {
+    breed: number;
+    size: number;
+    energy: number;
+    age: number;
+    traits: number;
+  };
+}
+
+export async function generateBio(params: BioGenerationParams): Promise<string> {
+  const { request } = await import('./api');
+  const response = await request('/ai/generate-bio', {
+    method: 'POST',
+    body: params,
+  });
+  return (response as any).bio;
+}
+
+export async function analyzePhoto(url: string): Promise<PhotoAnalysisResult> {
+  const { request } = await import('./api');
+  const response = await request('/ai/analyze-photo', {
+    method: 'POST',
+    body: { url },
+  });
+  return response as PhotoAnalysisResult;
+}
+
+export async function computeCompatibility(a: any, b: any): Promise<CompatibilityResult> {
+  const { request } = await import('./api');
+  const response = await request('/ai/compatibility', {
+    method: 'POST',
+    body: { a, b },
+  });
+  return response as CompatibilityResult;
+}

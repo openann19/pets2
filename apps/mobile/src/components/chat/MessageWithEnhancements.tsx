@@ -252,7 +252,7 @@ export function MessageWithEnhancements({
             colors={
               isOwnMessage
                 ? [colors.primary, colors.primaryDark || colors.primary]
-                : [colors.card, colors.cardElevated || colors.card]
+                : [colors.card, colors.surfaceElevated || colors.card]
             }
             style={[
               styles.messageBubble,

@@ -7,6 +7,7 @@ import type { Request, Response } from 'express';
 import * as mongoose from 'mongoose';
 import Pet from '../models/Pet';
 import User from '../models/User';
+import { AdoptionApplication } from '../models/AdoptionApplication';
 const logger = require('../utils/logger');
 
 // Type definitions
@@ -23,49 +24,6 @@ interface ApplicationData {
   vetReference?: string;
   personalReference?: string;
   additionalInfo?: string;
-}
-
-interface AdoptionApplication {
-  petId: mongoose.Types.ObjectId;
-  applicantId: mongoose.Types.ObjectId;
-  status: 'pending' | 'approved' | 'rejected' | 'withdrawn';
-  applicationData: ApplicationData;
-  submittedAt: Date;
-  reviewedAt?: Date;
-  reviewedBy?: mongoose.Types.ObjectId;
-  reviewNotes?: string;
-}
-
-// Define AdoptionApplication schema inline if model doesn't exist
-let AdoptionApplication: mongoose.Model<AdoptionApplication>;
-try {
-  AdoptionApplication = require('../models/AdoptionApplication');
-} catch {
-  // Create a simple in-memory model if not exists
-  const adoptionApplicationSchema = new mongoose.Schema({
-    petId: { type: mongoose.Schema.Types.ObjectId, ref: 'Pet', required: true },
-    applicantId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    status: {
-      type: String,
-      enum: ['pending', 'approved', 'rejected', 'withdrawn'],
-      default: 'pending'
-    },
-    applicationData: {
-      experience: String,
-      livingSituation: String,
-      otherPets: String,
-      timeAlone: String,
-      vetReference: String,
-      personalReference: String,
-      additionalInfo: String
-    },
-    submittedAt: { type: Date, default: Date.now },
-    reviewedAt: Date,
-    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    reviewNotes: String
-  });
-
-  AdoptionApplication = mongoose.model('AdoptionApplication', adoptionApplicationSchema);
 }
 
 /**
@@ -158,11 +116,16 @@ export const submitApplication = async (req: AuthRequest, res: Response): Promis
       return;
     }
 
+    // Get ownerId from pet
+    const ownerId = pet.owner;
+
     // Create application
     const application = await AdoptionApplication.create({
       petId,
       applicantId,
-      applicationData
+      ownerId,
+      answers: applicationData,
+      status: 'pending'
     });
 
     res.status(201).json({
@@ -302,7 +265,7 @@ export const updateApplicationStatus = async (req: AuthRequest, res: Response): 
     // Update application
     application.status = status as 'pending' | 'approved' | 'rejected' | 'withdrawn';
     application.reviewedAt = new Date();
-    application.reviewedBy = reviewerId as any;
+    application.reviewedBy = new mongoose.Types.ObjectId(reviewerId);
     if (reviewNotes) {
       application.reviewNotes = reviewNotes;
     }

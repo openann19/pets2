@@ -139,6 +139,27 @@ module.exports = [
           ],
         },
       ],
+
+      // Enforce Theme tokens only (UI & Motion Contract)
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/]',
+          message: 'Use Theme.colors.* tokens instead of hex colors',
+        },
+        {
+          selector: 'Property[key.name="borderRadius"] > Literal[value=/^[0-9]+$/]',
+          message: 'Use Theme.borderRadius.* instead of raw numbers',
+        },
+        {
+          selector: 'Property[key.name="padding"] > Literal[value=/^[0-9]+$/]',
+          message: 'Use Theme.spacing.* instead of raw numbers',
+        },
+        {
+          selector: 'Property[key.name="margin"] > Literal[value=/^[0-9]+$/]',
+          message: 'Use Theme.spacing.* instead of raw numbers',
+        },
+      ],
     },
     settings: {
       react: {

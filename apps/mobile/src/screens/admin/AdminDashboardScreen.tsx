@@ -132,6 +132,9 @@ export default function AdminDashboardScreen({
       case "verifications":
         navigation.navigate("AdminVerifications");
         break;
+      case "services":
+        navigation.navigate("AdminServices");
+        break;
       default:
         logger.info(`Quick action: ${action}`);
     }
@@ -398,6 +401,46 @@ export default function AdminDashboardScreen({
                 ])}
               >
                 Uploads
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
+              onPress={() => {
+                handleQuickAction("verifications");
+              }}
+            >
+              <Ionicons name="shield-checkmark-outline" size={32} color="#10B981" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
+                Verifications
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
+              onPress={() => {
+                handleQuickAction("services");
+              }}
+            >
+              <Ionicons name="server-outline" size={32} color="#8b5cf6" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
+                Services
               </Text>
             </TouchableOpacity>
           </View>

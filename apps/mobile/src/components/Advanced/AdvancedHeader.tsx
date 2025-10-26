@@ -97,10 +97,10 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   rightButtons = [],
   onBackPress,
   showBackButton = true,
-  backgroundColor = "Theme.colors.neutral[0]",
-  textColor = "#333",
+  backgroundColor = Theme.colors.neutral[0],
+  textColor = Theme.colors.text.primary,
   blurIntensity = 20,
-  gradientColors = ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
+  gradientColors = [Theme.colors.primary[500], Theme.colors.primary[600]],
   style,
   titleStyle,
   subtitleStyle,
@@ -249,7 +249,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           styles.headerButton,
           isLeft ? styles.leftButton : styles.rightButton,
         ])}
-        glowColor={variant === "primary" ? "Theme.colors.primary[500]" : "Theme.colors.neutral[500]"}
+        glowColor={variant === "primary" ? Theme.colors.primary[500] : Theme.colors.neutral[500]}
       >
         {button.badge && button.badge > 0 && (
           <View style={styles.badge}>
@@ -302,7 +302,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           ...baseStyles,
           backgroundColor: transparent ? "transparent" : "transparent",
           borderBottomWidth: 1,
-          borderBottomColor: "Theme.colors.neutral[100]",
+          borderBottomColor: Theme.colors.neutral[100],
         };
       case "floating":
         return {
@@ -311,7 +311,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           borderRadius: 12,
           marginHorizontal: 16,
           marginTop: 8,
-          shadowColor: "Theme.colors.neutral[950]",
+          shadowColor: Theme.colors.neutral[900],
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -322,7 +322,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           ...baseStyles,
           backgroundColor: transparent ? "transparent" : backgroundColor,
           borderBottomWidth: 1,
-          borderBottomColor: "Theme.colors.neutral[200]",
+          borderBottomColor: Theme.colors.neutral[200],
         };
     }
   };
@@ -479,7 +479,7 @@ export const HeaderConfigs = {
     variant: "glass" as HeaderVariant,
     showBackButton: true,
     blurIntensity: 20,
-    textColor: "Theme.colors.neutral[0]",
+    textColor: Theme.colors.neutral[0],
     ...props,
   }),
 
@@ -487,8 +487,8 @@ export const HeaderConfigs = {
   gradient: (props: Partial<AdvancedHeaderProps>) => ({
     variant: "gradient" as HeaderVariant,
     showBackButton: true,
-    gradientColors: ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
-    textColor: "Theme.colors.neutral[0]",
+    gradientColors: [Theme.colors.primary[500], Theme.colors.primary[600]],
+    textColor: Theme.colors.neutral[0],
     ...props,
   }),
 
@@ -504,7 +504,7 @@ export const HeaderConfigs = {
   minimal: (props: Partial<AdvancedHeaderProps>) => ({
     variant: "minimal" as HeaderVariant,
     showBackButton: true,
-    textColor: "Theme.colors.neutral[500]",
+    textColor: Theme.colors.neutral[500],
     ...props,
   }),
 
@@ -520,7 +520,7 @@ export const HeaderConfigs = {
 // Styles
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: Theme.colors.neutral[0],
   },
   floatingContainer: {
     backgroundColor: "transparent",
@@ -579,17 +579,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: "Theme.colors.status.error",
+    backgroundColor: Theme.colors.status.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "Theme.colors.neutral[0]",
+    borderColor: Theme.colors.neutral[0],
   },
   badgeText: {
-    color: "Theme.colors.neutral[0]",
+    color: Theme.colors.neutral[0],
     fontSize: 10,
     fontWeight: "bold",
   },

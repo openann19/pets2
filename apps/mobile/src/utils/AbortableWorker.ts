@@ -14,7 +14,7 @@ export interface AbortableWorkerOptions {
 }
 
 export class AbortableWorker<T> {
-  private queue: Array<{ task: Task<T>; resolve: (v: T) => void; reject: (e: any) => void }> = [];
+  private queue: Array<{ task: Task<T>; resolve: (v: T) => void; reject: (e: Error) => void }> = [];
   private running = 0;
   private aborted = false;
   private concurrency: number;
@@ -95,7 +95,9 @@ export class AbortableWorker<T> {
       
       resolve(result);
     } catch (error) {
-      reject(error);
+      // Ensure error is always an Error instance
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      reject(errorObj);
     } finally {
       this.running--;
       // Process next task in queue

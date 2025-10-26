@@ -4,6 +4,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useMemo, type ComponentProps } from "react";
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { haptic } from '../ui/haptics';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import {
   AdvancedHeader,
@@ -200,6 +203,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   };
 
   const handleNavigation = (id: string) => {
+    haptic.tap();
     switch (id) {
       case "profile":
         navigation.navigate("Profile");
@@ -220,6 +224,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   };
 
   const handleAction = async (id: string) => {
+    if (id === "delete") {
+      haptic.error();
+    } else {
+      haptic.confirm();
+    }
+    
     switch (id) {
       case "export-data":
         await handleExportData();
@@ -264,7 +274,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           <Ionicons
             name={item.icon as ComponentProps<typeof Ionicons>["name"]}
             size={20}
-            color={item.destructive ? "Theme.colors.status.error" : "Theme.colors.neutral[500]"}
+            color={item.destructive ? Theme.colors.status.error : Theme.colors.neutral[500]}
           />
         </View>
         <View style={styles.settingText}>
@@ -296,12 +306,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
             onValueChange={(value) =>
               category && handleToggle(category, item.id, value)
             }
-            trackColor={{ false: "Theme.colors.neutral[300]", true: "Theme.colors.secondary[500]" }}
-            thumbColor={item.value ? "Theme.colors.neutral[0]" : "Theme.colors.neutral[100]"}
+            trackColor={{ false: Theme.colors.neutral[300], true: Theme.colors.secondary[500] }}
+            thumbColor={item.value ? Theme.colors.neutral[0] : Theme.colors.neutral[100]}
           />
         )}
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color="Theme.colors.neutral[400]" />
+          <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400]} />
         )}
       </View>
     </TouchableOpacity>
@@ -321,61 +331,81 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Advanced Header */}
-      <AdvancedHeader
-        {...HeaderConfigs.glass({
-          title: "Settings",
-          rightButtons: [
-            {
-              type: "search",
-              onPress: async () => {
-                logger.info("Search settings");
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "Settings",
+            rightButtons: [
+              {
+                type: "search",
+                onPress: async () => {
+                  haptic.tap();
+                  logger.info("Search settings");
+                },
+                variant: "minimal",
+                haptic: "light",
               },
-              variant: "minimal",
-              haptic: "light",
+            ],
+            apiActions: {
+              search: async () => {
+                logger.info("Search settings API action");
+              },
             },
-          ],
-          apiActions: {
-            search: async () => {
-              logger.info("Search settings API action");
-            },
-          },
-        })}
-      />
-
+          })}
+        />
+      }
+    >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Summary */}
-        <ProfileSummarySection
-          onEditProfile={() => handleNavigation("profile")}
-        />
+        <Animated.View entering={FadeInDown.duration(220)}>
+          <ProfileSummarySection
+            onEditProfile={() => handleNavigation("profile")}
+          />
+        </Animated.View>
 
         {/* Settings Sections */}
-        <NotificationSettingsSection
-          settings={notificationSettings}
-          onToggle={(id, value) => handleToggle("notifications", id, value)}
-        />
-        {renderSection("Preferences", preferenceSettings, "preferences")}
-        <AccountSettingsSection
-          settings={accountSettings}
-          onNavigate={handleNavigation}
-        />
-        {renderSection("Support", supportSettings)}
-        <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
+        <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+          <NotificationSettingsSection
+            settings={notificationSettings}
+            onToggle={(id, value) => handleToggle("notifications", id, value)}
+          />
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(260).delay(100)}>
+          {renderSection("Preferences", preferenceSettings, "preferences")}
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+          <AccountSettingsSection
+            settings={accountSettings}
+            onNavigate={handleNavigation}
+          />
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(300).delay(200)}>
+          {renderSection("Support", supportSettings)}
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(320).delay(250)}>
+          <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
+        </Animated.View>
 
         {/* App Version */}
-        <View style={styles.versionSection}>
-          <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
-          <Text style={styles.versionSubtitle}>
-            Built with ❤️ for pet lovers
-          </Text>
-        </View>
+        <Animated.View entering={FadeInDown.duration(340).delay(300)}>
+          <View style={styles.versionSection}>
+            <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
+            <Text style={styles.versionSubtitle}>
+              Built with ❤️ for pet lovers
+            </Text>
+          </View>
+        </Animated.View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 

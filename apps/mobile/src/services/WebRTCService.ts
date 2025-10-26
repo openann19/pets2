@@ -13,6 +13,13 @@ import {
 import { logger } from "./logger";
 import { useAuthStore } from "../stores/useAuthStore";
 
+// TURN server configuration type
+interface RTCIceServer {
+  urls: string | string[];
+  username?: string;
+  credential?: string;
+}
+
 export interface CallData {
   callId: string;
   matchId: string;
@@ -76,7 +83,7 @@ class WebRTCService extends EventEmitter {
           urls: turnUrl,
           username: turnUsername,
           credential: turnCredential,
-        } as any);
+        } satisfies RTCIceServer);
         logger.info("TURN server configured", { url: turnUrl });
       } else {
         logger.warn(

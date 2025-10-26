@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logger } from "@pawfectmatch/core";
 
 export interface SettingsData {
-  [key: string]: any;
+  [key: string]: string | number | boolean | null;
 }
 
 export interface UseSettingsPersistenceOptions {

@@ -1,6 +1,34 @@
 import type { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 import logger from "../utils/logger";
+import { createClient } from 'redis';
+
+// Initialize Redis client
+let redisClient: ReturnType<typeof createClient> | null = null;
+
+async function getRedisClient() {
+  if (redisClient) return redisClient;
+  
+  redisClient = createClient({
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    socket: {
+      connectTimeout: 10000,
+      reconnectStrategy: (retries) => {
+        if (retries > 10) {
+          logger.error('Redis connection failed after 10 retries');
+          return new Error('Max retries reached');
+        }
+        return Math.min(retries * 100, 3000);
+      }
+    }
+  });
+
+  redisClient.on('error', (err) => logger.error('Redis Client Error', { error: err.message }));
+  redisClient.on('connect', () => logger.info('Redis Client Connected'));
+
+  await redisClient.connect();
+  return redisClient;
+}
 
 interface AuthRequest extends Request {
   user?: any;
@@ -39,28 +67,62 @@ export async function enforceQuota(key: LimitKey) {
       const isPremium = !!user.premium?.isActive && 
                         (!user.premium.expiresAt || new Date(user.premium.expiresAt) > new Date());
       const limit = (isPremium ? PREMIUM_LIMITS : FREE_LIMITS)[key];
-      const today = new Date().toISOString().slice(0,10);
       
-      // Using user's usage tracking (not Redis for now to keep it simple)
-      const usage = user.premium?.usage || {};
-      const currentKey = `${key}Used` as keyof typeof usage;
-      const used = usage[currentKey] as number || 0;
-      
-      if (used >= limit) {
-        return res.status(429).json({ 
-          error: "quota_exceeded", 
-          key, 
-          limit, 
-          used,
-          retryAfter: 86400 // seconds until reset
+      try {
+        // Use Redis for quota tracking with distributed rate limiting
+        const redis = await getRedisClient();
+        const today = new Date().toISOString().slice(0, 10);
+        const redisKey = `quota:${req.user._id}:${key}:${today}`;
+        
+        // Get current usage
+        const usedStr = await redis.get(redisKey);
+        const used = usedStr ? parseInt(usedStr, 10) : 0;
+        
+        if (used >= limit) {
+          // Calculate seconds until midnight for TTL
+          const now = new Date();
+          const midnight = new Date(now);
+          midnight.setHours(24, 0, 0, 0);
+          const secondsUntilReset = Math.floor((midnight.getTime() - now.getTime()) / 1000);
+          
+          return res.status(429).json({ 
+            error: "quota_exceeded", 
+            key, 
+            limit, 
+            used,
+            retryAfter: secondsUntilReset
+          });
+        }
+
+        // Increment usage with expiration at midnight
+        await redis.incr(redisKey);
+        await redis.expire(redisKey, 86400); // Expire at midnight
+      } catch (redisError: any) {
+        logger.warn('Redis quota tracking failed, falling back to database', { 
+          error: redisError.message,
+          userId: req.user._id 
+        });
+        
+        // Fallback to database tracking
+        const usage = user.premium?.usage || {};
+        const currentKey = `${key}Used` as keyof typeof usage;
+        const used = usage[currentKey] as number || 0;
+        
+        if (used >= limit) {
+          return res.status(429).json({ 
+            error: "quota_exceeded", 
+            key, 
+            limit, 
+            used,
+            retryAfter: 86400
+          });
+        }
+
+        const incrementKey = `premium.usage.${currentKey}`;
+        await User.findByIdAndUpdate(req.user._id, {
+          $inc: { [incrementKey]: 1 }
         });
       }
-
-      // Increment usage
-      const incrementKey = `premium.usage.${currentKey}`;
-      await User.findByIdAndUpdate(req.user._id, {
-        $inc: { [incrementKey]: 1 }
-      });
 
       // Set subscriptionActive on req.user for subsequent middleware
       req.user.subscriptionActive = isPremium;

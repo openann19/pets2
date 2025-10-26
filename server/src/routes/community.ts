@@ -1,11 +1,14 @@
 import express, { type Request, type Response, Router } from 'express';
 import { requireAuth } from '../middleware/adminAuth';
 import logger from '../utils/logger';
-import { type IUserDocument } from '../models/User';
+import User from '../models/User';
+import mongoose from 'mongoose';
 const CommunityPost = require('../models/CommunityPost');
+import Report from '../models/Report';
+import Block from '../models/Block';
 
 interface AuthenticatedRequest extends Request {
-  user?: IUserDocument;
+  user?: any;
 }
 
 const router: Router = express.Router();
@@ -80,7 +83,7 @@ router.get('/posts', async (req: Request, res: Response) => {
         packId: packId || null,
         userId: userId || null,
         type: type || null,
-        matchedCount: filteredTotal
+        matchedCount: total
       }
     });
   } catch (error) {
@@ -189,7 +192,7 @@ router.post('/posts/:id/like', async (req: AuthenticatedRequest, res: Response) 
     res.json({
       success: true,
       post: updatedPost,
-      message: nowLiked ? 'Post liked successfully' : 'Post unliked successfully'
+      message: wasLiked ? 'Post liked successfully' : 'Post unliked successfully'
     });
   } catch (error) {
     logger.error('Failed to like community post', { error });
@@ -216,9 +219,25 @@ router.post('/posts/:id/comments', async (req: AuthenticatedRequest, res: Respon
       });
     }
 
-    // For now, return mock response until Comment model is implemented
+    // Add comment to post
+    const post = await CommunityPost.findById(id);
+    
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    post.addComment({
+      author: req.user?._id,
+      content: content.trim()
+    });
+    
+    await post.save();
+    
     const newComment = {
-      _id: `comment-${Date.now()}`,
+      _id: post.comments[post.comments.length - 1]._id,
       author: {
         _id: req.user?._id || 'unknown',
         name: req.user ? `${req.user.firstName} ${req.user.lastName}` : 'Unknown User',
@@ -252,22 +271,37 @@ router.get('/posts/:id/comments', async (req: Request, res: Response) => {
     const { id } = req.params;
     const { page = 1, limit = 20 } = req.query;
 
-    // For now, return mock comments until Comment model is implemented
-    const mockComments = [
-      {
-        _id: 'c1',
-        author: { _id: 'user2', name: 'Mike Chen', avatar: '/avatar2.jpg' },
-        content: 'Looks like a perfect day! Max is such a handsome boy 😍',
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
+    const post = await CommunityPost.findById(id)
+      .populate('comments.author', 'firstName lastName avatar')
+      .lean();
 
-    const total = mockComments.length;
-    const comments = mockComments.slice((Number(page) - 1) * Number(limit), Number(page) * Number(limit));
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    const total = post.comments?.length || 0;
+    const skip = (Number(page) - 1) * Number(limit);
+    const comments = (post.comments || []).slice(skip, skip + Number(limit));
+
+    const transformedComments = comments.map((comment: any) => ({
+      _id: comment._id,
+      author: {
+        _id: comment.author?._id || comment.author,
+        name: comment.author ? `${comment.author.firstName || ''} ${comment.author.lastName || ''}`.trim() : 'Unknown User',
+        avatar: comment.author?.avatar
+      },
+      content: comment.content,
+      likes: comment.likes?.length || 0,
+      createdAt: comment.createdAt,
+      postId: id
+    }));
 
     res.json({
       success: true,
-      comments,
+      comments: transformedComments,
       pagination: {
         page: parseInt(page as string, 10),
         limit: parseInt(limit as string, 10),
@@ -292,8 +326,29 @@ router.get('/posts/:id/comments', async (req: Request, res: Response) => {
 router.delete('/posts/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id || req.user?.id;
 
-    // For now, return mock response
+    const post = await CommunityPost.findById(id);
+    
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    const isOwner = String(post.author) === String(userId);
+    const isAdmin = req.user?.roles?.includes('admin') || false;
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to delete this post'
+      });
+    }
+
+    await CommunityPost.findByIdAndDelete(id);
+
     res.json({
       success: true,
       message: 'Post deleted successfully'
@@ -315,33 +370,42 @@ router.put('/posts/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { content, images, activityDetails } = req.body;
+    const userId = req.user?._id || req.user?.id;
 
-    if (!content || !content.trim()) {
-      return res.status(400).json({
+    const post = await CommunityPost.findById(id);
+    
+    if (!post) {
+      return res.status(404).json({
         success: false,
-        message: 'Post content is required'
+        message: 'Post not found'
       });
     }
 
-    // For now, return mock response
-    const updatedPost = {
-      _id: id,
-      author: {
-        _id: req.user?._id || 'unknown',
-        name: req.user ? `${req.user.firstName} ${req.user.lastName}` : 'Unknown User',
-        avatar: req.user?.avatar || '/user-avatar.jpg',
-      },
-      content: content.trim(),
-      images: images || [],
-      likes: 0,
-      comments: [],
-      createdAt: new Date().toISOString(),
-      activityDetails: activityDetails || undefined,
-    };
+    // Only post owner can update
+    if (String(post.author) !== String(userId)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to update this post'
+      });
+    }
+
+    // Update fields
+    if (content !== undefined) {
+      post.content = content.trim();
+    }
+    if (images !== undefined) {
+      post.images = images;
+    }
+    if (activityDetails !== undefined && post.type === 'activity') {
+      post.activityDetails = activityDetails;
+    }
+
+    await post.save();
+    await post.populate('author', 'firstName lastName avatar');
 
     res.json({
       success: true,
-      post: updatedPost,
+      post,
       message: 'Post updated successfully'
     });
   } catch (error) {
@@ -360,22 +424,35 @@ router.put('/posts/:id', async (req: AuthenticatedRequest, res: Response) => {
 router.post('/posts/:id/join', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id || req.user?.id;
 
-    // For now, return mock response
-    const updatedPost = {
-      _id: id,
-      activityDetails: {
-        date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'Santa Monica Beach, CA',
-        maxAttendees: 30,
-        currentAttendees: 19, // Incremented
-        attending: true,
+    const post = await CommunityPost.findByIdAndUpdate(
+      id,
+      { 
+        $addToSet: { 
+          'activityDetails.currentAttendees': new mongoose.Types.ObjectId(userId) 
+        } 
       },
-    };
+      { new: true }
+    ).populate('author', 'firstName lastName avatar');
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    if (post.type !== 'activity') {
+      return res.status(400).json({
+        success: false,
+        message: 'This is not an activity post'
+      });
+    }
 
     res.json({
       success: true,
-      post: updatedPost,
+      participants: post.activityDetails?.currentAttendees || [],
       message: 'Successfully joined activity'
     });
   } catch (error) {
@@ -394,22 +471,35 @@ router.post('/posts/:id/join', async (req: AuthenticatedRequest, res: Response) 
 router.post('/posts/:id/leave', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id || req.user?.id;
 
-    // For now, return mock response
-    const updatedPost = {
-      _id: id,
-      activityDetails: {
-        date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
-        location: 'Santa Monica Beach, CA',
-        maxAttendees: 30,
-        currentAttendees: 17, // Decremented
-        attending: false,
+    const post = await CommunityPost.findByIdAndUpdate(
+      id,
+      { 
+        $pull: { 
+          'activityDetails.currentAttendees': new mongoose.Types.ObjectId(userId) 
+        } 
       },
-    };
+      { new: true }
+    ).populate('author', 'firstName lastName avatar');
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    if (post.type !== 'activity') {
+      return res.status(400).json({
+        success: false,
+        message: 'This is not an activity post'
+      });
+    }
 
     res.json({
       success: true,
-      post: updatedPost,
+      participants: post.activityDetails?.currentAttendees || [],
       message: 'Successfully left activity'
     });
   } catch (error) {
@@ -427,17 +517,45 @@ router.post('/posts/:id/leave', async (req: AuthenticatedRequest, res: Response)
 // @access  Private
 router.post('/report', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { type, targetId, reason, description } = req.body;
+    const { targetType, targetId, reason } = req.body as { 
+      targetType: 'post' | 'comment' | 'user'; 
+      targetId: string; 
+      reason?: string 
+    };
+    const reporterId = req.user?._id || req.user?.id;
 
-    if (!type || !targetId || !reason) {
+    // Validate target type
+    if (!['post', 'comment', 'user'].includes(targetType)) {
       return res.status(400).json({
         success: false,
-        message: 'Report type, target ID, and reason are required'
+        message: 'Invalid targetType. Must be one of: post, comment, user'
       });
     }
 
-    // For now, return mock response
-    logger.info('Content reported', { type, targetId, reason, description, userId: req.user?._id });
+    if (!targetId) {
+      return res.status(400).json({
+        success: false,
+        message: 'targetId is required'
+      });
+    }
+
+    // Create report
+    await Report.create({
+      reporterId,
+      reportedUserId: targetType === 'user' ? targetId : undefined,
+      reportedPetId: undefined, // Can be extended later if needed
+      type: 'inappropriate_content', // Default type, can be extended
+      category: targetType === 'post' || targetType === 'comment' ? 'chat' : 'user',
+      reason: (reason || '').trim().slice(0, 1000),
+      status: 'pending'
+    });
+
+    logger.info('Content reported', { 
+      targetType, 
+      targetId, 
+      reason, 
+      userId: reporterId 
+    });
 
     res.json({
       success: true,
@@ -458,7 +576,8 @@ router.post('/report', async (req: AuthenticatedRequest, res: Response) => {
 // @access  Private
 router.post('/block', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.body as { userId: string };
+    const blockerId = req.user?._id || req.user?.id;
 
     if (!userId) {
       return res.status(400).json({
@@ -467,8 +586,24 @@ router.post('/block', async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    // For now, return mock response
-    logger.info('User blocked', { blockedUserId: userId, blockedBy: req.user?._id });
+    if (userId === String(blockerId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot block yourself'
+      });
+    }
+
+    // Create or update block (upsert to handle duplicates)
+    await Block.updateOne(
+      { blockerId, blockedId: userId },
+      { $setOnInsert: { blockerId, blockedId: userId } },
+      { upsert: true }
+    );
+
+    logger.info('User blocked', { 
+      blockedUserId: userId, 
+      blockedBy: blockerId 
+    });
 
     res.json({
       success: true,

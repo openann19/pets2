@@ -2,6 +2,8 @@ import { FlatList, RefreshControl, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { FlatList as FlatListType } from "react-native";
 import { useRef, useState } from "react";
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { haptic } from '../ui/haptics';
 
 import {
   AdvancedHeader,
@@ -52,44 +54,53 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
   });
 
   const handleMatchPress = (matchId: string, petName: string) => {
+    haptic.confirm();
     navigation.navigate("Chat", { matchId, petName });
+  };
+  
+  const handleFilterPress = () => {
+    haptic.tap();
+    setFilterOpen(true);
+    logger.info("Filter matches button pressed");
+  };
+  
+  const handleSearchPress = () => {
+    haptic.tap();
+    logger.info("Search matches button pressed");
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Advanced Header */}
-      <AdvancedHeader
-        {...HeaderConfigs.glass({
-          title: "Matches",
-          rightButtons: [
-            {
-              type: "filter",
-              onPress: async () => {
-                logger.info("Filter matches button pressed");
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "Matches",
+            rightButtons: [
+              {
+                type: "filter",
+                onPress: handleFilterPress,
+                variant: "glass",
+                haptic: "light",
               },
-              variant: "glass",
-              haptic: "light",
-            },
-            {
-              type: "search",
-              onPress: async () => {
-                logger.info("Search matches button pressed");
+              {
+                type: "search",
+                onPress: handleSearchPress,
+                variant: "minimal",
+                haptic: "light",
               },
-              variant: "minimal",
-              haptic: "light",
+            ],
+            apiActions: {
+              filter: async () => {
+                logger.info("Filter API action triggered");
+              },
+              search: async () => {
+                logger.info("Search API action triggered");
+              },
             },
-          ],
-          apiActions: {
-            filter: async () => {
-              logger.info("Filter API action triggered");
-            },
-            search: async () => {
-              logger.info("Search API action triggered");
-            },
-          },
-        })}
-      />
-
+          })}
+        />
+      }
+    >
       <MatchesTabs selectedTab={selectedTab} onTabChange={setSelectedTab} />
 
       <FlatList
@@ -119,19 +130,15 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
           />
         }
       />
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
   list: {
     flex: 1,
   },
   listContent: {
-    padding: 16,
+    padding: Theme.spacing.md,
   },
 });

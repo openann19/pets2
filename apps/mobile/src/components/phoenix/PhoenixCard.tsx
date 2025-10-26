@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   type ViewStyle,
   type TouchableOpacityProps,
+  type NativeSyntheticEvent,
+  type NativeTouchEvent,
   StyleSheet,
 } from "react-native";
 import {
@@ -26,11 +28,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 
 import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  AnimationConfigs,
+  SPRING,
 } from "../../animation";
+import { Colors, Spacing, BorderRadius } from "../../styles/GlobalStyles";
 import { PREMIUM_SHADOWS } from "../elite/constants";
 import { useTheme } from "../../theme/Provider";
 
@@ -84,9 +84,9 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   const handlePressIn = useCallback(() => {
     if (!interactive) return;
 
-    scale.value = withSpring(0.98, AnimationConfigs.spring);
-    glowIntensity.value = withSpring(1.3, AnimationConfigs.spring);
-    elevation.value = withSpring(1.2, AnimationConfigs.spring);
+    scale.value = withSpring(0.98, SPRING.soft);
+    glowIntensity.value = withSpring(1.3, SPRING.soft);
+    elevation.value = withSpring(1.2, SPRING.soft);
 
     runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
   }, [interactive]);
@@ -94,14 +94,42 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
   const handlePressOut = useCallback(() => {
     if (!interactive) return;
 
-    scale.value = withSpring(1, AnimationConfigs.spring);
-    glowIntensity.value = withSpring(1, AnimationConfigs.spring);
-    elevation.value = withSpring(1, AnimationConfigs.spring);
+    scale.value = withSpring(1, SPRING.soft);
+    glowIntensity.value = withSpring(1, SPRING.soft);
+    elevation.value = withSpring(1, SPRING.soft);
   }, [interactive]);
 
   const handlePress = useCallback(() => {
     if (onPress) {
-      onPress({} as any);
+      // TouchableOpacity requires native event but we're calling it programmatically
+      // Creating minimal event object to satisfy type checker
+      const syntheticEvent = {
+        nativeEvent: {
+          pageX: 0,
+          pageY: 0,
+          locationX: 0,
+          locationY: 0,
+          timestamp: Date.now(),
+          target: 0,
+          identifier: 0,
+        },
+        currentTarget: 0,
+        target: 0,
+        bubbles: false,
+        cancelable: true,
+        defaultPrevented: false,
+        eventPhase: 0,
+        isTrusted: true,
+        preventDefault: () => {},
+        isDefaultPrevented: () => false,
+        stopPropagation: () => {},
+        isPropagationStopped: () => false,
+        persist: () => {},
+        timeStamp: Date.now(),
+        type: "press",
+      } as NativeSyntheticEvent<NativeTouchEvent>;
+      
+      onPress(syntheticEvent);
     }
   }, [onPress]);
 
@@ -196,7 +224,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
         <TouchableOpacity
           testID={testID}
           style={{
-            borderRadius: BorderRadius.lg,
+            borderRadius: Number(BorderRadius.lg) || 8,
             overflow: "hidden",
           }}
           onPressIn={handlePressIn}
@@ -207,13 +235,13 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
           {...props}
         >
           {variant === "glass" ? (
-            <BlurView intensity={20} style={{ borderRadius: BorderRadius.lg }}>
+            <BlurView intensity={20} style={{ borderRadius: Number(BorderRadius.lg) || 8 }}>
               <CardContent />
             </BlurView>
           ) : variant === "neon" ? (
             <LinearGradient
               colors={[Colors.primary + "05", Colors.primary + "10"]}
-              style={{ borderRadius: BorderRadius.lg }}
+              style={{ borderRadius: Number(BorderRadius.lg) || 8 }}
             >
               <CardContent />
             </LinearGradient>
@@ -232,7 +260,7 @@ export const PhoenixCard: React.FC<PhoenixCardProps> = ({
       style={StyleSheet.flatten([
         animatedStyle,
         {
-          borderRadius: BorderRadius.lg,
+          borderRadius: Number(BorderRadius.lg) || 8,
           overflow: "hidden",
         },
         style,

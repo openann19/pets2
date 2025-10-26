@@ -1,248 +1,97 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Modal, View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, FlatList
-} from "react-native";
-import { BlurView } from "expo-blur";
-import { Ionicons } from "@expo/vector-icons";
-import { Theme } from "../../theme/unified-theme";
+import React, { useState } from 'react';
+import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { startActivity } from '../../services/petActivityService';
 
-type Pet = { _id: string; name: string; breed?: string };
+export interface ActivityType {
+  id: string;
+  label: string;
+  emoji?: string;
+}
 
-const ACTIVITY_KINDS = [
-  { key: "walk", label: "Walk", icon: "walk" },
-  { key: "play", label: "Play", icon: "tennisball" },
-  { key: "feeding", label: "Feeding", icon: "restaurant" },
-  { key: "rest", label: "Rest", icon: "bed" },
-  { key: "training", label: "Training", icon: "ribbon" },
-  { key: "lost_pet", label: "Lost Pet", icon: "alert-circle" },
-] as const;
-
-export type CreateActivityForm = {
-  petId: string;
-  activity: typeof ACTIVITY_KINDS[number]["key"];
-  message?: string;
-  shareToMap: boolean;
-  radiusMeters: number;
-};
+export interface PetLite {
+  _id: string;
+  name: string;
+}
 
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onStart: (form: CreateActivityForm) => Promise<void> | void;
-  testID?: string;
+  pets: PetLite[];
+  activityTypes: string[] | ActivityType[];
 }
 
-export default function CreateActivityModal({ visible, onClose, onStart, testID }: Props) {
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [loadingPets, setLoadingPets] = useState(false);
-  const [form, setForm] = useState<CreateActivityForm>({
-    petId: "",
-    activity: "walk",
-    message: "",
-    shareToMap: true,
-    radiusMeters: 800,
-  });
-  const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (!visible) return;
-    (async () => {
-      try {
-        setLoadingPets(true);
-        const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || "";
-        const res = await fetch(`${API_URL}/api/pets/mine`);
-        const list: Pet[] = res.ok ? await res.json() : [];
-        setPets(list);
-        if (list.length && !form.petId) {
-          setForm((f) => ({ ...f, petId: list[0]._id }));
-        }
-      } finally {
-        setLoadingPets(false);
-      }
-    })();
-  }, [visible]);
-
-  const canSubmit = useMemo(() => !!form.petId && !!form.activity && !submitting, [form, submitting]);
+export default function CreateActivityModal({ visible, onClose, pets, activityTypes }: Props) {
+  const [pet, setPet] = useState<string | null>(pets?.[0]?._id ?? null);
+  const [act, setAct] = useState<string | null>(
+    typeof activityTypes[0] === 'string' ? (activityTypes[0] as string) : (activityTypes[0] as ActivityType).id
+  );
+  const [msg, setMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    if (!canSubmit) return;
-    setSubmitting(true);
+    if (!pet || !act) return;
     try {
-      await onStart(form);
+      setLoading(true);
+      await startActivity({ petId: pet, activity: act, message: msg });
       onClose();
+    } catch (error) {
+      console.error('Failed to start activity:', error);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <Modal transparent visible={visible} animationType="slide" testID={testID || "create-activity-modal"}>
-      <View style={styles.backdrop}>
-        <BlurView intensity={30} style={styles.sheet}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Start Pet Activity</Text>
-            <TouchableOpacity accessibilityLabel="Close" onPress={onClose} testID="btn-close-create-activity">
-              <Ionicons name="close" size={24} color={Theme.colors.neutral[800]} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Pet picker */}
-          <Text style={styles.label}>Pet</Text>
-          {loadingPets ? (
-            <ActivityIndicator color={Theme.colors.primary[500]} />
-          ) : pets.length ? (
-            <FlatList
-              horizontal
-              data={pets}
-              keyExtractor={(p) => p._id}
-              contentContainerStyle={{ gap: 8 }}
-              renderItem={({ item }) => {
-                const active = item._id === form.petId;
-                return (
-                  <TouchableOpacity
-                    style={[styles.chip, active && styles.chipActive]}
-                    onPress={() => setForm((f) => ({ ...f, petId: item._id }))}
-                    testID={`chip-pet-${item._id}`}
-                  >
-                    <Text style={[styles.chipText, active && styles.chipTextActive]}>
-                      {item.name}{item.breed ? ` · ${item.breed}` : ""}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-          ) : (
-            <Text style={styles.hint}>No pets found. Add one in "My Pets".</Text>
-          )}
-
-          {/* Activity kinds */}
-          <Text style={[styles.label, { marginTop: 16 }]}>Activity</Text>
-          <View style={styles.chipsRow}>
-            {ACTIVITY_KINDS.map((k) => {
-              const active = form.activity === k.key;
-              return (
-                <TouchableOpacity
-                  key={k.key}
-                  style={[styles.chip, active && styles.chipActive]}
-                  onPress={() => setForm((f) => ({ ...f, activity: k.key }))}
-                  testID={`chip-activity-${k.key}`}
-                >
-                  <Ionicons
-                    name={k.icon as any}
-                    size={16}
-                    color={active ? Theme.colors.primary[700] : Theme.colors.neutral[600]}
-                  />
-                  <Text style={[styles.chipText, active && styles.chipTextActive]}>{k.label}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* Message */}
-          <Text style={[styles.label, { marginTop: 16 }]}>Message (optional)</Text>
-          <View style={styles.input}>
-            <TextInput
-              value={form.message}
-              onChangeText={(t) => setForm((f) => ({ ...f, message: t }))}
-              placeholder="e.g., At the park near 5th street"
-              placeholderTextColor={Theme.colors.neutral[400]}
-              style={styles.inputText}
-              maxLength={140}
-              testID="input-activity-message"
-            />
-          </View>
-
-          {/* Share + radius */}
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={[styles.toggle, form.shareToMap && styles.toggleOn]}
-              onPress={() => setForm((f) => ({ ...f, shareToMap: !f.shareToMap }))}
-              testID="toggle-share-map"
-            >
-              <Ionicons
-                name={form.shareToMap ? "eye" : "eye-off"}
-                size={16}
-                color={form.shareToMap ? Theme.colors.neutral[0] : Theme.colors.neutral[700]}
-              />
-              <Text style={[styles.toggleText, form.shareToMap && styles.toggleTextOn]}>
-                Share to Map
-              </Text>
-            </TouchableOpacity>
-
-            <View style={styles.radiusPill}>
-              <Text style={styles.radiusText}>{form.radiusMeters} m</Text>
-              <View style={styles.radiusButtons}>
-                <TouchableOpacity
-                  onPress={() => setForm((f) => ({ ...f, radiusMeters: Math.max(200, f.radiusMeters - 200) }))}
-                  testID="btn-radius-dec"
-                >
-                  <Ionicons name="remove-circle" size={22} color={Theme.colors.neutral[600]} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setForm((f) => ({ ...f, radiusMeters: Math.min(3000, f.radiusMeters + 200) }))}
-                  testID="btn-radius-inc"
-                >
-                  <Ionicons name="add-circle" size={22} color={Theme.colors.neutral[600]} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          {/* Actions */}
-          <TouchableOpacity
-            style={[styles.primaryBtn, !canSubmit && { opacity: 0.5 }]}
-            onPress={submit}
-            disabled={!canSubmit}
-            testID="btn-start-activity"
-          >
-            {submitting ? (
-              <ActivityIndicator color={Theme.colors.neutral[0]} />
-            ) : (
-              <Text style={styles.primaryBtnText}>Start Activity</Text>
-            )}
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
+      <View style={s.container}>
+        <Text style={s.header}>Start Activity</Text>
+        <Text style={s.subHeader}>Pet</Text>
+        {pets.map(p => (
+          <TouchableOpacity key={p._id} onPress={() => setPet(p._id)} style={[s.option, pet === p._id && s.selected]}>
+            <Text>{p.name}</Text>
           </TouchableOpacity>
-        </BlurView>
+        ))}
+
+        <Text style={[s.subHeader, { marginTop: 12 }]}>Activity</Text>
+        {activityTypes.map((t) => {
+          const id = typeof t === 'string' ? t : t.id;
+          const label = typeof t === 'string' ? t : `${t.emoji ?? ''} ${t.label}`;
+          return (
+            <TouchableOpacity key={id} onPress={() => setAct(id)} style={[s.option, act === id && s.selected]}>
+              <Text>{label}</Text>
+            </TouchableOpacity>
+          );
+        })}
+
+        <TextInput
+          value={msg}
+          onChangeText={setMsg}
+          placeholder="Message (optional)"
+          style={s.input}
+          placeholderTextColor="#999"
+        />
+        <View style={s.actions}>
+          <TouchableOpacity onPress={onClose} style={s.button}>
+            <Text>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={submit} style={[s.button, s.primaryButton]} disabled={loading}>
+            <Text style={s.primaryText}>{loading ? 'Sharing...' : 'Share'}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.35)" },
-  sheet: { padding: 16, paddingBottom: 24, borderTopLeftRadius: 16, borderTopRightRadius: 16, overflow: "hidden" },
-  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 },
-  title: { fontSize: 18, fontWeight: "700", color: Theme.colors.neutral[800] },
-  label: { fontSize: 14, fontWeight: "600", color: Theme.colors.neutral[700], marginBottom: 8 },
-  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  chip: {
-    flexDirection: "row", alignItems: "center", gap: 6,
-    paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: Theme.colors.neutral[100],
-  },
-  chipActive: { backgroundColor: "#fde7f2", borderWidth: 1, borderColor: Theme.colors.primary[300] },
-  chipText: { color: Theme.colors.neutral[700], fontWeight: "600" },
-  chipTextActive: { color: Theme.colors.primary[700] },
-  hint: { color: Theme.colors.neutral[500], marginBottom: 8 },
-  input: { borderRadius: 12, backgroundColor: Theme.colors.neutral[100], paddingHorizontal: 12, paddingVertical: 8 },
-  inputText: { color: Theme.colors.neutral[800], fontSize: 14 },
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 16 },
-  toggle: {
-    flexDirection: "row", alignItems: "center", gap: 8,
-    backgroundColor: Theme.colors.neutral[100], paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20,
-  },
-  toggleOn: { backgroundColor: Theme.colors.primary[500] },
-  toggleText: { color: Theme.colors.neutral[700], fontWeight: "700" },
-  toggleTextOn: { color: Theme.colors.neutral[0] },
-  radiusPill: {
-    flexDirection: "row", alignItems: "center", gap: 8,
-    backgroundColor: Theme.colors.neutral[100], paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20,
-  },
-  radiusText: { fontWeight: "700", color: Theme.colors.neutral[700] },
-  radiusButtons: { flexDirection: "row", gap: 8 },
-  primaryBtn: {
-    marginTop: 16, backgroundColor: Theme.colors.primary[500],
-    alignItems: "center", justifyContent: "center", paddingVertical: 12, borderRadius: 12,
-  },
-  primaryBtnText: { color: Theme.colors.neutral[0], fontSize: 16, fontWeight: "700" },
+const s = StyleSheet.create({
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  header: { fontWeight: '700', fontSize: 18, marginBottom: 8 },
+  subHeader: { fontWeight: '600', fontSize: 14, marginBottom: 8, marginTop: 8 },
+  option: { padding: 12, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, marginBottom: 8 },
+  selected: { borderColor: '#4f46e5', backgroundColor: '#eef2ff' },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 10, padding: 12, marginTop: 8, color: '#111' },
+  actions: { flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginTop: 16 },
+  button: { padding: 12, borderWidth: 1, borderColor: '#ddd', borderRadius: 10, flex: 1, alignItems: 'center' },
+  primaryButton: { backgroundColor: '#4f46e5', borderColor: '#4f46e5' },
+  primaryText: { color: '#fff', fontWeight: '600' },
 });
-

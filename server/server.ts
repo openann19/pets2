@@ -13,6 +13,7 @@ import swaggerUi from 'swagger-ui-express';
 import 'dotenv/config';
 import logger from './src/utils/logger';
 import type { ExtendedLogger } from './src/utils/logger';
+import { FLAGS } from './src/config/flags';
 
 // Swagger configuration
 const swaggerOptions = {
@@ -110,6 +111,7 @@ const premiumRoutes = await import('./src/routes/premium');
 const analyticsRoutes = await import('./src/routes/analytics');
 const adminRoutes = await import('./src/routes/admin');
 const adminAnalyticsRoutes = await import('./src/routes/admin.analytics');
+const adminServicesRoutes = await import('./src/routes/adminServices');
 const accountRoutes = await import('./src/routes/account');
 const memoriesRoutes = await import('./src/routes/memories');
 const webhookRoutes = await import('./src/routes/webhooks');
@@ -136,6 +138,10 @@ const petActivityRoutes = await import('./src/routes/petActivity');
 const homeRoutes = await import('./src/routes/home');
 const settingsRoutes = await import('./src/routes/settings');
 const revenuecatRoutes = await import('./src/routes/revenuecat');
+const liveRoutes = await import('./src/routes/live');
+const livekitWebhookRoutes = await import('./src/routes/livekitWebhooks');
+const mapActivityRoutes = await import('./src/routes/mapActivity');
+const voiceNotesRoutes = await import('./src/routes/voiceNotes');
 
 // Import middleware
 const errorHandler = await import('./src/middleware/errorHandler');
@@ -505,13 +511,16 @@ app.use('/api/auth', authRoutes.default);
 app.use('/api/users', authenticateToken, userRoutes.default);
 app.use('/api/pets', authenticateToken, petRoutes.default);
 app.use('/api/matches', authenticateToken, matchRoutes.default);
+app.use('/api/matches/search', authenticateToken, (await import('./src/routes/matches.search')).default);
 app.use('/api/chat', authenticateToken, chatRoutes.default);
+app.use('/api/chat', authenticateToken, voiceNotesRoutes.default);
 app.use('/api/ai', authenticateToken, aiRoutes.default);
 app.use('/api/ai', authenticateToken, aiPhotoRoutes.default);
 app.use('/api/ai', authenticateToken, aiCompatRoutes.default);
 app.use('/api/premium', authenticateToken, premiumRoutes.default);
 app.use('/api/analytics', authenticateToken, analyticsRoutes.default);
 app.use('/api/account', authenticateToken, accountRoutes.default);
+app.use('/api', (await import('./src/routes/swipe')).default);
 app.use('/api/memories', authenticateToken, memoriesRoutes.default);
 app.use('/api/map', authenticateToken, (await import('./src/routes/map')).default);
 app.use('/api/events', authenticateToken, (await import('./src/routes/events')).default);
@@ -519,6 +528,12 @@ app.use('/api/personality', authenticateToken, (await import('./src/routes/perso
 app.use('/api/dashboard', authenticateToken, (await import('./src/routes/dashboard')).default);
 app.use('/api/admin', authenticateToken, requireAdmin, adminRoutes.default);
 app.use('/api/admin/analytics', authenticateToken, requireAdmin, adminAnalyticsRoutes.default);
+app.use('/api/admin/services', authenticateToken, requireAdmin, adminServicesRoutes.default);
+app.use('/api/admin/system', authenticateToken, requireAdmin, (await import('./src/routes/adminSystem')).default);
+app.use('/api/admin/security', authenticateToken, requireAdmin, (await import('./src/routes/adminSecurity')).default);
+app.use('/api/admin/subscriptions', authenticateToken, requireAdmin, (await import('./src/routes/adminSubscriptions')).default);
+app.use('/api/admin/chats', authenticateToken, requireAdmin, (await import('./src/routes/adminChatModeration')).default);
+app.use('/api/admin/uploads', authenticateToken, requireAdmin, (await import('./src/routes/adminUploadModeration')).default);
 // Manual moderation endpoints (with CSRF protection for cookie auth)
 app.use('/api/moderation', csrfProtection, authenticateToken, requireAdmin, moderationRoutes.default);
 app.use('/api/user/moderation', csrfProtection, moderationUserRoutes.default);
@@ -527,6 +542,17 @@ app.use('/api/ai/moderation', authenticateToken, aiModerationRoutes.default);
 app.use('/api/admin/ai/moderation', csrfProtection, aiModerationAdminRoutes.default);
 app.use('/api/upload', authenticateToken, (await import('./src/routes/upload')).default);
 app.use('/api/uploads', (await import('./src/routes/uploads')).default);
+// Cloudinary upload routes
+app.use('/api/upload', (await import('./src/routes/uploadPhoto')).default);
+
+// Enhanced Upload & Verification Routes (per PHOTOVERIFICATION spec)
+const uploadRoutes = await import('./src/routes/uploadRoutes');
+const verificationRoutes = await import('./src/routes/verification');
+const moderateRoutes = await import('./src/routes/moderate');
+app.use('/api/uploads', authenticateToken, uploadRoutes.default);
+app.use('/api/verification', verificationRoutes.default);
+app.use('/api/admin', authenticateToken, requireAdmin, moderateRoutes.default);
+
 app.use('/api/community', authenticateToken, communityRoutes.default); // Register community routes
 app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route
 app.use('/api/stories', authenticateToken, storiesRoutes.default);
@@ -534,6 +560,7 @@ app.use('/api/conversations', conversationsRoutes.default);
 app.use('/api/profile', profileRoutes.default); // Profile routes (handles auth internally)
 app.use('/api/adoption', adoptionRoutes.default); // Adoption routes (handles auth internally)
 app.use('/api', petActivityRoutes.default); // Pet activity routes
+app.use('/api/map', authenticateToken, mapActivityRoutes.default); // Map activity routes
 
 // Enhanced 2025 Features Routes
 app.use('/api/auth/biometric', biometricRoutes.default);
@@ -551,6 +578,15 @@ app.use('/api/admin/enhanced-features', adminEnhancedFeaturesRoutes.default);
 
 // Admin Moderation Routes
 app.use('/api/admin/moderation', authenticateToken, requireAdmin, adminModerationRoutes.default);
+
+// Admin Safety Moderation Routes (for photo analysis and safety)
+app.use('/api/admin/safety-moderation', authenticateToken, requireAdmin, (await import('./src/routes/adminSafetyModeration')).default);
+
+// Live streaming routes (if flag is enabled)
+if (FLAGS.GO_LIVE) {
+  app.use('/api/live', liveRoutes.default);
+  app.use('/api', livekitWebhookRoutes.default);
+}
 
 // Webhooks - no auth required, verification handled within the route handlers
 app.use('/api/webhooks', webhookRoutes.default);
@@ -579,6 +615,10 @@ if (process.env.NODE_ENV !== 'test') {
   // Socket.io for real-time chat
   const { default: chatSocket } = await import('./src/services/chatSocket');
   chatSocket(io);
+
+  // Socket.io for live streaming
+  const { default: liveSocket } = await import('./src/sockets/liveSocket');
+  liveSocket(io);
 
   // Initialize admin notifications service
   const { default: adminNotifications } = await import('./src/services/adminNotifications');

@@ -16,7 +16,7 @@ export function usePremiumStatus(pollMs = 0) {
   async function fetchStatus() {
     try {
       setLoading(true);
-      const data = await request<{ subscription?: PremiumStatus }>("/premium/status", { method: "GET" });
+      const data = await request<{ subscription?: PremiumStatus }>("/api/premium/status", { method: "GET" });
       setStatus({ 
         active: !!data?.subscription?.active, 
         plan: data?.subscription?.plan ?? "free",

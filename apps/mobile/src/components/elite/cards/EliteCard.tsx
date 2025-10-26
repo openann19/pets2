@@ -20,14 +20,11 @@ import * as Haptics from "expo-haptics";
 import Animated from "react-native-reanimated";
 
 import {
-  GlobalStyles,
-  BorderRadius,
-  AnimationConfigs,
-  Shadows,
+  SPRING,
 } from "../../../animation";
+import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
 import { PREMIUM_GRADIENTS } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
-import { Theme } from '../theme/unified-theme';
 
 /**
  * EliteCard Component
@@ -77,19 +74,19 @@ export const EliteCard: React.FC<EliteCardProps> = ({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.98, AnimationConfigs.spring);
+    scale.value = withSpring(0.98, SPRING.soft);
     if (onPress) {
       runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, AnimationConfigs.spring);
+    scale.value = withSpring(1, SPRING.soft);
   };
 
   const getCardStyle = (): ViewStyle => {
     const baseStyle = {
-      borderRadius: BorderRadius["2xl"],
+      borderRadius: Number(BorderRadius["2xl"]) || 16,
       overflow: "hidden" as const,
       position: "relative" as const,
     };
@@ -101,7 +98,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           backgroundColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
           borderColor: "rgba(255,255,255,0.2)",
-          shadowColor: "Theme.colors.neutral[950]",
+          shadowColor: "#000000",
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.37,
           shadowRadius: 32,
@@ -181,7 +178,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
             <LinearGradient
               colors={gradientColors}
               style={{
-                borderRadius: BorderRadius["2xl"],
+                borderRadius: Number(BorderRadius["2xl"]) || 16,
                 flex: 1,
               }}
               start={{ x: 0, y: 0 }}
@@ -190,7 +187,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
               {blur ? (
                 <BlurView
                   intensity={15}
-                  style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+                  style={{ borderRadius: Number(BorderRadius["2xl"]) || 16, flex: 1 }}
                 >
                   {CardContent}
                 </BlurView>
@@ -203,7 +200,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
               {blur ? (
                 <BlurView
                   intensity={15}
-                  style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+                  style={{ borderRadius: Number(BorderRadius["2xl"]) || 16, flex: 1 }}
                 >
                   {CardContent}
                 </BlurView>
@@ -242,7 +239,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
         <LinearGradient
           colors={gradientColors}
           style={{
-            borderRadius: BorderRadius["2xl"],
+            borderRadius: Number(BorderRadius["2xl"]) || 16,
             flex: 1,
           }}
           start={{ x: 0, y: 0 }}
@@ -251,7 +248,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           {blur ? (
             <BlurView
               intensity={15}
-              style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+              style={{ borderRadius: Number(BorderRadius["2xl"]) || 16, flex: 1 }}
             >
               {CardContent}
             </BlurView>
@@ -264,7 +261,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           {blur ? (
             <BlurView
               intensity={15}
-              style={{ borderRadius: BorderRadius["2xl"], flex: 1 }}
+              style={{ borderRadius: Number(BorderRadius["2xl"]) || 16, flex: 1 }}
             >
               {CardContent}
             </BlurView>

@@ -1,7 +1,9 @@
 /**
  * Authentication Service for PawfectMatch Mobile App
  * Handles user authentication, token management, and secure storage
+ * Uses react-native-keychain for production-grade security
  */
+import * as Keychain from "react-native-keychain";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 import { logger } from "@pawfectmatch/core";
@@ -62,14 +64,78 @@ class AuthService {
   private static readonly BIOMETRIC_CREDENTIALS_KEY = "biometric_credentials";
   private static readonly SESSION_START_KEY = "session_start_time";
   private static readonly LAST_ACTIVITY_KEY = "last_activity_time";
+  private static readonly SERVICE_NAME = "com.pawfectmatch.mobile";
 
   // Session configuration
   private static readonly SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
   private static readonly ACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes of inactivity
   private sessionCheckInterval: ReturnType<typeof setInterval> | null = null;
+  private useKeychain: boolean = true; // Use Keychain by default for production security
 
   constructor() {
     this.startSessionMonitoring();
+  }
+
+  // ===== Secure Storage Methods =====
+
+  /**
+   * Store item securely using Keychain (production) or SecureStore (development)
+   */
+  private async secureSetItemAsync(key: string, value: string): Promise<void> {
+    if (this.useKeychain) {
+      try {
+        await Keychain.setGenericPassword(key, value, {
+          service: `${AuthService.SERVICE_NAME}.${key}`,
+          accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+        });
+      } catch (error) {
+        // Fallback to SecureStore if Keychain fails
+        logger.warn("Keychain failed, falling back to SecureStore", { error, key });
+        this.useKeychain = false;
+        await SecureStore.setItemAsync(key, value);
+      }
+    } else {
+      await SecureStore.setItemAsync(key, value);
+    }
+  }
+
+  /**
+   * Get item securely from Keychain or SecureStore
+   */
+  private async secureGetItemAsync(key: string): Promise<string | null> {
+    if (this.useKeychain) {
+      try {
+        const credentials = await Keychain.getGenericPassword({
+          service: `${AuthService.SERVICE_NAME}.${key}`,
+        });
+        return credentials ? credentials.password : null;
+      } catch (error) {
+        // Fallback to SecureStore if Keychain fails
+        logger.warn("Keychain retrieval failed, trying SecureStore", { error, key });
+        return await SecureStore.getItemAsync(key);
+      }
+    } else {
+      return await SecureStore.getItemAsync(key);
+    }
+  }
+
+  /**
+   * Delete item securely from Keychain or SecureStore
+   */
+  private async secureDeleteItemAsync(key: string): Promise<void> {
+    if (this.useKeychain) {
+      try {
+        await Keychain.resetGenericPassword({
+          service: `${AuthService.SERVICE_NAME}.${key}`,
+        });
+      } catch (error) {
+        // Fallback to SecureStore if Keychain fails
+        logger.warn("Keychain deletion failed, falling back to SecureStore", { error, key });
+        await SecureStore.deleteItemAsync(key);
+      }
+    } else {
+      await SecureStore.deleteItemAsync(key);
+    }
   }
 
   /**
@@ -138,7 +204,7 @@ class AuthService {
    */
   private async getSessionStartTime(): Promise<number | null> {
     try {
-      const startTime = await SecureStore.getItemAsync(
+      const startTime = await this.secureGetItemAsync(
         AuthService.SESSION_START_KEY,
       );
       return startTime ? parseInt(startTime) : null;
@@ -153,7 +219,7 @@ class AuthService {
    */
   private async getLastActivityTime(): Promise<number | null> {
     try {
-      const lastActivity = await SecureStore.getItemAsync(
+      const lastActivity = await this.secureGetItemAsync(
         AuthService.LAST_ACTIVITY_KEY,
       );
       return lastActivity ? parseInt(lastActivity) : null;
@@ -168,7 +234,7 @@ class AuthService {
    */
   private async updateLastActivityTime(): Promise<void> {
     try {
-      await SecureStore.setItemAsync(
+      await this.secureSetItemAsync(
         AuthService.LAST_ACTIVITY_KEY,
         Date.now().toString(),
       );
@@ -204,7 +270,7 @@ class AuthService {
       await this.storeAuthData(response);
 
       // Update session start time for new session
-      await SecureStore.setItemAsync(
+      await this.secureSetItemAsync(
         AuthService.SESSION_START_KEY,
         Date.now().toString(),
       );
@@ -267,7 +333,7 @@ class AuthService {
       }
 
       // Store biometric preference
-      await SecureStore.setItemAsync(AuthService.BIOMETRIC_ENABLED_KEY, "true");
+      await this.secureSetItemAsync(AuthService.BIOMETRIC_ENABLED_KEY, "true");
 
       // Get current user credentials for biometric storage
       const currentUser = await this.getCurrentUser();
@@ -277,7 +343,7 @@ class AuthService {
           biometricToken: Date.now().toString() + Math.random().toString(36),
         };
 
-        await SecureStore.setItemAsync(
+        await this.secureSetItemAsync(
           AuthService.BIOMETRIC_CREDENTIALS_KEY,
           JSON.stringify(biometricCredentials),
         );
@@ -296,8 +362,8 @@ class AuthService {
    */
   async disableBiometricAuthentication(): Promise<void> {
     try {
-      await SecureStore.deleteItemAsync(AuthService.BIOMETRIC_ENABLED_KEY);
-      await SecureStore.deleteItemAsync(AuthService.BIOMETRIC_CREDENTIALS_KEY);
+      await this.secureDeleteItemAsync(AuthService.BIOMETRIC_ENABLED_KEY);
+      await this.secureDeleteItemAsync(AuthService.BIOMETRIC_CREDENTIALS_KEY);
       logger.info("Biometric authentication disabled");
     } catch (error) {
       logger.error("Failed to disable biometric authentication", { error });
@@ -310,7 +376,7 @@ class AuthService {
    */
   async isBiometricEnabled(): Promise<boolean> {
     try {
-      const enabled = await SecureStore.getItemAsync(
+      const enabled = await this.secureGetItemAsync(
         AuthService.BIOMETRIC_ENABLED_KEY,
       );
       return enabled === "true";
@@ -348,7 +414,7 @@ class AuthService {
       }
 
       // Get stored biometric credentials
-      const storedCredentials = await SecureStore.getItemAsync(
+      const storedCredentials = await this.secureGetItemAsync(
         AuthService.BIOMETRIC_CREDENTIALS_KEY,
       );
       if (!storedCredentials) {
@@ -559,7 +625,7 @@ class AuthService {
    */
   async getCurrentUser(): Promise<User | null> {
     try {
-      const userData = await SecureStore.getItemAsync(AuthService.USER_KEY);
+      const userData = await this.secureGetItemAsync(AuthService.USER_KEY);
       return userData ? (JSON.parse(userData) as User) : null;
     } catch (error) {
       logger.error("Failed to get current user", { error });
@@ -572,7 +638,7 @@ class AuthService {
    */
   async getAccessToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(AuthService.ACCESS_TOKEN_KEY);
+      return await this.secureGetItemAsync(AuthService.ACCESS_TOKEN_KEY);
     } catch (error) {
       logger.error("Failed to get access token", { error });
       return null;
@@ -604,7 +670,7 @@ class AuthService {
       }
 
       const updatedUser = { ...currentUser, ...userData };
-      await SecureStore.setItemAsync(
+      await this.secureSetItemAsync(
         AuthService.USER_KEY,
         JSON.stringify(updatedUser),
       );
@@ -620,23 +686,23 @@ class AuthService {
   private async storeAuthData(response: AuthResponse): Promise<void> {
     try {
       await Promise.all([
-        SecureStore.setItemAsync(
+        this.secureSetItemAsync(
           AuthService.ACCESS_TOKEN_KEY,
           response.accessToken,
         ),
-        SecureStore.setItemAsync(
+        this.secureSetItemAsync(
           AuthService.REFRESH_TOKEN_KEY,
           response.refreshToken,
         ),
-        SecureStore.setItemAsync(
+        this.secureSetItemAsync(
           AuthService.USER_KEY,
           JSON.stringify(response.user),
         ),
-        SecureStore.setItemAsync(
+        this.secureSetItemAsync(
           AuthService.SESSION_START_KEY,
           Date.now().toString(),
         ),
-        SecureStore.setItemAsync(
+        this.secureSetItemAsync(
           AuthService.LAST_ACTIVITY_KEY,
           Date.now().toString(),
         ),
@@ -653,11 +719,11 @@ class AuthService {
   private async clearAuthData(): Promise<void> {
     try {
       await Promise.all([
-        SecureStore.deleteItemAsync(AuthService.ACCESS_TOKEN_KEY),
-        SecureStore.deleteItemAsync(AuthService.REFRESH_TOKEN_KEY),
-        SecureStore.deleteItemAsync(AuthService.USER_KEY),
-        SecureStore.deleteItemAsync(AuthService.SESSION_START_KEY),
-        SecureStore.deleteItemAsync(AuthService.LAST_ACTIVITY_KEY),
+        this.secureDeleteItemAsync(AuthService.ACCESS_TOKEN_KEY),
+        this.secureDeleteItemAsync(AuthService.REFRESH_TOKEN_KEY),
+        this.secureDeleteItemAsync(AuthService.USER_KEY),
+        this.secureDeleteItemAsync(AuthService.SESSION_START_KEY),
+        this.secureDeleteItemAsync(AuthService.LAST_ACTIVITY_KEY),
       ]);
 
       // Stop session monitoring
@@ -670,7 +736,7 @@ class AuthService {
 
   private async getRefreshToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(AuthService.REFRESH_TOKEN_KEY);
+      return await this.secureGetItemAsync(AuthService.REFRESH_TOKEN_KEY);
     } catch (error) {
       logger.error("Failed to get refresh token", { error });
       return null;

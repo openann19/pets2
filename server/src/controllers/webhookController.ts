@@ -113,27 +113,51 @@ export const handleStripeWebhook = async (req: StripeWebhookRequest, res: Respon
   try {
     logger.info('Processing webhook event', { type: event.type, id: event.id });
 
+    const { syncEntitlementFromStripeCustomer } = await import('../services/stripeService');
+    let customerId: string | undefined;
+
     switch (event.type) {
       case 'checkout.session.completed':
         await handleCheckoutSessionCompleted(event.data.object as Session);
+        customerId = (event.data.object as any).customer;
         break;
       case 'invoice.paid':
         await handleInvoicePaid(event.data.object as Invoice);
+        customerId = (event.data.object as any).customer;
         break;
       case 'invoice.payment_failed':
         await handleInvoicePaymentFailed(event.data.object as Invoice);
+        customerId = (event.data.object as any).customer;
         break;
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(event.data.object as Invoice);
+        customerId = (event.data.object as any).customer;
         break;
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(event.data.object as Subscription);
+        customerId = (event.data.object as any).customer;
         break;
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(event.data.object as Subscription);
+        customerId = (event.data.object as any).customer;
+        break;
+      case 'customer.subscription.created':
+        customerId = (event.data.object as any).customer;
+        break;
+      case 'payment_method.attached':
+        customerId = (event.data.object as any).customer;
         break;
       default:
         logger.info(`Unhandled webhook event: ${event.type}`);
+    }
+
+    // Update Redis entitlement cache
+    if (customerId) {
+      try {
+        await syncEntitlementFromStripeCustomer(customerId);
+      } catch (e) {
+        logger.error('Failed to sync entitlement from webhook', { error: (e as Error).message, customerId });
+      }
     }
 
     if (process.env.NODE_ENV !== 'test') {

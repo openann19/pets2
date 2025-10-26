@@ -24,12 +24,9 @@ import * as Haptics from "expo-haptics";
 import Animated from "react-native-reanimated";
 
 import {
-  Colors,
-  Spacing,
-  GlobalStyles,
-  BorderRadius,
-  AnimationConfigs,
+  SPRING,
 } from "../../../animation";
+import { Colors, Spacing, BorderRadius, GlobalStyles } from "../../../styles/GlobalStyles";
 import { PREMIUM_GRADIENTS } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
 
@@ -48,7 +45,7 @@ interface EliteButtonProps extends TouchableOpacityProps {
     | "holographic"
     | "neon";
   size?: "sm" | "md" | "lg" | "xl";
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   loading?: boolean;
   gradient?: string[];
   ripple?: boolean;
@@ -108,8 +105,8 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.96, AnimationConfigs.spring);
-    glowIntensity.value = withSpring(1.2, AnimationConfigs.spring);
+    scale.value = withSpring(0.96, SPRING.soft);
+    glowIntensity.value = withSpring(1.2, SPRING.soft);
 
     if (ripple) {
       rippleScale.value = 0;
@@ -122,13 +119,13 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, AnimationConfigs.spring);
-    glowIntensity.value = withSpring(1, AnimationConfigs.spring);
+    scale.value = withSpring(1, SPRING.soft);
+    glowIntensity.value = withSpring(1, SPRING.soft);
   };
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
-      borderRadius: BorderRadius["2xl"],
+      borderRadius: Number(BorderRadius["2xl"]) || 16,
       overflow: "hidden",
       position: "relative",
     };
@@ -346,7 +343,7 @@ export const EliteButton: React.FC<EliteButtonProps> = ({
         <LinearGradient
           colors={getGradientColors()}
           style={{
-            borderRadius: BorderRadius["2xl"],
+            borderRadius: Number(BorderRadius["2xl"]) || 16,
             flex: 1,
             justifyContent: "center",
             alignItems: "center",

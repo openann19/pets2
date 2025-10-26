@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   StyleSheet,
@@ -10,7 +11,7 @@ import {
 } from "react-native";
 
 import type { PhotoData } from "../../hooks/usePhotoManager";
-import { Theme } from '../theme/unified-theme';
+import { useExtendedColors } from "../../hooks/useExtendedTheme";
 
 interface PetPhotosSectionProps {
   photos: PhotoData[];
@@ -29,6 +30,10 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
   onRemovePhoto,
   onSetPrimaryPhoto,
 }) => {
+  const colors = useExtendedColors();
+  const hasUploadingPhotos = photos.some((p) => p.isUploading);
+  const hasErrorPhotos = photos.some((p) => p.error);
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Photos</Text>
@@ -38,7 +43,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
         onPress={onPickImage}
         disabled={photos.length >= 10}
       >
-        <Ionicons name="camera" size={24} color="Theme.colors.neutral[500]" />
+        <Ionicons name="camera" size={24} color={colors.textSecondary} />
         <Text style={styles.addPhotoText}>
           {photos.length === 0
             ? "Add Photos"
@@ -48,11 +53,60 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
 
       {errors.photos && <Text style={styles.errorText}>{errors.photos}</Text>}
 
+      {/* Upload status indicators */}
+      {hasUploadingPhotos && (
+        <View style={styles.uploadStatusContainer}>
+          <ActivityIndicator size="small" color="#8B5CF6" />
+          <Text style={styles.uploadStatusText}>
+            Uploading photos...
+          </Text>
+        </View>
+      )}
+
+      {hasErrorPhotos && !hasUploadingPhotos && (
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle" size={16} color="#EF4444" />
+          <Text style={styles.errorStatusText}>
+            Some photos failed to upload. Please try again.
+          </Text>
+        </View>
+      )}
+
       {photos.length > 0 && (
         <View style={styles.photosGrid}>
           {photos.map((photo, index) => (
             <View key={index} style={styles.photoContainer}>
-              <Image source={{ uri: photo.uri }} style={styles.photo} />
+              <Image 
+                source={{ uri: photo.uploadedUrl || photo.uri }} 
+                style={styles.photo}
+                resizeMode="cover"
+              />
+
+              {/* Upload progress overlay */}
+              {photo.isUploading && photo.uploadProgress && (
+                <View style={styles.progressOverlay}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  {photo.uploadProgress.percentage < 100 && (
+                    <Text style={styles.progressText}>
+                      {photo.uploadProgress.percentage}%
+                    </Text>
+                  )}
+                </View>
+              )}
+
+              {/* Error indicator */}
+              {photo.error && (
+                <View style={styles.errorOverlay}>
+                  <Ionicons name="alert-circle" size={20} color="#EF4444" />
+                </View>
+              )}
+
+              {/* Success indicator */}
+              {photo.uploadedUrl && !photo.isUploading && !photo.error && (
+                <View style={styles.successIndicator}>
+                  <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                </View>
+              )}
 
               {photo.isPrimary && (
                 <View style={styles.primaryBadge}>
@@ -61,28 +115,30 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
               )}
 
               <View style={styles.photoActions}>
-                {!photo.isPrimary && (
+                {!photo.isPrimary && !photo.isUploading && (
                   <TouchableOpacity
                     style={styles.photoActionButton}
                     onPress={() => {
                       onSetPrimaryPhoto(index);
                     }}
                   >
-                    <Ionicons name="star" size={16} color="Theme.colors.neutral[0]" />
+                    <Ionicons name="star" size={16} color={colors.white} />
                   </TouchableOpacity>
                 )}
 
-                <TouchableOpacity
-                  style={StyleSheet.flatten([
-                    styles.photoActionButton,
-                    styles.deleteButton,
-                  ])}
-                  onPress={() => {
-                    onRemovePhoto(index);
-                  }}
-                >
-                  <Ionicons name="trash" size={16} color="Theme.colors.neutral[0]" />
-                </TouchableOpacity>
+                {!photo.isUploading && (
+                  <TouchableOpacity
+                    style={StyleSheet.flatten([
+                      styles.photoActionButton,
+                      styles.deleteButton,
+                    ])}
+                    onPress={() => {
+                      onRemovePhoto(index);
+                    }}
+                  >
+                    <Ionicons name="trash" size={16} color={colors.white} />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           ))}
@@ -182,5 +238,69 @@ const styles = StyleSheet.create({
     color: "Theme.colors.neutral[500]",
     marginTop: 12,
     lineHeight: 18,
+  },
+  uploadStatusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    marginTop: 8,
+    backgroundColor: "#F3E8FF",
+    borderRadius: 8,
+    gap: 8,
+  },
+  uploadStatusText: {
+    fontSize: 14,
+    color: "#8B5CF6",
+    fontWeight: "500",
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    marginTop: 8,
+    backgroundColor: "#FEE2E2",
+    borderRadius: 8,
+    gap: 8,
+  },
+  errorStatusText: {
+    fontSize: 14,
+    color: "#EF4444",
+    fontWeight: "500",
+  },
+  progressOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    gap: 4,
+  },
+  progressText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 4,
+  },
+  errorOverlay: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 12,
+    padding: 2,
+  },
+  successIndicator: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 12,
+    padding: 2,
   },
 });

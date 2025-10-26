@@ -8,6 +8,8 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { ReactNode } from "react";
 
 // Root Stack Navigator Types
+import VerificationCenterScreen from '../screens/VerificationCenterScreen';
+
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
@@ -60,6 +62,8 @@ export type RootStackParamList = {
   PrivacySettings: undefined;
   BlockedUsers: undefined;
   SafetyCenter: undefined;
+  VerificationCenter: undefined;
+  AdminServices: undefined;
   NotificationPreferences: undefined;
   HelpSupport: undefined;
   AboutTermsPrivacy: undefined;
@@ -71,6 +75,10 @@ export type RootStackParamList = {
   AdminChats: undefined;
   AdminUploads: undefined;
   AdminVerifications: undefined;
+  AdminServices: undefined;
+  GoLive: undefined;
+  LiveViewer: { streamId: string };
+  LiveBrowse: undefined;
   [key: string]: undefined | object;
 };
 
@@ -105,6 +113,7 @@ export type AdminStackParamList = {
   AdminChats: undefined;
   AdminUploads: undefined;
   AdminVerifications: undefined;
+  AdminServices: undefined;
 };
 
 // Premium Stack Types

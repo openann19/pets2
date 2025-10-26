@@ -12,6 +12,10 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { haptic } from '../ui/haptics';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import type { RootStackScreenProps } from "../navigation/types";
 import { useMyPetsScreen } from "../hooks/screens/useMyPetsScreen";
