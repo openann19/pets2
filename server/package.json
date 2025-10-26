@@ -2,13 +2,15 @@
   "name": "server",
   "version": "1.0.0",
   "description": "PawfectMatch backend APIs and services",
-  "main": "server.js",
+  "main": "dist/server.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only --watch src server.js",
+    "type-check": "tsc --noEmit",
     "lint": "eslint ./src ./tests",
     "lint:check": "eslint ./src ./tests --max-warnings 0",
     "lint:fix": "eslint ./src ./tests --fix",
@@ -61,15 +63,30 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/helmet": "^4.0.0",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.97",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^20.16.5",
+    "@types/nodemailer": "^7.0.3",
+    "@types/qrcode": "^1.5.6",
+    "@types/speakeasy": "^2.0.10",
     "@types/supertest": "^2.0.16",
+    "@types/ws": "^8.18.1",
     "jest": "^29.7.0",
     "nock": "^14.0.10",
     "prettier": "^3.3.3",
     "sinon": "^21.0.0",
     "supertest": "^7.1.4",
     "ts-jest": "^29.2.5",
+    "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.6.3"
   }
 }
