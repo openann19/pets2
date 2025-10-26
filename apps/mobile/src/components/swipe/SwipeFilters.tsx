@@ -105,7 +105,7 @@ export function SwipeFilters({
             {/* Apply Button */}
             <EliteButton
               title="Apply Filters"
-              variant="holographic"
+              variant="primary"
               size="md"
               icon="checkmark"
               magnetic={true}
