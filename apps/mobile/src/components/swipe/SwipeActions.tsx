@@ -34,7 +34,7 @@ export function SwipeActions({
         <FadeInUp delay={100}>
           <EliteButton
             title=""
-            variant="holographic"
+            variant="primary"
             size="lg"
             icon="star"
             magnetic={true}

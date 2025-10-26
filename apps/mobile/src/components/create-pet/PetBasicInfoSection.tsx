@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 
-import { PetFormData } from "../../hooks/usePetForm";
+import type { PetFormData } from "../../hooks/usePetForm";
 
 import type { FormFieldValue } from "../../types/forms";
 
@@ -47,7 +47,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
         <TextInput
           style={StyleSheet.flatten([
             styles.input,
-            errors.name && styles.inputError,
+            errors.name ? styles.inputError : undefined,
           ])}
           value={formData.name}
           onChangeText={(value) => {
@@ -97,7 +97,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
         <TextInput
           style={StyleSheet.flatten([
             styles.input,
-            errors.breed && styles.inputError,
+            errors.breed ? styles.inputError : undefined,
           ])}
           value={formData.breed}
           onChangeText={(value) => {
@@ -115,7 +115,7 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           <TextInput
             style={StyleSheet.flatten([
               styles.input,
-              errors.age && styles.inputError,
+              errors.age ? styles.inputError : undefined,
             ])}
             value={formData.age}
             onChangeText={(value) => {

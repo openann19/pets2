@@ -79,7 +79,7 @@ export function MatchModal({
             />
             <EliteButton
               title="Send Message"
-              variant="holographic"
+              variant="primary"
               size="lg"
               icon="chatbubble"
               ripple={true}

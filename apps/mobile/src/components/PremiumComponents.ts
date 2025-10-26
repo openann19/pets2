@@ -145,7 +145,7 @@ export const USAGE_EXAMPLES = {
   premiumButton: `
     <EliteButton
       title="Premium Action"
-      variant="holographic"
+      variant="primary"
       size="lg"
       magnetic={true}
       ripple={true}

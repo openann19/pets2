@@ -219,6 +219,36 @@ export interface ThemeOverrides {
   zIndex?: Partial<ZIndexScale>;
 }
 
+// ====== LEGACY TYPE DEFINITIONS ======
+/**
+ * Legacy type definitions for backward compatibility
+ * These types are used in premium screens and components
+ */
+
+export interface DynamicColors {
+  gradients: Record<string, string[]>;
+  glass: {
+    colors: string[];
+    locations: number[];
+  };
+}
+
+export interface SemanticColors {
+  premium: Record<string, string>;
+  interactive: Record<string, string>;
+  text: Record<string, string>;
+  background: Record<string, string>;
+}
+
+export interface EnhancedTypography {
+  effects: {
+    gradient: Record<string, TextStyle>;
+    shadow: {
+      text: TextStyle;
+    };
+  };
+}
+
 // ====== UTILITY TYPES ======
 export type ColorToken = keyof ColorPalette;
 export type TypographyVariantName = keyof TypographyScale;

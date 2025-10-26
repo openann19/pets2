@@ -35,7 +35,7 @@ export function NotificationSettingsSection({
       ])}
       onPress={() => {
         if (item.type === "toggle") {
-          onToggle(item.id, !item.value);
+          onToggle(item.id, !(item.value ?? false));
         }
       }}
       disabled={item.type === "toggle"}
@@ -78,10 +78,10 @@ export function NotificationSettingsSection({
       <View style={styles.settingRight}>
         {item.type === "toggle" && (
           <Switch
-            value={item.value}
+            value={item.value ?? false}
             onValueChange={(value) => onToggle(item.id, value)}
             trackColor={{ false: "#D1D5DB", true: "#8B5CF6" }}
-            thumbColor={item.value ? "#FFFFFF" : "#F3F4F6"}
+            thumbColor={(item.value ?? false) ? "#FFFFFF" : "#F3F4F6"}
           />
         )}
         {item.type === "navigation" && (
