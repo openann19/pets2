@@ -4,6 +4,7 @@ import { Alert } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { matchesAPI } from "../services/api";
 import type { RootStackParamList } from "../navigation/types";
+import type { FormFieldValue } from "../types/forms";
 
 export interface PetPhoto {
   uri: string;
@@ -41,7 +42,7 @@ export interface UsePetFormReturn {
   formData: PetFormData;
   errors: Record<string, string>;
   isSubmitting: boolean;
-  updateFormData: (field: string, value: string | boolean | string[]) => void;
+  updateFormData: (field: string, value: FormFieldValue) => void;
   validateForm: () => boolean;
   handleSubmit: (
     photos: PetPhoto[],
@@ -73,8 +74,13 @@ export const usePetForm = (): UsePetFormReturn => {
 
   const updateFormData = (
     field: string,
-    value: string | boolean | string[],
+    value: FormFieldValue,
   ) => {
+    // Handle null values by ignoring them
+    if (value === null) {
+      return;
+    }
+
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
       const parentKey = parent as keyof typeof formData;

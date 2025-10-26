@@ -8,6 +8,7 @@ import { getExtendedColors } from "../../theme/adapters";
 import { ReactionPicker } from "./ReactionPicker";
 import { chatService } from "../../services/chatService";
 import { Theme } from '../../theme/unified-theme';
+import { logger } from "../../services/logger";
 
 interface MessageItemProps {
   message: Message;
@@ -107,8 +108,9 @@ export function MessageItem({
           ...prev,
           [reaction]: (prev[reaction] || 0) + 1,
         }));
-      } catch (error) {
-        console.error("Failed to send reaction:", error);
+      } catch (error: unknown) {
+        const err = error instanceof Error ? error : new Error(String(error));
+        logger.error("Failed to send reaction", { error: err });
       }
       setShowReactionPicker(false);
     },

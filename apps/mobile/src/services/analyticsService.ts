@@ -1,4 +1,4 @@
-import { api } from './api';
+import { request } from './api';
 
 export interface AnalyticsEvent {
   event: string;
@@ -10,10 +10,11 @@ export interface AnalyticsEvent {
  */
 export async function track(event: string, props?: Record<string, any>): Promise<void> {
   try {
-    await api.post('/admin/analytics/track', { event, props });
+    await request('/admin/analytics/track', { method: 'POST', body: { event, props } });
   } catch (error) {
-    // Analytics failures should not break the app
-    console.warn('Analytics tracking failed:', error);
+    // Analytics failures should not break the app - log silently via logger
+    const { logger } = await import('./logger');
+    logger.warn('Analytics tracking failed', { error, event, props });
   }
 }
 

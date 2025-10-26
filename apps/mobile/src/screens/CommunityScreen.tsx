@@ -116,7 +116,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   const handlePostReaction = useCallback(
     (postId: string, emoji: string) => {
       startReaction('postReaction', { postId, emoji });
-      console.log(`Reacted with ${emoji} to post ${postId}`);
+      logger.info('Post reaction', { postId, emoji });
       setShowReactions((prev) => ({ ...prev, [postId]: false }));
       endReaction('postReaction', true);
     },

@@ -12,9 +12,8 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 
-import { MOBILE_SPACING } from '../constants/design-tokens';
+import { MOBILE_SPACING, MOBILE_RADIUS } from '../constants/design-tokens';
 import { Theme } from '../theme/unified-theme';
-import { MOBILE_RADIUS } from '../constants/design-tokens';
 
 // === HOLOGRAPHIC CONSTANTS ===
 export const HOLOGRAPHIC_CONFIGS = {
@@ -176,7 +175,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
     <Animated.View
       style={StyleSheet.flatten([
         {
-          borderRadius: BorderRadius["2xl"],
+          borderRadius: MOBILE_RADIUS["2xl"],
           overflow: "hidden",
           position: "relative",
         },
@@ -231,7 +230,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
         style={{
           position: "relative",
           zIndex: 1,
-          padding: Spacing.lg,
+          padding: MOBILE_SPACING[24],
         }}
       >
         {children}
@@ -264,13 +263,13 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
   const getSizeConfig = () => {
     switch (size) {
       case "sm":
-        return { padding: Spacing.md };
+        return { padding: MOBILE_SPACING[16] || 16 };
       case "lg":
-        return { padding: Spacing.xl };
+        return { padding: MOBILE_SPACING[32] || 32 };
       case "xl":
-        return { padding: Spacing["2xl"] };
+        return { padding: MOBILE_SPACING[48] || 48 };
       default:
-        return { padding: Spacing.lg };
+        return { padding: MOBILE_SPACING[24] || 24 };
     }
   };
 
@@ -316,20 +315,20 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
     switch (size) {
       case "sm":
         return {
-          paddingHorizontal: Spacing.lg,
-          paddingVertical: Spacing.sm,
+          paddingHorizontal: MOBILE_SPACING[24] || 24,
+          paddingVertical: MOBILE_SPACING[8] || 8,
           minHeight: 36,
         };
       case "lg":
         return {
-          paddingHorizontal: Spacing["2xl"],
-          paddingVertical: Spacing.lg,
+          paddingHorizontal: MOBILE_SPACING[48] || 48,
+          paddingVertical: MOBILE_SPACING[24] || 24,
           minHeight: 56,
         };
       default:
         return {
-          paddingHorizontal: Spacing.xl,
-          paddingVertical: Spacing.md,
+          paddingHorizontal: MOBILE_SPACING[32] || 32,
+          paddingVertical: MOBILE_SPACING[16] || 16,
           minHeight: 48,
         };
     }
@@ -444,7 +443,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
         style={{
           position: "relative",
           zIndex: 1,
-          padding: Spacing.xs,
+          padding: MOBILE_SPACING[4],
         }}
       >
         {/* Text would go here - this is a placeholder for the actual text implementation */}

@@ -16,7 +16,7 @@ import {
 } from "react-native";
 
 import type { RootStackParamList } from "../../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
 

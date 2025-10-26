@@ -27,7 +27,7 @@ import {
   utils,
 } from "@pawfectmatch/design-tokens";
 
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 // ===== RN-SAFE FACADE WRAPPERS =====
 

@@ -1,31 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from "@testing-library/react-native";
+import { renderHook, act } from "@testing-library/react-hooks/native";
 import { Alert } from "react-native";
 import * as ImageManipulator from "expo-image-manipulator";
 import { usePhotoEditor, DEFAULT_ADJUSTMENTS } from "../usePhotoEditor";
-
-// Mock ImageManipulator
-jest.mock("expo-image-manipulator", () => ({
-  manipulateAsync: jest.fn(),
-  FlipType: {
-    Horizontal: "horizontal",
-    Vertical: "vertical",
-  },
-  SaveFormat: {
-    JPEG: "jpeg",
-    PNG: "png",
-  },
-}));
-
-// Mock Alert
-jest.mock("react-native", () => ({
-  ...jest.requireActual("react-native"),
-  Alert: {
-    alert: jest.fn(),
-  },
-}));
 
 // Mock logger
 jest.mock("@pawfectmatch/core", () => ({

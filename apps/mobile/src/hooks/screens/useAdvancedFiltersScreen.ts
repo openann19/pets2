@@ -22,7 +22,7 @@ interface UseAdvancedFiltersScreenReturn {
   getFiltersByCategory: (category: string) => FilterOption[];
 }
 
-const INITIAL_FILTERS: FilterOption[] = [
+export const INITIAL_FILTERS: FilterOption[] = [
   // Pet Characteristics
   { id: "neutered", label: "Neutered/Spayed Only", value: false, category: "characteristics" },
   { id: "vaccinated", label: "Fully Vaccinated", value: true, category: "characteristics" },

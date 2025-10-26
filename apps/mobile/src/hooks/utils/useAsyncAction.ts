@@ -21,8 +21,8 @@ export interface UseAsyncActionReturn<TResult, TArgs extends any[] = []> {
  * @example
  * const { data, isLoading, error, execute } = useAsyncAction({
  *   action: async (userId: string) => await api.getUser(userId),
- *   onSuccess: (user) => console.log('User loaded:', user),
- *   onError: (error) => console.error('Failed to load:', error)
+ *   onSuccess: (user) => logger.info('User loaded', { userId: user.id }),
+ *   onError: (error) => logger.error('Failed to load user', { error })
  * });
  */
 export function useAsyncAction<TResult, TArgs extends any[] = []>({

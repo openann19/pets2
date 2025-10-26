@@ -18,7 +18,7 @@ import {
 import { useTheme } from "../../theme/Provider";
 import { useAdminUsersScreen } from "../../hooks/useAdminUsersScreen";
 import type { AdminScreenProps } from "../../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 const FILTER_BUTTON_HIT_SLOP = {
   top: 8,

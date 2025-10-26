@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '../theme/unified-theme';
 import { useTheme } from '../theme/Provider';
 import { getExtendedColors } from '../theme/adapters';
+import { logger } from '../services/logger';
 
 interface VerificationBadge {
   id: string;
@@ -51,7 +52,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       // const response = await verificationService.getStatus();
       // setVerificationStatus(response);
     } catch (error) {
-      console.error('Error loading verification status:', error);
+      logger.error('Error loading verification status', { error });
     } finally {
       setLoading(false);
     }

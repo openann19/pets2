@@ -6,7 +6,7 @@
  */
 
 import { logger } from "@pawfectmatch/core";
-import { apiClient } from "./apiClient";
+import apiClient from "./apiClient";
 import type { AxiosError } from "axios";
 
 // ============================================================================
@@ -157,7 +157,7 @@ export const communityAPI = {
       );
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to fetch community feed");
+      return handleApiError(error, "Failed to fetch community feed");
     }
   },
 
@@ -184,7 +184,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to create community post");
+      return handleApiError(error, "Failed to create community post");
     }
   },
 
@@ -198,7 +198,7 @@ export const communityAPI = {
       );
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to like/unlike community post");
+      return handleApiError(error, "Failed to like/unlike community post");
     }
   },
 
@@ -221,7 +221,7 @@ export const communityAPI = {
       );
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to fetch post comments");
+      return handleApiError(error, "Failed to fetch post comments");
     }
   },
 
@@ -243,7 +243,7 @@ export const communityAPI = {
       );
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to add comment to post");
+      return handleApiError(error, "Failed to add comment to post");
     }
   },
 
@@ -263,7 +263,7 @@ export const communityAPI = {
       }>("/community/report", data);
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to report content");
+      return handleApiError(error, "Failed to report content");
     }
   },
 
@@ -280,7 +280,7 @@ export const communityAPI = {
       }>("/community/block", { userId });
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to block user");
+      return handleApiError(error, "Failed to block user");
     }
   },
 
@@ -303,7 +303,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to join activity");
+      return handleApiError(error, "Failed to join activity");
     }
   },
 
@@ -326,7 +326,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to leave activity");
+      return handleApiError(error, "Failed to leave activity");
     }
   },
 
@@ -344,7 +344,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to delete post");
+      return handleApiError(error, "Failed to delete post");
     }
   },
 
@@ -368,7 +368,7 @@ export const communityAPI = {
 
       return response;
     } catch (error) {
-      handleApiError(error, "Failed to update post");
+      return handleApiError(error, "Failed to update post");
     }
   },
 };

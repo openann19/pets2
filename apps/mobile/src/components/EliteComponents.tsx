@@ -11,7 +11,25 @@
  * - All components extracted to: components/elite/
  */
 
-// Re-export all elite components from the modular structure
+// Import all elite components from the modular structure
+import {
+  EliteContainer,
+  EliteScrollContainer,
+  EliteHeader,
+  ElitePageHeader,
+  EliteCard,
+  EliteButton,
+  FadeInUp,
+  ScaleIn,
+  StaggeredContainer,
+  GestureWrapper,
+  EliteLoading,
+  EliteEmptyState,
+  PREMIUM_GRADIENTS,
+  PREMIUM_SHADOWS,
+} from "./elite";
+
+// Re-export all elite components for named imports
 export {
   EliteContainer,
   EliteScrollContainer,
@@ -27,28 +45,10 @@ export {
   EliteEmptyState,
   PREMIUM_GRADIENTS,
   PREMIUM_SHADOWS,
-} from "./elite";
-
-// Import for default export object
-import {
-  EliteContainer,
-  EliteScrollContainer,
-  EliteHeader,
-  ElitePageHeader,
-  EliteCard,
-  EliteButton,
-  EliteLoading,
-  EliteEmptyState,
-  FadeInUp,
-  ScaleIn,
-  StaggeredContainer,
-  GestureWrapper,
-  PREMIUM_GRADIENTS,
-  PREMIUM_SHADOWS,
-} from "./elite";
+};
 
 // Default export for backward compatibility
-const EliteComponents = {
+export default {
   EliteContainer,
   EliteScrollContainer,
   EliteHeader,
@@ -64,5 +64,3 @@ const EliteComponents = {
   PREMIUM_GRADIENTS,
   PREMIUM_SHADOWS,
 };
-
-export default EliteComponents;

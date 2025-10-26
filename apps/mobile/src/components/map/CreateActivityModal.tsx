@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { startActivity } from '../../services/petActivityService';
+import { logger } from '../../services/logger';
 
 export interface ActivityType {
   id: string;
@@ -35,7 +36,7 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
       await startActivity({ petId: pet, activity: act, message: msg });
       onClose();
     } catch (error) {
-      console.error('Failed to start activity:', error);
+      logger.error('Failed to start activity', { error });
     } finally {
       setLoading(false);
     }

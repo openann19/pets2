@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { analyzePhotoFromUri, PhotoAnalysisResult } from "../services/aiPhotoService";
+import { analyzePhotoFromUri, type PhotoAnalysisResult } from "../services/aiPhotoService";
 import { useNavigation } from "@react-navigation/native";
 
 export default function AIPhotoAnalyzerScreen() {

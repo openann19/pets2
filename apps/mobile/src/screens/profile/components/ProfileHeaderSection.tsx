@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { logger } from "@pawfectmatch/core";
-import { AdvancedCard, CardConfigs } from "../../components/Advanced/AdvancedCard";
-import { DoubleTapLikePlus } from "../../components/Gestures/DoubleTapLikePlus";
-import { useDoubleTapMetrics } from "../../hooks/useInteractionMetrics";
-import { matchesAPI } from "../../services/api";
-import SmartImage from "../../components/common/SmartImage";
-import { Theme } from '../../theme/unified-theme';
+import { AdvancedCard, CardConfigs } from "../../../components/Advanced/AdvancedCard";
+import { DoubleTapLikePlus } from "../../../components/Gestures/DoubleTapLikePlus";
+import { useDoubleTapMetrics } from "../../../hooks/useInteractionMetrics";
+import { matchesAPI } from "../../../services/api";
+import SmartImage from "../../../components/common/SmartImage";
+import { Theme } from '../../../theme/unified-theme';
 import * as Haptics from "expo-haptics";
 
 interface User {

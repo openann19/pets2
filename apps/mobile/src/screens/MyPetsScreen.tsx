@@ -22,6 +22,7 @@ import { useMyPetsScreen } from "../hooks/screens/useMyPetsScreen";
 import { DoubleTapLikePlus } from "../components/Gestures/DoubleTapLikePlus";
 import { PinchZoomPro } from "../components/Gestures/PinchZoomPro";
 import { useDoubleTapMetrics, usePinchMetrics } from "../hooks/useInteractionMetrics";
+import { logger } from '../services/logger';
 
 const { width: _screenWidth } = Dimensions.get("window");
 
@@ -43,9 +44,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
   const { startInteraction: startPinch, endInteraction: endPinch } = usePinchMetrics();
 
   const handlePetLike = (pet: Pet) => {
+    haptic.confirm();
     startDoubleTap('petLike', { petId: pet.id, petName: pet.name });
     // Add some love for the pet
-    console.log(`❤️ Showing love for ${pet.name}!`);
+    logger.info('Pet like action', { petId: pet.id, petName: pet.name });
     endDoubleTap('petLike', true);
   };
 
@@ -53,15 +55,13 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
     void loadPets();
   }, [loadPets]);
 
-  const renderPetCard = ({ item }: { item: Pet }) => {
+  const renderPetCard = ({ item, index }: { item: Pet; index: number }) => {
     return (
-      <TouchableOpacity
-        style={styles.petCard}
-        onPress={() => {
-          // Navigate to pet detail/edit screen
-          navigation.navigate("PetDetails", { petId: item.id, pet: item });
-        }}
-      >
+      <Animated.View entering={FadeInDown.duration(220).delay(index * 50)}>
+        <TouchableOpacity
+          style={styles.petCard}
+          onPress={() => handleNavigateToPetDetails(item)}
+        >
         {/* Pet Photo with Gestures */}
         <View style={styles.petImageContainer}>
           {item.photos && item.photos.length > 0 ? (
@@ -164,7 +164,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 styles.viewButton,
               ])}
               onPress={() => {
-                // Navigate to pet detail view
+                haptic.tap();
                 navigation.navigate("PetDetails", {
                   petId: item.id,
                   pet: item,
@@ -181,7 +181,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 styles.editButton,
               ])}
               onPress={() => {
-                // Navigate to pet edit screen
+                haptic.confirm();
                 navigation.navigate("EditPet", { petId: item.id, pet: item });
               }}
             >
@@ -194,6 +194,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 styles.deleteButton,
               ])}
               onPress={() => {
+                haptic.error();
                 handleDeletePet(item._id);
               }}
             >
@@ -202,6 +203,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           </View>
         </View>
       </TouchableOpacity>
+    </Animated.View>
     );
   };
 
@@ -215,7 +217,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
       </Text>
       <TouchableOpacity
         style={styles.emptyButton}
-        onPress={() => navigation.navigate("CreatePet")}
+        onPress={() => {
+          haptic.confirm();
+          navigation.navigate("CreatePet");
+        }}
       >
         <Ionicons name="add-circle" size={20} color="#FFFFFF" />
         <Text style={styles.emptyButtonText}>
@@ -225,24 +230,39 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
     </View>
   );
 
+  const handleBackPress = () => {
+    haptic.tap();
+    navigation.goBack();
+  };
+  
+  const handleAddPet = () => {
+    haptic.confirm();
+    navigation.navigate("CreatePet");
+  };
+  
+  const handleNavigateToPetDetails = (item: Pet) => {
+    haptic.tap();
+    navigation.navigate("PetDetails", { petId: item.id, pet: item });
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <Ionicons name="arrow-back" size={24} color="#6B7280" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Pets</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate("CreatePet")}
-        >
-          <Ionicons name="add" size={24} color="#8B5CF6" />
-        </TouchableOpacity>
-      </View>
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: 'My Pets',
+            rightButtons: [
+              {
+                type: 'add',
+                onPress: handleAddPet,
+                variant: 'primary',
+                haptic: 'light',
+              },
+            ],
+          })}
+        />
+      }
+    >
 
       {/* Content */}
       <FlatList
@@ -259,15 +279,21 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
             tintColor="#8B5CF6"
           />
         }
-        ListEmptyComponent={!isLoading ? renderEmptyState : null}
+        ListEmptyComponent={!isLoading ? (
+          <Animated.View entering={FadeInDown.duration(220)}>
+            {renderEmptyState()}
+          </Animated.View>
+        ) : null}
         ListHeaderComponent={
           pets.length > 0 ? (
-            <View style={styles.listHeader}>
-              <Text style={styles.listHeaderText}>
-                {pets.length} pet{pets.length !== 1 ? "s" : ""} profile
-                {pets.length !== 1 ? "s" : ""}
-              </Text>
-            </View>
+            <Animated.View entering={FadeInDown.duration(200)}>
+              <View style={styles.listHeader}>
+                <Text style={styles.listHeaderText}>
+                  {pets.length} pet{pets.length !== 1 ? "s" : ""} profile
+                  {pets.length !== 1 ? "s" : ""}
+                </Text>
+              </View>
+            </Animated.View>
           ) : null
         }
       />
@@ -286,7 +312,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           </View>
         </View>
       )}
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 

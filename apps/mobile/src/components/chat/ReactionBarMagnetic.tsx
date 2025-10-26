@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from "react";
-import { LayoutChangeEvent, StyleSheet, View } from "react-native";
+import { type LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -45,7 +45,10 @@ export default function ReactionBarMagnetic({
 
   const onItemLayout = (index: number) => (e: LayoutChangeEvent) => {
     const { x, width } = e.nativeEvent.layout;
-    centers[index].x.value = x + width / 2;
+    const center = centers[index];
+    if (center) {
+      center.x.value = x + width / 2;
+    }
   };
 
   const pan = Gesture.Pan()
@@ -68,13 +71,18 @@ export default function ReactionBarMagnetic({
       let bestIdx = 0;
       let bestDist = Number.MAX_SAFE_INTEGER;
       for (let i = 0; i < centers.length; i++) {
-        const d = Math.abs((centers[i].x.value ?? 0) - x);
+        const center = centers[i];
+        const centerX = center?.x.value ?? 0;
+        const d = Math.abs(centerX - x);
         if (d < bestDist) {
           bestDist = d;
           bestIdx = i;
         }
       }
-      runOnJS(onSelect)(reactions[bestIdx].emoji);
+      const bestReaction = reactions[bestIdx];
+      if (bestReaction) {
+        runOnJS(onSelect)(bestReaction.emoji);
+      }
       touchX.value = null;
     })
     .onFinalize(() => {
@@ -87,7 +95,8 @@ export default function ReactionBarMagnetic({
       <View style={[styles.wrap, { backgroundColor, borderColor }]}>
         {reactions.map((r, i) => {
           const s = useAnimatedStyle(() => {
-            const x = centers[i].x.value;
+            const center = centers[i];
+            const x = center?.x.value ?? 0;
             const t = touchX.value;
             const isActive = active.value && t != null;
 

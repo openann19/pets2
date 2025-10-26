@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { _subscriptionAPI as subscriptionApi } from "../../services/api";
 import type { RootStackParamList } from "../../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 type SubscriptionManagerNavigationProp = NavigationProp<RootStackParamList>;
 

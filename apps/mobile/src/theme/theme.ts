@@ -65,6 +65,12 @@ export interface ShadowScale {
   soft: ShadowToken;
   medium: ShadowToken;
   strong: ShadowToken;
+  xs?: ShadowToken;
+  sm?: ShadowToken;
+  md?: ShadowToken;
+  lg?: ShadowToken;
+  xl?: ShadowToken;
+  "2xl"?: ShadowToken;
 }
 
 export interface Theme {

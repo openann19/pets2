@@ -79,6 +79,8 @@ export function getExtendedColors(theme: Theme): ExtendedColors {
     
     // Text aliases
     textSecondary: colors.textMuted,
+    interactive: colors.primary,
+    feedback: colors.success,
     
     // Monochrome palette
     white: "#ffffff",

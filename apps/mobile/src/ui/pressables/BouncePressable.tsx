@@ -10,7 +10,7 @@ import Animated, {
   withSpring, 
   useAnimatedStyle 
 } from 'react-native-reanimated';
-import { Pressable, ViewStyle } from 'react-native';
+import { Pressable, type ViewStyle } from 'react-native';
 import { useMotion } from '../motion/useMotion';
 import { haptic } from '../haptics';
 import { Motion } from '../motion/useMotion';

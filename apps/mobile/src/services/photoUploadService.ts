@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { api } from './api';
+import { request } from './api';
 
 export interface PhotoUploadResult {
   url: string;
@@ -36,11 +36,12 @@ export async function pickAndUpload(): Promise<PhotoUploadResult | null> {
     }
 
     // Create multipart upload
-    const multipartResponse = await api.post('/upload/multipart/create', {
-      contentType: 'image/jpeg',
+    const multipartResponse = await request<{ key: string; uploadId: string }>('/upload/multipart/create', {
+      method: 'POST',
+      body: { contentType: 'image/jpeg' }
     });
 
-    const { key, uploadId } = multipartResponse.data;
+    const { key, uploadId } = multipartResponse;
 
     // Upload parts (simplified - in production, implement chunking)
     const formData = new FormData();
@@ -50,15 +51,18 @@ export async function pickAndUpload(): Promise<PhotoUploadResult | null> {
       type: 'image/jpeg',
     } as any);
 
-    const uploadResponse = await api.post('/upload', formData, {
+    const uploadResponse = await request<PhotoUploadResult>('/upload', {
+      method: 'POST',
+      body: formData,
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    return uploadResponse.data;
+    return uploadResponse;
   } catch (error) {
-    console.error('Photo upload error:', error);
+    const { logger } = await import('./logger');
+    logger.error('Photo upload error', { error });
     throw error;
   }
 }

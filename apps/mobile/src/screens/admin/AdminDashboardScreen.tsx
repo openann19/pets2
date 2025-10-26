@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
-import { Theme } from '../theme/unified-theme';
+import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AdminStats {
@@ -70,7 +70,8 @@ interface SystemHealth {
 export default function AdminDashboardScreen({
   navigation,
 }: AdminScreenProps<"AdminDashboard">): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors: ExtendedColors = getExtendedColors(theme);
   const { user: _user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);

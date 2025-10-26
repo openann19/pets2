@@ -4,28 +4,21 @@ import { Ionicons } from "@expo/vector-icons";
 import {
   Dimensions,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import type { ScrollView } from "react-native";
 
 // Import new architecture components
 import {
   EliteButton,
-  Heading2,
-  useStaggeredAnimation,
-  useEntranceAnimation,
-} from "../components";
-
-// Import legacy components for backward compatibility
-import {
-  EliteContainer,
-  EliteScrollContainer,
-  EliteHeader,
   EliteCard,
+  Heading2,
   FadeInUp,
   StaggeredContainer,
+  useStaggeredAnimation,
+  useEntranceAnimation,
 } from "../components";
 
 // Import premium components
@@ -39,6 +32,8 @@ import {
 import { useHomeScreen } from "../hooks/screens/useHomeScreen";
 import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
 import { Theme } from '../theme/unified-theme';
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -80,33 +75,37 @@ export default function HomeScreen() {
   }, [startStaggeredAnimation, startEntranceAnimation]);
 
   return (
-    <EliteContainer gradient="primary">
-      {/* Premium Glass Header */}
-      <EliteHeader
-        title="PawfectMatch"
-        subtitle={`Welcome back, ${user?.firstName ?? "Pet Lover"}!`}
-        blur={true}
-        rightComponent={
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            <EliteButton
-              title="Profile"
-              variant="secondary"
-              size="sm"
-              onPress={handleProfilePress}
-            />
-            <EliteButton
-              title="Settings"
-              variant="secondary"
-              size="sm"
-              onPress={handleSettingsPress}
-            />
-          </View>
-        }
-      />
-
-      <EliteScrollContainer
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "PawfectMatch",
+            subtitle: `Welcome back, ${user?.firstName ?? "Pet Lover"}!`,
+            showBackButton: false,
+            rightButtons: [
+              {
+                type: "custom",
+                icon: "person-outline",
+                onPress: handleProfilePress,
+                variant: "glass",
+                haptic: "light",
+                customComponent: undefined,
+              },
+              {
+                type: "custom",
+                icon: "settings-outline",
+                onPress: handleSettingsPress,
+                variant: "glass",
+                haptic: "light",
+                customComponent: undefined,
+              },
+            ],
+          })}
+        />
+      }
+    >
+      <ScrollView
         ref={scrollRef}
-        gradient="primary"
         onScroll={onScroll}
         scrollEventThrottle={16}
         refreshControl={
@@ -116,6 +115,8 @@ export default function HomeScreen() {
             tintColor={Theme.colors.primary[500]}
           />
         }
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
       >
         {/* Quick Actions with Premium Effects */}
         <FadeInUp delay={0}>
@@ -426,8 +427,8 @@ export default function HomeScreen() {
             </View>
           </View>
         </FadeInUp>
-      </EliteScrollContainer>
-    </EliteContainer>
+      </ScrollView>
+    </ScreenShell>
   );
 }
 

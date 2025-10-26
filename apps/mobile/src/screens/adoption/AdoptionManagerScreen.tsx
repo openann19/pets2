@@ -1,23 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
 import * as Haptics from "expo-haptics";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Alert,
   Modal,
   StyleSheet,
 } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
 
 import {
   EliteContainer,
@@ -28,7 +20,6 @@ import {
   EliteLoading,
   EliteEmptyState,
 } from "../../components";
-import { adoptionAPI } from "../../services/api";
 import {
   GlobalStyles,
   Colors,
@@ -36,7 +27,9 @@ import {
   Shadows,
 } from "../../animation";
 import type { RootStackScreenProps } from "../../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
+import { useAdoptionManagerScreen } from "../../hooks/screens/useAdoptionManagerScreen";
+import type { PetListing } from "../../hooks/screens/useAdoptionManagerScreen";
 
 // Helper to convert rem spacing to pixels
 const sp = (key: number): number => {
@@ -152,152 +145,30 @@ const normalizeApplication = (application: unknown): AdoptionApplication => {
 };
 
 const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
-  const [activeTab, setActiveTab] = useState<"listings" | "applications">(
-    "listings",
-  );
-  const [refreshing, setRefreshing] = useState(false);
-  const [showStatusModal, setShowStatusModal] = useState(false);
-  const [selectedPet, setSelectedPet] = useState<PetListing | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // ✅ REAL DATA - Fetched from backend API
-  const [petListings, setPetListings] = useState<PetListing[]>([]);
-  const [applications, setApplications] = useState<AdoptionApplication[]>([]);
-
-  // ✅ Load real data on mount and tab change
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
-
-  const loadData = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      if (activeTab === "listings") {
-        const listingsData = await adoptionAPI.getListings();
-        setPetListings(listingsData.map(normalizeListing));
-      } else {
-        const applicationsData = await adoptionAPI.getApplications();
-        setApplications(applicationsData.map(normalizeApplication));
-      }
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to load data. Please try again.";
-      logger.error("Failed to load adoption data:", { error: err });
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const tabScale1 = useSharedValue(1);
-  const tabScale2 = useSharedValue(1);
-
-  const tabAnimatedStyle1 = useAnimatedStyle(() => ({
-    transform: [{ scale: tabScale1.value }],
-  }));
-
-  const tabAnimatedStyle2 = useAnimatedStyle(() => ({
-    transform: [{ scale: tabScale2.value }],
-  }));
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadData();
-    setRefreshing(false);
-  };
-
-  const handleTabPress = (
-    tab: "listings" | "applications",
-    scaleValue: import("react-native-reanimated").SharedValue<number>,
-  ) => {
-    setActiveTab(tab);
-    scaleValue.value = withSpring(0.95, SPRING_CONFIG, () => {
-      scaleValue.value = withSpring(1, SPRING_CONFIG);
-    });
-  };
-
-  const handleStatusChange = (pet: PetListing, newStatus: string) => {
-    setPetListings((prev) =>
-      prev.map((p) =>
-        p.id === pet.id
-          ? { ...p, status: newStatus as PetListing["status"] }
-          : p,
-      ),
-    );
-    setShowStatusModal(false);
-    setSelectedPet(null);
-  };
-
-  const handleApplicationAction = (
-    applicationId: string,
-    action: "approve" | "reject",
-  ) => {
-    Alert.alert(
-      `${action === "approve" ? "Approve" : "Reject"} Application`,
-      `Are you sure you want to ${action} this application?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: action === "approve" ? "Approve" : "Reject",
-          style: action === "approve" ? "default" : "destructive",
-          onPress: () => {
-            setApplications((prev) =>
-              prev.map((app) =>
-                app.id === applicationId
-                  ? {
-                      ...app,
-                      status: action === "approve" ? "approved" : "rejected",
-                    }
-                  : app,
-              ),
-            );
-          },
-        },
-      ],
-    );
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Theme.colors.status.success";
-      case "pending":
-        return "Theme.colors.status.warning";
-      case "adopted":
-        return "#8b5cf6";
-      case "paused":
-        return "Theme.colors.neutral[500]";
-      case "approved":
-        return "Theme.colors.status.success";
-      case "rejected":
-        return "Theme.colors.status.error";
-      default:
-        return "Theme.colors.neutral[500]";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "active":
-        return "✅";
-      case "pending":
-        return "⏳";
-      case "adopted":
-        return "🏠";
-      case "paused":
-        return "⏸️";
-      case "approved":
-        return "✅";
-      case "rejected":
-        return "❌";
-      default:
-        return "❓";
-    }
-  };
+  // Use the extracted hook for all business logic
+  const {
+    activeTab,
+    refreshing,
+    showStatusModal,
+    selectedPet,
+    isLoading,
+    error,
+    petListings,
+    applications,
+    setActiveTab,
+    setShowStatusModal,
+    setSelectedPet,
+    onRefresh,
+    handleTabPress,
+    handleStatusChange,
+    handleApplicationAction,
+    getStatusColor,
+    getStatusIcon,
+    tabAnimatedStyle1,
+    tabAnimatedStyle2,
+    tabScale1,
+    tabScale2,
+  } = useAdoptionManagerScreen();
 
   const renderListings = () => (
     <View style={styles.tabContent}>

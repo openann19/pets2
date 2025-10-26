@@ -4,15 +4,19 @@
  */
 import { useCallback, useState } from "react";
 import { logger } from "@pawfectmatch/core";
-import { api } from "../../../services/api";
+import { api } from "@mobile/services/api";
 
 interface UserPreferences {
   maxDistance: number;
   ageRange: { min: number; max: number };
   breeds: string[];
+  species: string[];
+  intents: string[];
   activityLevel: "low" | "medium" | "high";
   size: "small" | "medium" | "large";
   notifications: {
+    email: boolean;
+    push: boolean;
     matches: boolean;
     messages: boolean;
     updates: boolean;
@@ -60,13 +64,17 @@ interface UsePreferencesSetupReturn {
   }>;
 }
 
-const DEFAULT_PREFERENCES: Partial<UserPreferences> = {
+export const DEFAULT_PREFERENCES: Partial<UserPreferences> = {
   maxDistance: 25,
   ageRange: { min: 1, max: 10 },
   breeds: [],
+  species: [],
+  intents: [],
   activityLevel: "medium",
   size: "medium",
   notifications: {
+    email: true,
+    push: true,
     matches: true,
     messages: true,
     updates: false,
@@ -78,7 +86,7 @@ const DEFAULT_PREFERENCES: Partial<UserPreferences> = {
   },
 };
 
-const AVAILABLE_BREEDS = [
+export const AVAILABLE_BREEDS = [
   "Golden Retriever",
   "Labrador Retriever",
   "German Shepherd",
@@ -222,6 +230,8 @@ export const usePreferencesSetup = (): UsePreferencesSetupReturn => {
         maxDistance: preferences.maxDistance!,
         ageRange: preferences.ageRange!,
         breeds: preferences.breeds!,
+        species: preferences.species ?? [],
+        intents: preferences.intents ?? [],
         activityLevel: preferences.activityLevel!,
         size: preferences.size!,
         notifications: preferences.notifications!,
@@ -232,8 +242,21 @@ export const usePreferencesSetup = (): UsePreferencesSetupReturn => {
         preferences: completePreferences,
       });
 
-      // Submit to API
-      await api.updateUserPreferences(completePreferences);
+      // Prepare payload for API contract
+      const apiPayload: Parameters<(typeof api)["updateUserPreferences"]>[0] = {
+        maxDistance: completePreferences.maxDistance,
+        ageRange: completePreferences.ageRange,
+        species: completePreferences.species,
+        intents: completePreferences.intents,
+        notifications: {
+          email: completePreferences.notifications.email,
+          push: completePreferences.notifications.push,
+          matches: completePreferences.notifications.matches,
+          messages: completePreferences.notifications.messages,
+        },
+      };
+
+      await api.updateUserPreferences(apiPayload);
 
       logger.info("User preferences saved successfully");
       return completePreferences;

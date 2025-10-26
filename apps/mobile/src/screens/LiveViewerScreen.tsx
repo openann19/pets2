@@ -7,6 +7,7 @@ import { FLAGS } from "../config/flags";
 import { Theme } from "../theme/unified-theme";
 import { Ionicons } from "@expo/vector-icons";
 import io from "socket.io-client";
+import { logger } from '../services/logger';
 
 interface LiveViewerScreenProps {
   navigation: any;
@@ -46,7 +47,7 @@ export default function LiveViewerScreen({}: LiveViewerScreenProps) {
 
     socket.on("reaction", ({ emoji, ts }: { emoji: string; ts: number }) => {
       // Handle reaction
-      console.log("Reaction:", emoji);
+      logger.info("Live reaction received", { emoji, timestamp: ts });
     });
 
     socketRef.current = socket;

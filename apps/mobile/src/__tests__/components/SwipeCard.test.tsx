@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import SwipeCard from "../../components/ModernSwipeCard";
 import { ThemeContext } from "../../theme/Provider";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 // Mock expo modules
 jest.mock("expo-haptics", () => ({

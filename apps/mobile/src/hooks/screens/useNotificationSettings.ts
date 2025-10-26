@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { usePersistedState } from "../utils/usePersistedState";
+import { usePersistedState } from "@mobile/hooks/utils/usePersistedState";
 
 export interface NotificationSettings {
   email: boolean;
@@ -14,7 +14,7 @@ export interface UseNotificationSettingsReturn {
   resetToDefault: () => void;
 }
 
-const DEFAULT_NOTIFICATIONS: NotificationSettings = {
+export const DEFAULT_NOTIFICATIONS: NotificationSettings = {
   email: true,
   push: true,
   matches: true,

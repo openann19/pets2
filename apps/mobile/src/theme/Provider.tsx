@@ -30,3 +30,12 @@ export const useTheme = (): Theme => {
 export { getExtendedColors, getThemeColors, getIsDark } from "./adapters";
 export type { ExtendedColors } from "./adapters";
 
+// Additional type exports for components expecting these types
+export type { SemanticColors } from "./types";
+export type DynamicColors = SemanticColors;
+export type ThemeColors = ExtendedColors;
+
+// Shadow and Typography types for backward compatibility
+export type EnhancedShadows = Record<string, unknown>;
+export type EnhancedTypography = Record<string, unknown>;
+

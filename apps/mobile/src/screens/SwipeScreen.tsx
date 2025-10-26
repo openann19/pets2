@@ -22,6 +22,9 @@ import { useSwipeData } from "../hooks/useSwipeData";
 import { useTabDoublePress } from "../hooks/navigation/useTabDoublePress";
 import { useSwipeUndo } from "../hooks/useSwipeUndo";
 import UndoPill from "../components/feedback/UndoPill";
+import { ScreenShell } from "../ui/layout/ScreenShell";
+import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
+import { haptic } from "../ui/haptics";
 import { Theme } from '../theme/unified-theme';
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -49,6 +52,13 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   const { capture, undo, busy } = useSwipeUndo();
 
   const onSwipeWithCapture = async (gestureDir: "left" | "right" | "up", actionDir: "like" | "pass" | "superlike", petId: string, index: number) => {
+    if (actionDir === "like") {
+      haptic.confirm();
+    } else if (actionDir === "superlike") {
+      haptic.super();
+    } else {
+      haptic.tap();
+    }
     capture({ petId, direction: gestureDir, index });
     await handleSwipe(actionDir);
   };
@@ -114,21 +124,32 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   // Show loading state
   if (isLoading && pets.length === 0) {
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backButton}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>Swipe</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Matches")}>
-            <Text style={styles.matchesButton}>Matches</Text>
-          </TouchableOpacity>
-        </View>
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: "Swipe",
+              showBackButton: true,
+              onBackPress: () => navigation.goBack(),
+              rightButtons: [
+                {
+                  type: "custom",
+                  icon: "people-outline",
+                  onPress: () => navigation.navigate("Matches"),
+                  variant: "glass",
+                  haptic: "light",
+                  customComponent: undefined,
+                },
+              ],
+            })}
+          />
+        }
+      >
         <View style={styles.emptyContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
           <Text style={styles.emptySubtitle}>Loading pets...</Text>
         </View>
-      </View>
+      </ScreenShell>
     );
   }
 
@@ -136,39 +157,65 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
   if (!currentPet) {
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backButton}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>Swipe</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Matches")}>
-            <Text style={styles.matchesButton}>Matches</Text>
-          </TouchableOpacity>
-        </View>
-
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: "Swipe",
+              showBackButton: true,
+              onBackPress: () => navigation.goBack(),
+              rightButtons: [
+                {
+                  type: "custom",
+                  icon: "people-outline",
+                  onPress: () => navigation.navigate("Matches"),
+                  variant: "glass",
+                  haptic: "light",
+                  customComponent: undefined,
+                },
+              ],
+            })}
+          />
+        }
+      >
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyTitle}>No more pets!</Text>
           <Text style={styles.emptySubtitle}>
             Check back later for more matches
           </Text>
         </View>
-      </View>
+      </ScreenShell>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Swipe</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Matches")}>
-          <Text style={styles.matchesButton}>Matches</Text>
-        </TouchableOpacity>
-      </View>
-
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "Swipe",
+            showBackButton: true,
+            onBackPress: () => {
+              haptic.tap();
+              navigation.goBack();
+            },
+            rightButtons: [
+              {
+                type: "custom",
+                icon: "people-outline",
+                onPress: () => {
+                  haptic.tap();
+                  navigation.navigate("Matches");
+                },
+                variant: "glass",
+                haptic: "light",
+                customComponent: undefined,
+              },
+            ],
+          })}
+        />
+      }
+    >
       <View style={styles.cardContainer}>
         <Animated.View
           testID={`swipe-card-${currentIndex}`}
@@ -199,7 +246,10 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
       <View style={styles.actions}>
         <TouchableOpacity
           style={StyleSheet.flatten([styles.actionButton, styles.passButton])}
-          onPress={() => handleButtonSwipe("pass")}
+          onPress={() => {
+            haptic.tap();
+            handleButtonSwipe("pass");
+          }}
         >
           <Text style={styles.actionButtonText}>Pass</Text>
         </TouchableOpacity>
@@ -209,14 +259,20 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
             styles.actionButton,
             styles.superLikeButton,
           ])}
-          onPress={() => handleButtonSwipe("superlike")}
+          onPress={() => {
+            haptic.super();
+            handleButtonSwipe("superlike");
+          }}
         >
           <Text style={styles.actionButtonText}>★</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={StyleSheet.flatten([styles.actionButton, styles.likeButton])}
-          onPress={() => handleButtonSwipe("like")}
+          onPress={() => {
+            haptic.confirm();
+            handleButtonSwipe("like");
+          }}
         >
           <Text style={styles.actionButtonText}>Like</Text>
         </TouchableOpacity>
@@ -224,6 +280,7 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
 
       <UndoPill
         onUndo={async () => {
+          haptic.selection();
           const restoredPet = await undo();
           if (restoredPet) {
             // put the card back to front of stack
@@ -233,37 +290,11 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
         }}
         testID="undo-pill"
       />
-    </View>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 20,
-    backgroundColor: "white",
-  },
-  backButton: {
-    fontSize: 16,
-    color: "#007AFF",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  matchesButton: {
-    fontSize: 16,
-    color: "#007AFF",
-  },
   cardContainer: {
     flex: 1,
     justifyContent: "center",

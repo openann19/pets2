@@ -199,6 +199,12 @@ declare module "react-native-reanimated" {
     children?: React.ReactNode;
   }
 
+  // SharedValue type
+  export interface SharedValue<T> {
+    value: T;
+    _value?: T;
+  }
+
   export const Animated: {
     View: React.ComponentType<AnimatedViewProps>;
     Text: React.ComponentType<AnimatedTextProps>;
@@ -206,7 +212,7 @@ declare module "react-native-reanimated" {
     ScrollView: React.ComponentType<AnimatedScrollViewProps>;
   };
 
-  export function useSharedValue<T>(value: T): { value: T };
+  export function useSharedValue<T>(value: T): SharedValue<T>;
   export function useAnimatedStyle<T>(updater: () => T): T;
   export function withTiming<T>(value: T, config?: unknown): T;
   export function withSpring<T>(value: T, config?: unknown): T;

@@ -10,8 +10,7 @@ export * from "./index";
 
 let warned = false;
 if (!warned) {
-  // eslint-disable-next-line no-console
-  console.warn(
+  logger.warn(
     "[DEPRECATION] components/index.tsx → use components/index instead.",
   );
   warned = true;

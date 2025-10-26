@@ -2,6 +2,7 @@
  * Metro configuration for optimized bundle size and performance
  * Reduces APK size and improves app startup time
  */
+const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
 
 /** @type {import('metro-config').MetroConfig} */
@@ -21,6 +22,7 @@ const config = getDefaultConfig(__dirname);
     extraNodeModules: {
       ...config.resolver.extraNodeModules,
       '@babel/runtime': require.resolve('@babel/runtime/package.json'),
+      '@mobile': path.resolve(__dirname, 'src'),
     },
   };
 

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import type { ThemeColors } from "../../theme/Provider";
 import type { AdminUserStatus } from "../../services/adminUsersService";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 type IoniconName =
   | "paw"

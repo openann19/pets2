@@ -28,7 +28,7 @@ export interface UsePhotoEditorReturn {
   rotateRight: () => void;
 }
 
-const DEFAULT_ADJUSTMENTS: PhotoAdjustments = {
+export const DEFAULT_ADJUSTMENTS: PhotoAdjustments = {
   brightness: 100,
   contrast: 100,
   saturation: 100,

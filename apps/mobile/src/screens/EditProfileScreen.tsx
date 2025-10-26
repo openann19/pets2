@@ -15,6 +15,10 @@ import {
   Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { haptic } from '../ui/haptics';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useEditProfileScreen } from "../hooks/screens/useEditProfileScreen";
 import type { ProfileData } from "../hooks/screens/useEditProfileScreen";
 import { Theme } from '../theme/unified-theme';
@@ -68,6 +72,7 @@ function EditProfileScreen({
   };
 
   const onSubmit = async () => {
+    haptic.success();
     const result = await handleSave();
     if (result?.shouldNavigate) {
       if (hasChanges) {
@@ -81,10 +86,16 @@ function EditProfileScreen({
   };
 
   const onCancel = () => {
+    haptic.tap();
     const shouldNavigate = handleCancel();
     if (shouldNavigate) {
       navigation.goBack();
     }
+  };
+  
+  const handleBackPress = () => {
+    haptic.tap();
+    navigation.goBack();
   };
 
   return (

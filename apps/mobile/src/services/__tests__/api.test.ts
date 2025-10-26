@@ -330,11 +330,11 @@ describe('API Service', () => {
         data: mockPets,
       });
 
-      const pets = await matchesAPI.getPets({ species: 'dog', age: 2 });
+      const pets = await matchesAPI.getPets({ species: 'dog', minAge: 2, maxAge: 5 });
 
       expect(pets).toEqual(mockPets);
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/pets?species=dog&age=2',
+        '/pets?species=dog&minAge=2&maxAge=5',
         { timeout: 30000 }
       );
     });

@@ -1,6 +1,5 @@
 /**
- * @jest-environment jsdom
- * Integration tests for MatchesScreen with tab reselect functionality
+ * @jest-environment node
  */
 import React from "react";
 import { renderHook, act, waitFor } from "@testing-library/react-native";

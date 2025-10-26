@@ -39,7 +39,8 @@ export async function jpegByteSize(
     
     return info.size ?? 0;
   } catch (error) {
-    console.warn("[QualityScore] Failed to compute size:", error);
+    const { logger } = await import('../services/logger');
+    logger.warn('QualityScore: Failed to compute size', { error });
     return 0;
   }
 }
@@ -103,4 +104,5 @@ export async function compareSharpness(
 
   return size1 > size2 ? uri1 : uri2;
 }
+
 

@@ -158,10 +158,14 @@ export const usePhotoManager = (): UsePhotoManagerReturn => {
 
   const removePhoto = (index: number) => {
     setPhotos((prev) => {
+      const photoToRemove = prev[index];
       const newPhotos = prev.filter((_, i) => i !== index);
       // If we removed the primary photo, make the first remaining photo primary
-      if (prev[index].isPrimary && newPhotos.length > 0) {
-        newPhotos[0].isPrimary = true;
+      if (photoToRemove?.isPrimary && newPhotos.length > 0) {
+        const firstPhoto = newPhotos[0];
+        if (firstPhoto) {
+          firstPhoto.isPrimary = true;
+        }
       }
       return newPhotos;
     });

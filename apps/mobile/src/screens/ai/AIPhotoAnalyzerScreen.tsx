@@ -24,7 +24,7 @@ import { useTheme } from "../../theme/Provider";
 import type { AIScreenProps } from "../../navigation/types";
 import { logger } from "../../services/logger";
 import { api } from "../../services/api";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

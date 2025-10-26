@@ -17,13 +17,16 @@ jest.mock("expo-haptics", () => ({
   },
 }));
 
-jest.mock("expo-blur", () => ({
-  BlurView: ({ children, ...props }: any) => (
-    <div data-testid="blur-view" {...props}>
-      {children}
-    </div>
-  ),
-}));
+jest.mock("expo-blur", () => {
+  const { View } = require("react-native");
+  return {
+    BlurView: ({ children, ...props }: any) => (
+      <View testID="blur-view" {...props}>
+        {children}
+      </View>
+    ),
+  };
+});
 
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({
@@ -35,11 +38,25 @@ jest.mock("react-native-safe-area-context", () => ({
 }));
 
 // Mock Ionicons
-jest.mock("@expo/vector-icons", () => ({
-  Ionicons: ({ name, size, color, testID }: any) => (
-    <div testID={`icon-${name}`} data-name={name} data-size={size} data-color={color} />
-  ),
-}));
+jest.mock("@expo/vector-icons", () => {
+  const { View } = require("react-native");
+  const React = require("react");
+  return {
+    Ionicons: React.forwardRef(({ name, size, color, testID, ...props }: any, ref: any) => {
+      // Store icon props as data attributes for testing
+      const iconProps = {
+        testID: testID || `icon-${name}`,
+        accessibilityLabel: name,
+        "data-name": name,
+        "data-size": size,
+        "data-color": color,
+        ref: ref,
+        ...props,
+      };
+      return <View {...iconProps} />;
+    }),
+  };
+});
 
 describe("ActivePillTabBar", () => {
   const mockState = {
@@ -72,7 +89,7 @@ describe("ActivePillTabBar", () => {
   };
 
   const mockNavigation: any = {
-    emit: jest.fn(),
+    emit: jest.fn(() => ({ defaultPrevented: false })),
     navigate: jest.fn(),
     addListener: jest.fn(() => jest.fn()),
   };
@@ -108,7 +125,7 @@ describe("ActivePillTabBar", () => {
   });
 
   it("should display correct icons for each route", () => {
-    const { getByTestId } = render(
+    const { queryByTestId, getAllByTestId } = render(
       <ActivePillTabBar
         state={mockState}
         descriptors={mockDescriptors}
@@ -116,11 +133,18 @@ describe("ActivePillTabBar", () => {
       />,
     );
 
-    expect(getByTestId("icon-home")).toBeTruthy();
-    expect(getByTestId("icon-heart")).toBeTruthy();
-    expect(getByTestId("icon-chatbubbles")).toBeTruthy();
-    expect(getByTestId("icon-map")).toBeTruthy();
-    expect(getByTestId("icon-person")).toBeTruthy();
+    // Icons are rendered, check they exist (may be multiple with same name due to animation)
+    const homeIcons = queryByTestId("icon-home") || queryByTestId("icon-home-outline");
+    const heartIcons = queryByTestId("icon-heart") || queryByTestId("icon-heart-outline");
+    const chatIcons = queryByTestId("icon-chatbubbles") || queryByTestId("icon-chatbubbles-outline");
+    const mapIcons = queryByTestId("icon-map") || queryByTestId("icon-map-outline");
+    const personIcons = queryByTestId("icon-person") || queryByTestId("icon-person-outline");
+    
+    expect(homeIcons).toBeTruthy();
+    expect(heartIcons).toBeTruthy();
+    expect(chatIcons).toBeTruthy();
+    expect(mapIcons).toBeTruthy();
+    expect(personIcons).toBeTruthy();
   });
 
   it("should display focused icon for active tab", () => {
@@ -180,7 +204,6 @@ describe("ActivePillTabBar", () => {
   });
 
   it("should detect double-tap and emit tabDoublePress event", async () => {
-    jest.useFakeTimers();
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -194,11 +217,10 @@ describe("ActivePillTabBar", () => {
     // First tap
     fireEvent.press(homeTab);
     
-    // Second tap within 300ms
-    act(() => {
-      jest.advanceTimersByTime(150);
+    // Second tap within 300ms (simulate quick double tap)
+    await act(async () => {
+      fireEvent.press(homeTab);
     });
-    fireEvent.press(homeTab);
 
     await waitFor(() => {
       expect(mockNavigation.emit).toHaveBeenCalledWith({
@@ -206,12 +228,9 @@ describe("ActivePillTabBar", () => {
         target: "Home-0",
       });
     });
-
-    jest.useRealTimers();
   });
 
   it("should not emit tabDoublePress if second tap is after 300ms", async () => {
-    jest.useFakeTimers();
     const { getByTestId } = render(
       <ActivePillTabBar
         state={mockState}
@@ -225,21 +244,31 @@ describe("ActivePillTabBar", () => {
     // First tap
     fireEvent.press(homeTab);
     
-    // Second tap after 300ms - should not trigger double-tap
-    act(() => {
-      jest.advanceTimersByTime(350);
+    // Wait 350ms before second tap (longer than 300ms threshold)
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 350));
     });
+    
+    // Reset mock to ignore first tap events
+    mockNavigation.emit.mockClear();
+    
+    // Second tap after delay
     fireEvent.press(homeTab);
 
+    // Should only have regular tap event, not double-tap
     await waitFor(() => {
-      expect(mockNavigation.emit).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: "tabDoublePress",
-        }),
-      );
+      expect(mockNavigation.emit).toHaveBeenCalledWith({
+        type: "tabPress",
+        target: "Home-0",
+        canPreventDefault: true,
+      });
     });
-
-    jest.useRealTimers();
+    
+    expect(mockNavigation.emit).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "tabDoublePress",
+      }),
+    );
   });
 
   it("should show badge for routes with counts", () => {

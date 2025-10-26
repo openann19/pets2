@@ -23,7 +23,7 @@ import { useTheme } from "../../theme/Provider";
 import type { RootStackParamList } from "../../navigation/types";
 import { aiAPI, matchesAPI } from "../../services/api";
 import { logger } from "../../services/logger";
-import { Theme } from '../theme/unified-theme';
+import { Theme } from '../../theme/unified-theme';
 
 interface Pet {
   id: string;

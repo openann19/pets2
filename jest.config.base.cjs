@@ -1,33 +1,58 @@
 /**
- * Base Jest configuration for PawfectMatch monorepo
- * Common settings shared across all packages and apps
+ * Base Jest Configuration for PawfectMatch Monorepo
+ *
+ * This is the single source of truth for Jest configuration.
+ * All workspace configs should import and extend this base config.
  */
-const config = {
-  // Common test settings
+module.exports = {
+  // Global settings
+  testEnvironment: 'node',
+  collectCoverageFrom: [
+    '**/*.{ts,tsx,js,jsx}',
+    '!**/*.d.ts',
+    '!**/node_modules/**',
+    '!**/dist/**',
+    '!**/build/**',
+    '!**/*.config.{ts,js}',
+    '!**/coverage/**',
+    '!**/__mocks__/**',
+    '!**/__tests__/fixtures/**',
+  ],
+  coverageDirectory: '<rootDir>/coverage',
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
+  coverageThreshold: {
+    global: {
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
+  },
+  testMatch: [
+    '<rootDir>/**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)',
+    '<rootDir>/**/?(*.)+(spec|test).(ts|tsx|js|jsx)',
+  ],
+  transform: {
+    '^.+\\.(ts|tsx)$': ['@swc/jest', {
+      jsc: {
+        transform: {
+          react: {
+            runtime: 'automatic',
+          },
+        },
+      },
+    }],
+    '^.+\\.(js|jsx)$': ['@swc/jest'],
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  moduleNameMapper: {
+    '^@shared/(.*)$': '<rootDir>/packages/shared/src/$1',
+    '^@shared/errors$': '<rootDir>/packages/core-errors/src/index.ts',
+    '^@shared/errors/(.*)$': '<rootDir>/packages/core-errors/src/$1',
+  },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testTimeout: 10000,
   verbose: true,
-
-  // Coverage settings
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx,js,jsx}',
-    '!src/**/*.d.ts',
-    '!src/setupTests.{ts,js}',
-    '!src/**/__tests__/**',
-    '!src/**/*.test.{ts,tsx,js,jsx}',
-    '!src/**/*.spec.{ts,tsx,js,jsx}',
-    '!src/test-utils/**',
-    '!src/**/__mocks__/**'
-  ],
-  coverageReporters: ['text', 'lcov', 'html'],
-  coverageDirectory: 'coverage',
-
-  // Module file extensions
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-
-  // Transform ignore patterns (can be extended)
-  transformIgnorePatterns: [
-    '/node_modules/(?!(zod|@tanstack|axios|recharts|framer-motion|date-fns|lucide-react|sonner|bson|mongodb|@heroicons/react|@headlessui|@radix-ui|jest-expo|@react-native|expo|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg)/)'
-  ]
+  detectOpenHandles: true,
+  forceExit: true,
 };
-
-export default config;

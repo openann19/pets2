@@ -22,6 +22,7 @@ import {
   type WebProcessingReport,
 } from "../../utils/audio/web-processing";
 import { TranscriptionBadge } from "./TranscriptionBadge";
+import { logger } from "../../services/logger";
 
 interface Props {
   matchId: string;
@@ -457,7 +458,7 @@ export function VoiceRecorderUltra({
         if (transcript) {
           // Attach transcript metadata for server-side processing
           // Server can read this from multipart or query params
-          console.log("Sending with transcript:", transcript);
+          logger.debug("Sending voice note with transcript", { transcript });
         }
         await chatService.sendVoiceNote(matchId, body);
       } else {
@@ -571,8 +572,9 @@ export function VoiceRecorderUltra({
                       await soundRef.current.setPositionAsync(Math.round(p * dur));
                       setProgress(p);
                     }
-                  } catch (err) {
-                    console.error("Error seeking audio:", err);
+                  } catch (err: unknown) {
+                    const error = err instanceof Error ? err : new Error(String(err));
+                    logger.error("Error seeking audio", { error });
                   }
                 } else {
                   setProgress(p);
