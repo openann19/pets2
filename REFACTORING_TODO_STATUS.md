@@ -53,20 +53,21 @@
 
 ## 🎯 Next Immediate Steps
 
-1. **Verify Current Work** (Priority 1)
-   - Run `pnpm mobile:tsc` to check TypeScript errors
-   - Run `pnpm mobile:lint` to check linting errors
+1. **Verification** (Priority 1) ⭐
+   - Run `pnpm type-check` to check TypeScript errors
+   - Run `pnpm lint` to check linting errors  
    - Fix any issues with completed refactoring
+   - Verify imports work across codebase
 
 2. **Continue Refactoring** (Priority 2)
-   - Split remaining animation hooks
-   - Tackle large components (AdvancedCard, SwipeCard, LottieAnimations)
-   - Decompose god screens
+   - Split large components (AdvancedCard, SwipeCard, LottieAnimations)
+   - Decompose god screens (AICompatibilityScreen, etc.)
+   - Investigate and fix useMotionSystem.ts
 
-3. **Integration** (Priority 3)
-   - Update all imports
-   - Verify all tests pass
-   - Document patterns for future development
+3. **Documentation** (Priority 3)
+   - Document refactoring patterns
+   - Create migration guide
+   - Update developer documentation
 
 ## 📈 Estimated Remaining Work
 
