@@ -463,7 +463,7 @@ export const animationPresets = {
 
 // Gesture-based animations
 export const createSwipeAnimation = (
-  gestureState: any,
+  gestureState: { dx: number; vx: number },
   screenWidth: number,
   onSwipeComplete?: (direction: "left" | "right") => void,
 ) => {

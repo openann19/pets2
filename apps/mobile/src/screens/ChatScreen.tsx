@@ -12,11 +12,13 @@ import {
   StyleSheet,
   UIManager,
   View,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { EliteContainer } from "../components/EliteContainer";
+import { EliteContainer } from "../components/EliteComponents";
 import { ChatHeader } from "../components/chat/ChatHeader";
 import { MessageList } from "../components/chat/MessageList";
 import { MessageInput } from "../components/chat/MessageInput";
@@ -34,12 +36,9 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-type RootStackParamList = {
-  Chat: { matchId: string; petName: string };
-  Matches: undefined;
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type ChatScreenProps = NativeStackScreenProps<RootStackParamList, "Chat">;
+type ChatScreenProps = RootStackScreenProps<"Chat">;
 
 export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   const { matchId, petName } = route.params;
@@ -201,7 +200,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
 
   // Handle scroll events
   const handleScroll = useCallback(
-    async (e: any) => {
+    async (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       try {
         const offset = e.nativeEvent.contentOffset.y;
         await AsyncStorage.setItem(

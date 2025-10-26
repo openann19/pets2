@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-import { EliteHeader } from "../EliteHeader";
-import { EliteButton } from "../EliteButton";
+import { EliteHeader } from "../EliteComponents";
+import { EliteButton } from "../EliteComponents";
 
 interface SwipeHeaderProps {
   onBack: () => void;

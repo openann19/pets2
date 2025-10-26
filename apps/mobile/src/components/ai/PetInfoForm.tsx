@@ -8,7 +8,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native";
 
-import { Theme } from "../theme/unified-theme";
+import { Theme } from "../../theme/unified-theme";
 
 interface PetInfoFormProps {
   petName: string;

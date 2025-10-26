@@ -48,19 +48,9 @@ import {
   ParticleEffect,
 } from "../components/PremiumComponents";
 import { matchesAPI } from "../services/api";
+import type { RootStackParamList } from "../navigation/types";
 
 const { width: screenWidth } = Dimensions.get("window");
-
-type RootStackParamList = {
-  Home: undefined;
-  Swipe: undefined;
-  Matches: undefined;
-  Profile: undefined;
-  AdoptionManager: undefined;
-  Settings: undefined;
-  MyPets: undefined;
-  CreatePet: undefined;
-};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

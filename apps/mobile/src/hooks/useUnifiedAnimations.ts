@@ -18,6 +18,7 @@ import {
   useSharedValue,
   useAnimatedStyle,
   useAnimatedGestureHandler,
+  useAnimatedScrollHandler,
   withSpring,
   withTiming,
   withSequence,
@@ -454,6 +455,184 @@ export function useMagneticEffect(
   };
 }
 
+// === 7. STAGGERED ANIMATION HOOK ===
+interface UseStaggeredAnimationReturn {
+  start: () => void;
+  getAnimatedStyle: (index: number) => ReturnType<typeof useAnimatedStyle>;
+}
+
+export function useStaggeredAnimation(
+  itemCount: number,
+  delayMs: number = 100,
+  config: keyof typeof SPRING_CONFIGS = "standard",
+): UseStaggeredAnimationReturn {
+  const springConfig = SPRING_CONFIGS[config];
+  const delaySteps = delayMs;
+
+  const start = useCallback(() => {
+    // Animation is managed by individual shared values
+  }, []);
+
+  const getAnimatedStyle = useCallback(
+    (index: number) => {
+      // Create shared values for this item
+      const translateY = useSharedValue(30);
+      const opacity = useSharedValue(0);
+
+      useEffect(() => {
+        if (prefersReducedMotion) {
+          opacity.value = withTiming(1, { duration: TIMING_CONFIGS.standard });
+          translateY.value = withTiming(0, { duration: TIMING_CONFIGS.standard });
+        } else {
+          opacity.value = withDelay(
+            index * delaySteps,
+            withSpring(1, springConfig),
+          );
+          translateY.value = withDelay(
+            index * delaySteps,
+            withSpring(0, springConfig),
+          );
+        }
+      }, [index, delaySteps]);
+
+      return useAnimatedStyle(() => ({
+        opacity: opacity.value,
+        transform: [{ translateY: translateY.value }],
+      }));
+    },
+    [delaySteps, springConfig],
+  );
+
+  return {
+    start,
+    getAnimatedStyle,
+  };
+}
+
+// === 8. RIPPLE EFFECT HOOK ===
+interface UseRippleEffectReturn {
+  handlePress: (x: number, y: number, onComplete?: () => void) => void;
+  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+}
+
+export function useRippleEffect(
+  color: string = "#ffffff",
+  opacity: number = 0.3,
+): UseRippleEffectReturn {
+  const rippleScale = useSharedValue(0);
+  const rippleOpacity = useSharedValue(0);
+  const rippleX = useSharedValue(0);
+  const rippleY = useSharedValue(0);
+
+  const handlePress = useCallback(
+    (x: number, y: number, onComplete?: () => void) => {
+      if (prefersReducedMotion) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      rippleX.value = x;
+      rippleY.value = y;
+      rippleOpacity.value = opacity;
+      rippleScale.value = 0;
+
+      rippleScale.value = withTiming(1, { duration: TIMING_CONFIGS.standard });
+      rippleOpacity.value = withTiming(0, { duration: TIMING_CONFIGS.standard });
+
+      if (onComplete) {
+        setTimeout(onComplete, TIMING_CONFIGS.standard);
+      }
+    },
+    [rippleX, rippleY, rippleScale, rippleOpacity, opacity],
+  );
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    position: "absolute",
+    left: rippleX.value - 50,
+    top: rippleY.value - 50,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: color,
+    opacity: rippleOpacity.value,
+    transform: [{ scale: rippleScale.value }],
+  }));
+
+  return {
+    handlePress,
+    animatedStyle,
+  };
+}
+
+// === 9. SHIMMER EFFECT HOOK ===
+interface UseShimmerEffectReturn {
+  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+}
+
+export function useShimmerEffect(
+  colors: string[] = ["#ffffff40", "#ffffff90", "#ffffff40"],
+  duration: number = 2000,
+): UseShimmerEffectReturn {
+  const shimmerProgress = useSharedValue(0);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    shimmerProgress.value = withSequence(
+      withTiming(1, { duration }),
+      withDelay(1000, withTiming(0, { duration: 0 })),
+    );
+  }, [shimmerProgress, duration]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const gradientColors = colors;
+    return {
+      backgroundColor: gradientColors[0],
+      // Additional shimmer effect would be handled by a wrapper component
+    };
+  });
+
+  return {
+    animatedStyle,
+  };
+}
+
+// === 10. SCROLL ANIMATION HOOK ===
+interface UseScrollAnimationReturn {
+  onScroll: ReturnType<typeof useAnimatedScrollHandler>;
+  animatedStyle: ReturnType<typeof useAnimatedStyle>;
+}
+
+export function useScrollAnimation(
+  parallaxSpeed: number = 0.5,
+): UseScrollAnimationReturn {
+  const scrollY = useSharedValue(0);
+
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [-100, 0, 100],
+      [50 * parallaxSpeed, 0, -50 * parallaxSpeed],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      transform: [{ translateY }],
+    };
+  });
+
+  return {
+    onScroll,
+    animatedStyle,
+  };
+}
+
 // === EXPORT ALL HOOKS ===
 export const UnifiedAnimations = {
   useSpringAnimation,
@@ -462,6 +641,10 @@ export const UnifiedAnimations = {
   usePressAnimation,
   useGlowAnimation,
   useMagneticEffect,
+  useStaggeredAnimation,
+  useRippleEffect,
+  useShimmerEffect,
+  useScrollAnimation,
 };
 
 export default UnifiedAnimations;

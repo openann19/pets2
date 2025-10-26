@@ -12,7 +12,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import {
   useAuthStore,
-  useSwipeLogic,
   type Pet,
   type PetFilters,
 } from "@pawfectmatch/core";
@@ -41,15 +40,11 @@ import { EliteContainer, EliteHeader } from "../components/EliteComponents";
 import { useTheme } from "../contexts/ThemeContext";
 import { matchesAPI } from "../services/api";
 
+import type { RootStackScreenProps } from "../navigation/types";
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-type RootStackParamList = {
-  Swipe: undefined;
-  Matches: undefined;
-  Chat: { matchId: string; petName: string };
-};
-
-type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
+type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
   const { user } = useAuthStore();
@@ -71,14 +66,58 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     maxDistance: 25,
   });
 
-  // Swipe logic hook
-  const { handleLike, handlePass, handleSuperLike } = useSwipeLogic({
-    onMatch: (result) => {
-      if (result.isMatch) {
-        setShowMatchModal(true);
+  // Swipe logic implementation
+  const handleLike = useCallback(async (pet: Pet) => {
+    try {
+      // Create a match (like action)
+      if (user?.pets?.[0] && pet._id) {
+        const currentPetId = user.pets[0];
+        const match = await matchesAPI.createMatch(currentPetId, pet._id);
+        
+        if (match) {
+          // Check if it's a mutual match
+          const existingMatch = pets.find((p) => p._id === pet._id);
+          if (existingMatch) {
+            setShowMatchModal(true);
+            setMatchedPet(pet);
+          }
+          
+          return match;
+        }
       }
-    },
-  });
+      return null;
+    } catch (error) {
+      logger.error("Error liking pet:", { error });
+      return null;
+    }
+  }, [user, pets]);
+  
+  const handlePass = useCallback(async (pet: Pet) => {
+    try {
+      // Pass action - just move to next
+      logger.info("Pet passed", { petId: pet._id });
+      return null;
+    } catch (error) {
+      logger.error("Error passing pet:", { error });
+      return null;
+    }
+  }, []);
+  
+  const handleSuperLike = useCallback(async (pet: Pet) => {
+    try {
+      // Super like is same as like but with different marker
+      const result = await handleLike(pet);
+      
+      if (result) {
+        Alert.alert("Super Like Sent!", `${pet.name} will see that you super liked them!`);
+      }
+      
+      return result;
+    } catch (error) {
+      logger.error("Error super liking pet:", { error });
+      return null;
+    }
+  }, [handleLike]);
 
   // Animation hooks
   const { start: startStaggeredAnimation, getAnimatedStyle } =

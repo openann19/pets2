@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { Message } from "../../hooks/useChatData";
+import type { Message } from "../../hooks/useChatData";
 import { tokens } from "@pawfectmatch/design-tokens";
 import { useTheme } from "../../contexts/ThemeContext";
 

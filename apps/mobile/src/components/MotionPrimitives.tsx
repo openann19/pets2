@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import type { ViewStyle, FlatListProps } from "react-native";
 import { View, Animated, ScrollView, FlatList } from "react-native";
+import { Theme } from "../theme/unified-theme";
 
-// import { MotionSystem } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
+// === PROJECT HYPERION: MOTION & ANIMATION PRIMITIVES ===
+const MotionSystem = Theme.motion;
 
 // Staggered FadeInUp List Component
 interface StaggeredFadeInUpListProps {
@@ -25,7 +27,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   useEffect(() => {
     const animations = animatedValues.map((animatedValue, index) =>
       Animated.spring(animatedValue, {
-        ...MotionSystem.springs.gentle,
+        damping: 25, stiffness: 300, mass: 1,
         toValue: 1,
         delay: index * delay,
         useNativeDriver: true,
@@ -84,7 +86,7 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
   useEffect(() => {
     if (trigger) {
       Animated.spring(animatedValue, {
-        ...MotionSystem.springs.bouncy,
+        damping: 10, stiffness: 600, mass: 0.5,
         toValue: 1,
         delay,
         useNativeDriver: true,
@@ -125,7 +127,7 @@ interface PageTransitionProps {
 export const PageTransition: React.FC<PageTransitionProps> = ({
   children,
   type = "fade",
-  duration = MotionSystem.timings.standard,
+  duration = 300,
   style,
 }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -134,7 +136,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
     Animated.timing(animatedValue, {
       toValue: 1,
       duration,
-      easing: MotionSystem.easings.standard as any,
+      easing: "cubic-bezier(0.4, 0, 0.2, 1)",
       useNativeDriver: true,
     }).start();
   }, [animatedValue, duration]);
@@ -268,7 +270,7 @@ export function AnimatedFlatList<T>({
 
       // Trigger animation
       Animated.spring(animatedValue, {
-        ...MotionSystem.springs.gentle,
+        damping: 25, stiffness: 300, mass: 1,
         toValue: 1,
         delay: index * animationDelay,
         useNativeDriver: true,
@@ -354,7 +356,7 @@ export const ScrollTrigger: React.FC<ScrollTriggerProps> = ({
       Animated.sequence([
         Animated.delay(delay),
         Animated.spring(animatedValue, {
-          ...MotionSystem.springs.standard,
+          damping: 20, stiffness: 400, mass: 0.8,
           toValue: 1,
           useNativeDriver: true,
         }),

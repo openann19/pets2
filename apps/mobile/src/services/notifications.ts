@@ -1,6 +1,7 @@
 /**
  * Push Notifications Service for PawfectMatch Mobile
  * Professional implementation with Expo Notifications
+ * This is the PRIMARY implementation - pushNotificationService.ts is deprecated
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -8,6 +9,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { logger } from "@pawfectmatch/core";
+import { api } from "./api";
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -64,6 +66,15 @@ class NotificationService {
 
       // Store token locally
       await AsyncStorage.setItem("expo_push_token", token);
+
+      // Register token with backend
+      try {
+        const deviceId = await this.getDeviceId();
+        await this.registerTokenWithBackend(token, deviceId);
+      } catch (error) {
+        logger.warn("Failed to register push token with backend", { error });
+        // Non-critical - continue without backend registration
+      }
 
       // Configure notification channel for Android
       if (Platform.OS === "android") {
@@ -377,13 +388,65 @@ class NotificationService {
     });
   }
 
-  // Get current token
+      // Get current token
   getExpoPushToken(): string | null {
     return this.expoPushToken;
   }
 
+  // Get or create device ID
+  private async getDeviceId(): Promise<string> {
+    let deviceId = await AsyncStorage.getItem("device_id");
+    if (!deviceId) {
+      deviceId = `mobile_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      await AsyncStorage.setItem("device_id", deviceId);
+    }
+    return deviceId;
+  }
+
+  // Register token with backend
+  private async registerTokenWithBackend(token: string, deviceId: string): Promise<void> {
+    try {
+      await api.request("/notifications/register-token", {
+        method: "POST",
+        body: {
+          token,
+          platform: Platform.OS,
+          deviceId,
+        },
+      });
+      logger.info("Push token registered with backend", { deviceId });
+    } catch (error) {
+      logger.error("Failed to register push token with backend", { error });
+      throw error;
+    }
+  }
+
+  // Unregister token from backend
+  async unregisterToken(deviceId?: string): Promise<boolean> {
+    try {
+      const id = deviceId || await this.getDeviceId();
+      await api.request("/notifications/unregister-token", {
+        method: "DELETE",
+        body: { deviceId: id },
+      });
+      logger.info("Push token unregistered from backend", { deviceId: id });
+      return true;
+    } catch (error) {
+      logger.error("Failed to unregister push token", { error });
+      return false;
+    }
+  }
+
   // Clean up resources
-  cleanup(): void {
+  async cleanup(): Promise<void> {
+    // Unregister from backend
+    if (this.expoPushToken) {
+      await this.unregisterToken().catch(() => {
+        // Non-critical
+      });
+    }
+
+    // Remove listeners
     if (this.notificationListener !== null) {
       this.notificationListener.remove();
       this.notificationListener = null;
@@ -400,4 +463,5 @@ class NotificationService {
 
 // Export a singleton instance
 export const notificationService = new NotificationService();
+export const initializeNotificationsService = () => notificationService.initialize();
 export default notificationService;

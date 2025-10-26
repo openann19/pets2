@@ -8,27 +8,22 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { EliteContainer } from "../components/EliteContainer";
-import { EliteLoading } from "../components/EliteLoading";
+import { EliteContainer, EliteLoading } from "../components/EliteComponents";
 import { SwipeHeader } from "../components/swipe/SwipeHeader";
 import { SwipeFilters } from "../components/swipe/SwipeFilters";
 import { SwipeCard } from "../components/swipe/SwipeCard";
 import { SwipeActions } from "../components/swipe/SwipeActions";
 import { MatchModal } from "../components/swipe/MatchModal";
 import { EmptyState } from "../components/swipe/EmptyState";
-import { GlassContainer } from "../components/GlassContainer";
+import { GlassContainer } from "../components/GlassMorphism";
 import { useSwipeData } from "../hooks/useSwipeData";
 import { tokens } from "@pawfectmatch/design-tokens";
 
+import type { RootStackScreenProps } from "../navigation/types";
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-type RootStackParamList = {
-  Swipe: undefined;
-  Chat: { matchId: string; petName: string };
-  Matches: undefined;
-};
-
-type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
+type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function SwipeScreen({ navigation }: SwipeScreenProps) {
   const { data, actions } = useSwipeData();

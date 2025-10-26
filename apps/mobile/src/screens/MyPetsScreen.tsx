@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import type { Pet } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -20,15 +19,9 @@ import { matchesAPI } from "../services/api";
 
 const { width: _screenWidth } = Dimensions.get("window");
 
-type RootStackParamList = {
-  MyPets: undefined;
-  CreatePet: undefined;
-  Home: undefined;
-  PetDetails: { petId: string; pet: Pet };
-  EditPet: { petId: string; pet: Pet };
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type MyPetsScreenProps = NativeStackScreenProps<RootStackParamList, "MyPets">;
+type MyPetsScreenProps = RootStackScreenProps<"MyPets">;
 
 // Using Pet type from core package
 

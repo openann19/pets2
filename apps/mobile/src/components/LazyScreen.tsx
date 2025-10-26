@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, ComponentType } from "react";
+import React, { Suspense, lazy, type ComponentType } from "react";
 import { logger } from "@pawfectmatch/core";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
@@ -92,7 +92,7 @@ class LazyScreenErrorBoundary extends React.Component<
   },
   { hasError: boolean; error: Error | null }
 > {
-  constructor(props: any) {
+  constructor(props: Record<string, never>) {
     super(props);
     this.state = { hasError: false, error: null };
   }
@@ -140,7 +140,12 @@ export const createLazyScreen = <P extends object>(
     );
   }
 
-  LazyScreenWrapper.displayName = `LazyScreen(${LazyComponent.displayName || "Component"})`;
+  // displayName will be set after component is created since LazyComponent is lazy
+  if ("displayName" in LazyComponent && LazyComponent.displayName) {
+    LazyScreenWrapper.displayName = `LazyScreen(${String(LazyComponent.displayName)})`;
+  } else {
+    LazyScreenWrapper.displayName = "LazyScreen(Component)";
+  }
 
   return LazyScreenWrapper;
 };

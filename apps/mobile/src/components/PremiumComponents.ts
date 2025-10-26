@@ -15,9 +15,7 @@ export {
   ElitePageHeader,
   EliteCard,
   EliteButton,
-  EliteLoading,
-  EliteEmptyState,
-  EliteAvatar,
+  // Note: EliteLoading, EliteEmptyState, EliteAvatar are not exported from EliteComponents
   // Advanced Animation Components
   FadeInUp,
   ScaleIn,

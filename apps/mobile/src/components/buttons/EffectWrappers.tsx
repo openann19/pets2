@@ -19,10 +19,12 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import {
   useGlowAnimation,
   useMagneticEffect,
-  useRippleEffect,
-  useShimmerEffect,
   usePressAnimation,
 } from "../../hooks/useUnifiedAnimations";
+import {
+  useRippleEffect,
+  useShimmerEffect,
+} from "../../hooks/usePremiumAnimations";
 import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===

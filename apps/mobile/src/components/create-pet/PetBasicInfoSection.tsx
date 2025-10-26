@@ -9,10 +9,12 @@ import {
 
 import { PetFormData } from "../../hooks/usePetForm";
 
+import type { FormFieldValue } from "../../types/forms";
+
 interface PetBasicInfoSectionProps {
   formData: PetFormData;
   errors: Record<string, string>;
-  onUpdateFormData: (field: string, value: any) => void;
+  onUpdateFormData: (field: string, value: FormFieldValue) => void;
 }
 
 const speciesOptions = [

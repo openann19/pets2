@@ -90,7 +90,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           text: "Confirm",
           onPress: () => {
             if (pet) {
-              setPet({ ...pet, status: newStatus as any });
+              setPet({ ...pet, status: newStatus as PetDetails['status'] });
               Alert.alert("Success", `Status updated to ${newStatus}`);
             }
           },

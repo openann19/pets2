@@ -18,7 +18,7 @@ import NetInfo from "@react-native-community/netinfo";
 import {
   UnifiedAPIClient,
   type APIClientConfig,
-  type RequestConfig,
+  type UnifiedRequestConfig,
 } from "@pawfectmatch/core/api/UnifiedAPIClient";
 
 const envApiBaseUrl = process.env["EXPO_PUBLIC_API_URL"];

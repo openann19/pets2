@@ -277,8 +277,8 @@ export default function PerformanceTestSuite({
                 {
                   color:
                     metrics.fps >= 55
-                      ? Theme.colors.text.primary.success
-                      : Theme.colors.text.primary.error,
+                      ? Theme.colors.status.success
+                      : Theme.colors.status.error,
                 },
               ]}
             >
@@ -390,16 +390,16 @@ function getGradeColor(grade: string): string {
   switch (grade) {
     case "A+":
     case "A":
-      return Theme.colors.text.primary.success;
+      return Theme.colors.status.success;
     case "B":
-      return Theme.colors.text.primary.accent;
+      return Theme.colors.status.info;
     case "C":
-      return Theme.colors.text.primary.warning;
+      return Theme.colors.status.warning;
     case "D":
     case "F":
-      return Theme.colors.text.primary.error;
+      return Theme.colors.status.error;
     default:
-      return Theme.colors.text.primary.primary;
+      return Theme.colors.text.primary;
   }
 }
 
@@ -497,11 +497,11 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.md,
     paddingTop: Theme.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border.light.subtle,
+    borderTopColor: Theme.colors.border.light,
   },
   recommendationsTitle: {
     marginBottom: Theme.spacing.sm,
-    color: Theme.colors.text.primary.accent,
+    color: Theme.colors.status.info,
   },
   recommendation: {
     marginBottom: Theme.spacing.xs,

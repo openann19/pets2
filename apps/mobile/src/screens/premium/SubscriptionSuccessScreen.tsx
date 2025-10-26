@@ -15,11 +15,9 @@ import {
   View,
 } from "react-native";
 
-type RootStackParamList = {
-  Home: undefined;
-  SubscriptionManager: undefined;
-  [key: string]: undefined | object;
-};
+import type { RootStackParamList } from "../../navigation/types";
+
+type NavigationProp = NavigationProp<RootStackParamList>;
 
 const AnimatedCheckmark = () => {
   const animatedValue = useRef(new Animated.Value(0)).current;

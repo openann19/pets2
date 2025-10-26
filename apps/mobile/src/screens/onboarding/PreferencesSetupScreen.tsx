@@ -1,4 +1,4 @@
-import { INTENT_OPTIONS, SPECIES_OPTIONS } from "@pawfectmatch/core";
+import { INTENT_OPTIONS, SPECIES_OPTIONS } from "../../constants/options";
 import { logger } from "@pawfectmatch/core";
 import Slider from "@react-native-community/slider";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -87,7 +87,7 @@ const PreferencesSetupScreen = ({
     transform: [{ scale: scaleValue.value }],
   }));
 
-  const updatePreferences = (field: string, value: any) => {
+  const updatePreferences = (field: string, value: import("../../types/forms").FormFieldValue) => {
     setPreferences((prev) => ({
       ...prev,
       [field]: value,

@@ -4,6 +4,18 @@
  */
 import { api } from './api';
 import { logger } from './logger';
+import { ErrorHandler } from '../lib/ErrorHandler';
+
+// Helper to normalize error and handle
+const handleError = (error: unknown, action: string, context?: Record<string, unknown>) => {
+    const normalizedError = error instanceof Error ? error : new Error(String(error));
+    ErrorHandler.handle(normalizedError, {
+        component: 'VideoCallService',
+        action,
+        metadata: context,
+    });
+};
+
 class VideoCallService {
     peerConnection = null;
     localStream = null;
@@ -22,7 +34,11 @@ class VideoCallService {
             return this.peerConnection;
         }
         catch (error) {
-            logger.error('Failed to initialize peer connection', { error });
+            const normalizedError = error instanceof Error ? error : new Error(String(error));
+            ErrorHandler.handle(normalizedError, {
+                component: 'VideoCallService',
+                action: 'initializePeerConnection',
+            });
             throw error;
         }
     }
@@ -39,7 +55,12 @@ class VideoCallService {
             return stream;
         }
         catch (error) {
-            logger.warn('Camera permission denied', { error });
+            const normalizedError = error instanceof Error ? error : new Error(String(error));
+            ErrorHandler.handle(normalizedError, {
+                component: 'VideoCallService',
+                action: 'getUserMedia',
+                metadata: { reason: 'Camera permission denied' },
+            });
             throw error;
         }
     }
@@ -56,7 +77,12 @@ class VideoCallService {
             return stream;
         }
         catch (error) {
-            logger.info('Screen sharing cancelled by user', { error });
+            const normalizedError = error instanceof Error ? error : new Error(String(error));
+            ErrorHandler.handle(normalizedError, {
+                component: 'VideoCallService',
+                action: 'getScreenShareStream',
+                metadata: { reason: 'Screen sharing cancelled by user' },
+            });
             throw error;
         }
     }
@@ -94,7 +120,7 @@ class VideoCallService {
             return await api.videoCall.sendOffer(callId, offer);
         }
         catch (error) {
-            logger.error('Failed to send offer', { error, callId });
+            handleError(error, 'sendOffer', { callId });
             throw error;
         }
     }
@@ -106,7 +132,7 @@ class VideoCallService {
             return await api.videoCall.getAnswer(callId);
         }
         catch (error) {
-            logger.error('Failed to get answer', { error, callId });
+            handleError(error, 'getAnswer', { callId });
             throw error;
         }
     }
@@ -118,7 +144,7 @@ class VideoCallService {
             return await api.videoCall.sendIceCandidate(callId, candidate);
         }
         catch (error) {
-            logger.error('Failed to send ICE candidate', { error, callId });
+            handleError(error, 'sendIceCandidate', { callId });
             throw error;
         }
     }
@@ -130,7 +156,7 @@ class VideoCallService {
             return await api.videoCall.createCall(receiverId);
         }
         catch (error) {
-            logger.error('Failed to create video call', { error, receiverId });
+            handleError(error, 'createCall', { receiverId });
             throw error;
         }
     }
@@ -142,7 +168,7 @@ class VideoCallService {
             return await api.videoCall.joinCall(callId);
         }
         catch (error) {
-            logger.error('Failed to join call', { error, callId });
+            handleError(error, 'joinCall', { callId });
             throw error;
         }
     }
@@ -174,7 +200,7 @@ class VideoCallService {
             return await api.videoCall.endCall(callId);
         }
         catch (error) {
-            logger.error('Failed to end call', { error, callId });
+            handleError(error, 'endCall', { callId });
             throw error;
         }
     }
@@ -191,7 +217,7 @@ class VideoCallService {
             return offer;
         }
         catch (error) {
-            logger.error('Failed to create offer', { error });
+            handleError(error, 'createOffer', {});
             throw error;
         }
     }
@@ -203,7 +229,7 @@ class VideoCallService {
             return await api.videoCall.startRecording(callId);
         }
         catch (error) {
-            logger.warn('Recording permission denied', { error, callId });
+            handleError(error, 'startRecording', { callId, reason: 'Recording permission denied' });
             throw error;
         }
     }
@@ -215,7 +241,7 @@ class VideoCallService {
             return await api.videoCall.stopRecording(callId);
         }
         catch (error) {
-            logger.error('Failed to stop recording', { error, callId });
+            handleError(error, 'stopRecording', { callId });
             throw error;
         }
     }

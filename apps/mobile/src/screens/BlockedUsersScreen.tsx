@@ -39,32 +39,24 @@ function BlockedUsersScreen({
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Mock data for demo - in real app this would come from API
-  const mockBlockedUsers: BlockedUser[] = [
-    {
-      id: "1",
-      name: "John Smith",
-      email: "john@example.com",
-      blockedAt: "2024-01-15T10:30:00Z",
-      reason: "Inappropriate behavior",
-    },
-    {
-      id: "2",
-      name: "Sarah Johnson",
-      email: "sarah@example.com",
-      blockedAt: "2024-01-10T14:20:00Z",
-      reason: "Spam messages",
-    },
-  ];
-
   const loadBlockedUsers = useCallback(async (refresh = false) => {
     try {
       if (refresh) setRefreshing(true);
       else setLoading(true);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setBlockedUsers(mockBlockedUsers);
+      // Fetch real blocked users from API
+      const users = await matchesAPI.getBlockedUsers();
+      
+      // Transform API response to BlockedUser format
+      const transformedUsers: BlockedUser[] = users.map((user) => ({
+        id: user._id || user.id || "",
+        name: user.name || user.firstName || "Unknown",
+        email: user.email || "",
+        blockedAt: user.createdAt || new Date().toISOString(),
+        reason: "User blocked", // This would come from the API in a real scenario
+      }));
+
+      setBlockedUsers(transformedUsers);
     } catch (error) {
       logger.error("Failed to load blocked users:", { error });
       Alert.alert("Error", "Failed to load blocked users. Please try again.");
@@ -78,7 +70,32 @@ function BlockedUsersScreen({
     void loadBlockedUsers();
   }, [loadBlockedUsers]);
 
-  const handleUnblockUser = useCallback(
+  const handleUnblockUser = useCallback(async (userId: string) => {
+    Alert.alert(
+      "Unblock User",
+      "Are you sure you want to unblock this user?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Unblock",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await matchesAPI.unblockUser(userId);
+              // Remove from local state
+              setBlockedUsers((prev) => prev.filter((user) => user.id !== userId));
+              Alert.alert("Success", "User has been unblocked");
+            } catch (error) {
+              logger.error("Failed to unblock user:", { error });
+              Alert.alert("Error", "Failed to unblock user. Please try again.");
+            }
+          },
+        },
+      ],
+    );
+  }, []);
+
+  const _handleUnblockUser = useCallback(
     async (userId: string, userName: string) => {
       Alert.alert(
         "Unblock User",

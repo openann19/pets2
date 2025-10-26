@@ -6,6 +6,8 @@ import {
   Text,
   StyleSheet,
   Animated,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 
 import { useThemeToggle } from "../hooks/useThemeToggle";
@@ -15,7 +17,7 @@ interface ThemeToggleProps {
   variant?: "icon" | "button" | "selector";
   size?: "small" | "medium" | "large";
   showLabel?: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({

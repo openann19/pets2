@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
-import { Message } from "../hooks/useChatData";
+import type { Message } from "../../hooks/useChatData";
 import { MessageItem } from "./MessageItem";
 import { TypingIndicator } from "./TypingIndicator";
 import { tokens } from "@pawfectmatch/design-tokens";

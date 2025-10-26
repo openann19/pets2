@@ -2,7 +2,7 @@ import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 import { Alert } from "react-native";
 
-import type { ThemeMode } from "../contexts/ThemeContext";
+import type { ThemeMode } from "../stores/useUIStore";
 import { useTheme } from "../contexts/ThemeContext";
 
 export interface UseThemeToggleReturn {

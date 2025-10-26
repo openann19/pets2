@@ -10,6 +10,7 @@ import {
 } from "react-native-webrtc";
 
 import { logger } from "./logger";
+import { useAuthStore } from "../stores/useAuthStore";
 
 export interface CallData {
   callId: string;
@@ -56,18 +57,34 @@ class WebRTCService extends EventEmitter {
   private currentCallId: string | null = null;
   private callStartTime = 0;
 
-  // STUN/TURN configuration
+  // STUN/TURN configuration with environment support
   private readonly rtcConfiguration = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      // Add TURN servers for production
-      // {
-      //   urls: 'turn:your-turn-server.com:3478',
-      //   username: 'username',
-      //   credential: 'password'
-      // }
-    ],
+    iceServers: (() => {
+      const servers = [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+      ];
+
+      // Add TURN servers from environment if configured
+      const turnUrl = process.env.EXPO_PUBLIC_TURN_SERVER_URL;
+      const turnUsername = process.env.EXPO_PUBLIC_TURN_USERNAME;
+      const turnCredential = process.env.EXPO_PUBLIC_TURN_CREDENTIAL;
+
+      if (turnUrl && turnUsername && turnCredential) {
+        servers.push({
+          urls: turnUrl,
+          username: turnUsername,
+          credential: turnCredential,
+        });
+        logger.info("TURN server configured", { url: turnUrl });
+      } else {
+        logger.warn(
+          "No TURN server configured. Calls may fail across NAT/firewalls.",
+        );
+      }
+
+      return servers;
+    })(),
     iceCandidatePoolSize: 10,
   };
 
@@ -175,11 +192,16 @@ class WebRTCService extends EventEmitter {
       const callId = `call_${String(Date.now())}_${Math.random().toString(36).substring(2, 11)}`;
       this.currentCallId = callId;
 
+      // Get user data from auth store
+      const { user } = useAuthStore.getState();
+      const callerId = user?._id ?? user?.id ?? "unknown";
+      const callerName = user?.name ?? user?.firstName ?? "Unknown User";
+
       const callData: CallData = {
         callId,
         matchId,
-        callerId: "current-user-id", // Get from auth store
-        callerName: "Current User", // Get from auth store
+        callerId,
+        callerName,
         callType,
         timestamp: Date.now(),
       };
@@ -401,9 +423,9 @@ class WebRTCService extends EventEmitter {
         // React Native WebRTC specific method
         if (
           "_switchCamera" in videoTrack &&
-          typeof (videoTrack as any)._switchCamera === "function"
+          typeof (videoTrack as import("../types/webrtc").MediaStreamTrackWithCamera)._switchCamera === "function"
         ) {
-          (videoTrack as any)._switchCamera();
+          (videoTrack as import("../types/webrtc").MediaStreamTrackWithCamera)._switchCamera?.();
         }
       }
     }
@@ -437,7 +459,7 @@ class WebRTCService extends EventEmitter {
 
     this.peerConnection.addEventListener("track", (event: RTCTrackEvent) => {
       if (event.streams.length > 0) {
-        this.remoteStream = event.streams[0] as any;
+        this.remoteStream = event.streams[0];
         this.callState.remoteStream = this.remoteStream;
         this.emit("callStateChanged", this.callState);
       }
@@ -493,7 +515,7 @@ class WebRTCService extends EventEmitter {
   private async handleOffer(data: WebRTCSignalingData) {
     if (this.peerConnection !== null) {
       if (data.offer !== undefined) {
-        await this.peerConnection.setRemoteDescription(data.offer as any);
+        await this.peerConnection.setRemoteDescription(data.offer);
       }
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
@@ -510,7 +532,7 @@ class WebRTCService extends EventEmitter {
   private async handleAnswer(data: WebRTCSignalingData) {
     if (this.peerConnection !== null) {
       if (data.answer !== undefined) {
-        await this.peerConnection.setRemoteDescription(data.answer as any);
+        await this.peerConnection.setRemoteDescription(data.answer);
       }
     }
   }

@@ -2,10 +2,9 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { EliteButton } from "../EliteButton";
-import { GlowContainer } from "../GlowContainer";
-import { PremiumHeading } from "../PremiumHeading";
-import { PremiumBody } from "../PremiumBody";
+import { EliteButton } from "../EliteComponents";
+import { GlowContainer } from "../GlowShadowSystem";
+import { PremiumHeading, PremiumBody } from "../PremiumTypography";
 
 interface EmptyStateProps {
   type: "error" | "empty";

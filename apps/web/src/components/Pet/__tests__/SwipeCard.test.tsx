@@ -13,7 +13,7 @@ import SwipeCard from '../SwipeCard';
 // Mock framer-motion to avoid animation issues in tests
 jest.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
   },
   useMotionValue: () => ({ get: () => 0, set: jest.fn() }),
   useTransform: () => 0,

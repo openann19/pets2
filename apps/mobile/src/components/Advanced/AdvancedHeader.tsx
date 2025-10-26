@@ -434,7 +434,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
       ]}
-      edges={["top"]}
+      edges={["top"] as const}
     >
       <StatusBar
         barStyle={

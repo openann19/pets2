@@ -20,6 +20,10 @@ export type RootStackParamList = {
   Matches: undefined;
   Map: undefined;
   Home: undefined;
+  Settings: undefined;
+  MyPets: undefined;
+  CreatePet: undefined;
+  AdoptionManager: undefined;
   Premium: undefined;
   PremiumSuccess: { sessionId?: string };
   PremiumCancel: undefined;

@@ -9,11 +9,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NavigationProp } from "@react-navigation/native";
 
-import { useAIBio } from "../../hooks/useAIBio";
-import { PetInfoForm } from "../../components/ai/PetInfoForm";
-import { ToneSelector } from "../../components/ai/ToneSelector";
-import { BioResults } from "../../components/ai/BioResults";
-import { Theme } from "../../theme/unified-theme";
+import { useAIBio } from "../hooks/useAIBio";
+import { PetInfoForm } from "../components/ai/PetInfoForm";
+import { ToneSelector } from "../components/ai/ToneSelector";
+import { BioResults } from "../components/ai/BioResults";
+import { Theme } from "../theme/unified-theme";
 
 interface AIBioScreenProps {
   navigation: NavigationProp<any>;

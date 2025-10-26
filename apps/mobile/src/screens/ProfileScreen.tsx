@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import { useAuthStore } from "@pawfectmatch/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -27,15 +26,9 @@ import {
 // import { AdvancedButton } from '../components/Advanced/AdvancedInteractionSystem';
 import { matchesAPI } from "../services/api";
 
-type RootStackParamList = {
-  Profile: undefined;
-  MyPets: undefined;
-  Settings: undefined;
-  CreatePet: undefined;
-  Login: undefined;
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type ProfileScreenProps = NativeStackScreenProps<RootStackParamList, "Profile">;
+type ProfileScreenProps = RootStackScreenProps<"Profile">;
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { user, logout } = useAuthStore();
@@ -263,7 +256,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                   style={styles.menuIcon}
                 >
                   <Ionicons
-                    name={item.icon as keyof typeof Ionicons.glyphMap}
+                    name={item.icon}
                     size={24}
                     color={item.color}
                   />

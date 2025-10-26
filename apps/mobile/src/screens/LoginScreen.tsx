@@ -13,14 +13,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Define the navigation props type
-type RootStackParamList = {
-  Home: undefined;
-  Login: undefined;
-  Register: undefined;
-};
+import type { RootStackScreenProps } from "../navigation/types";
 
-type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
+type LoginScreenProps = RootStackScreenProps<"Login">;
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [email, setEmail] = useState("");

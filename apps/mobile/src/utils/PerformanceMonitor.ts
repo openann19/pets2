@@ -16,7 +16,7 @@ declare const __DEV__: boolean;
  * - Development-only monitoring
  */
 
-interface PerformanceMetrics {
+export interface PerformanceMetrics {
   fps: number;
   memoryUsage: number;
   interactionTime: number;

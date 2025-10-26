@@ -9,7 +9,8 @@ import {
   type ViewStyle,
   type ImageStyle,
 } from "react-native";
-import FastImage, {
+import FastImage from "react-native-fast-image";
+import type {
   FastImageProps,
   Priority,
   ResizeMode,
@@ -23,7 +24,7 @@ interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
   containerStyle?: StyleProp<ViewStyle>;
   showLoadingIndicator?: boolean;
   showErrorState?: boolean;
-  fallbackIcon?: keyof typeof Ionicons.glyphMap;
+  fallbackIcon?: string;
   priority?: Priority;
   resizeMode?: ResizeMode;
   cache?: "immutable" | "web" | "cacheOnly";
@@ -78,7 +79,7 @@ export function OptimizedImage({
   }, [onLoadEnd]);
 
   const handleError = useCallback(
-    (error: unknown) => {
+    (error: Error | unknown) => {
       setIsLoading(false);
       setHasError(true);
       onError?.(error);

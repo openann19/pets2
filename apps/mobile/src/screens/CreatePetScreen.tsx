@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -19,17 +18,9 @@ import { PetPersonalitySection } from "../components/create-pet/PetPersonalitySe
 import { PetPhotosSection } from "../components/create-pet/PetPhotosSection";
 import { usePetForm } from "../hooks/usePetForm";
 import { usePhotoManager } from "../hooks/usePhotoManager";
+import type { RootStackScreenProps } from "../navigation/types";
 
-type RootStackParamList = {
-  CreatePet: undefined;
-  MyPets: undefined;
-  Home: undefined;
-};
-
-type CreatePetScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "CreatePet"
->;
+type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 
 export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
   const { formData, errors, isSubmitting, updateFormData, handleSubmit } =
