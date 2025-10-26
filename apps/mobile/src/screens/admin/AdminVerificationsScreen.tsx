@@ -273,7 +273,10 @@ function AdminVerificationsScreen({
   const renderVerification = useCallback(
     ({ item }: { item: Verification }) => (
       <TouchableOpacity
-        style={[styles.verificationCard, { backgroundColor: colors.card }]}
+        style={StyleSheet.flatten([
+          styles.verificationCard,
+          { backgroundColor: colors.card },
+        ])}
         onPress={() => {
           setSelectedVerification(item);
         }}
@@ -286,34 +289,49 @@ function AdminVerificationsScreen({
                 size={16}
                 color={colors.primary}
               />
-              <Text style={[styles.verificationType, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.verificationType,
+                  { color: colors.text },
+                ])}
+              >
                 {item.type.replace("_", " ").toUpperCase()}
               </Text>
             </View>
-            <Text style={[styles.userName, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.userName,
+                { color: colors.text },
+              ])}
+            >
               {item.userName}
             </Text>
-            <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.userEmail,
+                { color: colors.textSecondary },
+              ])}
+            >
               {item.userEmail}
             </Text>
           </View>
 
           <View style={styles.badges}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.priorityBadge,
                 { backgroundColor: getPriorityColor(item.priority) },
-              ]}
+              ])}
             >
               <Text style={styles.badgeText}>
                 {item.priority.toUpperCase()}
               </Text>
             </View>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.statusBadge,
                 { backgroundColor: getStatusColor(item.status) },
-              ]}
+              ])}
             >
               <Text style={styles.badgeText}>
                 {item.status.replace("_", " ").toUpperCase()}
@@ -323,7 +341,12 @@ function AdminVerificationsScreen({
         </View>
 
         <View style={styles.cardContent}>
-          <Text style={[styles.submittedAt, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.submittedAt,
+              { color: colors.textSecondary },
+            ])}
+          >
             Submitted: {new Date(item.submittedAt).toLocaleDateString()}
           </Text>
 
@@ -334,7 +357,10 @@ function AdminVerificationsScreen({
               color={colors.textSecondary}
             />
             <Text
-              style={[styles.documentsCount, { color: colors.textSecondary }]}
+              style={StyleSheet.flatten([
+                styles.documentsCount,
+                { color: colors.textSecondary },
+              ])}
             >
               {item.documents.length} document
               {item.documents.length !== 1 ? "s" : ""}
@@ -342,7 +368,12 @@ function AdminVerificationsScreen({
           </View>
 
           {item.expiresAt ? (
-            <Text style={[styles.expiresAt, { color: colors.error }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.expiresAt,
+                { color: colors.error },
+              ])}
+            >
               Expires: {new Date(item.expiresAt).toLocaleDateString()}
             </Text>
           ) : null}
@@ -351,14 +382,20 @@ function AdminVerificationsScreen({
         {item.status === "pending" && (
           <View style={styles.quickActions}>
             <TouchableOpacity
-              style={[styles.quickActionButton, styles.approveButton]}
+              style={StyleSheet.flatten([
+                styles.quickActionButton,
+                styles.approveButton,
+              ])}
               onPress={() => handleVerificationAction(item.id, "approve")}
             >
               <Ionicons name="checkmark" size={16} color="white" />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionButton, styles.infoButton]}
+              style={StyleSheet.flatten([
+                styles.quickActionButton,
+                styles.infoButton,
+              ])}
               onPress={() => {
                 handleRequestInfo(item);
               }}
@@ -367,7 +404,10 @@ function AdminVerificationsScreen({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionButton, styles.rejectButton]}
+              style={StyleSheet.flatten([
+                styles.quickActionButton,
+                styles.rejectButton,
+              ])}
               onPress={() => {
                 handleRejectWithReason(item);
               }}
@@ -388,21 +428,21 @@ function AdminVerificationsScreen({
 
   const renderFilterButton = (filterType: typeof filter, label: string) => (
     <TouchableOpacity
-      style={[
+      style={StyleSheet.flatten([
         styles.filterButton,
         {
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
-      ]}
+      ])}
       onPress={() => {
         setFilter(filterType);
       }}
     >
       <Text
-        style={[
+        style={StyleSheet.flatten([
           styles.filterButtonText,
           { color: filter === filterType ? "white" : colors.text },
-        ]}
+        ])}
       >
         {label}
       </Text>
@@ -414,9 +454,19 @@ function AdminVerificationsScreen({
 
     return (
       <View style={styles.modalOverlay}>
-        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.modalContent,
+            { backgroundColor: colors.card },
+          ])}
+        >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.modalTitle,
+                { color: colors.text },
+              ])}
+            >
               Verification Details
             </Text>
             <TouchableOpacity
@@ -430,43 +480,86 @@ function AdminVerificationsScreen({
 
           <View style={styles.modalBody}>
             <View style={styles.verificationInfo}>
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.infoLabel,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 User:
               </Text>
-              <Text style={[styles.infoValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.infoValue,
+                  { color: colors.text },
+                ])}
+              >
                 {selectedVerification.userName} (
                 {selectedVerification.userEmail})
               </Text>
 
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.infoLabel,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 Type:
               </Text>
-              <Text style={[styles.infoValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.infoValue,
+                  { color: colors.text },
+                ])}
+              >
                 {selectedVerification.type.replace("_", " ")}
               </Text>
 
-              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.infoLabel,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 Submitted:
               </Text>
-              <Text style={[styles.infoValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.infoValue,
+                  { color: colors.text },
+                ])}
+              >
                 {new Date(selectedVerification.submittedAt).toLocaleString()}
               </Text>
 
               {selectedVerification.notes ? (
                 <>
                   <Text
-                    style={[styles.infoLabel, { color: colors.textSecondary }]}
+                    style={StyleSheet.flatten([
+                      styles.infoLabel,
+                      { color: colors.textSecondary },
+                    ])}
                   >
                     Notes:
                   </Text>
-                  <Text style={[styles.infoValue, { color: colors.text }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.infoValue,
+                      { color: colors.text },
+                    ])}
+                  >
                     {selectedVerification.notes}
                   </Text>
                 </>
               ) : null}
             </View>
 
-            <Text style={[styles.documentsHeader, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.documentsHeader,
+                { color: colors.text },
+              ])}
+            >
               Documents:
             </Text>
             <FlatList
@@ -474,21 +567,26 @@ function AdminVerificationsScreen({
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.documentItem,
                     { backgroundColor: colors.background },
-                  ]}
+                  ])}
                 >
                   <Ionicons name="document" size={20} color={colors.primary} />
                   <View style={styles.documentInfo}>
-                    <Text style={[styles.documentName, { color: colors.text }]}>
+                    <Text
+                      style={StyleSheet.flatten([
+                        styles.documentName,
+                        { color: colors.text },
+                      ])}
+                    >
                       {item.name}
                     </Text>
                     <Text
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.documentType,
                         { color: colors.textSecondary },
-                      ]}
+                      ])}
                     >
                       {item.type.replace("_", " ")}
                     </Text>
@@ -505,7 +603,10 @@ function AdminVerificationsScreen({
           {selectedVerification.status === "pending" && (
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={[styles.actionButton, styles.approveButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.approveButton,
+                ])}
                 onPress={() =>
                   handleVerificationAction(selectedVerification.id, "approve")
                 }
@@ -515,7 +616,10 @@ function AdminVerificationsScreen({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.actionButton, styles.infoButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.infoButton,
+                ])}
                 onPress={() => {
                   handleRequestInfo(selectedVerification);
                 }}
@@ -525,7 +629,10 @@ function AdminVerificationsScreen({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.actionButton, styles.rejectButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.rejectButton,
+                ])}
                 onPress={() => {
                   handleRejectWithReason(selectedVerification);
                 }}
@@ -542,10 +649,18 @@ function AdminVerificationsScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.header,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
@@ -554,22 +669,35 @@ function AdminVerificationsScreen({
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.text },
+          ])}
+        >
           Verification Management
         </Text>
       </View>
 
       {/* Search and Filters */}
-      <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.searchContainer,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.searchInputContainer,
             { backgroundColor: colors.background },
-          ]}
+          ])}
         >
           <Ionicons name="search" size={20} color={colors.textSecondary} />
           <TextInput
-            style={[styles.searchInput, { color: colors.text }]}
+            style={StyleSheet.flatten([
+              styles.searchInput,
+              { color: colors.text },
+            ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search verifications..."
@@ -588,7 +716,12 @@ function AdminVerificationsScreen({
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.textSecondary },
+            ])}
+          >
             Loading verifications...
           </Text>
         </View>
@@ -612,7 +745,12 @@ function AdminVerificationsScreen({
                 size={64}
                 color={colors.textSecondary}
               />
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.emptyText,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 No verifications found
               </Text>
             </View>

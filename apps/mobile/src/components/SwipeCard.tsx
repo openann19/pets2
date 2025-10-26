@@ -158,9 +158,11 @@ const SwipeCard = React.memo(function SwipeCard({
       },
       onPanResponderGrant: () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const xValue = (pan.x as Animated.Value & { _value: number })._value || 0;
+        const xValue =
+          (pan.x as Animated.Value & { _value: number })._value || 0;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const yValue = (pan.y as Animated.Value & { _value: number })._value || 0;
+        const yValue =
+          (pan.y as Animated.Value & { _value: number })._value || 0;
         pan.setOffset({
           x: xValue,
           y: yValue,
@@ -388,11 +390,11 @@ const SwipeCard = React.memo(function SwipeCard({
   // Calculate rotation based on pan position - memoized for performance
   const rotate = useMemo(
     () =>
-      (pan.x.interpolate({
+      pan.x.interpolate({
         inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
         outputRange: ["-10deg", "0deg", "10deg"],
         extrapolate: "clamp",
-      }) as unknown as Animated.AnimatedInterpolation<string>),
+      }) as unknown as Animated.AnimatedInterpolation<string>,
     [pan.x],
   );
 
@@ -411,7 +413,7 @@ const SwipeCard = React.memo(function SwipeCard({
   }, [currentPhotoIndex]);
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         styles.card,
         disabled && styles.cardDisabled,
         {
@@ -423,7 +425,7 @@ const SwipeCard = React.memo(function SwipeCard({
           ],
           opacity,
         },
-      ]}
+      ])}
       {...panResponder.panHandlers}
       accessible={true}
       accessibilityRole="button"
@@ -461,7 +463,7 @@ const SwipeCard = React.memo(function SwipeCard({
           {pet.photos.map((_, index) => (
             <View
               key={index}
-              style={[
+              style={StyleSheet.flatten([
                 styles.photoDot,
                 {
                   backgroundColor:
@@ -469,7 +471,7 @@ const SwipeCard = React.memo(function SwipeCard({
                       ? "#fff"
                       : "rgba(255,255,255,0.4)",
                 },
-              ]}
+              ])}
             />
           ))}
         </View>
@@ -518,23 +520,31 @@ const SwipeCard = React.memo(function SwipeCard({
 
         {/* Swipe Overlays */}
         <Animated.View
-          style={[styles.overlay, styles.likeOverlay, { opacity: likeOpacity }]}
+          style={StyleSheet.flatten([
+            styles.overlay,
+            styles.likeOverlay,
+            { opacity: likeOpacity },
+          ])}
         >
           <Text style={styles.overlayText}>LIKE</Text>
         </Animated.View>
 
         <Animated.View
-          style={[styles.overlay, styles.nopeOverlay, { opacity: nopeOpacity }]}
+          style={StyleSheet.flatten([
+            styles.overlay,
+            styles.nopeOverlay,
+            { opacity: nopeOpacity },
+          ])}
         >
           <Text style={styles.overlayText}>NOPE</Text>
         </Animated.View>
 
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.overlay,
             styles.superLikeOverlay,
             { opacity: superLikeOpacity },
-          ]}
+          ])}
         >
           <Text style={styles.overlayText}>SUPER LIKE</Text>
         </Animated.View>
@@ -557,13 +567,13 @@ const SwipeCard = React.memo(function SwipeCard({
           <View style={styles.compatibilityContainer}>
             <View style={styles.compatibilityBar}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.compatibilityFill,
                   {
                     width: `${pet.compatibility}%`,
                     backgroundColor: colors.primary,
                   },
-                ]}
+                ])}
               />
             </View>
             <Text style={styles.compatibilityText}>
@@ -576,9 +586,17 @@ const SwipeCard = React.memo(function SwipeCard({
             {pet.tags.slice(0, 3).map((tag, index) => (
               <View
                 key={index}
-                style={[styles.tag, { backgroundColor: `${colors.primary}20` }]}
+                style={StyleSheet.flatten([
+                  styles.tag,
+                  { backgroundColor: `${colors.primary}20` },
+                ])}
               >
-                <Text style={[styles.tagText, { color: colors.primary }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.tagText,
+                    { color: colors.primary },
+                  ])}
+                >
                   {tag}
                 </Text>
               </View>

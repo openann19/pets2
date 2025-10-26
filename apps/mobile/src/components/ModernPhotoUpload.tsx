@@ -24,7 +24,7 @@ import {
   type ViewStyle,
 } from "react-native";
 
-import { useStaggeredAnimation } from "../hooks/useUnifiedAnimations";
+import { useStaggeredAnimation } from "../hooks/usePremiumAnimations";
 import { Theme } from "../theme/unified-theme";
 
 import EliteButton from "./buttons/EliteButton";
@@ -266,7 +266,7 @@ function ModernPhotoUpload({
   }, [photos, maxPhotos, renderPhotoItem, renderAddButton]);
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={StyleSheet.flatten([styles.container, style])}>
       <Text style={styles.title}>Pet Photos</Text>
       <Text style={styles.subtitle}>
         Add up to {maxPhotos} photos ({photos.length}/{maxPhotos})

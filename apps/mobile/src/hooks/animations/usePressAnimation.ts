@@ -1,5 +1,9 @@
 import { useCallback } from "react";
-import { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 
 import { SPRING_CONFIGS } from "./configs/springConfigs";
 import { prefersReducedMotion } from "./configs/accessibility";
@@ -47,4 +51,3 @@ export function usePressAnimation(
 }
 
 export default usePressAnimation;
-

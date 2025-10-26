@@ -47,20 +47,20 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
         {personalityTags.map((tag) => (
           <TouchableOpacity
             key={tag}
-            style={[
+            style={StyleSheet.flatten([
               styles.tag,
               formData.personalityTags.includes(tag) && styles.tagSelected,
-            ]}
+            ])}
             onPress={() => {
               togglePersonalityTag(tag);
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.tagText,
                 formData.personalityTags.includes(tag) &&
                   styles.tagTextSelected,
-              ]}
+              ])}
             >
               {tag.replace("-", " ")}
             </Text>

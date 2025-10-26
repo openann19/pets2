@@ -30,4 +30,3 @@ export const PERSONALITY_TAGS = [
   "friendly",
   "curious",
 ] as const;
-

@@ -3,13 +3,21 @@
  * Extracted from AIPhotoAnalyzerScreen
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import React from 'react';
-import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import React from "react";
+import {
+  Alert,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import * as Haptics from "expo-haptics";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PhotoUploadSectionProps {
   selectedImage: string | null;
@@ -35,11 +43,12 @@ export function PhotoUploadSection({
     }
 
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
         Alert.alert(
-          'Permission needed',
-          'We need camera roll permissions to analyze your pet photo',
+          "Permission needed",
+          "We need camera roll permissions to analyze your pet photo",
         );
         return;
       }
@@ -58,7 +67,7 @@ export function PhotoUploadSection({
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to pick image');
+      Alert.alert("Error", "Failed to pick image");
     }
   };
 
@@ -71,8 +80,11 @@ export function PhotoUploadSection({
 
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'We need camera permissions to take a photo');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "We need camera permissions to take a photo",
+        );
         return;
       }
 
@@ -89,19 +101,29 @@ export function PhotoUploadSection({
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to take photo');
+      Alert.alert("Error", "Failed to take photo");
     }
   };
 
   return (
     <View style={styles.imageSection}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>Select Pet Photo</Text>
+      <Text
+        style={StyleSheet.flatten([
+          styles.sectionTitle,
+          { color: colors.text },
+        ])}
+      >
+        Select Pet Photo
+      </Text>
 
       {selectedImage !== null ? (
         <View style={styles.imageContainer}>
           <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
           <TouchableOpacity
-            style={[styles.changeImageButton, { backgroundColor: colors.primary }]}
+            style={StyleSheet.flatten([
+              styles.changeImageButton,
+              { backgroundColor: colors.primary },
+            ])}
             onPress={pickImage}
           >
             <Ionicons name="camera" size={20} color="#FFFFFF" />
@@ -109,21 +131,37 @@ export function PhotoUploadSection({
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={[styles.imagePlaceholder, { backgroundColor: colors.card }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.imagePlaceholder,
+            { backgroundColor: colors.card },
+          ])}
+        >
           <Ionicons name="camera" size={48} color={colors.textSecondary} />
-          <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.placeholderText,
+              { color: colors.textSecondary },
+            ])}
+          >
             No photo selected
           </Text>
           <View style={styles.imageButtons}>
             <TouchableOpacity
-              style={[styles.imageButton, { backgroundColor: colors.primary }]}
+              style={StyleSheet.flatten([
+                styles.imageButton,
+                { backgroundColor: colors.primary },
+              ])}
               onPress={pickImage}
             >
               <Ionicons name="image" size={20} color="#FFFFFF" />
               <Text style={styles.imageButtonText}>Gallery</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.imageButton, { backgroundColor: colors.primary }]}
+              style={StyleSheet.flatten([
+                styles.imageButton,
+                { backgroundColor: colors.primary },
+              ])}
               onPress={takePhoto}
             >
               <Ionicons name="camera" size={20} color="#FFFFFF" />
@@ -142,11 +180,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 16,
   },
   imageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   selectedImage: {
     width: SCREEN_WIDTH - 32,
@@ -155,23 +193,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   changeImageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     gap: 8,
   },
   changeImageText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   imagePlaceholder: {
     height: SCREEN_WIDTH - 32,
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   placeholderText: {
@@ -180,21 +218,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   imageButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
   },
   imageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
     gap: 8,
   },
   imageButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
-

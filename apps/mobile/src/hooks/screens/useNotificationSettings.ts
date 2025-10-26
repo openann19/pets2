@@ -25,16 +25,18 @@ const DEFAULT_NOTIFICATIONS: NotificationSettings = {
  * Hook for managing notification settings with persistence
  */
 export function useNotificationSettings(): UseNotificationSettingsReturn {
-  const { value: settings, setValue } = usePersistedState<NotificationSettings>({
-    key: "notification_settings",
-    initialValue: DEFAULT_NOTIFICATIONS,
-  });
+  const { value: settings, setValue } = usePersistedState<NotificationSettings>(
+    {
+      key: "notification_settings",
+      initialValue: DEFAULT_NOTIFICATIONS,
+    },
+  );
 
   const updateSetting = useCallback(
     (key: keyof NotificationSettings, value: boolean) => {
       setValue({ ...settings, [key]: value });
     },
-    [settings, setValue]
+    [settings, setValue],
   );
 
   const resetToDefault = useCallback(() => {

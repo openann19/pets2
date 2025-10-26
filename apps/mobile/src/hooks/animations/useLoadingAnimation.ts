@@ -39,4 +39,3 @@ export const useLoadingAnimation = () => {
 };
 
 export default useLoadingAnimation;
-

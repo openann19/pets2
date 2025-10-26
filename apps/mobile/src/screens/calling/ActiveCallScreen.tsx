@@ -127,12 +127,12 @@ export default function ActiveCallScreen({
       {/* Local Video (Draggable Picture-in-Picture) */}
       {callState.localStream && callState.isVideoEnabled && (
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.localVideoContainer,
             {
               transform: localVideoAnim.getTranslateTransform(),
             },
-          ]}
+          ])}
           {...panResponder.panHandlers}
         >
           <RTCView
@@ -206,13 +206,13 @@ export default function ActiveCallScreen({
 
       {/* Controls Overlay */}
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           styles.controlsOverlay,
           {
             opacity: fadeAnim,
             pointerEvents: controlsVisible ? "auto" : "none",
           },
-        ]}
+        ])}
       >
         <SafeAreaView style={styles.controlsContent}>
           {/* Header */}
@@ -231,10 +231,10 @@ export default function ActiveCallScreen({
           <View style={styles.callControls}>
             {/* Mute Button */}
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.controlButton,
                 callState.isMuted && styles.controlButtonActive,
-              ]}
+              ])}
               onPress={onToggleMute}
             >
               <Ionicons
@@ -255,10 +255,10 @@ export default function ActiveCallScreen({
             {/* Video Toggle (only for video calls) */}
             {callState.callData?.callType === "video" && (
               <TouchableOpacity
-                style={[
+                style={StyleSheet.flatten([
                   styles.controlButton,
                   !callState.isVideoEnabled && styles.controlButtonActive,
-                ]}
+                ])}
                 onPress={onToggleVideo}
               >
                 <Ionicons
@@ -271,7 +271,10 @@ export default function ActiveCallScreen({
 
             {/* End Call Button */}
             <TouchableOpacity
-              style={[styles.controlButton, styles.endCallButton]}
+              style={StyleSheet.flatten([
+                styles.controlButton,
+                styles.endCallButton,
+              ])}
               onPress={onEndCall}
             >
               <LinearGradient

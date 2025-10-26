@@ -261,11 +261,21 @@ export default function AdminBillingScreen({
     const isActionLoading = actionLoading === item.id;
 
     return (
-      <View style={[styles.subscriptionCard, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.subscriptionCard,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <View style={styles.subscriptionHeader}>
           <View style={styles.subscriptionInfo}>
             <View style={styles.userAvatar}>
-              <Text style={[styles.userAvatarText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.userAvatarText,
+                  { color: colors.text },
+                ])}
+              >
                 {item.userName
                   .split(" ")
                   .map((n) => n[0])
@@ -273,26 +283,36 @@ export default function AdminBillingScreen({
               </Text>
             </View>
             <View style={styles.subscriptionDetails}>
-              <Text style={[styles.userName, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.userName,
+                  { color: colors.text },
+                ])}
+              >
                 {item.userName}
               </Text>
-              <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.userEmail,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 {item.userEmail}
               </Text>
               <View style={styles.subscriptionMeta}>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.planBadge,
                     { backgroundColor: getPlanColor(item.planId) },
-                  ]}
+                  ])}
                 >
                   <Text style={styles.planText}>{item.planName}</Text>
                 </View>
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.statusBadge,
                     { backgroundColor: getStatusColor(item.status) },
-                  ]}
+                  ])}
                 >
                   <Ionicons
                     name={getStatusIcon(item.status)}
@@ -310,7 +330,10 @@ export default function AdminBillingScreen({
           <View style={styles.subscriptionActions}>
             {item.cancelAtPeriodEnd ? (
               <TouchableOpacity
-                style={[styles.actionButton, { backgroundColor: "#10B981" }]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  { backgroundColor: "#10B981" },
+                ])}
                 onPress={() => handleReactivateSubscription(item.id)}
                 disabled={isActionLoading}
               >
@@ -322,7 +345,10 @@ export default function AdminBillingScreen({
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={[styles.actionButton, { backgroundColor: "#F59E0B" }]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  { backgroundColor: "#F59E0B" },
+                ])}
                 onPress={() => handleCancelSubscription(item.id)}
                 disabled={isActionLoading}
               >
@@ -339,19 +365,34 @@ export default function AdminBillingScreen({
         <View style={styles.subscriptionStats}>
           <View style={styles.statItem}>
             <Ionicons name="cash" size={16} color="#10B981" />
-            <Text style={[styles.statText, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.statText,
+                { color: colors.textSecondary },
+              ])}
+            >
               {formatCurrency(item.amount, item.currency)}/{item.interval}
             </Text>
           </View>
           <View style={styles.statItem}>
             <Ionicons name="calendar" size={16} color="#3B82F6" />
-            <Text style={[styles.statText, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.statText,
+                { color: colors.textSecondary },
+              ])}
+            >
               Next: {formatDate(item.currentPeriodEnd)}
             </Text>
           </View>
           <View style={styles.statItem}>
             <Ionicons name="time" size={16} color="#6B7280" />
-            <Text style={[styles.statText, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.statText,
+                { color: colors.textSecondary },
+              ])}
+            >
               Created: {formatDate(item.createdAt)}
             </Text>
           </View>
@@ -363,11 +404,19 @@ export default function AdminBillingScreen({
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading billing data...
           </Text>
         </View>
@@ -377,7 +426,10 @@ export default function AdminBillingScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
       <View style={styles.header}>
@@ -389,12 +441,17 @@ export default function AdminBillingScreen({
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+        >
           Billing Management
         </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
-            style={[styles.refreshButton, { backgroundColor: colors.primary }]}
+            style={StyleSheet.flatten([
+              styles.refreshButton,
+              { backgroundColor: colors.primary },
+            ])}
             onPress={onRefresh}
             disabled={refreshing}
           >
@@ -406,54 +463,119 @@ export default function AdminBillingScreen({
       {/* Billing Metrics */}
       {metrics ? (
         <View style={styles.metricsContainer}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Revenue Overview
           </Text>
           <View style={styles.metricsGrid}>
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
                 <Ionicons name="cash" size={20} color="#10B981" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   Total Revenue
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: colors.text },
+                ])}
+              >
                 {formatCurrency(metrics.totalRevenue)}
               </Text>
             </View>
 
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
                 <Ionicons name="trending-up" size={20} color="#3B82F6" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   MRR
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: colors.text },
+                ])}
+              >
                 {formatCurrency(metrics.monthlyRecurringRevenue)}
               </Text>
             </View>
 
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
                 <Ionicons name="people" size={20} color="#8B5CF6" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   ARPU
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: colors.text },
+                ])}
+              >
                 {formatCurrency(metrics.averageRevenuePerUser)}
               </Text>
             </View>
 
-            <View style={[styles.metricCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.metricCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.metricHeader}>
                 <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-                <Text style={[styles.metricTitle, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.metricTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   Active Subs
                 </Text>
               </View>
-              <Text style={[styles.metricValue, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.metricValue,
+                  { color: colors.text },
+                ])}
+              >
                 {metrics.activeSubscriptions}
               </Text>
             </View>
@@ -461,62 +583,70 @@ export default function AdminBillingScreen({
 
           <View style={styles.secondaryMetrics}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.secondaryMetricCard,
                 { backgroundColor: colors.card },
-              ]}
+              ])}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.secondaryMetricLabel,
                   { color: colors.textSecondary },
-                ]}
+                ])}
               >
                 Conversion Rate
               </Text>
               <Text
-                style={[styles.secondaryMetricValue, { color: colors.text }]}
+                style={StyleSheet.flatten([
+                  styles.secondaryMetricValue,
+                  { color: colors.text },
+                ])}
               >
                 {metrics.conversionRate.toFixed(1)}%
               </Text>
             </View>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.secondaryMetricCard,
                 { backgroundColor: colors.card },
-              ]}
+              ])}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.secondaryMetricLabel,
                   { color: colors.textSecondary },
-                ]}
+                ])}
               >
                 Churn Rate
               </Text>
-              <Text style={[styles.secondaryMetricValue, { color: "#EF4444" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.secondaryMetricValue,
+                  { color: "#EF4444" },
+                ])}
+              >
                 {metrics.churnRate.toFixed(1)}%
               </Text>
             </View>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.secondaryMetricCard,
                 { backgroundColor: colors.card },
-              ]}
+              ])}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.secondaryMetricLabel,
                   { color: colors.textSecondary },
-                ]}
+                ])}
               >
                 Revenue Growth
               </Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.secondaryMetricValue,
                   { color: metrics.revenueGrowth > 0 ? "#10B981" : "#EF4444" },
-                ]}
+                ])}
               >
                 {metrics.revenueGrowth > 0 ? "+" : ""}
                 {metrics.revenueGrowth.toFixed(1)}%
@@ -529,7 +659,12 @@ export default function AdminBillingScreen({
       {/* Filters */}
       <View style={styles.filtersContainer}>
         <View style={styles.filterRow}>
-          <Text style={[styles.filterLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.filterLabel,
+              { color: colors.text },
+            ])}
+          >
             Status:
           </Text>
           <View style={styles.filterButtons}>
@@ -545,26 +680,26 @@ export default function AdminBillingScreen({
             ).map((status) => (
               <TouchableOpacity
                 key={status}
-                style={[
+                style={StyleSheet.flatten([
                   styles.filterButton,
                   selectedStatus === status && styles.filterButtonActive,
                   {
                     backgroundColor:
                       selectedStatus === status ? colors.primary : colors.card,
                   },
-                ]}
+                ])}
                 onPress={() => {
                   setSelectedStatus(status);
                 }}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.filterText,
                     {
                       color:
                         selectedStatus === status ? "#FFFFFF" : colors.text,
                     },
-                  ]}
+                  ])}
                 >
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </Text>
@@ -574,30 +709,35 @@ export default function AdminBillingScreen({
         </View>
 
         <View style={styles.filterRow}>
-          <Text style={[styles.filterLabel, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.filterLabel,
+              { color: colors.text },
+            ])}
+          >
             Plan:
           </Text>
           <View style={styles.filterButtons}>
             {(["all", "basic", "premium", "ultimate"] as const).map((plan) => (
               <TouchableOpacity
                 key={plan}
-                style={[
+                style={StyleSheet.flatten([
                   styles.filterButton,
                   selectedPlan === plan && styles.filterButtonActive,
                   {
                     backgroundColor:
                       selectedPlan === plan ? colors.primary : colors.card,
                   },
-                ]}
+                ])}
                 onPress={() => {
                   setSelectedPlan(plan);
                 }}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.filterText,
                     { color: selectedPlan === plan ? "#FFFFFF" : colors.text },
-                  ]}
+                  ])}
                 >
                   {plan.charAt(0).toUpperCase() + plan.slice(1)}
                 </Text>

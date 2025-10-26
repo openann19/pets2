@@ -32,7 +32,7 @@ export function useGDPRStatus(): UseGDPRStatusReturn {
     try {
       const isPending = await gdprService.isDeletionPending();
       const daysRemaining = await gdprService.getDaysUntilDeletion();
-      
+
       setStatus({
         isPending,
         daysRemaining: daysRemaining ?? null,

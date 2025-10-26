@@ -40,4 +40,3 @@ export const useShimmerEffect = (enabled = true) => {
 };
 
 export default useShimmerEffect;
-

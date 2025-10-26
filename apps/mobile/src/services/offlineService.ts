@@ -199,7 +199,7 @@ class OfflineService {
   /**
    * Execute a pending action
    */
-  private async executePendingAction(_action: PendingAction): Promise<void> {
+  private executePendingAction(_action: PendingAction): void {
     // const actionData = action.data as Record<string, unknown>;
     switch (_action.type) {
       case "swipe":

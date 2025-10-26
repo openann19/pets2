@@ -38,4 +38,3 @@ export const useFloatingEffect = (enabled = true) => {
 };
 
 export default useFloatingEffect;
-

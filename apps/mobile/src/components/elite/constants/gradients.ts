@@ -15,4 +15,3 @@ export const PREMIUM_GRADIENTS = {
 } as const;
 
 export type PremiumGradientKey = keyof typeof PREMIUM_GRADIENTS;
-

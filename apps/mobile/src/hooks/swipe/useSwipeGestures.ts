@@ -27,7 +27,7 @@ export function useSwipeGestures({
 }: UseSwipeGesturesOptions): SwipeGestureState {
   // Animation values
   const position = useRef(new Animated.ValueXY()).current;
-  
+
   // Rotate interpolation
   const rotate = position.x.interpolate({
     inputRange: [-screenWidth / 2, 0, screenWidth / 2],

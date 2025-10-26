@@ -14,6 +14,12 @@ interface AdminAPIResponse<T> {
   message?: string;
 }
 
+interface RequestOptions {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string | FormData;
+}
+
 interface PaginationParams {
   page?: number | null;
   limit?: number | null;
@@ -112,7 +118,7 @@ interface Verification {
 class AdminAPIService {
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestOptions = {},
   ): Promise<AdminAPIResponse<T>> {
     const url = `${BASE_URL}${endpoint}`;
 
@@ -563,7 +569,7 @@ class AdminAPIService {
       queryParams.append("page", String(params.page));
     if (params.limit !== undefined)
       queryParams.append("limit", String(params.limit));
-    if (params.filter !== undefined && params.filter !== "")
+    if (params.filter !== undefined)
       queryParams.append("filter", params.filter);
     if (params.search !== undefined && params.search !== "")
       queryParams.append("search", params.search);

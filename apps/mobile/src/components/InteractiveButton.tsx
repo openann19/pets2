@@ -1,6 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState, forwardRef } from "react";
-import type { ViewStyle, TextStyle, TouchableOpacityProps } from "react-native";
+import type {
+  ViewStyle,
+  TextStyle,
+  TouchableOpacityProps,
+  StyleSheet,
+} from "react-native";
 import {
   TouchableOpacity,
   View,
@@ -293,7 +298,9 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       return (
         <>
           {leftIcon && <View style={{ marginRight: 8 }}>{leftIcon}</View>}
-          <Text style={[getTextStyles(), textStyle]}>{title}</Text>
+          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>
+            {title}
+          </Text>
           {rightIcon && <View style={{ marginLeft: 8 }}>{rightIcon}</View>}
         </>
       );
@@ -304,7 +311,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
       const buttonContent = (
         <TouchableOpacity
           ref={ref}
-          style={[
+          style={StyleSheet.flatten([
             getVariantStyles(),
             {
               paddingHorizontal: sizeConfig.paddingHorizontal,
@@ -317,20 +324,18 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
             },
             glowEffect && glow.glowStyle,
             style,
-          ]}
+          ])}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onPress={handlePress}
           disabled={disabled || loading}
-          onPressIn={handleTouchStart}
           onTouchMove={handleTouchMove}
-          onPressOut={handleTouchEnd}
           activeOpacity={1}
           {...props}
         >
           {/* Ripple effect overlay */}
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               {
                 position: "absolute",
                 top: 0,
@@ -342,7 +347,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
               },
               ripple.rippleStyle,
               isPressed && { opacity: 0.5 },
-            ]}
+            ])}
           />
 
           {/* Main content */}

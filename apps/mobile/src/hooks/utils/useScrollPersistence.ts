@@ -16,7 +16,7 @@ export interface UseScrollPersistenceReturn {
 
 /**
  * Hook for persisting scroll position to AsyncStorage
- * 
+ *
  * @example
  * const { listRef, initialOffset, handleScroll, restoreScroll } = useScrollPersistence({
  *   key: 'matches_scroll',
@@ -42,7 +42,10 @@ export function useScrollPersistence({
           setInitialOffset(offset);
         }
       } catch (error) {
-        console.error(`Failed to restore scroll position for key "${key}":`, error);
+        console.error(
+          `Failed to restore scroll position for key "${key}":`,
+          error,
+        );
       }
     };
 
@@ -69,10 +72,13 @@ export function useScrollPersistence({
       try {
         await AsyncStorage.setItem(key, String(offset));
       } catch (error) {
-        console.error(`Failed to save scroll position for key "${key}":`, error);
+        console.error(
+          `Failed to save scroll position for key "${key}":`,
+          error,
+        );
       }
     },
-    [key, enabled]
+    [key, enabled],
   );
 
   const restoreScroll = useCallback(() => {

@@ -183,7 +183,10 @@ function ModerationToolsScreen({
               <BlurView intensity={20} style={styles.toolBlur}>
                 <View style={styles.toolContent}>
                   <View
-                    style={[styles.toolIcon, { backgroundColor: item.color }]}
+                    style={StyleSheet.flatten([
+                      styles.toolIcon,
+                      { backgroundColor: item.color },
+                    ])}
                   >
                     <Ionicons name={item.icon} size={24} color="white" />
                   </View>

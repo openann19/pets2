@@ -55,11 +55,16 @@ export function AttachmentPreview({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.preview, { backgroundColor: colors.background }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.preview,
+          { backgroundColor: colors.background },
+        ])}
+      >
         {type === "image" && (
           <Image source={{ uri }} style={styles.image} resizeMode="cover" />
         )}
-        
+
         {type !== "image" && (
           <View style={styles.fileIcon}>
             <Ionicons
@@ -87,13 +92,23 @@ export function AttachmentPreview({
       </View>
 
       {name && (
-        <Text style={[styles.fileName, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.fileName,
+            { color: colors.textSecondary },
+          ])}
+        >
           {name}
         </Text>
       )}
 
       {size && (
-        <Text style={[styles.fileSize, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.fileSize,
+            { color: colors.textSecondary },
+          ])}
+        >
           {formatFileSize(size)}
         </Text>
       )}
@@ -152,4 +167,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-

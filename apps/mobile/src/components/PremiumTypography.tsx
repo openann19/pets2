@@ -6,6 +6,7 @@ import {
   Platform,
   type TextStyle,
   type ViewStyle,
+  StyleSheet,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -211,7 +212,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
           >
             {shimmer && (
               <Animated.View
-                style={[
+                style={StyleSheet.flatten([
                   {
                     position: "absolute",
                     top: 0,
@@ -221,10 +222,12 @@ export const GradientText: React.FC<GradientTextProps> = ({
                     backgroundColor: "rgba(255,255,255,0.3)",
                   },
                   shimmerStyle,
-                ]}
+                ])}
               />
             )}
-            <Text style={[textStyle, { opacity: 0 }]}>{children}</Text>
+            <Text style={StyleSheet.flatten([textStyle, { opacity: 0 }])}>
+              {children}
+            </Text>
           </LinearGradient>
         </MaskedViewIOS>
       </Animated.View>
@@ -235,7 +238,9 @@ export const GradientText: React.FC<GradientTextProps> = ({
   return (
     <Animated.View style={animated ? animatedStyle : undefined}>
       <View style={{ position: "relative" }}>
-        <Text style={[textStyle, { color: "transparent" }]}>{children}</Text>
+        <Text style={StyleSheet.flatten([textStyle, { color: "transparent" }])}>
+          {children}
+        </Text>
         <View
           style={{
             position: "absolute",
@@ -253,7 +258,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
           >
             {shimmer && (
               <Animated.View
-                style={[
+                style={StyleSheet.flatten([
                   {
                     position: "absolute",
                     top: 0,
@@ -263,10 +268,12 @@ export const GradientText: React.FC<GradientTextProps> = ({
                     backgroundColor: "rgba(255,255,255,0.3)",
                   },
                   shimmerStyle,
-                ]}
+                ])}
               />
             )}
-            <Text style={[textStyle, { color: "transparent" }]}>
+            <Text
+              style={StyleSheet.flatten([textStyle, { color: "transparent" }])}
+            >
               {children}
             </Text>
           </LinearGradient>
@@ -348,7 +355,9 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   }));
 
   return (
-    <Animated.Text style={[style, animatedStyle]}>{children}</Animated.Text>
+    <Animated.Text style={StyleSheet.flatten([style, animatedStyle])}>
+      {children}
+    </Animated.Text>
   );
 };
 
@@ -398,7 +407,7 @@ export const PremiumHeading: React.FC<PremiumHeadingProps> = ({
       shimmer={shimmer}
       glow={glow}
       shadow="glow"
-      style={[getLevelStyle(), style]}
+      style={StyleSheet.flatten([getLevelStyle(), style])}
     >
       {children}
     </GradientText>
@@ -470,14 +479,14 @@ export const PremiumLabel: React.FC<PremiumLabelProps> = ({
   return (
     <AnimatedText
       animation={animated ? "fadeIn" : undefined}
-      style={[
+      style={StyleSheet.flatten([
         {
           fontSize: size === "xs" ? 12 : size === "base" ? 16 : 14,
           fontWeight: "500",
           ...getVariantStyle(),
         },
         style,
-      ]}
+      ])}
     >
       {children}
     </AnimatedText>

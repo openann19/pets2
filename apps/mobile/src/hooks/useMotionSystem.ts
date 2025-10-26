@@ -1,7 +1,36 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Dimensions, Platform } from "react-native";
 
-// import { MotionSystem, Accessibility } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: MOTION & ANIMATION HOOKS ===
+// Simplified MotionSystem and Accessibility definitions
+const MotionSystem = {
+  springs: {
+    standard: { tension: 300, friction: 30 },
+    gentle: { tension: 120, friction: 14 },
+    bouncy: { tension: 180, friction: 12 },
+  },
+  timings: {
+    fast: 200,
+    standard: 300,
+    slow: 500,
+  },
+  easings: {
+    standard: Easing.bezier(0.4, 0.0, 0.2, 1),
+    decelerate: Easing.bezier(0.0, 0.0, 0.2, 1),
+    accelerate: Easing.bezier(0.4, 0.0, 1, 1),
+  },
+};
+
+const Accessibility = {
+  reduceMotion: false,
+  motion: {
+    prefersReducedMotion: false,
+    reducedMotionConfigs: {
+      timings: {
+        standard: 300,
+      },
+    },
+  },
+};
 
 // Custom hook for spring animations with physics
 export const useSpring = (
@@ -23,7 +52,7 @@ export const useSpring = (
 
   const animate = (
     toValue: number,
-    customConfig?: Partial<typeof MotionSystem.springs.standard>,
+    customConfig?: Partial<{ tension: number; friction: number }>,
   ) => {
     const springConfig = {
       ...MotionSystem.springs[config],
@@ -35,8 +64,12 @@ export const useSpring = (
     // Check for reduced motion preference
     const { prefersReducedMotion } = Accessibility.motion;
     if (prefersReducedMotion) {
-      springConfig.timing =
-        Accessibility.motion.reducedMotionConfigs.timings.standard;
+      // Use simplified animation for reduced motion
+      return Animated.timing(animatedValue, {
+        toValue,
+        duration: 200,
+        useNativeDriver: true,
+      });
     }
 
     return Animated.spring(animatedValue, springConfig);

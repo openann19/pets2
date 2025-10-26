@@ -48,6 +48,8 @@
     "god-phase:complete": "echo '🎉 God-Phase Production Hardening Complete! All quality gates passed.'",
     "ea:mobile": "tsx scripts/ea.ts",
     "ea:mobile:write": "tsx scripts/ea.ts --write",
+    "ea:enhanced": "tsx scripts/ea-enhanced.ts",
+    "ea:enhanced:write": "tsx scripts/ea-enhanced.ts --write",
     "fix:theme": "tsx scripts/fix-theme-errors.ts",
     "fix:theme:write": "tsx scripts/fix-theme-errors.ts --write",
     "fix:colors": "tsx scripts/fix-color-errors.ts",

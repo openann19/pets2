@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { View, type ViewStyle, type ViewProps } from "react-native";
+import { View, type ViewStyle, type ViewProps, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -10,7 +10,12 @@ import {
 import Animated from "react-native-reanimated";
 
 import { BorderRadius, Spacing } from "../../styles/GlobalStyles";
-import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from "./configs";
+import {
+  BLUR_CONFIGS,
+  TRANSPARENCY_CONFIGS,
+  BORDER_CONFIGS,
+  SHADOW_CONFIGS,
+} from "./configs";
 
 /**
  * GlassContainer Component
@@ -78,7 +83,10 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
 
   return (
     <Animated.View
-      style={[glassStyle, animated ? animatedStyle : undefined]}
+      style={StyleSheet.flatten([
+        glassStyle,
+        animated ? animatedStyle : undefined,
+      ])}
       onTouchStart={handlePressIn}
       onTouchEnd={handlePressOut}
       {...props}
@@ -108,4 +116,3 @@ export const GlassContainer: React.FC<GlassContainerProps> = ({
 };
 
 export default GlassContainer;
-

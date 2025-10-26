@@ -76,7 +76,7 @@ import ModernSwipeScreen from "./screens/ModernSwipeScreen";
 import ModernCreatePetScreen from "./screens/ModernCreatePetScreen";
 
 // Test/Demo Screens
-import ComponentShowcaseScreen from "./screens/ComponentShowcaseScreen";
+// ComponentShowcaseScreen removed
 import ComponentTestScreen from "./screens/ComponentTestScreen";
 import NewComponentsTestScreen from "./screens/NewComponentsTestScreen";
 import MigrationExampleScreen from "./screens/MigrationExampleScreen";
@@ -120,9 +120,18 @@ const AppNavigator = (): React.ReactElement => (
     <Stack.Screen name="Subscription" component={PremiumScreen} />
     <Stack.Screen name="PremiumSuccess" component={PremiumSuccessScreen} />
     <Stack.Screen name="PremiumCancel" component={PremiumCancelScreen} />
-    <Stack.Screen name="SubscriptionManager" component={SubscriptionManagerScreen} />
-    <Stack.Screen name="SubscriptionSuccess" component={SubscriptionSuccessScreen} />
-    <Stack.Screen name="ManageSubscription" component={ManageSubscriptionScreen} />
+    <Stack.Screen
+      name="SubscriptionManager"
+      component={SubscriptionManagerScreen}
+    />
+    <Stack.Screen
+      name="SubscriptionSuccess"
+      component={SubscriptionSuccessScreen}
+    />
+    <Stack.Screen
+      name="ManageSubscription"
+      component={ManageSubscriptionScreen}
+    />
 
     {/* AI Screens */}
     <Stack.Screen name="AIBio" component={AIBioScreen} />
@@ -133,17 +142,29 @@ const AppNavigator = (): React.ReactElement => (
     <Stack.Screen name="PrivacySettings" component={PrivacySettingsScreen} />
     <Stack.Screen name="BlockedUsers" component={BlockedUsersScreen} />
     <Stack.Screen name="SafetyCenter" component={SafetyCenterScreen} />
-    <Stack.Screen name="NotificationPreferences" component={NotificationPreferencesScreen} />
+    <Stack.Screen
+      name="NotificationPreferences"
+      component={NotificationPreferencesScreen}
+    />
     <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
-    <Stack.Screen name="AboutTermsPrivacy" component={AboutTermsPrivacyScreen} />
-    <Stack.Screen name="DeactivateAccount" component={DeactivateAccountScreen} />
+    <Stack.Screen
+      name="AboutTermsPrivacy"
+      component={AboutTermsPrivacyScreen}
+    />
+    <Stack.Screen
+      name="DeactivateAccount"
+      component={DeactivateAccountScreen}
+    />
     <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     <Stack.Screen name="AdvancedFilters" component={AdvancedFiltersScreen} />
     <Stack.Screen name="ModerationTools" component={ModerationToolsScreen} />
 
     {/* Adoption Screens */}
     <Stack.Screen name="AdoptionManager" component={AdoptionManagerScreen} />
-    <Stack.Screen name="AdoptionApplication" component={AdoptionApplicationScreen} />
+    <Stack.Screen
+      name="AdoptionApplication"
+      component={AdoptionApplicationScreen}
+    />
 
     {/* Admin Navigator */}
     <Stack.Screen name="AdminDashboard" component={AdminNavigator} />
@@ -165,7 +186,10 @@ const AppNavigator = (): React.ReactElement => (
 
     {/* Test/Demo Screens */}
     <Stack.Screen name="ComponentTest" component={ComponentTestScreen} />
-    <Stack.Screen name="NewComponentsTest" component={NewComponentsTestScreen} />
+    <Stack.Screen
+      name="NewComponentsTest"
+      component={NewComponentsTestScreen}
+    />
     <Stack.Screen name="MigrationExample" component={MigrationExampleScreen} />
     <Stack.Screen name="PremiumDemo" component={PremiumDemoScreen} />
   </Stack.Navigator>

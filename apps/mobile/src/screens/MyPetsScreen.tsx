@@ -144,10 +144,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
 
           {/* Status badge */}
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.statusBadge,
               { backgroundColor: getIntentColor(item.intent) },
-            ]}
+            ])}
           >
             <Text style={styles.statusBadgeText}>
               {getIntentLabel(item.intent)}
@@ -199,7 +199,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           {/* Action Buttons */}
           <View style={styles.petActions}>
             <TouchableOpacity
-              style={[styles.actionButton, styles.viewButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.viewButton,
+              ])}
               onPress={useCallback(() => {
                 // Navigate to pet detail view
                 navigation.navigate("PetDetails", {
@@ -213,7 +216,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, styles.editButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.editButton,
+              ])}
               onPress={useCallback(() => {
                 // Navigate to pet edit screen
                 navigation.navigate("EditPet", { petId: item.id, pet: item });
@@ -223,7 +229,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, styles.deleteButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.deleteButton,
+              ])}
               onPress={useCallback(() => {
                 handleDeletePet(item._id);
               }, [item._id])}

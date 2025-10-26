@@ -1,8 +1,12 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState, forwardRef } from "react";
-import type { ViewStyle, TouchableOpacityProps } from "react-native";
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { View, TouchableOpacity, Text, Animated,  } from 'react-native';
+import type {
+  ViewStyle,
+  TouchableOpacityProps,
+  StyleSheet,
+} from "react-native";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
+import { View, TouchableOpacity, Text, Animated } from "react-native";
 
 import {
   useGyroscopeTilt,
@@ -13,7 +17,7 @@ import {
   EnhancedShadows,
   SemanticColors,
   EnhancedTypography,
-} from '../styles/EnhancedDesignTokens';
+} from "../styles/EnhancedDesignTokens";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
@@ -226,14 +230,14 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       const content = (
         <View
           ref={cardRef}
-          style={[
+          style={StyleSheet.flatten([
             {
               padding: sizeConfig.padding,
               flex: 1,
               justifyContent: "center",
             },
             contentStyle,
-          ]}
+          ])}
         >
           {children}
           {renderShimmer()}
@@ -263,7 +267,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     const cardContent = (
       <Animated.View
         ref={ref}
-        style={[
+        style={StyleSheet.flatten([
           getVariantStyles(),
           getGlowStyle(),
           {
@@ -277,7 +281,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
             opacity: entranceAnimation !== "none" ? entrance.style.opacity : 1,
           },
           style,
-        ]}
+        ])}
       >
         {renderContent()}
       </Animated.View>
@@ -299,8 +303,6 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               onPress={onPress}
-              onPressIn={handleTouchStart}
-              onPressOut={handleTouchEnd}
               activeOpacity={1}
               style={{ borderRadius: sizeConfig.borderRadius }}
               {...props}
@@ -319,8 +321,6 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onPress}
-        onPressIn={handleTouchStart}
-        onPressOut={handleTouchEnd}
         activeOpacity={1}
         style={{ borderRadius: sizeConfig.borderRadius }}
         {...props}

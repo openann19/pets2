@@ -74,7 +74,9 @@ function HelpSupportScreen({
           ))}
 
           {/* App Info */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+          <Text
+            style={StyleSheet.flatten([styles.sectionTitle, { marginTop: 32 }])}
+          >
             About PawfectMatch
           </Text>
           <AppInfoCard />

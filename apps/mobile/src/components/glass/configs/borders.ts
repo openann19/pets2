@@ -18,4 +18,3 @@ export const BORDER_CONFIGS = {
 } as const;
 
 export type BorderStyle = keyof typeof BORDER_CONFIGS;
-

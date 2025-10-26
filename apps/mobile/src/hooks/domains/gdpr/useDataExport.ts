@@ -22,7 +22,7 @@ export function useDataExport(): UseDataExportReturn {
 
     try {
       const result = await gdprService.exportUserData();
-      
+
       if (result.success) {
         Alert.alert(
           "Data Export Started",
@@ -31,11 +31,12 @@ export function useDataExport(): UseDataExportReturn {
         logger.info("Data export requested", { exportId: result.exportId });
         return true;
       }
-      
+
       Alert.alert("Error", result.message || "Failed to export data");
       return false;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to export data";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to export data";
       setError(errorMessage);
       logger.error("Data export failed:", { error: errorMessage });
       Alert.alert("Error", errorMessage);

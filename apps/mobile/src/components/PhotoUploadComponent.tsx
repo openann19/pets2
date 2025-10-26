@@ -211,7 +211,10 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={[styles.actionButton, styles.removeButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.removeButton,
+              ])}
               onPress={() => {
                 removePhoto(photo.id);
               }}
@@ -224,7 +227,9 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 
       {/* Add Photo Button */}
       {photos.length < maxPhotos && (
-        <Animated.View style={[styles.addPhotoContainer, animatedStyle]}>
+        <Animated.View
+          style={StyleSheet.flatten([styles.addPhotoContainer, animatedStyle])}
+        >
           <TouchableOpacity
             style={styles.addPhotoButton}
             onPress={showImageOptions}

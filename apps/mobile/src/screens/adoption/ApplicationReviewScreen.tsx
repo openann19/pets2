@@ -217,18 +217,18 @@ const ApplicationReviewScreen = ({
                 </View>
               </View>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusBadge,
                   {
                     backgroundColor: `${getStatusColor(application.status)}20`,
                   },
-                ]}
+                ])}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.statusText,
                     { color: getStatusColor(application.status) },
-                  ]}
+                  ])}
                 >
                   {getStatusIcon(application.status)}{" "}
                   {application.status.charAt(0).toUpperCase() +

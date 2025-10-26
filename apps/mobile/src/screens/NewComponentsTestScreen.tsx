@@ -129,7 +129,7 @@ export default function NewComponentsTestScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Section */}
-        <View style={[getAnimatedStyle(0), entranceStyle]}>
+        <View style={StyleSheet.flatten([getAnimatedStyle(0), entranceStyle])}>
           <FXContainerPresets.holographic style={styles.heroSection}>
             <Heading1 style={styles.heroTitle}>New Architecture Test</Heading1>
             <Body style={styles.heroSubtitle}>

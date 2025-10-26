@@ -10,4 +10,3 @@ export const TRANSPARENCY_CONFIGS = {
 } as const;
 
 export type TransparencyLevel = keyof typeof TRANSPARENCY_CONFIGS;
-

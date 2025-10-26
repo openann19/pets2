@@ -1,8 +1,5 @@
 import React, { type ReactNode } from "react";
-import {
-  ScrollView,
-  type ScrollViewProps,
-} from "react-native";
+import { ScrollView, type ScrollViewProps } from "react-native";
 
 import { EliteContainer } from "./EliteContainer";
 import { GlobalStyles } from "../../../styles/GlobalStyles";
@@ -38,4 +35,3 @@ export const EliteScrollContainer: React.FC<EliteScrollContainerProps> = ({
 };
 
 export default EliteScrollContainer;
-

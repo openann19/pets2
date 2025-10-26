@@ -74,10 +74,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
           />
 
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.modal,
               { backgroundColor: (colors as any).surface ?? colors.background },
-            ]}
+            ])}
           >
             {/* Header */}
             <View style={styles.header}>
@@ -101,21 +101,33 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
 
               {/* Feature Icon */}
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.featureIcon,
                   { backgroundColor: `${colors.primary}20` },
-                ]}
+                ])}
               >
-                <Ionicons name={icon as ComponentProps<typeof Ionicons>['name']} size={40} color={colors.primary} />
+                <Ionicons
+                  name={icon as ComponentProps<typeof Ionicons>["name"]}
+                  size={40}
+                  color={colors.primary}
+                />
               </View>
 
               {/* Text Content */}
-              <Text style={[styles.title, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.title,
+                  { color: colors.text },
+                ])}
+              >
                 Unlock {feature}
               </Text>
 
               <Text
-                style={[styles.description, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.description,
+                  { color: colors.textSecondary },
+                ])}
               >
                 {description}
               </Text>
@@ -129,10 +141,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     color={colors.success}
                   />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.featureText,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Unlimited access to all features
                   </Text>
@@ -144,10 +156,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     color={colors.success}
                   />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.featureText,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Priority customer support
                   </Text>
@@ -159,10 +171,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     color={colors.success}
                   />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.featureText,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Advanced AI matching
                   </Text>
@@ -188,18 +200,18 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.laterButton,
                     { backgroundColor: colors.background },
-                  ]}
+                  ])}
                   onPress={handleClose}
                   activeOpacity={0.8}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.laterButtonText,
                       { color: colors.textSecondary },
-                    ]}
+                    ])}
                   >
                     Maybe Later
                   </Text>

@@ -12,12 +12,11 @@ interface GestureWrapperProps {
   onSwipe?: (direction: string) => void;
 }
 
-export const GestureWrapper: React.FC<GestureWrapperProps> = ({ 
-  children, 
-  onSwipe 
+export const GestureWrapper: React.FC<GestureWrapperProps> = ({
+  children,
+  onSwipe,
 }) => {
   return <View>{children}</View>;
 };
 
 export default GestureWrapper;
-

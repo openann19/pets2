@@ -9,12 +9,12 @@ export interface UseToggleStateReturn {
 
 /**
  * Hook for managing boolean toggle state
- * 
+ *
  * @example
  * const { isOn, toggle, setOn, setOff } = useToggleState();
  */
 export function useToggleState(
-  initialValue: boolean = false
+  initialValue: boolean = false,
 ): UseToggleStateReturn {
   const [isOn, setIsOn] = useState(initialValue);
 

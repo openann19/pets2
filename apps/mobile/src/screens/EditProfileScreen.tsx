@@ -176,18 +176,18 @@ function EditProfileScreen({
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Profile</Text>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.saveButton,
               (!hasChanges || loading) && styles.saveButtonDisabled,
-            ]}
+            ])}
             onPress={handleSave}
             disabled={!hasChanges || loading}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.saveButtonText,
                 (!hasChanges || loading) && styles.saveButtonTextDisabled,
-              ]}
+              ])}
             >
               {loading ? "Saving..." : "Save"}
             </Text>

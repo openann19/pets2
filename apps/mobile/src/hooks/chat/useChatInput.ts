@@ -72,32 +72,29 @@ export function useChatInput({
         setInputTextState(text);
       }
     },
-    [maxLength]
+    [maxLength],
   );
 
   const clearInput = useCallback(() => {
     setInputTextState("");
-    
+
     // Clear draft from storage
     void AsyncStorage.removeItem(`mobile_chat_draft_${matchId}`);
   }, [matchId]);
 
-  const handleTyping = useCallback(
-    (typing: boolean) => {
-      setIsTyping(typing);
+  const handleTyping = useCallback((typing: boolean) => {
+    setIsTyping(typing);
 
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
 
-      if (typing) {
-        typingTimeoutRef.current = setTimeout(() => {
-          setIsTyping(false);
-        }, 2000);
-      }
-    },
-    []
-  );
+    if (typing) {
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+      }, 2000);
+    }
+  }, []);
 
   // Cleanup timeout on unmount
   useEffect(() => {

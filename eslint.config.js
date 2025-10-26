@@ -188,8 +188,86 @@ export default [
       ...typescriptPlugin.configs['strict-type-checked'].rules,
     },
   },
-  
-  // ... Add similar blocks for packages/ui, packages/ai, server, etc. ...
+
+  // --- Workspace: packages/ui ---
+  {
+    files: ['packages/ui/src/**/*.{ts,tsx}'],
+    plugins: {
+        '@typescript-eslint': typescriptPlugin,
+        'react': reactPlugin,
+        'react-hooks': reactHooksPlugin,
+    },
+    languageOptions: {
+      parserOptions: {
+        project: [path.join(__dirname, 'packages/ui/tsconfig.json')],
+        tsconfigRootDir: path.join(__dirname, 'packages/ui'),
+      },
+    },
+    rules: {
+      ...typescriptPlugin.configs['strict-type-checked'].rules,
+      ...reactPlugin.configs.recommended.rules,
+      ...reactPlugin.configs['jsx-runtime'].rules,
+      ...reactHooksPlugin.configs.recommended.rules,
+    },
+    settings: {
+      react: { version: 'detect' },
+    },
+  },
+
+  // --- Workspace: packages/design-tokens ---
+  {
+    files: ['packages/design-tokens/src/**/*.{ts,tsx}'],
+    plugins: {
+        '@typescript-eslint': typescriptPlugin,
+    },
+    languageOptions: {
+      parserOptions: {
+        project: [path.join(__dirname, 'packages/design-tokens/tsconfig.json')],
+        tsconfigRootDir: path.join(__dirname, 'packages/design-tokens'),
+      },
+    },
+    rules: {
+      ...typescriptPlugin.configs['strict-type-checked'].rules,
+    },
+  },
+
+  // --- Workspace: packages/ai ---
+  {
+    files: ['packages/ai/src/**/*.{ts,tsx}'],
+    plugins: {
+        '@typescript-eslint': typescriptPlugin,
+    },
+    languageOptions: {
+      parserOptions: {
+        project: [path.join(__dirname, 'packages/ai/tsconfig.json')],
+        tsconfigRootDir: path.join(__dirname, 'packages/ai'),
+      },
+    },
+    rules: {
+      ...typescriptPlugin.configs['strict-type-checked'].rules,
+    },
+  },
+
+  // --- Workspace: server ---
+  {
+    files: ['server/src/**/*.{ts,tsx}', 'server/**/*.ts'],
+    plugins: {
+        '@typescript-eslint': typescriptPlugin,
+    },
+    languageOptions: {
+      parserOptions: {
+        project: [path.join(__dirname, 'server/tsconfig.json')],
+        tsconfigRootDir: path.join(__dirname, 'server'),
+      },
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      ...typescriptPlugin.configs['strict-type-checked'].rules,
+      'no-console': 'off', // Allow console in server code (will replace with logger in Phase 1)
+    },
+  },
   
   // 5. Global Test Files Overrides
   {

@@ -13,7 +13,7 @@
 
 import type { ReactNode } from "react";
 import React, { forwardRef } from "react";
-import { View, type ViewStyle } from "react-native";
+import { View, type ViewStyle, StyleSheet } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import {
@@ -60,7 +60,7 @@ export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
     );
 
     return (
-      <Animated.View ref={ref} style={[glowStyle, style]}>
+      <Animated.View ref={ref} style={StyleSheet.flatten([glowStyle, style])}>
         {children}
       </Animated.View>
     );
@@ -89,7 +89,7 @@ export const WithMagneticFX = forwardRef<View, WithMagneticFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[magneticStyle, style]}
+        style={StyleSheet.flatten([magneticStyle, style])}
         onTouchStart={(event) => {
           if (disabled) return;
           const { pageX, pageY } = event.nativeEvent;
@@ -131,7 +131,7 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
         {children}
         {!disabled && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               {
                 position: "absolute",
                 top: "50%",
@@ -144,7 +144,7 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
                 marginLeft: -50,
               },
               rippleStyle,
-            ]}
+            ])}
             pointerEvents="none"
           />
         )}
@@ -172,16 +172,14 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
     },
     ref,
   ) => {
-    const { shimmerStyle } = useShimmerEffect(
-      !disabled && duration > 0,
-    );
+    const { shimmerStyle } = useShimmerEffect(!disabled && duration > 0);
 
     return (
       <View ref={ref} style={style}>
         {children}
         {!disabled && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               {
                 position: "absolute",
                 top: 0,
@@ -191,7 +189,7 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
                 backgroundColor: color,
               },
               shimmerStyle,
-            ]}
+            ])}
             pointerEvents="none"
           />
         )}
@@ -218,7 +216,7 @@ export const WithPressFX = forwardRef<View, WithPressFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[pressStyle, style]}
+        style={StyleSheet.flatten([pressStyle, style])}
         onTouchStart={disabled ? undefined : handlePressIn}
         onTouchEnd={disabled ? undefined : handlePressOut}
       >
@@ -242,10 +240,10 @@ export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
     const { LinearGradient } = require("expo-linear-gradient");
 
     const gradientConfig = gradient ? (Theme.gradients as any)[gradient] : null;
-    const gradientColors = colors || Array.isArray(gradientConfig?.colors) ? gradientConfig?.colors : [
-        Theme.colors.primary[500],
-        Theme.colors.primary[400],
-      ];
+    const gradientColors =
+      colors || Array.isArray(gradientConfig?.colors)
+        ? gradientConfig?.colors
+        : [Theme.colors.primary[500], Theme.colors.primary[400]];
 
     return (
       <LinearGradient

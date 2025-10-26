@@ -48,10 +48,10 @@ export function useMatchesActions({
               }
             },
           },
-        ]
+        ],
       );
     },
-    [onMatchRemoved]
+    [onMatchRemoved],
   );
 
   const handleBlock = useCallback(
@@ -78,68 +78,85 @@ export function useMatchesActions({
               }
             },
           },
-        ]
+        ],
       );
     },
-    [onMatchBlocked]
+    [onMatchBlocked],
   );
 
   const handleReport = useCallback(
     async (matchId: string, petName: string) => {
-      Alert.alert(
-        "Report",
-        `Why are you reporting ${petName}?`,
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
+      Alert.alert("Report", `Why are you reporting ${petName}?`, [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Spam",
+          onPress: async () => {
+            try {
+              await matchesAPI.report(matchId, "spam");
+              logger.info("User reported", {
+                matchId,
+                petName,
+                reason: "spam",
+              });
+              onMatchReported?.(matchId);
+              Alert.alert(
+                "Reported",
+                "Thank you for reporting. We'll review this.",
+              );
+            } catch (error) {
+              logger.error("Failed to report", { error, matchId });
+              Alert.alert("Error", "Failed to report. Please try again.");
+            }
           },
-          {
-            text: "Spam",
-            onPress: async () => {
-              try {
-                await matchesAPI.report(matchId, "spam");
-                logger.info("User reported", { matchId, petName, reason: "spam" });
-                onMatchReported?.(matchId);
-                Alert.alert("Reported", "Thank you for reporting. We'll review this.");
-              } catch (error) {
-                logger.error("Failed to report", { error, matchId });
-                Alert.alert("Error", "Failed to report. Please try again.");
-              }
-            },
+        },
+        {
+          text: "Inappropriate Content",
+          onPress: async () => {
+            try {
+              await matchesAPI.report(matchId, "inappropriate");
+              logger.info("User reported", {
+                matchId,
+                petName,
+                reason: "inappropriate",
+              });
+              onMatchReported?.(matchId);
+              Alert.alert(
+                "Reported",
+                "Thank you for reporting. We'll review this.",
+              );
+            } catch (error) {
+              logger.error("Failed to report", { error, matchId });
+              Alert.alert("Error", "Failed to report. Please try again.");
+            }
           },
-          {
-            text: "Inappropriate Content",
-            onPress: async () => {
-              try {
-                await matchesAPI.report(matchId, "inappropriate");
-                logger.info("User reported", { matchId, petName, reason: "inappropriate" });
-                onMatchReported?.(matchId);
-                Alert.alert("Reported", "Thank you for reporting. We'll review this.");
-              } catch (error) {
-                logger.error("Failed to report", { error, matchId });
-                Alert.alert("Error", "Failed to report. Please try again.");
-              }
-            },
+        },
+        {
+          text: "Other",
+          onPress: async () => {
+            try {
+              await matchesAPI.report(matchId, "other");
+              logger.info("User reported", {
+                matchId,
+                petName,
+                reason: "other",
+              });
+              onMatchReported?.(matchId);
+              Alert.alert(
+                "Reported",
+                "Thank you for reporting. We'll review this.",
+              );
+            } catch (error) {
+              logger.error("Failed to report", { error, matchId });
+              Alert.alert("Error", "Failed to report. Please try again.");
+            }
           },
-          {
-            text: "Other",
-            onPress: async () => {
-              try {
-                await matchesAPI.report(matchId, "other");
-                logger.info("User reported", { matchId, petName, reason: "other" });
-                onMatchReported?.(matchId);
-                Alert.alert("Reported", "Thank you for reporting. We'll review this.");
-              } catch (error) {
-                logger.error("Failed to report", { error, matchId });
-                Alert.alert("Error", "Failed to report. Please try again.");
-              }
-            },
-          },
-        ]
-      );
+        },
+      ]);
     },
-    [onMatchReported]
+    [onMatchReported],
   );
 
   return {

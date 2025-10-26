@@ -3,8 +3,10 @@ import { ScrollView, StyleSheet, View } from "react-native";
 
 import { EliteButton, FadeInUp } from "../EliteComponents";
 import { GlassContainer } from "../GlassMorphism";
-import { PremiumBody } from "../PremiumTypography";
+import PremiumTypography from "../PremiumTypography";
 import type { SwipeFilters as SwipeFiltersType } from "../../hooks/useSwipeData";
+
+const { PremiumBody } = PremiumTypography;
 
 interface SwipeFiltersProps {
   filters: SwipeFiltersType;

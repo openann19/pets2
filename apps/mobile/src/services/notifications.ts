@@ -13,12 +13,10 @@ import { api } from "./api";
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
-  handleNotification: () => ({
+  handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
   }),
 });
 
@@ -49,12 +47,12 @@ class NotificationService {
       let finalStatus = existingStatus;
 
       // Request permission if not granted
-      if (existingStatus !== Notifications.PermissionStatus.GRANTED) {
+      if (String(existingStatus) !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
 
-      if (finalStatus !== Notifications.PermissionStatus.GRANTED) {
+      if (String(finalStatus) !== "granted") {
         logger.warn("Failed to get push token for push notification!");
         return null;
       }
@@ -388,7 +386,7 @@ class NotificationService {
     });
   }
 
-      // Get current token
+  // Get current token
   getExpoPushToken(): string | null {
     return this.expoPushToken;
   }
@@ -397,14 +395,17 @@ class NotificationService {
   private async getDeviceId(): Promise<string> {
     let deviceId = await AsyncStorage.getItem("device_id");
     if (!deviceId) {
-      deviceId = `mobile_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      deviceId = `mobile_${String(Date.now())}_${Math.random().toString(36).substring(2, 9)}`;
       await AsyncStorage.setItem("device_id", deviceId);
     }
     return deviceId;
   }
 
   // Register token with backend
-  private async registerTokenWithBackend(token: string, deviceId: string): Promise<void> {
+  private async registerTokenWithBackend(
+    token: string,
+    deviceId: string,
+  ): Promise<void> {
     try {
       await api.request("/notifications/register-token", {
         method: "POST",
@@ -424,7 +425,7 @@ class NotificationService {
   // Unregister token from backend
   async unregisterToken(deviceId?: string): Promise<boolean> {
     try {
-      const id = deviceId || await this.getDeviceId();
+      const id = deviceId || (await this.getDeviceId());
       await api.request("/notifications/unregister-token", {
         method: "DELETE",
         body: { deviceId: id },
@@ -463,5 +464,6 @@ class NotificationService {
 
 // Export a singleton instance
 export const notificationService = new NotificationService();
-export const initializeNotificationsService = () => notificationService.initialize();
+export const initializeNotificationsService = () =>
+  notificationService.initialize();
 export default notificationService;

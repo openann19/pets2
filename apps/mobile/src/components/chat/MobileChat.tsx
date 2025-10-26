@@ -63,10 +63,25 @@ export function MobileChat({
   }, [messages]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
+    >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.card }]}>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.header,
+          { backgroundColor: colors.card },
+        ])}
+      >
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.text },
+          ])}
+        >
           {otherUserName}
         </Text>
       </View>
@@ -89,13 +104,18 @@ export function MobileChat({
       />
 
       {/* Input Area */}
-      <View style={[styles.inputContainer, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.inputContainer,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <View style={styles.inputRow}>
           <TextInput
-            style={[
+            style={StyleSheet.flatten([
               styles.textInput,
               { backgroundColor: colors.background, color: colors.text },
-            ]}
+            ])}
             value={inputText}
             onChangeText={setInputText}
             placeholder={`Message ${otherUserName}...`}
@@ -106,7 +126,10 @@ export function MobileChat({
           />
 
           <TouchableOpacity
-            style={[styles.voiceButton, { backgroundColor: colors.primary }]}
+            style={StyleSheet.flatten([
+              styles.voiceButton,
+              { backgroundColor: colors.primary },
+            ])}
             onPress={() => {
               setShowVoiceRecorder(true);
             }}
@@ -115,14 +138,14 @@ export function MobileChat({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.sendButton,
               {
                 backgroundColor: inputText.trim()
                   ? colors.primary
                   : colors.gray400,
               },
-            ]}
+            ])}
             onPress={handleSendText}
             disabled={!inputText.trim()}
           >

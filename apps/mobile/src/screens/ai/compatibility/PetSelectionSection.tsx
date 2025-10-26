@@ -3,10 +3,17 @@
  * Extracted from AICompatibilityScreen
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
-import type { TextStyle, ViewStyle } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import type { TextStyle, ViewStyle } from "react-native";
 
 interface Pet {
   _id: string;
@@ -51,23 +58,42 @@ export function PetSelectionSection({
     onSelect: () => void,
   ) => (
     <TouchableOpacity
-      style={[
+      style={StyleSheet.flatten([
         styles.petCard,
         { backgroundColor: colors.card },
         isSelected && { borderColor: colors.primary, borderWidth: 2 },
-      ]}
+      ])}
       onPress={onSelect}
     >
       <Image source={{ uri: pet.photos[0] }} style={styles.petImage} />
       <View style={styles.petInfo}>
-        <Text style={[styles.petName, { color: colors.text }]}>{pet.name}</Text>
-        <Text style={[styles.petBreed, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([styles.petName, { color: colors.text }])}
+        >
+          {pet.name}
+        </Text>
+        <Text
+          style={StyleSheet.flatten([
+            styles.petBreed,
+            { color: colors.textSecondary },
+          ])}
+        >
           {pet.breed}
         </Text>
-        <Text style={[styles.petAge, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.petAge,
+            { color: colors.textSecondary },
+          ])}
+        >
           {pet.age} years old
         </Text>
-        <Text style={[styles.petOwner, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.petOwner,
+            { color: colors.textSecondary },
+          ])}
+        >
           Owner: {pet.owner.name}
         </Text>
       </View>
@@ -81,21 +107,31 @@ export function PetSelectionSection({
 
   return (
     <View style={styles.selectionSection}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>
+      <Text
+        style={StyleSheet.flatten([
+          styles.sectionTitle,
+          { color: colors.text },
+        ])}
+      >
         🐕 Select Two Pets
       </Text>
       <Text
-        style={[
+        style={StyleSheet.flatten([
           styles.sectionDescription,
           { color: colors.textSecondary },
-        ]}
+        ])}
       >
         Choose two pets to analyze their compatibility using AI technology.
       </Text>
 
       <View style={styles.petSelection}>
         <View style={styles.petColumn}>
-          <Text style={[styles.columnTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.columnTitle,
+              { color: colors.text },
+            ])}
+          >
             Pet 1
           </Text>
           {selectedPet1 ? (
@@ -104,21 +140,17 @@ export function PetSelectionSection({
             })
           ) : (
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.placeholderCard,
                 { backgroundColor: colors.card },
-              ]}
+              ])}
             >
-              <Ionicons
-                name="paw"
-                size={40}
-                color={colors.textSecondary}
-              />
+              <Ionicons name="paw" size={40} color={colors.textSecondary} />
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.placeholderText,
                   { color: colors.textSecondary },
-                ]}
+                ])}
               >
                 Select Pet 1
               </Text>
@@ -127,13 +159,23 @@ export function PetSelectionSection({
         </View>
 
         <View style={styles.vsContainer}>
-          <Text style={[styles.vsText, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.vsText,
+              { color: colors.primary },
+            ])}
+          >
             VS
           </Text>
         </View>
 
         <View style={styles.petColumn}>
-          <Text style={[styles.columnTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.columnTitle,
+              { color: colors.text },
+            ])}
+          >
             Pet 2
           </Text>
           {selectedPet2 ? (
@@ -142,21 +184,17 @@ export function PetSelectionSection({
             })
           ) : (
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.placeholderCard,
                 { backgroundColor: colors.card },
-              ]}
+              ])}
             >
-              <Ionicons
-                name="paw"
-                size={40}
-                color={colors.textSecondary}
-              />
+              <Ionicons name="paw" size={40} color={colors.textSecondary} />
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.placeholderText,
                   { color: colors.textSecondary },
-                ]}
+                ])}
               >
                 Select Pet 2
               </Text>
@@ -165,7 +203,12 @@ export function PetSelectionSection({
         </View>
       </View>
 
-      <Text style={[styles.availablePetsTitle, { color: colors.text }]}>
+      <Text
+        style={StyleSheet.flatten([
+          styles.availablePetsTitle,
+          { color: colors.text },
+        ])}
+      >
         Available Pets
       </Text>
 
@@ -176,21 +219,22 @@ export function PetSelectionSection({
         scrollEnabled={false}
         renderItem={({ item }) => {
           const isSelected =
-            selectedPet1?._id === item._id ||
-            selectedPet2?._id === item._id;
+            selectedPet1?._id === item._id || selectedPet2?._id === item._id;
           const isDisabled: boolean =
             isSelected ||
             Boolean(selectedPet1 && selectedPet2) ||
-            Boolean(selectedPet1 && selectedPet1.owner._id === item.owner._id) ||
+            Boolean(
+              selectedPet1 && selectedPet1.owner._id === item.owner._id,
+            ) ||
             Boolean(selectedPet2 && selectedPet2.owner._id === item.owner._id);
 
           return (
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.availablePetCard,
                 { backgroundColor: colors.card },
                 isDisabled && { opacity: 0.5 },
-              ]}
+              ])}
               onPress={() => {
                 if (isDisabled) return;
                 if (!selectedPet1) {
@@ -206,18 +250,18 @@ export function PetSelectionSection({
                 style={styles.availablePetImage}
               />
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.availablePetName,
                   { color: colors.text },
-                ]}
+                ])}
               >
                 {item.name}
               </Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.availablePetBreed,
                   { color: colors.textSecondary },
-                ]}
+                ])}
               >
                 {item.breed}
               </Text>
@@ -235,7 +279,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   sectionDescription: {
@@ -244,26 +288,26 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   petSelection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 30,
   },
   petColumn: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   columnTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   petCard: {
-    width: '100%',
+    width: "100%",
     padding: 15,
     borderRadius: 15,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
   petImage: {
     width: 80,
@@ -272,11 +316,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   petInfo: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   petName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   petBreed: {
@@ -291,16 +335,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   selectedIndicator: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
   },
   placeholderCard: {
-    width: '100%',
+    width: "100%",
     height: 150,
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   placeholderText: {
     marginTop: 10,
@@ -311,11 +355,11 @@ const styles = StyleSheet.create({
   },
   vsText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   availablePetsTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
   },
   availablePetCard: {
@@ -323,7 +367,7 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 15,
     borderRadius: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   availablePetImage: {
     width: 60,
@@ -333,11 +377,11 @@ const styles = StyleSheet.create({
   },
   availablePetName: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 2,
   },
   availablePetBreed: {
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

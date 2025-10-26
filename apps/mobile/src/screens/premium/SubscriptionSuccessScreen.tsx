@@ -65,13 +65,13 @@ const AnimatedCheckmark = () => {
     <View style={styles.checkmarkContainer}>
       {/* React Native Animated API type compatibility issue - runtime works correctly */}
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           styles.checkmarkCircle,
           {
             transform: [{ scale }],
             opacity,
           } as any,
-        ]}
+        ])}
       >
         <LinearGradient
           colors={["#6D28D9", "#7C3AED", "#8B5CF6"]}
@@ -156,7 +156,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, styles.secondaryButton]}
+          style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
           onPress={() => {
             navigation.navigate("Home");
           }}

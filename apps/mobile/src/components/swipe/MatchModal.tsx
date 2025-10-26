@@ -4,9 +4,11 @@ import { Image, StyleSheet, View } from "react-native";
 import { EliteButton, ScaleIn, FadeInUp } from "../EliteComponents";
 import { HolographicContainer, ParticleEffect } from "../HolographicEffects";
 import { GlowContainer } from "../GlowShadowSystem";
-import { PremiumHeading, PremiumBody } from "../PremiumTypography";
+import PremiumTypography from "../PremiumTypography";
 import type { Pet } from "../../types/api";
 import { Dimensions } from "react-native";
+
+const { PremiumHeading, PremiumBody } = PremiumTypography;
 
 const { width: screenWidth } = Dimensions.get("window");
 

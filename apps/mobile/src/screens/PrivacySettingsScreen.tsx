@@ -115,17 +115,27 @@ function PrivacySettingsScreen({
     control: React.ReactNode,
     danger?: boolean,
   ) => (
-    <View style={[styles.settingItem, { backgroundColor: colors.card }]}>
+    <View
+      style={StyleSheet.flatten([
+        styles.settingItem,
+        { backgroundColor: colors.card },
+      ])}
+    >
       <View style={styles.settingContent}>
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.settingTitle,
             { color: danger ? colors.error : colors.text },
-          ]}
+          ])}
         >
           {title}
         </Text>
-        <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.settingSubtitle,
+            { color: colors.textSecondary },
+          ])}
+        >
           {subtitle}
         </Text>
       </View>
@@ -142,22 +152,22 @@ function PrivacySettingsScreen({
       {options.map((option) => (
         <TouchableOpacity
           key={option.value}
-          style={[
+          style={StyleSheet.flatten([
             styles.pickerOption,
             value === option.value && {
               backgroundColor: colors.primary,
               borderColor: colors.primary,
             },
-          ]}
+          ])}
           onPress={() => {
             onChange(option.value);
           }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.pickerOptionText,
               { color: value === option.value ? "white" : colors.text },
-            ]}
+            ])}
           >
             {option.label}
           </Text>
@@ -168,14 +178,17 @@ function PrivacySettingsScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.header,
           { backgroundColor: colors.card, borderBottomColor: colors.border },
-        ]}
+        ])}
       >
         <TouchableOpacity
           style={styles.backButton}
@@ -183,7 +196,12 @@ function PrivacySettingsScreen({
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.text },
+          ])}
+        >
           Privacy Settings
         </Text>
         <View style={styles.headerSpacer} />
@@ -195,7 +213,12 @@ function PrivacySettingsScreen({
       >
         {/* Profile Visibility */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Profile Visibility
           </Text>
           {renderSettingItem(
@@ -258,7 +281,12 @@ function PrivacySettingsScreen({
 
         {/* Communication */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Communication
           </Text>
           {renderSettingItem(
@@ -297,7 +325,12 @@ function PrivacySettingsScreen({
 
         {/* Privacy Features */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Privacy Features
           </Text>
           {renderSettingItem(
@@ -325,7 +358,12 @@ function PrivacySettingsScreen({
 
         {/* Data & Analytics */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Data & Analytics
           </Text>
           {renderSettingItem(
@@ -357,7 +395,12 @@ function PrivacySettingsScreen({
 
         {/* Danger Zone */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.error }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.error },
+            ])}
+          >
             Danger Zone
           </Text>
           {renderSettingItem(

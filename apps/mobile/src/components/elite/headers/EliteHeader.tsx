@@ -1,11 +1,22 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, type ReactNode } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  type ReactNode,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { runOnJS } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import { Colors, Spacing, GlobalStyles, Shadows } from "../../../styles/GlobalStyles";
+import {
+  Colors,
+  Spacing,
+  GlobalStyles,
+  Shadows,
+} from "../../../styles/GlobalStyles";
 
 /**
  * EliteHeader Component
@@ -100,4 +111,3 @@ export const EliteHeader: React.FC<EliteHeaderProps> = ({
 };
 
 export default EliteHeader;
-

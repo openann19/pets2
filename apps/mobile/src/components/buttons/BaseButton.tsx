@@ -195,7 +195,12 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         return (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="small" color={getIconColor()} />
-            <Text style={[getTextStyles(), { marginLeft: Theme.spacing.sm }]}>
+            <Text
+              style={StyleSheet.flatten([
+                getTextStyles(),
+                { marginLeft: Theme.spacing.sm },
+              ])}
+            >
               Loading...
             </Text>
           </View>
@@ -212,7 +217,9 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
               style={{ marginRight: Theme.spacing.sm }}
             />
           )}
-          <Text style={[getTextStyles(), textStyle]}>{title}</Text>
+          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>
+            {title}
+          </Text>
           {rightIcon && (
             <Ionicons
               name={rightIcon}
@@ -228,7 +235,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     return (
       <TouchableOpacity
         ref={ref}
-        style={[
+        style={StyleSheet.flatten([
           getVariantStyles(),
           {
             paddingHorizontal: sizeConfig.paddingHorizontal,
@@ -236,7 +243,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
             opacity: isDisabled ? 0.6 : 1,
           },
           style,
-        ]}
+        ])}
         onPress={handlePress}
         disabled={isDisabled}
         activeOpacity={0.8}

@@ -46,7 +46,7 @@ function BlockedUsersScreen({
 
       // Fetch real blocked users from API
       const users = await matchesAPI.getBlockedUsers();
-      
+
       // Transform API response to BlockedUser format
       const transformedUsers: BlockedUser[] = users.map((user) => ({
         id: user._id || user.id || "",
@@ -71,28 +71,26 @@ function BlockedUsersScreen({
   }, [loadBlockedUsers]);
 
   const handleUnblockUser = useCallback(async (userId: string) => {
-    Alert.alert(
-      "Unblock User",
-      "Are you sure you want to unblock this user?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Unblock",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await matchesAPI.unblockUser(userId);
-              // Remove from local state
-              setBlockedUsers((prev) => prev.filter((user) => user.id !== userId));
-              Alert.alert("Success", "User has been unblocked");
-            } catch (error) {
-              logger.error("Failed to unblock user:", { error });
-              Alert.alert("Error", "Failed to unblock user. Please try again.");
-            }
-          },
+    Alert.alert("Unblock User", "Are you sure you want to unblock this user?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Unblock",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await matchesAPI.unblockUser(userId);
+            // Remove from local state
+            setBlockedUsers((prev) =>
+              prev.filter((user) => user.id !== userId),
+            );
+            Alert.alert("Success", "User has been unblocked");
+          } catch (error) {
+            logger.error("Failed to unblock user:", { error });
+            Alert.alert("Error", "Failed to unblock user. Please try again.");
+          }
         },
-      ],
-    );
+      },
+    ]);
   }, []);
 
   const _handleUnblockUser = useCallback(
@@ -135,7 +133,12 @@ function BlockedUsersScreen({
     ({ item }: { item: BlockedUser }) => (
       <BlurView intensity={20} style={styles.userCard}>
         <View style={styles.userInfo}>
-          <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+          <View
+            style={StyleSheet.flatten([
+              styles.avatar,
+              { backgroundColor: colors.primary },
+            ])}
+          >
             <Text style={styles.avatarText}>
               {item.name
                 .split(" ")
@@ -145,24 +148,47 @@ function BlockedUsersScreen({
             </Text>
           </View>
           <View style={styles.userDetails}>
-            <Text style={[styles.userName, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.userName,
+                { color: colors.text },
+              ])}
+            >
               {item.name}
             </Text>
-            <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.userEmail,
+                { color: colors.textSecondary },
+              ])}
+            >
               {item.email}
             </Text>
-            <Text style={[styles.blockedDate, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.blockedDate,
+                { color: colors.textSecondary },
+              ])}
+            >
               Blocked {new Date(item.blockedAt).toLocaleDateString()}
             </Text>
             {item.reason && (
-              <Text style={[styles.blockReason, { color: colors.error }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.blockReason,
+                  { color: colors.error },
+                ])}
+              >
                 Reason: {item.reason}
               </Text>
             )}
           </View>
         </View>
         <TouchableOpacity
-          style={[styles.unblockButton, { backgroundColor: colors.primary }]}
+          style={StyleSheet.flatten([
+            styles.unblockButton,
+            { backgroundColor: colors.primary },
+          ])}
           onPress={() => handleUnblockUser(item.id, item.name)}
         >
           <Ionicons name="person-remove-outline" size={16} color="white" />

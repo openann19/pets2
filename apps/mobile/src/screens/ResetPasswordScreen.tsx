@@ -126,7 +126,10 @@ function ResetPasswordScreen({
             <View style={styles.inputGroup}>
               <Text style={styles.label}>New Password</Text>
               <TextInput
-                style={[styles.input, errors.password && styles.inputError]}
+                style={StyleSheet.flatten([
+                  styles.input,
+                  errors.password && styles.inputError,
+                ])}
                 value={formData.password}
                 onChangeText={(value) => {
                   updateField("password", value);
@@ -144,10 +147,10 @@ function ResetPasswordScreen({
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Confirm New Password</Text>
               <TextInput
-                style={[
+                style={StyleSheet.flatten([
                   styles.input,
                   errors.confirmPassword && styles.inputError,
-                ]}
+                ])}
                 value={formData.confirmPassword}
                 onChangeText={(value) => {
                   updateField("confirmPassword", value);
@@ -163,15 +166,18 @@ function ResetPasswordScreen({
             </View>
 
             <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
+              style={StyleSheet.flatten([
+                styles.button,
+                loading && styles.buttonDisabled,
+              ])}
               onPress={handleResetPassword}
               disabled={loading}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.buttonText,
                   loading && styles.buttonTextDisabled,
-                ]}
+                ])}
               >
                 {loading ? "Resetting..." : "Reset Password"}
               </Text>

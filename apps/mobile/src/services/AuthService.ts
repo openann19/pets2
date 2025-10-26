@@ -66,7 +66,7 @@ class AuthService {
   // Session configuration
   private static readonly SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
   private static readonly ACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes of inactivity
-  private sessionCheckInterval: NodeJS.Timeout | null = null;
+  private sessionCheckInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.startSessionMonitoring();
@@ -82,8 +82,8 @@ class AuthService {
     }
 
     // Check session every minute
-    this.sessionCheckInterval = setInterval(async () => {
-      await this.checkSessionValidity();
+    this.sessionCheckInterval = setInterval(() => {
+      void this.checkSessionValidity();
     }, 60000); // Check every minute
   }
 
@@ -355,7 +355,7 @@ class AuthService {
         throw new AuthError("No biometric credentials found");
       }
 
-      const credentials: BiometricCredentials = JSON.parse(storedCredentials);
+      const credentials = JSON.parse(storedCredentials) as BiometricCredentials;
 
       // Perform login with stored email and a special biometric flag
       const response = await api.request<AuthResponse>(
@@ -560,7 +560,7 @@ class AuthService {
   async getCurrentUser(): Promise<User | null> {
     try {
       const userData = await SecureStore.getItemAsync(AuthService.USER_KEY);
-      return userData ? JSON.parse(userData) : null;
+      return userData ? (JSON.parse(userData) as User) : null;
     } catch (error) {
       logger.error("Failed to get current user", { error });
       return null;

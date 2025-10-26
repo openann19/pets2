@@ -54,7 +54,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   // Refs
   const flatListRef = useRef<any>(null);
   const inputRef = useRef<any>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<number | null>(null);
   const savedOffsetRef = useRef<number>(0);
   const didRestoreRef = useRef<boolean>(false);
 
@@ -200,9 +200,11 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
 
   // Handle scroll events
   const handleScroll = useCallback(
-    async (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    async (event: {
+      nativeEvent: { contentOffset: { x: number; y: number } };
+    }) => {
       try {
-        const offset = e.nativeEvent.contentOffset.y;
+        const offset = event.nativeEvent.contentOffset.y;
         await AsyncStorage.setItem(
           `mobile_chat_scroll_${matchId}`,
           String(offset),
@@ -276,7 +278,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
       >
         <MessageList
           messages={data.messages}
-          typingUsers={data.typingUsers}
+          typingUsers={data.otherUserTyping ? ["Other User"] : []}
           isOnline={data.isOnline}
           onRetryMessage={actions.retryMessage}
           flatListRef={flatListRef}
@@ -300,6 +302,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
           onTypingChange={handleTypingChange}
           isSending={data.isSending}
           inputRef={inputRef}
+          matchId={matchId}
         />
       </KeyboardAvoidingView>
     </EliteContainer>

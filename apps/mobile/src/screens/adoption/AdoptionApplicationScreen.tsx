@@ -53,7 +53,10 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
     commitment: "",
   });
 
-  const updateFormData = (field: string, value: import("../../types/forms").FormFieldValue) => {
+  const updateFormData = (
+    field: string,
+    value: import("../../types/forms").FormFieldValue,
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -139,19 +142,19 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
             (option) => (
               <TouchableOpacity
                 key={option}
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionButton,
                   formData.experience === option && styles.selectedOption,
-                ]}
+                ])}
                 onPress={() => {
                   updateFormData("experience", option);
                 }}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.optionText,
                     formData.experience === option && styles.selectedOptionText,
-                  ]}
+                  ])}
                 >
                   {option}
                 </Text>
@@ -172,19 +175,19 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
           ].map((option) => (
             <TouchableOpacity
               key={option}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.livingSpace === option && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("livingSpace", option);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.livingSpace === option && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option}
               </Text>
@@ -368,10 +371,10 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.progressFill,
                 { width: `${((currentStep + 1) / 4) * 100}%` },
-              ]}
+              ])}
             />
           </View>
           <Text style={styles.progressText}>Step {currentStep + 1} of 4</Text>
@@ -396,10 +399,10 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
           )}
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.nextButton,
               !validateStep() && styles.disabledButton,
-            ]}
+            ])}
             onPress={handleNext}
             disabled={!validateStep()}
           >

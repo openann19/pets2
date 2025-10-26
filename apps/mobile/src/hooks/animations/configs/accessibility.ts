@@ -14,4 +14,3 @@ AccessibilityInfo.isReduceMotionEnabled().then((isEnabled) => {
 export const getAccessibilityConfig = () => ({
   prefersReducedMotion,
 });
-

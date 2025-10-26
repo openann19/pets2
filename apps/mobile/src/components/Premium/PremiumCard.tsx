@@ -302,7 +302,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   if (variant === "glass") {
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           containerStyle,
           {
             transform: [
@@ -322,15 +322,15 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
             ],
           },
           style,
-        ]}
+        ])}
         {...(tilt ? panResponder.panHandlers : {})}
       >
         <BlurView intensity={30} style={StyleSheet.absoluteFillObject} />
         <View
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             { backgroundColor: "rgba(255, 255, 255, 0.1)" },
-          ]}
+          ])}
         />
 
         {onPress ? (
@@ -360,7 +360,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
 
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           containerStyle,
           {
             transform: [
@@ -380,17 +380,17 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
             ],
           },
           style,
-        ]}
+        ])}
         {...(tilt ? panResponder.panHandlers : {})}
       >
         <LinearGradient
           colors={gradientColors}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             { borderRadius: containerStyle.borderRadius },
-          ]}
+          ])}
         />
 
         {onPress ? (
@@ -411,7 +411,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
         {/* Glow overlay */}
         {glow && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               StyleSheet.absoluteFillObject,
               {
                 borderRadius: containerStyle.borderRadius,
@@ -421,7 +421,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
                   outputRange: [0, 0.2],
                 }),
               },
-            ]}
+            ])}
             pointerEvents="none"
           />
         )}
@@ -432,7 +432,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   // Default implementation
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         containerStyle,
         {
           transform: [
@@ -452,7 +452,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           ],
         },
         style,
-      ]}
+      ])}
       {...(tilt ? panResponder.panHandlers : {})}
     >
       {onPress ? (

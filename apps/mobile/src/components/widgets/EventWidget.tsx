@@ -69,10 +69,10 @@ export function EventWidget({
               {event.title}
             </Text>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.categoryBadge,
                 { backgroundColor: getCategoryColor(event.category) },
-              ]}
+              ])}
             >
               <Text style={styles.categoryEmoji}>
                 {getCategoryEmoji(event.category)}

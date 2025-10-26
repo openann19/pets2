@@ -42,7 +42,7 @@ export function SwipeCard({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         styles.card,
         {
           transform: [
@@ -51,20 +51,35 @@ export function SwipeCard({
             { rotate },
           ],
         },
-      ]}
+      ])}
       {...panHandlers}
     >
       {/* Premium Like/Nope Indicators */}
-      <Animated.View style={[styles.likeIndicator, { opacity: likeOpacity }]}>
+      <Animated.View
+        style={StyleSheet.flatten([
+          styles.likeIndicator,
+          { opacity: likeOpacity },
+        ])}
+      >
         <GlowContainer color="primary" intensity="heavy" animated={true}>
           <GradientText gradient="primary" size="lg" weight="bold" glow={true}>
             LIKE
           </GradientText>
         </GlowContainer>
       </Animated.View>
-      <Animated.View style={[styles.nopeIndicator, { opacity: nopeOpacity }]}>
+      <Animated.View
+        style={StyleSheet.flatten([
+          styles.nopeIndicator,
+          { opacity: nopeOpacity },
+        ])}
+      >
         <GlowContainer color="secondary" intensity="heavy" animated={true}>
-          <GradientText gradient="secondary" size="lg" weight="bold" glow={true}>
+          <GradientText
+            gradient="secondary"
+            size="lg"
+            weight="bold"
+            glow={true}
+          >
             NOPE
           </GradientText>
         </GlowContainer>

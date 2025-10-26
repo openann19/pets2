@@ -41,7 +41,7 @@ export function VoiceRecorder({
   const startRecording = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
@@ -66,11 +66,10 @@ export function VoiceRecorder({
       durationTimer.current = setInterval(() => {
         setDuration((prev) => prev + 1);
       }, 1000);
-
     } catch (error) {
       Alert.alert(
         "Permission Needed",
-        "Microphone access is required to record voice notes."
+        "Microphone access is required to record voice notes.",
       );
     }
   };
@@ -78,9 +77,11 @@ export function VoiceRecorder({
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      mediaRecorderRef.current.stream
+        .getTracks()
+        .forEach((track) => track.stop());
       setIsRecording(false);
-      
+
       if (durationTimer.current) {
         clearInterval(durationTimer.current);
         durationTimer.current = null;
@@ -101,10 +102,10 @@ export function VoiceRecorder({
     setIsSending(true);
     try {
       await chatService.sendVoiceNote(matchId, audioBlob, duration);
-      
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       onVoiceNoteSent?.();
-      
+
       // Reset state
       setAudioBlob(null);
       setDuration(0);
@@ -137,7 +138,10 @@ export function VoiceRecorder({
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={[styles.recordButton, isRecording && styles.recordButtonActive]}
+        style={StyleSheet.flatten([
+          styles.recordButton,
+          isRecording && styles.recordButtonActive,
+        ])}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={disabled}
@@ -155,7 +159,9 @@ export function VoiceRecorder({
 
       {!isRecording && audioBlob && (
         <View style={styles.audioPreview}>
-          <Text style={styles.audioInfo}>Voice note ({formatDuration(duration)})</Text>
+          <Text style={styles.audioInfo}>
+            Voice note ({formatDuration(duration)})
+          </Text>
           <View style={styles.actions}>
             <TouchableOpacity
               style={styles.actionButton}
@@ -164,23 +170,24 @@ export function VoiceRecorder({
               <Ionicons name="close" size={20} color="#EF4444" />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.actionButton, styles.sendButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.sendButton,
+              ])}
               onPress={sendVoiceNote}
               disabled={isSending}
             >
-              <Ionicons 
-                name={isSending ? "hourglass" : "send"} 
-                size={20} 
-                color={isSending ? "#9CA3AF" : "#10B981"} 
+              <Ionicons
+                name={isSending ? "hourglass" : "send"}
+                size={20}
+                color={isSending ? "#9CA3AF" : "#10B981"}
               />
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      {isSending && (
-        <Text style={styles.sending}>Sending...</Text>
-      )}
+      {isSending && <Text style={styles.sending}>Sending...</Text>}
     </View>
   );
 }
@@ -253,4 +260,3 @@ const styles = StyleSheet.create({
     color: "#6B7280",
   },
 });
-

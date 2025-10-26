@@ -38,32 +38,45 @@ const PremiumCancelScreen = (): React.JSX.Element => {
             <Ionicons name="close-circle" size={80} color="#ef4444" />
           </View>
 
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+          >
             Payment Cancelled
           </Text>
 
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.subtitle,
+              { color: colors.textSecondary },
+            ])}
+          >
             No worries! Your payment was cancelled and you weren't charged. You
             can try again anytime.
           </Text>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.primaryButton,
                 { backgroundColor: colors.primary },
-              ]}
+              ])}
               onPress={handleTryAgain}
             >
               <Text style={styles.primaryButtonText}>Try Again</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.secondaryButton, { borderColor: colors.primary }]}
+              style={StyleSheet.flatten([
+                styles.secondaryButton,
+                { borderColor: colors.primary },
+              ])}
               onPress={handleGoBack}
             >
               <Text
-                style={[styles.secondaryButtonText, { color: colors.primary }]}
+                style={StyleSheet.flatten([
+                  styles.secondaryButtonText,
+                  { color: colors.primary },
+                ])}
               >
                 Go Back
               </Text>

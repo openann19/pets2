@@ -7,12 +7,12 @@ export interface UseTabStateReturn<T extends string> {
 
 /**
  * Hook for managing tab state
- * 
+ *
  * @example
  * const { activeTab, setActiveTab } = useTabState('matches');
  */
 export function useTabState<T extends string>(
-  initialTab: T
+  initialTab: T,
 ): UseTabStateReturn<T> {
   const [activeTab, setActiveTabState] = useState<T>(initialTab);
 

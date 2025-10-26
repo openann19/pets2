@@ -4,9 +4,20 @@
  */
 
 import type { Message } from "@pawfectmatch/core";
-import { chatService, type MessageWithReactions } from "../../services/chatService";
+import {
+  chatService,
+  type MessageWithReactions,
+} from "../../services/chatService";
 import React, { useState, useCallback } from "react";
-import { StyleSheet, Text, TouchableOpacity, View, Modal, Pressable, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+  Pressable,
+  Alert,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -110,10 +121,10 @@ export function EnhancedMessageBubble({
     <>
       <Pressable onLongPress={handleLongPress}>
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.messageContainer,
             isOwnMessage ? styles.ownContainer : styles.otherContainer,
-          ]}
+          ])}
         >
           {/* Avatar placeholder */}
           {showAvatars && petInfo ? (
@@ -130,11 +141,13 @@ export function EnhancedMessageBubble({
                 ? ["#FF6B6B", "#FF8E8E"]
                 : [colors.card, colors.background]
             }
-            style={[styles.bubble, getBubbleStyle()]}
+            style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text style={[styles.messageText, getTextStyle()]}>
+            <Text
+              style={StyleSheet.flatten([styles.messageText, getTextStyle()])}
+            >
               {message.content}
             </Text>
           </LinearGradient>
@@ -159,19 +172,19 @@ export function EnhancedMessageBubble({
 
           <View style={styles.messageMeta}>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.timestamp,
                 isDark ? styles.timestampDark : styles.timestampLight,
-              ]}
+              ])}
             >
               {formatTime(message.sentAt)}
             </Text>
             {isOwnMessage && showStatus ? (
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.status,
                   isDark ? styles.statusDark : styles.statusLight,
-                ]}
+                ])}
               >
                 {getStatusIcon()}
               </Text>
@@ -335,4 +348,3 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
 });
-

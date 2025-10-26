@@ -1,5 +1,10 @@
 import React, { useEffect, type ReactNode } from "react";
-import { useSharedValue, useAnimatedStyle, withSpring, withTiming } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
 /**
@@ -32,4 +37,3 @@ export const ScaleIn: React.FC<ScaleInProps> = ({ children, delay = 0 }) => {
 };
 
 export default ScaleIn;
-

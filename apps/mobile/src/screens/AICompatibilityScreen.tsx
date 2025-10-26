@@ -20,7 +20,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { api, matchesAPI } from "../services/api";
 import { useTheme } from "../contexts/ThemeContext";
 import type { NavigationProp, RouteProp } from "../navigation/types";
-import { PetSelectionSection, AnalysisResultsSection } from './ai/compatibility';
+import {
+  PetSelectionSection,
+  AnalysisResultsSection,
+} from "./ai/compatibility";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -80,7 +83,9 @@ export default function AICompatibilityScreen({
     loadAvailablePets();
 
     // Check if pets were passed via route params
-    const params = route?.params as { petAId?: string; petBId?: string } | undefined;
+    const params = route?.params as
+      | { petAId?: string; petBId?: string }
+      | undefined;
     if (params?.petAId && params?.petBId) {
       // Load specific pets for analysis
       loadSpecificPets(params.petAId, params.petBId);
@@ -92,14 +97,14 @@ export default function AICompatibilityScreen({
       setIsLoadingPets(true);
       // Fetch real pets from API
       const pets = await matchesAPI.getPets();
-      
+
       // Filter out current user's pets
       const userData = user as { _id?: string } | undefined;
       const availablePets = pets.filter((pet) => {
         const petOwner = pet.owner as { _id?: string } | undefined;
         return petOwner?._id !== userData?._id;
       });
-      
+
       setAvailablePets(availablePets as unknown as Pet[]);
     } catch (err: unknown) {
       logger.error("Error loading pets:", { error: err });
@@ -146,7 +151,10 @@ export default function AICompatibilityScreen({
       });
       setCompatibilityResult(result);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to analyze compatibility. Please try again.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to analyze compatibility. Please try again.";
       logger.error("Compatibility analysis error:", { error: err });
       setError(message);
     } finally {
@@ -161,15 +169,22 @@ export default function AICompatibilityScreen({
     setError(null);
   };
 
-
   if (isLoadingPets) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading pets...
           </Text>
         </View>
@@ -179,7 +194,10 @@ export default function AICompatibilityScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <LinearGradient
         colors={isDark ? ["#1a1a2e", "#16213e"] : ["#667eea", "#764ba2"]}
@@ -187,7 +205,9 @@ export default function AICompatibilityScreen({
       >
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => { navigation.goBack(); }}
+          onPress={() => {
+            navigation.goBack();
+          }}
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
@@ -210,10 +230,10 @@ export default function AICompatibilityScreen({
 
             {selectedPet1 && selectedPet2 && (
               <TouchableOpacity
-                style={[
+                style={StyleSheet.flatten([
                   styles.analyzeButton,
                   { opacity: isAnalyzing ? 0.7 : 1 },
-                ]}
+                ])}
                 onPress={analyzeCompatibility}
                 disabled={isAnalyzing}
               >

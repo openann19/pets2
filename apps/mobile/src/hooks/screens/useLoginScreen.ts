@@ -31,7 +31,9 @@ export function useLoginScreen({
 }: UseLoginScreenOptions): UseLoginScreenReturn {
   // Form validation rules
   const validateForm = useCallback(
-    (values: LoginFormValues): Partial<Record<keyof LoginFormValues, string>> => {
+    (
+      values: LoginFormValues,
+    ): Partial<Record<keyof LoginFormValues, string>> => {
       const errors: Partial<Record<keyof LoginFormValues, string>> = {};
 
       if (!values.email.trim()) {
@@ -48,7 +50,7 @@ export function useLoginScreen({
 
       return errors;
     },
-    []
+    [],
   );
 
   // Form state management
@@ -68,22 +70,19 @@ export function useLoginScreen({
   });
 
   // Handle login submission
-  const handleLogin = useCallback(
-    async () => {
-      logger.info("Login attempt:", { email: values.email });
-      
-      // TODO: Implement actual authentication
-      // This is a placeholder for the authentication logic
-      // In production, you would:
-      // 1. Call AuthService.login(values.email, values.password)
-      // 2. Handle success: navigation.navigate("Home")
-      // 3. Handle error: setError state and display in UI
-      
-      // For demo purposes, navigate to Home
-      navigation.navigate("Home");
-    },
-    [values.email, navigation]
-  );
+  const handleLogin = useCallback(async () => {
+    logger.info("Login attempt:", { email: values.email });
+
+    // TODO: Implement actual authentication
+    // This is a placeholder for the authentication logic
+    // In production, you would:
+    // 1. Call AuthService.login(values.email, values.password)
+    // 2. Handle success: navigation.navigate("Home")
+    // 3. Handle error: setError state and display in UI
+
+    // For demo purposes, navigate to Home
+    navigation.navigate("Home");
+  }, [values.email, navigation]);
 
   const handleSubmit = handleSubmitForm(handleLogin);
 

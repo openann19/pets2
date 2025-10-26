@@ -19,7 +19,9 @@ export interface UseProfileDataReturn {
 /**
  * Hook for fetching and managing profile data
  */
-export function useProfileData({ enabled = true }: UseProfileDataOptions = {}): UseProfileDataReturn {
+export function useProfileData({
+  enabled = true,
+}: UseProfileDataOptions = {}): UseProfileDataReturn {
   const { user } = useAuthStore();
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +36,12 @@ export function useProfileData({ enabled = true }: UseProfileDataOptions = {}): 
     try {
       const userPets = await matchesAPI.getMyPets();
       setPets(userPets.data || []);
-      logger.info("Profile data refreshed", { petCount: userPets.data?.length });
+      logger.info("Profile data refreshed", {
+        petCount: userPets.data?.length,
+      });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to load profile";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load profile";
       setError(errorMessage);
       logger.error("Failed to refresh profile", { error: errorMessage });
     } finally {

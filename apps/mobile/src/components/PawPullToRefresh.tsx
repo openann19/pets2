@@ -157,7 +157,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   });
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={StyleSheet.flatten([styles.container, style])}>
       {/* Custom Refresh Indicator */}
       {refreshing && (
         <View
@@ -167,7 +167,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
           accessibilityRole="progressbar"
         >
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               styles.pawContainer,
               {
                 transform: [
@@ -178,13 +178,9 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                 ],
                 opacity: pawOpacity,
               },
-            ]}
+            ])}
           >
-            <Ionicons
-              name="paw"
-              size={24}
-              color={colors.primary}
-            />
+            <Ionicons name="paw" size={24} color={colors.primary} />
           </Animated.View>
 
           {/* Scratch marks effect */}
@@ -192,7 +188,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
             {[0, 1, 2].map((index) => (
               <Animated.View
                 key={index}
-                style={[
+                style={StyleSheet.flatten([
                   styles.scratchMark,
                   {
                     backgroundColor: colors.primary,
@@ -206,7 +202,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                       },
                     ],
                   },
-                ]}
+                ])}
               />
             ))}
           </View>

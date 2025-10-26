@@ -9,6 +9,7 @@ import { MatchCard } from "../components/matches/MatchCard";
 import { MatchesTabs } from "../components/matches/MatchesTabs";
 import { useMatchesData } from "../hooks/useMatchesData";
 import { logger } from "../services/logger";
+import type { Match } from "../hooks/useMatchesData";
 
 interface MatchesScreenProps {
   navigation: {

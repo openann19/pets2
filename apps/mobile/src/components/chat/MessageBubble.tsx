@@ -131,10 +131,10 @@ export function MessageBubble({
   if (message.messageType === "image") {
     return (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.messageContainer,
           isOwnMessage ? styles.ownContainer : styles.otherContainer,
-        ]}
+        ])}
       >
         <TouchableOpacity style={styles.imageBubble}>
           <Text style={styles.imagePlaceholder}>📷 Image</Text>
@@ -152,10 +152,10 @@ export function MessageBubble({
   if (message.messageType === "voice") {
     return (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.messageContainer,
           isOwnMessage ? styles.ownContainer : styles.otherContainer,
-        ]}
+        ])}
       >
         <TouchableOpacity style={styles.voiceBubble}>
           <Text style={styles.voicePlaceholder}>🎵 Voice Message</Text>
@@ -173,10 +173,10 @@ export function MessageBubble({
   if (message.messageType === "video") {
     return (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.messageContainer,
           isOwnMessage ? styles.ownContainer : styles.otherContainer,
-        ]}
+        ])}
       >
         <TouchableOpacity style={styles.videoBubble}>
           <Text style={styles.videoPlaceholder}>🎥 Video Message</Text>
@@ -194,10 +194,10 @@ export function MessageBubble({
   if (message.messageType === "gif" || message.messageType === "sticker") {
     return (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.messageContainer,
           isOwnMessage ? styles.ownContainer : styles.otherContainer,
-        ]}
+        ])}
       >
         <TouchableOpacity style={styles.gifBubble}>
           <Text style={styles.gifPlaceholder}>
@@ -216,10 +216,10 @@ export function MessageBubble({
 
   return (
     <View
-      style={[
+      style={StyleSheet.flatten([
         styles.messageContainer,
         isOwnMessage ? styles.ownContainer : styles.otherContainer,
-      ]}
+      ])}
     >
       {/* Milestone Badge */}
       {getMilestoneBadge() && (
@@ -233,18 +233,18 @@ export function MessageBubble({
       {/* Pet Avatar */}
       {showAvatars && getPetAvatar() ? (
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.avatarContainer,
             isOwnMessage ? styles.ownAvatar : styles.otherAvatar,
-          ]}
+          ])}
         >
           <Text style={styles.avatarEmoji}>{getPetAvatar()}</Text>
           {petInfo ? (
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.avatarName,
                 isDark ? styles.avatarNameDark : styles.avatarNameLight,
-              ]}
+              ])}
             >
               {petInfo.name}
             </Text>
@@ -258,11 +258,11 @@ export function MessageBubble({
             ? ["#FF6B6B", "#FF8E8E"]
             : [colors.card, colors.background]
         }
-        style={[styles.bubble, getBubbleStyle()]}
+        style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <Text style={[styles.messageText, getTextStyle()]}>
+        <Text style={StyleSheet.flatten([styles.messageText, getTextStyle()])}>
           {message.content}
         </Text>
 
@@ -284,19 +284,19 @@ export function MessageBubble({
 
       <View style={styles.messageMeta}>
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.timestamp,
             isDark ? styles.timestampDark : styles.timestampLight,
-          ]}
+          ])}
         >
           {formatTime(message.sentAt)}
         </Text>
         {isOwnMessage && showStatus ? (
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.status,
               isDark ? styles.statusDark : styles.statusLight,
-            ]}
+            ])}
           >
             {getStatusIcon()}
           </Text>

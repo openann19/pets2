@@ -20,7 +20,14 @@ import {
 
 import { AdvancedButton } from "./AdvancedInteractionSystem";
 import { useCardAnimations, type CardInteraction } from "./Card/CardAnimations";
-import { getCardStyles, getSizeStyles, getPaddingValue, getMarginValue, type CardVariant, type CardSize } from "./Card/CardVariants";
+import {
+  getCardStyles,
+  getSizeStyles,
+  getPaddingValue,
+  getMarginValue,
+  type CardVariant,
+  type CardSize,
+} from "./Card/CardVariants";
 import { CardBackground } from "./Card/CardBackground";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -207,21 +214,26 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   const renderContent = () => {
     return (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.content,
           { padding: getPaddingValue({ padding }) },
           contentStyle,
-        ]}
+        ])}
       >
         {/* Badge */}
         {badge && (
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.badge,
               { backgroundColor: badge.backgroundColor || "#ef4444" },
-            ]}
+            ])}
           >
-            <Text style={[styles.badgeText, { color: badge.color || "#fff" }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.badgeText,
+                { color: badge.color || "#fff" },
+              ])}
+            >
               {badge.text}
             </Text>
           </View>
@@ -230,13 +242,16 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
         {/* Status */}
         {status && (
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.status,
               { backgroundColor: status.backgroundColor || "#10b981" },
-            ]}
+            ])}
           >
             <Text
-              style={[styles.statusText, { color: status.color || "#fff" }]}
+              style={StyleSheet.flatten([
+                styles.statusText,
+                { color: status.color || "#fff" },
+              ])}
             >
               {status.text}
             </Text>
@@ -253,16 +268,24 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
         )}
 
         {/* Title */}
-        {title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
+        {title && (
+          <Text style={StyleSheet.flatten([styles.title, titleStyle])}>
+            {title}
+          </Text>
+        )}
 
         {/* Subtitle */}
         {subtitle && (
-          <Text style={[styles.subtitle, subtitleStyle]}>{subtitle}</Text>
+          <Text style={StyleSheet.flatten([styles.subtitle, subtitleStyle])}>
+            {subtitle}
+          </Text>
         )}
 
         {/* Description */}
         {description && (
-          <Text style={[styles.description, descriptionStyle]}>
+          <Text
+            style={StyleSheet.flatten([styles.description, descriptionStyle])}
+          >
             {description}
           </Text>
         )}
@@ -278,7 +301,12 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
                 key={index}
                 icon={action.icon}
                 title={action.title}
-                variant={(action.variant || "minimal") as "minimal" | "primary" | "secondary"}
+                variant={
+                  (action.variant || "minimal") as
+                    | "minimal"
+                    | "primary"
+                    | "secondary"
+                }
                 size="sm"
                 interactions={["hover", "press"]}
                 haptic={action.haptic || "light"}
@@ -321,8 +349,8 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
   return (
     <Animated.View style={cardStyle}>
       {/* Background */}
-      <CardBackground 
-        variant={variant} 
+      <CardBackground
+        variant={variant}
         gradientColors={gradientColors}
         blurIntensity={blurIntensity}
       />
@@ -330,7 +358,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       {/* Glow Overlay */}
       {interactions.includes("glow") && (
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             {
               backgroundColor: glowColor,
@@ -340,7 +368,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
               }),
               borderRadius: 12,
             },
-          ]}
+          ])}
           pointerEvents="none"
         />
       )}
@@ -348,7 +376,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
       {/* Shimmer Overlay */}
       {(loading || isLoading) && (
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             {
               backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -357,7 +385,7 @@ export const AdvancedCard: React.FC<AdvancedCardProps> = ({
                 outputRange: [0, 0.5],
               }),
             },
-          ]}
+          ])}
           pointerEvents="none"
         />
       )}

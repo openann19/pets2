@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { View, type ViewProps, type ViewStyle } from "react-native";
+import { View, type ViewProps, type ViewStyle, StyleSheet } from "react-native";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -9,7 +9,12 @@ import Animated from "react-native-reanimated";
 
 import { Spacing } from "../../styles/GlobalStyles";
 import { GlassContainer } from "./GlassContainer";
-import { BLUR_CONFIGS, TRANSPARENCY_CONFIGS, BORDER_CONFIGS, SHADOW_CONFIGS } from "./configs";
+import {
+  BLUR_CONFIGS,
+  TRANSPARENCY_CONFIGS,
+  BORDER_CONFIGS,
+  SHADOW_CONFIGS,
+} from "./configs";
 
 /**
  * GlassButton Component
@@ -113,7 +118,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
 
   return (
     <Animated.View
-      style={[animatedStyle, style]}
+      style={StyleSheet.flatten([animatedStyle, style])}
       onTouchStart={handlePressIn}
       onTouchEnd={handlePressOut}
       onTouchCancel={handlePressOut}
@@ -124,14 +129,14 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
         border={config.border}
         shadow={config.shadow}
         borderRadius="xl"
-        style={[
+        style={StyleSheet.flatten([
           { ...sizeConfig },
           {
             justifyContent: "center",
             alignItems: "center",
             opacity: disabled ? 0.5 : 1,
           },
-        ]}
+        ])}
         {...props}
       >
         {children}
@@ -141,4 +146,3 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
 };
 
 export default GlassButton;
-

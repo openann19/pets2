@@ -30,12 +30,17 @@ export function useChatScroll({
       if (!enabled) return;
 
       try {
-        const saved = await AsyncStorage.getItem(`mobile_chat_scroll_${matchId}`);
+        const saved = await AsyncStorage.getItem(
+          `mobile_chat_scroll_${matchId}`,
+        );
         if (saved) {
           setInitialOffset(Number(saved));
         }
       } catch (error) {
-        console.error(`Failed to restore scroll position for chat ${matchId}:`, error);
+        console.error(
+          `Failed to restore scroll position for chat ${matchId}:`,
+          error,
+        );
       }
     };
 
@@ -59,9 +64,15 @@ export function useChatScroll({
     if (!enabled) return;
 
     try {
-      await AsyncStorage.setItem(`mobile_chat_scroll_${matchId}`, String(offset));
+      await AsyncStorage.setItem(
+        `mobile_chat_scroll_${matchId}`,
+        String(offset),
+      );
     } catch (error) {
-      console.error(`Failed to save scroll position for chat ${matchId}:`, error);
+      console.error(
+        `Failed to save scroll position for chat ${matchId}:`,
+        error,
+      );
     }
   };
 

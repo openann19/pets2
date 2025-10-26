@@ -26,16 +26,16 @@ export function TypingIndicator({
         style={styles.avatar}
       />
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.typingBubble,
           { backgroundColor: colors.white, borderColor: colors.gray200 },
-        ]}
+        ])}
       >
         <View style={styles.typingDots}>
           {[0, 1, 2].map((i) => (
             <Animated.View
               key={i}
-              style={[
+              style={StyleSheet.flatten([
                 styles.typingDot,
                 {
                   backgroundColor: colors.gray500,
@@ -54,12 +54,17 @@ export function TypingIndicator({
                     },
                   ],
                 },
-              ]}
+              ])}
             />
           ))}
         </View>
         {typingUsers.length > 1 && (
-          <Text style={[styles.typingText, { color: colors.gray500 }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.typingText,
+              { color: colors.gray500 },
+            ])}
+          >
             {typingUsers.length} people are typing...
           </Text>
         )}

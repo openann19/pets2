@@ -90,12 +90,12 @@ export const Footer: React.FC<FooterProps> = ({
   const renderDefaultFooter = (): React.ReactElement => (
     <Animated.View
       // Animated style cast to any to satisfy RN/Reanimated type unions
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         { backgroundColor: colors.white },
         style,
         animatedStyle as any,
-      ]}
+      ])}
       accessibilityRole="text"
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
@@ -105,20 +105,30 @@ export const Footer: React.FC<FooterProps> = ({
         <View style={styles.brandSection}>
           <View style={styles.brandContainer}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.logoContainer,
                 { backgroundColor: colors.primary },
-              ]}
+              ])}
             >
               <Text style={styles.logoEmoji}>🐾</Text>
             </View>
-            <Text style={[styles.brandName, { color: colors.gray800 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.brandName,
+                { color: colors.gray800 },
+              ])}
+            >
               PawfectMatch
             </Text>
           </View>
 
           {showVersion ? (
-            <Text style={[styles.versionText, { color: colors.gray500 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.versionText,
+                { color: colors.gray500 },
+              ])}
+            >
               Version 1.0.0
             </Text>
           ) : null}
@@ -138,7 +148,14 @@ export const Footer: React.FC<FooterProps> = ({
               Terms of Service
             </AnimatedButton>
 
-            <Text style={[styles.separator, { color: colors.gray400 }]}>•</Text>
+            <Text
+              style={StyleSheet.flatten([
+                styles.separator,
+                { color: colors.gray400 },
+              ])}
+            >
+              •
+            </Text>
 
             <AnimatedButton
               onPress={handlePrivacyPress}
@@ -168,7 +185,12 @@ export const Footer: React.FC<FooterProps> = ({
                 size={16}
                 color={colors.gray500}
               />
-              <Text style={[styles.supportText, { color: colors.gray500 }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.supportText,
+                  { color: colors.gray500 },
+                ])}
+              >
                 Need Help? Contact Support
               </Text>
             </View>
@@ -178,7 +200,12 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Copyright */}
         {showCopyright ? (
           <View style={styles.copyrightSection}>
-            <Text style={[styles.copyrightText, { color: colors.gray500 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.copyrightText,
+                { color: colors.gray500 },
+              ])}
+            >
               © {new Date().getFullYear()} PawfectMatch Inc. All rights
               reserved.
             </Text>
@@ -190,19 +217,29 @@ export const Footer: React.FC<FooterProps> = ({
 
   const renderMinimalFooter = (): React.ReactElement => (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         styles.minimalContainer,
         { backgroundColor: colors.white },
         style,
         animatedStyle as any,
-      ]}
+      ])}
     >
       <View style={styles.minimalContent}>
-        <Text style={[styles.minimalBrand, { color: colors.gray600 }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.minimalBrand,
+            { color: colors.gray600 },
+          ])}
+        >
           🐾 PawfectMatch
         </Text>
         {showCopyright ? (
-          <Text style={[styles.minimalCopyright, { color: colors.gray500 }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.minimalCopyright,
+              { color: colors.gray500 },
+            ])}
+          >
             © {new Date().getFullYear()}
           </Text>
         ) : null}
@@ -219,7 +256,7 @@ export const Footer: React.FC<FooterProps> = ({
             string,
           ]
         }
-        style={[styles.premiumContainer, style]}
+        style={StyleSheet.flatten([styles.premiumContainer, style])}
       >
         <BlurView intensity={20} style={styles.premiumBlur}>
           <View style={styles.premiumContent}>
@@ -228,7 +265,10 @@ export const Footer: React.FC<FooterProps> = ({
                 <Text style={styles.premiumLogoEmoji}>💎</Text>
               </View>
               <Text
-                style={[styles.premiumBrandName, { color: colors.gray800 }]}
+                style={StyleSheet.flatten([
+                  styles.premiumBrandName,
+                  { color: colors.gray800 },
+                ])}
               >
                 PawfectMatch Premium
               </Text>
@@ -243,7 +283,12 @@ export const Footer: React.FC<FooterProps> = ({
                 Terms
               </AnimatedButton>
 
-              <Text style={[styles.separator, { color: colors.gray400 }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.separator,
+                  { color: colors.gray400 },
+                ])}
+              >
                 •
               </Text>
 
@@ -255,7 +300,12 @@ export const Footer: React.FC<FooterProps> = ({
                 Privacy
               </AnimatedButton>
 
-              <Text style={[styles.separator, { color: colors.gray400 }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.separator,
+                  { color: colors.gray400 },
+                ])}
+              >
                 •
               </Text>
 
@@ -270,7 +320,10 @@ export const Footer: React.FC<FooterProps> = ({
 
             {showCopyright ? (
               <Text
-                style={[styles.premiumCopyright, { color: colors.gray500 }]}
+                style={StyleSheet.flatten([
+                  styles.premiumCopyright,
+                  { color: colors.gray500 },
+                ])}
               >
                 © {new Date().getFullYear()} PawfectMatch Inc.
               </Text>

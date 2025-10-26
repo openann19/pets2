@@ -1,4 +1,9 @@
-import React, { Suspense, lazy, type ComponentType, type ReactNode } from "react";
+import React, {
+  Suspense,
+  lazy,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 import { logger } from "@pawfectmatch/core";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
@@ -27,7 +32,10 @@ function DefaultLoadingFallback() {
 
   return (
     <View
-      style={[styles.loadingContainer, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.loadingContainer,
+        { backgroundColor: colors.background },
+      ])}
       accessible={true}
       accessibilityLabel="Loading screen"
       accessibilityRole="progressbar"
@@ -37,7 +45,9 @@ function DefaultLoadingFallback() {
         color={colors.primary}
         style={styles.loadingIndicator}
       />
-      <Text style={[styles.loadingText, { color: colors.text }]}>
+      <Text
+        style={StyleSheet.flatten([styles.loadingText, { color: colors.text }])}
+      >
         Loading...
       </Text>
     </View>
@@ -58,19 +68,32 @@ function DefaultErrorBoundary({
 
   return (
     <View
-      style={[styles.errorContainer, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.errorContainer,
+        { backgroundColor: colors.background },
+      ])}
       accessible={true}
       accessibilityLabel="Screen failed to load"
       accessibilityRole="alert"
     >
-      <Text style={[styles.errorTitle, { color: colors.text }]}>
+      <Text
+        style={StyleSheet.flatten([styles.errorTitle, { color: colors.text }])}
+      >
         Oops! Something went wrong
       </Text>
-      <Text style={[styles.errorMessage, { color: colors.text }]}>
+      <Text
+        style={StyleSheet.flatten([
+          styles.errorMessage,
+          { color: colors.text },
+        ])}
+      >
         {error.message || "Failed to load this screen"}
       </Text>
       <Text
-        style={[styles.retryButton, { color: colors.primary }]}
+        style={StyleSheet.flatten([
+          styles.retryButton,
+          { color: colors.primary },
+        ])}
         onPress={retry}
         accessible={true}
         accessibilityRole="button"
@@ -92,7 +115,10 @@ class LazyScreenErrorBoundary extends React.Component<
   },
   { hasError: boolean; error: Error | null }
 > {
-  constructor(props: { children: ReactNode; fallback: ComponentType<{ error: Error; retry: () => void }> }) {
+  constructor(props: {
+    children: ReactNode;
+    fallback: ComponentType<{ error: Error; retry: () => void }>;
+  }) {
     super(props);
     this.state = { hasError: false, error: null };
   }
@@ -101,7 +127,7 @@ class LazyScreenErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     logger.error("LazyScreen Error:", { error, errorInfo });
   }
 
@@ -109,7 +135,7 @@ class LazyScreenErrorBoundary extends React.Component<
     this.setState({ hasError: false, error: null });
   };
 
-  render() {
+  override render() {
     if (this.state.hasError && this.state.error) {
       const ErrorComponent = this.props.fallback;
       return <ErrorComponent error={this.state.error} retry={this.retry} />;
@@ -189,13 +215,18 @@ export const LazyProfileScreen = createLazyScreen(
       const { colors } = useTheme();
       return (
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.loadingContainer,
             { backgroundColor: colors.background },
-          ]}
+          ])}
         >
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading Profile...
           </Text>
         </View>
@@ -211,13 +242,18 @@ export const LazySettingsScreen = createLazyScreen(
       const { colors } = useTheme();
       return (
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.loadingContainer,
             { backgroundColor: colors.background },
-          ]}
+          ])}
         >
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading Settings...
           </Text>
         </View>
@@ -233,13 +269,18 @@ export const LazyMatchesScreen = createLazyScreen(
       const { colors } = useTheme();
       return (
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.loadingContainer,
             { backgroundColor: colors.background },
-          ]}
+          ])}
         >
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading Matches...
           </Text>
         </View>

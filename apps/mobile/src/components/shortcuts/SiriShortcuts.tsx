@@ -182,10 +182,10 @@ export function SiriShortcuts(): React.JSX.Element {
             </View>
 
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 shortcut.isActive ? styles.deleteButton : styles.createButton,
-              ]}
+              ])}
               onPress={() =>
                 shortcut.isActive
                   ? deleteShortcut(shortcut)

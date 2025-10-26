@@ -39,4 +39,3 @@ export const useGlowEffect = (enabled = true) => {
 };
 
 export default useGlowEffect;
-

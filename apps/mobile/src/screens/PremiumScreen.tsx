@@ -219,14 +219,17 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
   if (isPremium) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.premiumActiveContainer}>
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.premiumActiveGradient,
               { backgroundColor: "#1f2937" },
-            ]}
+            ])}
           >
             <Ionicons name="star" size={80} color="#fff" />
             <Text style={styles.premiumActiveTitle}>You're Premium!</Text>
@@ -235,7 +238,9 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
             </Text>
             <TouchableOpacity
               style={styles.manageButton}
-              onPress={() => { navigation.navigate("ManageSubscription"); }}
+              onPress={() => {
+                navigation.navigate("ManageSubscription");
+              }}
             >
               <Text style={styles.manageButtonText}>Manage Subscription</Text>
             </TouchableOpacity>
@@ -247,11 +252,14 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.gray900 }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.gray900 },
+      ])}
     >
       {/* Header */}
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.header,
           styles.headerBlur,
           {
@@ -260,7 +268,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                 ? "rgba(255,255,255,0.08)"
                 : colors.glassDarkMedium,
           },
-        ]}
+        ])}
       >
         <TouchableOpacity
           onPress={() => {
@@ -271,11 +279,21 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
         >
           <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.white }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.white },
+          ])}
+        >
           Go Premium
         </Text>
         <TouchableOpacity onPress={handleRestorePurchases}>
-          <Text style={[styles.restoreText, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.restoreText,
+              { color: colors.primary },
+            ])}
+          >
             Restore
           </Text>
         </TouchableOpacity>
@@ -283,35 +301,47 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Holographic Hero */}
-        <View style={[styles.heroSection, styles.holographicBg]}>
+        <View
+          style={StyleSheet.flatten([styles.heroSection, styles.holographicBg])}
+        >
           <Ionicons name="star" size={60} color="#fff" />
-          <Text style={[styles.heroTitle, styles.holoText]}>
+          <Text style={StyleSheet.flatten([styles.heroTitle, styles.holoText])}>
             Unlock Premium Features
           </Text>
-          <Text style={[styles.heroSubtitle, styles.holoTextSoft]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.heroSubtitle,
+              styles.holoTextSoft,
+            ])}
+          >
             Find your pet's perfect match faster with premium features
           </Text>
         </View>
 
         {/* Features Grid */}
         <View style={styles.featuresSection}>
-          <Text style={[styles.sectionTitle, { color: colors.white }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.white },
+            ])}
+          >
             What You'll Get
           </Text>
           <View style={styles.featuresGrid}>
             {premiumFeatures.map((feature, index) => (
               <View
                 key={index}
-                style={[
+                style={StyleSheet.flatten([
                   styles.featureCard,
                   { backgroundColor: colors.surface },
-                ]}
+                ])}
               >
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.featureIcon,
                     { backgroundColor: `${feature.color}20` },
-                  ]}
+                  ])}
                 >
                   <Ionicons
                     name={feature.icon as any}
@@ -319,11 +349,19 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                     color={feature.color}
                   />
                 </View>
-                <Text style={[styles.featureTitle, { color: colors.white }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.featureTitle,
+                    { color: colors.white },
+                  ])}
+                >
                   {feature.title}
                 </Text>
                 <Text
-                  style={[styles.featureDescription, { color: colors.gray300 }]}
+                  style={StyleSheet.flatten([
+                    styles.featureDescription,
+                    { color: colors.gray300 },
+                  ])}
                 >
                   {feature.description}
                 </Text>
@@ -334,13 +372,18 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Pricing Plans */}
         <View style={styles.pricingSection}>
-          <Text style={[styles.sectionTitle, { color: colors.white }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.white },
+            ])}
+          >
             Choose Your Plan
           </Text>
           {premiumPlans.map((plan) => (
             <TouchableOpacity
               key={plan.id}
-              style={[
+              style={StyleSheet.flatten([
                 styles.planCard,
                 { backgroundColor: colors.gray800 },
                 selectedPlan === plan.id && [
@@ -348,7 +391,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                   { borderColor: colors.accent },
                 ],
                 plan.popular && styles.popularPlan,
-              ]}
+              ])}
               onPress={() => {
                 handlePlanSelection(plan.id);
               }}
@@ -356,34 +399,47 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
             >
               {plan.popular && (
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.popularBadge,
                     { backgroundColor: colors.primary },
-                  ]}
+                  ])}
                 >
                   <Text style={styles.popularText}>Most Popular</Text>
                 </View>
               )}
               {plan.savings && (
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.savingsBadge,
                     { backgroundColor: colors.success },
-                  ]}
+                  ])}
                 >
                   <Text style={styles.savingsText}>{plan.savings}</Text>
                 </View>
               )}
               <View style={styles.planHeader}>
-                <Text style={[styles.planName, { color: colors.white }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.planName,
+                    { color: colors.white },
+                  ])}
+                >
                   {plan.name}
                 </Text>
                 <View style={styles.planPricing}>
-                  <Text style={[styles.planPrice, { color: colors.white }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.planPrice,
+                      { color: colors.white },
+                    ])}
+                  >
                     ${plan.price}
                   </Text>
                   <Text
-                    style={[styles.planDuration, { color: colors.gray400 }]}
+                    style={StyleSheet.flatten([
+                      styles.planDuration,
+                      { color: colors.gray400 },
+                    ])}
                   >
                     /{plan.duration}
                   </Text>
@@ -398,10 +454,10 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                       color={colors.success}
                     />
                     <Text
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.planFeatureText,
                         { color: colors.gray300 },
-                      ]}
+                      ])}
                     >
                       {feature}
                     </Text>
@@ -414,15 +470,15 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Subscribe Button */}
         <TouchableOpacity
-          style={[
+          style={StyleSheet.flatten([
             styles.subscribeButton,
             isLoading && styles.subscribeButtonLoading,
-          ]}
+          ])}
           onPress={handleSubscribe}
           disabled={isLoading}
         >
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               styles.subscribeButtonGradient,
               styles.neonButton,
               {
@@ -436,7 +492,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
                   },
                 ],
               },
-            ]}
+            ])}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" size="small" />
@@ -453,22 +509,42 @@ function PremiumScreen({ navigation }: PremiumScreenProps): JSX.Element {
 
         {/* Terms */}
         <View style={styles.termsSection}>
-          <Text style={[styles.termsText, { color: colors.gray500 }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.termsText,
+              { color: colors.gray500 },
+            ])}
+          >
             Subscription automatically renews unless cancelled at least 24 hours
             before the end of the current period.
           </Text>
           <View style={styles.termsLinks}>
             <TouchableOpacity>
-              <Text style={[styles.termsLink, { color: colors.primary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.termsLink,
+                  { color: colors.primary },
+                ])}
+              >
                 Terms of Service
               </Text>
             </TouchableOpacity>
-            <Text style={[styles.termsSeparator, { color: colors.gray500 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.termsSeparator,
+                { color: colors.gray500 },
+              ])}
+            >
               {" "}
               •{" "}
             </Text>
             <TouchableOpacity>
-              <Text style={[styles.termsLink, { color: colors.primary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.termsLink,
+                  { color: colors.primary },
+                ])}
+              >
                 Privacy Policy
               </Text>
             </TouchableOpacity>

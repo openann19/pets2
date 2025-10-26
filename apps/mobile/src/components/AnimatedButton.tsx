@@ -224,7 +224,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         animatedStyle,
         styles.shadow,
         Platform.OS === "android" && {
@@ -234,16 +234,16 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
             [2, 4, 6],
           ) as unknown as number,
         },
-      ]}
+      ])}
     >
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.button,
           variantStyles[variant],
           sizeStyles[size],
           style,
           disabled && styles.disabled,
-        ]}
+        ])}
         onPress={handlePress}
         disabled={disabled || loading}
         activeOpacity={0.7}
@@ -254,7 +254,11 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       >
         {typeof children === "string" ? (
           <Text
-            style={[styles.text, textStyle, disabled && styles.disabledText]}
+            style={StyleSheet.flatten([
+              styles.text,
+              textStyle,
+              disabled && styles.disabledText,
+            ])}
           >
             {loading ? "..." : children}
           </Text>

@@ -1,12 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
-  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,129 +9,21 @@ import {
   View,
 } from "react-native";
 import Footer from "../../components/Footer";
-
-type BillingPeriod = "monthly" | "yearly";
-
-interface SubscriptionTier {
-  id: string;
-  name: string;
-  price: {
-    monthly: number;
-    yearly: number;
-  };
-  stripePriceId: {
-    monthly: string;
-    yearly: string;
-  };
-  features: string[];
-  popular?: boolean;
-}
-
-const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
-  {
-    id: "basic",
-    name: "Basic",
-    price: { monthly: 0, yearly: 0 },
-    stripePriceId: {
-      monthly: "",
-      yearly: "",
-    },
-    features: [
-      "5 daily swipes",
-      "Basic matching",
-      "Standard chat",
-      "Weather updates",
-      "Community support",
-    ],
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    price: { monthly: 9.99, yearly: 99.99 },
-    stripePriceId: {
-      monthly: "price_premium_monthly",
-      yearly: "price_premium_yearly",
-    },
-    features: [
-      "Unlimited swipes",
-      "See who liked you",
-      "Advanced filters",
-      "Ad-free experience",
-      "Advanced matching algorithm",
-      "Priority in search results",
-      "Read receipts",
-      "Video calls",
-    ],
-    popular: true,
-  },
-  {
-    id: "ultimate",
-    name: "Ultimate",
-    price: { monthly: 19.99, yearly: 199.99 },
-    stripePriceId: {
-      monthly: "price_ultimate_monthly",
-      yearly: "price_ultimate_yearly",
-    },
-    features: [
-      "All Premium features",
-      "AI-powered recommendations",
-      "Exclusive events access",
-      "Priority support",
-      "Profile boost",
-      "Unlimited Super Likes",
-      "Advanced analytics",
-      "VIP status",
-    ],
-  },
-];
+import { usePremiumScreen } from "../../hooks/screens/premium";
 
 export function PremiumScreen(): JSX.Element {
-  const navigation = useNavigation();
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
-  const [selectedTier, setSelectedTier] = useState<string>("premium");
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    billingPeriod,
+    selectedTier,
+    isLoading,
+    subscriptionTiers,
+    setBillingPeriod,
+    setSelectedTier,
+    handleSubscribe,
+    handleGoBack,
+  } = usePremiumScreen();
 
-  const handleSubscribe = async (tierId: string) => {
-    setIsLoading(true);
-    try {
-      // Get the selected tier's price ID
-      const tier = SUBSCRIPTION_TIERS.find((t) => t.id === tierId);
-      if (!tier) {
-        throw new Error("Invalid subscription tier");
-      }
-
-      const priceId = tier.stripePriceId[billingPeriod];
-
-      // Create checkout session
-      const { _subscriptionAPI } = await import("../../services/api");
-      const session = await _subscriptionAPI.createCheckoutSession({
-        priceId,
-        successUrl: "pawfectmatch://subscription/success",
-        cancelUrl: "pawfectmatch://subscription/cancel",
-        metadata: {
-          tier: tierId,
-          billingPeriod,
-        },
-      });
-
-      // Open Stripe checkout in browser
-      if (session?.url) {
-        await Linking.openURL(session.url);
-      }
-    } catch (error) {
-      logger.error("Subscription error:", { error });
-      // Show error to user
-      Alert.alert(
-        "Subscription Error",
-        "Failed to start checkout process. Please try again.",
-        [{ text: "OK" }],
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const renderTierCard = (tier: SubscriptionTier) => {
+  const renderTierCard = (tier: (typeof subscriptionTiers)[0]) => {
     const isSelected = selectedTier === tier.id;
     const price = tier.price[billingPeriod];
     const yearlyDiscount =
@@ -150,11 +37,11 @@ export function PremiumScreen(): JSX.Element {
         onPress={() => {
           setSelectedTier(tier.id);
         }}
-        style={[
+        style={StyleSheet.flatten([
           styles.tierCard,
           isSelected && styles.tierCardSelected,
           tier.popular && styles.tierCardPopular,
-        ]}
+        ])}
         accessibilityLabel={`${tier.name} tier`}
       >
         {tier.popular ? (
@@ -189,10 +76,10 @@ export function PremiumScreen(): JSX.Element {
         </View>
 
         <TouchableOpacity
-          style={[
+          style={StyleSheet.flatten([
             styles.subscribeButton,
             isSelected && styles.subscribeButtonSelected,
-          ]}
+          ])}
           onPress={() => handleSubscribe(tier.id)}
           disabled={isLoading}
         >
@@ -219,9 +106,7 @@ export function PremiumScreen(): JSX.Element {
       >
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
+            onPress={handleGoBack}
             style={styles.backButton}
             accessibilityLabel="Back"
           >
@@ -236,38 +121,38 @@ export function PremiumScreen(): JSX.Element {
 
         <View style={styles.billingToggle}>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.billingOption,
               billingPeriod === "monthly" && styles.billingOptionActive,
-            ]}
+            ])}
             onPress={() => {
               setBillingPeriod("monthly");
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.billingText,
                 billingPeriod === "monthly" && styles.billingTextActive,
-              ]}
+              ])}
             >
               Monthly
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.billingOption,
               billingPeriod === "yearly" && styles.billingOptionActive,
-            ]}
+            ])}
             onPress={() => {
               setBillingPeriod("yearly");
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.billingText,
                 billingPeriod === "yearly" && styles.billingTextActive,
-              ]}
+              ])}
             >
               Yearly
             </Text>
@@ -278,7 +163,7 @@ export function PremiumScreen(): JSX.Element {
         </View>
 
         <View style={styles.tiersContainer}>
-          {SUBSCRIPTION_TIERS.map(renderTierCard)}
+          {subscriptionTiers.map(renderTierCard)}
         </View>
 
         <View style={styles.footer}>
