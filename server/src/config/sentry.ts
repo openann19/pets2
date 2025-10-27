@@ -3,7 +3,7 @@
  */
 
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 const logger = require('../utils/logger');
 
 /**
@@ -25,15 +25,11 @@ function initSentry(app?: any): void {
 
   try {
     // Enable HTTP calls tracing
-    if (Sentry.Integrations && Sentry.Integrations.Http) {
-      integrations.push(new Sentry.Integrations.Http({ tracing: true }));
-    }
+    integrations.push(Sentry.httpIntegration());
     // Enable Express.js middleware tracing
-    if (Sentry.Integrations && Sentry.Integrations.Express && app) {
-      integrations.push(new Sentry.Integrations.Express({ app }));
-    }
+    integrations.push(Sentry.expressIntegration());
     // Enable profiling
-    integrations.push(new ProfilingIntegration());
+    integrations.push(nodeProfilingIntegration());
   } catch (error) {
     logger.warn('Some Sentry integrations unavailable:', { error: (error as Error).message });
   }

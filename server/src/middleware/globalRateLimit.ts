@@ -3,32 +3,37 @@
  * Protects all API endpoints from abuse
  */
 
-import rateLimit, { RateLimitRequestHandler, Options } from 'express-rate-limit';
-import { ipKeyGenerator } from 'express-rate-limit';
-let RedisStore: any;
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
+import type { Request, Response } from 'express';
+let RedisStore: typeof import('rate-limit-redis').Store | null;
 const isTestEnv = process.env.NODE_ENV === 'test';
 try {
   RedisStore = require('rate-limit-redis');
 } catch {
   RedisStore = null;
 }
-import redis from '../config/redis';
+import { getRedisClient } from '../config/redis';
 import logger from '../utils/logger';
 
 /**
  * Create rate limiter with Redis store (if available) or memory store
  */
-export function createRateLimiter(options: Partial<Options> = {}): RateLimitRequestHandler {
-  const defaultOptions: Partial<Options> = {
+interface RateLimitOptions {
+  windowMs?: number;
+  max?: number;
+  message?: string;
+  skip?: (req: Request) => boolean;
+  skipSuccessfulRequests?: boolean;
+}
+
+export function createRateLimiter(options: RateLimitOptions = {}): ReturnType<typeof rateLimit> {
+  const defaultOptions: Record<string, unknown> = {
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per windowMs
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    message: {
-      error: 'Too many requests from this IP, please try again later.',
-      retryAfter: null, // Will be set automatically
-    },
-    handler: (req, res) => {
+    message: 'Too many requests from this IP, please try again later.',
+    handler: (req: Request, res: Response) => {
       logger.warn('Rate limit exceeded', {
         ip: req.ip,
         path: req.path,
@@ -41,7 +46,7 @@ export function createRateLimiter(options: Partial<Options> = {}): RateLimitRequ
         retryAfter: res.getHeader('Retry-After'),
       });
     },
-    skip: (req) => {
+    skip: (req: Request) => {
       // Skip rate limiting for health checks
       return req.path === '/health' || req.path === '/api/health';
     },
@@ -49,9 +54,10 @@ export function createRateLimiter(options: Partial<Options> = {}): RateLimitRequ
     keyGenerator: ipKeyGenerator,
   };
 
-  const config: any = { ...defaultOptions, ...options };
+  const config: Record<string, unknown> = { ...defaultOptions, ...options };
 
   // Use Redis store if available
+  const redis = getRedisClient();
   if (RedisStore && redis && (redis as any).isReady) {
     try {
       config.store = new RedisStore({
@@ -59,8 +65,8 @@ export function createRateLimiter(options: Partial<Options> = {}): RateLimitRequ
         prefix: 'rl:',
       });
       if (!isTestEnv) logger.info('Rate limiter using Redis store');
-    } catch (error: any) {
-      if (!isTestEnv) logger.warn('Failed to initialize Redis store for rate limiter, using memory store', { error: error.message });
+    } catch (error) {
+      if (!isTestEnv) logger.warn('Failed to initialize Redis store for rate limiter, using memory store', { error: error instanceof Error ? error.message : 'Unknown error' });
     }
   } else {
     if (!isTestEnv) logger.info('Rate limiter using memory store (Redis not available)');
@@ -73,7 +79,7 @@ export function createRateLimiter(options: Partial<Options> = {}): RateLimitRequ
  * Global rate limiter for all API routes
  * 100 requests per 15 minutes per IP
  */
-export const globalRateLimiter: RateLimitRequestHandler = createRateLimiter({
+export const globalRateLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: 'Too many requests from this IP, please try again in 15 minutes.',
@@ -83,7 +89,7 @@ export const globalRateLimiter: RateLimitRequestHandler = createRateLimiter({
  * Strict rate limiter for sensitive endpoints
  * 10 requests per 15 minutes per IP
  */
-export const strictRateLimiter: RateLimitRequestHandler = createRateLimiter({
+export const strictRateLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: 'Too many requests to this endpoint, please try again in 15 minutes.',
@@ -93,7 +99,7 @@ export const strictRateLimiter: RateLimitRequestHandler = createRateLimiter({
  * Auth rate limiter for login/register endpoints
  * 5 requests per 15 minutes per IP
  */
-export const authRateLimiter: RateLimitRequestHandler = createRateLimiter({
+export const authRateLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 5,
   message: 'Too many authentication attempts, please try again in 15 minutes.',
@@ -104,7 +110,7 @@ export const authRateLimiter: RateLimitRequestHandler = createRateLimiter({
  * API rate limiter for general API endpoints
  * 60 requests per minute per IP
  */
-export const apiRateLimiter: RateLimitRequestHandler = createRateLimiter({
+export const apiRateLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 60,
   message: 'Too many API requests, please slow down.',
@@ -114,7 +120,7 @@ export const apiRateLimiter: RateLimitRequestHandler = createRateLimiter({
  * Upload rate limiter for file upload endpoints
  * 10 uploads per hour per IP
  */
-export const uploadRateLimiter: RateLimitRequestHandler = createRateLimiter({
+export const uploadRateLimiter = createRateLimiter({
   windowMs: 60 * 60 * 1000,
   max: 10,
   message: 'Too many file uploads, please try again later.',
@@ -124,11 +130,11 @@ export const uploadRateLimiter: RateLimitRequestHandler = createRateLimiter({
  * Webhook rate limiter for external webhooks
  * 100 requests per minute per IP
  */
-export const webhookRateLimiter: RateLimitRequestHandler = createRateLimiter({
+export const webhookRateLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 100,
   message: 'Webhook rate limit exceeded.',
-  skip: (req) => {
+  skip: (req: Request) => {
     // Don't rate limit verified webhooks (e.g., Stripe)
     return req.headers['stripe-signature'] !== undefined;
   },
@@ -137,22 +143,11 @@ export const webhookRateLimiter: RateLimitRequestHandler = createRateLimiter({
 /**
  * Create custom rate limiter with specific options
  */
-export function createCustomRateLimiter(windowMs: number, max: number, message: string): RateLimitRequestHandler {
+export function createCustomRateLimiter(windowMs: number, max: number, message: string): ReturnType<typeof rateLimit> {
   return createRateLimiter({
     windowMs,
     max,
     message,
   });
 }
-
-export {
-  globalRateLimiter,
-  strictRateLimiter,
-  authRateLimiter,
-  apiRateLimiter,
-  uploadRateLimiter,
-  webhookRateLimiter,
-  createCustomRateLimiter,
-  createRateLimiter,
-};
 

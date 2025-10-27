@@ -9,25 +9,26 @@ import * as Haptics from 'expo-haptics';
 /**
  * Haptic feedback utilities
  * Use these exclusively - no direct Haptics.* calls
+ * All methods include error handling to prevent crashes
  */
 export const haptic = {
   // Light impact - for subtle interactions (tabs, buttons, minor selections)
-  tap: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+  tap: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}),
   
   // Medium impact - for confirmations (like, send message)
-  confirm: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+  confirm: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {}),
   
   // Heavy impact - for super-actions (super-like, purchase)
-  super: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy),
+  super: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => {}),
   
   // Notification feedback for errors
-  error: () => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error),
+  error: () => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}),
   
   // Notification feedback for success
-  success: () => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success),
+  success: () => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}),
   
   // Selection feedback (pickers, toggles, wheel)
-  selection: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+  selection: () => Haptics.selectionAsync().catch(() => {}),
 };
 
 /**

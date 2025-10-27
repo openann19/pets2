@@ -1,15 +1,17 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import Report from '../models/Report';
 import UserBlock from '../models/UserBlock';
 import UserMute from '../models/UserMute';
 import logger from '../utils/logger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Request interfaces
  */
 interface AuthenticatedRequest extends Request {
   userId?: string;
-  user?: any;
+  user?: IUserDocument;
 }
 
 /**
@@ -19,7 +21,7 @@ export const getAnalytics = async (req: AuthenticatedRequest, res: Response): Pr
   try {
     const { startDate, endDate, groupBy = 'day' } = req.query;
 
-    const dateFilter: any = {};
+    const dateFilter: { $gte?: Date; $lte?: Date } = {};
     if (startDate) dateFilter.$gte = new Date(startDate as string);
     if (endDate) dateFilter.$lte = new Date(endDate as string);
 
@@ -52,7 +54,7 @@ export const getAnalytics = async (req: AuthenticatedRequest, res: Response): Pr
     ]);
 
     // Reports over time
-    const getDateGroupFormat = (): any => {
+    const getDateGroupFormat = (): Record<string, Record<string, unknown>> => {
       switch (groupBy) {
         case 'hour': return { year: { $year: '$createdAt' }, month: { $month: '$createdAt' }, day: { $dayOfMonth: '$createdAt' }, hour: { $hour: '$createdAt' } };
         case 'week': return { year: { $year: '$createdAt' }, week: { $week: '$createdAt' } };
@@ -120,10 +122,10 @@ export const getAnalytics = async (req: AuthenticatedRequest, res: Response): Pr
         totalMutes,
         avgResolutionTime: resolvedReports[0]?.avgResolutionTime || 0,
       },
-      reportsByStatus: reportsByStatus.map((r: any) => ({ status: r._id, count: r.count })),
-      reportsByType: reportsByType.map((r: any) => ({ type: r._id, count: r.count })),
-      reportsByPriority: reportsByPriority.map((r: any) => ({ priority: r._id, count: r.count })),
-      reportsByCategory: reportsByCategory.map((r: any) => ({ category: r._id, count: r.count })),
+      reportsByStatus: reportsByStatus.map((r: { _id: string; count: number }) => ({ status: r._id, count: r.count })),
+      reportsByType: reportsByType.map((r: { _id: string; count: number }) => ({ type: r._id, count: r.count })),
+      reportsByPriority: reportsByPriority.map((r: { _id: string; count: number }) => ({ priority: r._id, count: r.count })),
+      reportsByCategory: reportsByCategory.map((r: { _id: string; count: number }) => ({ category: r._id, count: r.count })),
       reportsOverTime,
       topReporters,
       mostReportedUsers,
@@ -132,8 +134,8 @@ export const getAnalytics = async (req: AuthenticatedRequest, res: Response): Pr
 
     logger.info('Moderation analytics fetched', { adminId: req.user?._id });
     res.json({ success: true, data: analytics });
-  } catch (error: any) {
-    logger.error('Failed to fetch moderation analytics', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to fetch moderation analytics', { error: getErrorMessage(error) });
     res.status(500).json({ success: false, message: 'Failed to fetch analytics' });
   }
 };

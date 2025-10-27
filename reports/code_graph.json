@@ -1,0 +1,153 @@
+{
+  "version": "1.0.0",
+  "generated": "2025-01-30T00:00:00Z",
+  "description": "Code dependency graph for mobile app",
+
+  "modules": {
+    "screens": {
+      "count": 111,
+      "dependencies": ["navigation", "services", "hooks", "components", "stores"],
+      "organization": "Feature-based folder structure",
+      "keyScreens": [
+        "HomeScreen", "SwipeScreen", "MatchesScreen", "ChatScreen",
+        "ProfileScreen", "SettingsScreen", "PremiumScreen"
+      ]
+    },
+    "components": {
+      "count": 500,
+      "dependencies": ["react-native", "reanimated", "gesture-handler", "theme", "ui"],
+      "organization": "Component library with Advanced/, Elite/, Premium/ subfolders",
+      "features": [
+        "Glassmorphism", "Holographic effects", "Animations", "Gestures",
+        "Chat components", "Swipe cards", "Photo editor"
+      ]
+    },
+    "services": {
+      "count": 47,
+      "dependencies": ["apiClient", "socket.io", "storage", "analytics"],
+      "organization": "API services, real-time services, platform services",
+      "keyServices": [
+        "api.ts", "chatService.ts", "PremiumService.ts", "gdprService.ts",
+        "aiService.ts", "socket.ts", "analyticsService.ts"
+      ]
+    },
+    "hooks": {
+      "count": 200,
+      "dependencies": ["react", "navigation", "services", "stores"],
+      "organization": "screens/, animations/, chat/, swipe/, navigation/",
+      "features": [
+        "Screen-specific hooks", "Animation hooks", "Gesture hooks",
+        "Data fetching hooks", "State management hooks"
+      ]
+    },
+    "stores": {
+      "count": 2,
+      "dependencies": ["zustand"],
+      "organization": "Global state management",
+      "stores": ["useAuthStore", "useUIStore"]
+    },
+    "navigation": {
+      "count": 17,
+      "dependencies": ["@react-navigation/native", "@react-navigation/bottom-tabs"],
+      "organization": "Multi-navigator structure",
+      "navigators": [
+        "RootStackNavigator", "TabNavigator", "OnboardingStack",
+        "AdminStack", "PremiumStack"
+      ]
+    }
+  },
+
+  "dependencies": {
+    "external": {
+      "@react-navigation": ["native", "bottom-tabs", "native-stack"],
+      "react-native": "0.72.10",
+      "expo": "~49.0.23",
+      "zustand": "^4.4.7",
+      "react-native-reanimated": "^3.6.1",
+      "react-native-gesture-handler": "^2.14.0",
+      "socket.io-client": "^4.6.0",
+      "axios": "^1.6.0"
+    },
+    "internal": {
+      "@pawfectmatch/core": ["Shared types", "Utilities"],
+      "@pawfectmatch/ui": ["Shared UI components"]
+    }
+  },
+
+  "importGraph": {
+    "highLevel": {
+      "App.tsx": ["navigation", "providers", "theme"],
+      "navigation/": ["screens", "types"],
+      "screens/": ["components", "hooks", "services"],
+      "components/": ["theme", "utils"],
+      "services/": ["apiClient", "config"]
+    },
+    "circularDependencies": {
+      "detected": false,
+      "status": "clean"
+    }
+  },
+
+  "featureOwnership": {
+    "swipe": {
+      "screens": ["SwipeScreen.tsx", "ModernSwipeScreen.tsx"],
+      "components": ["SwipeCard.tsx", "SwipeFilters.tsx"],
+      "services": ["swipeService.ts"],
+      "hooks": ["useSwipeData.ts", "useSwipeGestures.ts", "useSwipeAnimations.ts", "useSwipeUndo.ts"],
+      "owner": "Core team"
+    },
+    "chat": {
+      "screens": ["ChatScreen.tsx"],
+      "components": ["ChatBubble.tsx", "ChatInput.tsx", "TypingIndicator.tsx"],
+      "services": ["chatService.ts", "socket.ts"],
+      "hooks": ["useChatData.ts"],
+      "owner": "Messaging team"
+    },
+    "premium": {
+      "screens": ["PremiumScreen.tsx", "ManageSubscriptionScreen.tsx"],
+      "services": ["PremiumService.ts"],
+      "hooks": ["usePremium.ts", "usePremiumAnimations.ts"],
+      "owner": "Product team"
+    },
+    "ai": {
+      "screens": ["AIBioScreen.tsx", "AIPhotoAnalyzerScreen.tsx", "AICompatibilityScreen.tsx"],
+      "services": ["aiService.ts", "aiCompatService.ts", "aiPhotoService.ts"],
+      "hooks": ["useAIBio.ts"],
+      "owner": "AI team"
+    },
+    "admin": {
+      "screens": ["AdminDashboardScreen.tsx", "AdminUsersScreen.tsx", "AdminAnalyticsScreen.tsx"],
+      "services": ["adminAPI.ts"],
+      "owner": "Platform team"
+    }
+  },
+
+  "deadCode": {
+    "detected": false,
+    "unusedExports": [],
+    "unreachableCode": []
+  },
+
+  "architecturePatterns": {
+    "separationOfConcerns": "Screens (presentation) → Hooks (logic) → Services (data)",
+    "stateManagement": "Zustand for global state, React state for local state",
+    "dataFetching": "API services with error handling, caching, retry logic",
+    "realTime": "Socket.io for chat, live streaming, notifications",
+    "animations": "react-native-reanimated + gesture-handler for 60fps interactions"
+  },
+
+  "codeMetrics": {
+    "totalFiles": 1500,
+    "totalLines": "200000+",
+    "languageDistribution": {
+      "typescript": "95%",
+      "javascript": "5%"
+    },
+    "testCoverage": {
+      "unit": "70%",
+      "integration": "45%",
+      "e2e": "15%"
+    },
+    "complexity": "moderate-to-high"
+  }
+}

@@ -63,7 +63,8 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -261,7 +262,7 @@ const PetProfileSetupScreen = ({
                 styles.optionButton,
                 formData.species === option.value && styles.selectedOption,
               ])}
-              onPress={() => {
+               testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 updateFormData("species", option.value);
               }}
             >
@@ -323,7 +324,7 @@ const PetProfileSetupScreen = ({
                 styles.optionButton,
                 formData.gender === gender && styles.selectedOption,
               ])}
-              onPress={() => {
+               testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 updateFormData("gender", gender);
               }}
             >
@@ -350,7 +351,7 @@ const PetProfileSetupScreen = ({
                 styles.optionButton,
                 formData.size === option.value && styles.selectedOption,
               ])}
-              onPress={() => {
+               testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 updateFormData("size", option.value);
               }}
             >
@@ -384,7 +385,7 @@ const PetProfileSetupScreen = ({
                 styles.optionButton,
                 formData.intent === option.value && styles.selectedOption,
               ])}
-              onPress={() => {
+               testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 updateFormData("intent", option.value);
               }}
             >
@@ -413,7 +414,7 @@ const PetProfileSetupScreen = ({
                 styles.tagButton,
                 formData.personalityTags.includes(tag) && styles.selectedTag,
               ])}
-              onPress={() => {
+               testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 togglePersonalityTag(tag);
               }}
             >
@@ -468,7 +469,7 @@ const PetProfileSetupScreen = ({
                 option.key as keyof typeof formData.healthInfo
               ] && styles.selectedHealthOption,
             ])}
-            onPress={() => {
+             testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               updateHealthInfo(
                 option.key,
                 !formData.healthInfo[
@@ -524,7 +525,7 @@ const PetProfileSetupScreen = ({
 
         {/* Footer */}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <TouchableOpacity style={styles.backButton}  testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleBack}>
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
 
@@ -533,7 +534,7 @@ const PetProfileSetupScreen = ({
               styles.nextButton,
               !validateStep() && styles.disabledButton,
             ])}
-            onPress={handleNext}
+             testID="PetProfileSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleNext}
             disabled={!validateStep()}
           >
             <Text style={styles.nextButtonText}>
@@ -590,12 +591,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginBottom: 32,
   },
   inputGroup: {
@@ -604,17 +605,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   textArea: {
     height: 100,
@@ -630,9 +631,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionButton: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -641,7 +642,7 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "Theme.colors.primary[500]",
+    borderColor: theme.colors.primary[500],
   },
   optionText: {
     fontSize: 14,
@@ -697,7 +698,7 @@ const styles = StyleSheet.create({
   },
   healthLabel: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "500",
   },
   selectedHealthLabel: {
@@ -706,7 +707,7 @@ const styles = StyleSheet.create({
   },
   healthNote: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     lineHeight: 20,
     fontStyle: "italic",
   },

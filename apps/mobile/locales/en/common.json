@@ -1,0 +1,109 @@
+{
+  "app": {
+    "name": "PawfectMatch",
+    "tagline": "Find your pet's perfect match"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?"
+  },
+  "discovery": {
+    "title": "Discover",
+    "swipeLeft": "Pass",
+    "swipeRight": "Like",
+    "superLike": "Super Like",
+    "noMorePets": "No more pets to show",
+    "refresh": "Pull to refresh"
+  },
+  "matches": {
+    "title": "Matches",
+    "noMatches": "No matches yet",
+    "startSwiping": "Start swiping to find matches!",
+    "matchFound": "It's a match!",
+    "messageButton": "Message"
+  },
+  "chat": {
+    "title": "Chat",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "delivered": "Delivered",
+    "read": "Read",
+    "online": "Online",
+    "offline": "Offline",
+    "typing": "Typing...",
+    "noMessages": "No messages yet",
+    "startConversation": "Start the conversation!"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "settings": "Settings",
+    "premium": "Premium",
+    "logout": "Log Out",
+    "deleteAccount": "Delete Account"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "help": "Help & Support",
+    "about": "About",
+    "version": "Version",
+    "gdpr": {
+      "export": "Export My Data",
+      "delete": "Delete My Account",
+      "deleteConfirm": "Are you sure you want to delete your account? This cannot be undone.",
+      "gracePeriod": "You have {days} days to recover your account"
+    }
+  },
+  "premium": {
+    "title": "Premium",
+    "upgrade": "Upgrade to Premium",
+    "features": {
+      "unlimitedSwipes": "Unlimited Swipes",
+      "seeLikes": "See Who Likes You",
+      "noAds": "No Ads",
+      "boost": "Boost Your Profile",
+      "superLikes": "Super Likes"
+    },
+    "subscribe": "Subscribe Now",
+    "restore": "Restore Purchases"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Check your connection.",
+    "notFound": "Not found",
+    "unauthorized": "Please log in again.",
+    "unknown": "Unknown error occurred"
+  },
+  "loading": {
+    "generic": "Loading...",
+    "pleaseWait": "Please wait..."
+  },
+  "success": {
+    "profileUpdated": "Profile updated successfully",
+    "messageSent": "Message sent",
+    "photoUploaded": "Photo uploaded successfully"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "retry": "Retry",
+    "dismiss": "Dismiss"
+  }
+}

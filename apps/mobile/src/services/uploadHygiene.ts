@@ -56,7 +56,7 @@ async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType
   try {
     // Read first bytes for signature detection
     const fileInfo = await FileSystem.getInfoAsync(uri);
-    const isFile = fileInfo.exists && fileInfo.isDirectory === false;
+    const isFile = fileInfo.exists && !fileInfo.isDirectory;
 
     if (isFile) {
       // Basic JPEG, PNG validation based on file extension
@@ -71,7 +71,7 @@ async function validateMimeType(uri: string): Promise<{ valid: boolean; mimeType
       };
 
       if (typeof ext === 'string') {
-        const normalizedExt = ext.toLowerCase() as (typeof validExtensions)[number] | string;
+        const normalizedExt = ext.toLowerCase();
         if ((validExtensions as readonly string[]).includes(normalizedExt)) {
           return { valid: true, mimeType: mimeTypes[normalizedExt as (typeof validExtensions)[number]] };
         }

@@ -1,7 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
-import { Theme } from '../../../theme/unified-theme';
+import { useTheme } from "../../../theme/Provider";
 import HapticSwitch from "../../../components/micro/HapticSwitch";
 
 interface SettingsSectionProps {
@@ -10,36 +10,80 @@ interface SettingsSectionProps {
   onSettingToggle: (key: string) => () => void;
 }
 
-const SettingsSection: React.FC<SettingsSectionProps> = React.memo(({
+const SettingsSection = React.memo<SettingsSectionProps>(({
   title,
   settings,
   onSettingToggle
-}) => (
-  <View style={styles.section}>
-    <Text style={styles.sectionTitle}>{title}</Text>
-    <BlurView intensity={20} style={styles.settingsCard}>
-      {Object.entries(settings).map(([key, value]) => (
-        <View key={key} style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingTitle}>
-              {key.charAt(0).toUpperCase() + key.slice(1)} {title.toLowerCase()}
-            </Text>
-            <Text style={styles.settingDescription}>
-              {title === 'Notifications'
-                ? `Receive ${key} notifications`
-                : `${value ? "Visible to others" : "Hidden from others"}`
-              }
-            </Text>
+}) => {
+  const theme = useTheme();
+  
+  const styles = useMemo(() => StyleSheet.create({
+    section: {
+      paddingHorizontal: 20,
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.colors.text,
+      marginBottom: 12,
+      paddingLeft: 4,
+    },
+    settingsCard: {
+      borderRadius: 12,
+      overflow: "hidden",
+      padding: 16,
+    },
+    settingItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    settingInfo: {
+      flex: 1,
+    },
+    settingTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.text,
+      marginBottom: 4,
+    },
+    settingDescription: {
+      fontSize: 14,
+      color: theme.colors.textMuted,
+    },
+  }), [theme]);
+
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <BlurView intensity={20} style={styles.settingsCard}>
+        {Object.entries(settings).map(([key, value]) => (
+          <View key={key} style={styles.settingItem}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.settingTitle}>
+                {key.charAt(0).toUpperCase() + key.slice(1)} {title.toLowerCase()}
+              </Text>
+              <Text style={styles.settingDescription}>
+                {title === 'Notifications'
+                  ? `Receive ${key} notifications`
+                  : (value ? "Visible to others" : "Hidden from others")
+                }
+              </Text>
+            </View>
+            <HapticSwitch
+              value={value}
+              onValueChange={onSettingToggle(key)}
+            />
           </View>
-          <HapticSwitch
-            value={value}
-            onValueChange={onSettingToggle(key)}
-          />
-        </View>
-      ))}
-    </BlurView>
-  </View>
-));
+        ))}
+      </BlurView>
+    </View>
+  );
+});
 
 interface ProfileSettingsSectionProps {
   notifications: Record<string, boolean>;
@@ -54,13 +98,55 @@ export const ProfileSettingsSection: React.FC<ProfileSettingsSectionProps> = Rea
   onNotificationToggle,
   onPrivacyToggle
 }) => {
+  const theme = useTheme();
+  
   const formatPrivacyKey = useCallback((key: string) => {
     return key.replace(/([A-Z])/g, " $1").toLowerCase();
   }, []);
 
   const getPrivacyDescription = useCallback((key: string, value: boolean) => {
-    return `${value ? "Visible to others" : "Hidden from others"}`;
+    return value ? "Visible to others" : "Hidden from others";
   }, []);
+
+  const styles = useMemo(() => StyleSheet.create({
+    section: {
+      paddingHorizontal: 20,
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.colors.text,
+      marginBottom: 12,
+      paddingLeft: 4,
+    },
+    settingsCard: {
+      borderRadius: 12,
+      overflow: "hidden",
+      padding: 16,
+    },
+    settingItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    settingInfo: {
+      flex: 1,
+    },
+    settingTitle: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.text,
+      marginBottom: 4,
+    },
+    settingDescription: {
+      fontSize: 14,
+      color: theme.colors.textMuted,
+    },
+  }), [theme]);
 
   return (
     <View>
@@ -95,46 +181,6 @@ export const ProfileSettingsSection: React.FC<ProfileSettingsSectionProps> = Rea
       </View>
     </View>
   );
-});
-
-const styles = StyleSheet.create({
-  section: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: Theme.colors.neutral[800],
-    marginBottom: 12,
-    paddingLeft: 4,
-  },
-  settingsCard: {
-    borderRadius: 12,
-    overflow: "hidden",
-    padding: 16,
-  },
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.neutral[100],
-  },
-  settingInfo: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Theme.colors.neutral[800],
-    marginBottom: 4,
-  },
-  settingDescription: {
-    fontSize: 14,
-    color: Theme.colors.neutral[500],
-  },
 });
 
 SettingsSection.displayName = 'SettingsSection';

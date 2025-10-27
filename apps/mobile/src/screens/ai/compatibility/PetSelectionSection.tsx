@@ -63,7 +63,7 @@ export function PetSelectionSection({
         { backgroundColor: colors.card },
         isSelected && { borderColor: colors.primary, borderWidth: 2 },
       ])}
-      onPress={onSelect}
+       testID="PetSelectionSection-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onSelect}
     >
       <Image source={{ uri: pet.photos[0] }} style={styles.petImage} />
       <View style={styles.petInfo}>
@@ -235,7 +235,7 @@ export function PetSelectionSection({
                 { backgroundColor: colors.card },
                 isDisabled && { opacity: 0.5 },
               ])}
-              onPress={() => {
+               testID="PetSelectionSection-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 if (isDisabled) return;
                 if (!selectedPet1) {
                   onSelectPet1(item);

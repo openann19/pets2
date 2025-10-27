@@ -8,7 +8,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../../theme/Provider';
 
 export interface ScreenShellProps {
   header?: React.ReactNode;
@@ -27,10 +27,13 @@ export interface ScreenShellProps {
  * ```
  */
 export function ScreenShell({ header, children, footer }: ScreenShellProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   return (
     <View style={s.root}>
       <LinearGradient
-        colors={[Theme.colors.neutral[50], `${Theme.colors.primary[500]}10`]}
+        colors={[theme.colors.neutral[50], `${theme.colors.primary[500]}10`]}
         style={StyleSheet.absoluteFillObject}
       />
       <SafeAreaView style={s.safe}>
@@ -42,19 +45,19 @@ export function ScreenShell({ header, children, footer }: ScreenShellProps) {
   );
 }
 
-const s = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   root: { 
     flex: 1, 
-    backgroundColor: Theme.colors.neutral[0] 
+    backgroundColor: theme.colors.bg 
   },
   safe: { 
     flex: 1, 
-    paddingHorizontal: Theme.spacing.xl 
+    paddingHorizontal: theme.spacing.xl 
   },
   body: { 
     flex: 1, 
-    paddingTop: Theme.spacing.lg, 
-    paddingBottom: Theme.spacing.xl 
+    paddingTop: theme.spacing.lg, 
+    paddingBottom: theme.spacing.xl 
   },
 });
 

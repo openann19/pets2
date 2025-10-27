@@ -71,19 +71,21 @@ export default function AIPhotoAnalyzerScreen() {
       </View>
 
       <View style={styles.buttonGroup}>
-        <TouchableOpacity style={styles.button} onPress={pickPhoto}>
+        <TouchableOpacity style={styles.button}  testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={pickPhoto}>
           <Text style={styles.buttonText}>Pick from Library</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={takePhoto}>
+        <TouchableOpacity style={styles.button}  testID="AIPhotoAnalyzerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={takePhoto}>
           <Text style={styles.buttonText}>Take Photo</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
+        testID="btn-analyze"
+        accessibilityLabel={loading ? "Analyzing photo" : "Analyze photo"}
+        accessibilityRole="button"
         onPress={onAnalyze}
         disabled={!photoUri || loading}
         style={[styles.analyzeButton, (!photoUri || loading) && styles.disabled]}
-        testID="btn-analyze"
       >
         {loading ? (
           <ActivityIndicator color="#fff" />

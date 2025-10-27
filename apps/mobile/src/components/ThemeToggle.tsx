@@ -69,6 +69,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={toggleTheme}
+        accessibilityRole="button"
+        accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
+        accessibilityHint="Toggles between light and dark theme"
         style={StyleSheet.flatten([
           themeStyles.iconContainer,
           buttonSizes[size],
@@ -102,6 +105,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={toggleTheme}
+        accessibilityRole="button"
+        accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
+        accessibilityHint="Toggles between light and dark theme"
         style={[
           themeStyles.buttonContainer,
           buttonSizes[size],

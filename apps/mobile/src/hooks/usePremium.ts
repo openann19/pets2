@@ -24,8 +24,9 @@ export function usePremiumStatus(pollMs = 0) {
         trialEndsAt: data?.subscription?.trialEndsAt,
       });
       setError(null);
-    } catch (e: any) {
-      setError(e?.message ?? "Failed to load premium status");
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : "Failed to load premium status";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -35,7 +36,7 @@ export function usePremiumStatus(pollMs = 0) {
     fetchStatus();
     if (pollMs > 0) {
       const id = setInterval(fetchStatus, pollMs);
-      return () => clearInterval(id);
+      return () => { clearInterval(id); };
     }
   }, [pollMs]);
 

@@ -22,7 +22,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -74,7 +74,7 @@ router.put('/profile/advanced', profileUpdateValidation, validate, updateAdvance
 router.put('/privacy-settings', updatePrivacySettings);
 router.put('/notification-preferences', updateNotificationPreferences);
 
-// Photo management routes
+// Photo management
 router.post('/photos', upload.array('photos', 6), uploadProfilePhotos);
 router.delete('/photos/:photoId', deleteProfilePhoto);
 router.put('/photos/:photoId/primary', setPrimaryPhoto);
@@ -90,4 +90,3 @@ router.post('/reactivate', reactivateAccount);
 // Legacy routes removed - using advanced profile routes above
 
 export default router;
-

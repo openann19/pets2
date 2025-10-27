@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { z, ZodSchema } from 'zod';
+import type { Request, Response, NextFunction } from 'express';
+import { z, type ZodSchema } from 'zod';
 
 interface ZodValidateOptions {
   body?: ZodSchema;
@@ -14,9 +14,9 @@ export function zodValidate({ body, params, query }: ZodValidateOptions) {
       if (params) req.params = params.parse(req.params ?? {});
       if (query) req.query = query.parse(req.query ?? {});
       return next();
-    } catch (err: any) {
-      const issues = err?.issues || [];
-      const errors = issues.map((i: any) => ({
+    } catch (err) {
+      const issues = (err as { issues?: Array<{ path?: string[]; code?: string; message?: string }> }).issues || [];
+      const errors = issues.map((i) => ({
         path: i.path?.join('.') || '',
         code: i.code,
         message: i.message,

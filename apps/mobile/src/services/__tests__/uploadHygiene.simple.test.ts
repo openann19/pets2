@@ -19,6 +19,21 @@ import {
 jest.mock('expo-image-picker');
 jest.mock('expo-image-manipulator');
 jest.mock('expo-file-system');
+jest.mock('../logger', () => ({
+  logger: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+    security: jest.fn(),
+    bufferOfflineLog: jest.fn().mockResolvedValue(undefined),
+    flushOfflineLogs: jest.fn().mockResolvedValue(undefined),
+    setUserInfo: jest.fn(),
+    clearUserInfo: jest.fn(),
+    getSessionId: jest.fn().mockReturnValue('test-session'),
+    destroy: jest.fn(),
+  }
+}));
 
 const mockImagePicker = ImagePicker as any;
 const mockImageManipulator = ImageManipulator as any;
@@ -179,7 +194,7 @@ describe('UploadHygiene Service - Simplified Tests', () => {
     it('should succeed on first attempt', async () => {
       // Give the mock a shape so TS doesn't infer `never`
       type UploadFn = (...args: any[]) => Promise<string>;
-      const uploadFn: jest.MockedFunction<UploadFn> = jest.fn(() => Promise.resolve('success'));
+      const uploadFn: jest.MockedFunction<UploadFn> = jest.fn().mockResolvedValue('success');
       
       const result = await uploadWithRetry(uploadFn);
       
@@ -188,10 +203,12 @@ describe('UploadHygiene Service - Simplified Tests', () => {
     });
     
     it('should retry on failure and succeed', async () => {
-      const uploadFn = jest.fn() as jest.MockedFunction<() => Promise<string>>;
+      // Give the mock a shape so TS doesn't infer `never`
+      type UploadFn = (...args: any[]) => Promise<string>;
+      const uploadFn: jest.MockedFunction<UploadFn> = jest.fn();
       (uploadFn as jest.Mock)
-        .mockImplementationOnce(() => Promise.reject(new Error('Attempt 1 failed')))
-        .mockImplementationOnce(() => Promise.resolve('success'));
+        .mockRejectedValueOnce(new Error('Attempt 1 failed'))
+        .mockResolvedValueOnce('success');
       
       const result = await uploadWithRetry(uploadFn, 3, 100);
       

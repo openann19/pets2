@@ -1,10 +1,12 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
-import {
+import mongoose, { Schema, Model } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
+import type {
   IConversation,
   IConversationMethods,
   IConversationModel,
   IConversationMessage,
-  IConversationMessageRead
+  IConversationMessageRead,
+  IConversationDocument
 } from '../types/mongoose.d';
 
 /**
@@ -13,7 +15,17 @@ import {
 const messageSchema = new Schema<IConversationMessage>({
   sender: { type: String, ref: 'User', required: true },
   content: { type: String, required: true, maxlength: 1000 },
+  messageType: { type: String, enum: ['text', 'location', 'image', 'system'], default: 'text' },
   attachments: [{ type: String }],
+  reactions: [{
+    userId: { type: String, ref: 'User' },
+    emoji: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
+  isEdited: { type: Boolean, default: false },
+  editedAt: Date,
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: Date,
   sentAt: { type: Date, default: Date.now },
   readBy: [{
     user: { type: String, ref: 'User' },
@@ -27,7 +39,14 @@ const messageSchema = new Schema<IConversationMessage>({
 const conversationSchema = new Schema<IConversation, IConversationModel, IConversationMethods>({
   participants: [{ type: String, ref: 'User', required: true }],
   lastMessageAt: { type: Date, default: Date.now },
-  messages: { type: [messageSchema], default: [] }
+  messages: { type: [messageSchema], default: [] },
+  isArchivedBy: [{ type: String, ref: 'User' }],
+  isUserBlocked: [{ type: String, ref: 'User' }],
+  userActions: {
+    blockedBy: [{ type: String, ref: 'User' }],
+    favoritedBy: [{ type: String, ref: 'User' }],
+    archivedBy: [{ type: String, ref: 'User' }]
+  }
 }, { timestamps: true });
 
 // Indexes for performance
@@ -50,7 +69,7 @@ conversationSchema.statics.findOrCreateOneToOne = async function(userA: string, 
 /**
  * Add a message to the conversation
  */
-conversationSchema.methods.addMessage = async function(this: any, senderId: string, content: string, attachments: string[] = []): Promise<any> {
+conversationSchema.methods.addMessage = async function(this: IConversationDocument, senderId: string, content: string, attachments: string[] = []): Promise<IConversationDocument> {
   const msg = {
     sender: senderId,
     content,
@@ -68,7 +87,7 @@ conversationSchema.methods.addMessage = async function(this: any, senderId: stri
 /**
  * Mark messages as read for a user
  */
-conversationSchema.methods.markMessagesAsRead = async function(this: any, userId: string): Promise<boolean> {
+conversationSchema.methods.markMessagesAsRead = async function(this: IConversationDocument, userId: string): Promise<boolean> {
   let changed = false;
   for (const msg of this.messages) {
     const isSender = String(msg.sender) === String(userId);
@@ -81,6 +100,44 @@ conversationSchema.methods.markMessagesAsRead = async function(this: any, userId
   }
   if (changed) await this.save();
   return changed;
+};
+
+/**
+ * Toggle archive status for a user
+ */
+conversationSchema.methods.toggleArchive = async function(this: IConversationDocument, userId: string): Promise<void> {
+  const userActions = this.userActions || {};
+  const archivedBy = userActions.archivedBy || [];
+  const index = archivedBy.indexOf(userId);
+  
+  if (index > -1) {
+    archivedBy.splice(index, 1);
+  } else {
+    archivedBy.push(userId);
+  }
+  
+  if (!this.userActions) this.userActions = {};
+  this.userActions.archivedBy = archivedBy;
+  await this.save();
+};
+
+/**
+ * Toggle favorite status for a user
+ */
+conversationSchema.methods.toggleFavorite = async function(this: IConversationDocument, userId: string): Promise<void> {
+  const userActions = this.userActions || {};
+  const favoritedBy = userActions.favoritedBy || [];
+  const index = favoritedBy.indexOf(userId);
+  
+  if (index > -1) {
+    favoritedBy.splice(index, 1);
+  } else {
+    favoritedBy.push(userId);
+  }
+  
+  if (!this.userActions) this.userActions = {};
+  this.userActions.favoritedBy = favoritedBy;
+  await this.save();
 };
 
 /**
@@ -118,8 +175,8 @@ conversationSchema.statics.getMessagesPage = async function(conversationId: stri
   ]);
 
   // Ensure ascending order
-  const messages = (doc?.page || []).sort((a: any, b: any) => 
-    (a.sentAt || a._id.getTimestamp()).getTime() - (b.sentAt || b._id.getTimestamp()).getTime()
+  const messages = (doc?.page || []).sort((a: IConversationMessage, b: IConversationMessage) => 
+    (a.sentAt || a._id?.getTimestamp?.call({ _id: a._id })).getTime() - (b.sentAt || b._id?.getTimestamp?.call({ _id: b._id })).getTime()
   );
   const nextCursor = doc?.hasMore ? (doc?.nextCursor || (messages[0] && messages[0]._id)) : null;
   return { messages, nextCursor, hasMore: Boolean(doc?.hasMore) };

@@ -20,7 +20,11 @@ module.exports = function (api) {
   );
 
   return {
-    presets: [['babel-preset-expo', { jsxRuntime: 'automatic' }], ...baseConfig.presets],
+    presets: [
+      'module:metro-react-native-babel-preset',
+      ['babel-preset-expo', { jsxRuntime: 'automatic' }], 
+      ...baseConfig.presets
+    ],
     plugins: [moduleResolverPlugin, ...filteredBasePlugins, 'react-native-reanimated/plugin'],
     env: baseConfig.env,
   };

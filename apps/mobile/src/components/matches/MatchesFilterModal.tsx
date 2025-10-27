@@ -31,7 +31,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
             testID="filter-q"
             style={S.input}
             value={f.q ?? ""}
-            onChangeText={(q) => setF({ ...f, q })}
+            onChangeText={(q) => { setF({ ...f, q }); }}
             placeholder="Search by pet name"
             placeholderTextColor={Theme.colors.neutral[400]}
           />
@@ -42,7 +42,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
               <TouchableOpacity
                 key={s || "all"}
                 style={[S.pill, (f.species ?? "") === s && S.pillActive]}
-                onPress={() => setF({ ...f, species: s })}
+                onPress={() => { setF({ ...f, species: s }); }}
                 testID={`filter-species-${s || "all"}`}
               >
                 <Text style={S.pillText}>{s || "All"}</Text>
@@ -56,7 +56,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
               testID="filter-minDist"
               style={[S.input, S.inputHalf]}
               value={f.minDist?.toString() ?? ""}
-              onChangeText={(v) => setF({ ...f, minDist: v ? Number(v) : undefined })}
+              onChangeText={(v) => { setF({ ...f, minDist: v ? Number(v) : undefined }); }}
               keyboardType="numeric"
               placeholder="Min"
               placeholderTextColor={Theme.colors.neutral[400]}
@@ -65,7 +65,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
               testID="filter-maxDist"
               style={[S.input, S.inputHalf]}
               value={f.maxDist?.toString() ?? ""}
-              onChangeText={(v) => setF({ ...f, maxDist: v ? Number(v) : undefined })}
+              onChangeText={(v) => { setF({ ...f, maxDist: v ? Number(v) : undefined }); }}
               keyboardType="numeric"
               placeholder="Max"
               placeholderTextColor={Theme.colors.neutral[400]}
@@ -78,7 +78,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
               <TouchableOpacity
                 key={k}
                 style={[S.pill, (f.sort ?? "newest") === k && S.pillActive]}
-                onPress={() => setF({ ...f, sort: k })}
+                onPress={() => { setF({ ...f, sort: k }); }}
                 testID={`filter-sort-${k}`}
               >
                 <Text style={S.pillText}>{k}</Text>
@@ -91,7 +91,7 @@ export default function MatchesFilterModal({ visible, initial, onApply, onClose 
               <Text style={S.btnGhostText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => onApply(f)}
+              onPress={() => { onApply(f); }}
               style={[S.btn, S.btnPrimary]}
               testID="filter-apply"
             >

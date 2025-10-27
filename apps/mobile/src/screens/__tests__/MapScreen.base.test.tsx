@@ -34,7 +34,7 @@ jest.mock("../../components/map", () => {
       <View testID="MapFiltersModal">
         <TouchableOpacity
           accessibilityLabel="apply-filters"
-          onPress={() => {
+           testID="MapScreen.base.test-button-2" accessibilityRole="button" onPress={() => {
             onToggleActivity("walk");
             onSetFilters({ radius: 1000 });
           }}
@@ -51,7 +51,7 @@ jest.mock("../../components/map", () => {
     PinDetailsModal: ({ visible, onClose }: any) =>
       visible ? (
         <View testID="PinDetailsModal">
-          <TouchableOpacity accessibilityLabel="close-pin" onPress={onClose}>
+          <TouchableOpacity accessibilityLabel="close-pin"  testID="MapScreen.base.test-button-2" accessibilityRole="button" onPress={onClose}>
             <Text>Close Pin</Text>
           </TouchableOpacity>
         </View>

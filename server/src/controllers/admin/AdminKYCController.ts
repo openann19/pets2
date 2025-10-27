@@ -7,6 +7,7 @@ import type { Request, Response } from 'express';
 import Verification from '../../models/Verification';
 import User from '../../models/User';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 const logger = require('../../utils/logger');
 
 // Type definitions
@@ -129,14 +130,17 @@ export const getKYCStats = async (req: AdminRequest, res: Response): Promise<voi
     
     allVerifications.forEach((v: any) => {
       v.documents.forEach((doc: any) => {
+        if (!doc) return; // Skip if doc is undefined
+        
         if (!docTypeCounts[doc.type]) {
           docTypeCounts[doc.type] = { count: 0, success: 0, total: 0 };
         }
-        docTypeCounts[doc.type].count++;
-        docTypeCounts[doc.type].total++;
+        const typeStats = docTypeCounts[doc.type]!;
+        typeStats.count++;
+        typeStats.total++;
         
         if (v.status === 'approved') {
-          docTypeCounts[doc.type].success++;
+          typeStats.success++;
         }
       });
     });
@@ -153,8 +157,8 @@ export const getKYCStats = async (req: AdminRequest, res: Response): Promise<voi
       approved,
       rejected,
       expired,
-      averageProcessingTime: parseFloat(averageProcessingTime.toFixed(1)),
-      complianceRate: parseFloat(complianceRate),
+      averageProcessingTime: parseFloat(averageProcessingTime.toString()),
+      complianceRate: parseFloat(complianceRate.toString()),
       riskDistribution,
       countryDistribution,
       documentTypes
@@ -166,12 +170,12 @@ export const getKYCStats = async (req: AdminRequest, res: Response): Promise<voi
       success: true,
       data: stats
     });
-  } catch (error: any) {
-    logger.error('Failed to fetch KYC stats', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to fetch KYC stats', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       error: 'Failed to fetch KYC statistics',
-      message: error.message
+      message: getErrorMessage(error)
     });
   }
 };
@@ -292,12 +296,12 @@ export const getKYCVerifications = async (req: AdminRequest, res: Response): Pro
         pages: Math.ceil(total / limitNum)
       }
     });
-  } catch (error: any) {
-    logger.error('Failed to fetch KYC verifications', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to fetch KYC verifications', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       error: 'Failed to fetch KYC verifications',
-      message: error.message
+      message: getErrorMessage(error)
     });
   }
 };
@@ -332,7 +336,7 @@ export const reviewKYCVerification = async (req: AdminRequest, res: Response): P
       // Also update user verification status
       const user = await User.findById(verification.userId);
       if (user) {
-        user.isVerified = true;
+        // user.isVerified = true; // TODO: Add isVerified field to User schema if needed
         await user.save();
       }
     } else if (status === 'rejected') {
@@ -364,12 +368,12 @@ export const reviewKYCVerification = async (req: AdminRequest, res: Response): P
         reviewedBy: req.userId
       }
     });
-  } catch (error: any) {
-    logger.error('Failed to review KYC verification', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to review KYC verification', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       error: 'Failed to review KYC verification',
-      message: error.message
+      message: getErrorMessage(error)
     });
   }
 };
@@ -402,7 +406,9 @@ export const requestAdditionalDocuments = async (req: AdminRequest, res: Respons
     }));
 
     if (!verification.metadata) {
-      verification.metadata = {};
+      verification.metadata = {
+        submissionSource: 'web' // Default value
+      };
     }
     if (!(verification.metadata as any).requestedDocuments) {
       (verification.metadata as any).requestedDocuments = [];
@@ -432,12 +438,12 @@ export const requestAdditionalDocuments = async (req: AdminRequest, res: Respons
         message
       }
     });
-  } catch (error: any) {
-    logger.error('Failed to request additional documents', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to request additional documents', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       error: 'Failed to request additional documents',
-      message: error.message
+      message: getErrorMessage(error)
     });
   }
 };

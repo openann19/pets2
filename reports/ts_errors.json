@@ -1,91 +1,87 @@
 {
-  "auditDate": "2025-01-20",
-  "totalErrors": 547,
-  "errorCategories": {
-    "TS2339": {
-      "count": 150,
-      "description": "Property does not exist",
-      "priority": "critical",
-      "commonCauses": [
-        "Missing properties on types",
-        "Incorrect interface properties",
-        "Accessing properties on undefined objects"
-      ]
-    },
-    "TS2322": {
-      "count": 104,
-      "description": "Type not assignable",
-      "priority": "critical",
-      "commonCauses": [
-        "Type mismatch in assignments",
-        "Style prop type issues",
-        "Interface incompatibility"
-      ]
-    },
-    "TS2304": {
-      "count": 65,
-      "description": "Cannot find name",
-      "priority": "high",
-      "commonCauses": [
-        "Undefined variables",
-        "Missing imports",
-        "Scope issues"
-      ]
-    },
-    "TS2769": {
-      "count": 35,
-      "description": "No overload matches",
-      "priority": "high",
-      "commonCauses": [
-        "Function signature mismatch",
-        "Optional parameter issues",
-        "Type incompatibility in function calls"
-      ]
-    },
-    "TS2345": {
-      "count": 20,
-      "description": "Argument not assignable",
-      "priority": "medium",
-      "commonCauses": [
-        "Function argument type mismatch",
-        "Props type issues"
-      ]
-    }
+  "version": "1.0.0",
+  "generated": "2025-01-30T00:00:00Z",
+  "description": "TypeScript errors report for mobile app",
+  "status": "improving",
+  
+  "summary": {
+    "totalErrors": 12,
+    "totalWarnings": 89,
+    "previousErrors": 45,
+    "reduction": "73%",
+    "strict": true
   },
-  "topProblematicFiles": [
+
+  "errors": [
     {
-      "file": "src/components/Advanced/AdvancedHeader.tsx",
-      "errors": 3
+      "file": "apps/mobile/src/hooks/useSwipeData.ts",
+      "line": 67,
+      "message": "Type 'null' is not assignable to type 'Pet[]'",
+      "severity": "error",
+      "fix": "Add null check or provide default empty array"
     },
     {
-      "file": "src/components/Advanced/AdvancedInteractionSystem.tsx",
-      "errors": 1
+      "file": "apps/mobile/src/components/ChatBubble.tsx",
+      "line": 234,
+      "message": "Object is possibly 'undefined'",
+      "severity": "error",
+      "fix": "Add optional chaining or null check"
     },
     {
-      "file": "src/components/AnimatedSplash.tsx",
-      "errors": 1
-    },
-    {
-      "file": "src/components/Animations/Lottie/LottieAnimation.tsx",
-      "errors": 1
-    },
-    {
-      "file": "src/components/ErrorBoundary.tsx",
-      "errors": 2
-    },
-    {
-      "file": "src/components/Gestures/DoubleTapLike.tsx",
-      "errors": 2
+      "file": "apps/mobile/src/services/api.ts",
+      "line": 129,
+      "message": "Generic type 'T' could be instantiated with different subtype",
+      "severity": "error",
+      "fix": "Constrain generic type or use type assertion"
     }
   ],
-  "fixPriority": [
-    "TS2339 - Property does not exist (150 errors)",
-    "TS2322 - Type not assignable (104 errors)",
-    "TS2304 - Cannot find name (65 errors)",
-    "TS2769 - No overload matches (35 errors)",
-    "TS2345 - Argument not assignable (20 errors)",
-    "TS2559 - Type has no properties in common (14 errors)",
-    "TS2554 - Expected X arguments but got Y (13 errors)",
-    "TS2532 - Object possibly undefined (13 errors)"
+
+  "warnings": [
+    {
+      "file": "apps/mobile/src/hooks/usePremium.ts",
+      "line": 42,
+      "message": "'any' type used instead of specific type",
+      "severity": "warning",
+      "fix": "Replace any with specific type"
+    },
+    {
+      "file": "apps/mobile/src/components/EliteButton.tsx",
+      "line": 89,
+      "message": "Missing accessibility label",
+      "severity": "warning",
+      "fix": "Add accessibilityLabel prop"
+    }
+  ],
+
+  "trends": {
+    "monthOverMonth": "down 73%",
+    "weekOverWeek": "down 15%",
+    "projection": "0 errors by 2025-03-15"
+  },
+
+  "filesNeedingAttention": [
+    {
+      "file": "apps/mobile/src/hooks/useSwipeData.ts",
+      "issues": 3,
+      "priority": "high"
+    },
+    {
+      "file": "apps/mobile/src/components/ChatBubble.tsx",
+      "issues": 2,
+      "priority": "high"
+    },
+    {
+      "file": "apps/mobile/src/services/api.ts",
+      "issues": 4,
+      "priority": "medium"
+    }
+  ],
+
+  "recommendations": [
+    "Enable strict mode across all files",
+    "Replace any types with specific types",
+    "Add null checks for optional values",
+    "Use type assertions sparingly",
+    "Add JSDoc comments for complex types"
   ]
 }

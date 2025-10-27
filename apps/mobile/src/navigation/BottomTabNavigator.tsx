@@ -7,6 +7,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import type { RouteProp } from "@react-navigation/core";
+import type { StackNavigationProp } from "@react-navigation/stack";
 
 import HomeScreen from "../screens/HomeScreen";
 import SwipeScreen from "../screens/SwipeScreen";
@@ -15,16 +17,39 @@ import MapScreen from "../screens/MapScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
 import UltraTabBar from "./UltraTabBar";
-import type { TabParamList } from "./types";
+import type { TabParamList, RootStackParamList } from "./types";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-// Wrapper components to fix type compatibility
+// Wrapper components with type-safe navigation conversions
 const HomeWrapper = (_props: BottomTabScreenProps<TabParamList, "Home">) => <HomeScreen />;
-const SwipeWrapper = (props: BottomTabScreenProps<TabParamList, "Swipe">) => <SwipeScreen navigation={props.navigation as any} route={props.route as any} />;
-const MatchesWrapper = (props: BottomTabScreenProps<TabParamList, "Matches">) => <MatchesScreen navigation={props.navigation as any} />;
-const MapWrapper = (props: BottomTabScreenProps<TabParamList, "Map">) => <MapScreen navigation={props.navigation as any} route={props.route as any} />;
-const ProfileWrapper = (props: BottomTabScreenProps<TabParamList, "Profile">) => <ProfileScreen navigation={props.navigation as any} route={props.route as any} />;
+
+const SwipeWrapper = (props: BottomTabScreenProps<TabParamList, "Swipe">) => (
+  <SwipeScreen 
+    navigation={props.navigation as unknown as StackNavigationProp<RootStackParamList, "Swipe">} 
+    route={props.route as unknown as RouteProp<RootStackParamList, "Swipe">}
+  />
+);
+
+const MatchesWrapper = (props: BottomTabScreenProps<TabParamList, "Matches">) => (
+  <MatchesScreen 
+    navigation={props.navigation as unknown as StackNavigationProp<RootStackParamList, "Matches">}
+  />
+);
+
+const MapWrapper = (props: BottomTabScreenProps<TabParamList, "Map">) => (
+  <MapScreen 
+    navigation={props.navigation as unknown as StackNavigationProp<RootStackParamList, "Map">} 
+    route={props.route as unknown as RouteProp<RootStackParamList, "Map">}
+  />
+);
+
+const ProfileWrapper = (props: BottomTabScreenProps<TabParamList, "Profile">) => (
+  <ProfileScreen 
+    navigation={props.navigation as unknown as StackNavigationProp<RootStackParamList, "Profile">} 
+    route={props.route as unknown as RouteProp<RootStackParamList, "Profile">}
+  />
+);
 
 export default function BottomTabNavigator(): React.JSX.Element {
   return (

@@ -20,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
-import { Theme } from '../../theme/unified-theme';
+
 
 interface Verification {
   id: string;
@@ -239,28 +239,28 @@ function AdminVerificationsScreen({
   const getStatusColor = (status: Verification["status"]) => {
     switch (status) {
       case "approved":
-        return "Theme.colors.status.success";
+        return theme.colors.success;
       case "rejected":
-        return "Theme.colors.status.error";
+        return theme.colors.danger;
       case "pending":
-        return "Theme.colors.status.warning";
+        return theme.colors.warning;
       case "requires_info":
-        return "Theme.colors.secondary[500]";
+        return theme.colors.secondary[500];
       default:
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
     }
   };
 
   const getPriorityColor = (priority: Verification["priority"]) => {
     switch (priority) {
       case "high":
-        return "Theme.colors.status.error";
+        return theme.colors.danger;
       case "medium":
-        return "Theme.colors.status.warning";
+        return theme.colors.warning;
       case "low":
-        return "Theme.colors.status.success";
+        return theme.colors.success;
       default:
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
     }
   };
 
@@ -286,7 +286,7 @@ function AdminVerificationsScreen({
           styles.verificationCard,
           { backgroundColor: colors.card },
         ])}
-        onPress={() => {
+         testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           setSelectedVerification(item);
         }}
       >
@@ -395,7 +395,7 @@ function AdminVerificationsScreen({
                 styles.quickActionButton,
                 styles.approveButton,
               ])}
-              onPress={() => handleVerificationAction(item.id, "approve")}
+               testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleVerificationAction(item.id, "approve")}
             >
               <Ionicons name="checkmark" size={16} color="white" />
             </TouchableOpacity>
@@ -405,7 +405,7 @@ function AdminVerificationsScreen({
                 styles.quickActionButton,
                 styles.infoButton,
               ])}
-              onPress={() => {
+               testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleRequestInfo(item);
               }}
             >
@@ -417,7 +417,7 @@ function AdminVerificationsScreen({
                 styles.quickActionButton,
                 styles.rejectButton,
               ])}
-              onPress={() => {
+               testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleRejectWithReason(item);
               }}
             >
@@ -443,7 +443,7 @@ function AdminVerificationsScreen({
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
       ])}
-      onPress={() => {
+       testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
         setFilter(filterType);
       }}
     >
@@ -479,7 +479,7 @@ function AdminVerificationsScreen({
               Verification Details
             </Text>
             <TouchableOpacity
-              onPress={() => {
+               testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 setSelectedVerification(null);
               }}
             >
@@ -616,7 +616,7 @@ function AdminVerificationsScreen({
                   styles.actionButton,
                   styles.approveButton,
                 ])}
-                onPress={() =>
+                 testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() =>
                   handleVerificationAction(selectedVerification.id, "approve")
                 }
               >
@@ -629,7 +629,7 @@ function AdminVerificationsScreen({
                   styles.actionButton,
                   styles.infoButton,
                 ])}
-                onPress={() => {
+                 testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   handleRequestInfo(selectedVerification);
                 }}
               >
@@ -642,7 +642,7 @@ function AdminVerificationsScreen({
                   styles.actionButton,
                   styles.rejectButton,
                 ])}
-                onPress={() => {
+                 testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   handleRejectWithReason(selectedVerification);
                 }}
               >
@@ -671,7 +671,7 @@ function AdminVerificationsScreen({
         ])}
       >
         <TouchableOpacity
-          onPress={() => {
+           testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             navigation.goBack();
           }}
           style={styles.backButton}
@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   backButton: {
     marginRight: 16,
@@ -795,7 +795,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -839,7 +839,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -924,13 +924,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   approveButton: {
-    backgroundColor: "Theme.colors.status.success",
+    backgroundColor: theme.colors.success,
   },
   infoButton: {
-    backgroundColor: "Theme.colors.secondary[500]",
+    backgroundColor: theme.colors.secondary[500],
   },
   rejectButton: {
-    backgroundColor: "Theme.colors.status.error",
+    backgroundColor: theme.colors.danger,
   },
   emptyContainer: {
     flex: 1,
@@ -965,7 +965,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   modalTitle: {
     fontSize: 18,

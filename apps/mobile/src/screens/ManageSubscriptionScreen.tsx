@@ -176,7 +176,7 @@ const ManageSubscriptionScreen = ({
           ])}
         >
           <TouchableOpacity
-            onPress={() => {
+             testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
             }}
@@ -329,7 +329,7 @@ const ManageSubscriptionScreen = ({
                 styles.actionButton,
                 styles.cancelButton,
               ])}
-              onPress={handleCancelSubscription}
+               testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleCancelSubscription}
             >
               <Text
                 style={StyleSheet.flatten([
@@ -346,7 +346,7 @@ const ManageSubscriptionScreen = ({
                 styles.actionButton,
                 { backgroundColor: colors.primary },
               ])}
-              onPress={() => navigation.navigate("Premium")}
+               testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("Premium")}
             >
               <Text style={styles.actionButtonText}>Upgrade to Premium</Text>
             </TouchableOpacity>
@@ -357,7 +357,7 @@ const ManageSubscriptionScreen = ({
               styles.actionButton,
               styles.restoreButton,
             ])}
-            onPress={handleRestorePurchases}
+             testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleRestorePurchases}
           >
             <Text
               style={StyleSheet.flatten([
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 15,
     padding: 20,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

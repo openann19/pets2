@@ -19,18 +19,18 @@ const DEEPSEEK_BASE_URL = 'https://api.deepseek.com/v1';
 
 // Cache for AI responses (simple in-memory cache)
 interface CacheEntry {
-  data: any;
+  data: unknown;
   timestamp: number;
 }
 
 const responseCache: Map<string, CacheEntry> = new Map();
 const CACHE_TTL = 3600000; // 1 hour in milliseconds
 
-function getCacheKey(endpoint: string, data: any): string {
+function getCacheKey(endpoint: string, data: Record<string, unknown>): string {
   return `${endpoint}:${JSON.stringify(data)}`;
 }
 
-function getCachedResponse(key: string): any | null {
+function getCachedResponse(key: string): unknown | null {
   const cached = responseCache.get(key);
   if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
     return cached.data;
@@ -41,7 +41,7 @@ function getCachedResponse(key: string): any | null {
   return null;
 }
 
-function setCachedResponse(key: string, data: any): void {
+function setCachedResponse(key: string, data: unknown): void {
   responseCache.set(key, {
     data,
     timestamp: Date.now()
@@ -49,7 +49,7 @@ function setCachedResponse(key: string, data: any): void {
 }
 
 // Enhanced helper function to call AI Service
-async function callEnhancedAIService(endpoint: string, data: any, options: { useCache?: boolean; timeout?: number } = {}) {
+async function callEnhancedAIService(endpoint: string, data: Record<string, unknown>, options: { useCache?: boolean; timeout?: number } = {}) {
   const { useCache = true, timeout = 30000 } = options;
   
   if (useCache) {
@@ -77,7 +77,7 @@ async function callEnhancedAIService(endpoint: string, data: any, options: { use
     }
 
     return result;
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Enhanced AI Service error', { endpoint, error: error.message });
     
     // Fallback to direct DeepSeek if AI service is unavailable
@@ -91,7 +91,7 @@ async function callEnhancedAIService(endpoint: string, data: any, options: { use
 }
 
 // Fallback function for direct API calls
-async function callDeepSeekAPIFallback(data: any, endpoint: string) {
+async function callDeepSeekAPIFallback(data: Record<string, unknown>, endpoint: string) {
   // Only provide fallback for bio generation
   if (endpoint !== 'generate-bio') {
     throw new Error('AI service unavailable and no fallback available for this endpoint');
@@ -122,7 +122,7 @@ async function callDeepSeekAPIFallback(data: any, endpoint: string) {
     });
 
     return { bio: response.data.choices[0].message.content };
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Direct DeepSeek API error', { error: error.message });
     throw new Error('AI service temporarily unavailable');
   }
@@ -199,7 +199,7 @@ router.post('/generate-bio', authenticateToken, [
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Enhanced bio generation error', { error: error.message });
     res.status(500).json({
       success: false,
@@ -224,7 +224,7 @@ router.get('/cache/stats', authenticateToken, async (req: Request, res: Response
           Math.max(...Array.from(responseCache.values()).map(v => v.timestamp)) : null
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Cache stats error', { error: error.message });
     res.status(500).json({
       success: false,
@@ -244,7 +244,7 @@ router.post('/cache/clear', authenticateToken, async (req: Request, res: Respons
       message: `Cleared ${entriesCleared} cache entries`,
       entries_cleared: entriesCleared
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Cache clear error', { error: error.message });
     res.status(500).json({
       success: false,
@@ -268,7 +268,7 @@ router.post('/bio', authenticateToken, async (req: Request, res: Response) => {
       headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }
     });
     res.json({ bio: response.data.choices?.[0]?.message?.content?.trim() || '' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Bio generation failed', { error: error.message });
     res.json({ bio: 'A friendly and loving pet looking for a forever home!' });
   }
@@ -294,7 +294,7 @@ router.post('/analyze-photo', authenticateToken, async (req: Request, res: Respo
       headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }
     });
     res.json({ analysis: response.data.choices?.[0]?.message?.content?.trim() || '' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Photo analysis failed', { error: error.message });
     res.json({ analysis: 'Photo looks good!' });
   }
@@ -314,7 +314,7 @@ router.post('/compatibility', authenticateToken, async (req: Request, res: Respo
       headers: { Authorization: `Bearer ${DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' }
     });
     res.json({ result: response.data.choices?.[0]?.message?.content?.trim() || '' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Compatibility failed', { error: error.message });
     res.json({ result: 'Compatibility score: 75' });
   }

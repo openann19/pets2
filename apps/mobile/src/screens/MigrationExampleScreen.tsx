@@ -14,6 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 export default function MigrationExampleScreen() {
@@ -28,13 +29,13 @@ export default function MigrationExampleScreen() {
         {useNewArchitecture ? "New Architecture" : "Legacy Architecture"}
       </Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity style={styles.button}  testID="MigrationExampleScreen-button-2" accessibilityLabel="" accessibilityRole="button" onPress={() => {}}>
         <Text style={styles.buttonText}>Primary Button</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
-        onPress={() => {}}
+         testID="MigrationExampleScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {}}
       >
         <Text style={styles.buttonText}>Secondary Button</Text>
       </TouchableOpacity>
@@ -97,7 +98,7 @@ export default function MigrationExampleScreen() {
             styles.toggleButton,
             useNewArchitecture && styles.activeToggle,
           ])}
-          onPress={() => setUseNewArchitecture(true)}
+           testID="MigrationExampleScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setUseNewArchitecture(true); }}
         >
           <Text style={styles.toggleText}>New Architecture</Text>
         </TouchableOpacity>
@@ -107,7 +108,7 @@ export default function MigrationExampleScreen() {
             styles.toggleButton,
             !useNewArchitecture && styles.activeToggle,
           ])}
-          onPress={() => setUseNewArchitecture(false)}
+           testID="MigrationExampleScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setUseNewArchitecture(false); }}
         >
           <Text style={styles.toggleText}>Legacy</Text>
         </TouchableOpacity>
@@ -121,7 +122,7 @@ export default function MigrationExampleScreen() {
               styles.tab,
               selectedExample === tab && styles.activeTab,
             ])}
-            onPress={() => setSelectedExample(tab)}
+             testID="MigrationExampleScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setSelectedExample(tab); }}
           >
             <Text style={styles.tabText}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   elevatedContainer: {
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

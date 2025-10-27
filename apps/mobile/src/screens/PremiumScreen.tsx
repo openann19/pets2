@@ -12,10 +12,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme, getExtendedColors } from "../theme/Provider";
+import { useTheme } from "../theme/Provider";
 import { usePremiumScreen } from "../hooks/screens/usePremiumScreen";
 import type { NavigationProp } from "../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { PremiumTierCard } from "../components/premium/PremiumTierCard";
+import { BillingToggle } from "../components/premium/BillingToggle";
+import { useTranslation } from 'react-i18next';
 
 interface PremiumScreenProps {
   navigation: NavigationProp;
@@ -23,7 +25,8 @@ interface PremiumScreenProps {
 
 function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
   const theme = useTheme();
-  const colors = getExtendedColors(theme);
+  const { t } = useTranslation('premium');
+  const colors = theme.colors;
   const isDark = theme.scheme === 'dark';
 
   const {
@@ -55,7 +58,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
         ]}
       >
         <TouchableOpacity
-          onPress={() => {
+           testID="PremiumScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             handleGoBack();
           }}
@@ -64,128 +67,30 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
           <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.white }]}>
-          Go Premium
+          {t('go_premium')}
         </Text>
         <View style={{ width: 60 }} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Billing Period Toggle */}
-        <View style={styles.billingToggle}>
-          <TouchableOpacity
-            style={[
-              styles.billingButton,
-              billingPeriod === "monthly" && [
-                styles.billingButtonActive,
-                { backgroundColor: colors.primary },
-              ],
-            ]}
-            onPress={() => setBillingPeriod("monthly")}
-          >
-            <Text
-              style={[
-                styles.billingButtonText,
-                {
-                  color:
-                    billingPeriod === "monthly"
-                      ? "Theme.colors.neutral[0]"
-                      : colors.gray400,
-                },
-              ]}
-            >
-              Monthly
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.billingButton,
-              billingPeriod === "yearly" && [
-                styles.billingButtonActive,
-                { backgroundColor: colors.primary },
-              ],
-            ]}
-            onPress={() => setBillingPeriod("yearly")}
-          >
-            <Text
-              style={[
-                styles.billingButtonText,
-                {
-                  color:
-                    billingPeriod === "yearly" ? "Theme.colors.neutral[0]" : colors.gray400,
-                },
-              ]}
-            >
-              Yearly
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {/* Billing Toggle */}
+        <BillingToggle
+          billingPeriod={billingPeriod}
+          onToggle={setBillingPeriod}
+        />
 
         {/* Subscription Tiers */}
         <View style={styles.tiersContainer}>
           {subscriptionTiers
             .filter((tier) => tier.id !== "basic")
             .map((tier) => (
-              <TouchableOpacity
+              <PremiumTierCard
                 key={tier.id}
-                style={[
-                  styles.tierCard,
-                  {
-                    backgroundColor: colors.gray800,
-                    borderColor:
-                      selectedTier === tier.id
-                        ? colors.primary
-                        : colors.gray700,
-                  },
-                ]}
+                tier={tier}
+                billingPeriod={billingPeriod}
+                isSelected={selectedTier === tier.id}
                 onPress={() => setSelectedTier(tier.id)}
-              >
-                {tier.popular && (
-                  <View
-                    style={[
-                      styles.popularBadge,
-                      { backgroundColor: colors.primary },
-                    ]}
-                  >
-                    <Text style={styles.popularText}>Most Popular</Text>
-                  </View>
-                )}
-
-                <View style={styles.tierHeader}>
-                  <Text style={[styles.tierName, { color: colors.white }]}>
-                    {tier.name}
-                  </Text>
-                  <View style={styles.tierPricing}>
-                    <Text style={[styles.tierPrice, { color: colors.white }]}>
-                      ${tier.price[billingPeriod]}
-                    </Text>
-                    <Text
-                      style={[styles.tierDuration, { color: colors.gray400 }]}
-                    >
-                      /{billingPeriod === "monthly" ? "month" : "year"}
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.tierFeatures}>
-                  {tier.features.map((feature, index) => (
-                    <View key={index} style={styles.tierFeature}>
-                      <Ionicons
-                        name="checkmark"
-                        size={16}
-                        color={colors.success}
-                      />
-                      <Text
-                        style={[
-                          styles.tierFeatureText,
-                          { color: colors.gray300 },
-                        ]}
-                      >
-                        {feature}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              </TouchableOpacity>
+              />
             ))}
         </View>
 
@@ -196,16 +101,16 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
             { backgroundColor: colors.primary },
             isLoading && { opacity: 0.7 },
           ]}
-          onPress={() => handleSubscribe(selectedTier)}
+           testID="PremiumScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleSubscribe(selectedTier)}
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
+            <ActivityIndicator color={theme.colors.neutral[0}]} } size="small" />
           ) : (
             <>
-              <Text style={styles.subscribeButtonText}>Subscribe Now</Text>
-              <Ionicons name="arrow-forward" size={20} color="Theme.colors.neutral[0]" />
-            </>
+              <Text style={styles.subscribeButtonText}>{t('premium_subscribe')}</Text>
+              <Ionicons name="arrow-forward" size={20} color={theme.colors.neutral[0]}} />
+            }<}/>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -241,7 +146,7 @@ const styles = StyleSheet.create({
   },
   billingToggle: {
     flexDirection: "row",
-    backgroundColor: "Theme.colors.neutral[800]",
+    backgroundColor: theme.colors.neutral[800],
     borderRadius: 12,
     padding: 4,
     marginBottom: 30,
@@ -253,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   billingButtonActive: {
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -282,7 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   popularText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 12,
     fontWeight: "600",
   },
@@ -328,7 +233,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   subscribeButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 18,
     fontWeight: "bold",
   },

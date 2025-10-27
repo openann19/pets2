@@ -188,7 +188,7 @@ export default function VoiceRecorderUltraNative({
       form.append("file", {
         uri: previewUri,
         name: "voice-note.m4a",
-        type: Platform.select({ ios: "audio/m4a", android: "audio/m4a", default: "audio/m4a" })!,
+        type: Platform.select({ ios: "audio/m4a", android: "audio/m4a", default: "audio/m4a" }),
       } as any);
       await sendVoiceNote(matchId, form);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -220,7 +220,7 @@ export default function VoiceRecorderUltraNative({
             disabled={disabled}
             style={styles.recBtn}
           >
-            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={Theme.colors.neutral[0]} />
+            <Ionicons name={isRecording ? "stop" : "mic"} size={22} color={Theme.colors.neutral[0}]}} />
           </TouchableOpacity>
 
           <Text
@@ -241,7 +241,7 @@ export default function VoiceRecorderUltraNative({
 
           {isRecording && (
             <TouchableOpacity onPress={toggleLock} style={styles.lockBtn}>
-              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={Theme.colors.neutral[0]} />
+              <Ionicons name={isLocked ? "lock-closed" : "lock-open"} size={18} color={Theme.colors.neutral[0}]}} />
             </TouchableOpacity>
           )}
         </View>
@@ -255,7 +255,7 @@ export default function VoiceRecorderUltraNative({
               isPlaying={isPlaying}
               progress={progress}
               duration={Math.max(1, Math.round(durationMs / 1000))}
-              color={Theme.colors.primary[500]}
+              color={Theme.colors.primary[500}]}
               height={36}
             />
             <Text style={styles.dur}>{fmt(durationMs)}</Text>
@@ -263,11 +263,11 @@ export default function VoiceRecorderUltraNative({
 
           <View style={styles.actions}>
             <TouchableOpacity onPress={playPause} style={styles.actionBtn}>
-              <Ionicons name={isPlaying ? "pause" : "play"} size={18} color={Theme.colors.neutral[0]} />
+              <Ionicons name={isPlaying ? "pause" : "play"} size={18} color={Theme.colors.neutral[0}]}} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleCancel} style={styles.actionBtn}>
-              <Ionicons name="trash" size={18} color={Theme.colors.status.error} />
+              <Ionicons name="trash" size={18} color={Theme.colors.status.erro}r}} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={send} disabled={isSending} style={styles.sendBtn}>

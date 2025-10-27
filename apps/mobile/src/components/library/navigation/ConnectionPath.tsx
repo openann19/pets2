@@ -68,7 +68,7 @@ export const ConnectionPath: React.FC<ConnectionPathProps> = ({
               transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
             },
           ])}
-          onPress={() => onDotPress(index)}
+          onPress={() => { onDotPress(index); }}
         />
       ))}
     </View>

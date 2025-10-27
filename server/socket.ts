@@ -5,7 +5,7 @@
 
 import { Server, Socket } from 'socket.io';
 import type { Server as HTTPServer } from 'http';
-import { logger } from './src/utils/logger.js';
+import logger from './src/utils/logger.js';
 
 interface SocketUser {
   id: string;

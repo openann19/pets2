@@ -149,7 +149,7 @@ function NotificationPreferencesScreen({
         <View key={category} style={styles.categorySection}>
           <TouchableOpacity
             style={styles.categoryHeader}
-            onPress={() => {
+             testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               toggleCategory(category);
             }}
           >
@@ -159,8 +159,8 @@ function NotificationPreferencesScreen({
               onValueChange={() => {
                 toggleCategory(category);
               }}
-              trackColor={{ false: "#767577", true: "Theme.colors.status.info" }}
-              thumbColor={categoryEnabled ? "Theme.colors.neutral[0]" : "#f4f3f4"}
+              trackColor={{ false: "#767577", true: theme.colors.status.info }}
+              thumbColor={categoryEnabled ? theme.colors.neutral[0] : "#f4f3f4"}
             />
           </TouchableOpacity>
 
@@ -182,8 +182,8 @@ function NotificationPreferencesScreen({
                   onValueChange={() => {
                     toggleSetting(setting.id);
                   }}
-                  trackColor={{ false: "#767577", true: "Theme.colors.status.info" }}
-                  thumbColor={setting.enabled ? "Theme.colors.neutral[0]" : "#f4f3f4"}
+                  trackColor={{ false: "#767577", true: theme.colors.status.info }}
+                  thumbColor={setting.enabled ? theme.colors.neutral[0] : "#f4f3f4"}
                 />
               </View>
             </BlurView>
@@ -206,7 +206,7 @@ function NotificationPreferencesScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                 () => {},
               );
@@ -218,7 +218,7 @@ function NotificationPreferencesScreen({
             </BlurView>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Notifications</Text>
-          <TouchableOpacity style={styles.saveButton} onPress={saveSettings}>
+          <TouchableOpacity style={styles.saveButton}  testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={saveSettings}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
         </View>
@@ -229,8 +229,8 @@ function NotificationPreferencesScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color="Theme.colors.status.info"
-            />
+              color={theme.colors.status.info
+           } }/>
             <Text style={styles.infoText}>
               Choose which notifications you'd like to receive. You can always
               change these settings later.
@@ -261,8 +261,8 @@ function NotificationPreferencesScreen({
                     "Push notification settings would be managed by device settings.",
                   );
                 }}
-                trackColor={{ false: "#767577", true: "Theme.colors.status.success" }}
-                thumbColor={"Theme.colors.neutral[0]"}
+                trackColor={{ false: "#767577", true: theme.colors.success }}
+                thumbColor={theme.colors.neutral[0]}
               />
             </View>
 
@@ -281,7 +281,7 @@ function NotificationPreferencesScreen({
                     "Quiet hours feature coming soon!",
                   );
                 }}
-                trackColor={{ false: "#767577", true: "Theme.colors.secondary[500]" }}
+                trackColor={{ false: "#767577", true: theme.colors.secondary[500] }}
                 thumbColor={"#f4f3f4"}
               />
             </View>
@@ -290,7 +290,7 @@ function NotificationPreferencesScreen({
           {/* Test Notification */}
           <TouchableOpacity
             style={styles.testButton}
-            onPress={() => {
+             testID="NotificationPreferencesScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.selectionAsync().catch(() => {});
               Alert.alert(
                 "Test Notification",

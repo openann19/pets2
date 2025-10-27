@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -12,7 +12,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useTheme } from "../theme/Provider";
-import { Theme } from '../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -41,11 +40,11 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
 }) => {
   const { colors } = useTheme();
 
-  // Animation values
-  const pawRotation = useRef(new Animated.Value(0)).current;
-  const pawScale = useRef(new Animated.Value(1)).current;
-  const pawOpacity = useRef(new Animated.Value(0.7)).current;
-  const scratchOffset = useRef(new Animated.Value(0)).current;
+  // Animation values (useState pattern to avoid refs during render)
+  const [pawRotation] = useState(() => new Animated.Value(0));
+  const [pawScale] = useState(() => new Animated.Value(1));
+  const [pawOpacity] = useState(() => new Animated.Value(0.7));
+  const [scratchOffset] = useState(() => new Animated.Value(0));
 
   // Start paw animation when refreshing
   useEffect(() => {
@@ -248,7 +247,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 20,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

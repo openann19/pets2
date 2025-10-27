@@ -1,12 +1,14 @@
 import { Ionicons, type IconProps } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useMemo, type ComponentProps } from "react";
+import React, { useMemo } from "react";
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { getAccessibilityProps } from '../utils/accessibilityUtils';
 
 import {
   AdvancedHeader,
@@ -20,11 +22,13 @@ import type { RootStackScreenProps } from "../navigation/types";
 import {
   ProfileSummarySection,
   NotificationSettingsSection,
+  LanguageSection,
   AccountSettingsSection,
   DangerZoneSection,
 } from "./settings";
-
-import { Theme } from '../theme/unified-theme';
+import { SettingSection } from "../components/settings/SettingSection";
+import { useTheme } from "../theme/Provider";
+import { useTranslation } from 'react-i18next';
 
 type SettingsScreenProps = RootStackScreenProps<"Settings">;
 
@@ -39,6 +43,10 @@ interface SettingItem {
 }
 
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
+  const reducedMotion = useReducedMotion();
+  const theme = useTheme();
+  const { t } = useTranslation('common');
+  
   const {
     notifications,
     preferences,
@@ -49,6 +57,101 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     handleDeleteAccount,
     handleExportData,
   } = useSettingsScreen();
+
+  const styles = useMemo(() => StyleSheet.create({
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingBottom: 40,
+    },
+    section: {
+      marginTop: 24,
+      paddingHorizontal: 20,
+    },
+    sectionTitle: {
+      fontSize: 14,
+      fontWeight: "bold",
+      color: theme.colors.textMuted,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+      marginBottom: 12,
+    },
+    sectionContent: {
+      backgroundColor: theme.colors.bgElevated,
+      borderRadius: 12,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    settingItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    settingItemDestructive: {
+      borderBottomColor: "#FEF2F2",
+    },
+    settingLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    settingIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 8,
+      backgroundColor: theme.colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 12,
+    },
+    settingIconDestructive: {
+      backgroundColor: "#FEF2F2",
+    },
+    settingText: {
+      flex: 1,
+    },
+    settingTitle: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: theme.colors.text,
+      marginBottom: 2,
+    },
+    settingTitleDestructive: {
+      color: theme.colors.danger,
+    },
+    settingSubtitle: {
+      fontSize: 13,
+      color: theme.colors.textMuted,
+    },
+    settingSubtitleDestructive: {
+      color: "#FCA5A5",
+    },
+    settingRight: {
+      marginLeft: 12,
+    },
+    versionSection: {
+      alignItems: "center",
+      paddingVertical: 40,
+      paddingHorizontal: 20,
+    },
+    versionText: {
+      fontSize: 14,
+      color: theme.colors.textMuted,
+      fontWeight: "500",
+    },
+    versionSubtitle: {
+      fontSize: 12,
+      color: theme.colors.textMuted,
+      marginTop: 4,
+    },
+  }), [theme]);
 
   const notificationSettings: SettingItem[] = [
     {
@@ -122,6 +225,13 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   ];
 
   const supportSettings: SettingItem[] = [
+    {
+      id: "ui-demo",
+      title: "UI Showcase",
+      subtitle: "View all UI components and variants",
+      icon: "layers",
+      type: "navigation",
+    },
     {
       id: "help",
       title: "Help & Support",
@@ -198,7 +308,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       }
     } catch (error) {
       logger.error("Failed to update settings:", { error });
-      Alert.alert("Error", "Failed to update settings. Please try again.");
+      Alert.alert(t('settings.error'), t('settings.failed_update'));
     }
   };
 
@@ -207,6 +317,9 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     switch (id) {
       case "profile":
         navigation.navigate("Profile");
+        break;
+      case "ui-demo":
+        navigation.navigate("UIDemo");
         break;
       case "privacy":
       case "subscription":
@@ -255,6 +368,10 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         styles.settingItem,
         item.destructive && styles.settingItemDestructive,
       ])}
+      testID={`setting-item-${item.id}`}
+      accessibilityLabel={`${item.title}${item.subtitle ? `: ${item.subtitle}` : ''}`}
+      accessibilityRole={item.type === "toggle" ? "text" : "button"}
+      disabled={item.type === "toggle"}
       onPress={() => {
         if (item.type === "navigation") {
           handleNavigation(item.id);
@@ -262,7 +379,6 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           handleAction(item.id);
         }
       }}
-      disabled={item.type === "toggle"}
     >
       <View style={styles.settingLeft}>
         <View
@@ -272,9 +388,9 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           ])}
         >
           <Ionicons
-            name={item.icon as ComponentProps<typeof Ionicons>["name"]}
+            name={item.icon}
             size={20}
-            color={item.destructive ? Theme.colors.status.error : Theme.colors.neutral[500]}
+            color={item.destructive ? theme.colors.danger : theme.colors.textMuted}
           />
         </View>
         <View style={styles.settingText}>
@@ -306,12 +422,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
             onValueChange={(value) =>
               category && handleToggle(category, item.id, value)
             }
-            trackColor={{ false: Theme.colors.neutral[300], true: Theme.colors.secondary[500] }}
-            thumbColor={item.value ? Theme.colors.neutral[0] : Theme.colors.neutral[100]}
+            trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+            thumbColor={item.value ? "#fff" : "#f1f1f1"}
           />
         )}
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400]} />
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.textMuted} />
         )}
       </View>
     </TouchableOpacity>
@@ -335,7 +451,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       header={
         <AdvancedHeader
           {...HeaderConfigs.glass({
-            title: "Settings",
+            title: t('settings.title'),
             rightButtons: [
               {
                 type: "search",
@@ -362,41 +478,54 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Summary */}
-        <Animated.View entering={FadeInDown.duration(220)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(220)}>
           <ProfileSummarySection
-            onEditProfile={() => handleNavigation("profile")}
+            onEditProfile={() => { handleNavigation("profile"); }}
           />
         </Animated.View>
 
         {/* Settings Sections */}
-        <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(240).delay(50)}>
           <NotificationSettingsSection
             settings={notificationSettings}
             onToggle={(id, value) => handleToggle("notifications", id, value)}
           />
         </Animated.View>
         
-        <Animated.View entering={FadeInDown.duration(260).delay(100)}>
-          {renderSection("Preferences", preferenceSettings, "preferences")}
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(260).delay(100)}>
+          <SettingSection
+            title="Preferences"
+            items={preferenceSettings}
+            category="preferences"
+            onToggle={(id, value) => handleToggle("preferences", id, value)}
+          />
         </Animated.View>
         
-        <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(280).delay(150)}>
+          <LanguageSection />
+        </Animated.View>
+        
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(290).delay(175)}>
           <AccountSettingsSection
             settings={accountSettings}
             onNavigate={handleNavigation}
           />
         </Animated.View>
         
-        <Animated.View entering={FadeInDown.duration(300).delay(200)}>
-          {renderSection("Support", supportSettings)}
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(310).delay(225)}>
+          <SettingSection
+            title="Support"
+            items={supportSettings}
+            onItemPress={handleNavigation}
+          />
         </Animated.View>
         
-        <Animated.View entering={FadeInDown.duration(320).delay(250)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(320).delay(250)}>
           <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
         </Animated.View>
 
         {/* App Version */}
-        <Animated.View entering={FadeInDown.duration(340).delay(300)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(340).delay(300)}>
           <View style={styles.versionSection}>
             <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
             <Text style={styles.versionSubtitle}>
@@ -408,191 +537,3 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     </ScreenShell>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "Theme.colors.background.secondary",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: "Theme.colors.neutral[0]",
-    borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[900]",
-  },
-  placeholder: {
-    width: 40,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  profileSection: {
-    padding: 20,
-    paddingBottom: 0,
-  },
-  profileCard: {
-    backgroundColor: "Theme.colors.neutral[0]",
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  profileAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "Theme.colors.neutral[100]",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[900]",
-    marginBottom: 2,
-  },
-  profileEmail: {
-    fontSize: 14,
-    color: "Theme.colors.neutral[500]",
-    marginBottom: 4,
-  },
-  profileStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "Theme.colors.status.success",
-    marginRight: 6,
-  },
-  statusText: {
-    fontSize: 12,
-    color: "Theme.colors.neutral[500]",
-    fontWeight: "500",
-  },
-  editProfileButton: {
-    padding: 8,
-  },
-  section: {
-    marginTop: 24,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[500]",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  sectionContent: {
-    backgroundColor: "Theme.colors.neutral[0]",
-    borderRadius: 12,
-    shadowColor: "Theme.colors.neutral[950]",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[100]",
-  },
-  settingItemDestructive: {
-    borderBottomColor: "#FEF2F2",
-  },
-  settingLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: "Theme.colors.neutral[100]",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  settingIconDestructive: {
-    backgroundColor: "#FEF2F2",
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "Theme.colors.neutral[900]",
-    marginBottom: 2,
-  },
-  settingTitleDestructive: {
-    color: "Theme.colors.status.error",
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    color: "Theme.colors.neutral[500]",
-  },
-  settingSubtitleDestructive: {
-    color: "#FCA5A5",
-  },
-  settingRight: {
-    marginLeft: 12,
-  },
-  versionSection: {
-    alignItems: "center",
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-  },
-  versionText: {
-    fontSize: 14,
-    color: "Theme.colors.neutral[500]",
-    fontWeight: "500",
-  },
-  versionSubtitle: {
-    fontSize: 12,
-    color: "Theme.colors.neutral[400]",
-    marginTop: 4,
-  },
-  profileCardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-});

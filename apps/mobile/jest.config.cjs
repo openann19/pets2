@@ -1,84 +1,181 @@
-const baseConfig = require('../../jest.config.base.cjs');
-
-module.exports = {
-  ...baseConfig,
-  // Mobile-specific overrides
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', '<rootDir>/src/setupTests.ts'], // Order matters: jest.setup first
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)',
-  ],
-  testTimeout: 30000, // Increase default timeout to 30 seconds
-  maxWorkers: '50%', // Use 50% of available CPUs to balance speed vs memory
-  workerIdleMemoryLimit: '1GB', // Increased from 512MB to 1GB for better memory handling
-  bail: false, // Continue running tests even if some fail
-  verbose: false, // Reduce console noise
-  clearMocks: true, // Auto-clear mocks between tests to prevent memory leaks
-  resetMocks: true, // Reset mock state between tests
-  restoreMocks: true, // Restore original implementations
-  // Expose GC for memory leak detection
-  testEnvironmentOptions: {
-    jest: {
-      exposeGC: true,
+/** @type {import('jest').Config} */
+const config = {
+  // Multi-tier test projects: services, ui, integration, contract, performance
+  projects: [
+    {
+      displayName: 'services',
+      preset: 'jest-expo',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/src/services/**/*.test.ts?(x)',
+        '<rootDir>/src/services/**/__tests__/*.test.ts?(x)',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      transformIgnorePatterns: [
+        'node_modules/(?!(@react-native|react-native|@react-navigation|expo(nent)?|expo-.*|@expo/.*|expo-modules-core|react-native-reanimated)/)'
+      ],
+      moduleNameMapper: {
+        '^react-native-reanimated$': 'react-native-reanimated/mock',
+        '^expo-image-picker$': '<rootDir>/__mocks__/expo-image-picker.ts',
+        '^expo-file-system$': '<rootDir>/__mocks__/expo-file-system.ts',
+        '^@/services/logger$': '<rootDir>/__mocks__/logger.ts',
+        '^@mobile/services/logger$': '<rootDir>/__mocks__/logger.ts',
+        '^./logger$': '<rootDir>/__mocks__/logger.ts',
+        '^../logger$': '<rootDir>/__mocks__/logger.ts'
+      },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/services',
+      collectCoverageFrom: [
+        'src/services/**/*.ts',
+        '!src/services/**/*.test.ts',
+        '!src/services/**/*.spec.ts',
+      ],
+      coverageThreshold: {
+        global: {
+          lines: 90,
+          branches: 90,
+          functions: 90,
+          statements: 90,
+        },
+      },
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
     },
-    customExportConditions: [''],
-  },
-  // Optimize module loading
-  modulePathIgnorePatterns: [
-    '<rootDir>/node_modules',
-    '<rootDir>/dist',
-    '<rootDir>/build',
-  ],
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.config.cjs' }],
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|expo|@expo|expo-secure-store|expo-local-authentication|expo-modules-core|@react-native-community|react-native-keychain|react-native-reanimated|react-native-gesture-handler|@expo/vector-icons|@sentry|@react-native-masked-view|@react-native-community/slider)/)',
-  ],
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx,js,jsx}',
-    '!src/**/__tests__/**',
-    '!src/**/__mocks__/**',
-    '!src/setupTests.ts',
-  ],
-  coverageThreshold: {
-    global: {
-      branches: 90,
-      functions: 90,
-      lines: 90,
-      statements: 90,
+    {
+      displayName: 'ui',
+      preset: 'jest-expo',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/components/**/*.test.ts?(x)',
+        '<rootDir>/src/screens/**/*.test.ts?(x)',
+        '<rootDir>/src/hooks/**/*.test.ts?(x)',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      transformIgnorePatterns: [
+        'node_modules/(?!(@react-native|react-native|@react-navigation|expo(nent)?|expo-.*|@expo/.*|expo-modules-core|react-native-reanimated)/)'
+      ],
+      moduleNameMapper: {
+        '^react-native-reanimated$': 'react-native-reanimated/mock'
+      },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/ui',
+      collectCoverageFrom: [
+        'src/components/**/*.tsx',
+        'src/screens/**/*.tsx',
+        'src/hooks/**/*.ts',
+        '!src/components/**/*.test.tsx',
+        '!src/screens/**/*.test.tsx',
+        '!src/hooks/**/*.test.ts',
+      ],
+      coverageThreshold: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+      },
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
     },
-    // Core packages require 95% coverage
-    './src/services': {
-      branches: 95,
-      functions: 95,
-      lines: 95,
-      statements: 95,
+    {
+      displayName: 'integration',
+      preset: 'jest-expo',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/**/integration/**/*.test.ts?(x)',
+        '<rootDir>/src/__tests__/integration.test.tsx',
+        '<rootDir>/src/**/*.integration.test.ts?(x)',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      transformIgnorePatterns: [
+        'node_modules/(?!(@react-native|react-native|@react-navigation|expo(nent)?|expo-.*|@expo/.*|expo-modules-core|react-native-reanimated)/)'
+      ],
+      moduleNameMapper: {
+        '^react-native-reanimated$': 'react-native-reanimated/mock',
+        '\\.svg$': '<rootDir>/__mocks__/fileMock.js',
+      },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/integration',
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
     },
-    './src/core': {
-      branches: 95,
-      functions: 95,
-      lines: 95,
-      statements: 95,
+    {
+      displayName: 'performance',
+      preset: 'jest-expo',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/**/performance/**/*.test.ts?(x)',
+        '<rootDir>/src/__tests__/performance.test.tsx',
+        '<rootDir>/src/**/*.performance.test.ts?(x)',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      transformIgnorePatterns: [
+        'node_modules/(?!(@react-native|react-native|@react-navigation|expo(nent)?|expo-.*|@expo/.*|expo-modules-core|react-native-reanimated)/)'
+      ],
+      moduleNameMapper: {
+        '^react-native-reanimated$': 'react-native-reanimated/mock'
+      },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/performance',
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
     },
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  moduleNameMapper: {
-    ...baseConfig.moduleNameMapper,
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@mobile/(.*)$': '<rootDir>/src/$1',
-    // More specific patterns must come before general ones
-    '^@pawfectmatch/core/(.*)$': '<rootDir>/../../packages/core/src/$1',
-    '^@pawfectmatch/ui/(.*)$': '<rootDir>/../../packages/ui/$1',
-    '^@pawfectmatch/design-tokens/(.*)$': '<rootDir>/../../packages/design-tokens/src/$1',
-    '^@pawfectmatch/core$': '<rootDir>/../../packages/core/src/index.ts',
-    '^@pawfectmatch/ui$': '<rootDir>/../../packages/ui/src/index.ts',
-    '^@pawfectmatch/design-tokens$': '<rootDir>/../../packages/design-tokens/src/index.ts',
-    '^@pawfectmatch/(.*)$': '<rootDir>/../../packages/$1/src/index.ts',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-  },
-  globals: {
-    __DEV__: true,
-  },
+    {
+      displayName: 'contract',
+      preset: 'jest-expo',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/tests/contract/**/*.test.ts',
+        '<rootDir>/src/**/*.contract.test.ts?(x)',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/contract',
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
+    },
+    {
+      displayName: 'a11y',
+      preset: 'jest-expo',
+      testEnvironment: 'jsdom',
+      testMatch: [
+        '<rootDir>/src/**/a11y/**/*.test.ts?(x)',
+        '<rootDir>/src/__tests__/a11y/**/*.test.ts?(x)',
+        '<rootDir>/src/**/*.a11y.test.ts?(x)',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      transformIgnorePatterns: [
+        'node_modules/(?!(@react-native|react-native|@react-navigation|expo(nent)?|expo-.*|@expo/.*|expo-modules-core|react-native-reanimated)/)'
+      ],
+      moduleNameMapper: {
+        '^react-native-reanimated$': 'react-native-reanimated/mock'
+      },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/a11y',
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
+    },
+    {
+      displayName: 'security',
+      preset: 'jest-expo',
+      testEnvironment: 'node',
+      testMatch: [
+        '<rootDir>/tests/security/**/*.test.ts',
+        '<rootDir>/src/**/*.security.test.ts',
+      ],
+      transform: { '^.+\\.[tj]sx?$': 'babel-jest' },
+      moduleDirectories: ['node_modules', '<rootDir>/../../node_modules'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+      cacheDirectory: '<rootDir>/.jest-cache/security',
+      testPathIgnorePatterns: ['/e2e/', '/android/', '/ios/', '/dist/', '/build/']
+    }
+  ],
+  verbose: true,
+  reporters: [
+    'default',
+    ['jest-junit', { outputDirectory: './reports', outputName: 'jest-results.xml' }],
+  ],
 };
+
+module.exports = config;

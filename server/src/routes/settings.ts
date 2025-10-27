@@ -51,7 +51,7 @@ r.patch("/settings/me", authenticateToken, async (req: Request, res: Response) =
     
     const { notifications, preferences, settings } = req.body;
     
-    const update: any = { updatedAt: new Date() };
+    const update: Record<string, unknown> = { updatedAt: new Date() };
     
     if (notifications) {
       update['preferences.notifications'] = notifications;

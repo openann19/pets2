@@ -151,6 +151,6 @@ function canvasToBlob(
   type = "image/png",
   quality?: number
 ): Promise<Blob> {
-  return new Promise<Blob>((r) => c.toBlob((b) => r(b!), type, quality));
+  return new Promise<Blob>((r) => { c.toBlob((b) => { r(b!); }, type, quality); });
 }
 

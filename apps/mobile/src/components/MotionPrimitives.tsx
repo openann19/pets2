@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import type { ViewStyle } from "react-native";
 import { StyleSheet, View, AccessibilityInfo } from "react-native";
 import Animated, { FadeInUp, SlideInLeft, SlideInRight, useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 
 const usePrefersReducedMotion = () => {
-  const reduced = useRef(false);
+  const [reduced, setReduced] = useState(false);
   useEffect(() => {
-    AccessibilityInfo.isReduceMotionEnabled().then(v => { reduced.current = !!v; });
+    AccessibilityInfo.isReduceMotionEnabled().then(v => { setReduced(!!v); });
   }, []);
   return reduced;
 };
@@ -24,8 +24,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
   style,
   containerStyle,
 }) => {
-  const reduceMotionRef = useRef(false);
-  useEffect(() => { AccessibilityInfo.isReduceMotionEnabled().then(v => { reduceMotionRef.current = !!v; }); }, []);
+  const reduceMotion = usePrefersReducedMotion();
 
   return (
     <View style={StyleSheet.flatten([containerStyle])}>
@@ -33,7 +32,7 @@ export const StaggeredFadeInUpList: React.FC<StaggeredFadeInUpListProps> = ({
         return (
           <Animated.View
             key={index}
-            entering={reduceMotionRef.current ? undefined : FadeInUp.delay(index * delay).springify().damping(25).stiffness(300)}
+            entering={reduceMotion ? undefined : FadeInUp.delay(index * delay).springify().damping(25).stiffness(300)}
             style={style}
           >
             {child}
@@ -58,8 +57,7 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
   trigger = true,
 }) => {
   const s = useSharedValue(0.3);
-  const reduceMotionRef = useRef(false);
-  useEffect(() => { AccessibilityInfo.isReduceMotionEnabled().then(v => { reduceMotionRef.current = !!v; }); }, []);
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (trigger) {
@@ -68,8 +66,8 @@ export const PhysicsBasedScaleIn: React.FC<PhysicsBasedScaleInProps> = ({
   }, [trigger]);
 
   const styleA = useAnimatedStyle(() => ({
-    opacity: reduceMotionRef.current ? 1 : s.value,
-    transform: [{ scale: reduceMotionRef.current ? 1 : s.value }],
+    opacity: reduceMotion ? 1 : s.value,
+    transform: [{ scale: reduceMotion ? 1 : s.value }],
   }));
   return <Animated.View style={[styleA, style]}>{children}</Animated.View>;
 };

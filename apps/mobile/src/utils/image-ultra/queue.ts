@@ -30,7 +30,7 @@ export class AbortableQueue {
       this.q.push({ id, run, resolve, reject, ctrl });
       this.pump();
     });
-    return { id, cancel: () => ctrl.abort(), promise: p };
+    return { id, cancel: () => { ctrl.abort(); }, promise: p };
   }
 
   private pump() {
@@ -38,8 +38,8 @@ export class AbortableQueue {
       const job = this.q.shift()!;
       this.running++;
       job.run(job.ctrl.signal)
-        .then((v) => job.resolve(v))
-        .catch((e) => job.reject(e))
+        .then((v) => { job.resolve(v); })
+        .catch((e) => { job.reject(e); })
         .finally(() => {
           this.running--;
           this.pump();

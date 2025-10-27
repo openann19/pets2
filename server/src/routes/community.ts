@@ -8,7 +8,20 @@ import Report from '../models/Report';
 import Block from '../models/Block';
 
 interface AuthenticatedRequest extends Request {
-  user?: any;
+  user?: {
+    _id: string;
+    avatar?: string;
+    firstName?: string;
+    lastName?: string;
+    [key: string]: unknown;
+  };
+}
+
+interface PostAuthor {
+  _id?: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
 }
 
 const router: Router = express.Router();
@@ -30,7 +43,7 @@ router.get('/posts', async (req: Request, res: Response) => {
     } = req.query;
 
     // Build query for community posts
-    const query: any = {
+    const query: Record<string, unknown> = {
       moderationStatus: 'approved',
       isArchived: false
     };
@@ -51,7 +64,17 @@ router.get('/posts', async (req: Request, res: Response) => {
     const total = await CommunityPost.countDocuments(query);
 
     // Transform posts to match expected format
-    const transformedPosts = posts.map((post: any) => ({
+    const transformedPosts = posts.map((post: {
+      _id: unknown;
+      content?: string;
+      author?: { _id: unknown; firstName?: string; lastName?: string; avatar?: string };
+      createdAt?: Date;
+      likes?: unknown[];
+      comments?: unknown[];
+      images?: unknown[];
+      packId?: { name?: string };
+      [key: string]: unknown;
+    }) => ({
       _id: post._id,
       author: {
         _id: post.author?._id || post.author,
@@ -111,7 +134,7 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
     }
 
     // Create new community post
-    const postData: any = {
+    const postData: Record<string, unknown> = {
       author: req.user?._id,
       content: content.trim(),
       images,
@@ -133,9 +156,10 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
       post: {
         _id: newPost._id,
         author: {
-          _id: (newPost.author as any)?._id || req.user?._id,
-          name: req.user ? `${req.user.firstName} ${req.user.lastName}` : 'Unknown User',
-          avatar: (newPost.author as any)?.avatar || req.user?.avatar,
+          _id: (newPost.author as PostAuthor)?._id || req.user?._id,
+          firstName: (newPost.author as PostAuthor)?.firstName || req.user?.firstName,
+          lastName: (newPost.author as PostAuthor)?.lastName || req.user?.lastName,
+          avatar: (newPost.author as PostAuthor)?.avatar || req.user?.avatar,
         },
         content: newPost.content,
         images: newPost.images,
@@ -143,7 +167,7 @@ router.post('/posts', async (req: AuthenticatedRequest, res: Response) => {
         comments: [],
         createdAt: newPost.createdAt,
         packId: newPost.packId,
-        packName: (newPost.packId as any)?.name,
+        packName: (newPost.packId as { name?: string })?.name,
         type: newPost.type,
         activityDetails: newPost.activityDetails
       },
@@ -286,7 +310,13 @@ router.get('/posts/:id/comments', async (req: Request, res: Response) => {
     const skip = (Number(page) - 1) * Number(limit);
     const comments = (post.comments || []).slice(skip, skip + Number(limit));
 
-    const transformedComments = comments.map((comment: any) => ({
+    const transformedComments = comments.map((comment: {
+      _id: unknown;
+      content?: string;
+      author?: { _id: unknown; firstName?: string; lastName?: string; avatar?: string };
+      createdAt?: Date;
+      [key: string]: unknown;
+    }) => ({
       _id: comment._id,
       author: {
         _id: comment.author?._id || comment.author,

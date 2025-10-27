@@ -3,10 +3,11 @@
  * Handles security metrics, IP blocking, and monitoring
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import SecurityAlert from '../../models/SecurityAlert';
 import logger from '../../utils/logger';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AdminRequest extends Request {
   userId?: string;
@@ -77,12 +78,12 @@ export const getSecurityMetrics = async (req: AdminRequest, res: Response): Prom
       success: true,
       data: metrics,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get security metrics', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get security metrics',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -136,12 +137,12 @@ export const blockIP = async (req: AdminRequest, res: Response): Promise<void> =
         securityAlertId: securityAlert._id,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to block IP address', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to block IP address',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -160,22 +161,22 @@ export const getBlockedIPs = async (req: AdminRequest, res: Response): Promise<v
       .limit(100);
 
     const ips = blockedIPs.map((alert) => ({
-      ipAddress: alert.ipAddress,
+      ipAddress: alert.source?.ip || 'unknown',
       reason: alert.description,
       blockedAt: alert.createdAt,
-      blockedBy: alert.metadata?.blockedBy,
+      blockedBy: alert.acknowledgedBy?.name || 'system',
     }));
 
     res.json({
       success: true,
       data: ips,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get blocked IPs', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get blocked IPs',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -203,8 +204,12 @@ export const unblockIP = async (req: AdminRequest, res: Response): Promise<void>
       return;
     }
 
-    securityAlert.resolved = true;
-    securityAlert.resolvedBy = req.userId;
+    securityAlert.status = 'resolved';
+    securityAlert.acknowledgedBy = {
+      id: req.userId as any,
+      name: 'Admin',
+      timestamp: new Date()
+    };
     securityAlert.resolvedAt = new Date();
     await securityAlert.save();
 
@@ -214,12 +219,12 @@ export const unblockIP = async (req: AdminRequest, res: Response): Promise<void>
       success: true,
       message: `IP address ${ip} has been unblocked`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to unblock IP', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to unblock IP',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };

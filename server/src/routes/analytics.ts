@@ -15,7 +15,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -77,7 +77,7 @@ router.post('/events', async (req: Request, res: Response): Promise<void> => {
     }
 
     // Normalize and validate events
-    const docs = events.map((e: any) => ({
+    const docs = events.map((e: Record<string, unknown>) => ({
       userId: e.userId && mongoose.Types.ObjectId.isValid(e.userId) ? new mongoose.Types.ObjectId(e.userId) : undefined,
       eventType: e.eventType || 'custom',
       entityType: e.entityType,
@@ -96,12 +96,13 @@ router.post('/events', async (req: Request, res: Response): Promise<void> => {
       message: `Processed ${result.length} events`,
       processed: result.length
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Analytics events error:', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to process analytics events',
-      error: error.message
+      error: errorMessage
     });
   }
 });
@@ -138,12 +139,13 @@ router.get('/performance', async (req: Request, res: Response): Promise<void> =>
         timestamp: new Date().toISOString()
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Performance metrics error:', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to fetch performance metrics',
-      error: error.message
+      error: errorMessage
     });
   }
 });

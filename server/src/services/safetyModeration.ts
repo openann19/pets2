@@ -5,7 +5,8 @@
  * moderation and safety checks. Implements fallback logic and caching.
  */
 
-import Rekognition from '@aws-sdk/client-rekognition';
+import * as Rekognition from '@aws-sdk/client-rekognition';
+// @ts-ignore - AWS SDK might not be available in all environments
 import logger from '../utils/logger';
 
 export interface ModerationResult {
@@ -84,7 +85,7 @@ export async function moderateWithRekognition(
       })),
       provider: 'aws-rekognition',
     };
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Rekognition moderation failed:', error);
     return moderateWithFallback(imageBuffer);
   }
@@ -112,11 +113,11 @@ export async function moderateWithFallback(imageBuffer: Buffer): Promise<Moderat
  */
 export async function moderateImage(
   imageBuffer: Buffer,
-  preferredProvider: 'aws' | 'google' | 'any' = 'any'
+  preferredProvider: 'aws' | 'google' | 'fallback' = 'fallback'
 ): Promise<ModerationResult> {
   try {
     // Try AWS Rekognition first
-    if (preferredProvider === 'any' || preferredProvider === 'aws') {
+    if (preferredProvider === 'fallback' || preferredProvider === 'aws') {
       const result = await moderateWithRekognition(imageBuffer);
       if (result.provider !== 'fallback') {
         return result;
@@ -133,7 +134,7 @@ export async function moderateImage(
 
     // Final fallback
     return moderateWithFallback(imageBuffer);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Moderation failed completely:', error);
     return moderateWithFallback(imageBuffer);
   }

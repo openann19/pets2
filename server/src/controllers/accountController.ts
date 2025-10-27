@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
-import User, { IUserDocument } from '../models/User';
+import type { Request, Response } from 'express';
+import User from '../models/User';
+import type { IUserDocument } from '../types/mongoose';
 import Match from '../models/Match';
 import Conversation from '../models/Conversation';
 import logger from '../utils/logger';
@@ -46,8 +47,68 @@ interface AccountStatusResponse {
   scheduledDeletionDate?: string;
   daysRemaining?: number;
   canCancel?: boolean;
-  requestId?: string;
+  error?: string;
   message?: string;
+  requestId?: string;
+}
+
+interface ExportPetData {
+  id: string;
+  name: string;
+  species: string;
+  breed: string;
+  age: number;
+  size: string;
+  bio: string;
+  photos: string[];
+  personalityTags: string[];
+  healthInfo: Record<string, unknown>;
+  createdAt: Date;
+}
+
+interface ExportMatchData {
+  id: string;
+  status: string;
+  compatibilityScore: number;
+  createdAt: Date;
+  pet1: { id: string; name: string; species: string; owner: string } | null;
+  pet2: { id: string; name: string; species: string; owner: string } | null;
+}
+
+interface ExportMessageData {
+  id: string;
+  content: string;
+  type: string;
+  createdAt: Date;
+  matchId: string | null;
+  isSender: boolean;
+  receiverId: string | undefined;
+}
+
+interface ExportData {
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    bio?: string;
+    location: Record<string, unknown>;
+    preferences: Record<string, unknown>;
+    createdAt: Date;
+    lastLoginAt?: Date;
+  };
+  exportRequestedAt: Date;
+  format: string;
+  includes: {
+    messages: boolean;
+    matches: boolean;
+    profileData: boolean;
+    preferences: boolean;
+  };
+  pets?: ExportPetData[];
+  matches?: ExportMatchData[];
+  messages?: ExportMessageData[];
 }
 
 interface DataExportResponse {
@@ -55,8 +116,9 @@ interface DataExportResponse {
   exportId?: string;
   estimatedTime?: string;
   message?: string;
-  exportData?: any;
+  exportData?: ExportData | string;
   error?: string;
+  csv?: string;
 }
 
 interface ProfileStatsResponse {
@@ -158,18 +220,18 @@ export const requestDataExport = async (
     }
 
     // Prepare export data
-    const exportData: any = {
+    const exportData: ExportData = {
       user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        bio: user.bio,
-        location: user.location,
-        preferences: user.preferences,
-        createdAt: user.createdAt,
-        lastLoginAt: user.lastLoginAt
+        id: user._id?.toString() || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || undefined,
+        bio: user.bio || undefined,
+        location: user.location ? (user.location as Record<string, unknown>) : {},
+        preferences: user.preferences ? (user.preferences as Record<string, unknown>) : {},
+        createdAt: user.createdAt ? new Date(user.createdAt) : new Date(),
+        lastLoginAt: user.lastLoginAt ? new Date(user.lastLoginAt) : undefined
       },
       exportRequestedAt: new Date(),
       format,
@@ -183,18 +245,20 @@ export const requestDataExport = async (
 
     // Add pets data
     if (includeProfileData && user.pets) {
-      exportData.pets = Array.isArray(user.pets) ? user.pets.map((pet: any) => ({
-        id: pet._id || pet,
-        name: pet.name,
-        species: pet.species,
-        breed: pet.breed,
-        age: pet.age,
-        size: pet.size,
-        bio: pet.bio,
-        photos: pet.photos,
-        personalityTags: pet.personalityTags,
-        healthInfo: pet.healthInfo,
-        createdAt: pet.createdAt
+      // Populate pets to get full details
+      const fullUser = await User.findById(user._id).populate('pets').lean();
+      exportData.pets = Array.isArray(fullUser?.pets) ? fullUser.pets.map((pet: any) => ({
+        id: pet._id ? pet._id.toString() : '',
+        name: pet.name || '',
+        species: pet.species || '',
+        breed: pet.breed || '',
+        age: pet.age || 0,
+        size: pet.size || '',
+        bio: pet.bio || '',
+        photos: pet.photos || [],
+        personalityTags: pet.personalityTags || [],
+        healthInfo: pet.healthInfo || {},
+        createdAt: pet.createdAt || new Date()
       })) : [];
     }
 
@@ -205,20 +269,20 @@ export const requestDataExport = async (
       }).populate('pet1 pet2 user1 user2');
 
       exportData.matches = matches.map((match: any) => ({
-        id: match._id,
-        status: match.status,
-        compatibilityScore: match.compatibilityScore,
-        createdAt: match.createdAt,
-        pet1: match.pet1 ? {
-          id: match.pet1._id,
-          name: match.pet1.name,
-          species: match.pet1.species,
+        id: match._id?.toString() || '',
+        status: match.status || '',
+        compatibilityScore: match.compatibilityScore || 0,
+        createdAt: match.createdAt ? new Date(match.createdAt) : new Date(),
+        pet1: match.pet1 && match.pet1._id ? {
+          id: match.pet1._id?.toString() || '',
+          name: (match.pet1 as any).name || '',
+          species: (match.pet1 as any).species || '',
           owner: match.user1?._id?.toString() === userId.toString() ? 'me' : 'other'
         } : null,
-        pet2: match.pet2 ? {
-          id: match.pet2._id,
-          name: match.pet2.name,
-          species: match.pet2.species,
+        pet2: match.pet2 && match.pet2._id ? {
+          id: match.pet2._id?.toString() || '',
+          name: (match.pet2 as any).name || '',
+          species: (match.pet2 as any).species || '',
           owner: match.user2?._id?.toString() === userId.toString() ? 'me' : 'other'
         } : null
       }));
@@ -228,24 +292,33 @@ export const requestDataExport = async (
     if (includeMessages) {
       // Try to use Conversation model (embedded messages)
       const conversations = await Conversation.find({ participants: userId }).lean();
-      const flat: any[] = [];
+      interface FlatMessage {
+        _id: string;
+        content: string;
+        type: string;
+        createdAt: Date;
+        sender: string;
+        conversationParticipants: string[];
+      }
+      const flat: FlatMessage[] = [];
       for (const conv of conversations) {
         for (const m of (conv.messages || [])) {
+          const msg = m as Record<string, unknown>; // Access raw properties
           flat.push({
-            _id: m._id,
-            content: m.content,
-            type: m.type || 'text',
-            createdAt: (m.sentAt || m.createdAt),
-            sender: m.sender,
+            _id: String(msg._id) || '',
+            content: String(msg.content || ''),
+            type: 'text', // Default type since IConversationMessage doesn't have type
+            createdAt: msg.sentAt as Date || new Date(),
+            sender: String(msg.sender || ''),
             conversationParticipants: conv.participants
           });
         }
       }
-      exportData.messages = flat.map((message: any) => {
-        const senderId = message?.sender?._id ? message.sender._id.toString() : message?.sender?.toString?.();
+      exportData.messages = flat.map((message) => {
+        const senderId = message.sender.toString();
         let receiverId: string | undefined;
         if (Array.isArray(message.conversationParticipants)) {
-          const others = message.conversationParticipants.map((id: any) => id.toString()).filter((id: string) => id !== userId.toString());
+          const others = message.conversationParticipants.map((id) => id.toString()).filter((id) => id !== userId.toString());
           receiverId = others[0];
         }
         return {
@@ -265,6 +338,41 @@ export const requestDataExport = async (
 
     // Estimated time for processing (in a real app, this would be a background job)
     const estimatedTime = '24-48 hours';
+
+    // Convert to CSV if requested
+    if (format === 'csv') {
+      const csvRows: string[] = [];
+      
+      // Add header
+      csvRows.push('Data Type,Field,Value');
+      
+      // Flatten JSON structure for CSV
+      const flattenObject = (obj: unknown, prefix = ''): void => {
+        if (typeof obj !== 'object' || obj === null) return;
+        const record = obj as Record<string, unknown>;
+        for (const key in record) {
+          const value = record[key];
+          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            flattenObject(value, prefix + key + '.');
+          } else if (Array.isArray(value)) {
+            csvRows.push(`${prefix}${key},count,${value.length}`);
+          } else {
+            csvRows.push(`${prefix}${key},value,"${String(value).replace(/"/g, '""')}"`);
+          }
+        }
+      };
+      
+      flattenObject(exportData);
+      
+      return void res.json({
+        success: true,
+        exportId,
+        estimatedTime,
+        message: 'Data export in CSV format',
+        exportData: undefined,
+        csv: csvRows.join('\n')
+      });
+    }
 
     res.json({
       success: true,
@@ -328,8 +436,8 @@ export const cancelAccountDeletion = async (
     }
 
     // Cancel the deletion request
-    user.deletionRequestedAt = undefined;
-    user.deletionRequestId = undefined;
+    user.deletionRequestedAt = null as any;
+    user.deletionRequestId = null as any;
     await user.save();
 
     logger.info(`Account deletion cancelled for user ${userId}`);
@@ -382,7 +490,7 @@ export const initiateAccountDeletion = async (
     }
 
     // Validate password
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await (user as any).comparePassword(password);
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,
@@ -417,8 +525,8 @@ export const initiateAccountDeletion = async (
     user.deletionRequestedAt = new Date();
     user.deletionRequestId = requestId;
     user.deletionGracePeriodEndsAt = gracePeriodEndsAt;
-    user.deletionReason = reason || undefined;
-    user.deletionFeedback = feedback || undefined;
+    user.deletionReason = reason || null as any;
+    user.deletionFeedback = feedback || null as any;
     
     await user.save();
 
@@ -510,7 +618,7 @@ interface ConfirmAccountDeletionRequest extends AuthenticatedRequest {
  */
 export const confirmAccountDeletion = async (
   req: ConfirmAccountDeletionRequest,
-  res: Response<{ success: boolean; message?: string }>
+  res: Response<{ success: boolean; message?: string; error?: string }>
 ): Promise<void> => {
   try {
     const userId = req.userId;

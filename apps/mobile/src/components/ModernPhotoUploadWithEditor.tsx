@@ -213,7 +213,7 @@ export function ModernPhotoUploadWithEditor({
         <View style={styles.photoGrid}>
           {photos.map((photo) => (
             <View key={photo.id} style={styles.photoContainer}>
-              <TouchableOpacity onPress={() => editPhoto(photo.id)}>
+              <TouchableOpacity onPress={() => { editPhoto(photo.id); }}>
                 <Image source={{ uri: photo.uri }} style={styles.photo} />
 
                 {photo.isPrimary && (
@@ -226,14 +226,14 @@ export function ModernPhotoUploadWithEditor({
                   {!photo.isPrimary && (
                     <TouchableOpacity
                       style={styles.actionButton}
-                      onPress={() => setPrimaryPhoto(photo.id)}
+                      onPress={() => { setPrimaryPhoto(photo.id); }}
                     >
                       <Text style={styles.actionButtonText}>⭐</Text>
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity
                     style={[styles.actionButton, styles.removeButton]}
-                    onPress={() => removePhoto(photo.id)}
+                    onPress={() => { removePhoto(photo.id); }}
                   >
                     <Text style={styles.removeButtonText}>✕</Text>
                   </TouchableOpacity>

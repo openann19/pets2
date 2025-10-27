@@ -1,10 +1,10 @@
 import React, { type ReactNode } from "react";
-import { View, type ViewStyle, StyleSheet } from "react-native";
+import { View, type ViewStyle, StyleSheet, type StyleProp } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "../../../theme/Provider";
-import { GlobalStyles } from "../../../animation";
+import { GlobalStyles } from "../../../styles/GlobalStyles";
 
 /**
  * EliteContainer Component
@@ -29,7 +29,7 @@ export const EliteContainer: React.FC<EliteContainerProps> = ({
     colors.gradientPrimary;
 
   return (
-    <View style={StyleSheet.flatten([GlobalStyles.container, style])}>
+    <View style={[GlobalStyles.container, style]}>
       <LinearGradient
         colors={gradientColors}
         style={GlobalStyles.backgroundGradient}

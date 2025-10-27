@@ -31,7 +31,7 @@ export function useMatchModal({
   const closeModal = useCallback(() => {
     setIsOpen(false);
     // Delay clearing matched pet to allow exit animation
-    setTimeout(() => setMatchedPet(null), 300);
+    setTimeout(() => { setMatchedPet(null); }, 300);
   }, []);
 
   const handleKeepSwiping = useCallback(() => {

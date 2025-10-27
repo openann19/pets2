@@ -4,16 +4,21 @@ import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMapScreen } from "../hooks/screens/useMapScreen";
-import { MapFiltersModal, MapStatsPanel, PinDetailsModal, HeatmapOverlay, CreateActivityModal } from "../components/map";
+import { MapViewComponent } from "../components/map/MapViewComponent";
+import { MapControls } from "../components/map/MapControls";
+import { MapStatsPanel, MapFiltersModal, PinDetailsModal, CreateActivityModal } from "../components/map";
 import { ScreenShell } from "../ui/layout/ScreenShell";
 import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
 import { haptic } from "../ui/haptics";
 import type { RootStackParamList } from "../navigation/types";
-import { Theme } from "../theme/unified-theme";
+import { useTheme } from "../theme/Provider";
+import { useTranslation } from 'react-i18next';
 
 type MapScreenProps = NativeStackScreenProps<RootStackParamList, "Map">;
 
 export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Element {
+  const theme = useTheme();
+  const { t } = useTranslation('map');
   const {
     region,
     userLocation,
@@ -38,6 +43,22 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
 
   const [showCreate, setShowCreate] = useState(false);
 
+  // Dynamic styles that depend on theme
+  const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#fff" },
+    map: { flex: 1 },
+    fabs: { position: "absolute", right: 12, bottom: 24, gap: 10 },
+    fab: {
+      width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center",
+      shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 8, elevation: 6,
+    },
+    fabLocate: { backgroundColor: "#fff" },
+    fabAR: { backgroundColor: "#fff" },
+    fabFilters: { backgroundColor: "#fff" },
+    fabCreate: { backgroundColor: theme.colors.primary },
+    fabText: { fontSize: 18 },
+  });
+
   const handleARPress = () => {
     haptic.confirm();
     if (userLocation) {
@@ -52,8 +73,8 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
       header={
         <AdvancedHeader
           {...HeaderConfigs.glass({
-            title: "Pet Activity Map",
-            subtitle: "Real-time locations",
+            title: t('pet_activity_map'),
+            subtitle: t('real_time_locations'),
             showBackButton: true,
             onBackPress: () => {
               haptic.tap();
@@ -66,89 +87,30 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
       <View testID="MapScreen" style={styles.container}>
 
       {/* MapView */}
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        initialRegion={region}
-        showsUserLocation
-        testID="map-view"
-      >
-        {filters?.radius && userLocation ? (
-          <Circle
-            testID="map-radius"
-            center={{ latitude: userLocation.latitude, longitude: userLocation.longitude }}
-            radius={filters.radius}
-            strokeColor="rgba(99,102,241,0.4)"
-            fillColor="rgba(99,102,241,0.15)"
-          />
-        ) : null}
-
-        {/* Heatmap */}
-        <HeatmapOverlay points={heatmapPoints} />
-
-        {/* Pins */}
-        {filteredPins.map((pin) => (
-          <Marker
-            key={pin._id}
-            testID={`marker-${pin._id}`}
-            coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
-            pinColor={getMarkerColor(pin.activity, getStableMatchFlag(pin))}
-            onPress={() => setSelectedPin(pin)}
-            title={pin.activity}
-            description={pin.message || ""}
-          />
-        ))}
-      </MapView>
+      <MapViewComponent
+        region={region}
+        userLocation={userLocation}
+        filteredPins={filteredPins}
+        filters={filters}
+        heatmapPoints={heatmapPoints}
+        onMarkerPress={setSelectedPin}
+        getMarkerColor={getMarkerColor}
+        getStableMatchFlag={getStableMatchFlag}
+      />
 
       {/* Stats Panel */}
       <MapStatsPanel stats={stats} opacity={statsOpacity} />
 
       {/* Floating controls */}
-      <View style={styles.fabs}>
-        <TouchableOpacity
-          style={[styles.fab, styles.fabLocate]}
-          onPress={() => {
-            haptic.tap();
-            getCurrentLocation();
-          }}
-          testID="fab-locate"
-        >
-          <Text style={styles.fabText}>📍</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.fab, styles.fabAR]}
-          onPress={() => {
-            haptic.confirm();
-            navigation.navigate("ARScentTrails", { initialLocation: userLocation });
-          }}
-          testID="fab-ar"
-        >
-          <Text style={styles.fabText}>👁️</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.fab, styles.fabCreate]}
-          onPress={() => {
-            haptic.confirm();
-            setShowCreate(true);
-          }}
-          testID="fab-create-activity"
-        >
-          <Ionicons name="add" size={20} color="#fff" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.fab, styles.fabFilters]}
-          onPress={() => {
-            haptic.tap();
-            toggleFilterPanel();
-          }}
-          testID="btn-filters"
-        >
-          <Text style={styles.fabText}>⚙️</Text>
-        </TouchableOpacity>
-      </View>
+      <MapControls
+        onLocatePress={getCurrentLocation}
+        onARPress={() => {
+          haptic.confirm();
+          navigation.navigate("ARScentTrails", { initialLocation: userLocation });
+        }}
+        onCreatePress={() => setShowCreate(true)}
+        onFilterPress={toggleFilterPanel}
+      />
 
       {/* Filters modal */}
       {showFilters && (
@@ -162,7 +124,7 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
         visible={!!selectedPin}
         pin={selectedPin as any}
         activityTypes={activityTypes.map(a => a.id)}
-        onClose={() => setSelectedPin(null)}
+        onClose={() => { setSelectedPin(null); }}
         onLike={() => navigation.navigate("Swipe")}
         onChat={() => {
           // Navigate to chat if match exists, otherwise show prompt
@@ -188,17 +150,3 @@ export default function MapScreen({ navigation }: MapScreenProps): React.JSX.Ele
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  map: { flex: 1 },
-  fabs: { position: "absolute", right: 12, bottom: 24, gap: 10 },
-  fab: {
-    width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center",
-    shadowColor: "#000", shadowOpacity: 0.15, shadowRadius: 8, elevation: 6,
-  },
-  fabLocate: { backgroundColor: "#fff" },
-  fabAR: { backgroundColor: "#fff" },
-  fabFilters: { backgroundColor: "#fff" },
-  fabCreate: { backgroundColor: Theme.colors.primary[500] },
-  fabText: { fontSize: 18 },
-});

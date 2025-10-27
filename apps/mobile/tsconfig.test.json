@@ -1,13 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": ["jest", "react-native", "@testing-library/jest-native"]
+    "lib": ["ES2021"],
+    "types": ["jest", "node"],
+    "skipLibCheck": true,
+    "noEmit": true
   },
-  "include": [
-    "src/**/__tests__/**/*.ts",
-    "src/**/__tests__/**/*.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/setupTests.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "__mocks__/**/*.ts"]
 }

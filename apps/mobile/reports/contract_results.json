@@ -1,0 +1,12 @@
+{
+  "lastRun": "2025-10-27T03:55:23.649Z",
+  "status": "skipped",
+  "summary": {
+    "totalEndpoints": 0,
+    "passed": 0,
+    "failed": 0,
+    "warnings": 0
+  },
+  "results": [],
+  "note": "No OpenAPI spec found"
+}

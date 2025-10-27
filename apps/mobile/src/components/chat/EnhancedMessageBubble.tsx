@@ -199,11 +199,11 @@ export function EnhancedMessageBubble({
         visible={showReactionPicker}
         transparent
         animationType="fade"
-        onRequestClose={() => setShowReactionPicker(false)}
+        onRequestClose={() => { setShowReactionPicker(false); }}
       >
         <Pressable
           style={styles.modalOverlay}
-          onPress={() => setShowReactionPicker(false)}
+          onPress={() => { setShowReactionPicker(false); }}
         >
           <View style={styles.reactionPicker}>
             {REACTION_EMOJIS.map((emoji) => (

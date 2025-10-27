@@ -1,25 +1,13 @@
-import { Response } from 'express';
+import type { Request, Response } from 'express';
 import User from '../models/User';
 import logger from '../utils/logger';
-import { AuthRequest } from '../types/express';
+import type { AuthRequest } from '../types/express';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Request interfaces
  */
-interface RegisterPushTokenRequest extends AuthRequest {
-  body: {
-    token: string;
-    platform?: string;
-    deviceId?: string;
-  };
-}
 
-interface UnregisterPushTokenRequest extends AuthRequest {
-  body: {
-    deviceId?: string;
-    token?: string;
-  };
-}
 
 /**
  * Push token data structure
@@ -37,7 +25,7 @@ interface PushTokenData {
  * @route POST /api/notifications/register-token
  * @access Private
  */
-export const registerPushToken = async (req: RegisterPushTokenRequest, res: Response): Promise<void> => {
+export const registerPushToken = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
     const { token, platform, deviceId } = req.body;
@@ -68,7 +56,7 @@ export const registerPushToken = async (req: RegisterPushTokenRequest, res: Resp
 
     // Initialize pushTokens array if it doesn't exist
     if (!user.pushTokens) {
-      (user as any).pushTokens = [];
+      user.pushTokens = [];
     }
 
     // Check if token already exists for this device
@@ -86,11 +74,11 @@ export const registerPushToken = async (req: RegisterPushTokenRequest, res: Resp
 
     if (existingTokenIndex >= 0) {
       // Update existing token
-      user.pushTokens[existingTokenIndex] = pushTokenData as any;
+      user.pushTokens[existingTokenIndex] = pushTokenData;
       logger.info('Updated push token for device', { userId, deviceId, platform });
     } else {
       // Add new token
-      (user.pushTokens as any).push(pushTokenData);
+      user.pushTokens.push(pushTokenData);
       logger.info('Registered new push token', { userId, deviceId, platform });
     }
 
@@ -105,12 +93,13 @@ export const registerPushToken = async (req: RegisterPushTokenRequest, res: Resp
       }
     });
 
-  } catch (error: any) {
-    logger.error('Register push token error', { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error);
+    logger.error('Register push token error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Failed to register push token',
-      error: error.message
+      error: errorMessage
     });
   }
 };
@@ -120,7 +109,7 @@ export const registerPushToken = async (req: RegisterPushTokenRequest, res: Resp
  * @route DELETE /api/notifications/unregister-token
  * @access Private
  */
-export const unregisterPushToken = async (req: UnregisterPushTokenRequest, res: Response): Promise<void> => {
+export const unregisterPushToken = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
     const { deviceId, token } = req.body;
@@ -150,10 +139,10 @@ export const unregisterPushToken = async (req: UnregisterPushTokenRequest, res: 
 
     // Remove matching tokens
     if (deviceId) {
-      (user as any).pushTokens = user.pushTokens.filter((pt: PushTokenData) => pt.deviceId !== deviceId);
+      user.pushTokens = user.pushTokens.filter((pt: PushTokenData) => pt.deviceId !== deviceId);
       logger.info('Unregistered push token by deviceId', { userId, deviceId });
     } else if (token) {
-      (user as any).pushTokens = user.pushTokens.filter((pt: PushTokenData) => pt.token !== token);
+      user.pushTokens = user.pushTokens.filter((pt: PushTokenData) => pt.token !== token);
       logger.info('Unregistered push token by token', { userId });
     }
 
@@ -164,12 +153,13 @@ export const unregisterPushToken = async (req: UnregisterPushTokenRequest, res: 
       message: 'Push token unregistered successfully'
     });
 
-  } catch (error: any) {
-    logger.error('Unregister push token error', { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error);
+    logger.error('Unregister push token error', { error: errorMessage });
     res.status(500).json({
       success: false,
       message: 'Failed to unregister push token',
-      error: error.message
+      error: errorMessage
     });
   }
 };

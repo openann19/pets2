@@ -3,11 +3,12 @@
  * Handles chat message moderation and review
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import Match from '../../models/Match';
 import User from '../../models/User';
 import logger from '../../utils/logger';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AdminRequest extends Request {
   userId?: string;
@@ -26,8 +27,8 @@ export const getChatMessages = async (req: AdminRequest, res: Response): Promise
       limit?: string;
     };
 
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
+    const pageNum = parseInt(page.toString(), 10);
+    const limitNum = parseInt(limit.toString(), 10);
     const skip = (pageNum - 1) * limitNum;
 
     // Build query to find messages
@@ -43,6 +44,8 @@ export const getChatMessages = async (req: AdminRequest, res: Response): Promise
     const matches = await Match.find(query)
       .populate('pet1')
       .populate('pet2')
+      .populate('user1', 'firstName lastName')
+      .populate('user2', 'firstName lastName')
       .sort({ updatedAt: -1 })
       .limit(limitNum)
       .skip(skip);
@@ -61,10 +64,10 @@ export const getChatMessages = async (req: AdminRequest, res: Response): Promise
           let receiverName = 'Unknown';
           
           if (match.user1) {
-            senderName = `${match.user1.firstName} ${match.user1.lastName}`;
+            senderName = `${(match.user1 as any).firstName} ${(match.user1 as any).lastName}`;
           }
           if (match.user2) {
-            receiverName = `${match.user2.firstName} ${match.user2.lastName}`;
+            receiverName = `${(match.user2 as any).firstName} ${(match.user2 as any).lastName}`;
           }
 
           const messageData = {
@@ -116,12 +119,12 @@ export const getChatMessages = async (req: AdminRequest, res: Response): Promise
         pages: Math.ceil(messages.length / limitNum),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get chat messages', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get chat messages',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -155,6 +158,14 @@ export const moderateMessage = async (req: AdminRequest, res: Response): Promise
     }
 
     const match = matches[0];
+    if (!match) {
+      res.status(404).json({
+        success: false,
+        error: 'Message not found',
+      });
+      return;
+    }
+    
     const message = match.messages?.find((msg: any) => msg._id.toString() === messageId);
 
     if (!message) {
@@ -184,16 +195,16 @@ export const moderateMessage = async (req: AdminRequest, res: Response): Promise
     }
 
     // Mark as reviewed
-    message.reviewed = true;
-    message.reviewedBy = req.userId;
-    message.reviewedAt = new Date();
+    (message as any).reviewed = true;
+    (message as any).reviewedBy = req.userId;
+    (message as any).reviewedAt = new Date();
     
     // Add moderation metadata
-    if (!message.metadata) {
-      message.metadata = {};
+    if (!(message as any).metadata) {
+      (message as any).metadata = {};
     }
-    message.metadata.moderationAction = updatedAction;
-    message.metadata.moderationTimestamp = new Date();
+    (message as any).metadata.moderationAction = updatedAction;
+    (message as any).metadata.moderationTimestamp = new Date();
 
     await match.save();
 
@@ -209,12 +220,12 @@ export const moderateMessage = async (req: AdminRequest, res: Response): Promise
         moderatedBy: req.userId,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to moderate message', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to moderate message',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -290,12 +301,12 @@ export const getChatModerationStats = async (req: AdminRequest, res: Response): 
       success: true,
       data: stats,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get chat moderation stats', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get chat moderation stats',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };

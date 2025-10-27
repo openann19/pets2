@@ -26,8 +26,8 @@ const InCallManager = require("react-native-incall-manager").default;
 // Import WebRTCService after mocks are set up
 import WebRTCService from "../WebRTCService";
 
-// Create an instance for testing
-const webRTCService = new WebRTCService();
+// Use the singleton instance for testing
+const webRTCService = WebRTCService;
 
 // Mock interfaces
 interface MockMediaStreamTrack {
@@ -133,15 +133,8 @@ describe("webRTCService", () => {
     });
 
     it("should setup InCallManager correctly", () => {
-      // Debug: Check if InCallManager methods were called
-      console.log(
-        "InCallManager.setKeepScreenOn calls:",
-        InCallManager.setKeepScreenOn.mock.calls.length,
-      );
-      console.log(
-        "InCallManager.setForceSpeakerphoneOn calls:",
-        InCallManager.setForceSpeakerphoneOn.mock.calls.length,
-      );
+      // Initialize the service to trigger InCallManager setup
+      webRTCService.initialize(mockSocket);
 
       expect(InCallManager.setKeepScreenOn).toHaveBeenCalledWith(true);
       expect(InCallManager.setForceSpeakerphoneOn).toHaveBeenCalledWith(false);

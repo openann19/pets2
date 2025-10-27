@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 interface AboutTermsPrivacyScreenProps {
@@ -100,7 +101,7 @@ function AboutTermsPrivacyScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                 () => {},
               );
@@ -120,7 +121,7 @@ function AboutTermsPrivacyScreen({
           {/* App Info */}
           <BlurView intensity={15} style={styles.appInfoCard}>
             <View style={styles.appIcon}>
-              <Ionicons name="paw-outline" size={40} color="Theme.colors.status.info" />
+              <Ionicons name="paw-outline" size={40} color={theme.colors.status.info} }/>
             </View>
             <View style={styles.appDetails}>
               <Text style={styles.appName}>PawfectMatch</Text>
@@ -132,10 +133,10 @@ function AboutTermsPrivacyScreen({
           </BlurView>
 
           {/* Quick Links */}
-          <TouchableOpacity style={styles.websiteCard} onPress={handleWebsite}>
+          <TouchableOpacity style={styles.websiteCard}  testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleWebsite}>
             <BlurView intensity={20} style={styles.websiteBlur}>
               <View style={styles.websiteContent}>
-                <Ionicons name="globe-outline" size={24} color="Theme.colors.status.success" />
+                <Ionicons name="globe-outline" size={24} color={theme.colors.success} }/>
                 <View style={styles.websiteText}>
                   <Text style={styles.websiteTitle}>Visit Our Website</Text>
                   <Text style={styles.websiteDescription}>
@@ -158,7 +159,7 @@ function AboutTermsPrivacyScreen({
             <TouchableOpacity
               key={document.id}
               style={styles.documentCard}
-              onPress={() => {
+               testID="AboutTermsPrivacyScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleDocument(document);
               }}
             >
@@ -167,7 +168,7 @@ function AboutTermsPrivacyScreen({
                   <View
                     style={StyleSheet.flatten([
                       styles.documentIcon,
-                      { backgroundColor: "Theme.colors.secondary[500]" },
+                      { backgroundColor: theme.colors.secondary[500] },
                     ])}
                   >
                     <Ionicons name={document.icon} size={20} color="white" />
@@ -197,15 +198,15 @@ function AboutTermsPrivacyScreen({
 
           <BlurView intensity={15} style={styles.contactCard}>
             <View style={styles.contactItem}>
-              <Ionicons name="mail-outline" size={20} color="Theme.colors.status.info" />
+              <Ionicons name="mail-outline" size={20} color={theme.colors.status.info} }/>
               <Text style={styles.contactText}>support@pawfectmatch.com</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="call-outline" size={20} color="Theme.colors.status.success" />
+              <Ionicons name="call-outline" size={20} color={theme.colors.success} }/>
               <Text style={styles.contactText}>1-800-PET-MATCH</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="location-outline" size={20} color="Theme.colors.status.warning" />
+              <Ionicons name="location-outline" size={20} color={theme.colors.warning} }/>
               <Text style={styles.contactText}>San Francisco, CA</Text>
             </View>
           </BlurView>

@@ -79,9 +79,14 @@ function PrivacySettingsScreen({
     onChange: (value: string) => void,
   ) => (
     <View style={styles.pickerContainer}>
-      {options.map((option) => (
+        {options.map((option) => (
         <TouchableOpacity
           key={option.value}
+          testID={`privacy-option-${option.value}`}
+          accessibilityLabel={option.label}
+          accessibilityRole="button"
+          accessibilityState={{ selected: value === option.value }}
+          accessibilityHint={`Select ${option.label}`}
           style={StyleSheet.flatten([
             styles.pickerOption,
             value === option.value && {
@@ -108,6 +113,7 @@ function PrivacySettingsScreen({
 
   return (
     <SafeAreaView
+      testID="privacy-settings-screen"
       style={StyleSheet.flatten([
         styles.container,
         { backgroundColor: colors.background },
@@ -115,18 +121,27 @@ function PrivacySettingsScreen({
     >
       {/* Header */}
       <View
+        testID="privacy-settings-header"
+        accessibilityLabel="Privacy settings header"
+        accessibilityRole="header"
         style={StyleSheet.flatten([
           styles.header,
           { backgroundColor: colors.card, borderBottomColor: colors.border },
         ])}
       >
         <TouchableOpacity
+          testID="privacy-settings-back-button"
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+          accessibilityHint="Returns to previous screen"
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
         <Text
+          testID="privacy-settings-title"
+          accessibilityRole="header"
           style={StyleSheet.flatten([
             styles.headerTitle,
             { color: colors.text },
@@ -138,12 +153,16 @@ function PrivacySettingsScreen({
       </View>
 
       <ScrollView
+        testID="privacy-settings-scroll-view"
+        accessibilityLabel="Privacy settings content"
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
         {/* Profile Visibility */}
-        <View style={styles.section}>
+        <View testID="profile-visibility-section" accessibilityLabel="Profile visibility settings" style={styles.section}>
           <Text
+            testID="profile-visibility-title"
+            accessibilityRole="text"
             style={StyleSheet.flatten([
               styles.sectionTitle,
               { color: colors.text },
@@ -173,6 +192,10 @@ function PrivacySettingsScreen({
             "Show online status",
             "Let others know when you are active on the app",
             <Switch
+              testID="show-online-status-switch"
+              accessibilityLabel="Show online status"
+              accessibilityRole="switch"
+              accessibilityState={{ checked: settings.showOnlineStatus }}
               value={settings.showOnlineStatus}
               onValueChange={(value) =>
                 updateSetting("showOnlineStatus", value)
@@ -338,7 +361,7 @@ function PrivacySettingsScreen({
             "Manage users you have blocked",
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate("BlockedUsers")}
+               testID="PrivacySettingsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("BlockedUsers")}
             >
               <Ionicons
                 name="chevron-forward"
@@ -353,6 +376,12 @@ function PrivacySettingsScreen({
             "Data Download",
             "Download all your personal data (GDPR)",
             <TouchableOpacity
+              testID="export-data-button"
+              accessibilityLabel="Export my data"
+              accessibilityRole="button"
+              accessibilityHint="Downloads all your personal data for GDPR compliance"
+              accessibilityState={{ disabled: loadingExport }}
+              disabled={loadingExport}
               style={styles.actionButton}
               onPress={async () => {
                 try {
@@ -437,7 +466,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -465,7 +494,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
   },
   pickerOptionText: {
     fontSize: 12,

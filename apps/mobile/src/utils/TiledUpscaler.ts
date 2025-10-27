@@ -208,7 +208,7 @@ export async function tileUpscaleAuto(
           .then(resolve)
           .catch(reject);
       },
-      (error) => reject(error)
+      (error) => { reject(error); }
     );
   });
 }

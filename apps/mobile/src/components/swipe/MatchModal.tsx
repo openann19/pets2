@@ -35,7 +35,7 @@ export function MatchModal({
       const timer = setTimeout(() => {
         setShowConfetti(false);
       }, 4000);
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); };
     }
   }, [show]);
 
@@ -48,7 +48,7 @@ export function MatchModal({
         show={showConfetti}
         intensity="heavy"
         duration={4000}
-        onComplete={() => setShowConfetti(false)}
+        onComplete={() => { setShowConfetti(false); }}
       />
 
       <FXContainerPresets.premium style={styles.content}>

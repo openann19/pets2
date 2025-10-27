@@ -6,25 +6,27 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../theme/Provider";
 import { getIsDark } from "../../theme/adapters";
 import { useWelcome } from "../domains/onboarding/useWelcome";
+import type { WelcomeAnimationValues } from "../../types/animations";
+import type { Theme } from "../../theme/types";
 
 interface UseWelcomeScreenReturn {
   // From domain hook
-  logoScale: any;
-  logoOpacity: any;
-  titleOpacity: any;
-  titleTranslateY: any;
-  subtitleOpacity: any;
-  subtitleTranslateY: any;
-  featuresOpacity: any;
-  featuresTranslateY: any;
-  buttonOpacity: any;
-  buttonScale: any;
-  confettiScale: any;
+  logoScale: WelcomeAnimationValues['logoScale'];
+  logoOpacity: WelcomeAnimationValues['logoOpacity'];
+  titleOpacity: WelcomeAnimationValues['titleOpacity'];
+  titleTranslateY: WelcomeAnimationValues['titleTranslateY'];
+  subtitleOpacity: WelcomeAnimationValues['subtitleOpacity'];
+  subtitleTranslateY: WelcomeAnimationValues['subtitleTranslateY'];
+  featuresOpacity: WelcomeAnimationValues['featuresOpacity'];
+  featuresTranslateY: WelcomeAnimationValues['featuresTranslateY'];
+  buttonOpacity: WelcomeAnimationValues['buttonOpacity'];
+  buttonScale: WelcomeAnimationValues['buttonScale'];
+  confettiScale: WelcomeAnimationValues['confettiScale'];
   isReady: boolean;
 
   // Screen-specific
-  colors: any;
-  styles: any;
+  colors: Theme['colors'];
+  styles: Theme['styles'];
   isDark: boolean;
 
   // Navigation

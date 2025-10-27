@@ -5,11 +5,13 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import LottieView from "lottie-react-native";
+import type { AnimationObject } from "lottie-react-native";
+import type { ViewStyle } from "react-native";
 import { View, StyleSheet } from "react-native";
 
 export interface LottieAnimationProps {
   /** Animation source (JSON file or URL) */
-  source: any;
+  source: string | AnimationObject | { uri: string };
   /** Animation width */
   width?: number;
   /** Animation height */
@@ -23,7 +25,7 @@ export interface LottieAnimationProps {
   /** Callback when animation finishes */
   onAnimationFinish?: () => void;
   /** Additional styles */
-  style?: any;
+  style?: ViewStyle;
   /** Whether animation is visible */
   visible?: boolean;
   /** Color filters for theming */

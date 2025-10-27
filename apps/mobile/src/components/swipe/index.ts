@@ -1,20 +1,14 @@
 /**
  * Swipe Components
- * Modular components for swipe screen functionality
+ * 
+ * Exports for swipe-related presentational components and hooks
  */
 
-export { CardStack } from './CardStack';
-export { FilterPanel } from './FilterPanel';
-export { MatchModal } from './MatchModal';
-export { ConfettiBurst } from './ConfettiBurst';
-export { SwipeGestureHints } from './SwipeGestureHints';
-export { SwipeGestureHintOverlay } from './SwipeGestureHintOverlay';
-export { PeekSheet } from './PeekSheet';
+export { SwipeCard } from "./SwipeCard";
+export type { SwipeCardProps, Pet } from "./SwipeCard";
 
-export type { CardStackProps } from './CardStack';
-export type { FilterPanelProps } from './FilterPanel';
-export type { MatchModalProps } from './MatchModal';
-export type { ConfettiBurstProps } from './ConfettiBurst';
-export type { SwipeGestureHintsProps } from './SwipeGestureHints';
-export type { PeekSheetProps } from './PeekSheet';
+export { SwipeActions } from "./SwipeActions";
+export type { SwipeActionsProps } from "./SwipeActions";
 
+export { PeekSheet } from "./PeekSheet";
+export type { PeekSheetProps } from "./PeekSheet";

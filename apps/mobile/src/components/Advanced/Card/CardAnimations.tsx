@@ -3,7 +3,7 @@
  * Extracts animation logic from AdvancedCard
  */
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useMemo } from "react";
 import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
 import { logger } from "@pawfectmatch/core";
@@ -33,15 +33,15 @@ export function useCardAnimations({
   disabled = false,
   loading = false,
 }: UseCardAnimationsProps) {
-  // Animation Values
-  const scale = useRef(new Animated.Value(1)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
-  const rotation = useRef(new Animated.Value(0)).current;
-  const glow = useRef(new Animated.Value(0)).current;
-  const elevation = useRef(new Animated.Value(4)).current;
-  const tiltX = useRef(new Animated.Value(0)).current;
-  const tiltY = useRef(new Animated.Value(0)).current;
-  const shimmer = useRef(new Animated.Value(0)).current;
+  // Animation Values (direct creation, stable references)
+  const [scale] = useState(() => new Animated.Value(1));
+  const [opacity] = useState(() => new Animated.Value(1));
+  const [rotation] = useState(() => new Animated.Value(0));
+  const [glow] = useState(() => new Animated.Value(0));
+  const [elevation] = useState(() => new Animated.Value(4));
+  const [tiltX] = useState(() => new Animated.Value(0));
+  const [tiltY] = useState(() => new Animated.Value(0));
+  const [shimmer] = useState(() => new Animated.Value(0));
 
   // State
   const [isPressed, setIsPressed] = useState(false);
@@ -167,7 +167,7 @@ export function useCardAnimations({
   );
 
   return {
-    // Animation refs
+    // Animation values
     scale,
     opacity,
     rotation,

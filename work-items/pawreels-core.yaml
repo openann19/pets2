@@ -1,0 +1,58 @@
+id: pawreels-core
+owner: pr+api
+severity: critical
+area: backend+mobile+admin
+context: |
+  PawReels is a TikTok-style video reel creation and sharing feature for pet owners.
+  Users can create short-form videos (reels) from their pet photos/videos, add licensed music tracks,
+  apply templates with effects, and share them with deep links and analytics tracking.
+  
+  Current status: Feature doesn't exist yet. Need to implement full stack.
+  
+acceptance:
+  - Database models: Reel, Template, Track, Clip, RemixEdge, ShareEvent, ModerationFlag
+  - Backend APIs: /templates, /tracks, /reels, /uploads/sign, /reels/:id/render
+  - Render service: Docker container with FFmpeg for video processing
+  - Mobile screens: CreateReel, WatchReel, TemplatePicker
+  - Moderation: Auto-flag NSFW/violence content
+  - Admin: Reels management and moderation queue
+  - Analytics: K-factor tracking, share conversion metrics
+states:
+  - draft
+  - rendering
+  - public
+  - flagged
+  - removed
+telemetry:
+  - event: REEL_CREATE_START
+    props: [templateId, trackId]
+  - event: REEL_CREATE_COMPLETE
+    props: [reelId, duration, clipCount]
+  - event: REEL_RENDER_START
+    props: [reelId]
+  - event: REEL_RENDER_COMPLETE
+    props: [reelId, renderMs]
+  - event: REEL_SHARE_CLICK
+    props: [reelId, channel]
+  - event: REEL_REMIX_CLICK
+    props: [reelId]
+  - event: REEL_DEEPLINK_OPEN
+    props: [reelId, refUserId]
+contracts:
+  request: { templateId: string, trackId: string, locale: string }
+  response: { id: string, status: string, createdAt: string }
+  errors: [INVALID_TEMPLATE, INVALID_TRACK, LICENSE_EXPIRED, REJECTED_CONTENT]
+assets:
+  mocks: [mocks/fixtures/reels/create.success.json, mocks/fixtures/reels/render.success.json]
+  tests: [server/__tests__/reels.test.ts, apps/mobile/src/screens/__tests__/CreateReel.test.tsx]
+risks:
+  - Video rendering is computationally expensive; need efficient queue system
+  - Moderation can create backlogs if volume is high
+  - Licensed tracks must be validated on render to avoid copyright issues
+rollback:
+  - Disable reel creation via feature flag
+  - Hide reel UI via navigation guards
+links:
+  - specs: PawReels MVP Spec (provided in query)
+status: open
+

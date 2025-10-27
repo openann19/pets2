@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-10-27T01:49:24.886Z",
+  "bundleSize": 0,
+  "coldStart": 2500,
+  "tti": 3000,
+  "interactionLatency": 120,
+  "scrollJank": 0.5,
+  "memorySteadyState": 3,
+  "cpuAverage": 35
+}

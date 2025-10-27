@@ -5,7 +5,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { useAnimatedStyle, interpolate, Extrapolation } from "react-native-reanimated";
 
-import { Theme } from "../../../theme/unified-theme";
+import { useTheme } from "../../../theme/Provider";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -39,6 +39,8 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
   getEmotionColor,
   getEmotionEmoji,
 }) => {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   const inputRange = [
     (index - 1) * screenWidth,
     index * screenWidth,
@@ -138,7 +140,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
             <View style={styles.memoryMetadata}>
               {memory.metadata.location && (
                 <View style={styles.metadataItem}>
-                  <Ionicons name="location-outline" size={14} color={Theme.colors.neutral[0]} />
+                  <Ionicons name="location-outline" size={14} color="#ffffff" />
                   <Text style={styles.metadataText}>
                     {memory.metadata.location}
                   </Text>
@@ -146,7 +148,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
               )}
               {memory.metadata.participants && (
                 <View style={styles.metadataItem}>
-                  <Ionicons name="people-outline" size={14} color={Theme.colors.neutral[0]} />
+                  <Ionicons name="people-outline" size={14} color="#ffffff" />
                   <Text style={styles.metadataText}>
                     {memory.metadata.participants.join(" & ")}
                   </Text>
@@ -160,7 +162,7 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   memoryCard: {
     width: screenWidth * 0.85,
     height: Dimensions.get("window").height * 0.6,
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
   memoryTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: Theme.colors.neutral[0],
+    color: theme.colors.neutral[0],
     marginBottom: 4,
   },
   memoryTimestamp: {
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
   },
   memoryText: {
     fontSize: 18,
-    color: Theme.colors.neutral[0],
+    color: theme.colors.neutral[0],
     lineHeight: 26,
     fontStyle: "italic",
     textAlign: "center",

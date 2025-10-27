@@ -29,9 +29,10 @@ import { BlurView } from "expo-blur";
 import type { ViewStyle, TextStyle } from "react-native";
 import React from "react";
 import { lightTheme } from "../../theme/tokens";
+import { useTranslation } from 'react-i18next';
 
 // Create spacing object for backward compatibility
-const Spacing = lightTheme.spacing;
+const Spacing = lighttheme.spacing;
 
 // Animation configurations
 const SPRING_BOUNCY = {
@@ -77,6 +78,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   const styles = theme.styles || {};
   const isDark = theme.scheme === 'dark';
   const localStyles = createLocalStyles(colors);
+  const { t } = useTranslation('common');
 
   // Animation values
   const logoScale = useSharedValue(0);
@@ -245,9 +247,8 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
             </BlurView>
           </Animated.View>
 
-          {/* Elite Title */}
           <Animated.View style={titleAnimatedStyle}>
-            <Text style={styles.title as TextStyle}>You're All Set!</Text>
+            <Text style={styles.title as TextStyle}>{t('welcome.title')}</Text>
             <View style={localStyles.titleAccent} />
           </Animated.View>
 
@@ -260,8 +261,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 { color: colors.gray600 },
               ])}
             >
-              Welcome to the PawfectMatch community! Your profile is ready and
-              we're excited to help you find amazing connections.
+              {t('welcome.subtitle')}
             </Text>
           </Animated.View>
 
@@ -287,7 +287,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray800 },
                     ])}
                   >
-                    Smart Matching
+                    {t('welcome.smart_matching')}
                   </Text>
                   <Text
                     style={StyleSheet.flatten([
@@ -295,7 +295,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray600 },
                     ])}
                   >
-                    AI-powered recommendations based on your preferences
+                    {t('welcome.smart_matching_desc')}
                   </Text>
                 </View>
               </View>
@@ -314,7 +314,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray800 },
                     ])}
                   >
-                    Safe Messaging
+                    {t('welcome.safe_messaging')}
                   </Text>
                   <Text
                     style={StyleSheet.flatten([
@@ -322,7 +322,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray600 },
                     ])}
                   >
-                    Connect securely with other pet lovers
+                    {t('welcome.safe_messaging_desc')}
                   </Text>
                 </View>
               </View>
@@ -341,7 +341,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray800 },
                     ])}
                   >
-                    Local Connections
+                    {t('welcome.local_connections')}
                   </Text>
                   <Text
                     style={StyleSheet.flatten([
@@ -349,7 +349,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray600 },
                     ])}
                   >
-                    Find pets and owners in your area
+                    {t('welcome.local_connections_desc')}
                   </Text>
                 </View>
               </View>
@@ -372,7 +372,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray800 },
                     ])}
                   >
-                    Verified Profiles
+                    {t('welcome.verified_profiles')}
                   </Text>
                   <Text
                     style={StyleSheet.flatten([
@@ -380,7 +380,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray600 },
                     ])}
                   >
-                    Trust and safety are our top priorities
+                    {t('welcome.verified_profiles_desc')}
                   </Text>
                 </View>
               </View>
@@ -398,7 +398,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                     { color: colors.gray800 },
                   ])}
                 >
-                  Pro Tips
+                  {t('welcome.pro_tips')}
                 </Text>
               </View>
               <View style={localStyles.eliteTipsList}>
@@ -410,7 +410,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray700 },
                     ])}
                   >
-                    Add photos to get 3x more matches
+                    {t('welcome.tip_photos')}
                   </Text>
                 </View>
                 <View style={localStyles.eliteTip}>
@@ -421,7 +421,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray700 },
                     ])}
                   >
-                    Be honest about your pet's personality
+                    {t('welcome.tip_honest')}
                   </Text>
                 </View>
                 <View style={localStyles.eliteTip}>
@@ -432,7 +432,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                       { color: colors.gray700 },
                     ])}
                   >
-                    Respond to messages within 24 hours
+                    {t('welcome.tip_respond')}
                   </Text>
                 </View>
               </View>
@@ -448,7 +448,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
           ])}
         >
           <EliteButton
-            title="Start Matching! 🚀"
+            title={t('welcome.start_matching')}
             size="lg"
             icon="rocket"
             onPress={handleGetStarted}
@@ -463,7 +463,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
               { color: colors.gray500 },
             ])}
           >
-            You can update your preferences anytime in settings
+            {t('welcome.update_preferences')}
           </Text>
         </Animated.View>
       </LinearGradient>

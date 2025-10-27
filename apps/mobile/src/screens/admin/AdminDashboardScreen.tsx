@@ -71,7 +71,7 @@ export default function AdminDashboardScreen({
   navigation,
 }: AdminScreenProps<"AdminDashboard">): React.JSX.Element {
   const theme = useTheme();
-  const colors: ExtendedColors = getExtendedColors(theme);
+  const colors = theme.colors;
   const { user: _user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
@@ -144,13 +144,13 @@ export default function AdminDashboardScreen({
   const getStatusColor = (status: string): string => {
     switch (status) {
       case "healthy":
-        return "Theme.colors.status.success";
+        return colors.success;
       case "warning":
-        return "Theme.colors.status.warning";
+        return colors.warning;
       case "error":
-        return "Theme.colors.status.error";
+        return colors.error;
       default:
-        return "Theme.colors.neutral[500]";
+        return colors.gray500;
     }
   };
 
@@ -289,11 +289,11 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("analytics");
               }}
             >
-              <Ionicons name="analytics-outline" size={32} color="Theme.colors.status.info" />
+              <Ionicons name="analytics-outline" size={32} color={colors.info} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -309,11 +309,11 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("users");
               }}
             >
-              <Ionicons name="people-outline" size={32} color="Theme.colors.secondary[500]" />
+              <Ionicons name="people-outline" size={32} color={colors.secondary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -329,11 +329,11 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("security");
               }}
             >
-              <Ionicons name="shield-outline" size={32} color="Theme.colors.status.error" />
+              <Ionicons name="shield-outline" size={32} color={colors.error} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -349,11 +349,11 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("billing");
               }}
             >
-              <Ionicons name="card-outline" size={32} color="Theme.colors.status.success" />
+              <Ionicons name="card-outline" size={32} color={colors.success} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -369,12 +369,12 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("chats");
               }}
             >
               ?{" "}
-              <Ionicons name="chatbubbles-outline" size={32} color="Theme.colors.status.warning" />
+              <Ionicons name="chatbubbles-outline" size={32} color={colors.warning} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
@@ -390,7 +390,7 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("uploads");
               }}
             >
@@ -410,7 +410,7 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("verifications");
               }}
             >
@@ -430,7 +430,7 @@ export default function AdminDashboardScreen({
                 styles.quickActionCard,
                 { backgroundColor: colors.card },
               ])}
-              onPress={() => {
+               testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("services");
               }}
             >
@@ -467,7 +467,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="people" size={24} color="Theme.colors.status.info" />
+                <Ionicons name="people" size={24} color={colors.info} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -505,7 +505,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "Theme.colors.status.warning" },
+                    { color: colors.warning },
                   ])}
                 >
                   Suspended: {stats.users.suspended}
@@ -513,7 +513,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "Theme.colors.status.error" },
+                    { color: colors.error },
                   ])}
                 >
                   Banned: {stats.users.banned}
@@ -529,7 +529,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="paw" size={24} color="Theme.colors.status.success" />
+                <Ionicons name="paw" size={24} color={colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -559,7 +559,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "Theme.colors.status.success" },
+                    { color: colors.success },
                   ])}
                 >
                   +{stats.pets.recent24h} today
@@ -575,7 +575,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="heart" size={24} color="Theme.colors.primary[500]" />
+                <Ionicons name="heart" size={24} color={colors.primary} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -605,7 +605,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "Theme.colors.status.error" },
+                    { color: colors.error },
                   ])}
                 >
                   Blocked: {stats.matches.blocked}
@@ -613,7 +613,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "Theme.colors.status.success" },
+                    { color: colors.success },
                   ])}
                 >
                   +{stats.matches.recent24h} today
@@ -629,7 +629,7 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color="Theme.colors.secondary[500]" />
+                <Ionicons name="chatbubble" size={24} color={colors.secondary} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
@@ -659,7 +659,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: "Theme.colors.status.success" },
+                    { color: colors.success },
                   ])}
                 >
                   +{stats.messages.recent24h} today
@@ -708,7 +708,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -755,7 +754,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -774,7 +772,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,

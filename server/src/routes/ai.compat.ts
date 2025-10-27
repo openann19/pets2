@@ -33,7 +33,15 @@ interface CompatibilityScore {
   breakdown: CompatibilityBreakdown;
 }
 
-function score(pA: any, pB: any): CompatibilityScore {
+interface PetData {
+  energyLevel?: number;
+  size?: number;
+  age?: number;
+  activities?: string[];
+  temperament?: string[];
+}
+
+function score(pA: PetData, pB: PetData): CompatibilityScore {
   // 0..1 per dimension
   const energy = 1 - Math.min(1, diffIndex(ENERGY, pA.energyLevel, pB.energyLevel) / 2);
   const size = 1 - Math.min(1, diffIndex(SIZE, pA.size, pB.size) / 4);
@@ -81,8 +89,9 @@ router.post("/compatibility", authenticateToken, async (req: Request, res: Respo
 
     const { score: value, breakdown } = score(a, b);
     res.json({ data: { value, breakdown, compatible: value >= 65 } });
-  } catch (error: any) {
-    logger.error("Compatibility scoring error", { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error("Compatibility scoring error", { error: errorMessage });
     res.status(500).json({ error: "Failed to calculate compatibility" });
   }
 });

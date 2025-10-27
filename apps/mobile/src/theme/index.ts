@@ -7,6 +7,7 @@ export * from "./types";
 export * from "./Provider";
 export { createTheme } from "./rnTokens";
 export * from "./adapters";
+export { useTheme } from "./useTheme";
 
 // Re-export the extended theme hook for convenience
 export { useExtendedTheme, useExtendedColors } from "../hooks/useExtendedTheme";

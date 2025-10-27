@@ -117,6 +117,17 @@ jest.mock('react-native-reanimated', () => {
     exiting: { duration: jest.fn((ms: number) => ({ duration: ms, name })) },
   });
   
+  // Mock functions
+  const mockRunOnJS = jest.fn((fn) => fn);
+  const mockRunOnUI = jest.fn((fn) => fn);
+  const mockWithTiming = jest.fn((toValue) => toValue);
+  const mockWithSpring = jest.fn((toValue) => toValue);
+  const mockWithDelay = jest.fn(() => jest.fn());
+  const mockWithSequence = jest.fn(() => jest.fn());
+  const mockWithRepeat = jest.fn(() => jest.fn());
+  const mockUseSharedValue = jest.fn((initialValue) => ({ value: initialValue }));
+  const mockUseAnimatedStyle = jest.fn((updater) => updater());
+  
   // Simple component creation without caching (to avoid scope issues)
   const View = React.forwardRef((props: any, ref: any) => React.createElement('div', { ...props, ref }));
   const Text = React.forwardRef((props: any, ref: any) => React.createElement('span', { ...props, ref }));
@@ -130,15 +141,15 @@ jest.mock('react-native-reanimated', () => {
     Text,
     ScrollView,
     Image,
-    useSharedValue: jest.fn((initialValue) => ({ value: initialValue })),
-    useAnimatedStyle: jest.fn((updater) => updater()),
-    withTiming: jest.fn((toValue) => toValue),
-    withSpring: jest.fn((toValue) => toValue),
-    withDelay: jest.fn(() => jest.fn()),
-    withSequence: jest.fn(() => jest.fn()),
-    withRepeat: jest.fn(() => jest.fn()),
-    runOnJS: jest.fn((fn) => fn),
-    runOnUI: jest.fn((fn) => fn),
+    useSharedValue: mockUseSharedValue,
+    useAnimatedStyle: mockUseAnimatedStyle,
+    withTiming: mockWithTiming,
+    withSpring: mockWithSpring,
+    withDelay: mockWithDelay,
+    withSequence: mockWithSequence,
+    withRepeat: mockWithRepeat,
+    runOnJS: mockRunOnJS,
+    runOnUI: mockRunOnUI,
     Extrapolate: {
       CLAMP: 'clamp',
       EXTEND: 'extend',
@@ -182,6 +193,36 @@ jest.mock('@react-native-picker/picker', () => ({
   Picker: require('react-native').View,
   PickerItem: require('react-native').View,
 }));
+
+// Mock Animated API
+jest.mock('react-native/Libraries/Animated/Animated', () => {
+  // Use require instead of import to avoid timing issues
+  const AnimatedMock = require('../../__mocks__/Animated.js');
+  return AnimatedMock;
+}, { virtual: true });
+
+// Mock InteractionManager
+jest.mock('react-native/Libraries/Interaction/InteractionManager', () => {
+  const actualInteractionManager = jest.requireActual('react-native/Libraries/Interaction/InteractionManager');
+  
+  return {
+    ...actualInteractionManager,
+    InteractionManager: {
+      ...actualInteractionManager.InteractionManager,
+      runAfterInteractions: jest.fn((callback) => {
+        // Execute callback immediately in tests
+        if (typeof callback === 'function') {
+          setTimeout(callback, 0);
+        }
+        return {
+          cancel: jest.fn(),
+        };
+      }),
+      createInteractionHandle: jest.fn(() => 1),
+      clearInteractionHandle: jest.fn(),
+    },
+  };
+});
 
 // Mock @react-native-community/netinfo
 jest.mock('@react-native-community/netinfo', () => ({

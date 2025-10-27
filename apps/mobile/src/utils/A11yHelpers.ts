@@ -4,6 +4,7 @@
  */
 
 import { AccessibilityInfo, useColorScheme } from "react-native";
+import { useState, useEffect } from "react";
 
 type ColorScheme = 'light' | 'dark' | null;
 
@@ -133,5 +134,101 @@ export function getSafeTouchTarget(size: number): number {
 export function formatPercentage(value: number, min: number, max: number): string {
   const percent = Math.round(((value - min) / (max - min)) * 100);
   return `${percent}%`;
+}
+
+/**
+ * Hook to check if reduce motion is enabled
+ */
+export function useReducedMotion(): boolean {
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    
+    // Check initial state
+    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      if (mounted) {
+        setReduceMotion(enabled);
+      }
+    });
+
+    // Listen for changes
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', (event) => {
+      if (mounted) {
+        setReduceMotion(event);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.remove();
+    };
+  }, []);
+
+  return reduceMotion;
+}
+
+/**
+ * Hook to check if screen reader is enabled
+ */
+export function useScreenReader(): boolean {
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    
+    AccessibilityInfo.isScreenReaderEnabled().then((enabled) => {
+      if (mounted) {
+        setIsEnabled(enabled);
+      }
+    });
+
+    const subscription = AccessibilityInfo.addEventListener('screenReaderChanged', (event) => {
+      if (mounted) {
+        setIsEnabled(event);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.remove();
+    };
+  }, []);
+
+  return isEnabled;
+}
+
+/**
+ * Get adaptive animation duration
+ */
+export function useAdaptiveDuration(normalDuration: number): number {
+  const reduceMotion = useReducedMotion();
+  return reduceMotion ? 0 : normalDuration;
+}
+
+/**
+ * Generate accessibility props for interactive components
+ */
+export interface A11yProps {
+  label?: string;
+  hint?: string;
+  role?: 'button' | 'link' | 'text' | 'header' | 'searchbox' | 'image' | 'none';
+  state?: string;
+  value?: string;
+  testID?: string;
+}
+
+export function useA11yProps(props: A11yProps) {
+  const { label, hint, role, state, value, testID } = props;
+
+  return {
+    accessible: true,
+    accessibilityLabel: label,
+    accessibilityHint: hint,
+    accessibilityRole: role,
+    accessibilityState: state ? { [state]: true } : undefined,
+    accessibilityValue: value ? { text: value } : undefined,
+    testID,
+  };
 }
 

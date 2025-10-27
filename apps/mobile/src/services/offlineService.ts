@@ -38,6 +38,8 @@ class OfflineService {
   private isOnline = true;
   private isSyncing = false;
   private syncListeners: ((status: SyncStatus) => void)[] = [];
+  private netInfoUnsubscribe?: () => void;
+  private syncInterval?: NodeJS.Timeout;
   private offlineData: OfflineData = {
     pets: [],
     user: null,
@@ -77,7 +79,7 @@ class OfflineService {
    * Set up network monitoring
    */
   private setupNetworkMonitoring(): void {
-    NetInfo.addEventListener((state: NetInfoState) => {
+    this.netInfoUnsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
       const wasOffline = !this.isOnline;
       this.isOnline = state.isConnected === true;
 
@@ -94,7 +96,7 @@ class OfflineService {
    * Start periodic sync when online
    */
   private startPeriodicSync(): void {
-    setInterval(() => {
+    this.syncInterval = setInterval(() => {
       if (this.isOnline && !this.isSyncing) {
         void this.triggerSync();
       }
@@ -531,6 +533,21 @@ class OfflineService {
   }
 
   // ===== SECURITY CONTROLS =====
+
+  /**
+   * Cleanup method for testing - removes event listeners and timers
+   */
+  public cleanup(): void {
+    if (this.netInfoUnsubscribe) {
+      this.netInfoUnsubscribe();
+      this.netInfoUnsubscribe = undefined;
+    }
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = undefined;
+    }
+    this.syncListeners = [];
+  }
 }
 
 export const offlineService = new OfflineService();

@@ -362,7 +362,7 @@ export default function ExternalServicesManagementPage() {
                   { value: 'offline', label: 'Offline' },
                 ]}
                 value={filterStatus}
-                onChange={(v) =>
+                onChange={(v: string | number) =>
                   setFilterStatus(
                     v as 'all' | 'healthy' | 'warning' | 'error' | 'offline',
                   )
@@ -488,7 +488,7 @@ export default function ExternalServicesManagementPage() {
                   <EnhancedInput
                     type="password"
                     value={selectedService.apiKey || ''}
-                    onChange={(value) => setSelectedService({ ...selectedService, apiKey: value })}
+                    onChange={(value: string) => setSelectedService({ ...selectedService, apiKey: value })}
                     placeholder="Enter API key..."
                     ariaLabel="Service API key"
                   />
@@ -502,7 +502,7 @@ export default function ExternalServicesManagementPage() {
                     <EnhancedInput
                       type="text"
                       value={selectedService.endpoint}
-                      onChange={(value) =>
+                      onChange={(value: string) =>
                         setSelectedService({ ...selectedService, endpoint: value })
                       }
                       placeholder="https://api.service.com"
@@ -518,7 +518,7 @@ export default function ExternalServicesManagementPage() {
                   <EnhancedInput
                     type="number"
                     value={selectedService.limit.toString()}
-                    onChange={(value) =>
+                    onChange={(value: string) =>
                       setSelectedService({ ...selectedService, limit: parseInt(value) })
                     }
                     placeholder="1000000"

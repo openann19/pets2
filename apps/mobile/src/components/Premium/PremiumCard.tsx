@@ -7,7 +7,7 @@
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { ViewStyle } from "react-native";
 import {
   View,
@@ -56,14 +56,15 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const theme = useTheme();
   const isDark = theme.scheme === "dark";
   
-  const animatedScale = useRef(new Animated.Value(1)).current;
-  const animatedRotateX = useRef(new Animated.Value(0)).current;
-  const animatedRotateY = useRef(new Animated.Value(0)).current;
-  const animatedElevation = useRef(new Animated.Value(4)).current;
-  const animatedGlow = useRef(new Animated.Value(0)).current;
+  // Animation values (useState pattern to avoid refs during render)
+  const [animatedScale] = useState(() => new Animated.Value(1));
+  const [animatedRotateX] = useState(() => new Animated.Value(0));
+  const [animatedRotateY] = useState(() => new Animated.Value(0));
+  const [animatedElevation] = useState(() => new Animated.Value(4));
+  const [animatedGlow] = useState(() => new Animated.Value(0));
 
   // Enhanced 3D tilt effect with PanResponder
-  const panResponder = useRef(
+  const [panResponder] = useState(() =>
     PanResponder.create({
       onMoveShouldSetPanResponder: () => tilt && !disabled,
       onPanResponderGrant: () => {
@@ -119,8 +120,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           }),
         ]).start();
       },
-    }),
-  ).current;
+    })
+  );
 
   // Enhanced press handling
   const handlePressIn = () => {
@@ -232,7 +233,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
         friction: 10,
       }),
     ]).start();
-  }, []);
+  }, [animatedScale]);
 
   // Get variant styles
   const getVariantContainerStyle = (): ViewStyle => {

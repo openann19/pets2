@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 import logger from '../utils/logger';
 
 // Defer requiring analyticsService until inside handlers to play nicely with jest.mock
@@ -9,15 +9,15 @@ const getAnalyticsService = () => require('../services/analyticsService');
  */
 interface AuthenticatedRequest {
   userId?: string;
-  params: any;
-  query: any;
-  body: any;
+  params: Record<string, unknown>;
+  query: Record<string, unknown>;
+  body: Record<string, unknown>;
 }
 
 interface TrackUserEventRequest extends AuthenticatedRequest {
   body: {
     eventType: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -25,7 +25,7 @@ interface TrackPetEventRequest extends AuthenticatedRequest {
   body: {
     petId: string;
     eventType: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -33,7 +33,7 @@ interface TrackMatchEventRequest extends AuthenticatedRequest {
   body: {
     matchId: string;
     eventType: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -182,7 +182,8 @@ export const getUserAnalyticsController = async (req: GetUserAnalyticsRequest, r
 
     // Convert dates to ISO strings for JSON serialization if they're Date objects
     if (analytics.lastActive && analytics.lastActive instanceof Date) {
-      (analytics as any).lastActive = analytics.lastActive.toISOString();
+      const analyticsWithString = analytics as { lastActive: Date | string };
+      analyticsWithString.lastActive = analytics.lastActive.toISOString();
     }
 
     res.json({ success: true, data: analytics });
@@ -208,7 +209,8 @@ export const getPetAnalyticsController = async (req: GetPetAnalyticsRequest, res
 
     // Convert dates to ISO strings for JSON serialization if they're Date objects
     if (analytics.lastViewed && analytics.lastViewed instanceof Date) {
-      (analytics as any).lastViewed = analytics.lastViewed.toISOString();
+      const analyticsWithString = analytics as { lastViewed: Date | string };
+      analyticsWithString.lastViewed = analytics.lastViewed.toISOString();
     }
 
     res.json({ success: true, data: { analytics } });

@@ -78,6 +78,11 @@ export type RootStackParamList = {
   GoLive: undefined;
   LiveViewer: { streamId: string };
   LiveBrowse: undefined;
+  UIDemo: undefined;
+  ComponentTest: undefined;
+  NewComponentsTest: undefined;
+  MigrationExample: undefined;
+  PremiumDemo: undefined;
   [key: string]: undefined | object;
 };
 

@@ -99,6 +99,9 @@ const Colors = {
   tertiary: COLORS.neutral[400],
   inverse: COLORS.neutral[900],
   shadow: "rgba(0, 0, 0, 0.1)",
+  
+  // Neutral color palette
+  neutral: COLORS.neutral,
 };
 
 // Legacy typography mappings

@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme, getExtendedColors } from "../../theme/Provider";
+import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -233,11 +233,11 @@ export default function AdminAnalyticsScreen({
   const getTrendColor = (trend: "up" | "down" | "stable"): string => {
     switch (trend) {
       case "up":
-        return "Theme.colors.status.success";
+        return theme.colors.success;
       case "down":
-        return "Theme.colors.status.error";
+        return theme.colors.danger;
       default:
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
     }
   };
 
@@ -296,7 +296,7 @@ export default function AdminAnalyticsScreen({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => {
+             testID="AdminAnalyticsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               (navigation as { goBack: () => void }).goBack();
             }}
             style={styles.backButton}
@@ -320,7 +320,7 @@ export default function AdminAnalyticsScreen({
                       selectedPeriod === period ? colors.primary : colors.card,
                   },
                 ])}
-                onPress={() => {
+                 testID="AdminAnalyticsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   handlePeriodChange(period);
                 }}
               >
@@ -329,7 +329,7 @@ export default function AdminAnalyticsScreen({
                     styles.periodText,
                     {
                       color:
-                        selectedPeriod === period ? "Theme.colors.neutral[0]" : colors.text,
+                        selectedPeriod === period ? theme.colors.neutral[0] : colors.text,
                     },
                   ])}
                 >
@@ -360,7 +360,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="people" size={20} color="Theme.colors.status.info" />
+                    <Ionicons name="people" size={20} color={theme.colors.status.info} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -403,7 +403,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="heart" size={20} color="Theme.colors.primary[500]" />
+                    <Ionicons name="heart" size={20} color={theme.colors.primary[500]} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -446,7 +446,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color="Theme.colors.secondary[500]" />
+                    <Ionicons name="chatbubble" size={20} color={theme.colors.secondary[500]} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -489,7 +489,7 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="cash" size={20} color="Theme.colors.status.success" />
+                    <Ionicons name="cash" size={20} color={theme.colors.success} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -700,7 +700,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueValue,
-                      { color: "Theme.colors.status.error" },
+                      { color: theme.colors.danger },
                     ])}
                   >
                     {analytics.revenue.churnRate.toFixed(1)}%
@@ -726,7 +726,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="warning" size={20} color="Theme.colors.status.warning" />
+                  <Ionicons name="warning" size={20} color={theme.colors.warning} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -750,7 +750,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="shield" size={20} color="Theme.colors.status.error" />
+                  <Ionicons name="shield" size={20} color={theme.colors.danger} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -774,7 +774,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="flag" size={20} color="Theme.colors.secondary[500]" />
+                  <Ionicons name="flag" size={20} color={theme.colors.secondary[500]} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -798,7 +798,7 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="ban" size={20} color="Theme.colors.status.error" />
+                  <Ionicons name="ban" size={20} color={theme.colors.danger} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -996,7 +996,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1040,7 +1040,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1064,7 +1064,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1089,7 +1089,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1114,7 +1114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,

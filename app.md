@@ -81,7 +81,7 @@
         - **Event Discovery**: Find local pet events and meetups
 
         ### 6. 📖 Stories Feature
-        - **24-Hour Content**: Instagram-style stories for pet updates
+        - **24-Hour Content**:Instagram-style stories for pet updates
         - **Media Upload**: Photos and videos with text overlays
         - **View Tracking**: See who viewed your stories
         - **Direct Replies**: DM replies to stories

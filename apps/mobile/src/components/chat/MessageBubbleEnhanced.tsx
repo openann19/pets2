@@ -379,7 +379,7 @@ export function MessageBubbleEnhanced({
       {/* Read-by popover */}
       <ReadByPopover
         visible={showReadBy}
-        onClose={() => setShowReadBy(false)}
+        onClose={() => { setShowReadBy(false); }}
         receipts={message.readBy}
         users={users}
         anchor={anchor}
@@ -394,7 +394,7 @@ export function MessageBubbleEnhanced({
       {/* Morphing context menu */}
       <MorphingContextMenu
         visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
+        onClose={() => { setMenuVisible(false); }}
         anchor={menuAnchor}
         actions={actions}
         theme={{

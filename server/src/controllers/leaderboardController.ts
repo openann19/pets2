@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import User from '../models/User';
 import Match from '../models/Match';
 import Conversation from '../models/Conversation';
@@ -11,12 +12,17 @@ import LeaderboardScore from '../models/LeaderboardScore';
 const logger = require('../utils/logger');
 
 // Try to load Message model
-let Message: any = null;
+let Message: typeof import('../models/Message').default | null = null;
 try {
-  Message = require('../models/Message');
+  Message = require('../models/Message').default;
 } catch (error) {
   Message = null;
   logger.warn?.('Message model unavailable for engagement leaderboard', { error: (error as Error)?.message });
+}
+
+interface AuthRequest extends Request {
+  userId?: string;
+  user?: IUserDocument;
 }
 
 // Type definitions
@@ -131,9 +137,9 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
     };
 
     // Include current user's rank if authenticated
-    if ((req as any).userId) {
-      const userRank = await getUserRankInCategory((req as any).userId, category, timeframe);
-      const userScore = await getUserScoreInCategory((req as any).userId, category, timeframe);
+    if ((req as AuthRequest).userId) {
+      const userRank = await getUserRankInCategory((req as AuthRequest).userId!, category, timeframe);
+      const userScore = await getUserScoreInCategory((req as AuthRequest).userId!, category, timeframe);
 
       response.userRank = userRank;
       response.userScore = userScore;
@@ -160,7 +166,7 @@ export const getLeaderboard = async (req: Request, res: Response): Promise<void>
 export const getUserRank = async (req: Request, res: Response): Promise<void> => {
   try {
     const { category: categoryParam, timeframe: timeframeParam } = req.params;
-    const userId = (req as any).userId;
+    const userId = (req as AuthRequest).userId!;
 
     if (!userId) {
       res.status(401).json({
@@ -278,7 +284,7 @@ async function getLeaderboardEntries(
   offset: number
 ): Promise<LeaderboardEntry[]> {
   try {
-    let aggregationPipeline: any[] = [];
+    let aggregationPipeline: Record<string, unknown>[] = [];
 
     switch (category) {
       case 'overall':
@@ -476,7 +482,12 @@ async function getLeaderboardEntries(
     const results = await LeaderboardScore.aggregate(aggregationPipeline);
 
     // Add rank numbers
-    return results.map((entry: any, index: number) => ({
+    return results.map((entry: {
+      _id: string;
+      totalScore: number;
+      userName: string;
+      userAvatar?: string;
+    }, index: number) => ({
       userId: entry.userId.toString(),
       userName: entry.userName || 'Anonymous',
       score: entry.score || entry.totalScore || 0,

@@ -1,6 +1,6 @@
 // navigation/UltraTabBar.tsx
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Platform, type LayoutChangeEvent } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Platform, type LayoutChangeEvent, type NativeScrollEvent } from "react-native";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,18 +12,27 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { tabBarController } from "./tabbarController";
 
-type Route = { key: string; name: string };
-type State = { index: number; routes: Route[] };
-type Props = {
-  state: State;
-  descriptors: any;
-  navigation: any;
+type IoniconsName = string;
+
+type IconNameMap = {
+  Home: { focused: "home"; unfocused: "home-outline" };
+  Swipe: { focused: "heart"; unfocused: "heart-outline" };
+  Map: { focused: "map"; unfocused: "map-outline" };
+  Matches: { focused: "chatbubbles"; unfocused: "chatbubbles-outline" };
+  Profile: { focused: "person"; unfocused: "person-outline" };
+  AdoptionManager: { focused: "list"; unfocused: "list-outline" };
+  Premium: { focused: "star"; unfocused: "star-outline" };
 };
 
-const iconFor = (route: string, focused: boolean): any => {
-  switch (route) {
+type RouteName = keyof IconNameMap;
+
+const iconFor = (route: string, focused: boolean): IoniconsName => {
+  const routeName = route as RouteName;
+  
+  switch (routeName) {
     case "Home": return focused ? "home" : "home-outline";
     case "Swipe": return focused ? "heart" : "heart-outline";
     case "Map": return focused ? "map" : "map-outline";
@@ -35,16 +44,16 @@ const iconFor = (route: string, focused: boolean): any => {
   }
 };
 
-const badgeCount = (route: string) => (route === "Matches" ? 3 : route === "Map" ? 1 : route === "Home" ? 2 : 0);
+const badgeCount = (route: string): number => (route === "Matches" ? 3 : route === "Map" ? 1 : route === "Home" ? 2 : 0);
 
-const UltraTabBar: React.FC<Props> = ({ state, descriptors, navigation }) => {
+const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
   const insets = useSafeAreaInsets();
   const { colors, dark } = useTheme();
 
   const [containerW, setContainerW] = useState(0);
   const tabXs = useRef<number[]>([]);
   const tabWs = useRef<number[]>([]);
-  const onContainer = (e: LayoutChangeEvent) => setContainerW(e.nativeEvent.layout.width);
+  const onContainer = (e: LayoutChangeEvent) => { setContainerW(e.nativeEvent.layout.width); };
   const onTab = (i: number) => (e: LayoutChangeEvent) => {
     const { x, width } = e.nativeEvent.layout;
     tabXs.current[i] = x;

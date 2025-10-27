@@ -1,67 +1,155 @@
 id: chat-reactions-attachments
 owner: api
 severity: high
-area: mobile+contracts
+area: mobile+backend+contracts
+status: open
 context: |
-  Modern UX requires reactions and media attachments in chat.
-  Current implementation: UI elements exist but are non-functional ("coming soon" alerts).
-  Missing: reaction service, attachment upload, backend endpoints.
-status: in_progress
+  Modern chat applications require reactions, attachments, and voice notes.
+  Current behavior: Only text messaging is supported.
+  Why it matters: Users expect modern chat features; competitive disadvantage without them.
+  
+  Use Case:
+  1. User opens chat with matched pet owner
+  2. User long-presses message → reaction picker appears
+  3. User selects reaction (❤️ 👍 😂) → reaction added to message
+  4. User taps attachment icon → file picker opens
+  5. User selects photo/video/file → uploads and sends
+  6. User holds microphone icon → records voice note
+  7. User releases → voice note uploads and sends
+  8. User sees media thumbnails in chat
+  9. User can tap to view full-size media
+
 acceptance:
-  - services: add sendReaction, sendAttachment, sendVoiceNote methods implemented
-  - UI: long-press message → reaction bar modal appears
-  - UI: attachment picker integrates with photo library
-  - UI: voice note recorder with waveform visualization
-  - backend: POST /chat/reactions endpoint implemented
-  - backend: POST /chat/attachments endpoint handles file upload
-  - backend: POST /chat/voice handles audio upload
-  - Optimistic UI updates for all message types
-  - tests: unit for reducers, integration for ChatScreen, Detox E2E
-states: [loading, selecting, sending, sent, error]
+  - [ ] Backend: POST /chat/:conversationId/reaction endpoint
+  - [ ] Backend: POST /chat/:conversationId/attachment endpoint (multipart)
+  - [ ] Backend: POST /chat/:conversationId/voice endpoint
+  - [ ] Backend: GET /chat/:conversationId/attachments/:attachmentId endpoint
+  - [ ] Mobile: ChatBubble displays reactions
+  - [ ] Mobile: ChatBubble displays attachment thumbnails
+  - [ ] Mobile: ChatBubble displays voice note waveform
+  - [ ] Mobile: ChatInput has attachment picker button
+  - [ ] Mobile: ChatInput has voice note button (hold to record)
+  - [ ] Mobile: Long-press on message shows reaction picker
+  - [ ] Mobile: Media viewer opens on tap
+  - [ ] Mobile: Voice note playback with waveform
+  - [ ] Services: sendReaction, sendAttachment, sendVoiceNote methods
+  - [ ] Unit: ChatBubble reaction/attachment rendering tests
+  - [ ] Integration: Chat screen with reactions/attachments
+  - [ ] E2E: Send reaction, attachment, and voice note flow
+
+states:
+  - loading
+  - uploading
+  - processing
+  - success
+  - error
+
 telemetry:
   - event: CHAT_REACTION_SENT
-    props: [reaction, messageId, matchId]
+    props: [messageId, reactionType, userId, timestamp]
+  - event: CHAT_REACTION_REMOVED
+    props: [messageId, reactionType, userId]
   - event: CHAT_ATTACHMENT_SENT
-    props: [type, size, matchId]
-  - event: CHAT_VOICE_NOTE_SENT
-    props: [duration, matchId]
+    props: [messageId, attachmentType, fileSize, userId]
+  - event: CHAT_VOICE_SENT
+    props: [messageId, duration, fileSize, userId]
+  - event: CHAT_MEDIA_VIEWED
+    props: [attachmentId, mediaType]
+  - event: CHAT_VOICE_PLAYED
+    props: [voiceId, duration]
+
 contracts:
-  reactions:
-    endpoint: POST /matches/:matchId/messages/:messageId/reactions
-    request: { reaction: string }
-    response: { success: boolean, messageId: string, reactions: Record<string, number>, totalReactions: number }
-  attachments:
-    endpoint: POST /matches/:matchId/messages/attachments
-    request: FormData with file, type, caption?
-    response: { success: boolean, messageId: string, attachment: ChatAttachment, url: string }
-  voice:
-    endpoint: POST /matches/:matchId/messages/voice
-    request: FormData with audio, duration
-    response: { success: boolean, messageId: string, voiceNote: VoiceNoteData }
+  request:
+    reaction:
+      messageId: string
+      reactionType: "like" | "love" | "laugh" | "wow" | "sad" | "angry"
+      userId: string
+    attachment:
+      conversationId: string
+      file: File
+      type: "image" | "video" | "document"
+      metadata?: Record<string, unknown>
+    voice:
+      conversationId: string
+      audioUri: string
+      duration: number
+      sampleRate?: number
+  response:
+    reaction:
+      success: boolean
+      updatedMessage: Message
+      reaction: { type: string, count: number, users: string[] }
+    attachment:
+      success: boolean
+      messageId: string
+      attachmentId: string
+      url: string
+      thumbnailUrl?: string
+      fileSize: number
+      type: string
+    voice:
+      success: boolean
+      messageId: string
+      audioUrl: string
+      duration: number
+      waveform?: number[]
+  errors:
+    - code: FILE_TOO_LARGE
+      message: "File size exceeds maximum (10MB)"
+    - code: INVALID_FILE_TYPE
+      message: "File type not supported"
+    - code: UPLOAD_FAILED
+      message: "File upload failed, please try again"
+    - code: VOICE_TOO_LONG
+      message: "Voice note exceeds maximum duration (60s)"
+
 assets:
   mocks:
-    - mocks/fixtures/chat/reaction.success.json
-    - mocks/fixtures/chat/attachment.success.json
-    - mocks/fixtures/chat/voice.success.json
+    - mocks/fixtures/chat/reactions.json
+    - mocks/fixtures/chat/attachments.json
+    - mocks/fixtures/chat/voice-notes.json
   tests:
-    - apps/mobile/src/services/__tests__/chatService.test.tsx
-  service:
-    - apps/mobile/src/services/chatService.ts
-implementation:
-  completed:
-    - chatService.ts created with full API interface
-    - Mock fixtures created for all message types
-    - Types defined for MessageReaction, ChatAttachment, VoiceNoteData
-    - Helper methods for file processing and validation
-  remaining:
-    - Integrate with UI components (MessageBubble, MessageInput)
-    - Add photo picker integration
-    - Create voice recorder component
-    - Add optimistic UI updates
+    - apps/mobile/src/components/chat/__tests__/ChatBubble.reactions.test.tsx
+    - apps/mobile/src/components/chat/__tests__/ChatBubble.attachments.test.tsx
+    - apps/mobile/src/services/__tests__/chatService.reactions.test.ts
+    - e2e/chat-reactions.e2e.ts
+    - e2e/chat-attachments.e2e.ts
+  components:
+    - apps/mobile/src/components/chat/ReactionPicker.tsx
+    - apps/mobile/src/components/chat/AttachmentViewer.tsx
+    - apps/mobile/src/components/chat/VoiceNotePlayer.tsx
+  services:
+    - Enhanced chatService with reaction methods
+    - Attachment upload service
+    - Voice recording service
+
 risks:
-  - file uploads exceed size limits
-  - audio encoding incompatible formats
-  - storage costs for media files
+  - Large file uploads consuming bandwidth and storage
+  - Voice note quality issues on different devices
+  - Storage costs for media files
+  - Privacy concerns with media in chat
+  - Malicious file uploads (security risk)
+
 rollback:
-  - disable UI buttons via feature flag
-  - revert to text-only messaging
+  - Feature flag to disable reactions/attachments
+  - Revert to text-only messaging mode
+  - Keep data but don't display
+
+links:
+  - design: Chat reactions design spec
+  - PR: #TODO
+  - docs: reports/ux_findings.md
+
+dependencies:
+  - backend: chat endpoint enhancements
+  - backend: storage service for attachments
+  - mobile: react-native-image-picker
+  - mobile: react-native-audio-recorder
+  - infra: CDN for media storage
+
+timeline:
+  start: 2025-02-01
+  backend: 2025-02-15
+  mobile: 2025-02-20
+  testing: 2025-02-25
+  deploy: 2025-03-01

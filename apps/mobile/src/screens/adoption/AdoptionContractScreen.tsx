@@ -12,7 +12,8 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   AdoptionContract: {
@@ -117,7 +118,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity  testID="AdoptionContractScreen-button-2" accessibilityLabel="navigation.goBack()" accessibilityRole="button" onPress={() => navigation.goBack()}>
           <Text style={styles.backButton}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Adoption Contract</Text>
@@ -189,11 +190,11 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
-                trackColor={{ false: "Theme.colors.neutral[200]", true: "#fce7f3" }}
+                trackColor={{ false: theme.colors.neutral[200], true: "#fce7f3" }}
                 thumbColor={
                   contractTerms[item.key as keyof ContractTerms]
-                    ? "Theme.colors.primary[500]"
-                    : "Theme.colors.neutral[400]"
+                    ? theme.colors.primary[500]
+                    : theme.colors.neutral[400]
                 }
               />
             </View>
@@ -234,11 +235,11 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
-                trackColor={{ false: "Theme.colors.neutral[200]", true: "#fce7f3" }}
+                trackColor={{ false: theme.colors.neutral[200], true: "#fce7f3" }}
                 thumbColor={
                   contractTerms[item.key as keyof ContractTerms]
-                    ? "Theme.colors.primary[500]"
-                    : "Theme.colors.neutral[400]"
+                    ? theme.colors.primary[500]
+                    : theme.colors.neutral[400]
                 }
               />
             </View>
@@ -328,7 +329,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
             styles.generateButton,
             isGenerating && styles.disabledButton,
           ])}
-          onPress={generateContract}
+           testID="AdoptionContractScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={generateContract}
           disabled={isGenerating}
         >
           <Text style={styles.generateButtonText}>
@@ -345,7 +346,7 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
   },
   header: {
     flexDirection: "row",
@@ -353,17 +354,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[100]",
+    borderBottomColor: theme.colors.neutral[100],
   },
   backButton: {
     fontSize: 16,
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   placeholder: {
     width: 50,
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   contractInfo: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
@@ -382,18 +383,18 @@ const styles = StyleSheet.create({
   contractTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 8,
     textAlign: "center",
   },
   contractSubtitle: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginBottom: 4,
   },
   contractDate: {
     fontSize: 14,
-    color: "Theme.colors.neutral[400]",
+    color: theme.colors.neutral[400],
   },
   section: {
     marginBottom: 32,
@@ -401,12 +402,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 8,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -416,32 +417,32 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   textArea: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     textAlignVertical: "top",
     minHeight: 100,
   },
   helperText: {
     fontSize: 12,
-    color: "Theme.colors.neutral[400]",
+    color: theme.colors.neutral[400],
     marginTop: 4,
     lineHeight: 16,
   },
@@ -449,7 +450,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -461,12 +462,12 @@ const styles = StyleSheet.create({
   switchLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 4,
   },
   switchDescription: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     lineHeight: 18,
   },
   legalNotice: {
@@ -489,22 +490,22 @@ const styles = StyleSheet.create({
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "Theme.colors.neutral[100]",
+    borderTopColor: theme.colors.neutral[100],
   },
   generateButton: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: theme.colors.primary[500],
     borderRadius: 12,
     paddingVertical: 16,
     paddingHorizontal: 24,
     alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: "Theme.colors.neutral[300]",
+    backgroundColor: theme.colors.neutral[300],
   },
   generateButtonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
   },
 });
 

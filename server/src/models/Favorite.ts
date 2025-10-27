@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
-import {
+import mongoose, { Schema, Model } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
+import type {
   IFavorite,
   IFavoriteMethods,
   IFavoriteModel
@@ -38,16 +39,16 @@ favoriteSchema.index({ userId: 1, petId: 1 }, { unique: true });
 favoriteSchema.index({ userId: 1, createdAt: -1 });
 
 // Virtual for favorite age
-favoriteSchema.virtual('age').get(function(this: any): number {
+favoriteSchema.virtual('age').get(function(this: IFavoriteDocument): number {
   return Date.now() - this.createdAt.getTime();
 });
 
 // Static method: Get user's favorites with populated pet data
-favoriteSchema.statics.getUserFavorites = async function(userId: string, pageOrOptions: Record<string, unknown> | number = {}, perPage?: number): Promise<any> {
+favoriteSchema.statics.getUserFavorites = async function(userId: string, pageOrOptions: Record<string, unknown> | number = {}, perPage?: number): Promise<IFavoriteDocument[]> {
   // Support legacy signature: (userId, page, limit)
   let page: number;
   let limit: number;
-  let sort: any = { createdAt: -1, _id: -1 };
+  let sort: Record<string, 1 | -1> = { createdAt: -1, _id: -1 };
   let skip: number;
 
   if (typeof pageOrOptions === 'number') {

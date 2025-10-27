@@ -197,8 +197,8 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, [applyFilter]);
 
-  const handleFlipH = useCallback(() => setFlipHorizontal(!flipHorizontal), [flipHorizontal, setFlipHorizontal]);
-  const handleFlipV = useCallback(() => setFlipVertical(!flipVertical), [flipVertical, setFlipVertical]);
+  const handleFlipH = useCallback(() => { setFlipHorizontal(!flipHorizontal); }, [flipHorizontal, setFlipHorizontal]);
+  const handleFlipV = useCallback(() => { setFlipVertical(!flipVertical); }, [flipVertical, setFlipVertical]);
 
   const handleSave = useCallback(async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -211,7 +211,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     applyFilter({ brightness: 105, contrast: 110, saturation: 115, sharpen: 20 });
     setQuickMode('auto');
-    setTimeout(() => setQuickMode(null), 2000);
+    setTimeout(() => { setQuickMode(null); }, 2000);
   }, [applyFilter]);
 
   const batchApply = useCallback((preset: string) => {
@@ -227,7 +227,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
     if (presets[preset]) {
       applyFilter(presets[preset]);
       setQuickMode(preset);
-      setTimeout(() => setQuickMode(null), 2000);
+      setTimeout(() => { setQuickMode(null); }, 2000);
     }
   }, [applyFilter]);
 
@@ -256,14 +256,14 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
       
       logger.info('[ULTRA Export] Generated variants', {
         count: variants.length,
-        byRatio: variants.reduce((acc, v) => {
+        byRatio: variants.reduce<Record<string, number>>((acc, v) => {
           acc[v.ratio] = (acc[v.ratio] || 0) + 1;
           return acc;
-        }, {} as Record<string, number>),
-        byKind: variants.reduce((acc, v) => {
+        }, {}),
+        byKind: variants.reduce<Record<string, number>>((acc, v) => {
           acc[v.kind] = (acc[v.kind] || 0) + 1;
           return acc;
-        }, {} as Record<string, number>),
+        }, {}),
       });
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
@@ -319,7 +319,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <Ionicons
                 name={showSplit ? 'contract-outline' : 'swap-horizontal'}
                 size={22}
-                color={Theme.colors.primary[500]}
+                color={Theme.colors.primary[500}]}}
               />
             </BouncePressable>
           </View>
@@ -352,7 +352,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 8, paddingHorizontal: 12,
                          borderRadius: 10, backgroundColor: "rgba(255,255,255,0.08)", borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
                 accessibilityLabel="Auto-crop with face detection">
-                <Ionicons name="sparkles" size={18} color={Theme.colors.primary[500]} />
+                <Ionicons name="sparkles" size={18} color={Theme.colors.primary[500}]}} />
                 <Text style={{ color: "#fff", fontWeight: "700", fontSize: 13 }}>Auto</Text>
               </BouncePressable>
 
@@ -440,7 +440,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
         <Animated.View entering={FadeInDown.delay(100).springify()} exiting={FadeOutUp}>
           <BouncePressable
             style={[styles.tab, activeTab === 'adjust' && styles.activeTab]}
-            onPress={() => setActiveTab('adjust')}
+            onPress={() => { setActiveTab('adjust'); }}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'adjust' }}
           >
@@ -452,7 +452,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
         <Animated.View entering={FadeInDown.delay(150).springify()} exiting={FadeOutUp}>
           <BouncePressable
             style={[styles.tab, activeTab === 'filters' && styles.activeTab]}
-            onPress={() => setActiveTab('filters')}
+            onPress={() => { setActiveTab('filters'); }}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'filters' }}
           >
@@ -464,7 +464,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
         <Animated.View entering={FadeInDown.delay(200).springify()} exiting={FadeOutUp}>
           <BouncePressable
             style={[styles.tab, activeTab === 'crop' && styles.activeTab]}
-            onPress={() => setActiveTab('crop')}
+            onPress={() => { setActiveTab('crop'); }}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === 'crop' }}
           >
@@ -485,20 +485,20 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                   <Ionicons name="sparkles" size={16} color={quickMode === 'auto' ? Theme.colors.primary[500] : 'white'} />
                   <Text style={[styles.quickActionText, quickMode === 'auto' && { color: Theme.colors.primary[500] }]}>Auto</Text>
                 </BouncePressable>
-                <BouncePressable onPress={() => batchApply('portrait')} style={[styles.quickAction, quickMode === 'portrait' && styles.quickActionActive]}>
+                <BouncePressable onPress={() => { batchApply('portrait'); }} style={[styles.quickAction, quickMode === 'portrait' && styles.quickActionActive]}>
                   <Ionicons name="person" size={16} color={quickMode === 'portrait' ? Theme.colors.primary[500] : 'white'} />
                   <Text style={[styles.quickActionText, quickMode === 'portrait' && { color: Theme.colors.primary[500] }]}>Portrait</Text>
                 </BouncePressable>
-                <BouncePressable onPress={() => batchApply('vivid')} style={[styles.quickAction, quickMode === 'vivid' && styles.quickActionActive]}>
+                <BouncePressable onPress={() => { batchApply('vivid'); }} style={[styles.quickAction, quickMode === 'vivid' && styles.quickActionActive]}>
                   <Ionicons name="flash" size={16} color={quickMode === 'vivid' ? Theme.colors.primary[500] : 'white'} />
                   <Text style={[styles.quickActionText, quickMode === 'vivid' && { color: Theme.colors.primary[500] }]}>Vivid+</Text>
                 </BouncePressable>
-                <BouncePressable onPress={() => batchApply('dramatic')} style={[styles.quickAction, quickMode === 'dramatic' && styles.quickActionActive]}>
+                <BouncePressable onPress={() => { batchApply('dramatic'); }} style={[styles.quickAction, quickMode === 'dramatic' && styles.quickActionActive]}>
                   <Ionicons name="contrast" size={16} color={quickMode === 'dramatic' ? Theme.colors.primary[500] : 'white'} />
                   <Text style={[styles.quickActionText, quickMode === 'dramatic' && { color: Theme.colors.primary[500] }]}>Dramatic</Text>
                 </BouncePressable>
               </ScrollView>
-              <BouncePressable onPress={() => setShowGrid((g) => g === 'off' ? 'thirds' : g === 'thirds' ? 'golden' : 'off')} style={{ padding: 10 }}>
+              <BouncePressable onPress={() => { setShowGrid((g) => g === 'off' ? 'thirds' : g === 'thirds' ? 'golden' : 'off'); }} style={{ padding: 10 }}>
                 <Ionicons name="grid" size={20} color={showGrid === 'off' ? 'rgba(255,255,255,0.5)' : Theme.colors.primary[500]} />
               </BouncePressable>
             </View>
@@ -535,7 +535,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 step={1}
                 defaultValue={100}
                 icon="sunny"
-                onValueChange={(v) => updateAdjustment('brightness', v)}
+                onValueChange={(v) => { updateAdjustment('brightness', v); }}
               />
               <PhotoAdjustmentSlider
                 label="Contrast"
@@ -545,7 +545,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 step={1}
                 defaultValue={100}
                 icon="contrast"
-                onValueChange={(v) => updateAdjustment('contrast', v)}
+                onValueChange={(v) => { updateAdjustment('contrast', v); }}
               />
               <PhotoAdjustmentSlider
                 label="Saturation"
@@ -555,7 +555,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 step={1}
                 defaultValue={100}
                 icon="color-palette"
-                onValueChange={(v) => updateAdjustment('saturation', v)}
+                onValueChange={(v) => { updateAdjustment('saturation', v); }}
               />
               <PhotoAdjustmentSlider
                 label="Warmth"
@@ -565,7 +565,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 step={1}
                 defaultValue={0}
                 icon="flame"
-                onValueChange={(v) => updateAdjustment('warmth', v)}
+                onValueChange={(v) => { updateAdjustment('warmth', v); }}
               />
               <PhotoAdjustmentSlider
                 label="Blur"
@@ -575,7 +575,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 step={1}
                 defaultValue={0}
                 icon="water"
-                onValueChange={(v) => updateAdjustment('blur', v)}
+                onValueChange={(v) => { updateAdjustment('blur', v); }}
               />
               <PhotoAdjustmentSlider
                 label="Clarity"
@@ -585,12 +585,12 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 step={1}
                 defaultValue={0}
                 icon="aperture"
-                onValueChange={(v) => updateAdjustment('sharpen', v)}
+                onValueChange={(v) => { updateAdjustment('sharpen', v); }}
               />
 
               <View style={{ height: 10 }} />
               <BouncePressable onPress={resetAdjustments} style={styles.resetButton} scaleFrom={0.95} accessibilityLabel="Reset all adjustments">
-                <Ionicons name="refresh-circle" size={20} color={Theme.colors.status.error} />
+                <Ionicons name="refresh-circle" size={20} color={Theme.colors.status.erro}r}} />
                 <Text style={styles.resetButtonText}>Reset All</Text>
               </BouncePressable>
             </BlurView>
@@ -604,7 +604,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 accessibilityRole="button"
                 accessibilityLabel="Export ultra variants for social media"
               >
-                <Ionicons name="rocket" size={24} color={Theme.colors.primary[500]} />
+                <Ionicons name="rocket" size={24} color={Theme.colors.primary[500}]}} />
                 <Text style={styles.ultraExportText}>
                   {ultraExporting ? `Exporting... ${ultraProgress}%` : 'ULTRA Export (9 Variants)'}
                 </Text>
@@ -625,7 +625,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
           <View style={styles.filtersContainer}>
             {FILTER_PRESETS.map((preset, index) => (
               <Animated.View key={preset.name} entering={FadeInDown.delay(50 * (index + 1)).springify()} exiting={FadeOutUp}>
-                <BouncePressable style={styles.filterCard} onPress={() => applyFilterPreset(preset)} accessibilityLabel={`Apply ${preset.name} filter`}>
+                <BouncePressable style={styles.filterCard} onPress={() => { applyFilterPreset(preset); }} accessibilityLabel={`Apply ${preset.name} filter`}>
                   <BlurView intensity={20} style={styles.filterIcon}>
                     <Ionicons name={preset.icon} size={28} color="white" />
                   </BlurView>
@@ -641,14 +641,14 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
         <BeforeAfterSlider
           originalUri={imageUri}
           editedUri={editedUri}
-          onClose={() => setShowSplit(false)}
+          onClose={() => { setShowSplit(false); }}
         />
       )}
 
       {isProcessing && (
         <View style={styles.loadingOverlay} pointerEvents="none">
           <BlurView intensity={80} style={styles.loadingContent}>
-            <ActivityIndicator size="small" color={Theme.colors.primary[500]} />
+            <ActivityIndicator size="small" color={Theme.colors.primary[500}]}} />
             <Text style={styles.loadingText}>Processing…</Text>
           </BlurView>
         </View>
@@ -659,13 +659,13 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
         visible={showUltraModal}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setShowUltraModal(false)}
+        onRequestClose={() => { setShowUltraModal(false); }}
       >
         <BlurView intensity={80} style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Export Complete</Text>
-              <BouncePressable onPress={() => setShowUltraModal(false)} style={{ padding: 8 }}>
+              <BouncePressable onPress={() => { setShowUltraModal(false); }} style={{ padding: 8 }}>
                 <Ionicons name="close" size={24} color="white" />
               </BouncePressable>
             </View>
@@ -704,7 +704,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
             </ScrollView>
 
             <View style={styles.modalFooter}>
-              <BouncePressable onPress={() => setShowUltraModal(false)} style={styles.modalButton}>
+              <BouncePressable onPress={() => { setShowUltraModal(false); }} style={styles.modalButton}>
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </BouncePressable>
               <BouncePressable onPress={handleUltraSaveAll} style={[styles.modalButton, styles.modalButtonPrimary]}>

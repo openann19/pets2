@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSafetyCenterScreen } from "../hooks/screens/safety";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 interface SafetyCenterScreenProps {
@@ -41,14 +42,14 @@ function SafetyCenterScreen(): JSX.Element {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#1e3c72", "#2a5298", "Theme.colors.status.info"]}
+        colors={["#1e3c72", "#2a5298", theme.colors.status.info]}
         style={StyleSheet.absoluteFillObject}
       />
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <TouchableOpacity style={styles.backButton}  testID="SafetyCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}>
             <BlurView intensity={20} style={styles.backButtonBlur}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </BlurView>
@@ -63,7 +64,7 @@ function SafetyCenterScreen(): JSX.Element {
             <Ionicons
               name={emergencyMode ? "shield-checkmark" : "warning-outline"}
               size={24}
-              color={emergencyMode ? "Theme.colors.status.success" : "Theme.colors.status.error"}
+              color={emergencyMode ? theme.colors.success : theme.colors.danger}
             />
             <View style={styles.emergencyText}>
               <Text style={styles.emergencyTitle}>
@@ -80,9 +81,9 @@ function SafetyCenterScreen(): JSX.Element {
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.emergencyButton,
-                { backgroundColor: emergencyMode ? "Theme.colors.status.success" : "Theme.colors.status.error" },
+                { backgroundColor: emergencyMode ? theme.colors.success : theme.colors.danger },
               ])}
-              onPress={toggleEmergencyMode}
+               testID="SafetyCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={toggleEmergencyMode}
             >
               <Text style={styles.emergencyButtonText}>
                 {emergencyMode ? "Active" : "Activate"}
@@ -99,7 +100,7 @@ function SafetyCenterScreen(): JSX.Element {
             <TouchableOpacity
               key={option.id}
               style={styles.optionCard}
-              onPress={() => {
+               testID="SafetyCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleSafetyOption(option);
               }}
             >
@@ -136,10 +137,10 @@ function SafetyCenterScreen(): JSX.Element {
             Quick Actions
           </Text>
 
-          <TouchableOpacity style={styles.quickActionCard}>
+          <TouchableOpacity style={styles.quickActionCard} testID="SafetyCenterScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
             <BlurView intensity={20} style={styles.quickActionBlur}>
               <View style={styles.quickActionContent}>
-                <Ionicons name="help-buoy-outline" size={24} color="Theme.colors.status.info" />
+                <Ionicons name="help-buoy-outline" size={24} color={theme.colors.status.info} }/>
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Contact Support</Text>
                   <Text style={styles.quickActionDescription}>
@@ -155,14 +156,14 @@ function SafetyCenterScreen(): JSX.Element {
             </BlurView>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.quickActionCard}>
+          <TouchableOpacity style={styles.quickActionCard} testID="SafetyCenterScreen-button-2" accessibilityLabel="Button" accessibilityRole="button">
             <BlurView intensity={20} style={styles.quickActionBlur}>
               <View style={styles.quickActionContent}>
                 <Ionicons
                   name="document-text-outline"
                   size={24}
-                  color="Theme.colors.status.success"
-                />
+                  color={theme.colors.success
+               } }/>
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Safety Guidelines</Text>
                   <Text style={styles.quickActionDescription}>

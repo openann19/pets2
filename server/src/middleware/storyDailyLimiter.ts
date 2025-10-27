@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import redis from '../config/redis';
+import type { Request, Response, NextFunction } from 'express';
+import { getRedisClient } from '../config/redis';
 import logger from '../utils/logger';
 
 interface AuthRequest extends Request {
@@ -21,6 +21,7 @@ export async function storyDailyLimiter(req: AuthRequest, res: Response, next: N
         const userId = req.user?._id?.toString();
         if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
+        const redis = getRedisClient();
         if (!redis || !(redis as any).incr) {
             // Redis not configured; skip limiting but log
             logger.warn('Redis not available; skipping story daily limiter');
@@ -55,6 +56,4 @@ export async function storyDailyLimiter(req: AuthRequest, res: Response, next: N
         return next();
     }
 }
-
-export { storyDailyLimiter };
 

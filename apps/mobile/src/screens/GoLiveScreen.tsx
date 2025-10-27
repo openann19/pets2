@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../services/api";
 import { FLAGS } from "../config/flags";
-import { Theme } from "../theme/unified-theme";
+import { useTheme } from "../theme/Provider";
 import { logger } from "@pawfectmatch/core";
 
 interface GoLiveScreenProps {
@@ -13,11 +13,137 @@ interface GoLiveScreenProps {
 }
 
 export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
+  const theme = useTheme();
   const { top, bottom } = useSafeAreaInsets();
   const [publishing, setPublishing] = useState(false);
   const [muted, setMuted] = useState({ audio: false, video: false });
   const [streamId, setStreamId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Dynamic styles that depend on theme
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#000",
+      justifyContent: "space-between",
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingTop: 8,
+    },
+    closeButton: {
+      width: 40,
+      height: 40,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    headerTitle: {
+      color: "#fff",
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    placeholder: {
+      width: 40,
+    },
+    preview: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#1a1a1a",
+    },
+    liveBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: "#ef4444",
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 20,
+      marginBottom: 16,
+    },
+    liveIndicator: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: "#fff",
+      marginRight: 6,
+    },
+    liveText: {
+      color: "#fff",
+      fontWeight: "700",
+      fontSize: 12,
+    },
+    previewText: {
+      color: "#fff",
+      opacity: 0.7,
+      fontSize: 16,
+    },
+    controls: {
+      padding: 20,
+      gap: 16,
+    },
+    primaryButton: {
+      backgroundColor: theme.colors.primary,
+      padding: 14,
+      borderRadius: 12,
+      flexDirection: "row",
+      gap: 8,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    primaryText: {
+      color: "#fff",
+      fontWeight: "700",
+      fontSize: 16,
+    },
+    dangerButton: {
+      backgroundColor: "#ef4444",
+      padding: 14,
+      borderRadius: 12,
+      flexDirection: "row",
+      gap: 8,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    row: {
+      flexDirection: "row",
+      gap: 12,
+      justifyContent: "center",
+    },
+    circle: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: "rgba(255,255,255,0.15)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    errorContainer: {
+      backgroundColor: "rgba(239, 68, 68, 0.2)",
+      padding: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: "#ef4444",
+    },
+    errorText: {
+      color: "#ff6b6b",
+      fontSize: 14,
+      textAlign: "center",
+    },
+    loadingContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      justifyContent: "center",
+      marginVertical: 12,
+    },
+    loadingText: {
+      color: "#fff",
+      fontSize: 14,
+    },
+  });
 
   const startMutation = useMutation({
     mutationFn: async (payload: { title?: string; tags?: string[] }) => {
@@ -110,7 +236,7 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
   return (
     <View style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
+        <TouchableOpacity  testID="GoLiveScreen-button-2" accessibilityLabel="navigation.goBack() style=styles.closeButton" accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.closeButton}>
           <Ionicons name="close" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Go Live</Text>
@@ -133,13 +259,13 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
 
       <View style={styles.controls}>
         {!publishing ? (
-          <TouchableOpacity style={styles.primaryButton} onPress={connectAndPublish}>
+          <TouchableOpacity style={styles.primaryButton}  testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={connectAndPublish}>
             <Ionicons name="radio" size={20} color="#fff" />
             <Text style={styles.primaryText}>Go Live</Text>
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.dangerButton} onPress={endLive}>
+            <TouchableOpacity style={styles.dangerButton}  testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={endLive}>
               <Ionicons name="stop" size={20} color="#fff" />
               <Text style={styles.primaryText}>End Stream</Text>
             </TouchableOpacity>
@@ -147,17 +273,17 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
             <View style={styles.row}>
               <TouchableOpacity
                 style={styles.circle}
-                onPress={() => setMuted((m) => ({ ...m, audio: !m.audio }))}
+                 testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setMuted((m) => ({ ...m, audio: !m.audio })); }}
               >
                 <Ionicons name={muted.audio ? "mic-off" : "mic"} size={20} color="#fff" />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.circle}
-                onPress={() => setMuted((m) => ({ ...m, video: !m.video }))}
+                 testID="GoLiveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setMuted((m) => ({ ...m, video: !m.video })); }}
               >
                 <Ionicons
-                  name={muted.video ? "videocam-off" : "videocam"}
+                  name={muted.video ? "eye-off" : "eye"}
                   size={20}
                   color="#fff"
                 />
@@ -182,127 +308,3 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    justifyContent: "space-between",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  placeholder: {
-    width: 40,
-  },
-  preview: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#1a1a1a",
-  },
-  liveBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ef4444",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginBottom: 16,
-  },
-  liveIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#fff",
-    marginRight: 6,
-  },
-  liveText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 12,
-  },
-  previewText: {
-    color: "#fff",
-    opacity: 0.7,
-    fontSize: 16,
-  },
-  controls: {
-    padding: 20,
-    gap: 16,
-  },
-  primaryButton: {
-    backgroundColor: Theme.colors.primary[500],
-    padding: 14,
-    borderRadius: 12,
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  primaryText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  dangerButton: {
-    backgroundColor: "#ef4444",
-    padding: 14,
-    borderRadius: 12,
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  row: {
-    flexDirection: "row",
-    gap: 12,
-    justifyContent: "center",
-  },
-  circle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "rgba(255,255,255,0.15)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  errorContainer: {
-    backgroundColor: "rgba(239, 68, 68, 0.2)",
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ef4444",
-  },
-  errorText: {
-    color: "#ff6b6b",
-    fontSize: 14,
-    textAlign: "center",
-  },
-  loadingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  loadingText: {
-    color: "#fff",
-    fontSize: 14,
-  },
-});
-

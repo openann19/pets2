@@ -3,13 +3,15 @@
  * Ensures only authenticated admin users can access admin routes
  */
 
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import * as jwt from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import logger from '../utils/logger';
 
-interface AuthRequest extends Request {
-  user?: any;
+export interface AuthRequest extends Request {
+  userId?: string;
+  user?: { _id?: string; id?: string; role?: string; status?: string; email?: string; [key: string]: unknown };
 }
 
 /**
@@ -64,8 +66,8 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
     // Attach user to request
     req.user = user;
     next();
-  } catch (error: any) {
-    if (error.name === 'JsonWebTokenError') {
+  } catch (error) {
+    if (error instanceof Error && error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         success: false,
         error: 'Unauthorized',
@@ -73,7 +75,7 @@ export const requireAuth = async (req: AuthRequest, res: Response, next: NextFun
       });
     }
 
-    if (error.name === 'TokenExpiredError') {
+    if (error instanceof Error && error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
         error: 'Unauthorized',
@@ -125,7 +127,7 @@ export const requireAdmin = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     next();
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Admin authorization error', { error });
     return res.status(500).json({
       success: false,
@@ -171,7 +173,7 @@ export const requireRole = (allowedRoles: string | string[]) => {
       }
 
       next();
-    } catch (error: any) {
+    } catch (error) {
       logger.error('Role authorization error', { error });
       return res.status(500).json({
         success: false,
@@ -211,4 +213,3 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-export { requireAuth, requireAdmin, requireRole, optionalAuth };

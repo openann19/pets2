@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../../theme/Provider';
 
 interface ToastProps {
   message: string;
@@ -17,6 +17,31 @@ interface ToastProps {
   duration?: number;
 }
 
+const makeStyles = (theme: any) => StyleSheet.create({
+  container: {
+    position: "absolute",
+    top: 50,
+    left: 16,
+    right: 16,
+    zIndex: 1000,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    shadowColor: theme.colors.neutral[950],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  text: {
+    color: theme.colors.neutral[0],
+    fontSize: 14,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+});
+
 export function Toast({
   message,
   type = "info",
@@ -24,6 +49,8 @@ export function Toast({
   onHide,
   duration = 3000,
 }: ToastProps): React.JSX.Element {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
   const insets = useSafeAreaInsets();
   const translateY = useSharedValue(-100);
   const opacity = useSharedValue(0);
@@ -62,9 +89,9 @@ export function Toast({
   const getTypeStyles = () => {
     switch (type) {
       case "success":
-        return { backgroundColor: "Theme.colors.status.success", borderColor: "#059669" };
+        return { backgroundColor: theme.colors.success, borderColor: "#059669" };
       case "error":
-        return { backgroundColor: "Theme.colors.status.error", borderColor: "#dc2626" };
+        return { backgroundColor: theme.colors.danger, borderColor: "#dc2626" };
       default:
         return { backgroundColor: "#6366f1", borderColor: "#4f46e5" };
     }
@@ -97,14 +124,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 8,
   },
   text: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     fontWeight: "600",
     textAlign: "center",

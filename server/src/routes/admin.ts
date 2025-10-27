@@ -3,9 +3,95 @@
  * Handles admin dashboard endpoints
  */
 
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
+import type { AuthRequest } from '../middleware/adminAuth';
 import stripe from 'stripe';
 const Configuration = require('../models/Configuration');
+
+// Type definitions for Stripe data
+interface StripeSubscription {
+  id: string;
+  customer: string | stripe.Customer | stripe.DeletedCustomer;
+  items: {
+    data: Array<{
+      plan?: stripe.Plan;
+      price?: stripe.Price;
+    }>;
+  };
+  status: string;
+  current_period_end: number;
+  current_period_start: number;
+  created: number;
+  cancel_at_period_end?: boolean;
+}
+
+interface StripeBalanceTransaction {
+  type: string;
+  status: string;
+  amount: number;
+}
+
+interface StripeCustomer {
+  id: string;
+  email: string | null;
+  name?: string | null;
+}
+
+interface UserDocument {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  premium?: {
+    isActive: boolean;
+    plan?: string;
+    paymentStatus?: string;
+    expiresAt?: Date;
+  };
+  createdAt?: Date;
+}
+
+interface CustomerRow {
+  id: string;
+  name: string;
+  email: string;
+  tier?: string;
+  status?: string;
+  monthlyRevenue: number;
+  ltv: number;
+  subscriptionTier?: string;
+  subscriptionStatus?: string;
+  lifetimeValue?: number;
+}
+
+interface SortObject {
+  [key: string]: number;
+}
+
+interface QueryObject {
+  [key: string]: unknown;
+}
+
+interface TimestampQuery {
+  $gte?: Date;
+  $lte?: Date;
+}
+
+interface Alert {
+  assignedTo?: {
+    id: string;
+  };
+  severity: string;
+  status?: string;
+  type?: string;
+  createdAt?: Date;
+  riskScore?: number;
+}
+
+interface SeverityOrder {
+  [key: string]: number;
+}
 const Report = require('../models/Report');
 const SecurityAlert = require('../models/SecurityAlert');
 const { encrypt } = require('../utils/encryption');
@@ -50,7 +136,7 @@ router.post('/kyc-management/verifications/:verificationId/review', checkPermiss
 router.post('/kyc-management/verifications/:verificationId/request-documents', checkPermission('kyc:write'), AdminKYCController.requestAdditionalDocuments);
 
 // Audit Log Routes
-router.get('/audit-logs', checkPermission('audit:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/audit-logs', checkPermission('audit:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const {
       page = 1,
@@ -62,22 +148,25 @@ router.get('/audit-logs', checkPermission('audit:read'), async (req: Request, re
       success
     } = req.query;
 
-    const query = {};
+    const query: Record<string, unknown> = {};
 
     if (adminId) query.adminId = adminId;
     if (action) query.action = action;
     if (success !== undefined) query.success = success === 'true';
     if (startDate || endDate) {
-      query.timestamp = {};
-      if (startDate) query.timestamp.$gte = new Date(startDate);
-      if (endDate) query.timestamp.$lte = new Date(endDate);
+      query.timestamp = {} as TimestampQuery;
+      if (startDate) (query.timestamp as TimestampQuery).$gte = new Date(String(startDate));
+      if (endDate) (query.timestamp as TimestampQuery).$lte = new Date(String(endDate));
     }
 
+    const pageNum = typeof page === 'string' ? parseInt(page) : 1;
+    const limitNum = typeof limit === 'string' ? parseInt(limit) : 50;
+    
     const logs = await AdminActivityLog.find(query)
       .populate('adminId', 'firstName lastName email role')
       .sort({ timestamp: -1 })
-      .limit(parseInt(limit))
-      .skip((parseInt(page) - 1) * parseInt(limit));
+      .limit(limitNum)
+      .skip((pageNum - 1) * limitNum);
 
     const total = await AdminActivityLog.countDocuments(query);
 
@@ -87,24 +176,25 @@ router.get('/audit-logs', checkPermission('audit:read'), async (req: Request, re
       success: true,
       logs,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: pageNum,
+        limit: limitNum,
         total,
-        pages: Math.ceil(total / parseInt(limit))
+        pages: Math.ceil(total / limitNum)
       }
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? (error instanceof Error ? error.message : 'Unknown error') : 'Unknown error';
     logger.error('Failed to fetch audit logs', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to fetch audit logs',
-      message: error.message
+      message: errorMessage
     });
   }
 });
 
 // Stripe Management Routes
-router.get('/stripe/config', checkPermission('stripe:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/stripe/config', checkPermission('stripe:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     // Get Stripe configuration from database
     const configDoc = await Configuration.findOne({ type: 'stripe' });
@@ -146,29 +236,30 @@ router.get('/stripe/config', checkPermission('stripe:read'), async (req: Request
   }
 });
 
-router.post('/stripe/config', checkPermission('stripe:configure'), validate(schemas.stripeConfig), adminActionLogger('UPDATE_STRIPE_CONFIG'), async (req: Request, res: Response): Promise<void> => {
+router.post('/stripe/config', checkPermission('stripe:configure'), validate(schemas.stripeConfig), adminActionLogger('UPDATE_STRIPE_CONFIG'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { secretKey, publishableKey, webhookSecret, isLiveMode } = req.body;
 
     // Validate required fields
     if (!secretKey || !publishableKey) {
-      return res.status(400).json({ success: false, message: 'API keys are required' });
+      res.status(400).json({ success: false, message: 'API keys are required' });
     }
 
     // Verify we can initialize Stripe with the provided key (basic validation)
     try {
-      const stripeClient = stripe(secretKey);
-      const stripeAccount = await stripeClient.account.retrieve();
+      const stripeClient = new stripe(secretKey);
+      const stripeAccount = await stripeClient.accounts.retrieve();
 
       // Additional validation - check if account is valid
       if (!stripeAccount?.id) {
-        return res.status(400).json({ success: false, message: 'Invalid Stripe API key - unable to connect to Stripe account' });
+        res.status(400).json({ success: false, message: 'Invalid Stripe API key - unable to connect to Stripe account' });
       }
     } catch (stripeError) {
-      return res.status(400).json({
+      const errorMessage = stripeError instanceof Error ? stripeError.message : 'Unknown error';
+      res.status(400).json({
         success: false,
         message: 'Invalid Stripe API key or connection error',
-        error: stripeError.message
+        error: errorMessage
       });
     }
 
@@ -207,7 +298,7 @@ router.post('/stripe/config', checkPermission('stripe:configure'), validate(sche
   }
 });
 
-router.get('/stripe/subscriptions', adminActionLogger('VIEW_STRIPE_SUBSCRIPTIONS'), async (req: Request, res: Response): Promise<void> => {
+router.get('/stripe/subscriptions', adminActionLogger('VIEW_STRIPE_SUBSCRIPTIONS'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const stripeService = require('../services/stripeService');
     const stripeClient = await stripeService.getStripeClient();
@@ -219,15 +310,24 @@ router.get('/stripe/subscriptions', adminActionLogger('VIEW_STRIPE_SUBSCRIPTIONS
     });
 
     // Map Stripe data to our application format
-    const subscriptions = stripeSubscriptions.data.map(sub => {
+    const subscriptions = stripeSubscriptions.data.map((sub: StripeSubscription) => {
       const customer = sub.customer;
-      const plan = sub.items.data[0].plan;
+      const plan = sub.items.data[0]?.plan;
+
+      if (!plan) {
+        return null;
+      }
+
+      // Handle customer as either string ID or customer object
+      const customerId = typeof customer === 'string' ? customer : customer?.id || '';
+      const customerEmail = typeof customer === 'object' && 'email' in customer ? customer.email : '';
+      const customerName = typeof customer === 'object' && 'name' in customer ? customer.name : customerEmail;
 
       return {
         id: sub.id,
-        customerId: customer.id,
-        customerEmail: customer.email,
-        customerName: customer.name || customer.email,
+        customerId,
+        customerEmail,
+        customerName: customerName || customerEmail,
         planId: plan.id,
         planName: plan.nickname || `${plan.product} ${plan.interval}`,
         status: sub.status,
@@ -239,17 +339,17 @@ router.get('/stripe/subscriptions', adminActionLogger('VIEW_STRIPE_SUBSCRIPTIONS
         cancelAtPeriodEnd: sub.cancel_at_period_end,
         createdAt: new Date(sub.created * 1000).toISOString()
       };
-    });
+    }).filter(Boolean);
 
     res.json(subscriptions);
   } catch (error) {
     logger.error('Failed to load subscriptions', { error });
 
-    res.status(500).json({ success: false, message: 'Failed to load subscriptions', error: error.message });
+    res.status(500).json({ success: false, message: 'Failed to load subscriptions', error: (error instanceof Error ? error.message : 'Unknown error') });
   }
 });
 
-router.get('/stripe/metrics', adminActionLogger('VIEW_STRIPE_METRICS'), async (req: Request, res: Response): Promise<void> => {
+router.get('/stripe/metrics', adminActionLogger('VIEW_STRIPE_METRICS'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const stripeService = require('../services/stripeService');
     const stripeClient = await stripeService.getStripeClient();
@@ -266,14 +366,14 @@ router.get('/stripe/metrics', adminActionLogger('VIEW_STRIPE_METRICS'), async (r
     const activeSubscriptions = subscriptions.data.length;
 
     // Calculate MRR by normalizing all subscription costs to monthly
-    const monthlyRecurringRevenue = subscriptions.data.reduce((sum, sub) => {
+    const monthlyRecurringRevenue = subscriptions.data.reduce((sum: number, sub: StripeSubscription) => {
       const plan = sub.items.data[0].plan;
       const monthlyFactor = plan.interval === 'year' ? (1 / 12) : 1;
       return sum + (plan.amount * monthlyFactor);
     }, 0);
 
     // Calculate total revenue from all balance transactions
-    const totalRevenue = balanceTransactions.data.reduce((sum, transaction) => {
+    const totalRevenue = balanceTransactions.data.reduce((sum: number, transaction: StripeBalanceTransaction) => {
       if (transaction.type === 'charge' && transaction.status === 'available') {
         return sum + transaction.amount;
       }
@@ -315,40 +415,40 @@ router.get('/stripe/metrics', adminActionLogger('VIEW_STRIPE_METRICS'), async (r
   } catch (error) {
     logger.error('Failed to load billing metrics:', error);
 
-    res.status(500).json({ success: false, message: 'Failed to load billing metrics', error: error.message });
+    res.status(500).json({ success: false, message: 'Failed to load billing metrics', error: (error instanceof Error ? error.message : 'Unknown error') });
   }
 });
 
 // AI Service Management Routes
-router.get('/ai/config', async (req: Request, res: Response): Promise<void> => {
+router.get('/ai/config', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const config = {
       apiKey: process.env.DEEPSEEK_API_KEY ? '***configured***' : '',
       baseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
       model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
-      maxTokens: parseInt(process.env.DEEPSEEK_MAX_TOKENS) || 4000,
-      temperature: parseFloat(process.env.DEEPSEEK_TEMPERATURE) || 0.7,
+      maxTokens: parseInt(process.env.DEEPSEEK_MAX_TOKENS || '4000'),
+      temperature: parseFloat(process.env.DEEPSEEK_TEMPERATURE || '0.7'),
       isConfigured: !!process.env.DEEPSEEK_API_KEY,
       isActive: !!process.env.DEEPSEEK_API_KEY
     };
 
     res.json(config);
   } catch (error) {
-    logger.error('Failed to load AI config', { error: error.message });
+    logger.error('Failed to load AI config', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load AI config' });
   }
 });
 
-router.post('/ai/config', async (req: Request, res: Response): Promise<void> => {
+router.post('/ai/config', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { apiKey, baseUrl, model, maxTokens, temperature } = req.body;
 
     if (!apiKey) {
-      return res.status(400).json({ success: false, message: 'API key is required' });
+      res.status(400).json({ success: false, message: 'API key is required' });
     }
 
     if (!apiKey.startsWith('sk-')) {
-      return res.status(400).json({ success: false, message: 'Invalid API key format' });
+      res.status(400).json({ success: false, message: 'Invalid API key format' });
     }
 
     res.json({
@@ -361,12 +461,12 @@ router.post('/ai/config', async (req: Request, res: Response): Promise<void> => 
       isActive: true
     });
   } catch (error) {
-    logger.error('Failed to save AI config', { error: error.message });
+    logger.error('Failed to save AI config', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to save AI config' });
   }
 });
 
-router.get('/ai/stats', async (req: Request, res: Response): Promise<void> => {
+router.get('/ai/stats', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const stats = {
       totalRequests: 15420,
@@ -382,12 +482,12 @@ router.get('/ai/stats', async (req: Request, res: Response): Promise<void> => {
 
     res.json(stats);
   } catch (error) {
-    logger.error('Failed to load AI stats', { error: error.message });
+    logger.error('Failed to load AI stats', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load AI stats' });
   }
 });
 
-router.get('/ai/endpoints', async (req: Request, res: Response): Promise<void> => {
+router.get('/ai/endpoints', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const endpoints = [
       {
@@ -424,12 +524,12 @@ router.get('/ai/endpoints', async (req: Request, res: Response): Promise<void> =
 
     res.json(endpoints);
   } catch (error) {
-    logger.error('Failed to load AI endpoints', { error: error.message });
+    logger.error('Failed to load AI endpoints', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load AI endpoints' });
   }
 });
 
-router.get('/ai/models', async (req: Request, res: Response): Promise<void> => {
+router.get('/ai/models', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const models = [
       {
@@ -452,30 +552,30 @@ router.get('/ai/models', async (req: Request, res: Response): Promise<void> => {
 
     res.json(models);
   } catch (error) {
-    logger.error('Failed to load AI models', { error: error.message });
+    logger.error('Failed to load AI models', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load AI models' });
   }
 });
 
-router.post('/ai/test', async (req: Request, res: Response): Promise<void> => {
+router.post('/ai/test', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { prompt } = req.body;
 
     if (!prompt) {
-      return res.status(400).json({ success: false, message: 'Prompt is required' });
+      res.status(400).json({ success: false, message: 'Prompt is required' });
     }
 
     // Get the DeepSeek API key from environment or database
     const apiKey = process.env.DEEPSEEK_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({ success: false, message: 'DeepSeek API key is not configured' });
+      res.status(500).json({ success: false, message: 'DeepSeek API key is not configured' });
     }
 
     const baseUrl = process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
     const model = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
-    const maxTokens = parseInt(process.env.DEEPSEEK_MAX_TOKENS) || 1000;
-    const temperature = parseFloat(process.env.DEEPSEEK_TEMPERATURE) || 0.7;
+    const maxTokens = parseInt(process.env.DEEPSEEK_MAX_TOKENS || '1000');
+    const temperature = parseFloat(process.env.DEEPSEEK_TEMPERATURE || '0.7');
 
     // Make actual API call to DeepSeek
     const axios = require('axios');
@@ -500,24 +600,25 @@ router.post('/ai/test', async (req: Request, res: Response): Promise<void> => {
       usage: response.data.usage,
       model: response.data.model
     });
-  } catch (error) {
-    logger.error('DeepSeek API error:', error.response ? error.response.data : error.message);
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: unknown }; message?: string };
+    logger.error('DeepSeek API error:', err.response ? err.response.data : (err instanceof Error ? err.message : 'Unknown error'));
     res.status(500).json({
       success: false,
       message: 'Failed to call DeepSeek API',
-      error: error.response ? error.response.data : error.message
+      error: err.response ? err.response.data : (err instanceof Error ? err.message : 'Unknown error')
     });
   }
 });
 
 // Maps Service Management Routes
-router.get('/maps/config', async (req: Request, res: Response): Promise<void> => {
+router.get('/maps/config', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const config = {
       apiKey: process.env.GOOGLE_MAPS_API_KEY ? '***configured***' : '',
       isConfigured: !!process.env.GOOGLE_MAPS_API_KEY,
       isActive: !!process.env.GOOGLE_MAPS_API_KEY,
-      quotaLimit: parseInt(process.env.GOOGLE_MAPS_QUOTA_LIMIT) || 100000,
+      quotaLimit: parseInt(process.env.GOOGLE_MAPS_QUOTA_LIMIT || '100000'),
       quotaUsed: 0,
       billingAccount: process.env.GOOGLE_CLOUD_BILLING_ACCOUNT || '',
       restrictions: []
@@ -525,21 +626,21 @@ router.get('/maps/config', async (req: Request, res: Response): Promise<void> =>
 
     res.json(config);
   } catch (error) {
-    logger.error('Failed to load Maps config', { error: error.message });
+    logger.error('Failed to load Maps config', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load Maps config' });
   }
 });
 
-router.post('/maps/config', async (req: Request, res: Response): Promise<void> => {
+router.post('/maps/config', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { apiKey, billingAccount, quotaLimit, restrictions } = req.body;
 
     if (!apiKey) {
-      return res.status(400).json({ success: false, message: 'API key is required' });
+      res.status(400).json({ success: false, message: 'API key is required' });
     }
 
     if (!apiKey.startsWith('AIza')) {
-      return res.status(400).json({ success: false, message: 'Invalid Google Maps API key format' });
+      res.status(400).json({ success: false, message: 'Invalid Google Maps API key format' });
     }
 
     res.json({
@@ -552,12 +653,12 @@ router.post('/maps/config', async (req: Request, res: Response): Promise<void> =
       restrictions
     });
   } catch (error) {
-    logger.error('Failed to save Maps config', { error: error.message });
+    logger.error('Failed to save Maps config', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to save Maps config' });
   }
 });
 
-router.get('/maps/stats', async (req: Request, res: Response): Promise<void> => {
+router.get('/maps/stats', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const stats = {
       totalRequests: 89420,
@@ -576,12 +677,12 @@ router.get('/maps/stats', async (req: Request, res: Response): Promise<void> => 
 
     res.json(stats);
   } catch (error) {
-    logger.error('Failed to load Maps stats', { error: error.message });
+    logger.error('Failed to load Maps stats', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load Maps stats' });
   }
 });
 
-router.get('/maps/services', async (req: Request, res: Response): Promise<void> => {
+router.get('/maps/services', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const services = [
       {
@@ -621,12 +722,12 @@ router.get('/maps/services', async (req: Request, res: Response): Promise<void> 
 
     res.json(services);
   } catch (error) {
-    logger.error('Failed to load Maps services', { error: error.message });
+    logger.error('Failed to load Maps services', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load Maps services' });
   }
 });
 
-router.get('/maps/quotas', async (req: Request, res: Response): Promise<void> => {
+router.get('/maps/quotas', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const quotas = [
       {
@@ -654,13 +755,13 @@ router.get('/maps/quotas', async (req: Request, res: Response): Promise<void> =>
 
     res.json(quotas);
   } catch (error) {
-    logger.error('Failed to load Maps quotas', { error: error.message });
+    logger.error('Failed to load Maps quotas', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load Maps quotas' });
   }
 });
 
 // Billing Dashboard Routes
-router.get('/billing/customers', async (req: Request, res: Response): Promise<void> => {
+router.get('/billing/customers', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     let customers = [];
     try {
@@ -672,10 +773,10 @@ router.get('/billing/customers', async (req: Request, res: Response): Promise<vo
         client.subscriptions.list({ limit: 100, expand: ['data.customer', 'data.items.data.price'] })
       ]);
 
-      const emails = stripeCustomers.data.map(c => (c.email || '').toLowerCase()).filter(Boolean);
+      const emails = stripeCustomers.data.map((c: StripeCustomer) => (c.email || '').toLowerCase()).filter(Boolean);
       const User = require('../models/User');
       const users = await User.find({ email: { $in: emails } }).select('email firstName lastName premium').lean();
-      const userMap = new Map(users.map(u => [u.email.toLowerCase(), u]));
+      const userMap = new Map(users.map((u: UserDocument) => [u.email.toLowerCase(), u]));
 
       const subsByCustomer = new Map();
       for (const sub of subscriptions.data) {
@@ -683,7 +784,7 @@ router.get('/billing/customers', async (req: Request, res: Response): Promise<vo
         subsByCustomer.set(custId, sub);
       }
 
-      customers = stripeCustomers.data.map(c => {
+      customers = stripeCustomers.data.map((c: StripeCustomer) => {
         const u = userMap.get((c.email || '').toLowerCase());
         const sub = subsByCustomer.get(c.id) || null;
         const plan = sub?.items?.data?.[0]?.plan || sub?.items?.data?.[0]?.price;
@@ -693,12 +794,13 @@ router.get('/billing/customers', async (req: Request, res: Response): Promise<vo
           else if (plan.unit_amount != null) { amount = plan.unit_amount; interval = plan.recurring?.interval; }
         }
         const monthly = amount != null ? (interval === 'year' ? amount / 12 : amount) : null;
+        const userData = u as { _id: string; email: string; firstName?: string; lastName?: string; isActive?: boolean; isBlocked?: boolean; [key: string]: unknown };
         return {
           id: c.id,
-          name: c.name || (u ? `${u.firstName} ${u.lastName}` : c.email),
+          name: c.name || (userData ? `${userData.firstName} ${userData.lastName}` : c.email),
           email: c.email,
-          subscriptionTier: u?.premium?.plan || plan?.nickname || plan?.product || null,
-          subscriptionStatus: sub?.status || u?.premium?.paymentStatus || 'inactive',
+          subscriptionTier: userData?.premium?.plan || plan?.nickname || plan?.product || null,
+          subscriptionStatus: sub?.status || userData?.premium?.paymentStatus || 'inactive',
           monthlyRevenue: monthly != null ? Number((monthly / 100).toFixed(2)) : null,
           totalRevenue: null,
           joinDate: c.created ? new Date(c.created * 1000).toISOString() : null,
@@ -710,10 +812,10 @@ router.get('/billing/customers', async (req: Request, res: Response): Promise<vo
         };
       });
     } catch (error) {
-      logger.warn('Stripe customers list unavailable, falling back to Mongo data', { error: error.message });
+      logger.warn('Stripe customers list unavailable, falling back to Mongo data', { error: (error instanceof Error ? error.message : 'Unknown error') });
       const User = require('../models/User');
       const users = await User.find({ 'premium.isActive': true }).select('email firstName lastName premium createdAt').lean();
-      customers = users.map(u => ({
+      customers = users.map((u: UserDocument) => ({
         id: u._id.toString(),
         name: `${u.firstName} ${u.lastName}`,
         email: u.email,
@@ -732,12 +834,12 @@ router.get('/billing/customers', async (req: Request, res: Response): Promise<vo
 
     res.json(customers);
   } catch (error) {
-    logger.error('Failed to load customers', { error: error.message });
+    logger.error('Failed to load customers', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load customers' });
   }
 });
 
-router.get('/billing/metrics', async (req: Request, res: Response): Promise<void> => {
+router.get('/billing/metrics', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const User = require('../models/User');
     const now = new Date();
@@ -777,7 +879,7 @@ router.get('/billing/metrics', async (req: Request, res: Response): Promise<void
       const stripeService = require('../services/stripeService');
       const client = await stripeService.getStripeClient();
       const subscriptions = await client.subscriptions.list({ limit: 100, status: 'active' });
-      monthlyRecurringRevenue = subscriptions.data.reduce((sum, sub) => {
+      monthlyRecurringRevenue = subscriptions.data.reduce((sum: number, sub: StripeSubscription) => {
         const plan = sub.items.data[0]?.plan || sub.items.data[0]?.price;
         const amount = plan?.amount ?? plan?.unit_amount ?? 0;
         const interval = plan?.interval ?? plan?.recurring?.interval ?? 'month';
@@ -785,12 +887,12 @@ router.get('/billing/metrics', async (req: Request, res: Response): Promise<void
         return sum + (amount * monthlyFactor);
       }, 0);
       const balanceTransactions = await client.balanceTransactions.list({ limit: 100 });
-      totalRevenue = balanceTransactions.data.reduce((sum, t) => {
+      totalRevenue = balanceTransactions.data.reduce((sum: number, t: StripeBalanceTransaction) => {
         if (t.type === 'charge' && t.status === 'available') return sum + t.amount;
         return sum;
       }, 0);
     } catch (error) {
-      logger.warn('Stripe metrics unavailable, using estimates', { error: error.message });
+      logger.warn('Stripe metrics unavailable, using estimates', { error: (error instanceof Error ? error.message : 'Unknown error') });
       // Stripe not configured, use estimates
     }
 
@@ -814,12 +916,12 @@ router.get('/billing/metrics', async (req: Request, res: Response): Promise<void
 
     res.json(metrics);
   } catch (error) {
-    logger.error('Failed to load billing metrics', { error: error.message });
+    logger.error('Failed to load billing metrics', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load billing metrics' });
   }
 });
 
-router.get('/billing/revenue', async (req: Request, res: Response): Promise<void> => {
+router.get('/billing/revenue', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const User = require('../models/User');
     const now = new Date();
@@ -857,12 +959,12 @@ router.get('/billing/revenue', async (req: Request, res: Response): Promise<void
 
     res.json(revenueData.reverse());
   } catch (error) {
-    logger.error('Failed to load revenue data', { error: error.message });
+    logger.error('Failed to load revenue data', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load revenue data' });
   }
 });
 
-router.get('/billing/payment-methods', async (req: Request, res: Response): Promise<void> => {
+router.get('/billing/payment-methods', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     let paymentMethods = [];
 
@@ -888,21 +990,21 @@ router.get('/billing/payment-methods', async (req: Request, res: Response): Prom
             brand: pm.card?.brand || pm.type,
           });
         } catch (error) {
-          logger.warn('Payment method retrieval failed', { error: error.message, paymentMethodId: pmId });
+          logger.warn('Payment method retrieval failed', { error: (error instanceof Error ? error.message : 'Unknown error'), paymentMethodId: pmId });
         }
       }
     } catch (error) {
-      logger.warn('Stripe payment methods unavailable, returning empty list', { error: error.message });
+      logger.warn('Stripe payment methods unavailable, returning empty list', { error: (error instanceof Error ? error.message : 'Unknown error') });
     }
 
     res.json(paymentMethods);
   } catch (error) {
-    logger.error('Failed to load payment methods', { error: error.message });
+    logger.error('Failed to load payment methods', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load payment methods' });
   }
 });
 
-router.post('/billing/customers/export', async (req: Request, res: Response): Promise<void> => {
+router.post('/billing/customers/export', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { format = 'csv' } = req.body || {};
 
@@ -915,16 +1017,16 @@ router.post('/billing/customers/export', async (req: Request, res: Response): Pr
         client.customers.list({ limit: 100 }),
         client.subscriptions.list({ limit: 100, expand: ['data.customer', 'data.items.data.price'] })
       ]);
-      const emails = stripeCustomers.data.map(c => (c.email || '').toLowerCase()).filter(Boolean);
+      const emails = stripeCustomers.data.map((c: StripeCustomer) => (c.email || '').toLowerCase()).filter(Boolean);
       const User = require('../models/User');
       const users = await User.find({ email: { $in: emails } }).select('email firstName lastName premium').lean();
-      const userMap = new Map(users.map(u => [u.email.toLowerCase(), u]));
+      const userMap = new Map(users.map((u: UserDocument) => [u.email.toLowerCase(), u]));
       const subsByCustomer = new Map();
       for (const sub of subscriptions.data) {
         const custId = typeof sub.customer === 'object' ? sub.customer.id : sub.customer;
         subsByCustomer.set(custId, sub);
       }
-      customers = stripeCustomers.data.map(c => {
+      customers = stripeCustomers.data.map((c: StripeCustomer) => {
         const u = userMap.get((c.email || '').toLowerCase());
         const sub = subsByCustomer.get(c.id) || null;
         const plan = sub?.items?.data?.[0]?.plan || sub?.items?.data?.[0]?.price;
@@ -934,21 +1036,22 @@ router.post('/billing/customers/export', async (req: Request, res: Response): Pr
           else if (plan.unit_amount != null) { amount = plan.unit_amount; interval = plan.recurring?.interval; }
         }
         const monthly = amount != null ? (interval === 'year' ? amount / 12 : amount) : null;
+        const userData = u as { _id: string; email: string; firstName?: string; lastName?: string; isActive?: boolean; isBlocked?: boolean; [key: string]: unknown };
         return {
           id: c.id,
-          name: c.name || (u ? `${u.firstName} ${u.lastName}` : c.email),
+          name: c.name || (userData ? `${userData.firstName} ${userData.lastName}` : c.email),
           email: c.email,
-          subscriptionTier: u?.premium?.plan || plan?.nickname || plan?.product || null,
-          subscriptionStatus: sub?.status || u?.premium?.paymentStatus || 'inactive',
+          subscriptionTier: userData?.premium?.plan || plan?.nickname || plan?.product || null,
+          subscriptionStatus: sub?.status || userData?.premium?.paymentStatus || 'inactive',
           monthlyRevenue: monthly != null ? Number((monthly / 100).toFixed(2)) : null,
           lifetimeValue: null
         };
       });
     } catch (error) {
-      logger.warn('Stripe customer export unavailable, using Mongo data', { error: error.message });
+      logger.warn('Stripe customer export unavailable, using Mongo data', { error: (error instanceof Error ? error.message : 'Unknown error') });
       const User = require('../models/User');
       const users = await User.find({ 'premium.isActive': true }).select('email firstName lastName premium').lean();
-      customers = users.map(u => ({
+      customers = users.map((u: UserDocument) => ({
         id: u._id.toString(),
         name: `${u.firstName} ${u.lastName}`,
         email: u.email,
@@ -961,13 +1064,13 @@ router.post('/billing/customers/export', async (req: Request, res: Response): Pr
 
     if (format === 'json') {
       res.setHeader('Content-Type', 'application/json');
-      return res.json({ success: true, data: customers });
+      res.json({ success: true, data: customers });
     }
 
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=customers.csv');
     const header = 'Customer ID,Name,Email,Tier,Status,Monthly Revenue,LTV\n';
-    const rows = customers.map(c => [
+    const rows = customers.map((c: CustomerRow) => [
       c.id,
       (c.name || '').replace(/,/g, ' '),
       c.email,
@@ -978,13 +1081,13 @@ router.post('/billing/customers/export', async (req: Request, res: Response): Pr
     ].join(',')).join('\n');
     res.send(header + rows + '\n');
   } catch (error) {
-    logger.error('Failed to export customers', { error: error.message });
+    logger.error('Failed to export customers', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to export customers' });
   }
 });
 
 // External Services Management Routes
-router.get('/external-services', async (req: Request, res: Response): Promise<void> => {
+router.get('/external-services', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const services = [
       {
@@ -1063,12 +1166,12 @@ router.get('/external-services', async (req: Request, res: Response): Promise<vo
 
     res.json(services);
   } catch (error) {
-    logger.error('Failed to load external services', { error: error.message });
+    logger.error('Failed to load external services', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load external services' });
   }
 });
 
-router.get('/external-services/metrics', async (req: Request, res: Response): Promise<void> => {
+router.get('/external-services/metrics', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const metrics = {
       totalServices: 4,
@@ -1082,12 +1185,12 @@ router.get('/external-services/metrics', async (req: Request, res: Response): Pr
 
     res.json(metrics);
   } catch (error) {
-    logger.error('Failed to load external services metrics', { error: error.message });
+    logger.error('Failed to load external services metrics', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to load external services metrics' });
   }
 });
 
-router.post('/external-services/:serviceId/config', async (req: Request, res: Response): Promise<void> => {
+router.post('/external-services/:serviceId/config', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { serviceId } = req.params;
     const { apiKey, endpoint, limit, isActive } = req.body;
@@ -1102,13 +1205,13 @@ router.post('/external-services/:serviceId/config', async (req: Request, res: Re
       isConfigured: true
     });
   } catch (error) {
-    logger.error('Failed to save service config', { error: error.message });
+    logger.error('Failed to save service config', { error: (error instanceof Error ? error.message : 'Unknown error') });
     res.status(500).json({ success: false, message: 'Failed to save service config' });
   }
 });
 
 // Subscription Analytics Routes
-router.get('/analytics/subscription', async (req: Request, res: Response): Promise<void> => {
+router.get('/analytics/subscription', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { timeframe = '30d' } = req.query;
     const analytics = await subscriptionAnalyticsService.getSubscriptionAnalytics(timeframe);
@@ -1121,7 +1224,7 @@ router.get('/analytics/subscription', async (req: Request, res: Response): Promi
   }
 });
 
-router.get('/analytics/realtime', async (req: Request, res: Response): Promise<void> => {
+router.get('/analytics/realtime', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const metrics = await subscriptionAnalyticsService.getRealTimeMetrics();
 
@@ -1133,7 +1236,7 @@ router.get('/analytics/realtime', async (req: Request, res: Response): Promise<v
   }
 });
 
-router.post('/analytics/clear-cache', async (req: Request, res: Response): Promise<void> => {
+router.post('/analytics/clear-cache', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     subscriptionAnalyticsService.clearCache();
 
@@ -1146,7 +1249,7 @@ router.post('/analytics/clear-cache', async (req: Request, res: Response): Promi
 });
 
 // Payment Retry Management Routes
-router.get('/payments/retry-stats', async (req: Request, res: Response): Promise<void> => {
+router.get('/payments/retry-stats', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const stats = await paymentRetryService.getRetryStatistics();
 
@@ -1158,7 +1261,7 @@ router.get('/payments/retry-stats', async (req: Request, res: Response): Promise
   }
 });
 
-router.post('/payments/process-retries', async (req: Request, res: Response): Promise<void> => {
+router.post('/payments/process-retries', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     await paymentRetryService.processScheduledRetries();
 
@@ -1170,7 +1273,7 @@ router.post('/payments/process-retries', async (req: Request, res: Response): Pr
   }
 });
 
-router.post('/payments/process-notifications', async (req: Request, res: Response): Promise<void> => {
+router.post('/payments/process-notifications', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     await paymentRetryService.processScheduledNotifications();
 
@@ -1182,7 +1285,7 @@ router.post('/payments/process-notifications', async (req: Request, res: Respons
   }
 });
 
-router.post('/external-services/:serviceId/toggle', async (req: Request, res: Response): Promise<void> => {
+router.post('/external-services/:serviceId/toggle', async (req: AuthRequest, res: Response): Promise<void> => {
   const { serviceId } = req.params;
   try {
     const { isActive } = req.body;
@@ -1190,13 +1293,13 @@ router.post('/external-services/:serviceId/toggle', async (req: Request, res: Re
     // In production, update database
     res.json({ success: true, serviceId, isActive });
   } catch (error) {
-    logger.error('Failed to toggle service', { error: error.message, serviceId });
+    logger.error('Failed to toggle service', { error: (error instanceof Error ? error.message : 'Unknown error'), serviceId });
     res.status(500).json({ success: false, message: 'Failed to toggle service' });
   }
 });
 
 // User Management Routes
-router.get('/users', checkPermission('users:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/users', checkPermission('users:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const {
       page = 1,
@@ -1213,7 +1316,7 @@ router.get('/users', checkPermission('users:read'), async (req: Request, res: Re
     const Match = require('../models/Match');
 
     // Build query
-    const query = {};
+    const query: Record<string, unknown> = {};
 
     if (search) {
       query.$or = [
@@ -1239,22 +1342,22 @@ router.get('/users', checkPermission('users:read'), async (req: Request, res: Re
     }
 
     // Build sort
-    const sort = {};
-    sort[sortBy] = sortDirection === 'asc' ? 1 : -1;
+    const sort: SortObject = {};
+    sort[String(sortBy)] = sortDirection === 'asc' ? 1 : -1;
 
     // Execute query
     const [users, total] = await Promise.all([
       User.find(query)
         .select('firstName lastName email status role premium.isActive avatar createdAt lastLogin emailVerified')
         .sort(sort)
-        .limit(parseInt(limit))
-        .skip((parseInt(page) - 1) * parseInt(limit))
+        .limit(parseInt(String(limit)))
+        .skip((parseInt(String(page)) - 1) * parseInt(String(limit)))
         .lean(),
       User.countDocuments(query)
     ]);
 
     // Enhance users with additional data
-    const enhancedUsers = await Promise.all(users.map(async (user) => {
+    const enhancedUsers = await Promise.all(users.map(async (user: Record<string, unknown>) => {
       const [petCount, matchCount] = await Promise.all([
         Pet.countDocuments({ owner: user._id }),
         Match.countDocuments({
@@ -1289,10 +1392,10 @@ router.get('/users', checkPermission('users:read'), async (req: Request, res: Re
       data: {
         users: enhancedUsers,
         pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
+          page: parseInt(String(page)),
+          limit: parseInt(String(limit)),
           total,
-          pages: Math.ceil(total / parseInt(limit))
+          pages: Math.ceil(total / parseInt(String(limit)))
         }
       }
     });
@@ -1301,18 +1404,18 @@ router.get('/users', checkPermission('users:read'), async (req: Request, res: Re
     res.status(500).json({
       success: false,
       message: 'Failed to fetch users',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.put('/users/:userId/status', checkPermission('users:update'), async (req: Request, res: Response): Promise<void> => {
+router.put('/users/:userId/status', checkPermission('users:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
     const { status } = req.body;
 
     if (!['active', 'suspended', 'banned', 'pending'].includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Invalid status. Must be one of: active, suspended, banned, pending'
       });
@@ -1326,7 +1429,7 @@ router.put('/users/:userId/status', checkPermission('users:update'), async (req:
     ).select('firstName lastName email status');
 
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'User not found'
       });
@@ -1344,12 +1447,12 @@ router.put('/users/:userId/status', checkPermission('users:update'), async (req:
     res.status(500).json({
       success: false,
       message: 'Failed to update user status',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.delete('/users/:userId', checkPermission('users:delete'), strictRateLimiter, async (req: Request, res: Response): Promise<void> => {
+router.delete('/users/:userId', checkPermission('users:delete'), strictRateLimiter, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
 
@@ -1360,7 +1463,7 @@ router.delete('/users/:userId', checkPermission('users:delete'), strictRateLimit
     // Check if user exists
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'User not found'
       });
@@ -1391,13 +1494,13 @@ router.delete('/users/:userId', checkPermission('users:delete'), strictRateLimit
     res.status(500).json({
       success: false,
       message: 'Failed to delete user',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
 // Reports Management Routes
-router.get('/reports', checkPermission('reports:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/reports', checkPermission('reports:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const {
       page = 1,
@@ -1410,14 +1513,14 @@ router.get('/reports', checkPermission('reports:read'), async (req: Request, res
       sortOrder = 'desc'
     } = req.query;
 
-    const query = {};
+    const query: Record<string, unknown> = {};
     if (type) query.type = type;
     if (status) query.status = status;
     if (priority) query.priority = priority;
     if (createdBy) query.createdBy = createdBy;
 
-    const sortOptions = {};
-    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+    const sortOptions: SortObject = {};
+    sortOptions[String(sortBy)] = sortOrder === 'desc' ? -1 : 1;
 
     // Build aggregation pipeline for reports
     const pipeline = [];
@@ -1467,10 +1570,10 @@ router.get('/reports', checkPermission('reports:read'), async (req: Request, res
       success: true,
       reports,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: parseInt(String(page)),
+        limit: parseInt(String(limit)),
         total,
-        pages: Math.ceil(total / parseInt(limit))
+        pages: Math.ceil(total / parseInt(String(limit)))
       }
     });
   } catch (error) {
@@ -1478,12 +1581,12 @@ router.get('/reports', checkPermission('reports:read'), async (req: Request, res
     res.status(500).json({
       success: false,
       error: 'Failed to fetch reports',
-      message: error.message
+      message: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/reports', checkPermission('reports:create'), async (req: Request, res: Response): Promise<void> => {
+router.post('/reports', checkPermission('reports:create'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const {
       title,
@@ -1498,14 +1601,14 @@ router.post('/reports', checkPermission('reports:create'), async (req: Request, 
 
     // Validate required fields
     if (!title || !description || !type) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Title, description, and type are required'
       });
     }
 
     // Create report document
-    const reportData: any = {
+    const reportData: Record<string, unknown> = {
       reporterId: req.user._id,
       category: type,
       type: 'analytics',
@@ -1542,12 +1645,12 @@ router.post('/reports', checkPermission('reports:create'), async (req: Request, 
     res.status(500).json({
       success: false,
       message: 'Failed to create report',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.put('/reports/:id', checkPermission('reports:update'), async (req: Request, res: Response): Promise<void> => {
+router.put('/reports/:id', checkPermission('reports:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -1560,7 +1663,7 @@ router.put('/reports/:id', checkPermission('reports:update'), async (req: Reques
     );
 
     if (!updatedReport) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Report not found'
       });
@@ -1578,12 +1681,12 @@ router.put('/reports/:id', checkPermission('reports:update'), async (req: Reques
     res.status(500).json({
       success: false,
       message: 'Failed to update report',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.delete('/reports/:id', checkPermission('reports:delete'), async (req: Request, res: Response): Promise<void> => {
+router.delete('/reports/:id', checkPermission('reports:delete'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -1591,7 +1694,7 @@ router.delete('/reports/:id', checkPermission('reports:delete'), async (req: Req
     const report = await Report.findByIdAndDelete(id);
     
     if (!report) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Report not found'
       });
@@ -1608,18 +1711,18 @@ router.delete('/reports/:id', checkPermission('reports:delete'), async (req: Req
     res.status(500).json({
       success: false,
       message: 'Failed to delete report',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/reports/:id/schedule', checkPermission('reports:update'), async (req: Request, res: Response): Promise<void> => {
+router.post('/reports/:id/schedule', checkPermission('reports:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { frequency, time, timezone, enabled } = req.body;
 
     if (!frequency || !time || !timezone) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Frequency, time, and timezone are required'
       });
@@ -1629,7 +1732,7 @@ router.post('/reports/:id/schedule', checkPermission('reports:update'), async (r
     const report = await Report.findById(id);
     
     if (!report) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Report not found'
       });
@@ -1662,12 +1765,12 @@ router.post('/reports/:id/schedule', checkPermission('reports:update'), async (r
     res.status(500).json({
       success: false,
       message: 'Failed to schedule report',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/reports/:id/export', checkPermission('reports:export'), async (req: Request, res: Response): Promise<void> => {
+router.post('/reports/:id/export', checkPermission('reports:export'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { format = 'pdf' } = req.body;
@@ -1676,7 +1779,7 @@ router.post('/reports/:id/export', checkPermission('reports:export'), async (req
     const report = await Report.findById(id);
     
     if (!report) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Report not found'
       });
@@ -1703,12 +1806,12 @@ router.post('/reports/:id/export', checkPermission('reports:export'), async (req
     res.status(500).json({
       success: false,
       message: 'Failed to export report',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.get('/reports/:id/download', checkPermission('reports:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/reports/:id/download', checkPermission('reports:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { format = 'pdf' } = req.query;
@@ -1717,7 +1820,7 @@ router.get('/reports/:id/download', checkPermission('reports:read'), async (req:
     const report = await Report.findById(id).populate('reporterId', 'firstName lastName email').populate('reportedUserId', 'firstName lastName email');
     
     if (!report) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Report not found'
       });
@@ -1750,13 +1853,13 @@ router.get('/reports/:id/download', checkPermission('reports:read'), async (req:
     res.status(500).json({
       success: false,
       message: 'Failed to download report',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
 // Security Alerts Management Routes
-router.get('/security/alerts', checkPermission('security:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/security/alerts', checkPermission('security:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const {
       page = 1,
@@ -1770,13 +1873,13 @@ router.get('/security/alerts', checkPermission('security:read'), async (req: Req
     } = req.query;
 
     // Build query for security alerts
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     if (status) query.status = status;
     if (severity) query.severity = severity;
     if (type) query.type = type;
     if (assignedTo) query['assignedTo.id'] = assignedTo;
 
-    const sortOptions: any = {};
+    const sortOptions: Record<string, 1 | -1> = {};
     sortOptions[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
 
     const alerts = await SecurityAlert.find(query)
@@ -1806,14 +1909,25 @@ router.get('/security/alerts', checkPermission('security:read'), async (req: Req
     res.status(500).json({
       success: false,
       error: 'Failed to fetch security alerts',
-      message: error.message
+      message: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
 // Redirect to avoid duplicate code
-router.get('/security/alerts/backup', checkPermission('security:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/security/alerts/backup', checkPermission('security:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const {
+      page = 1,
+      limit = 20,
+      status,
+      severity,
+      type,
+      assignedTo,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
     // Old implementation with mock data backup
     const mockAlerts = [
       {
@@ -1939,11 +2053,11 @@ router.get('/security/alerts/backup', checkPermission('security:read'), async (r
     ];
 
     // Apply filters
-    let filteredAlerts = mockAlerts;
+    let filteredAlerts: Alert[] = mockAlerts;
     if (status) filteredAlerts = filteredAlerts.filter(alert => alert.status === status);
     if (severity) filteredAlerts = filteredAlerts.filter(alert => alert.severity === severity);
     if (type) filteredAlerts = filteredAlerts.filter(alert => alert.type === type);
-    if (assignedTo) filteredAlerts = filteredAlerts.filter(alert => alert.assignedTo?.id === assignedTo);
+    if (assignedTo) filteredAlerts = filteredAlerts.filter((alert: Alert) => alert.assignedTo?.id === assignedTo);
 
     // Sort
     filteredAlerts.sort((a, b) => {
@@ -1952,22 +2066,22 @@ router.get('/security/alerts/backup', checkPermission('security:read'), async (r
         aVal = new Date(a.createdAt).getTime();
         bVal = new Date(b.createdAt).getTime();
       } else if (sortBy === 'severity') {
-        const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-        aVal = severityOrder[a.severity];
-        bVal = severityOrder[b.severity];
+        const severityOrder: SeverityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+        aVal = severityOrder[String(a.severity)];
+        bVal = severityOrder[String(b.severity)];
       } else if (sortBy === 'riskScore') {
         aVal = a.riskScore;
         bVal = b.riskScore;
       } else {
-        aVal = a[sortBy] || '';
-        bVal = b[sortBy] || '';
+        aVal = (a as Record<string, unknown>)[String(sortBy)] || '';
+        bVal = (b as Record<string, unknown>)[String(sortBy)] || '';
       }
 
       return sortOrder === 'desc' ? bVal - aVal : aVal - bVal;
     });
 
     const total = filteredAlerts.length;
-    const alerts = filteredAlerts.slice((page - 1) * limit, page * limit);
+    const alerts = filteredAlerts.slice((Number(page) - 1) * Number(limit), Number(page) * Number(limit));
 
     await logAdminActivity(req, 'VIEW_SECURITY_ALERTS', { query: req.query });
 
@@ -1975,10 +2089,10 @@ router.get('/security/alerts/backup', checkPermission('security:read'), async (r
       success: true,
       alerts,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: parseInt(String(page)),
+        limit: parseInt(String(limit)),
         total,
-        pages: Math.ceil(total / parseInt(limit))
+        pages: Math.ceil(total / parseInt(String(limit)))
       }
     });
   } catch (error) {
@@ -1986,12 +2100,12 @@ router.get('/security/alerts/backup', checkPermission('security:read'), async (r
     res.status(500).json({
       success: false,
       error: 'Failed to fetch security alerts',
-      message: error.message
+      message: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/security/alerts/:id/acknowledge', checkPermission('security:update'), async (req: Request, res: Response): Promise<void> => {
+router.post('/security/alerts/:id/acknowledge', checkPermission('security:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -2019,18 +2133,18 @@ router.post('/security/alerts/:id/acknowledge', checkPermission('security:update
     res.status(500).json({
       success: false,
       message: 'Failed to acknowledge security alert',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/security/alerts/:id/resolve', checkPermission('security:update'), async (req: Request, res: Response): Promise<void> => {
+router.post('/security/alerts/:id/resolve', checkPermission('security:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { resolution } = req.body;
 
     if (!resolution) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Resolution description is required'
       });
@@ -2069,18 +2183,18 @@ router.post('/security/alerts/:id/resolve', checkPermission('security:update'), 
     res.status(500).json({
       success: false,
       message: 'Failed to resolve security alert',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/security/alerts/:id/escalate', checkPermission('security:update'), async (req: Request, res: Response): Promise<void> => {
+router.post('/security/alerts/:id/escalate', checkPermission('security:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { level } = req.body;
 
     if (typeof level !== 'number' || level < 0) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Valid escalation level is required'
       });
@@ -2114,18 +2228,18 @@ router.post('/security/alerts/:id/escalate', checkPermission('security:update'),
     res.status(500).json({
       success: false,
       message: 'Failed to escalate security alert',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/security/alerts/:id/assign', checkPermission('security:update'), async (req: Request, res: Response): Promise<void> => {
+router.post('/security/alerts/:id/assign', checkPermission('security:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { assigneeId } = req.body;
 
     if (!assigneeId) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Assignee ID is required'
       });
@@ -2164,12 +2278,12 @@ router.post('/security/alerts/:id/assign', checkPermission('security:update'), a
     res.status(500).json({
       success: false,
       message: 'Failed to assign security alert',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.put('/security/alerts/:id', checkPermission('security:update'), async (req: Request, res: Response): Promise<void> => {
+router.put('/security/alerts/:id', checkPermission('security:update'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -2193,12 +2307,12 @@ router.put('/security/alerts/:id', checkPermission('security:update'), async (re
     res.status(500).json({
       success: false,
       message: 'Failed to update security alert',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.delete('/security/alerts/:id', checkPermission('security:delete'), async (req: Request, res: Response): Promise<void> => {
+router.delete('/security/alerts/:id', checkPermission('security:delete'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -2214,12 +2328,12 @@ router.delete('/security/alerts/:id', checkPermission('security:delete'), async 
     res.status(500).json({
       success: false,
       message: 'Failed to delete security alert',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.post('/security/alerts/export', checkPermission('security:export'), async (req: Request, res: Response): Promise<void> => {
+router.post('/security/alerts/export', checkPermission('security:export'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { format = 'csv', alertIds } = req.body;
 
@@ -2236,24 +2350,24 @@ router.post('/security/alerts/export', checkPermission('security:export'), async
     res.json({
       success: true,
       export: exportResult,
-      message: `Security alerts exported successfully as ${format.toUpperCase()}`
+      message: `Security alerts exported successfully as ${String(format).toUpperCase()}`
     });
   } catch (error) {
     logger.error('Failed to export security alerts', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to export security alerts',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });
 
-router.get('/security/alerts/download', checkPermission('security:read'), async (req: Request, res: Response): Promise<void> => {
+router.get('/security/alerts/download', checkPermission('security:read'), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { format = 'csv' } = req.query;
 
     // For now, return mock file until Alert model is implemented
-    const mockContent = `Mock ${format.toUpperCase()} Security Alerts Export\nGenerated: ${new Date().toISOString()}\nAlert 1: Suspicious Login Attempts\nAlert 2: Data Export Request`;
+    const mockContent = `Mock ${String(format).toUpperCase()} Security Alerts Export\nGenerated: ${new Date().toISOString()}\nAlert 1: Suspicious Login Attempts\nAlert 2: Data Export Request`;
 
     const mimeType = format === 'pdf' ? 'application/pdf' :
       format === 'csv' ? 'text/csv' :
@@ -2270,7 +2384,7 @@ router.get('/security/alerts/download', checkPermission('security:read'), async 
     res.status(500).json({
       success: false,
       message: 'Failed to download security alerts',
-      error: error.message
+      error: (error instanceof Error ? error.message : 'Unknown error')
     });
   }
 });

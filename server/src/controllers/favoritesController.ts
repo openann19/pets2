@@ -1,4 +1,5 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import Favorite from '../models/Favorite';
 import Pet from '../models/Pet';
 import mongoose from 'mongoose';
@@ -9,7 +10,7 @@ import logger from '../utils/logger';
  */
 interface AuthenticatedRequest extends Request {
   userId: string;
-  user?: any;
+  user?: IUserDocument;
 }
 
 interface AddFavoriteRequest extends AuthenticatedRequest {
@@ -24,7 +25,7 @@ interface RemoveFavoriteRequest extends AuthenticatedRequest {
   };
 }
 
-interface GetFavoritesRequest extends AuthenticatedRequest {
+interface GetFavoritesRequest extends Omit<AuthenticatedRequest, 'query'> {
   query: {
     page?: string;
     limit?: string;

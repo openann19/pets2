@@ -24,7 +24,8 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 const { width } = Dimensions.get("window");
 
@@ -196,7 +197,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     styles.cardButton,
                     selectedIntent === "adopt" && styles.selectedCard,
                   ])}
-                  onPress={() => {
+                   testID="UserIntentScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     handleIntentSelect("adopt", scale1);
                   }}
                   activeOpacity={0.9}
@@ -216,7 +217,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={["Theme.colors.primary[500]", "Theme.colors.primary[700]"]}
+                          colors={[theme.colors.primary[500], theme.colors.primary[700]]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>🏠</Text>
@@ -266,7 +267,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     styles.cardButton,
                     selectedIntent === "list" && styles.selectedCard,
                   ])}
-                  onPress={() => {
+                   testID="UserIntentScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     handleIntentSelect("list", scale2);
                   }}
                   activeOpacity={0.9}
@@ -286,7 +287,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={["Theme.colors.secondary[500]", "Theme.colors.secondary[600]"]}
+                          colors={[theme.colors.secondary[500], theme.colors.secondary[600]]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>📝</Text>
@@ -396,14 +397,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "800",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     textAlign: "center",
     marginBottom: 16,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 18,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
     lineHeight: 26,
     paddingHorizontal: 24,
@@ -453,7 +454,7 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -465,14 +466,14 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     textAlign: "center",
     marginBottom: 16,
     letterSpacing: -0.3,
   },
   cardDescription: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
     lineHeight: 24,
     marginBottom: 24,
@@ -503,7 +504,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 15,
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     fontWeight: "600",
     flex: 1,
     lineHeight: 20,
@@ -532,7 +533,7 @@ const styles = StyleSheet.create({
   },
   optionsSubtext: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
     fontWeight: "500",

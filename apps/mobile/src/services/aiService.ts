@@ -1,4 +1,5 @@
 import { api } from './api';
+import type { Pet } from '@pawfectmatch/core';
 
 export interface BioGenerationParams {
   petName: string;
@@ -35,7 +36,32 @@ export interface CompatibilityResult {
   };
 }
 
+export interface PetCompatibilityData {
+  id: string;
+  name: string;
+  breed: string;
+  age: number;
+  size: string;
+  species: string;
+  gender: string;
+  personality?: string[];
+  energyLevel?: number;
+}
+
 export async function generateBio(params: BioGenerationParams): Promise<string> {
+  // Validate required parameters
+  if (!params.petName || params.petName.trim().length === 0) {
+    throw new Error('Pet name is required and cannot be empty');
+  }
+  
+  if (!params.keywords || params.keywords.length === 0) {
+    throw new Error('At least one keyword is required');
+  }
+  
+  if (params.keywords.some(keyword => !keyword || keyword.trim().length === 0)) {
+    throw new Error('All keywords must be non-empty strings');
+  }
+  
   const { request } = await import('./api');
   const response = await request<BioGenerationResult>('/ai/generate-bio', {
     method: 'POST',
@@ -54,13 +80,13 @@ export async function analyzePhoto(url: string): Promise<PhotoAnalysisResult> {
 }
 
 export async function computeCompatibility(
-  pet1Id: string,
-  pet2Id: string,
+  petA: Pet | PetCompatibilityData,
+  petB: Pet | PetCompatibilityData,
 ): Promise<CompatibilityResult> {
   const { request } = await import('./api');
   const response = await request<CompatibilityResult>('/ai/compatibility', {
     method: 'POST',
-    body: { pet1Id, pet2Id },
+    body: { a: petA, b: petB },
   });
   return response;
 }

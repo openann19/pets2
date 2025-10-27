@@ -2,13 +2,14 @@
  * Redis configuration for caching and rate limiting
  */
 
-import * as Redis from 'ioredis';
+import type Redis from 'ioredis';
+import RedisClass from 'ioredis';
 const logger = require('../utils/logger');
 
 const isTestEnv = process.env.NODE_ENV === 'test';
 
 // Optional dependency: allow running without ioredis (e.g., in tests/CI)
-let RedisConstructor: typeof Redis | null = null;
+let RedisConstructor: typeof RedisClass | null = null;
 try {
   RedisConstructor = require('ioredis');
 } catch {
@@ -16,12 +17,12 @@ try {
   if (!isTestEnv) logger.warn('ioredis not installed; Redis features will be disabled in this environment');
 }
 
-let redisClient: Redis.Redis | null = null;
+let redisClient: RedisClass | null = null;
 
 /**
  * Initialize Redis client
  */
-function initRedis(): Redis.Redis | null {
+function initRedis(): RedisClass | null {
   const redisUrl = process.env.REDIS_URL;
 
   if (!RedisConstructor) {
@@ -78,7 +79,7 @@ function initRedis(): Redis.Redis | null {
 /**
  * Get Redis client instance
  */
-function getRedisClient(): Redis.Redis | null {
+function getRedisClient(): RedisClass | null {
   return redisClient;
 }
 
@@ -214,7 +215,7 @@ async function getMultipleCache(keys: string[]): Promise<Record<string, string |
     const result: Record<string, string | null> = {};
 
     keys.forEach((key, index) => {
-      result[key] = values[index];
+      result[key] = values[index] ?? null;
     });
 
     return result;

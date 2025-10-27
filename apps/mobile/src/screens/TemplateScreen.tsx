@@ -10,10 +10,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { AdvancedCard, CardConfigs } from '../components/Advanced/AdvancedCard';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 import { StaggerList } from '../ui/lists/StaggerList';
 import { BouncePressable } from '../ui/pressables/BouncePressable';
 import { logger } from '../services/logger';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { getAccessibilityProps } from '../utils/accessibilityUtils';
 
 interface TemplateItem {
   _id: string;
@@ -22,6 +24,10 @@ interface TemplateItem {
 }
 
 export default function TemplateScreen() {
+  const theme = useTheme();
+  const reducedMotion = useReducedMotion();
+  const styles = createStyles(theme);
+  
   const data: TemplateItem[] = [
     { _id: '1', name: 'Item 1', description: 'Description 1' },
     { _id: '2', name: 'Item 2', description: 'Description 2' },
@@ -33,6 +39,10 @@ export default function TemplateScreen() {
     logger.info('Template screen button pressed');
   };
 
+  // Animation config that respects reduced motion
+  const animationConfig = reducedMotion ? {} : { entering: FadeInDown.duration(220) };
+  const hapticFeedback = reducedMotion ? undefined : 'tap';
+
   return (
     <ScreenShell
       header={
@@ -42,16 +52,28 @@ export default function TemplateScreen() {
       }
     >
       {/* Hero section with animation */}
-      <Animated.View entering={FadeInDown.duration(220)}>
+      <Animated.View {...animationConfig}>
         <AdvancedCard 
           {...CardConfigs.glass({})} 
           style={{ 
-            padding: Theme.spacing.lg, 
-            marginBottom: Theme.spacing.lg 
+            padding: theme.spacing.lg, 
+            marginBottom: theme.spacing.lg 
           }}
+          testID="template-hero-card"
+          {...getAccessibilityProps('hero section card', 'text')}
         >
-          <Text style={styles.heroTitle}>Hero Section</Text>
-          <Text style={styles.heroDescription}>
+          <Text 
+            style={styles.heroTitle}
+            accessibilityRole="text"
+            accessibilityLabel="Hero Section Title"
+          >
+            Hero Section
+          </Text>
+          <Text 
+            style={styles.heroDescription}
+            accessibilityRole="text"
+            accessibilityLabel="Template screen description"
+          >
             This is a template screen using the UI & Motion contract
           </Text>
         </AdvancedCard>
@@ -63,14 +85,30 @@ export default function TemplateScreen() {
         renderItem={(item) => (
           <BouncePressable 
             onPress={handlePress} 
-            hapticFeedback="tap"
+            hapticFeedback={hapticFeedback}
+            testID={`template-item-${item._id}`}
+            accessibilityLabel={`Tap to interact with ${item.name}: ${item.description}`}
+            accessibilityRole="button"
           >
             <AdvancedCard
               {...CardConfigs.glass({ interactions: ['press', 'glow'] })}
-              style={{ padding: Theme.spacing.lg }}
+              style={{ padding: theme.spacing.lg }}
+              testID={`template-card-${item._id}`}
             >
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemDescription}>{item.description}</Text>
+              <Text 
+                style={styles.itemName}
+                accessibilityRole="text"
+                accessibilityLabel={`Item name: ${item.name}`}
+              >
+                {item.name}
+              </Text>
+              <Text 
+                style={styles.itemDescription}
+                accessibilityRole="text"
+                accessibilityLabel={`Item description: ${item.description}`}
+              >
+                {item.description}
+              </Text>
             </AdvancedCard>
           </BouncePressable>
         )}
@@ -79,28 +117,29 @@ export default function TemplateScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Styles should be defined inside the component or use useMemo
+const createStyles = (theme: any) => StyleSheet.create({
   heroTitle: {
-    fontSize: Theme.typography.fontSize['3xl'],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.sm,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
   heroDescription: {
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.secondary,
-    lineHeight: Theme.typography.lineHeight.relaxed * Theme.typography.fontSize.base,
+    fontSize: 16,
+    color: theme.colors.textMuted,
+    lineHeight: 24,
   },
   itemName: {
-    fontSize: Theme.typography.fontSize.lg,
-    fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary,
-    marginBottom: Theme.spacing.xs,
+    fontSize: 18,
+    fontWeight: '600',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
   },
   itemDescription: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.text.secondary,
-    lineHeight: Theme.typography.lineHeight.normal * Theme.typography.fontSize.sm,
+    fontSize: 14,
+    color: theme.colors.textMuted,
+    lineHeight: 20,
   },
 });
 

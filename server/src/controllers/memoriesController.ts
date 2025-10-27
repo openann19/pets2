@@ -1,15 +1,16 @@
-import { Response } from 'express';
+import type { Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import Match from '../models/Match';
 import logger from '../utils/logger';
 import Conversation from '../models/Conversation';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 /**
  * Request interface
  */
 interface AuthenticatedRequest extends Request {
   userId: string;
-  user?: any;
+  user?: IUserDocument;
   params: {
     matchId: string;
   };
@@ -50,8 +51,8 @@ export const getMemories = async (req: AuthenticatedRequest, res: Response): Pro
     }
 
     // Check if user is part of this match
-    const matchUser1 = (match as any).user1?.toString();
-    const matchUser2 = (match as any).user2?.toString();
+    const matchUser1 = (match as { user1?: { toString(): string } }).user1?.toString();
+    const matchUser2 = (match as { user2?: { toString(): string } }).user2?.toString();
     if (matchUser1 !== userId && matchUser2 !== userId) {
       res.status(403).json({
         success: false,
@@ -61,7 +62,7 @@ export const getMemories = async (req: AuthenticatedRequest, res: Response): Pro
     }
 
     // Get messages for this match
-    let messages: any[] = [];
+    let messages: Array<{ sender?: { firstName?: string; lastName?: string }; content?: string; createdAt?: Date; sentAt?: Date; _id?: string }> = [];
     try {
       const Message = require('../models/Message');
       if (Message && typeof Message.find === 'function') {
@@ -83,23 +84,26 @@ export const getMemories = async (req: AuthenticatedRequest, res: Response): Pro
       const convo = await Conversation.findOne({ participants: { $all: participants, $size: 2 } })
         .lean();
       
-      if (convo && Array.isArray((convo as any).messages)) {
+      if (convo && Array.isArray((convo as { messages?: unknown[] }).messages)) {
         // Mimic Message shape minimally
-        messages = (convo as any).messages
+        messages = ((convo as { messages?: unknown[] }).messages || [])
           .slice()
-          .sort((a: any, b: any) => new Date(a.sentAt || a.createdAt).getTime() - new Date(b.sentAt || b.createdAt).getTime())
+          .sort((a: unknown, b: unknown) => new Date((a as { sentAt?: Date; createdAt?: Date }).sentAt || (a as { sentAt?: Date; createdAt?: Date }).createdAt).getTime() - new Date((b as { sentAt?: Date; createdAt?: Date }).sentAt || (b as { sentAt?: Date; createdAt?: Date }).createdAt).getTime())
           .slice(0, 50)
-          .map((m: any) => ({
-            _id: m._id,
-            content: m.content,
-            createdAt: m.sentAt || m.createdAt || new Date(),
-            sender: { _id: m.sender, firstName: '', lastName: '' }
-          }));
+          .map((m: unknown) => {
+            const msg = m as { _id?: string; content?: string; sentAt?: Date; createdAt?: Date; sender?: string };
+            return {
+              _id: msg._id,
+              content: msg.content,
+              createdAt: msg.sentAt || msg.createdAt || new Date(),
+              sender: { _id: msg.sender, firstName: '', lastName: '' }
+            };
+          });
       }
     }
 
     // Convert messages to memory nodes
-    const memories: MemoryNode[] = messages.map((message: any) => {
+    const memories: MemoryNode[] = messages.map((message: { sender?: { firstName?: string; lastName?: string }; content?: string; createdAt?: Date; sentAt?: Date; _id?: string }) => {
       const sender = message.sender || {};
 
       // Generate different types of memories based on message content
@@ -165,7 +169,7 @@ export const getMemories = async (req: AuthenticatedRequest, res: Response): Pro
       memories.unshift({
         id: `milestone_first_${matchId}`,
         type: 'text',
-        content: `Started a conversation with ${(match as any).pet1?.name || 'pet'} and ${(match as any).pet2?.name || 'pet'}`,
+        content: `Started a conversation with ${(match as { pet1?: { name?: string } }).pet1?.name || 'pet'} and ${(match as { pet2?: { name?: string } }).pet2?.name || 'pet'}`,
         title: 'First Contact',
         timestamp: firstMessage.createdAt.toISOString(),
         metadata: {
@@ -212,13 +216,13 @@ export const getMemories = async (req: AuthenticatedRequest, res: Response): Pro
       memories,
       match: {
         id: match._id,
-        pet1: (match as any).pet1 ? {
-          name: (match as any).pet1.name,
-          species: (match as any).pet1.species
+        pet1: (match as { pet1?: { name?: string; species?: string } }).pet1 ? {
+          name: (match as { pet1?: { name?: string; species?: string } }).pet1?.name,
+          species: (match as { pet1?: { name?: string; species?: string } }).pet1?.species
         } : null,
-        pet2: (match as any).pet2 ? {
-          name: (match as any).pet2.name,
-          species: (match as any).pet2.species
+        pet2: (match as { pet2?: { name?: string; species?: string } }).pet2 ? {
+          name: (match as { pet2?: { name?: string; species?: string } }).pet2?.name,
+          species: (match as { pet2?: { name?: string; species?: string } }).pet2?.species
         } : null
       }
     });

@@ -35,7 +35,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
           accessibilityLabel="Close preview"
           accessibilityRole="button"
         >
-          <Ionicons name="close-circle" size={20} color={Theme.colors.text.secondary} />
+          <Ionicons name="close-circle" size={20} color={Theme.colors.text.secondar}y}} />
         </TouchableOpacity>
       )}
 
@@ -50,7 +50,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
         />
       ) : (
         <View style={styles.imagePlaceholder}>
-          <Ionicons name="link" size={32} color={Theme.colors.text.tertiary} />
+          <Ionicons name="link" size={32} color={Theme.colors.text.tertiar}y}} />
         </View>
       )}
 
@@ -73,7 +73,7 @@ export function LinkPreviewCard({ data, onPress, onClose }: LinkPreviewCardProps
               <Ionicons
                 name="globe-outline"
                 size={12}
-                color={Theme.colors.text.secondary}
+                color={Theme.colors.text.secondar}y}}
               />
               <Text style={styles.siteName}>{siteName}</Text>
             </View>

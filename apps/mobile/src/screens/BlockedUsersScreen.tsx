@@ -148,7 +148,7 @@ function BlockedUsersScreen({
             styles.unblockButton,
             { backgroundColor: colors.primary },
           ])}
-          onPress={() => handleUnblockUser(item.id)}
+           testID="BlockedUsersScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleUnblockUser(item.id)}
         >
           <Ionicons name="person-remove-outline" size={16} color="white" />
           <Text style={styles.unblockButtonText}>Unblock</Text>
@@ -170,7 +170,7 @@ function BlockedUsersScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="BlockedUsersScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                 () => {},
               );
@@ -191,8 +191,8 @@ function BlockedUsersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color="Theme.colors.status.info"
-            />
+              color={theme.colors.status.info
+           } }/>
             <Text style={styles.infoText}>
               Blocked users cannot contact you or view your profile. You can
               unblock them at any time.

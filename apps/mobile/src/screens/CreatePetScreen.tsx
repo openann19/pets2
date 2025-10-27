@@ -17,7 +17,7 @@ import { PetPhotosSection } from "../components/create-pet/PetPhotosSection";
 import { usePetForm } from "../hooks/usePetForm";
 import { usePhotoManager } from "../hooks/usePhotoManager";
 import type { RootStackScreenProps } from "../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { haptic } from '../ui/haptics';
@@ -25,6 +25,9 @@ import { haptic } from '../ui/haptics';
 type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 
 export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   const { formData, errors, isSubmitting, updateFormData, handleSubmit } =
     usePetForm();
 
@@ -104,7 +107,11 @@ export default function CreatePetScreen({ navigation }: CreatePetScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.bg,
+  },
   keyboardAvoid: {
     flex: 1,
   },
@@ -112,6 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: Theme.spacing.lg,
+    padding: theme.spacing.lg,
   },
 });

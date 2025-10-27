@@ -7,6 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { getAccessibilityProps } from '../utils/accessibilityUtils';
 
 import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
 import { matchesAPI } from "../services/api";
@@ -14,8 +16,9 @@ import { useProfileScreen } from "../hooks/screens/useProfileScreen";
 import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
 
 import type { RootStackScreenProps } from "../navigation/types";
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 import MicroPressable from "../components/micro/MicroPressable";
+import { useTranslation } from 'react-i18next';
 
 // Import decomposed components
 import {
@@ -28,8 +31,11 @@ import {
 type ProfileScreenProps = RootStackScreenProps<"Profile">;
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation('common');
   const scrollRef = useRef<ScrollView>(null);
   const { onScroll, getOffset } = useScrollOffsetTracker();
+  const reducedMotion = useReducedMotion();
 
   const {
     user,
@@ -83,12 +89,46 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     navigation.navigate("CreatePet");
   }, [navigation]);
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    logoutButton: {
+      marginHorizontal: 20,
+      marginBottom: 40,
+      borderRadius: 12,
+      overflow: "hidden",
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    logoutGradient: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 16,
+      paddingHorizontal: 24,
+    },
+    logoutText: {
+      color: theme.colors.bg,
+      fontSize: 16,
+      fontWeight: "600",
+      marginLeft: 8,
+    },
+  });
+
   return (
     <ScreenShell
       header={
         <AdvancedHeader
           {...HeaderConfigs.glass({
-            title: "Profile",
+            title: t('profile.title'),
             rightButtons: [
               {
                 type: "edit",
@@ -128,17 +168,17 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         scrollEventThrottle={16}
       >
         {/* Profile Header Section */}
-        <Animated.View entering={FadeInDown.duration(220)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(220)}>
           <ProfileHeaderSection user={user} />
         </Animated.View>
 
         {/* Quick Stats Section */}
-        <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(240).delay(50)}>
           <ProfileStatsSection />
         </Animated.View>
 
         {/* Menu Items Section */}
-        <Animated.View entering={FadeInDown.duration(260).delay(100)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(260).delay(100)}>
           <ProfileMenuSection
             onNavigateToMyPets={onNavigateToMyPets}
             onNavigateToSettings={onNavigateToSettings}
@@ -147,7 +187,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </Animated.View>
 
         {/* Settings Sections */}
-        <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(280).delay(150)}>
           <ProfileSettingsSection
             notifications={notifications}
             privacy={privacy}
@@ -157,14 +197,28 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </Animated.View>
 
         {/* Logout Button */}
-        <Animated.View entering={FadeInDown.duration(300).delay(200)}>
-          <MicroPressable style={styles.logoutButton} onPress={onLogout}>
+        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(300).delay(200)}>
+          <MicroPressable 
+            style={styles.logoutButton} 
+            onPress={onLogout}
+          >
             <LinearGradient
-              colors={[Theme.colors.status.error, "#dc2626"]}
+              colors={[theme.colors.danger, "#dc2626"]}
               style={styles.logoutGradient}
             >
-              <Ionicons name="log-out" size={20} color={Theme.colors.neutral[0]} />
-              <Text style={styles.logoutText}>Logout</Text>
+              <Ionicons 
+                name="log-out" 
+                size={20} 
+                color={theme.colors.bg}
+                accessibilityLabel="Logout icon"
+              />
+              <Text 
+                style={styles.logoutText}
+                accessibilityRole="text"
+                accessibilityLabel="Logout text"
+              >
+                {t('profile.logout')}
+              </Text>
             </LinearGradient>
           </MicroPressable>
         </Animated.View>
@@ -172,39 +226,5 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     </ScreenShell>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  logoutButton: {
-    marginHorizontal: 20,
-    marginBottom: 40,
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: Theme.colors.neutral[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  logoutGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-  },
-  logoutText: {
-    color: Theme.colors.neutral[0],
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-});
 
 export default ProfileScreen;

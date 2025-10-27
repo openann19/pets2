@@ -1,17 +1,19 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import Stripe from 'stripe';
 import User from '../models/User';
 import logger from '../utils/logger';
 import paymentRetryService from '../services/paymentRetryService';
 import subscriptionAnalyticsService from '../services/subscriptionAnalyticsService';
 import { MongoClient } from 'mongodb';
+import { getErrorMessage } from '../utils/errorHandler';
 
 // Initialize Stripe
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 let stripe: Stripe | null = null;
 
 if (stripeSecretKey) {
-  stripe = new Stripe(stripeSecretKey, { apiVersion: '2023-10-16' });
+  // Using the latest stable API version - the specific API version string is typed by Stripe SDK
+  stripe = new Stripe(stripeSecretKey, { apiVersion: '2024-11-20.acacia' });
 } else {
   logger.warn('Stripe secret key not configured');
 }
@@ -24,35 +26,28 @@ interface StripeWebhookRequest extends Request {
     'stripe-signature'?: string;
   };
   rawBody?: Buffer | string;
-  body: any;
+  body: Stripe.Event | Record<string, unknown>;
 }
 
 /**
  * Checkout session type
  */
-interface Session extends Stripe.Checkout.Session {
+type Session = Stripe.Checkout.Session & {
   subscription?: string;
-  metadata?: {
-    userId?: string;
-  };
-}
+};
 
 /**
  * Invoice type
  */
-interface Invoice extends Stripe.Invoice {
+type Invoice = Stripe.Invoice & {
   subscription?: string | Stripe.Subscription;
   attempt_count?: number;
-}
+};
 
 /**
  * Subscription type
  */
-interface Subscription extends Stripe.Subscription {
-  items: Stripe.ApiList<Stripe.SubscriptionItem>;
-  cancel_at_period_end?: boolean;
-  current_period_end: number;
-}
+type Subscription = Stripe.Subscription;
 
 /**
  * Process webhook events from Stripe
@@ -84,14 +79,15 @@ export const handleStripeWebhook = async (req: StripeWebhookRequest, res: Respon
     }
 
     try {
-      event = stripe.webhooks.constructEvent(
+      event =       stripe.webhooks.constructEvent(
         payloadForVerification as string,
         sig,
         process.env.STRIPE_WEBHOOK_SECRET || (process.env.NODE_ENV === 'test' ? 'whsec_test' : '')
       );
-    } catch (err: any) {
-      logger.error('Webhook signature verification failed', { error: err.message });
-      res.status(400).send(`Webhook Error: ${err.message}`);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      logger.error('Webhook signature verification failed', { error: errorMessage });
+      res.status(400).send(`Webhook Error: ${errorMessage}`);
       return;
     }
   }
@@ -166,9 +162,9 @@ export const handleStripeWebhook = async (req: StripeWebhookRequest, res: Respon
     }
 
     logger.info('Successfully processed webhook event', { eventId: event.id, type: event.type });
-  } catch (err: any) {
+  } catch (err: unknown) {
     logger.error('Error processing webhook', {
-      error: err.message,
+      error: getErrorMessage(err),
       event: event.type,
       eventId: event.id
     });
@@ -220,15 +216,19 @@ async function handleCheckoutSessionCompleted(session: Session): Promise<void> {
     const subscription = await stripe.subscriptions.retrieve(session.subscription);
 
     // Get plan details from product ID
-    const priceId = subscription.items.data[0].price.id;
+    const priceId = subscription.items.data?.[0]?.price?.id;
+    if (!priceId) {
+      throw new Error('Price ID not found in subscription');
+    }
     const planName = await getPlanNameFromPriceId(priceId);
 
     // Update user with subscription details
+    const periodEnd = (subscription as any).current_period_end;
     (user.premium as any) = {
       isActive: true,
       plan: planName,
       stripeSubscriptionId: session.subscription,
-      expiresAt: new Date(subscription.current_period_end * 1000),
+      expiresAt: periodEnd ? new Date(periodEnd * 1000) : undefined,
       cancelAtPeriodEnd: subscription.cancel_at_period_end
     };
 
@@ -242,9 +242,9 @@ async function handleCheckoutSessionCompleted(session: Session): Promise<void> {
       plan: planName,
       subscriptionId: session.subscription
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to process subscription', {
-      error: error.message,
+      error: getErrorMessage(error),
       userId,
       sessionId: session.id
     });
@@ -285,7 +285,8 @@ async function handleInvoicePaid(invoice: Invoice): Promise<void> {
     }
 
     // Update subscription expiry date
-    (user.premium as any).expiresAt = new Date(subscription.current_period_end * 1000);
+    const periodEnd = (subscription as any).current_period_end;
+    (user.premium as any).expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
     (user.premium as any).isActive = true; // Ensure it's active
 
     await user.save();
@@ -295,9 +296,9 @@ async function handleInvoicePaid(invoice: Invoice): Promise<void> {
       subscriptionId: invoice.subscription,
       newExpiryDate: (user.premium as any).expiresAt
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error processing invoice.paid event', {
-      error: error.message,
+      error: getErrorMessage(error),
       invoiceId: invoice.id
     });
     throw error;
@@ -337,7 +338,8 @@ async function handleInvoicePaymentSucceeded(invoice: Invoice): Promise<void> {
     }
 
     // Update subscription status
-    (user.premium as any).expiresAt = new Date(subscription.current_period_end * 1000);
+    const periodEnd = (subscription as any).current_period_end;
+    (user.premium as any).expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
     (user.premium as any).isActive = true;
     (user.premium as any).retryCount = 0; // Reset retry count on successful payment
 
@@ -352,9 +354,9 @@ async function handleInvoicePaymentSucceeded(invoice: Invoice): Promise<void> {
       amount: invoice.amount_paid ? invoice.amount_paid / 100 : 0,
       newExpiryDate: (user.premium as any).expiresAt
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error processing invoice.payment_succeeded event', {
-      error: error.message,
+      error: getErrorMessage(error),
       invoiceId: invoice.id
     });
     throw error;
@@ -402,9 +404,9 @@ async function handleInvoicePaymentFailed(invoice: Invoice): Promise<void> {
       attemptCount,
       retryCount: (user.premium as any).retryCount
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error processing invoice.payment_failed event', {
-      error: error.message,
+      error: getErrorMessage(error),
       invoiceId: invoice.id
     });
     throw error;
@@ -433,11 +435,15 @@ async function handleSubscriptionUpdated(subscription: Subscription): Promise<vo
     }
 
     // Update subscription details
-    const priceId = subscription.items.data[0].price.id;
+    const priceId = subscription.items.data[0]?.price?.id;
+    if (!priceId) {
+      throw new Error('Price ID not found in subscription');
+    }
     const planName = await getPlanNameFromPriceId(priceId);
 
     (user.premium as any).plan = planName;
-    (user.premium as any).expiresAt = new Date(subscription.current_period_end * 1000);
+    const periodEnd = (subscription as any).current_period_end;
+    (user.premium as any).expiresAt = periodEnd ? new Date(periodEnd * 1000) : undefined;
     (user.premium as any).cancelAtPeriodEnd = subscription.cancel_at_period_end;
 
     // If plan changed, update feature limits
@@ -451,9 +457,9 @@ async function handleSubscriptionUpdated(subscription: Subscription): Promise<vo
       plan: planName,
       cancelAtPeriodEnd: subscription.cancel_at_period_end
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error processing subscription.updated event', {
-      error: error.message,
+      error: getErrorMessage(error),
       subscriptionId: subscription.id
     });
     throw error;
@@ -490,9 +496,9 @@ async function handleSubscriptionDeleted(subscription: Subscription): Promise<vo
       userId: user._id,
       subscriptionId: subscription.id
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error processing subscription.deleted event', {
-      error: error.message,
+      error: getErrorMessage(error),
       subscriptionId: subscription.id
     });
     throw error;
@@ -557,9 +563,9 @@ async function checkEventProcessed(eventId: string): Promise<boolean> {
     await client.close();
 
     return !!existingEvent;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log error and still return false as a fallback
-    logger.error('Error checking event status', { eventId, error: error.message });
+    logger.error('Error checking event status', { eventId, error: getErrorMessage(error) });
     return false;
   }
 }
@@ -584,9 +590,9 @@ async function markEventProcessed(eventId: string): Promise<boolean> {
 
     await client.close();
     return true;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log error before throwing it
-    logger.error('Error marking event as processed', { eventId, error: error.message });
+    logger.error('Error marking event as processed', { eventId, error: getErrorMessage(error) });
     // Then rethrow the error
     throw error;
   }
@@ -602,6 +608,9 @@ function isNonRetryableError(error: Error): boolean {
     'Invalid plan configuration'
   ];
 
-  return nonRetryableErrors.some(errMsg => error.message.includes(errMsg));
+  if (typeof error !== 'object' || error === null) return false;
+  const errorObj = error as Record<string, unknown>;
+  if (typeof errorObj.message !== 'string') return false;
+  return nonRetryableErrors.some(errMsg => errorObj.message.includes(errMsg));
 }
 

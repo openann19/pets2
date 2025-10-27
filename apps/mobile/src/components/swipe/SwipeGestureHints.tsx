@@ -137,7 +137,7 @@ export function SwipeGestureHints({ onDismiss, initialDismissed }: SwipeGestureH
 
       {/* Dismiss button */}
       <Pressable style={styles.dismissButton} onPress={handleDismiss} testID="dismiss-button">
-        <Ionicons name="close" size={20} color={Theme.colors.neutral[0]} />
+        <Ionicons name="close" size={20} color={Theme.colors.neutral[0}]}} />
       </Pressable>
     </Animated.View>
   );

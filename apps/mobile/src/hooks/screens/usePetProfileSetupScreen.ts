@@ -5,12 +5,32 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { usePetProfileSetup } from "../domains/onboarding/usePetProfileSetup";
 import type { OnboardingScreenProps } from "../../navigation/types";
+import type { PetPhoto } from "@pawfectmatch/core";
+
+// Interface for pet profile creation during onboarding
+interface PetProfileCreationData {
+  name: string;
+  breed: string;
+  age: number;
+  species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
+  gender: 'male' | 'female';
+  size: 'tiny' | 'small' | 'medium' | 'large' | 'extra-large';
+  description?: string;
+  photos: PetPhoto[];
+}
+
+interface PetProfileSetupState {
+  currentStep: number;
+  isUploading: boolean;
+  isSubmitting: boolean;
+  error: string | null;
+}
 
 interface UsePetProfileSetupScreenReturn {
   // From domain hook
-  profile: any;
-  state: any;
-  updateProfile: (updates: any) => void;
+  profile: Partial<PetProfileCreationData>;
+  state: PetProfileSetupState;
+  updateProfile: (updates: Partial<PetProfileCreationData>) => void;
   setCurrentStep: (step: number) => void;
   uploadPhoto: (uri: string) => Promise<void>;
   removePhoto: (index: number) => void;
@@ -29,8 +49,8 @@ interface UsePetProfileSetupScreenReturn {
 }
 
 export const usePetProfileSetupScreen = (): UsePetProfileSetupScreenReturn => {
-  const navigation = useNavigation<any>();
-  const route = useRoute<any>();
+  const navigation = useNavigation<OnboardingScreenProps<"PetProfileSetup">['navigation']>();
+  const route = useRoute<OnboardingScreenProps<"PetProfileSetup">['route']>();
   const { userIntent } = route.params as { userIntent: string };
 
   const {

@@ -43,14 +43,17 @@ class UsageTrackingService {
       if (!user.premium) {
         user.premium = {
           isActive: false,
-          plan: 'free',
+          plan: 'basic' as const,
           usage: {
             swipesUsed: 0,
             swipesLimit: 50,
             superLikesUsed: 0,
             superLikesLimit: 0,
             boostsUsed: 0,
-            boostsLimit: 0
+            boostsLimit: 0,
+            messagesSent: 0,
+            profileViews: 0,
+            rewindsUsed: 0
           }
         };
       }
@@ -63,7 +66,10 @@ class UsageTrackingService {
           superLikesUsed: 0,
           superLikesLimit: 0,
           boostsUsed: 0,
-          boostsLimit: 0
+          boostsLimit: 0,
+          messagesSent: 0,
+          profileViews: 0,
+          rewindsUsed: 0
         };
       }
 
@@ -85,7 +91,9 @@ class UsageTrackingService {
       }
 
       // Increment swipe count
-      user.premium.usage.swipesUsed = (user.premium.usage.swipesUsed || 0) + 1;
+      if (user.premium?.usage) {
+        user.premium.usage.swipesUsed = (user.premium.usage.swipesUsed || 0) + 1;
+      }
       
       // Track in analytics
       user.analytics.totalSwipes = (user.analytics.totalSwipes || 0) + 1;
@@ -110,8 +118,8 @@ class UsageTrackingService {
         userId, 
         petId,
         action,
-        swipesUsed: user.premium.usage.swipesUsed,
-        plan: user.premium.plan
+        swipesUsed: user.premium?.usage?.swipesUsed || 0,
+        plan: user.premium?.plan || 'basic'
       });
       
       return { success: true };
@@ -135,19 +143,21 @@ class UsageTrackingService {
       if (!user.premium) {
         user.premium = {
           isActive: false,
-          plan: 'free',
-          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0 }
+          plan: 'basic' as const,
+          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 }
         };
       }
       if (!user.premium.usage) {
-        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0 };
+        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 };
       }
       if (!user.analytics) {
         user.analytics = { totalSwipes: 0, totalLikes: 0, totalMatches: 0, profileViews: 0, lastActive: new Date(), totalPetsCreated: 0, totalMessagesSent: 0, totalSubscriptionsStarted: 0, totalSubscriptionsCancelled: 0, totalPremiumFeaturesUsed: 0, events: [] };
       }
       
       // Increment super like count
-      user.premium.usage.superLikesUsed = (user.premium.usage.superLikesUsed || 0) + 1;
+      if (user.premium?.usage) {
+        user.premium.usage.superLikesUsed = (user.premium.usage.superLikesUsed || 0) + 1;
+      }
       
       // Add super like event to user history
       if (!user.analytics.events) {
@@ -163,8 +173,8 @@ class UsageTrackingService {
       
       logger.info('Super like tracked', { 
         userId,
-        superLikesUsed: user.premium.usage.superLikesUsed,
-        plan: user.premium.plan
+        superLikesUsed: user.premium?.usage?.superLikesUsed || 0,
+        plan: user.premium?.plan || 'basic'
       });
       
       return { success: true };
@@ -188,36 +198,38 @@ class UsageTrackingService {
       if (!user.premium) {
         user.premium = {
           isActive: false,
-          plan: 'free',
-          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0 }
+          plan: 'basic' as const,
+          usage: { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 }
         };
       }
       if (!user.premium.usage) {
-        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0 };
+        user.premium.usage = { swipesUsed: 0, swipesLimit: 50, superLikesUsed: 0, superLikesLimit: 0, boostsUsed: 0, boostsLimit: 0, messagesSent: 0, profileViews: 0, rewindsUsed: 0 };
       }
       if (!user.analytics) {
         user.analytics = { totalSwipes: 0, totalLikes: 0, totalMatches: 0, profileViews: 0, lastActive: new Date(), totalPetsCreated: 0, totalMessagesSent: 0, totalSubscriptionsStarted: 0, totalSubscriptionsCancelled: 0, totalPremiumFeaturesUsed: 0, events: [] };
       }
       
       // Increment boost count
-      user.premium.usage.boostsUsed = (user.premium.usage.boostsUsed || 0) + 1;
-      
-      // Add boost event to user history
-      if (!user.analytics.events) {
-        user.analytics.events = [];
+      if (user.premium?.usage) {
+        user.premium.usage.boostsUsed = (user.premium.usage.boostsUsed || 0) + 1;
+        
+        // Add boost event to user history
+        if (!user.analytics.events) {
+          user.analytics.events = [];
+        }
+        (user.analytics as any).events.push({
+          type: 'boost',
+          timestamp: new Date(),
+          metadata: { count: user.premium.usage.boostsUsed }
+        });
       }
-      (user.analytics as any).events.push({
-        type: 'boost',
-        timestamp: new Date(),
-        metadata: { count: user.premium.usage.boostsUsed }
-      });
       
       await user.save();
       
       logger.info('Boost tracked', { 
         userId,
-        boostsUsed: user.premium.usage.boostsUsed,
-        plan: user.premium.plan
+        boostsUsed: user.premium?.usage?.boostsUsed || 0,
+        plan: user.premium?.plan || 'basic'
       });
       
       return { success: true };

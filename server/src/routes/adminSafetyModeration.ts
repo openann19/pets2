@@ -30,7 +30,7 @@ router.get('/queue', async (req: AuthenticatedRequest, res: Response): Promise<v
   try {
     const { status, page = 1, limit = 50 } = req.query;
     
-    const query: any = {
+    const query: Record<string, unknown> = {
       status: status || 'pending',
       flagged: true,
     };

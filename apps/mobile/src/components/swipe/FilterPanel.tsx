@@ -59,7 +59,7 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
                 title={breed}
                 variant={filters.breed === breed ? 'primary' : 'ghost'}
                 size="sm"
-                onPress={() => handleBreedChange(breed)}
+                onPress={() => { handleBreedChange(breed); }}
               />
             ))}
           </View>
@@ -79,7 +79,7 @@ export function FilterPanel({ filters, onFilterChange }: FilterPanelProps): JSX.
                     : 'ghost'
                 }
                 size="sm"
-                onPress={() => handleSpeciesChange(species)}
+                onPress={() => { handleSpeciesChange(species); }}
               />
             ))}
           </View>

@@ -1,0 +1,17 @@
+{
+  "cold_start_ms": {
+    "low": 3500,
+    "mid": 2800,
+    "high": 2000
+  },
+  "tti_ms": {
+    "low": 3800,
+    "mid": 3000,
+    "high": 2200
+  },
+  "js_heap_mb": 120,
+  "fps_drop_pct": 1.0,
+  "bundle_js_kb": 1500,
+  "bundle_assets_kb": 2500,
+  "network_requests_count": 25
+}

@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import Match from '../models/Match';
-import User, { IUserDocument } from '../models/User';
+import User from '../models/User';
 import logger from '../utils/logger';
 
 /**
@@ -28,7 +29,13 @@ interface SendMessageRequest extends AuthenticatedRequest {
   body: {
     content?: string;
     messageType?: string;
-    attachments?: any[];
+    attachments?: Array<{
+      type: 'image' | 'video' | 'file';
+      url: string;
+      filename?: string;
+      mimeType?: string;
+      size?: number;
+    }>;
     replyTo?: string;
   };
 }
@@ -106,7 +113,7 @@ export const getMessages = async (
     }
 
     // Get total message count
-    const totalMessages = (match as any).messages.length;
+    const totalMessages = match.messages.length;
 
     // Get paginated messages with sender population (reverse order for latest first)
     const messages = await Match.findOne({
@@ -125,10 +132,10 @@ export const getMessages = async (
       path: 'messages.replyTo',
       select: 'sender content messageType'
     })
-    .then((doc: any) => {
+    .then((doc: { messages: Array<{ sentAt: Date; [key: string]: unknown }> } | null) => {
       if (!doc) return [];
       // Sort messages by timestamp and slice for pagination
-      const sortedMessages = doc.messages.sort((a: any, b: any) => b.sentAt - a.sentAt);
+      const sortedMessages = doc.messages.sort((a: { sentAt: Date }, b: { sentAt: Date }) => b.sentAt.getTime() - a.sentAt.getTime());
       return sortedMessages.slice(skip, skip + limit);
     });
 
@@ -136,8 +143,8 @@ export const getMessages = async (
     const hasMore = page < totalPages;
 
     // Get unread count for this user
-    const unreadCount = (match as any).messages.filter((msg: any) =>
-      !msg.readBy.some((read: any) => read.user.toString() === req.userId)
+    const unreadCount = match.messages.filter((msg: { readBy: Array<{ user: { toString: () => string } }> }) =>
+      !msg.readBy.some((read: { user: { toString: () => string } }) => read.user.toString() === req.userId)
     ).length;
 
     res.json({
@@ -152,9 +159,9 @@ export const getMessages = async (
           hasMore
         },
         unreadCount,
-        matchStatus: (match as any).status,
-        isArchived: (match as any).isArchivedBy?.(req.userId),
-        isBlocked: (match as any).isUserBlocked?.(req.userId)
+        matchStatus: match.status,
+        isArchived: match.isArchivedBy?.(req.userId),
+        isBlocked: match.isUserBlocked?.(req.userId)
       }
     });
 
@@ -214,15 +221,15 @@ export const sendMessage = async (
       return;
     }
 
-    if ((match as any).status !== 'active') {
+    if (match.status !== 'active') {
       res.status(400).json({
         success: false,
-        message: 'Cannot send messages to inactive match'
+        message: 'Cannot send messages to inactive matches'
       });
       return;
     }
 
-    if ((match as any).isUserBlocked(req.userId)) {
+    if (match.isUserBlocked(req.userId)) {
       res.status(403).json({
         success: false,
         message: 'Cannot send messages to blocked match'
@@ -232,7 +239,7 @@ export const sendMessage = async (
 
     // Validate replyTo if provided
     if (replyTo) {
-      const replyMessage = (match as any).messages.id(replyTo);
+      const replyMessage = match.messages.id(replyTo);
       if (!replyMessage) {
         res.status(400).json({
           success: false,
@@ -243,7 +250,7 @@ export const sendMessage = async (
     }
 
     // Add message using model's method
-    const updatedMatch = await (match as any).addMessage(
+    const updatedMatch = await match.addMessage(
       req.userId,
       content,
       messageType,
@@ -326,7 +333,7 @@ export const editMessage = async (
       return;
     }
 
-    const message = (match as any).messages.id(messageId);
+    const message = match.messages.id(messageId);
     if (!message) {
       res.status(404).json({
         success: false,
@@ -416,7 +423,7 @@ export const deleteMessage = async (
       return;
     }
 
-    const message = (match as any).messages.id(messageId);
+    const message = match.messages.id(messageId);
     if (!message) {
       res.status(404).json({
         success: false,
@@ -500,7 +507,7 @@ export const addReaction = async (
       return;
     }
 
-    const message = (match as any).messages.id(messageId);
+    const message = match.messages.id(messageId);
     if (!message) {
       res.status(404).json({
         success: false,
@@ -510,7 +517,7 @@ export const addReaction = async (
     }
 
     // Check if user already reacted with this emoji
-    const existingReaction = (message.reactions || []).find((r: any) =>
+    const existingReaction = (message.reactions || []).find((r: { user: string; emoji: string }) =>
       r.user.toString() === req.userId && r.emoji === emoji
     );
 
@@ -576,7 +583,7 @@ export const removeReaction = async (
       return;
     }
 
-    const message = (match as any).messages.id(messageId);
+    const message = match.messages.id(messageId);
     if (!message) {
       res.status(404).json({
         success: false,
@@ -586,7 +593,7 @@ export const removeReaction = async (
     }
 
     // Find and remove reaction
-    const reactionIndex = (message.reactions || []).findIndex((r: any) =>
+    const reactionIndex = (message.reactions || []).findIndex((r: { user: string; emoji: string }) =>
       r.user.toString() === req.userId && r.emoji === emoji
     );
 
@@ -651,9 +658,9 @@ export const searchMessages = async (
 
     // Search messages (case-insensitive)
     const searchRegex = new RegExp(query.trim(), 'i');
-    const matchingMessages = (match as any).messages
-      .filter((msg: any) => !msg.isDeleted && searchRegex.test(msg.content))
-      .sort((a: any, b: any) => b.sentAt - a.sentAt)
+    const matchingMessages = match.messages
+      .filter((msg: { isDeleted?: boolean; content: string; sentAt: Date }) => !msg.isDeleted && searchRegex.test(msg.content))
+      .sort((a: { sentAt: Date }, b: { sentAt: Date }) => b.sentAt.getTime() - a.sentAt.getTime())
       .slice((parseInt(page) - 1) * parseInt(limit), parseInt(page) * parseInt(limit));
 
     // Populate sender info
@@ -662,7 +669,7 @@ export const searchMessages = async (
       select: 'firstName lastName avatar'
     });
 
-    const totalMatches = (match as any).messages.filter((msg: any) =>
+    const totalMatches = match.messages.filter((msg: { isDeleted?: boolean; content: string }) =>
       !msg.isDeleted && searchRegex.test(msg.content)
     ).length;
 
@@ -714,9 +721,9 @@ export const getChatStats = async (
     const totalConversations = matches.length;
 
     for (const match of matches) {
-      totalMessages += (match as any).messages.length;
-      unreadMessages += (match as any).messages.filter((msg: any) =>
-        !msg.readBy.some((read: any) => read.user.toString() === userId)
+      totalMessages += match.messages.length;
+      unreadMessages += match.messages.filter((msg: { readBy: Array<{ user: { toString: () => string } }> }) =>
+        !msg.readBy.some((read: { user: { toString: () => string } }) => read.user.toString() === userId)
       ).length;
     }
 

@@ -3,11 +3,12 @@
  * Handles upload moderation and review
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import Upload from '../../models/Upload';
 import User from '../../models/User';
 import logger from '../../utils/logger';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AdminRequest extends Request {
   userId?: string;
@@ -26,8 +27,8 @@ export const getUploads = async (req: AdminRequest, res: Response): Promise<void
       limit?: string;
     };
 
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
+    const pageNum = parseInt(page.toString(), 10);
+    const limitNum = parseInt(limit.toString(), 10);
     const skip = (pageNum - 1) * limitNum;
 
     // Build query
@@ -90,12 +91,12 @@ export const getUploads = async (req: AdminRequest, res: Response): Promise<void
         pages: Math.ceil(total / limitNum),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get uploads', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get uploads',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -130,7 +131,7 @@ export const moderateUpload = async (req: AdminRequest, res: Response): Promise<
     // Update upload status
     upload.status = action === 'approve' ? 'approved' : 'rejected';
     upload.reviewedAt = new Date();
-    upload.reviewedBy = req.userId;
+    upload.reviewedBy = req.userId as any;
 
     if (action === 'reject' && reason) {
       (upload as any).rejectionReason = reason;
@@ -150,12 +151,12 @@ export const moderateUpload = async (req: AdminRequest, res: Response): Promise<
         reviewedBy: req.userId,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to moderate upload', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to moderate upload',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -225,12 +226,12 @@ export const getUploadModerationStats = async (req: AdminRequest, res: Response)
       success: true,
       data: stats,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get upload moderation stats', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get upload moderation stats',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };

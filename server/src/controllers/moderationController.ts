@@ -8,12 +8,14 @@ import { z } from 'zod';
 import Report from '../models/Report';
 import UserBlock from '../models/UserBlock';
 import UserMute from '../models/UserMute';
-import { notifyNewReport } from '../services/adminNotifications';
-const logger = require('../utils/logger');
+import adminNotifications from '../services/adminNotifications';
+import logger from '../utils/logger';
+import type { IUserDocument } from '../types/mongoose';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 // Type definitions
 interface AuthRequest extends Request {
-  user?: any;
+  user?: IUserDocument;
   userId?: string;
 }
 
@@ -74,11 +76,34 @@ interface MuteUserBody {
  * Create a new report
  * POST /api/moderation/reports
  */
+interface ReportPayload {
+  reporterId: string;
+  reason: string;
+  description?: string;
+  type: string;
+  category: string;
+  evidence: Array<{
+    type?: string;
+    url?: string;
+    description?: string;
+  }>;
+  isAnonymous: boolean;
+  metadata: {
+    ipAddress?: string;
+    userAgent?: string;
+    reportSource: string;
+  };
+  reportedUserId?: string;
+  reportedPetId?: string;
+  reportedChatId?: string;
+  otherTargetId?: string;
+}
+
 export const createReport = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const parsed = reportSchema.parse(req.body);
-    const payload: any = {
-      reporterId: req.user!._id,
+    const payload: ReportPayload = {
+      reporterId: req.user!._id.toString(),
       reason: parsed.reason,
       description: parsed.description,
       type: parsed.type,
@@ -112,13 +137,16 @@ export const createReport = async (req: AuthRequest, res: Response): Promise<voi
 
     // Notify admins
     try {
-      await notifyNewReport({
-        reportId: report._id.toString(),
+      adminNotifications.notifyNewReport({
+        _id: report._id.toString(),
         type: parsed.type,
         category: parsed.category,
-        severity: getReportSeverity(parsed.type),
         reporterId: req.user!._id.toString(),
-        targetId: parsed.targetId
+        reportedUserId: payload.reportedUserId || '',
+        reason: parsed.reason,
+        status: 'pending',
+        priority: getReportSeverity(parsed.type),
+        createdAt: new Date()
       });
     } catch (notifyError) {
       logger.warn('Failed to notify admins of new report', { error: notifyError });
@@ -137,13 +165,13 @@ export const createReport = async (req: AuthRequest, res: Response): Promise<voi
       data: { reportId: report._id }
     });
 
-  } catch (error) {
-    logger.error('Failed to create report', { error: (error as Error).message });
-    const status = (error as any).name === 'ZodError' ? 400 : 500;
+  } catch (error: unknown) {
+    logger.error('Failed to create report', { error: getErrorMessage(error) });
+    const status = error instanceof Error && error.name === 'ZodError' ? 400 : 500;
     res.status(status).json({
       success: false,
       message: 'Failed to submit report',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -171,13 +199,13 @@ export const blockUser = async (req: AuthRequest, res: Response): Promise<void> 
       data: { id: doc._id }
     });
 
-  } catch (error) {
-    logger.error('Failed to block user', { error: (error as Error).message });
-    const status = (error as any).name === 'ZodError' ? 400 : 500;
+  } catch (error: unknown) {
+    logger.error('Failed to block user', { error: getErrorMessage(error) });
+    const status = error instanceof Error && error.name === 'ZodError' ? 400 : 500;
     res.status(status).json({
       success: false,
       message: 'Failed to block user',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -201,12 +229,12 @@ export const unblockUser = async (req: AuthRequest, res: Response): Promise<void
 
     res.json({ success: true });
 
-  } catch (error) {
-    logger.error('Failed to unblock user', { error: (error as Error).message });
+  } catch (error: unknown) {
+    logger.error('Failed to unblock user', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to unblock user',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -243,13 +271,13 @@ export const muteUser = async (req: AuthRequest, res: Response): Promise<void> =
       data: { id: doc._id, expiresAt }
     });
 
-  } catch (error) {
-    logger.error('Failed to mute user', { error: (error as Error).message });
-    const status = (error as any).name === 'ZodError' ? 400 : 500;
+  } catch (error: unknown) {
+    logger.error('Failed to mute user', { error: getErrorMessage(error) });
+    const status = error instanceof Error && error.name === 'ZodError' ? 400 : 500;
     res.status(status).json({
       success: false,
       message: 'Failed to mute user',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -273,12 +301,12 @@ export const unmuteUser = async (req: AuthRequest, res: Response): Promise<void>
 
     res.json({ success: true });
 
-  } catch (error) {
-    logger.error('Failed to unmute user', { error: (error as Error).message });
+  } catch (error: unknown) {
+    logger.error('Failed to unmute user', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to unmute user',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -307,12 +335,12 @@ export const getModerationState = async (req: AuthRequest, res: Response): Promi
       data: { blocks, mutes }
     });
 
-  } catch (error) {
-    logger.error('Failed to fetch moderation state', { error: (error as Error).message });
+  } catch (error: unknown) {
+    logger.error('Failed to fetch moderation state', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to fetch moderation state',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };

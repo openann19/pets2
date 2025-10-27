@@ -72,8 +72,10 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={handleBack}
+          testID="AIBioScreen-back-button"
+          accessibilityRole="button"
           accessibilityLabel="Go back"
+          onPress={handleBack}
         >
           <Ionicons
             name="arrow-back"
@@ -112,8 +114,10 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               <Text style={styles.sectionTitle}>Pet Photo (Optional)</Text>
               <TouchableOpacity
                 style={styles.photoPicker}
-                onPress={pickImage}
+                testID="AIBioScreen-photo-picker"
+                accessibilityRole="button"
                 accessibilityLabel="Select pet photo"
+                onPress={pickImage}
               >
                 {selectedPhoto ? (
                   <View style={styles.photoPreview}>
@@ -138,9 +142,11 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                 styles.generateButton,
                 (!isFormValid || isGenerating) && styles.disabledButton,
               ])}
-              onPress={handleGenerate}
-              disabled={!isFormValid || isGenerating}
+              testID="AIBioScreen-generate-button"
+              accessibilityRole="button"
               accessibilityLabel="Generate AI bio"
+              disabled={!isFormValid || isGenerating}
+              onPress={handleGenerate}
             >
               <Text style={styles.generateButtonText}>
                 {isGenerating ? "Generating..." : "Generate Bio"}
@@ -173,11 +179,13 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             {/* New Bio Button */}
             <TouchableOpacity
               style={styles.newBioButton}
+              testID="AIBioScreen-new-bio-button"
+              accessibilityRole="button"
+              accessibilityLabel="Create new bio"
               onPress={() => {
                 resetGeneration();
                 clearForm();
               }}
-              accessibilityLabel="Create new bio"
             >
               <Ionicons
                 name="add-circle"

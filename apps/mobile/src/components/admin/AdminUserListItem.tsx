@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import type { ThemeColors } from "../../theme/Provider";
 import type { AdminUserStatus } from "../../services/adminUsersService";
-import { Theme } from '../../theme/unified-theme';
 
 type IoniconName =
   | "paw"
@@ -133,7 +132,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
                   { backgroundColor: data.statusColor },
                 ])}
               >
-                <Ionicons name={data.statusIcon} size={12} color="Theme.colors.neutral[0]" />
+                <Ionicons name={data.statusIcon} size={12} color="#FFFFFF" />
                 <Text style={styles.statusText}>{data.statusLabel}</Text>
               </View>
               {data.verified ? (
@@ -143,7 +142,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
                     { backgroundColor: colors.success },
                   ])}
                 >
-                  <Ionicons name="checkmark" size={12} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="checkmark" size={12} color="#FFFFFF" />
                   <Text style={styles.verifiedText}>Verified</Text>
                 </View>
               ) : null}
@@ -160,12 +159,12 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
               accessibilityLabel={data.primaryAction.accessibilityLabel}
             >
               {data.isActionLoading ? (
-                <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
+                <ActivityIndicator size="small" color="#ffffff" />
               ) : (
                 <Ionicons
                   name={data.primaryAction.icon}
                   size={16}
-                  color="Theme.colors.neutral[0]"
+                  color="#ffffff"
                 />
               )}
             </TouchableOpacity>
@@ -179,12 +178,12 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
               accessibilityLabel={data.secondaryAction.accessibilityLabel}
             >
               {data.isActionLoading ? (
-                <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
+                <ActivityIndicator size="small" color="#ffffff" />
               ) : (
                 <Ionicons
                   name={data.secondaryAction.icon}
                   size={16}
-                  color="Theme.colors.neutral[0]"
+                  color="#ffffff"
                 />
               )}
             </TouchableOpacity>
@@ -199,7 +198,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="heart"
-            color="Theme.colors.primary[500]"
+            color="#3B82F6"
             label={`${data.metrics.matches} matches`}
           />
           <MetricBadge
@@ -225,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 6,
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
   },
   selectedContainer: {
     borderWidth: 1,
-    borderColor: "Theme.colors.secondary[500]",
+    borderColor: "#3B82F6",
   },
   headerRow: {
     flexDirection: "row",
@@ -279,7 +278,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statusText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -292,7 +291,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   verifiedText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -320,7 +319,7 @@ const styles = StyleSheet.create({
   },
   metricText: {
     fontSize: 13,
-    color: "Theme.colors.neutral[500]",
+    color: "#666666",
   },
 });
 

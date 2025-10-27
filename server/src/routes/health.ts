@@ -15,12 +15,19 @@ const router: Router = express.Router();
  */
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   const startTime = Date.now();
-  const health = {
+  const health: any = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development',
-    checks: {} as any
+    checks: {
+      mongodb: undefined as any,
+      redis: undefined as any,
+      memory: undefined as any,
+      cpu: undefined as any,
+      disk: undefined as any,
+      aiService: undefined as any
+    }
   };
 
   try {
@@ -34,16 +41,16 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         responseTime: Date.now() - startTime + 'ms'
       };
       
-      if (dbState === 1) {
+      if (dbState === 1 && mongoose.connection.db) {
         // Check if we can actually query
         const pingStart = Date.now();
         await mongoose.connection.db.admin().ping();
         health.checks.mongodb.ping = (Date.now() - pingStart) + 'ms';
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       health.checks.mongodb = {
         status: 'down',
-        error: error.message
+        error: error instanceof Error ? error.message : String(error)
       };
       health.status = 'degraded';
     }
@@ -56,10 +63,10 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
           status: 'up',
           message: 'Redis client not initialized in health check'
         };
-      } catch (error: any) {
+      } catch (error: unknown) {
         health.checks.redis = {
           status: 'down',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         };
         health.status = 'degraded';
       }
@@ -93,13 +100,14 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         const usedPercent = ((totalSpace - freeSpace) / totalSpace * 100).toFixed(2);
         
         health.checks.disk = {
-          status: usedPercent < 90 ? 'healthy' : 'warning',
+          status: Number(usedPercent) < 90 ? 'healthy' : 'warning',
           total: Math.round(totalSpace / 1024 / 1024 / 1024) + 'GB',
           free: Math.round(freeSpace / 1024 / 1024 / 1024) + 'GB',
           usedPercent: usedPercent + '%'
         };
-      } catch (diskError: any) {
-        logger.warn('Disk check failed', { error: diskError.message });
+      } catch (diskError: unknown) {
+        const errorMessage = diskError instanceof Error ? diskError.message : 'Unknown error';
+        logger.warn('Disk check failed', { error: errorMessage });
         health.checks.disk = {
           status: 'unknown',
           error: 'Could not check disk space'
@@ -126,10 +134,11 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         if (aiResponse.data?.status !== 'healthy') {
           health.status = 'degraded';
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         health.checks.aiService = {
           status: 'down',
-          error: error.message,
+          error: errorMessage,
           url: process.env.AI_SERVICE_URL
         };
         health.status = 'degraded';
@@ -151,10 +160,10 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     // All good!
     res.status(200).json(health);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Health check error:', error);
     health.status = 'error';
-    health.error = error.message;
+    health.error = error instanceof Error ? error.message : String(error);
     res.status(500).json(health);
   }
 });

@@ -84,7 +84,7 @@ export function LiveStreamPublisherScreen() {
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
-            onPress={() => navigation.goBack()}
+             testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { navigation.goBack(); }}
           >
             <Text style={styles.retryButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -129,7 +129,7 @@ export function LiveStreamPublisherScreen() {
             styles.controlButton,
             !cameraEnabled && styles.controlButtonDisabled,
           ]}
-          onPress={handleToggleCamera}
+           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleToggleCamera}
         >
           <Text style={styles.controlButtonText}>
             {cameraEnabled ? '📷' : '🚫'}
@@ -141,7 +141,7 @@ export function LiveStreamPublisherScreen() {
             styles.controlButton,
             !microphoneEnabled && styles.controlButtonDisabled,
           ]}
-          onPress={handleToggleMicrophone}
+           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleToggleMicrophone}
         >
           <Text style={styles.controlButtonText}>
             {microphoneEnabled ? '🎤' : '🔇'}
@@ -150,14 +150,14 @@ export function LiveStreamPublisherScreen() {
 
         <TouchableOpacity
           style={styles.controlButton}
-          onPress={handleSwitchCamera}
+           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSwitchCamera}
         >
           <Text style={styles.controlButtonText}>🔄</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.controlButton, styles.endButton]}
-          onPress={handleEndStream}
+           testID="LiveStreamPublisherScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleEndStream}
         >
           <Text style={styles.controlButtonText}>End</Text>
         </TouchableOpacity>

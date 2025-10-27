@@ -1,7 +1,9 @@
 import React, { useRef, useState } from "react";
-import { Pressable, View, StyleSheet, type ViewStyle } from "react-native";
+import { Pressable, View, StyleSheet, type ViewStyle, type AccessibilityProps, type PressableProps } from "react-native";
+import type { NativeSyntheticEvent, NativeTouchEvent } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring, interpolate } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { useReducedMotion } from "../../utils/A11yHelpers";
 
 type Props = {
   children: React.ReactNode;
@@ -11,7 +13,7 @@ type Props = {
   rippleColor?: string;      // e.g. "rgba(236,72,153,0.35)" (Theme pink)
   haptics?: boolean;
   scaleFrom?: number;        // 0.98 default
-};
+} & AccessibilityProps;
 
 export default function MicroPressable({
   children,
@@ -21,7 +23,9 @@ export default function MicroPressable({
   rippleColor = "rgba(236,72,153,0.35)",
   haptics = true,
   scaleFrom = 0.98,
+  ...accessibilityProps
 }: Props) {
+  const reduceMotion = useReducedMotion();
   const [layout, setLayout] = useState({ w: 0, h: 0 });
   const x = useSharedValue(0);
   const y = useSharedValue(0);
@@ -29,20 +33,24 @@ export default function MicroPressable({
   const scale = useSharedValue(1);
   const pressingRef = useRef(false);
 
-  const onPressIn = (e: any) => {
+  const animationDuration = reduceMotion ? 0 : 450;
+
+  const onPressIn = (e: NativeSyntheticEvent<NativeTouchEvent & { locationX: number; locationY: number }>) => {
     pressingRef.current = true;
     const { locationX, locationY } = e.nativeEvent;
     x.value = locationX;
     y.value = locationY;
     prog.value = 0;
-    prog.value = withTiming(1, { duration: 450 });
+    prog.value = withTiming(1, { duration: animationDuration });
     scale.value = withSpring(scaleFrom, { damping: 18, stiffness: 420, mass: 0.6 });
-    if (haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (haptics && !reduceMotion) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const onPressOut = () => {
     pressingRef.current = false;
-    scale.value = withSpring(1, { damping: 18, stiffness: 300 });
+    if (!reduceMotion) {
+      scale.value = withSpring(1, { damping: 18, stiffness: 300 });
+    }
   };
 
   const circle = useAnimatedStyle(() => {
@@ -75,6 +83,7 @@ export default function MicroPressable({
         const { width, height } = e.nativeEvent.layout;
         setLayout({ w: width, h: height });
       }}
+      {...accessibilityProps}
     >
       <Animated.View style={wrap}>
         <View style={styles.overflow}>

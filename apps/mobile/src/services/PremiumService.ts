@@ -190,30 +190,26 @@ class PremiumService {
         throw new Error(`Invalid plan ID: ${planId}`);
       }
 
-      const response = await api.request<{ sessionId: string; url: string }>(
-        "/premium/create-checkout-session",
+      const response = await api.request<{ data: { sessionId: string; url: string } }>(
+        "/premium/subscribe",
         {
           method: "POST",
           body: JSON.stringify({
-            priceId: plan.stripePriceId,
-            successUrl:
-              successUrl !== undefined
-                ? successUrl
-                : "pawfectmatch://premium/success",
-            cancelUrl:
-              cancelUrl !== undefined
-                ? cancelUrl
-                : "pawfectmatch://premium/cancel",
+            plan: planId,
+            interval: plan.interval,
           }),
         },
       );
 
       logger.info("Created checkout session", {
         planId,
-        sessionId: response.sessionId,
+        sessionId: response.data.sessionId,
       });
 
-      return response;
+      return {
+        sessionId: response.data.sessionId,
+        url: response.data.url
+      };
     } catch (error) {
       logger.error("Failed to create checkout session", { error, planId });
       throw error;

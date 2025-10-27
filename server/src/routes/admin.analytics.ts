@@ -17,7 +17,7 @@ router.get("/realtime", authenticateToken, requireAdmin, async (req: Request, re
     const events = await getEventCounts(since);
 
     // Get recent errors from Sentry or error logs
-    const errors = []; // Placeholder - would integrate with error tracking
+    const errors: string[] = []; // Placeholder - would integrate with error tracking
 
     res.json({
       success: true,
@@ -28,8 +28,9 @@ router.get("/realtime", authenticateToken, requireAdmin, async (req: Request, re
         timestamp: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
-    logger.error("Failed to get realtime analytics", { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error("Failed to get realtime analytics", { error: errorMessage });
     res.status(500).json({ success: false, error: "Failed to fetch analytics" });
   }
 });
@@ -53,8 +54,9 @@ router.get("/events", authenticateToken, requireAdmin, async (req: Request, res:
         timeframe: `${hours} hours`,
       },
     });
-  } catch (error: any) {
-    logger.error("Failed to get events", { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error("Failed to get events", { error: errorMessage });
     res.status(500).json({ success: false, error: "Failed to fetch events" });
   }
 });

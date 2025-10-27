@@ -3,7 +3,7 @@
  * Implements fine-grained permission system for admin panel
  */
 
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 
 interface AuthRequest extends Request {
@@ -246,4 +246,3 @@ export const getAllRoles = (): string[] => {
   return Object.keys(permissions);
 };
 
-export { permissions, hasPermission, checkPermission, checkAnyPermission, checkAllPermissions, getRolePermissions, getAllRoles };

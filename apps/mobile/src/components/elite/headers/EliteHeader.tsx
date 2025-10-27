@@ -10,12 +10,7 @@ import { BlurView } from "expo-blur";
 import { runOnJS } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 
-import {
-  Colors,
-  Spacing,
-  GlobalStyles,
-  Shadows,
-} from "../../../animation";
+import { Colors, Spacing, Shadows } from "../../../styles/GlobalStyles";
 
 /**
  * EliteHeader Component
@@ -27,14 +22,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.glassWhite,
+    backgroundColor: Colors.neutral[50],
     justifyContent: "center" as const,
     alignItems: "center" as const,
     marginRight: Spacing.md,
     ...Shadows.sm,
   },
   headerContainer: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.neutral[0],
     ...Shadows.sm,
   },
   headerTitleContainer: {
@@ -44,6 +39,31 @@ const styles = StyleSheet.create({
   headerRight: {
     width: 40,
     alignItems: "flex-end" as const,
+  },
+  headerContent: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    minHeight: 56,
+  },
+  heading2: {
+    fontSize: 20,
+    fontWeight: "700" as const,
+    color: Colors.neutral[900],
+    textAlign: "center" as const,
+  },
+  bodySmall: {
+    fontSize: 12,
+    color: Colors.neutral[600],
+    textAlign: "center" as const,
+    marginTop: 2,
+  },
+  headerBlur: {
+    backgroundColor: Colors.neutral[0],
+  },
+  headerSolid: {
+    backgroundColor: Colors.neutral[0],
   },
 });
 
@@ -74,21 +94,21 @@ export const EliteHeader: React.FC<EliteHeaderProps> = ({
   };
 
   const HeaderContent = (
-    <View style={GlobalStyles.headerContent}>
+    <View style={styles.headerContent}>
       {onBack && (
         <TouchableOpacity
           onPress={handleBackPress}
           style={styles.backButton}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.gray800} />
+          <Ionicons name="arrow-back" size={24} color={Colors.neutral[800]} />
         </TouchableOpacity>
       )}
 
       <View style={styles.headerTitleContainer}>
-        <Text style={GlobalStyles.heading2}>{title}</Text>
+        <Text style={styles.heading2}>{title}</Text>
         {subtitle != null && subtitle.length > 0 && (
-          <Text style={GlobalStyles.bodySmall}>{subtitle}</Text>
+          <Text style={styles.bodySmall}>{subtitle}</Text>
         )}
       </View>
 
@@ -98,7 +118,7 @@ export const EliteHeader: React.FC<EliteHeaderProps> = ({
 
   if (blur) {
     return (
-      <View style={GlobalStyles.headerBlur}>
+      <View style={styles.headerSolid}>
         <BlurView intensity={95} style={{ flex: 1 }}>
           {HeaderContent}
         </BlurView>

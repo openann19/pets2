@@ -8,7 +8,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

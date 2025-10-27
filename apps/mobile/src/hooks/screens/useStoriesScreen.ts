@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { Dimensions, PanResponder } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useStories } from "../domains/social/useStories";
+import { useReducedMotion } from "../useReducedMotion";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -44,6 +45,7 @@ export const useStoriesScreen = (
   initialGroupIndex: number = 0,
 ): UseStoriesScreenReturn => {
   const navigation = useNavigation();
+  const reducedMotion = useReducedMotion();
 
   const {
     storyGroups,
@@ -79,7 +81,9 @@ export const useStoriesScreen = (
         // Long press detection
         longPressTimer.current = setTimeout(() => {
           setPaused(true);
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          if (!reducedMotion) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
         }, 200);
       },
       onPanResponderRelease: (evt, gestureState) => {

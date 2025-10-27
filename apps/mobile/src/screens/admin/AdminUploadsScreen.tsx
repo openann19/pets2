@@ -22,7 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
-import { Theme } from '../../theme/unified-theme';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const IMAGE_SIZE = (SCREEN_WIDTH - 48) / 2;
@@ -185,7 +185,7 @@ function AdminUploadsScreen({
           styles.uploadCard,
           { backgroundColor: colors.card },
         ])}
-        onPress={() => {
+         testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           setSelectedUpload(item);
         }}
       >
@@ -244,13 +244,13 @@ function AdminUploadsScreen({
   const getStatusColor = (status: Upload["status"]) => {
     switch (status) {
       case "approved":
-        return "Theme.colors.status.success";
+        return theme.colors.success;
       case "rejected":
-        return "Theme.colors.status.error";
+        return theme.colors.danger;
       case "pending":
-        return "Theme.colors.status.warning";
+        return theme.colors.warning;
       default:
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
     }
   };
 
@@ -262,7 +262,7 @@ function AdminUploadsScreen({
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
       ])}
-      onPress={() => {
+       testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
         setFilter(filterType);
       }}
     >
@@ -298,7 +298,7 @@ function AdminUploadsScreen({
               Upload Details
             </Text>
             <TouchableOpacity
-              onPress={() => {
+               testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 setSelectedUpload(null);
               }}
             >
@@ -436,7 +436,7 @@ function AdminUploadsScreen({
                   styles.actionButton,
                   styles.approveButton,
                 ])}
-                onPress={() => handleUploadAction(selectedUpload.id, "approve")}
+                 testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleUploadAction(selectedUpload.id, "approve")}
               >
                 <Ionicons name="checkmark" size={20} color="white" />
                 <Text style={styles.actionButtonText}>Approve</Text>
@@ -447,7 +447,7 @@ function AdminUploadsScreen({
                   styles.actionButton,
                   styles.rejectButton,
                 ])}
-                onPress={() => {
+                 testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   handleRejectWithReason(selectedUpload);
                 }}
               >
@@ -476,7 +476,7 @@ function AdminUploadsScreen({
         ])}
       >
         <TouchableOpacity
-          onPress={() => {
+           testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             navigation.goBack();
           }}
           style={styles.backButton}
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   backButton: {
     marginRight: 16,
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -650,7 +650,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   modalTitle: {
     fontSize: 18,
@@ -766,10 +766,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   approveButton: {
-    backgroundColor: "Theme.colors.status.success",
+    backgroundColor: theme.colors.success,
   },
   rejectButton: {
-    backgroundColor: "Theme.colors.status.error",
+    backgroundColor: theme.colors.danger,
   },
   actionButtonText: {
     fontSize: 16,

@@ -7,7 +7,7 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "paths": {
-      "@mobile/*": ["src/*"],
+      "@mobile/*": ["./src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
       "@pawfectmatch/ui": ["../../packages/ui/src/index.ts"],

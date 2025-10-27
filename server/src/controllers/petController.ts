@@ -14,7 +14,17 @@ const logger = require('../utils/logger');
 // Type definitions
 interface AuthRequest extends Request {
   userId?: string;
-  files?: any[];
+  files?: Array<{
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    size: number;
+    destination: string;
+    filename: string;
+    path: string;
+    buffer: Buffer;
+  }>;
 }
 
 interface CreatePetBody {
@@ -25,15 +35,15 @@ interface CreatePetBody {
   gender: string;
   size: string;
   weight?: string | number;
-  color?: Record<string, any>;
+  color?: Record<string, string | number>;
   description: string;
   personalityTags: string[];
   intent: string;
   availability?: {
     isAvailable: boolean;
-    [key: string]: any;
+    [key: string]: string | number | boolean;
   };
-  healthInfo?: Record<string, any>;
+  healthInfo?: Record<string, string | number | boolean>;
   specialNeeds?: string;
 }
 
@@ -81,7 +91,7 @@ export const createPet = async (req: AuthRequest, res: Response): Promise<void> 
     if (req.files && req.files.length > 0) {
       for (let file of req.files) {
         try {
-          const uploadResult = await uploadToCloudinary(file.buffer, 'pets');
+          const uploadResult = await uploadToCloudinary(file.buffer, { folder: 'pets' });
           photos.push({
             url: uploadResult.secure_url,
             publicId: uploadResult.public_id,
@@ -123,7 +133,7 @@ export const createPet = async (req: AuthRequest, res: Response): Promise<void> 
 
     // Add pet to user's pets array
     await User.findByIdAndUpdate(req.userId, {
-      $push: { pets: (pet as any)._id }
+      $push: { pets: pet._id }
     });
 
     // Populate owner info
@@ -175,7 +185,21 @@ export const discoverPets = async (req: AuthRequest, res: Response): Promise<voi
     }
 
     // Build query
-    const query: any = {
+    const query: {
+      owner: { $ne: string };
+      'availability.isAvailable': boolean;
+      isActive: boolean;
+      species?: string;
+      intent?: string;
+      age?: { $gte?: number; $lte?: number };
+      size?: string;
+      location?: {
+        $near: {
+          $geometry: { type: 'Point'; coordinates: [number, number] };
+          $maxDistance: number;
+        };
+      };
+    } = {
       owner: { $ne: req.userId }, // Exclude user's own pets
       'availability.isAvailable': true,
       isActive: true
@@ -219,7 +243,7 @@ export const discoverPets = async (req: AuthRequest, res: Response): Promise<voi
     }).distinct('pet1._id pet2._id');
 
     // Exclude already swiped pets
-    const swipedPetIds = userSwipes.filter((id: any) => id.toString() !== req.userId);
+    const swipedPetIds = userSwipes.filter((id: { toString: () => string }) => id.toString() !== req.userId);
     if (swipedPetIds.length > 0) {
       query._id = { $nin: swipedPetIds };
     }
@@ -287,7 +311,7 @@ export const swipePet = async (req: AuthRequest, res: Response): Promise<void> =
       return;
     }
 
-    const currentPet = (currentUser.pets as any)[0]; // Using first pet for swiping
+    const currentPet = currentUser.pets[0]; // Using first pet for swiping
 
     // Check if already swiped
     const existingMatch = await Match.findOne({
@@ -315,7 +339,7 @@ export const swipePet = async (req: AuthRequest, res: Response): Promise<void> =
       },
       pet2: {
         _id: targetPet._id,
-        owner: (targetPet.owner as any)._id,
+        owner: targetPet.owner._id,
         name: targetPet.name,
         photos: targetPet.photos
       },
@@ -338,14 +362,14 @@ export const swipePet = async (req: AuthRequest, res: Response): Promise<void> =
     if (reciprocalMatch && (action === 'like' || action === 'superlike')) {
       // It's a match!
       isMatch = true;
-      (match as any).isMatch = true;
-      (match as any).matchedAt = new Date();
+      match.isMatch = true;
+      match.matchedAt = new Date();
       await match.save();
 
       // Update the reciprocal match as well
-      (reciprocalMatch as any).pet2Action = action;
-      (reciprocalMatch as any).isMatch = true;
-      (reciprocalMatch as any).matchedAt = new Date();
+      reciprocalMatch.pet2Action = action;
+      reciprocalMatch.isMatch = true;
+      reciprocalMatch.matchedAt = new Date();
       await reciprocalMatch.save();
     }
 
@@ -469,7 +493,7 @@ export const updatePet = async (req: AuthRequest, res: Response): Promise<void> 
     if (req.files && req.files.length > 0) {
       for (let file of req.files) {
         try {
-          const uploadResult = await uploadToCloudinary(file.buffer, 'pets');
+          const uploadResult = await uploadToCloudinary(file.buffer, { folder: 'pets' });
           newPhotos.push({
             url: uploadResult.secure_url,
             publicId: uploadResult.public_id,
@@ -486,7 +510,7 @@ export const updatePet = async (req: AuthRequest, res: Response): Promise<void> 
       for (let publicId of removePhotos) {
         try {
           await deleteFromCloudinary(publicId);
-          pet.photos = pet.photos.filter((photo: any) => photo.publicId !== publicId);
+          pet.photos = pet.photos.filter((photo: { publicId: string }) => photo.publicId !== publicId);
         } catch (deleteError) {
           logger.error('Photo delete error:', deleteError);
         }
@@ -495,19 +519,19 @@ export const updatePet = async (req: AuthRequest, res: Response): Promise<void> 
 
     // Update fields
     if (name !== undefined) pet.name = name;
-    if (species !== undefined) (pet as any).species = species;
-    if (breed !== undefined) (pet as any).breed = breed;
-    if (age !== undefined) (pet as any).age = parseInt(age.toString());
-    if (gender !== undefined) (pet as any).gender = gender;
-    if (size !== undefined) (pet as any).size = size;
-    if (weight !== undefined) (pet as any).weight = parseFloat(weight.toString());
-    if (color !== undefined) (pet as any).color = color;
-    if (description !== undefined) (pet as any).description = description;
-    if (personalityTags !== undefined) (pet as any).personalityTags = personalityTags;
-    if (intent !== undefined) (pet as any).intent = intent;
-    if (availability !== undefined) (pet as any).availability = availability;
-    if (healthInfo !== undefined) (pet as any).healthInfo = healthInfo;
-    if (specialNeeds !== undefined) (pet as any).specialNeeds = specialNeeds;
+    if (species !== undefined) pet.species = species;
+    if (breed !== undefined) pet.breed = breed;
+    if (age !== undefined) pet.age = parseInt(age.toString());
+    if (gender !== undefined) pet.gender = gender;
+    if (size !== undefined) pet.size = size;
+    if (weight !== undefined) pet.weight = parseFloat(weight.toString());
+    if (color !== undefined) pet.color = color;
+    if (description !== undefined) pet.description = description;
+    if (personalityTags !== undefined) pet.personalityTags = personalityTags;
+    if (intent !== undefined) pet.intent = intent;
+    if (availability !== undefined) pet.availability = availability;
+    if (healthInfo !== undefined) pet.healthInfo = healthInfo;
+    if (specialNeeds !== undefined) pet.specialNeeds = specialNeeds;
 
     // Add new photos
     if (newPhotos.length > 0) {
@@ -551,7 +575,7 @@ export const deletePet = async (req: AuthRequest, res: Response): Promise<void> 
     // Delete photos from Cloudinary
     for (let photo of pet.photos) {
       try {
-        await deleteFromCloudinary((photo as any).publicId);
+        await deleteFromCloudinary(photo.publicId);
       } catch (deleteError) {
         logger.error('Photo delete error:', deleteError);
       }

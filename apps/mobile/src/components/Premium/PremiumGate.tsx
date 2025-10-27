@@ -108,7 +108,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 ])}
               >
                 <Ionicons
-                  name={icon as ComponentProps<typeof Ionicons>["name"]}
+                  name={icon}
                   size={40}
                   color={colors.primary}
                 />

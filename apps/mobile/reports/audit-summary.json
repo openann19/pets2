@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-10-27T03:55:38.987Z",
+  "cwd": "/home/ben/Downloads/pets-fresh/apps/mobile",
+  "totals": {
+    "total": 12,
+    "passed": 5,
+    "failed": 5,
+    "skipped": 2
+  },
+  "failures": {
+    "P0": 3,
+    "P1": 2
+  },
+  "strictMode": false,
+  "results": [
+    {
+      "name": "TypeScript",
+      "status": "FAIL",
+      "severity": "P0",
+      "durationMs": 13259,
+      "startedAt": "2025-10-27T03:50:42.460Z",
+      "endedAt": "2025-10-27T03:50:55.719Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/typescript.log"
+    },
+    {
+      "name": "Linting",
+      "status": "PASS",
+      "severity": "P0",
+      "durationMs": 24788,
+      "startedAt": "2025-10-27T03:50:55.719Z",
+      "endedAt": "2025-10-27T03:51:20.507Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/linting.log"
+    },
+    {
+      "name": "Unit/Integration",
+      "status": "FAIL",
+      "severity": "P0",
+      "durationMs": 78543,
+      "startedAt": "2025-10-27T03:51:20.508Z",
+      "endedAt": "2025-10-27T03:52:39.051Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/unit/integration.log"
+    },
+    {
+      "name": "UI Tests",
+      "status": "FAIL",
+      "severity": "P1",
+      "durationMs": 164293,
+      "startedAt": "2025-10-27T03:52:39.051Z",
+      "endedAt": "2025-10-27T03:55:23.344Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/ui_tests.log"
+    },
+    {
+      "name": "Contract Check",
+      "status": "PASS",
+      "severity": "P0",
+      "durationMs": 314,
+      "startedAt": "2025-10-27T03:55:23.346Z",
+      "endedAt": "2025-10-27T03:55:23.660Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/contract_check.log"
+    },
+    {
+      "name": "Accessibility Report",
+      "status": "PASS",
+      "severity": "P0",
+      "durationMs": 313,
+      "startedAt": "2025-10-27T03:55:23.660Z",
+      "endedAt": "2025-10-27T03:55:23.973Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/accessibility_report.log"
+    },
+    {
+      "name": "Telemetry Coverage",
+      "status": "PASS",
+      "severity": "P1",
+      "durationMs": 342,
+      "startedAt": "2025-10-27T03:55:23.973Z",
+      "endedAt": "2025-10-27T03:55:24.315Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/telemetry_coverage.log"
+    },
+    {
+      "name": "Code Graph",
+      "status": "PASS",
+      "severity": "P1",
+      "durationMs": 9581,
+      "startedAt": "2025-10-27T03:55:24.315Z",
+      "endedAt": "2025-10-27T03:55:33.896Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/code_graph.log"
+    },
+    {
+      "name": "Security Scan",
+      "status": "FAIL",
+      "severity": "P0",
+      "durationMs": 5016,
+      "startedAt": "2025-10-27T03:55:33.896Z",
+      "endedAt": "2025-10-27T03:55:38.912Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/security_scan.log"
+    },
+    {
+      "name": "Perf Budget",
+      "status": "SKIPPED",
+      "severity": "P1",
+      "durationMs": 0,
+      "startedAt": "2025-10-27T03:55:38.912Z",
+      "endedAt": "2025-10-27T03:55:38.912Z",
+      "heavy": true
+    },
+    {
+      "name": "E2E Smoke (@critical)",
+      "status": "SKIPPED",
+      "severity": "P0",
+      "durationMs": 0,
+      "startedAt": "2025-10-27T03:55:38.912Z",
+      "endedAt": "2025-10-27T03:55:38.912Z",
+      "heavy": true
+    },
+    {
+      "name": "Premium Gate Audit",
+      "status": "FAIL",
+      "severity": "P1",
+      "durationMs": 75,
+      "startedAt": "2025-10-27T03:55:38.912Z",
+      "endedAt": "2025-10-27T03:55:38.987Z",
+      "heavy": false,
+      "logPath": "/home/ben/Downloads/pets-fresh/apps/mobile/reports/logs/premium_gate_audit.log"
+    }
+  ]
+}

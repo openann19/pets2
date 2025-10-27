@@ -6,6 +6,7 @@
 import type { Request, Response } from 'express';
 import Match from '../../models/Match';
 import Conversation from '../../models/Conversation';
+import { getErrorMessage } from '../../utils/errorHandler';
 const AuditLog = require('../../models/AuditLog');
 const logger = require('../../utils/logger');
 
@@ -94,12 +95,12 @@ export const getAllChats = async (req: AdminRequest, res: Response): Promise<voi
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting all chats:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get chats',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -142,12 +143,12 @@ export const getChatDetails = async (req: AdminRequest, res: Response): Promise<
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting chat details:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get chat details',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -236,12 +237,12 @@ export const deleteMessage = async (req: AdminRequest, res: Response): Promise<v
       message: 'Message deleted successfully'
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error deleting message:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to delete message',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -303,12 +304,12 @@ export const blockChat = async (req: AdminRequest, res: Response): Promise<void>
       data: blockData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error blocking chat:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to block chat',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -365,12 +366,12 @@ export const unblockChat = async (req: AdminRequest, res: Response): Promise<voi
       data: unblockData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error unblocking chat:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to unblock chat',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -438,12 +439,12 @@ export const getChatAnalytics = async (req: AdminRequest, res: Response): Promis
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting chat analytics:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get chat analytics',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };

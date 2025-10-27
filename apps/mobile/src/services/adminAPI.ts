@@ -126,7 +126,7 @@ class AdminAPIService {
       const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
-          ...(options.headers as Record<string, string> | undefined),
+          ...(options.headers),
         },
         ...options,
       });

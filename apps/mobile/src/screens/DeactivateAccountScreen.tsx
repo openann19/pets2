@@ -13,6 +13,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useDeactivateAccountScreen } from "../hooks/screens/useDeactivateAccountScreen";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 interface DeactivateAccountScreenProps {
@@ -47,7 +48,7 @@ function DeactivateAccountScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={handleGoBack}
+             testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
               <Ionicons name="arrow-back" size={24} color="white" />
@@ -61,7 +62,7 @@ function DeactivateAccountScreen({
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Warning */}
           <BlurView intensity={15} style={styles.warningCard}>
-            <Ionicons name="warning-outline" size={24} color="Theme.colors.status.warning" />
+            <Ionicons name="warning-outline" size={24} color={theme.colors.warning} }/>
             <Text style={styles.warningText}>
               Deactivating your account will temporarily hide your profile and
               pause all activity. You can reactivate anytime by logging back in.
@@ -78,7 +79,7 @@ function DeactivateAccountScreen({
                 styles.reasonCard,
                 reason === item && styles.reasonCardSelected,
               ])}
-              onPress={() => {
+               testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 selectReason(item);
               }}
             >
@@ -95,7 +96,7 @@ function DeactivateAccountScreen({
                   {item}
                 </Text>
                 {reason === item && (
-                  <Ionicons name="checkmark-circle" size={20} color="Theme.colors.status.success" />
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} }/>
                 )}
               </BlurView>
             </TouchableOpacity>
@@ -137,7 +138,7 @@ function DeactivateAccountScreen({
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={StyleSheet.flatten([styles.button, styles.cancelButton])}
-              onPress={() => {
+               testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 navigation.goBack();
               }}
             >
@@ -153,7 +154,7 @@ function DeactivateAccountScreen({
                   loading) &&
                   styles.buttonDisabled,
               ])}
-              onPress={handleDeactivate}
+               testID="DeactivateAccountScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleDeactivate}
               disabled={
                 !reason || confirmText.toLowerCase() !== "deactivate" || loading
               }
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   deactivateButton: {
-    backgroundColor: "Theme.colors.status.error",
+    backgroundColor: theme.colors.danger,
   },
   deactivateButtonText: {
     color: "white",

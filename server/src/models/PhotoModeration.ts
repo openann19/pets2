@@ -1,4 +1,5 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
+import mongoose, { Schema, Model } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 
 /**
  * Image metadata interface
@@ -63,6 +64,8 @@ export interface IPhotoModeration extends mongoose.Document {
 export interface IPhotoModerationMethods {
   approve(moderatorId: mongoose.Types.ObjectId, notes?: string): Promise<void>;
   reject(moderatorId: mongoose.Types.ObjectId, reason: string, category: string, notes?: string): Promise<void>;
+  // Virtual properties
+  age: number;
 }
 
 /**
@@ -228,6 +231,11 @@ photoModerationSchema.methods.reject = async function(
   this.expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days
   await this.save();
 };
+
+// Virtual: Age of the moderation entry
+photoModerationSchema.virtual('age').get(function(this: IPhotoModeration): number {
+  return Math.floor((Date.now() - this.uploadedAt.getTime()) / (1000 * 60)); // age in minutes
+});
 
 // Static methods
 photoModerationSchema.statics.getQueueStats = async function(): Promise<{

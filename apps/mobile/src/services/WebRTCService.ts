@@ -146,15 +146,6 @@ class WebRTCService extends EventEmitter {
     }
   }
 
-  // Initialize WebRTC service with socket connection
-  initialize(socket: {
-    emit: (event: string, data: unknown) => void;
-    on: (event: string, handler: (data: unknown) => void) => void;
-  }) {
-    this.socket = socket;
-    this.setupSocketListeners();
-  }
-
   private setupSocketListeners() {
     if (this.socket === null) return;
 
@@ -579,7 +570,7 @@ class WebRTCService extends EventEmitter {
       if (data.offer !== undefined) {
         const offer = new RTCSessionDescriptionImpl({
           sdp: data.offer.sdp ?? '',
-          type: data.offer.type as RTCSdpType,
+          type: data.offer.type,
         });
         await this.peerConnection.setRemoteDescription(offer);
       }
@@ -600,7 +591,7 @@ class WebRTCService extends EventEmitter {
       if (data.answer !== undefined) {
         const answer = new RTCSessionDescriptionImpl({
           sdp: data.answer.sdp ?? '',
-          type: data.answer.type as RTCSdpType,
+          type: data.answer.type,
         });
         await this.peerConnection.setRemoteDescription(answer);
       }

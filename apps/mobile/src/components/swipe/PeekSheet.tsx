@@ -3,7 +3,7 @@
  * Shows a preview of the next card with subtle animation
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 import { Theme } from '../../theme/unified-theme';
 import type { Pet } from '@pawfectmatch/core';
@@ -17,8 +17,8 @@ export interface PeekSheetProps {
 }
 
 export function PeekSheet({ nextPet, show = false }: PeekSheetProps): React.JSX.Element {
-  const scale = useRef(new Animated.Value(0.9)).current;
-  const opacity = useRef(new Animated.Value(0.3)).current;
+  const [scale] = useState(() => new Animated.Value(0.9));
+  const [opacity] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
     if (show && nextPet) {
@@ -58,8 +58,8 @@ export function PeekSheet({ nextPet, show = false }: PeekSheetProps): React.JSX.
       style={[
         styles.container,
         {
-          opacity,
-          transform: [{ scale }],
+          opacity: opacity,
+          transform: [{ scale: scale }],
         },
       ]}
     >

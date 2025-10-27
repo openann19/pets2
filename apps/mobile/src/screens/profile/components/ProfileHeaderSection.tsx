@@ -6,7 +6,7 @@ import { DoubleTapLikePlus } from "../../../components/Gestures/DoubleTapLikePlu
 import { useDoubleTapMetrics } from "../../../hooks/useInteractionMetrics";
 import { matchesAPI } from "../../../services/api";
 import SmartImage from "../../../components/common/SmartImage";
-import { Theme } from '../../../theme/unified-theme';
+import { useTheme } from "../../../theme/Provider";
 import * as Haptics from "expo-haptics";
 
 interface User {
@@ -22,6 +22,7 @@ interface ProfileHeaderSectionProps {
 }
 
 export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.memo(({ user }) => {
+  const theme = useTheme();
   const { startInteraction, endInteraction } = useDoubleTapMetrics();
 
   const handleProfileLike = useCallback(async () => {
@@ -36,6 +37,37 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
     const userProfile = await matchesAPI.getUserProfile();
     logger.info("Loaded user profile:", { userProfile });
   }, []);
+
+  const styles = StyleSheet.create({
+    header: {
+      padding: 20,
+    },
+    profileSection: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    profileImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      marginRight: 16,
+    },
+    profileInfo: {
+      flex: 1,
+    },
+    userName: {
+      fontSize: 24,
+      fontWeight: "bold",
+      marginBottom: 4,
+    },
+    userEmail: {
+      fontSize: 16,
+      marginBottom: 4,
+    },
+    memberSince: {
+      fontSize: 14,
+    },
+  });
 
   return (
     <AdvancedCard
@@ -63,53 +95,19 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
           />
         </DoubleTapLikePlus>
         <View style={styles.profileInfo}>
-          <Text style={[styles.userName, { color: Theme.colors.neutral[800] }]}>
+          <Text style={[styles.userName, { color: theme.colors.text }]}>
             {user?.firstName ?? "User"} {user?.lastName ?? ""}
           </Text>
-          <Text style={[styles.userEmail, { color: Theme.colors.neutral[500] }]}>
+          <Text style={[styles.userEmail, { color: theme.colors.textMuted }]}>
             {user?.email ?? "user@example.com"}
           </Text>
-          <Text style={[styles.memberSince, { color: Theme.colors.neutral[400] }]}>
+          <Text style={[styles.memberSince, { color: theme.colors.textMuted }]}>
             Member since {new Date().getFullYear()}
           </Text>
         </View>
       </View>
     </AdvancedCard>
   );
-});
-
-const styles = StyleSheet.create({
-  header: {
-    padding: 20,
-  },
-  profileSection: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 16,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: Theme.colors.neutral[800],
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 16,
-    color: Theme.colors.neutral[500],
-    marginBottom: 4,
-  },
-  memberSince: {
-    fontSize: 14,
-    color: Theme.colors.neutral[400],
-  },
 });
 
 ProfileHeaderSection.displayName = 'ProfileHeaderSection';

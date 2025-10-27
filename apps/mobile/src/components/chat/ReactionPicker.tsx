@@ -63,7 +63,7 @@ export function ReactionPicker({
         styles.reactionButton,
         selectedReaction === item.emoji && styles.selectedReaction,
       ])}
-      onPress={() => handleSelect(item.emoji)}
+      onPress={() => { handleSelect(item.emoji); }}
       accessibilityLabel={`React with ${item.label}`}
       accessibilityRole="button"
     >

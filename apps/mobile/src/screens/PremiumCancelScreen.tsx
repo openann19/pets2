@@ -36,7 +36,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.iconContainer}>
-            <Ionicons name="close-circle" size={80} color="Theme.colors.status.error" />
+            <Ionicons name="close-circle" size={80} color={theme.colors.danger} }/>
           </View>
 
           <Text
@@ -61,7 +61,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
                 styles.primaryButton,
                 { backgroundColor: colors.primary },
               ])}
-              onPress={handleTryAgain}
+               testID="PremiumCancelScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleTryAgain}
             >
               <Text style={styles.primaryButtonText}>Try Again</Text>
             </TouchableOpacity>
@@ -71,7 +71,7 @@ const PremiumCancelScreen = (): React.JSX.Element => {
                 styles.secondaryButton,
                 { borderColor: colors.primary },
               ])}
-              onPress={handleGoBack}
+               testID="PremiumCancelScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}
             >
               <Text
                 style={StyleSheet.flatten([

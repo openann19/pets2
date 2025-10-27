@@ -12,12 +12,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { type Pet } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 
 // Import new architecture components
 import {
-  Theme,
   ModernSwipeCard,
   EliteButton,
   EliteButtonPresets,
@@ -34,13 +33,18 @@ import { EliteContainer, EliteHeader } from "../components";
 import { useTheme } from "../theme/Provider";
 import { useModernSwipeScreen } from "../hooks/screens/useModernSwipeScreen";
 import type { RootStackScreenProps } from "../navigation/types";
-import { CardStack, FilterPanel, MatchModal, SwipeGestureHints, SwipeGestureHintOverlay, PeekSheet } from "../components/swipe";
+// Import state components
+import { LoadingState } from "../components/swipe/LoadingState";
+import { ErrorState } from "../components/swipe/ErrorState";
+import { NoMorePetsState } from "../components/swipe/NoMorePetsState";
+// import { CardStack, FilterPanel, MatchModal, SwipeGestureHints, SwipeGestureHintOverlay, PeekSheet } from "../components/swipe"; // TODO: Implement missing components
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
+  const theme = useTheme();
   const {
     pets,
     currentPet,
@@ -64,76 +68,116 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 
   // Loading state
   if (isLoading && pets.length === 0) {
-    return (
-      <EliteContainer gradient="primary">
-        <View style={styles.loadingContainer}>
-          <FXContainerPresets.glass style={styles.loadingCard}>
-            <Heading1 animated={true} style={styles.loadingTitle}>
-              Finding Matches
-            </Heading1>
-            <Body style={styles.loadingSubtitle}>
-              Discovering your perfect pet companions...
-            </Body>
-          </FXContainerPresets.glass>
-        </View>
-      </EliteContainer>
-    );
+    return <LoadingState loadPets={loadPets} />;
   }
 
   // Error state
   if (error) {
-    return (
-      <EliteContainer gradient="primary">
-        <View style={styles.emptyContainer}>
-          <FXContainer
-            type="glow"
-            hasGlow={true}
-            glowColor={Theme.colors.status.error}
-            style={styles.errorCard}
-          >
-            <Ionicons
-              name="alert-circle-outline"
-              size={80}
-              color={Theme.colors.status.error}
-            />
-            <Heading2 style={styles.errorTitle}>Error loading pets</Heading2>
-            <Body style={styles.errorMessage}>{error}</Body>
-            <EliteButtonPresets.premium
-              title="Try Again"
-              leftIcon="refresh"
-              onPress={loadPets}
-            />
-          </FXContainer>
-        </View>
-      </EliteContainer>
-    );
+    return <ErrorState error={error} loadPets={loadPets} />;
   }
 
   // No more pets state
   if (!currentPet) {
-    return (
-      <EliteContainer gradient="primary">
-        <View style={styles.emptyContainer}>
-          <FXContainerPresets.glass style={styles.emptyCard}>
-            <Ionicons
-              name="heart-outline"
-              size={80}
-              color={Theme.colors.primary[500]}
-            />
-            <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
-            <Body style={styles.emptySubtitle}>
-              Check back later for more matches
-            </Body>
-            <EliteButtonPresets.premium
-              title="Refresh"
-              leftIcon="refresh"
-              onPress={loadPets}
-            />
-          </FXContainerPresets.glass>
-        </View>
-      </EliteContainer>
-    );
+    return <NoMorePetsState loadPets={loadPets} />;
   }
+
+  const styles = StyleSheet.create({
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      padding: theme.spacing.xl,
+    },
+    loadingCard: {
+      padding: theme.spacing["4xl"],
+      alignItems: "center" as const,
+    },
+    loadingTitle: {
+      textAlign: "center",
+      marginBottom: theme.spacing.lg,
+    },
+    loadingSubtitle: {
+      textAlign: "center",
+      color: theme.colors.textMuted,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      padding: theme.spacing.xl,
+    },
+    errorCard: {
+      padding: theme.spacing["4xl"],
+      alignItems: "center" as const,
+    },
+    errorTitle: {
+      textAlign: "center",
+      marginTop: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+      color: theme.colors.danger,
+    },
+    errorMessage: {
+      textAlign: "center",
+      marginBottom: theme.spacing.xl,
+      color: theme.colors.textMuted,
+    },
+    emptyCard: {
+      padding: theme.spacing["4xl"],
+      alignItems: "center" as const,
+    },
+    emptyTitle: {
+      textAlign: "center",
+      marginTop: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+    },
+    emptySubtitle: {
+      textAlign: "center",
+      marginBottom: theme.spacing.xl,
+      color: theme.colors.textMuted,
+    },
+    headerActions: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.sm,
+    },
+    filterContainer: {
+      padding: theme.spacing.lg,
+    },
+    filterPlaceholder: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.bg,
+      borderRadius: 8,
+      margin: theme.spacing.md,
+    },
+    hintsPlaceholder: {
+      padding: theme.spacing.sm,
+      alignItems: "center" as const,
+    },
+    actionButtons: {
+      flexDirection: "row" as const,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      paddingVertical: theme.spacing.xl,
+      paddingHorizontal: theme.spacing["4xl"],
+      gap: theme.spacing.lg,
+    },
+    actionButton: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+    },
+    matchModalPlaceholder: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0,0,0,0.8)",
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      padding: theme.spacing["4xl"],
+      gap: theme.spacing.lg,
+    },
+  });
 
   return (
     <EliteContainer gradient="primary">
@@ -166,26 +210,23 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       {/* Filter Panel */}
       {showFilters && (
         <View style={styles.filterContainer}>
-          <FilterPanel
-            filters={filters}
-            onFilterChange={(newFilters) => {
-              setFilters({ ...filters, ...newFilters });
-            }}
-          />
+          <View style={styles.filterPlaceholder}>
+            <Body>Filter Panel (TODO: Implement)</Body>
+          </View>
         </View>
       )}
 
       {/* Gesture Hints */}
-      <SwipeGestureHints />
+      <View style={styles.hintsPlaceholder}>
+        <BodySmall>Swipe Hints (TODO: Implement)</BodySmall>
+      </View>
       
       {/* First-time user gesture hints overlay */}
-      <SwipeGestureHintOverlay />
+      {/* SwipeGestureHintOverlay placeholder */}
 
       {/* Card Stack */}
-      <CardStack
-        currentPet={currentPet}
-        nextPet={pets[currentIndex + 1]}
-        currentIndex={currentIndex}
+      <ModernSwipeCard
+        pet={currentPet as any} // TODO: Create proper adapter between core Pet and ModernSwipeCard Pet
         onSwipeLeft={() => {
           handleSwipeLeft(currentPet);
         }}
@@ -198,9 +239,10 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       />
 
       {/* Peek Sheet - Show next card */}
-      {pets[currentIndex + 1] && (
+      {/* TODO: Implement PeekSheet component */}
+      {/* {pets[currentIndex + 1] && (
         <PeekSheet nextPet={pets[currentIndex + 1]} show={true} />
-      )}
+      )} */}
 
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
@@ -243,169 +285,25 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 
       {/* Match Modal */}
       {showMatchModal && matchedPet && (
-        <MatchModal
-          pet={matchedPet}
-          show={showMatchModal}
-          onKeepSwiping={() => setShowMatchModal(false)}
-          onSendMessage={() => {
-            setShowMatchModal(false);
-            navigation.navigate("Chat", {
-              matchId: matchedPet._id,
-              petName: matchedPet.name,
-            });
-          }}
-        />
+        <View style={styles.matchModalPlaceholder}>
+          <Heading2>It's a Match! 🎉</Heading2>
+          <Body>You matched with {matchedPet.name}!</Body>
+          <EliteButton
+            title="Keep Swiping"
+            onPress={() => setShowMatchModal(false)}
+          />
+          <EliteButton
+            title="Send Message"
+            onPress={() => {
+              setShowMatchModal(false);
+              navigation.navigate("Chat", {
+                matchId: matchedPet._id,
+                petName: matchedPet.name,
+              });
+            }}
+          />
+        </View>
       )}
     </EliteContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Theme.spacing.xl,
-  },
-  loadingCard: {
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  loadingTitle: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.lg,
-  },
-  loadingSubtitle: {
-    textAlign: "center",
-    color: Theme.colors.text.secondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Theme.spacing.xl,
-  },
-  errorCard: {
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  errorTitle: {
-    textAlign: "center",
-    marginTop: Theme.spacing.lg,
-    marginBottom: Theme.spacing.md,
-    color: Theme.colors.status.error,
-  },
-  errorMessage: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
-  },
-  emptyCard: {
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  emptyTitle: {
-    textAlign: "center",
-    marginTop: Theme.spacing.lg,
-    marginBottom: Theme.spacing.md,
-  },
-  emptySubtitle: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: Theme.spacing.sm,
-  },
-  filterContainer: {
-    padding: Theme.spacing.lg,
-  },
-  filterPanel: {
-    padding: Theme.spacing.xl,
-  },
-  filterTitle: {
-    marginBottom: Theme.spacing.lg,
-    textAlign: "center",
-  },
-  filterSection: {
-    marginBottom: Theme.spacing.lg,
-  },
-  filterLabel: {
-    marginBottom: Theme.spacing.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
-  },
-  filterButtons: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Theme.spacing.sm,
-  },
-  cardContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Theme.spacing.xl,
-  },
-  nextCardContainer: {
-    position: "absolute",
-    zIndex: -1,
-  },
-  nextCard: {
-    width: screenWidth - Theme.spacing["4xl"] - Theme.spacing.lg,
-    height: screenHeight * 0.65,
-    transform: [{ scale: 0.95 }],
-    opacity: 0.8,
-  },
-  actionButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: Theme.spacing.xl,
-    paddingHorizontal: Theme.spacing["4xl"],
-    gap: Theme.spacing.lg,
-  },
-  actionButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-  },
-  matchModal: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  matchModalContent: {
-    width: screenWidth - Theme.spacing["4xl"],
-    padding: Theme.spacing["4xl"],
-    alignItems: "center",
-  },
-  matchTitle: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-  },
-  matchPhotos: {
-    flexDirection: "row",
-    marginBottom: Theme.spacing.xl,
-    gap: Theme.spacing.lg,
-  },
-  matchPhotoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  matchText: {
-    textAlign: "center",
-    marginBottom: Theme.spacing.xl,
-    color: Theme.colors.text.secondary,
-  },
-  matchButtons: {
-    flexDirection: "row",
-    gap: Theme.spacing.lg,
-  },
-});

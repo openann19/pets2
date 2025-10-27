@@ -38,7 +38,7 @@ router.post('/photo', authenticateToken, upload.single('file'), async (req: Requ
     );
 
     streamifier.createReadStream(req.file.buffer).pipe(stream);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Photo upload error', { error: error.message });
     res.status(500).json({ success: false, error: 'UPLOAD_FAIL' });
   }
@@ -67,7 +67,7 @@ router.post('/voice', authenticateToken, upload.single('file'), async (req: Requ
     );
 
     streamifier.createReadStream(req.file.buffer).pipe(stream);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Voice upload error', { error: error.message });
     res.status(500).json({ success: false });
   }

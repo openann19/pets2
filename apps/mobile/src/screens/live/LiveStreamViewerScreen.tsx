@@ -75,7 +75,7 @@ export function LiveStreamViewerScreen() {
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+             testID="LiveStreamViewerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { navigation.goBack(); }}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -101,7 +101,7 @@ export function LiveStreamViewerScreen() {
       
       {/* Header with live indicator */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity  testID="LiveStreamViewerScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
           <Text style={styles.closeButton}>✕</Text>
         </TouchableOpacity>
         <View style={styles.liveIndicator}>
@@ -160,7 +160,7 @@ export function LiveStreamViewerScreen() {
           <TouchableOpacity
             key={emoji}
             style={styles.reactionButton}
-            onPress={() => handleReaction(emoji)}
+             testID="LiveStreamViewerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleReaction(emoji); }}
           >
             <Text style={styles.reactionEmoji}>{emoji}</Text>
           </TouchableOpacity>
@@ -184,7 +184,7 @@ export function LiveStreamViewerScreen() {
           />
           <TouchableOpacity
             style={styles.sendButton}
-            onPress={handleSendMessage}
+             testID="LiveStreamViewerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSendMessage}
           >
             <Text style={styles.sendButtonText}>Send</Text>
           </TouchableOpacity>

@@ -164,7 +164,7 @@ function ModernText({
 
   // Get text color
   const textColorKey = color || 'primary';
-  const textColor = Theme.colors.text[textColorKey as keyof typeof Theme.colors.text];
+  const textColor = Theme.colors.text[textColorKey];
 
   // Build text style
   const textStyle: TextStyle = {
@@ -186,7 +186,7 @@ function ModernText({
 
   // Render gradient text
   if (gradient || gradientColors) {
-    const gradientConfig = gradient ? (Theme.gradients && Theme.gradients[gradient as keyof typeof Theme.gradients]) : null;
+    const gradientConfig = gradient ? (Theme.gradients && Theme.gradients[gradient]) : null;
     const colors = gradientColors ||
       (gradientConfig && typeof gradientConfig === 'object' && 'colors' in gradientConfig ? (gradientConfig as any).colors : null) || [
         Theme.colors.primary[500],

@@ -26,7 +26,7 @@ interface UseResetPasswordScreenReturn {
   isValid: boolean;
   loading: boolean;
   setValue: (name: keyof ResetPasswordFormValues, value: string) => void;
-  handleSubmit: (e?: any) => void | Promise<void>;
+  handleSubmit: (e?: unknown) => void | Promise<void>;
   navigateBack: () => void;
 }
 

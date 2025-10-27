@@ -4,7 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { I18nextProvider } from "react-i18next";
 
+import i18n from "./i18n";
 import { queryClient } from "./config/queryClient";
 import { ThemeProvider } from "./theme/Provider";
 import type { RootStackParamList } from "./navigation/types";
@@ -86,6 +88,7 @@ import ComponentTestScreen from "./screens/ComponentTestScreen";
 import NewComponentsTestScreen from "./screens/NewComponentsTestScreen";
 import MigrationExampleScreen from "./screens/MigrationExampleScreen";
 import PremiumDemoScreen from "./screens/PremiumDemoScreen";
+import UIDemoScreen from "./screens/UIDemoScreen";
 
 // Live Streaming Screens
 import GoLiveScreen from "./screens/GoLiveScreen";
@@ -206,6 +209,7 @@ const AppNavigator = (): React.ReactElement => (
     />
     <Stack.Screen name="MigrationExample" component={MigrationExampleScreen} />
     <Stack.Screen name="PremiumDemo" component={PremiumDemoScreen} />
+    <Stack.Screen name="UIDemo" component={UIDemoScreen} options={screenTransitions.fluid} />
 
     {/* Live Streaming Screens */}
     <Stack.Screen name="GoLive" component={GoLiveScreen} options={{ presentation: "modal" }} />
@@ -217,14 +221,16 @@ const AppNavigator = (): React.ReactElement => (
 export default function App(): React.ReactElement {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <NavigationContainer>
-            <StatusBar style="dark" />
-            <AppNavigator />
-          </NavigationContainer>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <I18nextProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <NavigationContainer>
+              <StatusBar style="dark" />
+              <AppNavigator />
+            </NavigationContainer>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </I18nextProvider>
     </GestureHandlerRootView>
   );
 }

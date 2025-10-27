@@ -50,8 +50,8 @@ describe('GDPR Service', () => {
       });
 
       expect(response).toEqual(mockResponse);
-      expect(request).toHaveBeenCalledWith('/api/account/delete', {
-        method: 'POST',
+      expect(request).toHaveBeenCalledWith('/api/users/delete-account', {
+        method: 'DELETE',
         body: {
           password: 'correctpassword',
           reason: 'User request',
@@ -82,7 +82,7 @@ describe('GDPR Service', () => {
       });
 
       expect(response.success).toBe(false);
-      expect(response.message).toBe('Failed to delete account');
+      expect(response.message).toBe('Server error');
     });
 
     it('should handle rate limiting', async () => {
@@ -126,7 +126,7 @@ describe('GDPR Service', () => {
       const response = await cancelDeletion();
 
       expect(response).toEqual(mockResponse);
-      expect(request).toHaveBeenCalledWith('/api/account/cancel-deletion', {
+      expect(request).toHaveBeenCalledWith('/api/users/cancel-deletion', {
         method: 'POST',
       });
     });
@@ -137,7 +137,7 @@ describe('GDPR Service', () => {
       const response = await cancelDeletion();
 
       expect(response.success).toBe(false);
-      expect(response.message).toBe('Failed to cancel deletion');
+      expect(response.message).toBe('Network error');
     });
 
     it('should handle errors during cancellation', async () => {
@@ -242,7 +242,7 @@ describe('GDPR Service', () => {
       const response = await exportUserData();
 
       expect(response).toEqual(mockResponse);
-      expect(request).toHaveBeenCalledWith('/api/account/export-data', {
+      expect(request).toHaveBeenCalledWith('/api/users/request-export', {
         method: 'POST',
         body: {
           format: 'json',
@@ -276,7 +276,7 @@ describe('GDPR Service', () => {
       });
 
       expect(response).toEqual(mockResponse);
-      expect(request).toHaveBeenCalledWith('/api/account/export-data', {
+      expect(request).toHaveBeenCalledWith('/api/users/request-export', {
         method: 'POST',
         body: {
           format: 'csv',
@@ -321,14 +321,22 @@ describe('GDPR Service', () => {
 
   describe('downloadExport', () => {
     it('should download exported data successfully', async () => {
+      const mockExportStatus = { url: 'https://example.com/export/export-123.json' };
       const mockBlob = new Blob(['exported data'], { type: 'application/json' });
 
-      (request as jest.Mock).mockResolvedValueOnce(mockBlob);
+      // Mock the status request
+      (request as jest.Mock).mockResolvedValueOnce(mockExportStatus);
+      
+      // Mock fetch for the actual download
+      global.fetch = jest.fn().mockResolvedValueOnce({
+        ok: true,
+        blob: () => Promise.resolve(mockBlob),
+      });
 
       const response = await downloadExport('export-123');
 
       expect(response).toBe(mockBlob);
-      expect(request).toHaveBeenCalledWith('/api/account/export/export-123', {
+      expect(request).toHaveBeenCalledWith('/api/users/export-data?exportId=export-123', {
         method: 'GET',
       });
     });

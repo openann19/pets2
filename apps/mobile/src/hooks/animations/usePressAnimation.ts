@@ -25,14 +25,14 @@ export function usePressAnimation(
   const opacity = useSharedValue(1);
 
   const handlePressIn = useCallback(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     scale.value = withSpring(0.96, SPRING_CONFIGS[config]);
     opacity.value = withSpring(0.8, SPRING_CONFIGS[config]);
   }, [scale, opacity, config]);
 
   const handlePressOut = useCallback(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     scale.value = withSpring(1, SPRING_CONFIGS[config]);
     opacity.value = withSpring(1, SPRING_CONFIGS[config]);
