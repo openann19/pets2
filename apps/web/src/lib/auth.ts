@@ -11,7 +11,7 @@ const TOKEN_NAME = 'pawfectmatch_auth';
 export async function verifyAuth(request) {
     try {
         // Try to get token from cookies first
-        const cookieStore = cookies();
+        const cookieStore = await cookies();
         const tokenCookie = cookieStore.get(TOKEN_NAME)?.value;
         // If no cookie, try Authorization header (Bearer token)
         let token = tokenCookie;
