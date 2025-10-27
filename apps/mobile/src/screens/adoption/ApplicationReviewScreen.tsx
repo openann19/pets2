@@ -16,7 +16,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   ApplicationReview: { applicationId: string };
@@ -122,15 +123,15 @@ const ApplicationReviewScreen = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "Theme.colors.status.warning";
+        return theme.colors.warning;
       case "approved":
-        return "Theme.colors.status.success";
+        return theme.colors.success;
       case "rejected":
-        return "Theme.colors.status.error";
+        return theme.colors.danger;
       case "interview":
         return "#8b5cf6";
       default:
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
     }
   };
 
@@ -170,7 +171,7 @@ const ApplicationReviewScreen = ({
           </Text>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+             testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -189,13 +190,13 @@ const ApplicationReviewScreen = ({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+             testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
             <Ionicons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Application Review</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.headerButton}>
+            <TouchableOpacity style={styles.headerButton} testID="ApplicationReviewScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
               <Ionicons name="share-outline" size={20} color="#333" />
             </TouchableOpacity>
           </View>
@@ -250,19 +251,19 @@ const ApplicationReviewScreen = ({
           <BlurView intensity={20} style={styles.sectionCard}>
             <View style={styles.contactInfo}>
               <View style={styles.contactItem}>
-                <Ionicons name="mail" size={20} color="Theme.colors.status.info" />
+                <Ionicons name="mail" size={20} color={theme.colors.status.info} }/>
                 <Text style={styles.contactText}>
                   {application.applicantEmail}
                 </Text>
               </View>
               <View style={styles.contactItem}>
-                <Ionicons name="call" size={20} color="Theme.colors.status.success" />
+                <Ionicons name="call" size={20} color={theme.colors.success} }/>
                 <Text style={styles.contactText}>
                   {application.applicantPhone}
                 </Text>
               </View>
               <View style={styles.contactItem}>
-                <Ionicons name="location" size={20} color="Theme.colors.status.error" />
+                <Ionicons name="location" size={20} color={theme.colors.danger} }/>
                 <Text style={styles.contactText}>
                   {application.applicantLocation}
                 </Text>
@@ -352,22 +353,22 @@ const ApplicationReviewScreen = ({
           <View style={styles.actionsGrid}>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
+               testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleStatusChange("approved");
               }}
             >
               <LinearGradient
-                colors={["Theme.colors.status.success", "#047857"]}
+                colors={[theme.colors.success, "#047857"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="checkmark-circle" size={24} color="Theme.colors.neutral[0]" />
+                <Ionicons name="checkmark-circle" size={24} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.actionText}>Approve</Text>
               </LinearGradient>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
+               testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleStatusChange("interview");
               }}
             >
@@ -375,22 +376,22 @@ const ApplicationReviewScreen = ({
                 colors={["#8b5cf6", "#7c3aed"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="chatbubble" size={24} color="Theme.colors.neutral[0]" />
+                <Ionicons name="chatbubble" size={24} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.actionText}>Schedule Interview</Text>
               </LinearGradient>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
+               testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleStatusChange("rejected");
               }}
             >
               <LinearGradient
-                colors={["Theme.colors.status.error", "#dc2626"]}
+                colors={[theme.colors.danger, "#dc2626"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="close-circle" size={24} color="Theme.colors.neutral[0]" />
+                <Ionicons name="close-circle" size={24} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.actionText}>Reject</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -403,7 +404,7 @@ const ApplicationReviewScreen = ({
           <View style={styles.contactActions}>
             <TouchableOpacity
               style={styles.contactButton}
-              onPress={() => {
+               testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 Alert.alert(
                   "Email",
                   `Send email to ${application.applicantEmail}`,
@@ -411,32 +412,32 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["Theme.colors.status.info", "#1d4ed8"]}
+                colors={[theme.colors.status.info, "#1d4ed8"]}
                 style={styles.contactButtonGradient}
               >
-                <Ionicons name="mail" size={20} color="Theme.colors.neutral[0]" />
+                <Ionicons name="mail" size={20} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.contactButtonText}>Email</Text>
               </LinearGradient>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.contactButton}
-              onPress={() => {
+               testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 Alert.alert("Call", `Call ${application.applicantPhone}`);
               }}
             >
               <LinearGradient
-                colors={["Theme.colors.status.success", "#047857"]}
+                colors={[theme.colors.success, "#047857"]}
                 style={styles.contactButtonGradient}
               >
-                <Ionicons name="call" size={20} color="Theme.colors.neutral[0]" />
+                <Ionicons name="call" size={20} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.contactButtonText}>Call</Text>
               </LinearGradient>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.contactButton}
-              onPress={() => {
+               testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 Alert.alert(
                   "Message",
                   `Send message to ${application.applicantPhone}`,
@@ -447,7 +448,7 @@ const ApplicationReviewScreen = ({
                 colors={["#8b5cf6", "#7c3aed"]}
                 style={styles.contactButtonGradient}
               >
-                <Ionicons name="chatbubble" size={20} color="Theme.colors.neutral[0]" />
+                <Ionicons name="chatbubble" size={20} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.contactButtonText}>Message</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -544,11 +545,11 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   applicantName: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -561,7 +562,7 @@ const styles = StyleSheet.create({
   },
   applicationDate: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
   },
   section: {
@@ -570,7 +571,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 12,
   },
   sectionCard: {
@@ -588,7 +589,7 @@ const styles = StyleSheet.create({
   },
   contactText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     fontWeight: "500",
   },
   lifestyleGrid: {
@@ -606,19 +607,19 @@ const styles = StyleSheet.create({
   },
   lifestyleLabel: {
     fontSize: 12,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "500",
     marginBottom: 4,
   },
   lifestyleValue: {
     fontSize: 14,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     fontWeight: "600",
   },
   experienceText: {
     fontSize: 16,
     lineHeight: 24,
-    color: "Theme.colors.neutral[600]",
+    color: theme.colors.neutral[600],
   },
   questionsList: {
     gap: 16,
@@ -626,23 +627,23 @@ const styles = StyleSheet.create({
   questionItem: {
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[100]",
+    borderBottomColor: theme.colors.neutral[100],
   },
   questionText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 8,
   },
   answerText: {
     fontSize: 14,
     lineHeight: 20,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
   },
   notesText: {
     fontSize: 16,
     lineHeight: 24,
-    color: "Theme.colors.neutral[600]",
+    color: theme.colors.neutral[600],
     fontStyle: "italic",
   },
   actionsGrid: {
@@ -657,7 +658,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
     marginTop: 8,
@@ -676,7 +677,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   contactButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     fontWeight: "600",
     marginTop: 4,
@@ -686,7 +687,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
 });

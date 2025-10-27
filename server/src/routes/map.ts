@@ -9,7 +9,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -52,7 +52,7 @@ router.get('/stats', authenticateToken, async (req: Request, res: Response): Pro
         recentActivity
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Map stats error:', { error });
     res.status(500).json({
       success: false,
@@ -104,7 +104,7 @@ router.post('/nearby', authenticateToken, async (req: Request, res: Response): P
         }))
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Nearby pets error:', { error });
     res.status(500).json({
       success: false,
@@ -196,7 +196,7 @@ router.get('/pins', authenticateToken, async (req: Request, res: Response): Prom
       success: true,
       data: { pins }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Map pins error:', { error });
     res.status(500).json({
       success: false,

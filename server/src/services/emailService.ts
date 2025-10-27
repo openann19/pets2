@@ -28,6 +28,13 @@ export interface PremiumWelcomeData {
   appUrl: string;
 }
 
+export interface NewMessageData {
+  userName: string;
+  senderName: string;
+  message: string;
+  chatUrl: string;
+}
+
 // Email template function type
 export type EmailTemplateFunction<T = Record<string, any>> = (data: T) => {
   subject: string;

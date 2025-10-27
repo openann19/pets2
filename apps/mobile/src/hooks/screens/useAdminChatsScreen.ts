@@ -313,12 +313,12 @@ export function useAdminChatsScreen({
               {
                 text: "Cancel",
                 style: "cancel",
-                onPress: () => resolve(false),
+                onPress: () => { resolve(false); },
               },
               {
                 text: "Block",
                 style: "destructive",
-                onPress: () => resolve(true),
+                onPress: () => { resolve(true); },
               },
             ],
           );

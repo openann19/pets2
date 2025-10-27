@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -33,12 +33,12 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
   onAnimationComplete,
   duration = 2500,
 }) => {
-  // Animation values
-  const pawScale = useRef(new Animated.Value(0)).current;
-  const pawOpacity = useRef(new Animated.Value(0)).current;
-  const textOpacity = useRef(new Animated.Value(0)).current;
-  const textTranslateY = useRef(new Animated.Value(30)).current;
-  const backgroundOpacity = useRef(new Animated.Value(0)).current;
+  // Animation values (useState pattern to avoid refs during render)
+  const [pawScale] = useState(() => new Animated.Value(0));
+  const [pawOpacity] = useState(() => new Animated.Value(0));
+  const [textOpacity] = useState(() => new Animated.Value(0));
+  const [textTranslateY] = useState(() => new Animated.Value(30));
+  const [backgroundOpacity] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     // Start animation sequence
@@ -172,9 +172,9 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
  * Animated loading dots component
  */
 const LoadingDots: React.FC = () => {
-  const dot1 = useRef(new Animated.Value(0)).current;
-  const dot2 = useRef(new Animated.Value(0)).current;
-  const dot3 = useRef(new Animated.Value(0)).current;
+  const [dot1] = useState(() => new Animated.Value(0));
+  const [dot2] = useState(() => new Animated.Value(0));
+  const [dot3] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const createDotAnimation = (dot: Animated.Value, delay: number) => {

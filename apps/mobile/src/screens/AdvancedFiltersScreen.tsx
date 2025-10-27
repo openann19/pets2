@@ -13,6 +13,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useAdvancedFiltersScreen } from "../hooks/screens/useAdvancedFiltersScreen";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 interface AdvancedFiltersScreenProps {
@@ -53,7 +54,7 @@ function AdvancedFiltersScreen({
                 styles.filterCard,
                 filter.value && styles.filterCardActive,
               ])}
-              onPress={() => {
+               testID="AdvancedFiltersScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 toggleFilter(filter.id);
               }}
             >
@@ -102,7 +103,7 @@ function AdvancedFiltersScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="AdvancedFiltersScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                 () => {},
               );
@@ -114,7 +115,7 @@ function AdvancedFiltersScreen({
             </BlurView>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Advanced Filters</Text>
-          <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
+          <TouchableOpacity style={styles.resetButton}  testID="AdvancedFiltersScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={resetFilters}>
             <Text style={styles.resetButtonText}>Reset</Text>
           </TouchableOpacity>
         </View>
@@ -125,8 +126,8 @@ function AdvancedFiltersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color="Theme.colors.status.info"
-            />
+              color={theme.colors.status.info
+           } }/>
             <Text style={styles.infoText}>
               Advanced filters help you find pets that match your specific
               preferences and lifestyle.
@@ -139,7 +140,7 @@ function AdvancedFiltersScreen({
           {renderCategory("special", "Special Considerations")}
 
           {/* Save Button */}
-          <TouchableOpacity style={styles.saveButton} onPress={saveFilters}>
+          <TouchableOpacity style={styles.saveButton}  testID="AdvancedFiltersScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={saveFilters}>
             <BlurView intensity={20} style={styles.saveButtonBlur}>
               <Ionicons name="save-outline" size={20} color="white" />
               <Text style={styles.saveButtonText}>Save Filters</Text>
@@ -258,8 +259,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkboxActive: {
-    backgroundColor: "Theme.colors.status.success",
-    borderColor: "Theme.colors.status.success",
+    backgroundColor: theme.colors.success,
+    borderColor: theme.colors.success,
   },
   saveButton: {
     borderRadius: 16,

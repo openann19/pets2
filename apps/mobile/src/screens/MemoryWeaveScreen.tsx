@@ -19,7 +19,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../theme/Provider";
 import type { RootStackScreenProps } from "../navigation/types";
 import { useMemoryWeaveScreen } from "../hooks/screens/useMemoryWeaveScreen";
-import { Theme } from '../theme/unified-theme';
 
 // Import extracted components
 // import { MemoryCard, ConnectionPath } from "../components/library";
@@ -45,6 +44,9 @@ export default function MemoryWeaveScreen({
   navigation,
   route,
 }: MemoryWeaveScreenProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   // Use the extracted hook for all business logic
   const {
     memories,
@@ -160,7 +162,7 @@ export default function MemoryWeaveScreen({
               <View style={styles.memoryMetadata}>
                 {memory.metadata.location && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="location-outline" size={14} color="Theme.colors.neutral[0]" />
+                    <Ionicons name="location-outline" size={14} color={theme.colors.text} />
                     <Text style={styles.metadataText}>
                       {memory.metadata.location}
                     </Text>
@@ -168,7 +170,7 @@ export default function MemoryWeaveScreen({
                 )}
                 {memory.metadata.participants && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="people-outline" size={14} color="Theme.colors.neutral[0]" />
+                    <Ionicons name="people-outline" size={14} color={theme.colors.text} />
                     <Text style={styles.metadataText}>
                       {memory.metadata.participants.join(" & ")}
                     </Text>
@@ -230,11 +232,11 @@ export default function MemoryWeaveScreen({
               {
                 left: point.x - 6,
                 top: point.y - 6,
-                backgroundColor: index === currentIndex ? "#FF69B4" : "Theme.colors.neutral[0]",
+                backgroundColor: index === currentIndex ? "#FF69B4" : theme.colors.text,
                 transform: [{ scale: index === currentIndex ? 1.2 : 1 }],
               },
             ])}
-            onPress={() => {
+             testID="MemoryWeaveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               scrollToIndex(index);
             }}
           />
@@ -261,13 +263,13 @@ export default function MemoryWeaveScreen({
         >
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="MemoryWeaveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
             }}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
             </BlurView>
           </TouchableOpacity>
 
@@ -278,13 +280,13 @@ export default function MemoryWeaveScreen({
 
           <TouchableOpacity
             style={styles.shareButton}
-            onPress={() => {
+             testID="MemoryWeaveScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               // Share functionality
             }}
           >
             <BlurView intensity={20} style={styles.shareButtonBlur}>
-              <Ionicons name="share-outline" size={24} color="Theme.colors.neutral[0]" />
+              <Ionicons name="share-outline" size={24} color={theme.colors.text} />
             </BlurView>
           </TouchableOpacity>
         </Animated.View>
@@ -346,10 +348,10 @@ export default function MemoryWeaveScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[950]",
+    backgroundColor: theme.colors.bg,
   },
   header: {
     paddingHorizontal: 20,
@@ -379,7 +381,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.text,
   },
   headerSubtitle: {
     fontSize: 14,
@@ -428,7 +430,7 @@ const styles = StyleSheet.create({
   memoryTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.text,
     marginBottom: 4,
   },
   memoryTimestamp: {
@@ -471,7 +473,7 @@ const styles = StyleSheet.create({
   },
   memoryText: {
     fontSize: 18,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.text,
     lineHeight: 26,
     fontStyle: "italic",
     textAlign: "center",
@@ -491,7 +493,7 @@ const styles = StyleSheet.create({
   },
   metadataText: {
     fontSize: 12,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.text,
     marginLeft: 4,
   },
   pathContainer: {
@@ -516,7 +518,7 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "Theme.colors.neutral[0]",
+    borderColor: theme.colors.text,
   },
   counterContainer: {
     position: "absolute",
@@ -531,7 +533,7 @@ const styles = StyleSheet.create({
   },
   counterText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.text,
     fontWeight: "600",
   },
 });

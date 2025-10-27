@@ -1,0 +1,27 @@
+{
+  "id": "tpl_heartfelt_v1",
+  "name": "Heartfelt • Smooth Moments",
+  "version": 1,
+  "minClips": 4,
+  "maxClips": 10,
+  "canvas": { "w": 1080, "h": 1920, "fps": 30, "bg": "#000000" },
+  "music": { "bpm": 92, "offsetMs": 450 },
+  "timeline": [
+    { "t": 0,    "clip": 0, "inMs": 0, "durMs": 1400, "transOut": "fade" },
+    { "t": 1400, "clip": 1, "inMs": 0, "durMs": 1400, "transOut": "fade" },
+    { "t": 2800, "clip": 2, "inMs": 0, "durMs": 1500, "transOut": "slideLeft" },
+    { "t": 4300, "clip": 3, "inMs": 0, "durMs": 1600, "transOut": "fade" }
+  ],
+  "fx": [
+    { "t": 1200, "type": "vignette", "strength": 0.25 },
+    { "t": 2000, "type": "softLUT", "name": "pastel" }
+  ],
+  "overlays": [
+    { "t": 300,  "durMs": 2200, "type": "text", "key": "reels.title_heartfelt", "style": "lowerThird", "pos": ["50%","86%"] }
+  ],
+  "cta": { "variant": "follow", "t": -1200 },
+  "styles": {
+    "lowerThird": { "font": "Inter-SemiBold.ttf", "size": 40, "color": "#FFFFFF", "align": "center", "bg": "#00000066", "pad": 20, "radius": 24 }
+  }
+}
+

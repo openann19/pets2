@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { PetFormData } from "../../hooks/usePetForm";
 import type { FormFieldValue } from "../../types/forms";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../../theme/Provider';
 
 interface PetIntentHealthSectionProps {
   formData: PetFormData;
@@ -26,11 +26,93 @@ const healthOptions = [
   { key: "specialNeeds", label: "Has Special Needs" },
 ];
 
+const makeStyles = (theme: any) => StyleSheet.create({
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: theme.colors.neutral[900],
+    marginBottom: 16,
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: theme.colors.neutral[700],
+    marginBottom: 8,
+  },
+  errorText: {
+    fontSize: 14,
+    color: theme.colors.danger,
+    marginTop: 4,
+  },
+  intentOptions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  intentButton: {
+    flex: 1,
+    minWidth: 140,
+    alignItems: "center",
+    padding: 16,
+    borderWidth: 1,
+    borderColor: theme.colors.neutral[300],
+    borderRadius: 12,
+    backgroundColor: theme.colors.neutral[0],
+  },
+  intentButtonSelected: {
+    borderColor: theme.colors.secondary[500],
+    backgroundColor: theme.colors.neutral[100],
+  },
+  intentEmoji: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  intentText: {
+    fontSize: 16,
+    color: theme.colors.neutral[700],
+    fontWeight: "500",
+    flex: 1,
+  },
+  intentTextSelected: {
+    color: theme.colors.secondary[500],
+  },
+  healthOptions: {
+    gap: 12,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: theme.colors.neutral[300],
+    borderRadius: 4,
+    marginRight: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: theme.colors.secondary[500],
+    borderColor: theme.colors.secondary[500],
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    color: theme.colors.neutral[700],
+  },
+});
+
 export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
   formData,
   errors,
   onUpdateFormData,
 }) => {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Intent & Health</Text>
@@ -90,7 +172,7 @@ export const PetIntentHealthSection: React.FC<PetIntentHealthSectionProps> = ({
               >
                 {formData.healthInfo[
                   item.key as keyof typeof formData.healthInfo
-                ] && <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />}
+                ] && <Ionicons name="checkmark" size={16} color="#ffffff" />}
               </View>
               <Text style={styles.checkboxLabel}>{item.label}</Text>
             </TouchableOpacity>
@@ -105,78 +187,3 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 32,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "Theme.colors.neutral[900]",
-    marginBottom: 16,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
-    marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 14,
-    color: "Theme.colors.status.error",
-    marginTop: 4,
-  },
-  intentOptions: {
-    gap: 12,
-  },
-  intentButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "Theme.colors.neutral[300]",
-    borderRadius: 12,
-    backgroundColor: "Theme.colors.neutral[0]",
-  },
-  intentButtonSelected: {
-    borderColor: "Theme.colors.secondary[500]",
-    backgroundColor: "Theme.colors.neutral[100]",
-  },
-  intentEmoji: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  intentText: {
-    fontSize: 16,
-    color: "Theme.colors.neutral[700]",
-    fontWeight: "500",
-    flex: 1,
-  },
-  intentTextSelected: {
-    color: "Theme.colors.secondary[500]",
-  },
-  healthOptions: {
-    gap: 12,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: "Theme.colors.neutral[300]",
-    borderRadius: 4,
-    marginRight: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkboxChecked: {
-    backgroundColor: "Theme.colors.secondary[500]",
-    borderColor: "Theme.colors.secondary[500]",
-  },
-  checkboxLabel: {
-    fontSize: 16,
-    color: "Theme.colors.neutral[700]",
-  },
-});

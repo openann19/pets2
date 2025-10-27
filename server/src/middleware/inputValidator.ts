@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import { Request, Response, NextFunction } from 'express';
-import { Schema } from 'joi';
+import type { Request, Response, NextFunction } from 'express';
+import type { Schema } from 'joi';
 
 // Custom validation middleware using Joi
 export const validateRequest = (schema: Schema) => {
@@ -79,5 +79,3 @@ export const schemas = {
     isActive: Joi.boolean().optional()
   })
 };
-
-export { validateRequest, schemas };

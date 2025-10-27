@@ -1,30 +1,62 @@
-import { Request, Response } from 'express';
-import User, { IUserDocument } from '../models/User';
+import type { Request, Response } from 'express';
+import User from '../models/User';
 import Pet from '../models/Pet';
 import Match from '../models/Match';
 import { deleteFromCloudinary, uploadToCloudinary } from '../services/cloudinaryService';
 import logger from '../utils/logger';
+import type { HydratedDocument } from 'mongoose';
+import type { IUser } from '../types/mongoose';
+import type { IPetDocument } from '../types/mongoose.d';
+
+type IUserDocument = HydratedDocument<IUser>;
 
 /**
  * Request interfaces
  */
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest {
   userId: string;
-  user?: IUserDocument;
 }
 
 interface GetCompleteProfileRequest extends AuthenticatedRequest {}
 
+interface LocationData {
+  type?: 'Point';
+  coordinates?: [number, number];
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+}
+
+interface UserPreferences {
+  maxDistance?: number;
+  ageRange?: { min: number; max: number };
+  species?: string[];
+  intents?: string[];
+  notifications?: Record<string, boolean>;
+  privacy?: Record<string, boolean>;
+}
+
+interface SocialLinks {
+  twitter?: string;
+  instagram?: string;
+  facebook?: string;
+  linkedin?: string;
+}
+
 interface UpdateAdvancedProfileRequest extends AuthenticatedRequest {
   body: {
     dateOfBirth?: string;
-    location?: any;
-    preferences?: any;
+    location?: LocationData;
+    preferences?: UserPreferences;
     firstName?: string;
     lastName?: string;
     bio?: string;
     phone?: string;
-    socialLinks?: any;
+    socialLinks?: SocialLinks;
     website?: string;
     occupation?: string;
     education?: string;
@@ -32,6 +64,13 @@ interface UpdateAdvancedProfileRequest extends AuthenticatedRequest {
     languages?: string[];
     relationshipStatus?: string;
   };
+}
+
+interface DataSharingSettings {
+  analytics?: boolean;
+  marketing?: boolean;
+  thirdParty?: boolean;
+  personalization?: boolean;
 }
 
 interface UpdatePrivacySettingsRequest extends AuthenticatedRequest {
@@ -43,7 +82,7 @@ interface UpdatePrivacySettingsRequest extends AuthenticatedRequest {
     showPets?: boolean;
     showLocation?: boolean;
     allowPetDiscovery?: boolean;
-    dataSharing?: any;
+    dataSharing?: DataSharingSettings;
   };
 }
 
@@ -61,8 +100,20 @@ interface UpdateNotificationPreferencesRequest extends AuthenticatedRequest {
   };
 }
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+  destination?: string;
+  filename?: string;
+  path?: string;
+}
+
 interface UploadProfilePhotosRequest extends AuthenticatedRequest {
-  files?: any[];
+  files?: Express.Multer.File[] | Express.Multer.File[][];
 }
 
 interface DeleteProfilePhotoRequest extends AuthenticatedRequest {
@@ -91,9 +142,40 @@ interface DeactivateAccountRequest extends AuthenticatedRequest {
 interface ReactivateAccountRequest extends AuthenticatedRequest {}
 
 /**
+ * Photo interface for user profile photos
+ */
+interface UserPhoto {
+  _id?: string;
+  url: string;
+  publicId: string;
+  uploadedAt: Date;
+  isPrimary: boolean;
+}
+
+/**
+ * Update payload interface for profile updates
+ */
+interface ProfileUpdatePayload {
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+  dateOfBirth?: string;
+  phone?: string;
+  location?: LocationData;
+  socialLinks?: SocialLinks;
+  website?: string;
+  occupation?: string;
+  education?: string;
+  interests?: string[];
+  languages?: string[];
+  relationshipStatus?: string;
+  preferences?: UserPreferences;
+}
+
+/**
  * Helper function to calculate profile completeness score
  */
-function calculateProfileCompleteness(user: IUserDocument): number {
+function calculateProfileCompleteness(user: IUserDocument | Record<string, unknown>): number {
   const fields = [
     'firstName', 'lastName', 'bio', 'avatar', 'dateOfBirth',
     'phone', 'location', 'preferences'
@@ -101,9 +183,13 @@ function calculateProfileCompleteness(user: IUserDocument): number {
 
   let completed = 0;
   fields.forEach(field => {
-    if (user[field as keyof IUserDocument] && (user[field as keyof IUserDocument] as any) !== '') {
-      if (field === 'location' && user.location?.coordinates?.[0] !== 0) {
-        completed++;
+    const fieldValue = (user as Record<string, unknown>)[field];
+    if (fieldValue && fieldValue !== '') {
+      if (field === 'location') {
+        const location = fieldValue as { coordinates?: [number, number] };
+        if (location.coordinates && location.coordinates[0] !== 0) {
+          completed++;
+        }
       } else if (field !== 'location') {
         completed++;
       }
@@ -111,7 +197,8 @@ function calculateProfileCompleteness(user: IUserDocument): number {
   });
 
   // Add pets to completeness
-  if (user.pets && user.pets.length > 0) {
+  const pets = (user as Record<string, unknown>)['pets'];
+  if (pets && Array.isArray(pets) && pets.length > 0) {
     completed++;
   }
 
@@ -121,8 +208,14 @@ function calculateProfileCompleteness(user: IUserDocument): number {
 /**
  * Get user's recent activity
  */
-async function getUserRecentActivity(userId: string): Promise<any[]> {
-  const activities: any[] = [];
+interface ActivityItem {
+  type: string;
+  description: string;
+  timestamp: Date;
+}
+
+async function getUserRecentActivity(userId: string): Promise<ActivityItem[]> {
+  const activities: ActivityItem[] = [];
 
   // Recent pets created
   const recentPets = await Pet.find({ owner: userId })
@@ -160,14 +253,21 @@ async function getUserRecentActivity(userId: string): Promise<any[]> {
 /**
  * Get user compatibility statistics
  */
-async function getUserCompatibilityStats(userId: string): Promise<any> {
+interface CompatibilityStats {
+  average: number;
+  highest: number;
+  lowest: number;
+  total: number;
+}
+
+async function getUserCompatibilityStats(userId: string): Promise<CompatibilityStats | null> {
   const matches = await Match.find({
     $or: [{ user1: userId }, { user2: userId }]
   }).select('compatibilityScore');
 
   if (matches.length === 0) return null;
 
-  const scores = matches.map((m: any) => m.compatibilityScore).filter((score: any) => score != null);
+  const scores = matches.map((m) => m.compatibilityScore).filter((score: number | undefined) => score != null) as number[];
   const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
   return {
@@ -207,7 +307,7 @@ export const getCompleteProfile = async (
     }
 
     // Calculate profile completeness score
-    const completenessScore = calculateProfileCompleteness(user as IUserDocument);
+    const completenessScore = calculateProfileCompleteness(user);
 
     // Get recent activity
     const recentActivity = await getUserRecentActivity(req.userId);
@@ -234,7 +334,7 @@ export const getCompleteProfile = async (
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Get complete profile error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -275,7 +375,7 @@ export const updateAdvancedProfile = async (
     }
 
     // Sanitize and update profile
-    const updates: any = {};
+    const updates: ProfileUpdatePayload = {};
     const allowedFields = [
       'firstName', 'lastName', 'bio', 'dateOfBirth', 'phone',
       'socialLinks', 'website', 'occupation', 'education',
@@ -284,18 +384,18 @@ export const updateAdvancedProfile = async (
 
     allowedFields.forEach(field => {
       if (req.body[field as keyof typeof req.body] !== undefined) {
-        updates[field] = req.body[field as keyof typeof req.body];
+        (updates as Record<string, unknown>)[field] = req.body[field as keyof typeof req.body];
       }
     });
 
     // Update location if provided
     if (location) {
-      updates.location = { ...user.location, ...location };
+      updates.location = { ...user.location, ...location } as LocationData;
     }
 
     // Update preferences if provided
     if (preferences) {
-      updates.preferences = { ...user.preferences, ...preferences };
+      updates.preferences = { ...user.preferences, ...preferences } as UserPreferences;
     }
 
     // Update user
@@ -303,7 +403,7 @@ export const updateAdvancedProfile = async (
     await user.save();
 
     // Calculate new completeness score
-    const completenessScore = calculateProfileCompleteness(user);
+    const completenessScore = calculateProfileCompleteness(user as unknown as IUserDocument);
 
     res.json({
       success: true,
@@ -314,7 +414,7 @@ export const updateAdvancedProfile = async (
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Update advanced profile error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -370,7 +470,7 @@ export const updatePrivacySettings = async (
       data: { privacySettings: (user as any).privacySettings }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Update privacy settings error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -407,17 +507,21 @@ export const updateNotificationPreferences = async (
       return;
     }
 
+    if (!user.preferences) {
+      user.preferences = {
+        maxDistance: 50,
+        ageRange: { min: 0, max: 20 },
+        species: [],
+        intents: [],
+        notifications: { email: true, push: true, matches: true, messages: true }
+      };
+    }
     user.preferences.notifications = {
       ...user.preferences.notifications,
       email: email !== false,
       push: push !== false,
       matches: matches !== false,
-      messages: messages !== false,
-      likes: likes !== false,
-      comments: comments !== false,
-      reminders: reminders !== false,
-      marketing: marketing !== false,
-      system: system !== false
+      messages: messages !== false
     };
 
     await user.save();
@@ -428,7 +532,7 @@ export const updateNotificationPreferences = async (
       data: { notifications: user.preferences.notifications }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Update notification preferences error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -471,21 +575,30 @@ export const uploadProfilePhotos = async (
       return;
     }
 
-    const uploadedPhotos: any[] = [];
+    const uploadedPhotos: UserPhoto[] = [];
 
-    for (const file of req.files) {
+    // Normalize files array (multer can return different structures)
+    const files = Array.isArray(req.files) ? req.files : [];
+    
+    for (const file of files) {
+      // Type guard to ensure file has buffer property
+      const multerFile = file as Express.Multer.File & { buffer: Buffer };
+      if (!multerFile.buffer) {
+        logger.error('File missing buffer', { originalname: multerFile.originalname });
+        continue;
+      }
       try {
-        const uploadResult = await uploadToCloudinary(file.buffer, 'profiles');
+        const uploadResult = await uploadToCloudinary(multerFile.buffer, { folder: 'profiles' });
         uploadedPhotos.push({
           url: uploadResult.secure_url,
           publicId: uploadResult.public_id,
-          uploadedAt: new Date(),
-          isPrimary: currentPhotoCount === 0 && uploadedPhotos.length === 0
-        });
-      } catch (uploadError) {
-        logger.error('Profile photo upload error', { error: uploadError, userId: req.userId });
-      }
+        uploadedAt: new Date(),
+        isPrimary: currentPhotoCount === 0 && uploadedPhotos.length === 0
+      });
+    } catch (uploadError: unknown) {
+      logger.error('Profile photo upload error', { error: uploadError, userId: req.userId });
     }
+  }
 
     // Add photos to user profile
     (user as any).photos = (user as any).photos || [];
@@ -502,7 +615,7 @@ export const uploadProfilePhotos = async (
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Upload profile photos error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -529,7 +642,7 @@ export const deleteProfilePhoto = async (
       return;
     }
 
-    const photoIndex = (user as any).photos?.findIndex((photo: any) => photo._id.toString() === photoId);
+    const photoIndex = (user as any).photos?.findIndex((photo: UserPhoto) => photo._id?.toString() === photoId);
     if (photoIndex === undefined || photoIndex === -1) {
       res.status(404).json({
         success: false,
@@ -544,7 +657,7 @@ export const deleteProfilePhoto = async (
     if (photo.publicId) {
       try {
         await deleteFromCloudinary(photo.publicId);
-      } catch (deleteError) {
+      } catch (deleteError: unknown) {
         logger.error('Profile photo deletion error', { error: deleteError, userId: req.userId });
       }
     }
@@ -565,7 +678,7 @@ export const deleteProfilePhoto = async (
       data: { photos: (user as any).photos }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Delete profile photo error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -593,12 +706,12 @@ export const setPrimaryPhoto = async (
     }
 
     // Reset all photos to non-primary
-    (user as any).photos?.forEach((photo: any) => {
+    (user as any).photos?.forEach((photo: UserPhoto) => {
       photo.isPrimary = false;
     });
 
     // Set the specified photo as primary
-    const photo = (user as any).photos?.find((photo: any) => photo._id.toString() === photoId);
+    const photo = (user as any).photos?.find((photo: UserPhoto) => photo._id?.toString() === photoId);
     if (photo) {
       photo.isPrimary = true;
     } else {
@@ -617,7 +730,7 @@ export const setPrimaryPhoto = async (
       data: { photos: (user as any).photos }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Set primary photo error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -646,7 +759,7 @@ export const getUserAnalytics = async (
     const analytics = {
       profile: {
         views: user.analytics?.profileViews || 0,
-        completeness: calculateProfileCompleteness(user),
+        completeness: calculateProfileCompleteness(user as unknown as IUserDocument),
         lastActive: user.analytics?.lastActive,
         joinDate: user.createdAt
       },
@@ -682,7 +795,7 @@ export const getUserAnalytics = async (
       data: analytics
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Get user analytics error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -724,7 +837,7 @@ export const exportUserData = async (
         createdAt: (user as any).createdAt,
         lastActive: (user as any).analytics?.lastActive
       },
-      pets: (user as any).pets?.map((pet: any) => ({
+      pets: (user as any).pets?.map((pet: IPetDocument) => ({
         name: pet.name,
         species: pet.species,
         breed: pet.breed,
@@ -733,7 +846,7 @@ export const exportUserData = async (
         personalityTags: pet.personalityTags,
         createdAt: pet.createdAt
       })) || [],
-      matches: (user as any).matches?.map((match: any) => ({
+      matches: (user as any).matches?.map((match: { compatibilityScore?: number; createdAt?: Date }) => ({
         compatibilityScore: match.compatibilityScore,
         createdAt: match.createdAt
       })) || [],
@@ -754,7 +867,7 @@ export const exportUserData = async (
 
     res.json(exportData);
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Export user data error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -783,7 +896,7 @@ export const deactivateAccount = async (
 
     // Mark as inactive
     user.isActive = false;
-    user.status = 'inactive';
+    user.status = 'suspended';
     (user as any).deactivatedAt = new Date();
     (user as any).deactivationReason = reason;
     (user as any).deactivationFeedback = feedback;
@@ -804,7 +917,7 @@ export const deactivateAccount = async (
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Deactivate account error', { error, userId: req.userId });
     res.status(500).json({
       success: false,
@@ -860,7 +973,7 @@ export const reactivateAccount = async (
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Reactivate account error', { error, userId: req.userId });
     res.status(500).json({
       success: false,

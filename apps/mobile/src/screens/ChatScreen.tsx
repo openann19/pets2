@@ -18,12 +18,14 @@ import ReactionBarMagnetic from "../components/chat/ReactionBarMagnetic";
 import { useChatScreen } from "../hooks/screens/useChatScreen";
 import { useTheme } from "../theme/Provider";
 import type { RootStackScreenProps } from "../navigation/types";
+import { useTranslation } from 'react-i18next';
 
 type ChatScreenProps = RootStackScreenProps<"Chat">;
 
 export default function ChatScreen({ navigation, route }: ChatScreenProps) {
   const { matchId, petName } = route.params;
   const { isDark } = useTheme();
+  const { t } = useTranslation('chat');
 
   const {
     inputText,
@@ -53,7 +55,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
         <AdvancedHeader
           {...HeaderConfigs.glass({
             title: petName,
-            subtitle: data.isOnline ? "Online now" : "Last seen recently",
+            subtitle: data.isOnline ? t('online_now') : t('last_seen_recently'),
             showBackButton: true,
             onBackPress: () => navigation.goBack(),
             rightButtons: [
@@ -93,7 +95,7 @@ export default function ChatScreen({ navigation, route }: ChatScreenProps) {
       >
         <MessageList
           messages={data.messages}
-          typingUsers={data.otherUserTyping ? ["Other User"] : []}
+          typingUsers={data.otherUserTyping ? [t('other_user_typing')] : []}
           isOnline={data.isOnline}
           currentUserId="current-user"
           matchId={matchId}

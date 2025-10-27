@@ -2,7 +2,7 @@ import React, { type ComponentProps } from "react";
 import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Colors, Spacing } from "../../../animation";
+import { Colors, Spacing } from "../../../styles/GlobalStyles";
 
 /**
  * EliteEmptyState Component
@@ -20,6 +20,11 @@ export const EliteEmptyState: React.FC<EliteEmptyStateProps> = ({
   title,
   message,
 }) => {
+  // Use neutral colors from GlobalStyles
+  const gray400 = typeof Colors.neutral === 'object' && Colors.neutral?.[400] ? Colors.neutral[400] : "#9ca3af";
+  const gray600 = typeof Colors.neutral === 'object' && Colors.neutral?.[600] ? Colors.neutral[600] : "#4b5563";
+  const gray700 = typeof Colors.neutral === 'object' && Colors.neutral?.[700] ? Colors.neutral[700] : "#374151";
+  
   return (
     <View
       style={{
@@ -29,16 +34,16 @@ export const EliteEmptyState: React.FC<EliteEmptyStateProps> = ({
       }}
     >
       <Ionicons
-        name={icon as ComponentProps<typeof Ionicons>["name"]}
+        name={icon}
         size={64}
-        color={Colors.gray400}
+        color={gray400}
       />
       <Text
         style={{
           fontSize: 20,
           fontWeight: "bold",
           marginTop: Spacing.lg,
-          color: Colors.gray700,
+          color: gray700,
         }}
       >
         {title}
@@ -47,7 +52,7 @@ export const EliteEmptyState: React.FC<EliteEmptyStateProps> = ({
         style={{
           fontSize: 14,
           marginTop: Spacing.sm,
-          color: Colors.gray600,
+          color: gray600,
           textAlign: "center",
         }}
       >

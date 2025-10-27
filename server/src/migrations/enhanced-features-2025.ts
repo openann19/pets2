@@ -46,9 +46,12 @@ const migration = {
     try {
       // Drop the new collections
       const db = mongoose.connection.db;
-      await db.dropCollection('biometriccredentials');
-      await db.dropCollection('leaderboardscores');
-      await db.dropCollection('notificationpreferences');
+      if (!db) {
+        throw new Error('Database connection not established');
+      }
+      await db.dropCollection('biometriccredentials').catch(() => {}); // Ignore if collection doesn't exist
+      await db.dropCollection('leaderboardscores').catch(() => {});
+      await db.dropCollection('notificationpreferences').catch(() => {});
 
       logger.info('✅ Rollback completed successfully');
 
@@ -68,6 +71,9 @@ async function createIndexes(): Promise<void> {
   logger.info('Creating database indexes...');
 
   const db = mongoose.connection.db;
+  if (!db) {
+    throw new Error('Database connection not established');
+  }
 
   // Biometric credentials indexes
   await db.collection('biometriccredentials').createIndex(
@@ -120,10 +126,18 @@ async function updateUserModel(): Promise<void> {
   logger.info('Updating User model schema...');
 
   const db = mongoose.connection.db;
+  if (!db) {
+    throw new Error('Database connection not established');
+  }
   const collection = db.collection('users');
 
   // Add new fields to existing users if they don't exist
-  const bulkOps: any[] = [];
+  const bulkOps: Array<{
+    updateOne: {
+      filter: { _id: unknown };
+      update: { $set?: Record<string, unknown> };
+    };
+  }> = [];
 
   // Find users that need updating
   const users = await collection.find({
@@ -135,7 +149,7 @@ async function updateUserModel(): Promise<void> {
   }).toArray();
 
   for (const user of users) {
-    const update: any = {};
+    const update: { $set?: Record<string, unknown> } = {};
 
     // Add default notification preferences
     if (!user.notificationPreferences) {

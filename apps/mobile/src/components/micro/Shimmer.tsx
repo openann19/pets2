@@ -15,7 +15,7 @@ export default function Shimmer({ width = undefined, height = 16, radius = 8 }: 
   useEffect(() => {
     const loop = () => {
       t.value = 0;
-      t.value = withTiming(1, { duration: 1100 }, () => loop());
+      t.value = withTiming(1, { duration: 1100 }, () => { loop(); });
     };
     loop();
   }, []);

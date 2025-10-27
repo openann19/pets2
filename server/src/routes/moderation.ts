@@ -1,4 +1,5 @@
-import express, { type Request, type Response, Router } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import {
   createReport,
@@ -6,10 +7,10 @@ import {
   unblockUser,
   muteUser,
   unmuteUser,
-  getMyModerationState
+  getModerationState
 } from '../controllers/moderationController';
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // All routes require authentication
 router.use(authenticateToken);
@@ -33,7 +34,7 @@ router.post('/mute', wrapHandler(muteUser));
 router.delete('/mute/:mutedUserId', wrapHandler(unmuteUser));
 
 // Get current user's blocks and mutes
-router.get('/me', wrapHandler(getMyModerationState));
+router.get('/me', wrapHandler(getModerationState));
 
 export default router;
 

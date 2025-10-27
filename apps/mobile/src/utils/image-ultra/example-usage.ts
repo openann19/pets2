@@ -64,7 +64,7 @@ export async function webpThumbnailExample(originalBlob: Blob) {
   );
 
   const webpThumb = await new Promise<Blob>(resolve => 
-    thumbCanvas.toBlob(blob => resolve(blob!), "image/webp", 0.8)
+    { thumbCanvas.toBlob(blob => { resolve(blob!); }, "image/webp", 0.8); }
   );
 
   return webpThumb;
@@ -138,7 +138,7 @@ export async function fullPipelineExample(fileBlob: Blob) {
   thumbCanvas.height = Math.round((result.canvas.height / result.canvas.width) * 512);
   thumbCanvas.getContext("2d")!.drawImage(result.canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
   const webpThumb = await new Promise<Blob>(resolve => 
-    thumbCanvas.toBlob(blob => resolve(blob!), "image/webp", 0.8)
+    { thumbCanvas.toBlob(blob => { resolve(blob!); }, "image/webp", 0.8); }
   );
 
   return {
@@ -270,7 +270,7 @@ export async function individualProFeaturesExample(fileBlob: Blob) {
   );
   
   const blob = await new Promise<Blob>(resolve =>
-    out.toBlob(b => resolve(b!), "image/jpeg", 0.9)
+    { out.toBlob(b => { resolve(b!); }, "image/jpeg", 0.9); }
   );
   
   return blob;

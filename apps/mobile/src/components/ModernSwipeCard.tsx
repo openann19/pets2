@@ -29,7 +29,6 @@ import Animated, {
 
 import { useEntranceAnimation } from "../hooks/useUnifiedAnimations";
 import { useSwipeGesturesRNGH } from "../hooks/useSwipeGesturesRNGH";
-import { Theme } from "../theme/unified-theme";
 import { useTheme } from "../theme/Provider";
 import { DoubleTapLikePlus } from "./Gestures/DoubleTapLikePlus";
 import LikeArbitrator from "./Gestures/LikeArbitrator";
@@ -50,20 +49,20 @@ interface Pet {
   breed: string;
   photos: string[];
   bio: string;
+  tags: string[];
   distance: number;
   compatibility: number;
   isVerified: boolean;
-  tags: string[];
 }
 
 interface SwipeCardProps {
   pet: Pet;
-  onSwipeLeft: (pet: Pet) => void;
-  onSwipeRight: (pet: Pet) => void;
-  onSwipeUp: (pet: Pet) => void;
+  onSwipeLeft?: () => void;
+  onSwipeRight?: () => void;
+  onSwipeUp?: () => void;
   isTopCard?: boolean;
   disabled?: boolean;
-  style?: ViewStyle | ViewStyle[];
+  style?: AnimatedStyleProp<ViewStyle>;
 }
 
 // === MAIN COMPONENT ===
@@ -76,7 +75,9 @@ function ModernSwipeCardComponent({
   disabled = false,
   style,
 }: SwipeCardProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors, spacing, radius, typography, shadows } = theme;
+  const styles = makeStyles(theme);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const { startInteraction, endInteraction } = useDoubleTapMetrics();
   const [isAccessibilityEnabled, setIsAccessibilityEnabled] = useState(false);
@@ -196,9 +197,9 @@ function ModernSwipeCardComponent({
   // Swipe gesture hook with RNGH
   const { gesture, cardStyle: panStyle, likeStyle, nopeStyle, superStyle, tx: translateX, ty: translateY } =
     useSwipeGesturesRNGH({
-      onSwipeLeft: () => handleSwipeLeft(),
-      onSwipeRight: () => handleSwipeRight(),
-      onSwipeUp: () => handleSwipeUp(),
+      onSwipeLeft: () => { handleSwipeLeft(); },
+      onSwipeRight: () => { handleSwipeRight(); },
+      onSwipeUp: () => { handleSwipeUp(); },
       swipeThreshold: 0.30,
       enabled: !disabled && isTopCard,
     });
@@ -295,7 +296,7 @@ function ModernSwipeCardComponent({
                       {
                         backgroundColor:
                           index === currentPhotoIndex
-                            ? Theme.colors.neutral[0]
+                            ? colors.textInverse
                             : "rgba(255,255,255,0.4)",
                       },
                     ])}
@@ -315,7 +316,7 @@ function ModernSwipeCardComponent({
                   <Ionicons
                     name="checkmark-circle"
                     size={24}
-                    color={Theme.colors.status.success}
+                    color={colors.success}}
                   />
                 </View>
               )}
@@ -391,7 +392,7 @@ function ModernSwipeCardComponent({
                     styles.compatibilityFill,
                     {
                       width: `${pet.compatibility}%`,
-                      backgroundColor: Theme.colors.primary[500],
+                      backgroundColor: colors.primary,
                     },
                   ])}
                 />
@@ -408,13 +409,13 @@ function ModernSwipeCardComponent({
                   key={index}
                   style={StyleSheet.flatten([
                     styles.tag,
-                    { backgroundColor: `${Theme.colors.primary[500]}20` },
+                    { backgroundColor: `${colors.primary}20` },
                   ])}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.tagText,
-                      { color: Theme.colors.primary[500] },
+                      { color: colors.primary },
                     ])}
                   >
                     {tag}
@@ -440,182 +441,6 @@ function ModernSwipeCardComponent({
 const ModernSwipeCard = React.memo(ModernSwipeCardComponent);
 
 // === STYLES ===
-const styles = StyleSheet.create({
-  card: {
-    position: "absolute",
-    width: SCREEN_WIDTH - Theme.spacing["4xl"],
-    height: SCREEN_HEIGHT * 0.75,
-    borderRadius: Theme.borderRadius["2xl"],
-    backgroundColor: Theme.colors.neutral[0],
-    ...Theme.shadows.depth.lg,
-  },
-  cardDisabled: {
-    opacity: 0.6,
-  },
-  photoContainer: {
-    flex: 1,
-    borderRadius: Theme.borderRadius["2xl"],
-    overflow: "hidden",
-    position: "relative",
-  },
-  photo: {
-    width: "100%",
-    height: "100%",
-  },
-  photoIndicators: {
-    position: "absolute",
-    top: Theme.spacing.xl,
-    left: Theme.spacing.xl,
-    right: Theme.spacing.xl,
-    flexDirection: "row",
-    gap: Theme.spacing.sm,
-  },
-  photoDot: {
-    flex: 1,
-    height: 3,
-    borderRadius: 2,
-  },
-  photoNavigation: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: "row",
-  },
-  photoNavLeft: {
-    flex: 1,
-  },
-  photoNavRight: {
-    flex: 1,
-  },
-  verifiedBadge: {
-    position: "absolute",
-    top: Theme.spacing.xl,
-    right: Theme.spacing.xl,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    borderRadius: Theme.borderRadius.lg,
-    padding: Theme.spacing.xs,
-  },
-  distanceBadge: {
-    position: "absolute",
-    bottom: 120,
-    right: Theme.spacing.xl,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    borderRadius: Theme.borderRadius.full,
-  },
-  distanceText: {
-    color: Theme.colors.neutral[0],
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: Theme.borderRadius["2xl"],
-  },
-  likeOverlay: {
-    backgroundColor: "rgba(16, 185, 129, 0.8)",
-  },
-  nopeOverlay: {
-    backgroundColor: "rgba(239, 68, 68, 0.8)",
-  },
-  superLikeOverlay: {
-    backgroundColor: "rgba(14, 165, 233, 0.8)",
-  },
-  overlayText: {
-    color: Theme.colors.neutral[0],
-    fontSize: Theme.typography.fontSize["5xl"],
-    fontWeight: Theme.typography.fontWeight.black,
-    textAlign: "center",
-    textShadowColor: "rgba(0,0,0,0.5)",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
-  infoGradient: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 200,
-    borderBottomLeftRadius: Theme.borderRadius["2xl"],
-    borderBottomRightRadius: Theme.borderRadius["2xl"],
-  },
-  infoContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    padding: Theme.spacing.xl,
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    marginBottom: Theme.spacing.xs,
-  },
-  name: {
-    fontSize: Theme.typography.fontSize["3xl"],
-    fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.neutral[0],
-    marginRight: Theme.spacing.sm,
-  },
-  age: {
-    fontSize: Theme.typography.fontSize["2xl"],
-    fontWeight: Theme.typography.fontWeight.normal,
-    color: Theme.colors.neutral[0],
-  },
-  breed: {
-    fontSize: Theme.typography.fontSize.lg,
-    color: "rgba(255,255,255,0.9)",
-    marginBottom: Theme.spacing.sm,
-  },
-  compatibilityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Theme.spacing.sm,
-  },
-  compatibilityBar: {
-    flex: 1,
-    height: 4,
-    backgroundColor: "rgba(255,255,255,0.3)",
-    borderRadius: 2,
-    marginRight: Theme.spacing.sm,
-  },
-  compatibilityFill: {
-    height: "100%",
-    borderRadius: 2,
-  },
-  compatibilityText: {
-    color: Theme.colors.neutral[0],
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    marginBottom: Theme.spacing.sm,
-    gap: Theme.spacing.sm,
-  },
-  tag: {
-    paddingHorizontal: Theme.spacing.sm,
-    paddingVertical: Theme.spacing.xs,
-    borderRadius: Theme.borderRadius.md,
-  },
-  tagText: {
-    fontSize: Theme.typography.fontSize.sm,
-    fontWeight: Theme.typography.fontWeight.semibold,
-  },
-  bio: {
-    fontSize: Theme.typography.fontSize.sm,
-    color: "rgba(255,255,255,0.9)",
-    lineHeight:
-      Theme.typography.fontSize.sm * Theme.typography.lineHeight.normal,
-  },
-});
 
 // Display name for debugging
 ModernSwipeCard.displayName = "ModernSwipeCard";

@@ -113,7 +113,7 @@ const normalizeListing = (listing: unknown): PetListing => {
     featured: typeof item.featured === "boolean" ? item.featured : false,
     listedAt:
       typeof item.listedAt === "string"
-        ? (item.listedAt as string)
+        ? (item.listedAt)
         : new Date().toISOString(),
   };
 };
@@ -139,7 +139,7 @@ const normalizeApplication = (application: unknown): AdoptionApplication => {
         : "pending",
     submittedAt:
       typeof item.submittedAt === "string"
-        ? (item.submittedAt as string)
+        ? (item.submittedAt)
         : new Date().toISOString(),
     experience:
       (item.experience as string) ??
@@ -274,19 +274,19 @@ export const useAdoptionManagerScreen = (): UseAdoptionManagerScreenReturn => {
   const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case "active":
-        return "Theme.colors.status.success";
+        return "#10b981"; // success color
       case "pending":
-        return "Theme.colors.status.warning";
+        return "#f59e0b"; // warning color
       case "adopted":
         return "#8b5cf6";
       case "paused":
-        return "Theme.colors.neutral[500]";
+        return "#6b7280"; // neutral[500]
       case "approved":
-        return "Theme.colors.status.success";
+        return "#10b981"; // success color
       case "rejected":
-        return "Theme.colors.status.error";
+        return "#ef4444"; // error color
       default:
-        return "Theme.colors.neutral[500]";
+        return "#6b7280"; // neutral[500]
     }
   }, []);
 

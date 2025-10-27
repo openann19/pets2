@@ -46,8 +46,12 @@ export interface DataExportRequest {
 export interface DataExportResponse {
   success: boolean;
   exportId?: string;
+  url?: string;
   estimatedTime?: string;
+  estimatedCompletion?: string;
   message?: string;
+  format?: string;
+  expiresAt?: string;
   exportData?: {
     profile?: unknown;
     pets?: unknown[];
@@ -67,9 +71,9 @@ export const deleteAccount = async (
 ): Promise<DeleteAccountResponse> => {
   try {
     const response = await request<DeleteAccountResponse>(
-      '/api/account/delete',
+      '/api/users/delete-account',
       {
-        method: 'POST',
+        method: 'DELETE',
         body: {
           password: data.password,
           reason: data.reason,
@@ -80,13 +84,17 @@ export const deleteAccount = async (
 
     return response;
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'SERVER_ERROR';
     logger.error('Delete account error:', error instanceof Error ? error : new Error(String(error)));
+    
+    // Extract error code if available
+    const errorObj = error as { code?: string; message?: string };
+    const errorCode = errorObj?.code || 'SERVER_ERROR';
+    const errorMessage = errorObj?.message || 'Failed to delete account';
     
     return {
       success: false,
-      message: 'Failed to delete account',
-      error: errorMessage,
+      message: errorMessage,
+      error: errorCode,
     };
   }
 };
@@ -100,14 +108,16 @@ export const cancelDeletion = async (): Promise<{
 }> => {
   try {
     const response = await request<{ success: boolean; message?: string }>(
-      '/api/account/cancel-deletion',
+      '/api/users/cancel-deletion',
       { method: 'POST' }
     );
 
     return response;
   } catch (error: unknown) {
+    const errorInstance = error instanceof Error ? error : new Error(String(error));
+    logger.error('Cancel deletion error:', errorInstance);
+    
     const errorMessage = error instanceof Error ? error.message : 'Failed to cancel deletion';
-    logger.error('Cancel deletion error:', error instanceof Error ? error : new Error(String(error)));
     
     return {
       success: false,
@@ -146,7 +156,7 @@ export const exportUserData = async (
 ): Promise<DataExportResponse> => {
   try {
     const response = await request<DataExportResponse>(
-      '/api/account/export-data',
+      '/api/users/request-export',
       {
         method: 'POST',
         body: {
@@ -176,14 +186,21 @@ export const exportUserData = async (
  */
 export const downloadExport = async (exportId: string): Promise<Blob> => {
   try {
-    const response = await request<Blob>(
-      `/api/account/export/${exportId}`,
+    // First get the export URL from the status
+    const exportStatus = await request<{ url: string }>(
+      `/api/users/export-data?exportId=${exportId}`,
       {
         method: 'GET',
       }
     );
 
-    return response;
+    // Download the actual file from the URL
+    const response = await fetch(exportStatus.url);
+    if (!response.ok) {
+      throw new Error('Failed to download export');
+    }
+    
+    return await response.blob();
   } catch (error: unknown) {
     logger.error('Download export error:', error instanceof Error ? error : new Error(String(error)));
     throw error instanceof Error ? error : new Error(String(error));

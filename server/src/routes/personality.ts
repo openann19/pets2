@@ -25,6 +25,20 @@ interface PersonalityArchetypes {
   [key: string]: Archetype;
 }
 
+interface PetPersonalityScore {
+  energy?: number;
+  independence?: number;
+  sociability?: number;
+}
+
+interface PetPersonality {
+  petId?: string;
+  primaryArchetype?: string;
+  secondaryArchetype?: string;
+  personalityScore: PetPersonalityScore;
+  traits?: string[];
+}
+
 const router: Router = express.Router();
 
 // Pet personality archetypes
@@ -90,7 +104,7 @@ router.post('/generate', authenticateToken, [
   body('age').optional().isInt({ min: 0 }).withMessage('Age must be a positive integer'),
   body('personalityTags').optional().isArray().withMessage('Personality tags must be an array'),
   body('description').optional().isString().withMessage('Description must be a string')
-], async (req: Request, res: Response) => {
+], async (req: AuthenticatedRequest, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -145,7 +159,7 @@ router.post('/compatibility', authenticateToken, [
   body('pet1Id').isMongoId().withMessage('Valid pet1 ID is required'),
   body('pet2Id').isMongoId().withMessage('Valid pet2 ID is required'),
   body('interactionType').optional().isIn(['playdate', 'mating', 'adoption', 'cohabitation']).withMessage('Invalid interaction type')
-], async (req: Request, res: Response) => {
+], async (req: AuthenticatedRequest, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -208,7 +222,7 @@ router.post('/compatibility', authenticateToken, [
 // @desc    Get all personality archetypes
 // @route   GET /api/personality/archetypes
 // @access  Private
-router.get('/archetypes', authenticateToken, async (req: Request, res: Response) => {
+router.get('/archetypes', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
     res.json({
       success: true,
@@ -287,19 +301,23 @@ async function analyzePetPersonality(petData: PetData): Promise<AnalysisResult> 
   const sortedArchetypes = Object.entries(archetypeScores)
     .sort(([, a], [, b]) => b - a);
 
-  const primaryKey = sortedArchetypes[0][0];
-  const secondaryKey = sortedArchetypes[1][0];
+  const primaryKey = sortedArchetypes[0]?.[0];
+  const secondaryKey = sortedArchetypes[1]?.[0];
 
-  const primaryArchetype = PERSONALITY_ARCHETYPES[primaryKey];
-  const secondaryArchetype = PERSONALITY_ARCHETYPES[secondaryKey];
+  const primaryArchetype = primaryKey ? PERSONALITY_ARCHETYPES[primaryKey] : undefined;
+  const secondaryArchetype = secondaryKey ? PERSONALITY_ARCHETYPES[secondaryKey] : undefined;
 
   // Generate description and compatibility tips
-  const personalityDescription = generatePersonalityDescription(primaryArchetype, secondaryArchetype);
-  const compatibilityTips = generateCompatibilityTips(primaryArchetype);
+  const personalityDescription = primaryArchetype && secondaryArchetype ? generatePersonalityDescription(primaryArchetype, secondaryArchetype) : '';
+  const compatibilityTips = primaryArchetype ? generateCompatibilityTips(primaryArchetype) : '';
+
+  if (!primaryArchetype || !primaryKey) {
+    throw new Error('Failed to determine primary archetype');
+  }
 
   return {
     primaryArchetype: primaryKey,
-    secondaryArchetype: secondaryKey,
+    secondaryArchetype: secondaryKey || primaryKey,
     personalityScore: {
       energy: getEnergyScore(primaryArchetype.energyLevel),
       independence: getIndependenceScore(primaryArchetype.independence),
@@ -393,20 +411,35 @@ async function getPetPersonality(petId: string) {
   try {
     const pet = await Pet.findById(petId).lean();
 
-    if (!pet || !(pet as any).aiData || !(pet as any).aiData.personalityArchetype) {
+    const typedPet = pet as Record<string, unknown> & {
+      aiData?: {
+        personalityArchetype?: {
+          primary?: string;
+          secondary?: string;
+        };
+        personalityScore?: {
+          energy?: number;
+          independence?: number;
+          socialness?: number;
+        };
+      };
+      personalityTags?: string[];
+    };
+
+    if (!typedPet.aiData || !typedPet.aiData.personalityArchetype) {
       return null;
     }
 
     return {
       petId: pet._id.toString(),
-      primaryArchetype: (pet as any).aiData.personalityArchetype?.primary || 'the-playful-explorer',
-      secondaryArchetype: (pet as any).aiData.personalityArchetype?.secondary || 'the-social-butterfly',
+      primaryArchetype: typedPet.aiData.personalityArchetype?.primary || 'the-playful-explorer',
+      secondaryArchetype: typedPet.aiData.personalityArchetype?.secondary || 'the-social-butterfly',
       personalityScore: {
-        energy: (pet as any).aiData.personalityScore?.energy || 5,
-        independence: (pet as any).aiData.personalityScore?.independence || 5,
-        sociability: (pet as any).aiData.personalityScore?.socialness || 5
+        energy: typedPet.aiData.personalityScore?.energy || 5,
+        independence: typedPet.aiData.personalityScore?.independence || 5,
+        sociability: typedPet.aiData.personalityScore?.socialness || 5
       },
-      traits: (pet as any).personalityTags || []
+      traits: typedPet.personalityTags || []
     };
   } catch (error) {
     logger.error('Error fetching pet personality:', error);
@@ -414,11 +447,14 @@ async function getPetPersonality(petId: string) {
   }
 }
 
-function calculatePersonalityCompatibility(pet1: any, pet2: any, interactionType: string): number {
+function calculatePersonalityCompatibility(pet1: PetPersonality, pet2: PetPersonality, interactionType: string): number {
+  const pet1Score = pet1.personalityScore || { energy: 5, independence: 5, sociability: 5 };
+  const pet2Score = pet2.personalityScore || { energy: 5, independence: 5, sociability: 5 };
+  
   const scores = {
-    energy: Math.abs(pet1.personalityScore.energy - pet2.personalityScore.energy),
-    independence: Math.abs(pet1.personalityScore.independence - pet2.personalityScore.independence),
-    sociability: Math.abs(pet1.personalityScore.sociability - pet2.personalityScore.sociability)
+    energy: Math.abs(pet1Score.energy - pet2Score.energy),
+    independence: Math.abs(pet1Score.independence - pet2Score.independence),
+    sociability: Math.abs(pet1Score.sociability - pet2Score.sociability)
   };
 
   const weights: { [key: string]: { energy: number; independence: number; sociability: number } } = {
@@ -428,7 +464,7 @@ function calculatePersonalityCompatibility(pet1: any, pet2: any, interactionType
     cohabitation: { energy: 0.3, independence: 0.5, sociability: 0.2 }
   };
 
-  const { energy, independence, sociability } = weights[interactionType] || weights.playdate;
+  const { energy, independence, sociability } = weights[interactionType] || weights.playdate || { energy: 0.5, independence: 0.2, sociability: 0.3 };
   const weightedDifference =
     scores.energy * energy +
     scores.independence * independence +
@@ -439,7 +475,7 @@ function calculatePersonalityCompatibility(pet1: any, pet2: any, interactionType
   return Math.round(compatibilityScore);
 }
 
-function generateDetailedCompatibilityAnalysis(pet1: any, pet2: any, interactionType: string) {
+function generateDetailedCompatibilityAnalysis(pet1: PetPersonality, pet2: PetPersonality, interactionType: string) {
   return {
     energyCompatibility: {
       score: Math.max(0, 100 - Math.abs(pet1.personalityScore.energy - pet2.personalityScore.energy) * 10),
@@ -464,15 +500,17 @@ function generateRecommendations(compatibilityScore: number, interactionType: st
     cohabitation: 'Следете споделените ресурси и отделните зони за почивка.'
   };
 
+  const recommendation = baseRecommendations[interactionType] || baseRecommendations['playdate'] || '';
+
   if (compatibilityScore >= 80) {
-    return ['Отлична съвместимост – очаквайте бърза адаптация.', baseRecommendations[interactionType] || baseRecommendations.playdate];
+    return ['Отлична съвместимост – очаквайте бърза адаптация.', recommendation];
   } else if (compatibilityScore >= 60) {
-    return ['Добра съвместимост с дребни забележки.', baseRecommendations[interactionType] || baseRecommendations.playdate];
+    return ['Добра съвместимост с дребни забележки.', recommendation];
   } else if (compatibilityScore >= 40) {
-    return ['Умерена съвместимост – подходете внимателно.', baseRecommendations[interactionType] || baseRecommendations.playdate];
+    return ['Умерена съвместимост – подходете внимателно.', recommendation];
   }
 
-  return ['Ниска съвместимост – преценете алтернативи или различен тип взаимодействие.', baseRecommendations[interactionType] || baseRecommendations.playdate];
+  return ['Ниска съвместимост – преценете алтернативи или различен тип взаимодействие.', recommendation];
 }
 
 function getEnergyScore(energyLevel: string): number {

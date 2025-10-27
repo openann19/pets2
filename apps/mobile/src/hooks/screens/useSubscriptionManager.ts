@@ -172,7 +172,7 @@ export const useSubscriptionManager = (): UseSubscriptionManagerReturn => {
 
   // Initial data fetch
   useEffect(() => {
-    void fetchSubscriptionData().finally(() => setIsLoading(false));
+    void fetchSubscriptionData().finally(() => { setIsLoading(false); });
   }, [fetchSubscriptionData]);
 
   return {

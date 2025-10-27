@@ -1,10 +1,10 @@
 import React, { forwardRef, type ReactNode } from "react";
-import { ScrollView, type ScrollViewProps } from "react-native";
+import { ScrollView, type ScrollViewProps, type ViewStyle } from "react-native";
 import type { ScrollView as ScrollViewType } from "react-native";
 
 import { EliteContainer } from "./EliteContainer";
-import { GlobalStyles } from "../../../animation";
-import { Colors } from "../../../animation";
+import { GlobalStyles } from "../../../styles/GlobalStyles";
+import { Colors } from "../../../styles/GlobalStyles";
 
 /**
  * EliteScrollContainer Component

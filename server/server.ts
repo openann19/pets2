@@ -1,18 +1,20 @@
-import express from 'express';
+import express, { type Request, type Response, type NextFunction } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
-import { ipKeyGenerator } from 'express-rate-limit';
+const rateLimit = require('express-rate-limit');
+const { ipKeyGenerator } = require('express-rate-limit');
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import 'dotenv/config';
 import logger, { type ExtendedLogger } from './src/utils/logger';
+const typedLogger = logger as ExtendedLogger;
 import { FLAGS } from './src/config/flags';
+import * as Sentry from '@sentry/node';
 
 // Swagger configuration
 const swaggerOptions = {
@@ -82,7 +84,7 @@ const {
   initSentry
 } = await import('./src/config/sentry');
 
-const app: any = express();
+const app = express();
 
 // Initialize Sentry for production environment
 if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
@@ -113,6 +115,7 @@ const biometricRoutes = await import('./src/routes/biometric');
 const leaderboardRoutes = await import('./src/routes/leaderboard');
 const notificationRoutes = await import('./src/routes/notifications');
 // Manual moderation routes  
+const moderationRoutes = await import('./src/routes/moderation');
 const moderationUserRoutes = await import('./src/routes/moderation');
 const adminEnhancedFeaturesRoutes = await import('./src/routes/adminEnhancedFeatures');
 const moderationAdminRoutes = await import('./src/routes/moderationAdmin');
@@ -120,8 +123,8 @@ const communityRoutes = await import('./src/routes/community'); // Import commun
 const aiModerationRoutes = await import('./src/routes/aiModeration');
 const aiModerationAdminRoutes = await import('./src/routes/aiModerationAdmin');
 const adminModerationRoutes = await import('./src/routes/adminModeration');
-// const favoritesRoutes = await import('./routes/favorites'); // Import favorites routes
-// const storiesRoutes = await import('./routes/stories');
+// const favoritesRoutes = await import('./src/routes/favorites'); // Import favorites routes - TODO: create this file
+// const storiesRoutes = await import('./src/routes/stories'); // TODO: create this file
 const conversationsRoutes = await import('./src/routes/conversations');
 const profileRoutes = await import('./src/routes/profile');
 const adoptionRoutes = await import('./src/routes/adoption');
@@ -134,6 +137,10 @@ const liveRoutes = await import('./src/routes/live');
 const livekitWebhookRoutes = await import('./src/routes/livekitWebhooks');
 const mapActivityRoutes = await import('./src/routes/mapActivity');
 const voiceNotesRoutes = await import('./src/routes/voiceNotes');
+const reelsRoutes = await import('./src/routes/reels');
+const templatesRoutes = await import('./src/routes/templates');
+const tracksRoutes = await import('./src/routes/tracks');
+const reelUploadsRoutes = await import('./src/routes/reelUploads');
 
 // Import middleware
 const errorHandler = await import('./src/middleware/errorHandler');
@@ -237,7 +244,7 @@ app.use(helmet({
 }));
 
 // Additional modern security headers (2025 standards)
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   // Deny framing completely
   res.setHeader('X-Frame-Options', 'DENY');
 
@@ -266,7 +273,7 @@ app.use((req, res, next) => {
       const elapsedTimeInMs = elapsedHrTime[0] * 1000 + elapsedHrTime[1] / 1000000;
 
       // Log response time for monitoring
-      logger.performance('API Response', Math.round(elapsedTimeInMs), {
+      typedLogger.performance('API Response', Math.round(elapsedTimeInMs), {
         path: req.path,
         method: req.method,
         statusCode: res.statusCode
@@ -299,19 +306,19 @@ const authLimiter = rateLimit({
     message: 'Too many authentication attempts, please try again later.',
     retryAfter: Math.ceil(rateLimitConfig.windowMs / 60000)
   },
-  keyGenerator: (req) => {
+  keyGenerator: (req: Request) => {
     // Use both IP and username (if provided) to prevent username enumeration
     const username = req.body?.username || req.body?.email || '';
     // Use library-provided IPv6-safe helper
-    return username ? `${ipKeyGenerator(req)}_${username}` : ipKeyGenerator(req);
+    return username ? `${ipKeyGenerator(req.ip)}_${username}` : ipKeyGenerator(req.ip);
   },
-  skip: (req) => {
+  skip: (req: Request) => {
     // Skip rate limiting for password reset verification
     return req.path === '/api/auth/reset-password/verify';
   },
-  handler: (req, res, next, options) => {
+  handler: (req: Request, res: Response, next: NextFunction, options: { statusCode: number; message: Record<string, unknown> | string }) => {
     // Log security event
-    logger.security('Rate limit exceeded for auth', {
+    typedLogger.security('Rate limit exceeded for auth', {
       ip: req.ip,
       path: req.path,
       headers: req.headers['user-agent']
@@ -329,16 +336,16 @@ const apiLimiter = rateLimit({
     message: 'Rate limit exceeded. Please try again later.',
     retryAfter: Math.ceil(rateLimitConfig.windowMs / 60000)
   },
-  skip: (req) => {
+  skip: (req: Request) => {
     // Skip rate limiting for health check and OPTIONS requests
     return req.path === '/api/health' || req.method === 'OPTIONS';
   },
-  keyGenerator: (req) => {
+  keyGenerator: (req: Request) => {
     // Use authenticated user ID if available, otherwise IP
     const userId = req.userId || req.user?.id;
-    return userId ? `user_${userId}` : ipKeyGenerator(req);
+    return userId ? `user_${userId}` : ipKeyGenerator(req.ip);
   },
-  handler: (req, res, next, options) => {
+  handler: (req: Request, res: Response, next: NextFunction, options: { statusCode: number; message: Record<string, unknown> | string }) => {
     // Log rate limit exceeded
     logger.warn('API rate limit exceeded', {
       ip: req.ip,
@@ -354,13 +361,13 @@ const apiLimiter = rateLimit({
 const _premiumLimiter = rateLimit({
   ...rateLimitConfig,
   max: parseInt(process.env.RATE_LIMIT_PREMIUM_MAX || '300'), // Higher limit for premium users
-  keyGenerator: (req) => {
-    const userId = req.userId || req.user?.id;
-    return userId ? `premium_${userId}` : ipKeyGenerator(req);
+  keyGenerator: (req: Request) => {
+    const userId = (req as any).userId || (req as any).user?.id;
+    return userId ? `premium_${userId}` : ipKeyGenerator(req.ip);
   },
-  skip: (req) => {
+  skip: (req: Request) => {
     // Skip for premium users with active subscription
-    return req.user?.subscription?.status === 'active';
+    return (req as any).user?.subscription?.status === 'active';
   }
 });
 
@@ -372,9 +379,9 @@ const _webhookLimiter = rateLimit({
     status: 429,
     error: 'Too many webhook requests'
   },
-  skip: (req) => {
+  skip: (req: Request) => {
     // Skip rate limiting for Stripe signature validated webhooks
-    return req.stripeEventVerified === true;
+    return (req as any).stripeEventVerified === true;
   }
 });
 
@@ -441,7 +448,7 @@ app.use(corsMiddleware.default({
     }
 
     // Log and reject
-    logger.security('CORS blocked request', { blockedOrigin: origin });
+    typedLogger.security('CORS blocked request', { blockedOrigin: origin });
     return callback(new Error('CORS: Origin not allowed'));
   },
   credentials: true,
@@ -483,15 +490,47 @@ app.use(morganMiddleware.default('combined'));
 
 // Database connection function is already defined above
 
+// GDPR Background Job: Automated account deletion processing
+let deletionJobInterval: NodeJS.Timeout | null = null;
+const setupDeletionJob = async () => {
+  try {
+    const cron = await import('node-cron');
+    
+    // Process expired deletions daily at 2 AM
+    cron.default.schedule('0 2 * * *', async () => {
+      try {
+        logger.info('🔄 Starting GDPR deletion background job...');
+        const { processExpiredDeletions } = await import('./src/services/deletionService');
+        const results = await processExpiredDeletions();
+        const successCount = results.filter(r => r.success).length;
+        logger.info(`✅ GDPR deletion job completed: ${successCount}/${results.length} successful`, {
+          total: results.length,
+          successful: successCount
+        });
+      } catch (error) {
+        logger.error('❌ GDPR deletion job failed:', error);
+      }
+    }, {
+      scheduled: true,
+      timezone: 'UTC'
+    });
+    
+    logger.info('✅ GDPR deletion background job scheduled (daily at 2 AM UTC)');
+  } catch (error) {
+    logger.warn('⚠️ node-cron not installed, GDPR deletion background job disabled');
+    logger.warn('Install with: pnpm add node-cron && pnpm add -D @types/node-cron');
+  }
+};
+
 // Health check routes (public - no auth required)
 const healthRoutes = await import('./src/routes/health');
 app.use('/health', healthRoutes.default);
 app.use('/api/health', healthRoutes.default); // Also available under /api prefix
 // Explicit liveness and readiness endpoints for healthchecks
-app.get('/health/live', (req, res) => {
+app.get('/health/live', (req: Request, res: Response) => {
   res.status(200).json({ status: 'live' });
 });
-app.get('/health/ready', async (req, res) => {
+app.get('/health/ready', async (req: Request, res: Response) => {
   const mongoReady = mongoose.connection.readyState === 1;
   const uptime = process.uptime();
   res.status(mongoReady ? 200 : 503).json({ status: mongoReady ? 'ready' : 'degraded', mongoReady, uptime });
@@ -546,9 +585,15 @@ app.use('/api/verification', verificationRoutes.default);
 app.use('/api/admin', authenticateToken, requireAdmin, moderateRoutes.default);
 
 app.use('/api/community', authenticateToken, communityRoutes.default); // Register community routes
-app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route
-app.use('/api/stories', authenticateToken, storiesRoutes.default);
+// app.use('/api/favorites', favoritesRoutes.default); // Favorites routes handle auth per-route - TODO: create favorites routes
+// app.use('/api/stories', authenticateToken, storiesRoutes.default); // TODO: create stories routes
 app.use('/api/conversations', conversationsRoutes.default);
+
+// PawReels Routes
+app.use('/api/reels', reelsRoutes.default);
+app.use('/api/templates', templatesRoutes.default);
+app.use('/api/tracks', tracksRoutes.default);
+app.use('/api/reel-uploads', reelUploadsRoutes.default);
 app.use('/api/profile', profileRoutes.default); // Profile routes (handles auth internally)
 app.use('/api/adoption', adoptionRoutes.default); // Adoption routes (handles auth internally)
 app.use('/api', petActivityRoutes.default); // Pet activity routes
@@ -584,7 +629,7 @@ if (FLAGS.GO_LIVE) {
 app.use('/api/webhooks', webhookRoutes.default);
 
 // Legacy health check (deprecated - use /health instead)
-app.get('/api/health/legacy', (req, res) => {
+app.get('/api/health/legacy', (req: Request, res: Response) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -594,16 +639,16 @@ app.get('/api/health/legacy', (req, res) => {
 });
 
 // Initialize WebSocket for real-time features (only when not in test mode)
-let socketInstance: any;
-let io: any;
+let socketInstance: { io?: SocketServer; cleanup?: () => void } | undefined;
+let io: SocketServer | undefined;
 if (process.env.NODE_ENV !== 'test') {
   const { initializeSocket } = await import('./socket');
-  socketInstance = initializeSocket(httpServer);
+  socketInstance = initializeSocket(httpServer) as { io?: SocketServer; cleanup?: () => void };
   io = socketInstance.io;
 }
 
 // Socket.io services (only when not in test mode)
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && io) {
   // Socket.io for real-time chat
   const { default: chatSocket } = await import('./src/services/chatSocket');
   chatSocket(io);
@@ -618,8 +663,8 @@ if (process.env.NODE_ENV !== 'test') {
   adminNotifications.setupAdminRoom(io);
 
   // Inject Socket.io into moderation routes for real-time updates
-  if (moderationRoutes.default.setSocketIO) {
-    moderationRoutes.default.setSocketIO(io);
+  if ((moderationRoutes.default as any).setSocketIO) {
+    (moderationRoutes.default as any).setSocketIO(io);
   }
 
   // Socket.io for pulse
@@ -648,7 +693,7 @@ if (process.env.NODE_ENV !== 'test') {
 
   // Socket.io for Map tracking
   try {
-    const { MapSocketServer } = await import('./src/sockets/mapSocket');
+    const MapSocketServer = (await import('./src/sockets/mapSocket')).default;
     const mapSocketServer = new MapSocketServer(httpServer);
     logger.info('🗺️ Map socket server initialized');
 
@@ -661,7 +706,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 // Sentry error handler (must be before other error handlers)
 if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
-  app.use(sentryErrorHandler());
+  app.use(Sentry.expressErrorHandler());
   logger.info('🔍 Sentry error handler enabled');
 }
 
@@ -669,7 +714,7 @@ if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
 app.use(errorHandler.default);
 
 // 404 handler (generic middleware, no path-to-regexp)
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     message: 'API endpoint not found'
@@ -679,15 +724,20 @@ app.use((req, res) => {
 // Start server function
 const startServer = async (): Promise<void> => {
   await connectDB();
+  
+  // Setup GDPR deletion background job
+  if (process.env.NODE_ENV !== 'test') {
+    await setupDeletionJob();
+  }
 
-  const PORT = process.env.PORT || 5000;
+  const PORT = parseInt(process.env.PORT || '5000', 10);
 
   const listen = (portToTry: number) => {
     httpServer.listen(portToTry, () => {
       logger.info(`🌟 PawfectMatch Premium Server running on port ${portToTry}`);
       logger.info(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
       logger.info(`🔗 Client URL: ${process.env.CLIENT_URL || 'http://localhost:3000'}`);
-    }).on('error', (err: any) => {
+    }).on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'EADDRINUSE') {
         logger.warn(`⚠️ Port ${portToTry} in use, trying ${portToTry + 1}`);
         listen(portToTry + 1);

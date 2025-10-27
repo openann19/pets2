@@ -1,641 +1,310 @@
 /**
- * AI Compatibility Screen - Mobile
- * Full implementation matching test specifications
+ * AI Compatibility Analyzer Screen for Mobile
+ * Advanced compatibility scoring and analysis between pets
+ * Refactored to use useAICompatibilityScreen hook and section components
  */
 
-import React, { useState, useEffect, useCallback } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
+  View,
   Alert,
-  FlatList,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { useAuthStore } from "@pawfectmatch/core";
-import { matchesAPI, api } from "../services/api";
-import { logger } from "../services/logger";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../theme/Provider";
+import type { RootStackParamList } from "../navigation/types";
+import { useAICompatibilityScreen } from "../hooks/screens/useAICompatibilityScreen";
+import { PetSelectionSection } from "./ai/compatibility/PetSelectionSection";
+import { AnalysisResultsSection } from "./ai/compatibility/AnalysisResultsSection";
 
-interface Pet {
-  _id: string;
-  name: string;
-  photos: string[];
-  breed: string;
-  age: number;
-  species: string;
-  owner: { _id: string; name: string };
-}
+const { width: screenWidth } = Dimensions.get("window");
 
-interface AnalysisResult {
-  compatibility_score: number;
-  ai_analysis: string;
-  breakdown: {
-    personality_compatibility: number;
-    lifestyle_compatibility: number;
-    activity_compatibility: number;
-    social_compatibility: number;
-    environment_compatibility: number;
-  };
-  recommendations: {
-    meeting_suggestions: string[];
-    activity_recommendations: string[];
-    supervision_requirements: string[];
-    success_probability: number;
-  };
-}
+type AICompatibilityScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "AICompatibility"
+>;
 
-const AICompatibilityScreen = ({ navigation, route }: any) => {
-  const { user } = useAuthStore();
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedPet1, setSelectedPet1] = useState<Pet | null>(null);
-  const [selectedPet2, setSelectedPet2] = useState<Pet | null>(null);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const AICompatibilityScreen = ({
+  navigation,
+  route,
+}: AICompatibilityScreenProps): React.JSX.Element => {
+  const { colors } = useTheme();
 
-  // Load pets on mount
-  const loadPets = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const allPets = await matchesAPI.getPets();
-      // Filter out pets owned by current user (or include them depending on requirements)
-      const otherPets = allPets as unknown as Pet[];
-      
-      // Always set the pets from API response
-      if (otherPets && otherPets.length > 0) {
-        setPets(otherPets);
-      } else {
-        // Fallback for empty response
-        setPets([]);
-      }
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to load pets";
-      setError(errorMessage);
-      const errorObj = err instanceof Error ? err : new Error(String(err));
-      logger.error("Failed to load pets", { error: errorObj });
-      // Set empty array on error
-      setPets([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Use the custom hook to manage all business logic
+  const {
+    isAnalyzing,
+    compatibilityResult,
+    error,
+    availablePets,
+    isLoadingPets,
+    selectedPet1,
+    selectedPet2,
+    setSelectedPet1,
+    setSelectedPet2,
+    analyzeCompatibility,
+    resetAnalysis,
+    handleGoBack,
+    clearError,
+  } = useAICompatibilityScreen(route);
 
   useEffect(() => {
-    loadPets();
-  }, [loadPets]);
-
-  // Handle route params for auto-selection
-  useEffect(() => {
-    if (route?.params?.pet1Id && route?.params?.pet2Id && pets.length > 0) {
-      const pet1 = pets.find(p => p._id === route.params.pet1Id);
-      const pet2 = pets.find(p => p._id === route.params.pet2Id);
-      if (pet1 && pet2) {
-        setSelectedPet1(pet1);
-        setSelectedPet2(pet2);
-      }
+    // Load pets if route params are provided
+    if (route?.params?.petAId && route?.params?.petBId) {
+      // Pet selection is handled by the hook
     }
-  }, [route?.params, pets]);
+  }, [route?.params]);
 
-  const handlePetSelect = (pet: Pet) => {
-    if (selectedPet1?._id === pet._id) {
-      // Deselect pet 1
-      setSelectedPet1(null);
-      setAnalysisResult(null);
-    } else if (selectedPet2?._id === pet._id) {
-      // Deselect pet 2
-      setSelectedPet2(null);
-      setAnalysisResult(null);
-    } else if (!selectedPet1) {
-      // Select as pet 1
-      setSelectedPet1(pet);
-      setAnalysisResult(null);
-    } else if (!selectedPet2 && selectedPet1._id !== pet._id && selectedPet1.owner._id !== pet.owner._id) {
-      // Select as pet 2 (can't be same pet or same owner)
-      setSelectedPet2(pet);
-      setAnalysisResult(null);
-    }
-  };
-
-  const handleAnalyze = async () => {
+  const handleAnalyzePress = () => {
     if (!selectedPet1 || !selectedPet2) {
       Alert.alert(
         "Selection Required",
-        "Please select two pets to analyze compatibility."
+        "Please select two pets to analyze compatibility",
       );
       return;
     }
 
-    setAnalyzing(true);
-    setError(null);
-    try {
-      const result = await api.ai.analyzeCompatibility({
-        pet1Id: selectedPet1._id,
-        pet2Id: selectedPet2._id,
-      });
-      setAnalysisResult(result);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Analysis failed";
-      setError(errorMessage);
-    } finally {
-      setAnalyzing(false);
+    if (selectedPet1._id === selectedPet2._id) {
+      Alert.alert("Invalid Selection", "Please select two different pets");
+      return;
     }
+
+    analyzeCompatibility();
   };
 
-  const handleReset = () => {
-    setSelectedPet1(null);
-    setSelectedPet2(null);
-    setAnalysisResult(null);
-    setError(null);
-  };
-
-  if (error && !pets.length && !loading) {
+  // Loading state
+  if (isLoadingPets) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>
-          Failed to load pets. Please try again.
-        </Text>
-      </View>
+      <SafeAreaView
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
+        testID="AICompatibilityScreen"
+      >
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
+            Loading pets...
+          </Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
-  const getCompatibilityLabel = (score: number) => {
-    if (score >= 90) return "Excellent Match!";
-    if (score >= 80) return "Very Good Match";
-    if (score >= 70) return "Good Compatibility";
-    if (score >= 60) return "Fair Compatibility";
-    return "Poor Match";
-  };
-
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          testID="back-button"
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>AI Compatibility</Text>
-      </View>
-
-      <Text style={styles.subtitle}>See how two pets would get along</Text>
-      
-      {loading && (
-        <Text style={styles.loadingText}>Loading pets...</Text>
-      )}
-
-      <TouchableOpacity style={styles.selectButton}>
-        <Text style={styles.selectButtonText}>🐕 Select Two Pets</Text>
-      </TouchableOpacity>
-
-      <View style={styles.petSelectionContainer}>
-        <View style={styles.petSlot}>
-          <Text style={styles.petSlotLabel}>Pet 1</Text>
-          {selectedPet1 ? (
-            <View style={styles.selectedPet}>
-              <Text style={styles.selectedPetName}>{selectedPet1.name}</Text>
-              <Text style={styles.selectedPetBreed}>{selectedPet1.breed}</Text>
-            </View>
-          ) : (
-            <View style={styles.emptyPetSlot}>
-              <Text style={styles.emptyPetText}>Select Pet 1</Text>
-            </View>
-          )}
-        </View>
-
-        <Text style={styles.vsText}>VS</Text>
-
-        <View style={styles.petSlot}>
-          <Text style={styles.petSlotLabel}>Pet 2</Text>
-          {selectedPet2 ? (
-            <View style={styles.selectedPet}>
-              <Text style={styles.selectedPetName}>{selectedPet2.name}</Text>
-              <Text style={styles.selectedPetBreed}>{selectedPet2.breed}</Text>
-            </View>
-          ) : (
-            <View style={styles.emptyPetSlot}>
-              <Text style={styles.emptyPetText}>Select Pet 2</Text>
-            </View>
-          )}
-        </View>
-      </View>
-
-      <View style={styles.availablePetsSection}>
-        <Text style={styles.sectionTitle}>Available Pets</Text>
-        {pets.length > 0 ? (
-          <FlatList
-            data={pets}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => {
-              const isSelected1 = selectedPet1?._id === item._id;
-              const isSelected2 = selectedPet2?._id === item._id;
-              const isSelected = isSelected1 || isSelected2;
-
-              return (
-                <TouchableOpacity
-                  style={[
-                    styles.petCard,
-                    isSelected && styles.petCardSelected,
-                  ]}
-                  onPress={() => handlePetSelect(item)}
-                >
-                  <Text style={styles.petCardName}>{item.name}</Text>
-                  <Text style={styles.petCardBreed}>{item.breed}</Text>
-                </TouchableOpacity>
-              );
-            }}
-            scrollEnabled={false}
-          />
-        ) : (
-          <Text>No pets available</Text>
-        )}
-      </View>
-
-      <TouchableOpacity
-        style={[styles.analyzeButton, (!selectedPet1 || !selectedPet2 || analyzing) && styles.analyzeButtonDisabled]}
-        onPress={handleAnalyze}
-        disabled={!selectedPet1 || !selectedPet2 || analyzing}
+    <SafeAreaView
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
+      testID="AICompatibilityScreen"
+    >
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
       >
-        {analyzing ? (
-          <Text style={styles.analyzeButtonText}>Analyzing...</Text>
-        ) : (
-          <Text style={styles.analyzeButtonText}>Analyze Compatibility</Text>
-        )}
-      </TouchableOpacity>
-
-      {error && !analyzing && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
-
-      {analysisResult && (
-        <View style={styles.resultsSection}>
-          <Text style={styles.resultsTitle}>🎯 Compatibility Results</Text>
-          
-          <View style={styles.scoreContainer}>
-            <Text style={styles.scoreValue}>
-              {Math.round(analysisResult.compatibility_score * 100)}/100
-            </Text>
-            <Text style={styles.scoreLabel}>
-              {getCompatibilityLabel(analysisResult.compatibility_score * 100)}
-            </Text>
-          </View>
-
-          <Text style={styles.analysisText}>{analysisResult.ai_analysis}</Text>
-
-          <View style={styles.breakdownSection}>
-            <Text style={styles.breakdownTitle}>📊 Detailed Breakdown</Text>
-            
-            <View style={styles.breakdownItem}>
-              <Text style={styles.breakdownLabel}>Personality</Text>
-              <Text style={styles.breakdownValue}>
-                {Math.round(analysisResult.breakdown.personality_compatibility * 100)}%
-              </Text>
-            </View>
-            
-            <View style={styles.breakdownItem}>
-              <Text style={styles.breakdownLabel}>Lifestyle</Text>
-              <Text style={styles.breakdownValue}>
-                {Math.round(analysisResult.breakdown.lifestyle_compatibility * 100)}%
-              </Text>
-            </View>
-            
-            <View style={styles.breakdownItem}>
-              <Text style={styles.breakdownLabel}>Activity Level</Text>
-              <Text style={styles.breakdownValue}>
-                {Math.round(analysisResult.breakdown.activity_compatibility * 100)}%
-              </Text>
-            </View>
-            
-            <View style={styles.breakdownItem}>
-              <Text style={styles.breakdownLabel}>Social Behavior</Text>
-              <Text style={styles.breakdownValue}>
-                {Math.round(analysisResult.breakdown.social_compatibility * 100)}%
-              </Text>
-            </View>
-            
-            <View style={styles.breakdownItem}>
-              <Text style={styles.breakdownLabel}>Environment</Text>
-              <Text style={styles.breakdownValue}>
-                {Math.round(analysisResult.breakdown.environment_compatibility * 100)}%
-              </Text>
-            </View>
-          </View>
-
-          {analysisResult.recommendations && (
-            <View style={styles.recommendationsSection}>
-              <Text style={styles.recommendationsTitle}>💡 Recommendations</Text>
-              
-              {analysisResult.recommendations.meeting_suggestions && analysisResult.recommendations.meeting_suggestions.length > 0 && (
-                <View style={styles.recommendationGroup}>
-                  <Text style={styles.recommendationGroupTitle}>🎯 Meeting Suggestions</Text>
-                  {analysisResult.recommendations.meeting_suggestions.map((suggestion, index) => (
-                    <Text key={index} style={styles.recommendationItem}>
-                      • {suggestion}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              
-              {analysisResult.recommendations.activity_recommendations && analysisResult.recommendations.activity_recommendations.length > 0 && (
-                <View style={styles.recommendationGroup}>
-                  <Text style={styles.recommendationGroupTitle}>🎾 Activity Recommendations</Text>
-                  {analysisResult.recommendations.activity_recommendations.map((activity, index) => (
-                    <Text key={index} style={styles.recommendationItem}>
-                      • {activity}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              
-              {analysisResult.recommendations.supervision_requirements && analysisResult.recommendations.supervision_requirements.length > 0 && (
-                <View style={styles.recommendationGroup}>
-                  <Text style={styles.recommendationGroupTitle}>⚠️ Supervision Requirements</Text>
-                  {analysisResult.recommendations.supervision_requirements.map((requirement, index) => (
-                    <Text key={index} style={styles.recommendationItem}>
-                      • {requirement}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              
-              <View style={styles.recommendationGroup}>
-                <Text style={styles.recommendationGroupTitle}>Success Probability:</Text>
-                <Text style={styles.probabilityValue}>
-                  {Math.round(analysisResult.recommendations.success_probability * 100)}%
-                </Text>
-              </View>
-            </View>
-          )}
-
-          <TouchableOpacity style={styles.newAnalysisButton} onPress={handleReset}>
-            <Text style={styles.newAnalysisButtonText}>New Analysis</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            testID="back-button"
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+            onPress={handleGoBack}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
+          <Text
+            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            accessibilityRole="header"
+          >
+            AI Compatibility Analyzer
+          </Text>
+          <View style={styles.headerActions}>
+            {compatibilityResult && (
+              <TouchableOpacity
+                style={StyleSheet.flatten([
+                  styles.historyButton,
+                  { backgroundColor: colors.primary },
+                ])}
+                testID="history-button"
+                accessibilityLabel="Reset analysis"
+                accessibilityRole="button"
+                onPress={resetAnalysis}
+              >
+                <Ionicons name="refresh" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      )}
-    </ScrollView>
+
+        {/* Pet Selection Section */}
+        <PetSelectionSection
+          selectedPet1={selectedPet1}
+          selectedPet2={selectedPet2}
+          availablePets={availablePets}
+          colors={colors}
+          screenWidth={screenWidth}
+          onSelectPet1={setSelectedPet1}
+          onSelectPet2={setSelectedPet2}
+        />
+
+        {/* Analyze Button */}
+        {selectedPet1 && selectedPet2 && !compatibilityResult && (
+          <View style={styles.analysisSection}>
+            <TouchableOpacity
+              style={StyleSheet.flatten([
+                styles.analyzeButton,
+                { backgroundColor: colors.primary },
+                isAnalyzing && styles.analyzeButtonDisabled,
+              ])}
+              testID="analyze-button"
+              disabled={isAnalyzing}
+              onPress={handleAnalyzePress}
+              accessibilityLabel={
+                isAnalyzing
+                  ? "Analyzing compatibility"
+                  : "Analyze compatibility"
+              }
+              accessibilityRole="button"
+            >
+              {isAnalyzing ? (
+                <>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <Text style={styles.analyzeButtonText}>Analyzing...</Text>
+                </>
+              ) : (
+                <>
+                  <Ionicons name="analytics" size={20} color="#FFFFFF" />
+                  <Text style={styles.analyzeButtonText}>
+                    Analyze Compatibility
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Analysis Results */}
+        {compatibilityResult && (
+          <AnalysisResultsSection
+            compatibilityResult={compatibilityResult}
+            colors={colors}
+            onReset={resetAnalysis}
+          />
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.errorText,
+                { color: "#F44336" },
+              ])}
+            >
+              {error}
+            </Text>
+            <TouchableOpacity testID="dismiss-error-button" accessibilityLabel="Dismiss error" accessibilityRole="button" onPress={clearError} style={styles.dismissButton}>
+              <Text style={{ color: colors.primary }}>Dismiss</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    padding: 16,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: "500",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 4,
   },
   backButton: {
-    marginRight: 12,
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: "#007AFF",
+    padding: 8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 24,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 40,
-  },
-  selectButton: {
-    backgroundColor: "#007AFF",
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  selectButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  petSelectionContainer: {
-    marginBottom: 24,
-    padding: 16,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  petSlot: {
     flex: 1,
+    marginLeft: 8,
+  },
+  headerActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  historyButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
     alignItems: "center",
   },
-  petSlotLabel: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 8,
-    fontWeight: "600",
-  },
-  selectedPet: {
-    alignItems: "center",
-  },
-  selectedPetName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  selectedPetBreed: {
-    fontSize: 12,
-    color: "#666",
-  },
-  emptyPetSlot: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderWidth: 2,
-    borderColor: "#ddd",
-    borderStyle: "dashed",
-    borderRadius: 8,
-    minWidth: 100,
-    alignItems: "center",
-  },
-  emptyPetText: {
-    fontSize: 14,
-    color: "#999",
-  },
-  vsText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#666",
-    marginHorizontal: 16,
-  },
-  availablePetsSection: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 16,
-  },
-  petCard: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: "#ddd",
-  },
-  petCardSelected: {
-    borderColor: "#007AFF",
-    backgroundColor: "#f0f8ff",
-  },
-  petCardName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 4,
-  },
-  petCardBreed: {
-    fontSize: 12,
-    color: "#666",
+  analysisSection: {
+    marginVertical: 24,
   },
   analyzeButton: {
-    backgroundColor: "#34C759",
-    padding: 16,
-    borderRadius: 12,
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
+    justifyContent: "center",
+    paddingVertical: 16,
+    borderRadius: 12,
+    gap: 8,
   },
   analyzeButtonDisabled: {
-    backgroundColor: "#ccc",
+    opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "#fff",
-    fontSize: 18,
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "600",
   },
   errorContainer: {
-    backgroundColor: "#fff5f5",
+    marginTop: 16,
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 24,
-  },
-  errorText: {
-    color: "#e53e3e",
-    fontSize: 14,
-  },
-  resultsSection: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 24,
-  },
-  resultsTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 16,
-  },
-  scoreContainer: {
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  scoreValue: {
-    fontSize: 48,
-    fontWeight: "bold",
-    color: "#007AFF",
-    marginBottom: 8,
-  },
-  scoreLabel: {
-    fontSize: 18,
-    color: "#666",
-  },
-  analysisText: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 20,
-    lineHeight: 24,
-  },
-  breakdownSection: {
-    marginBottom: 20,
-  },
-  breakdownTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 12,
-  },
-  breakdownItem: {
+    backgroundColor: "#FFEBEE",
+    borderRadius: 8,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  breakdownLabel: {
-    fontSize: 14,
-    color: "#666",
-    textTransform: "capitalize",
-  },
-  breakdownValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-  },
-  recommendationsSection: {
-    marginTop: 20,
-  },
-  recommendationsTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 16,
-  },
-  recommendationGroup: {
-    marginBottom: 16,
-  },
-  recommendationGroupTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
-  },
-  recommendationItem: {
-    fontSize: 14,
-    color: "#666",
-    marginLeft: 8,
-    marginBottom: 4,
-  },
-  probabilityValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#007AFF",
-  },
-  newAnalysisButton: {
-    backgroundColor: "#007AFF",
-    padding: 16,
-    borderRadius: 12,
     alignItems: "center",
-    marginTop: 20,
   },
-  newAnalysisButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+  errorText: {
+    flex: 1,
+    fontSize: 14,
+  },
+  dismissButton: {
+    padding: 8,
   },
 });
 

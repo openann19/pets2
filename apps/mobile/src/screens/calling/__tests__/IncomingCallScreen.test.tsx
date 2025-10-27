@@ -44,7 +44,7 @@ jest.mock("../../../services/WebRTCService", () => ({
 }));
 
 import IncomingCallScreen from "../IncomingCallScreen";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 
 // Debug: Log what we imported
 console.log("IncomingCallScreen imported:", typeof IncomingCallScreen);
@@ -250,7 +250,7 @@ describe("IncomingCallScreen", () => {
     const container = getByTestId("incoming-call-container");
     expect(container).toHaveStyle({
       flex: 1,
-      backgroundColor: "Theme.colors.neutral[950]",
+      backgroundColor: "theme.colors.neutral[950]",
     });
   });
 });

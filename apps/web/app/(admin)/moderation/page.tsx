@@ -7,7 +7,7 @@ import { logger } from '@/services/logger';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle, ChevronLeft, ChevronRight, XCircle } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface ModerationItem {
   _id: string;
@@ -82,11 +82,44 @@ export default function ModerationDashboard() {
     return (await res.json()) as T;
   };
 
+  // Define loadQueue and loadStats using useCallback
+  const loadQueue = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getJSON<{ success: boolean; items: ModerationItem[] }>(
+        `/api/moderation/queue?status=${filter}&limit=50`
+      );
+
+      if (data.success) {
+        setQueue(data.items);
+        setCurrentIndex(0);
+      }
+    } catch (error) {
+      logger.error('Failed to load moderation queue', { error });
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  const loadStats = useCallback(async () => {
+    try {
+      const data = await getJSON<{ success: boolean; stats: ModerationStats }>(
+        '/api/moderation/stats'
+      );
+
+      if (data.success) {
+        setStats(data.stats);
+      }
+    } catch (error) {
+      logger.error('Failed to load stats', { error });
+    }
+  }, []);
+
   // Real-time queue updates
   useRealtimeFeed({
     userId: 'moderation-queue',
-    onUpdate: (data) => {
-      const updateType = (data as { type?: string }).type;
+    onUpdate: (data: { type?: string }) => {
+      const updateType = data.type;
       if (updateType === 'queue:update') {
         void loadStats();
         info('Queue Updated', 'New items or changes detected');
@@ -126,39 +159,7 @@ export default function ModerationDashboard() {
   useEffect(() => {
     loadQueue();
     loadStats();
-  }, [filter, loadQueue, loadStats]);
-
-  const loadQueue = async () => {
-    try {
-      setLoading(true);
-      const data = await getJSON<{ success: boolean; items: ModerationItem[] }>(
-        `/api/moderation/queue?status=${filter}&limit=50`
-      );
-
-      if (data.success) {
-        setQueue(data.items);
-        setCurrentIndex(0);
-      }
-    } catch (error) {
-      logger.error('Failed to load moderation queue', { error });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadStats = async () => {
-    try {
-      const data = await getJSON<{ success: boolean; stats: ModerationStats }>(
-        '/api/moderation/stats'
-      );
-
-      if (data.success) {
-        setStats(data.stats);
-      }
-    } catch (error) {
-      logger.error('Failed to load stats', { error });
-    }
-  };
+  }, [loadQueue, loadStats]);
 
   const handleApprove = async () => {
     if (!currentItem) return;

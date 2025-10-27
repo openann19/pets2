@@ -21,8 +21,9 @@ import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useEditProfileScreen } from "../hooks/screens/useEditProfileScreen";
 import type { ProfileData } from "../hooks/screens/useEditProfileScreen";
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 import { AdvancedPhotoEditor } from "../components/photo/AdvancedPhotoEditor";
+import { useTranslation } from 'react-i18next';
 
 interface EditProfileScreenProps {
   navigation: {
@@ -33,6 +34,8 @@ interface EditProfileScreenProps {
 function EditProfileScreen({
   navigation,
 }: EditProfileScreenProps): JSX.Element {
+  const theme = useTheme();
+  const { t } = useTranslation('common');
   const [showPhotoEditor, setShowPhotoEditor] = useState(false);
   const [avatarToEdit, setAvatarToEdit] = useState<string | undefined>(undefined);
 
@@ -76,8 +79,8 @@ function EditProfileScreen({
     const result = await handleSave();
     if (result?.shouldNavigate) {
       if (hasChanges) {
-        Alert.alert("Success", "Profile updated successfully!", [
-          { text: "OK", onPress: () => navigation.goBack() },
+        Alert.alert(t('edit_profile.success'), t('edit_profile.profile_updated'), [
+          { text: "OK", onPress: () => { navigation.goBack(); } },
         ]);
       } else {
         navigation.goBack();
@@ -101,7 +104,7 @@ function EditProfileScreen({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#6366f1", "#8b5cf6", Theme.colors.primary[500]]}
+        colors={["#6366f1", "#8b5cf6", theme.colors.primary]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -122,16 +125,16 @@ function EditProfileScreen({
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+          <TouchableOpacity style={styles.cancelButton}  testID="EditProfileScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onCancel}>
             <Ionicons name="close" size={24} color="white" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
+          <Text style={styles.headerTitle}>{t('edit_profile.title')}</Text>
           <TouchableOpacity
             style={StyleSheet.flatten([
               styles.saveButton,
               (!hasChanges || loading) && styles.saveButtonDisabled,
             ])}
-            onPress={onSubmit}
+             testID="EditProfileScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onSubmit}
             disabled={!hasChanges || loading}
           >
             <Text
@@ -140,7 +143,7 @@ function EditProfileScreen({
                 (!hasChanges || loading) && styles.saveButtonTextDisabled,
               ])}
             >
-              {loading ? "Saving..." : "Save"}
+              {loading ? t('edit_profile.saving') : t('edit_profile.save')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -155,10 +158,10 @@ function EditProfileScreen({
           >
             {/* Avatar Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Profile Picture</Text>
+              <Text style={styles.sectionTitle}>{t('edit_profile.profile_picture')}</Text>
               <TouchableOpacity
                 style={styles.avatarContainer}
-                onPress={handleSelectAvatarWithEditor}
+                 testID="EditProfileScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSelectAvatarWithEditor}
               >
                 <BlurView intensity={20} style={styles.avatarBlur}>
                   {profileData.avatar ? (
@@ -187,11 +190,11 @@ function EditProfileScreen({
 
             {/* Personal Information */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Personal Information</Text>
+              <Text style={styles.sectionTitle}>{t('edit_profile.personal_info')}</Text>
 
               <View style={styles.inputRow}>
                 <View style={styles.inputHalf}>
-                  <Text style={styles.inputLabel}>First Name</Text>
+                  <Text style={styles.inputLabel}>{t('edit_profile.first_name')}</Text>
                   <BlurView intensity={15} style={styles.inputBlur}>
                     <TextInput
                       style={styles.input}
@@ -199,13 +202,13 @@ function EditProfileScreen({
                       onChangeText={(value) => {
                         updateField("firstName", value);
                       }}
-                      placeholder="Enter first name"
+                      placeholder={t('edit_profile.first_name_placeholder')}
                       placeholderTextColor="rgba(255,255,255,0.4)"
                     />
                   </BlurView>
                 </View>
                 <View style={styles.inputHalf}>
-                  <Text style={styles.inputLabel}>Last Name</Text>
+                  <Text style={styles.inputLabel}>{t('edit_profile.last_name')}</Text>
                   <BlurView intensity={15} style={styles.inputBlur}>
                     <TextInput
                       style={styles.input}
@@ -213,14 +216,14 @@ function EditProfileScreen({
                       onChangeText={(value) => {
                         updateField("lastName", value);
                       }}
-                      placeholder="Enter last name"
+                      placeholder={t('edit_profile.last_name_placeholder')}
                       placeholderTextColor="rgba(255,255,255,0.4)"
                     />
                   </BlurView>
                 </View>
               </View>
 
-              <Text style={styles.inputLabel}>Email</Text>
+              <Text style={styles.inputLabel}>{t('edit_profile.email')}</Text>
               <BlurView intensity={15} style={styles.inputBlur}>
                 <TextInput
                   style={styles.input}
@@ -228,14 +231,14 @@ function EditProfileScreen({
                   onChangeText={(value) => {
                     updateField("email", value);
                   }}
-                  placeholder="Enter email"
+                  placeholder={t('edit_profile.email_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
               </BlurView>
 
-              <Text style={styles.inputLabel}>Phone</Text>
+              <Text style={styles.inputLabel}>{t('edit_profile.phone')}</Text>
               <BlurView intensity={15} style={styles.inputBlur}>
                 <TextInput
                   style={styles.input}
@@ -243,13 +246,13 @@ function EditProfileScreen({
                   onChangeText={(value) => {
                     updateField("phone", value);
                   }}
-                  placeholder="Enter phone number"
+                  placeholder={t('edit_profile.phone_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   keyboardType="phone-pad"
                 />
               </BlurView>
 
-              <Text style={styles.inputLabel}>Location</Text>
+              <Text style={styles.inputLabel}>{t('edit_profile.location')}</Text>
               <BlurView intensity={15} style={styles.inputBlur}>
                 <TextInput
                   style={styles.input}
@@ -257,7 +260,7 @@ function EditProfileScreen({
                   onChangeText={(value) => {
                     updateField("location", value);
                   }}
-                  placeholder="Enter your location"
+                  placeholder={t('edit_profile.location_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                 />
               </BlurView>
@@ -265,7 +268,7 @@ function EditProfileScreen({
 
             {/* Bio Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>About Me</Text>
+              <Text style={styles.sectionTitle}>{t('edit_profile.about_me')}</Text>
               <BlurView intensity={15} style={styles.bioInputBlur}>
                 <TextInput
                   style={styles.bioInput}
@@ -273,7 +276,7 @@ function EditProfileScreen({
                   onChangeText={(value) => {
                     updateField("bio", value);
                   }}
-                  placeholder="Tell us about yourself and what you're looking for in a pet match..."
+                  placeholder={t('edit_profile.bio_placeholder')}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   multiline
                   numberOfLines={4}
@@ -282,7 +285,7 @@ function EditProfileScreen({
                 />
               </BlurView>
               <Text style={styles.charCount}>
-                {profileData.bio.length}/500 characters
+                {profileData.bio.length}/500 {t('edit_profile.characters')}
               </Text>
             </View>
 

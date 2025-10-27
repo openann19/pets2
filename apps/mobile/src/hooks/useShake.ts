@@ -1,23 +1,26 @@
-import { useCallback } from "react";
-import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import { useCallback } from 'react';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import { useReduceMotion } from './useReducedMotion';
 
-export function useShake(amplitude: number = 8, duration: number = 280) {
+export function useShake(amplitude = 8, duration = 280) {
+  const reduced = useReduceMotion();
   const t = useSharedValue(0);
 
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateX: t.value }],
-  }));
+  const style = useAnimatedStyle(() => ({ transform: [{ translateX: t.value }] }));
 
   const trigger = useCallback(() => {
-    "worklet";
-    // simple left-right jiggle
+    'worklet';
+    if (reduced) {
+      // Minimal nudge for reduced motion preference
+      t.value = withTiming(0, { duration: 80 });
+      return;
+    }
     t.value = withSequence(
       withTiming(-amplitude, { duration: duration * 0.2 }),
       withTiming(amplitude, { duration: duration * 0.4 }),
-      withTiming(0, { duration: duration * 0.4 }),
+      withTiming(0, { duration: duration * 0.4 })
     );
-  }, [amplitude, duration, t]);
+  }, [amplitude, duration, reduced]);
 
   return { style, trigger };
 }
-

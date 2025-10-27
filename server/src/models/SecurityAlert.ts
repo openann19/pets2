@@ -1,6 +1,7 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import mongoose, { Schema, Model } from 'mongoose';
+import type { Document } from 'mongoose';
 
-export interface ISecurityAlert extends Document {
+export interface ISecurityAlert extends mongoose.Document {
   title: string;
   description: string;
   type: 'authentication' | 'authorization' | 'data' | 'system' | 'network' | 'other';
@@ -85,6 +86,11 @@ export interface ISecurityAlert extends Document {
   };
   createdAt: Date;
   updatedAt: Date;
+  calculateRiskScore(): number;
+  addTimelineEvent(event: string, description: string, actor: string): void;
+  acknowledge(adminId: mongoose.Types.ObjectId, adminName: string): void;
+  escalate(adminId: mongoose.Types.ObjectId, adminName: string, reason: string, level: number): void;
+  resolve(adminId: mongoose.Types.ObjectId, adminName: string, adminEmail: string, resolution: string): void;
 }
 
 const securityAlertSchema = new Schema<ISecurityAlert>({
@@ -269,15 +275,17 @@ securityAlertSchema.index({ type: 1, status: 1 });
 
 // Method to calculate risk score
 securityAlertSchema.methods.calculateRiskScore = function(): number {
-  const severityScores = { critical: 100, high: 75, medium: 50, low: 25 };
-  const impactScores = { critical: 100, high: 75, medium: 50, low: 25 };
+  const severityScores: Record<'critical' | 'high' | 'medium' | 'low', number> = { critical: 100, high: 75, medium: 50, low: 25 };
+  const impactScores: Record<'critical' | 'high' | 'medium' | 'low', number> = { critical: 100, high: 75, medium: 50, low: 25 };
   
-  const severityScore = severityScores[this.severity] || 50;
+  const severityValue = this.severity as 'critical' | 'high' | 'medium' | 'low';
+  const severityScore = severityScores[severityValue] || 50;
+  
   const impactAvg = (
-    impactScores[this.impactAssessment.confidentiality] +
-    impactScores[this.impactAssessment.integrity] +
-    impactScores[this.impactAssessment.availability] +
-    impactScores[this.impactAssessment.businessImpact]
+    impactScores[this.impactAssessment.confidentiality as 'critical' | 'high' | 'medium' | 'low'] +
+    impactScores[this.impactAssessment.integrity as 'critical' | 'high' | 'medium' | 'low'] +
+    impactScores[this.impactAssessment.availability as 'critical' | 'high' | 'medium' | 'low'] +
+    impactScores[this.impactAssessment.businessImpact as 'critical' | 'high' | 'medium' | 'low']
   ) / 4;
   
   this.riskScore = Math.round((severityScore + impactAvg) / 2);
@@ -333,8 +341,8 @@ securityAlertSchema.methods.resolve = function(adminId: mongoose.Types.ObjectId,
 };
 
 // Static method to get alerts by status
-securityAlertSchema.statics.getAlertsByStatus = function(status: string, limit = 50, skip = 0) {
-  return this.find({ status })
+securityAlertSchema.statics.getAlertsByStatus = async function(status: string, limit = 50, skip = 0) {
+  return await this.find({ status })
     .populate('assignedTo.id', 'firstName lastName email')
     .populate('acknowledgedBy.id', 'firstName lastName email')
     .populate('resolvedBy.id', 'firstName lastName email')
@@ -344,8 +352,8 @@ securityAlertSchema.statics.getAlertsByStatus = function(status: string, limit =
 };
 
 // Static method to get critical alerts
-securityAlertSchema.statics.getCriticalAlerts = function(limit = 50, skip = 0) {
-  return this.find({
+securityAlertSchema.statics.getCriticalAlerts = async function(limit = 50, skip = 0) {
+  return await this.find({
     status: { $in: ['new', 'investigating'] },
     severity: { $in: ['critical', 'high'] }
   })

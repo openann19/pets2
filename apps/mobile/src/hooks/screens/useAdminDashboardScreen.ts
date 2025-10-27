@@ -232,7 +232,7 @@ export function useAdminDashboardScreen({
       title: "Verify Pets",
       subtitle: `${metrics.pendingVerifications} pending`,
       icon: "checkmark-circle",
-      action: () => onNavigateToVerifications(),
+      action: () => { onNavigateToVerifications(); },
       disabled: metrics.pendingVerifications === 0,
     },
     {

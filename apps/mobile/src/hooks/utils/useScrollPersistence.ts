@@ -9,7 +9,7 @@ export interface UseScrollPersistenceOptions {
 }
 
 export interface UseScrollPersistenceReturn {
-  listRef: React.RefObject<FlatList<any>>;
+  listRef: React.RefObject<FlatList>;
   initialOffset: number;
   handleScroll: (offset: number) => Promise<void>;
   restoreScroll: () => void;
@@ -27,7 +27,7 @@ export function useScrollPersistence({
   key,
   enabled = true,
 }: UseScrollPersistenceOptions): UseScrollPersistenceReturn {
-  const listRef = useRef<FlatList<any>>(null);
+  const listRef = useRef<FlatList>(null);
   const [initialOffset, setInitialOffset] = useState<number>(0);
   const didRestoreRef = useRef(false);
 

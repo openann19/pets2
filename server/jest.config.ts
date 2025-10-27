@@ -1,6 +1,8 @@
-import base from '../jest.config.base.js';
+import type { Config } from 'jest';
+// @ts-ignore - No types available for the base config
+import base from '../jest.config.base.cjs';
 
-const config = {
+const config: Config = {
   ...base,
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.(ts|tsx|js)'],

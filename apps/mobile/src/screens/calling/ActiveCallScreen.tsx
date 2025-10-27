@@ -15,7 +15,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RTCView } from "react-native-webrtc";
 
 import type { CallState } from "../../services/WebRTCService";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 interface ActiveCallScreenProps {
   callState: CallState;
@@ -146,9 +147,9 @@ export default function ActiveCallScreen({
           />
           <TouchableOpacity
             style={styles.switchCameraButton}
-            onPress={onSwitchCamera}
+             testID="ActiveCallScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onSwitchCamera}
           >
-            <Ionicons name="camera-reverse" size={20} color="Theme.colors.neutral[0]" />
+            <Ionicons name="camera-reverse" size={20} color={theme.colors.neutral[0]} }/>
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -156,7 +157,7 @@ export default function ActiveCallScreen({
       {/* Tap to show/hide controls */}
       <TouchableOpacity
         style={styles.videoTouchArea}
-        onPress={toggleControls}
+         testID="ActiveCallScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={toggleControls}
         activeOpacity={1}
       />
     </View>
@@ -173,7 +174,7 @@ export default function ActiveCallScreen({
         <View style={styles.avatarContainer}>
           <View style={styles.avatarRing}>
             <View style={styles.avatar}>
-              <Ionicons name="person" size={60} color="Theme.colors.neutral[0]" />
+              <Ionicons name="person" size={60} color={theme.colors.neutral[0]} }/>
             </View>
           </View>
         </View>
@@ -238,21 +239,21 @@ export default function ActiveCallScreen({
                 styles.controlButton,
                 callState.isMuted && styles.controlButtonActive,
               ])}
-              onPress={onToggleMute}
+               testID="ActiveCallScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onToggleMute}
             >
               <Ionicons
                 name={callState.isMuted ? "mic-off" : "mic"}
                 size={24}
-                color={callState.isMuted ? "#ff4757" : "Theme.colors.neutral[0]"}
+                color={callState.isMuted ? "#ff4757" : theme.colors.neutral[0]}
               />
             </TouchableOpacity>
 
             {/* Speaker Button */}
             <TouchableOpacity
               style={styles.controlButton}
-              onPress={onToggleSpeaker}
+               testID="ActiveCallScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onToggleSpeaker}
             >
-              <Ionicons name="volume-high" size={24} color="Theme.colors.neutral[0]" />
+              <Ionicons name="volume-high" size={24} color={theme.colors.neutral[0]} }/>
             </TouchableOpacity>
 
             {/* Video Toggle (only for video calls) */}
@@ -262,12 +263,12 @@ export default function ActiveCallScreen({
                   styles.controlButton,
                   !callState.isVideoEnabled && styles.controlButtonActive,
                 ])}
-                onPress={onToggleVideo}
+                 testID="ActiveCallScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onToggleVideo}
               >
                 <Ionicons
                   name={callState.isVideoEnabled ? "videocam" : "videocam-off"}
                   size={24}
-                  color={!callState.isVideoEnabled ? "#ff4757" : "Theme.colors.neutral[0]"}
+                  color={!callState.isVideoEnabled ? "#ff4757" : theme.colors.neutral[0]}
                 />
               </TouchableOpacity>
             )}
@@ -278,7 +279,7 @@ export default function ActiveCallScreen({
                 styles.controlButton,
                 styles.endCallButton,
               ])}
-              onPress={onEndCall}
+               testID="ActiveCallScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onEndCall}
             >
               <LinearGradient
                 colors={["#ff4757", "#ff3838"]}
@@ -287,8 +288,8 @@ export default function ActiveCallScreen({
                 <Ionicons
                   name="call"
                   size={24}
-                  color="Theme.colors.neutral[0]"
-                  style={{ transform: [{ rotate: "135deg" }] }}
+                  color={theme.colors.neutral[0]
+                  style={{ transform: [{ rotate: "135deg"} }] }}
                 />
               </LinearGradient>
             </TouchableOpacity>
@@ -302,7 +303,7 @@ export default function ActiveCallScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[950]",
+    backgroundColor: theme.colors.neutral[950],
   },
 
   // Video Call Styles
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   },
   remoteVideo: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[950]",
+    backgroundColor: theme.colors.neutral[950],
   },
   localVideoContainer: {
     position: "absolute",
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     elevation: 8,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -387,19 +388,19 @@ const styles = StyleSheet.create({
   callerName: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     marginBottom: 12,
     textAlign: "center",
   },
   callStatus: {
     fontSize: 18,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     opacity: 0.8,
     marginBottom: 8,
   },
   callDuration: {
     fontSize: 16,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     opacity: 0.6,
   },
 
@@ -424,12 +425,12 @@ const styles = StyleSheet.create({
   callerNameHeader: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     marginBottom: 4,
   },
   callDurationHeader: {
     fontSize: 16,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     opacity: 0.8,
   },
   callControls: {

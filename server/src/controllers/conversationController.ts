@@ -1,8 +1,9 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 import mongoose from 'mongoose';
 import Conversation from '../models/Conversation';
 import logger from '../utils/logger';
-import { AuthRequest } from '../types/express';
+import type { AuthRequest } from '../types/express';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Request interfaces
@@ -23,27 +24,41 @@ interface SendMessageRequest extends AuthRequest {
   };
   body: {
     content?: string;
-    attachments?: any[];
+    attachments?: Array<{
+      type: 'image' | 'video' | 'file';
+      url: string;
+      filename?: string;
+      mimeType?: string;
+      size?: number;
+    }>;
   };
-  io?: any; // Socket.io instance
+  io?: {
+    to: (room: string) => {
+      emit: (event: string, data: unknown) => void;
+    };
+  }; // Socket.io instance
 }
 
 interface MarkReadRequest extends AuthRequest {
   params: {
     conversationId: string;
   };
-  io?: any; // Socket.io instance
+  io?: {
+    to: (room: string) => {
+      emit: (event: string, data: unknown) => void;
+    };
+  }; // Socket.io instance
 }
 
 /**
  * Helper functions
  */
-function ok(res: Response, status: number, payload: Record<string, any>): Response {
+function ok(res: Response, status: number, payload: Record<string, unknown>): Response {
   return res.status(status).json({ success: true, ...payload });
 }
 
-function fail(res: Response, status: number, message: string, meta?: Record<string, any>): Response {
-  const body: { success: boolean; message: string; meta?: Record<string, any> } = { success: false, message };
+function fail(res: Response, status: number, message: string, meta?: Record<string, unknown>): Response {
+  const body: { success: boolean; message: string; meta?: Record<string, unknown> } = { success: false, message };
   if (meta && process.env.NODE_ENV !== 'production') {
     body.meta = meta;
   }
@@ -79,10 +94,10 @@ export const getMessages = async (req: GetMessagesRequest, res: Response): Promi
     const conv = await ensureMembership(conversationId, userId);
     if (!conv) return fail(res, 404, 'Conversation not found');
 
-    const page = await Conversation.getMessagesPage(conv._id, { before, limit });
+    const page = await Conversation.getMessagesPage(conv._id.toString(), { before, limit });
     return ok(res, 200, { ...page });
-  } catch (error: any) {
-    logger.error('getMessages error', { error: error?.message });
+  } catch (error: unknown) {
+    logger.error('getMessages error', { error: getErrorMessage(error) });
     return fail(res, 500, 'Failed to fetch messages');
   }
 };
@@ -128,13 +143,13 @@ export const sendMessage = async (req: SendMessageRequest, res: Response): Promi
           });
         }
       }
-    } catch (socketErr: any) {
-      logger.warn?.('Socket emit failed for sendMessage', { error: socketErr?.message });
+    } catch (socketErr: unknown) {
+      logger.warn?.('Socket emit failed for sendMessage', { error: socketErr instanceof Error ? socketErr.message : 'Unknown error' });
     }
 
     return ok(res, 201, { message: msg });
-  } catch (error: any) {
-    logger.error('sendMessage error', { error: error?.message });
+  } catch (error: unknown) {
+    logger.error('sendMessage error', { error: getErrorMessage(error) });
     return fail(res, 500, 'Failed to send message');
   }
 };
@@ -161,13 +176,13 @@ export const markRead = async (req: MarkReadRequest, res: Response): Promise<Res
           readAt: new Date().toISOString(),
         });
       }
-    } catch (socketErr: any) {
-      logger.warn?.('Socket emit failed for markRead', { error: socketErr?.message });
+    } catch (socketErr: unknown) {
+      logger.warn?.('Socket emit failed for markRead', { error: socketErr instanceof Error ? socketErr.message : 'Unknown error' });
     }
 
     return ok(res, 200, { changed });
-  } catch (error: any) {
-    logger.error('markRead error', { error: error?.message });
+  } catch (error: unknown) {
+    logger.error('markRead error', { error: getErrorMessage(error) });
     return fail(res, 500, 'Failed to mark messages as read');
   }
 };

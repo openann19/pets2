@@ -3,9 +3,10 @@
  * Handles subscription lifecycle management (cancel, reactivate, update)
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import logger from '../../utils/logger';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AdminRequest extends Request {
   userId?: string;
@@ -35,12 +36,12 @@ export const cancelSubscription = async (req: AdminRequest, res: Response): Prom
         reason,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to cancel subscription', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to cancel subscription',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -66,12 +67,12 @@ export const reactivateSubscription = async (req: AdminRequest, res: Response): 
         reactivatedAt: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to reactivate subscription', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to reactivate subscription',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -99,12 +100,12 @@ export const updateSubscription = async (req: AdminRequest, res: Response): Prom
         updates: updateData,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to update subscription', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to update subscription',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };

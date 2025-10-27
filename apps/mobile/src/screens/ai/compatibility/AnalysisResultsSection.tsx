@@ -293,7 +293,7 @@ export function AnalysisResultsSection({
         >
           🎯 Compatibility Results
         </Text>
-        <TouchableOpacity style={styles.resetButton} onPress={onReset}>
+        <TouchableOpacity style={styles.resetButton}  testID="AnalysisResultsSection-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onReset}>
           <Ionicons name="refresh" size={20} color={colors.primary} />
           <Text
             style={StyleSheet.flatten([

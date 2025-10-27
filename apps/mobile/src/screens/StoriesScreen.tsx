@@ -32,7 +32,9 @@ import { useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRef, useEffect } from "react";
 import { useStoriesScreen } from "../hooks/screens/social";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
+import { getAccessibilityProps } from '../utils/accessibilityUtils';
 
 // Navigation types
 type MainStackParamList = {
@@ -122,7 +124,7 @@ export default function StoriesScreen() {
   if (!currentGroup || !currentStory) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="Theme.colors.secondary[500]" />
+        <ActivityIndicator size="large" color={theme.colors.secondary[500]} }/>
       </View>
     );
   }
@@ -201,13 +203,16 @@ export default function StoriesScreen() {
           <View style={styles.headerActions}>
             {/* View Count */}
             <View style={styles.viewCount}>
-              <Ionicons name="eye" size={16} color="Theme.colors.neutral[0]" />
+              <Ionicons name="eye" size={16} color={theme.colors.neutral[0]} }/>
               <Text style={styles.viewCountText}>{viewCount}</Text>
             </View>
 
             {/* Mute Toggle */}
             {currentStory.mediaType === "video" && (
               <TouchableOpacity
+                testID="stories-mute-toggle"
+                accessibilityLabel={isMuted ? "Unmute video" : "Mute video"}
+                accessibilityRole="button"
                 onPress={() => {
                   setMuted(!isMuted);
                 }}
@@ -216,14 +221,26 @@ export default function StoriesScreen() {
                 <Ionicons
                   name={isMuted ? "volume-mute" : "volume-high"}
                   size={24}
-                  color="Theme.colors.neutral[0]"
+                  color={theme.colors.neutral[0]
+                  accessibilityLabel={isMuted ? "Muted icon" : "Unmuted icon}"}
                 />
               </TouchableOpacity>
             )}
 
             {/* Close Button */}
-            <TouchableOpacity onPress={handleGoBack} style={styles.iconButton}>
-              <Ionicons name="close" size={24} color="Theme.colors.neutral[0]" />
+            <TouchableOpacity 
+              testID="stories-close-button"
+              accessibilityLabel="Close stories and go back"
+              accessibilityRole="button"
+              onPress={handleGoBack}
+              style={styles.iconButton}
+            >
+              <Ionicons 
+                name="close" 
+                size={24} 
+                color={theme.colors.neutral[0]
+                accessibilityLabel="Close icon"
+             } }/>
             </TouchableOpacity>
           </View>
         </View>
@@ -242,11 +259,11 @@ export default function StoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[950]",
+    backgroundColor: theme.colors.neutral[950],
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[950]",
+    backgroundColor: theme.colors.neutral[950],
     justifyContent: "center",
     alignItems: "center",
   },
@@ -276,7 +293,7 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderRadius: 2,
   },
   header: {
@@ -299,10 +316,10 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "Theme.colors.neutral[0]",
+    borderColor: theme.colors.neutral[0],
   },
   username: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     fontWeight: "600",
   },
@@ -325,7 +342,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   viewCountText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 12,
     fontWeight: "600",
   },
@@ -345,7 +362,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   caption: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     textAlign: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",

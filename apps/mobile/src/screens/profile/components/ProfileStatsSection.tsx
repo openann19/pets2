@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { logger } from "@pawfectmatch/core";
 import { AdvancedCard, CardConfigs } from "../../../components/Advanced/AdvancedCard";
 import { matchesAPI } from "../../../services/api";
-import { Theme } from '../../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 
 interface ProfileStatsSectionProps {
   matchCount?: number;
@@ -69,12 +69,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: "bold",
-    color: Theme.colors.primary[500],
+    color: theme.colors.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: Theme.colors.neutral[500],
+    color: theme.colors.neutral[500],
   },
 });
 

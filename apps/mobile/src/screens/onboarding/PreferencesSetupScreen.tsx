@@ -19,7 +19,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -188,8 +189,8 @@ const PreferencesSetupScreen = ({
                 onValueChange={(value) => {
                   updatePreferences("maxDistance", Math.round(value));
                 }}
-                minimumTrackTintColor="Theme.colors.primary[500]"
-                maximumTrackTintColor="Theme.colors.neutral[200]"
+                minimumTrackTintColor=theme.colors.primary[500]
+                maximumTrackTintColor=theme.colors.neutral[200]
               />
               <View style={styles.sliderLabels}>
                 <Text style={styles.sliderLabel}>5 mi</Text>
@@ -219,8 +220,8 @@ const PreferencesSetupScreen = ({
                       min: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor="Theme.colors.primary[500]"
-                  maximumTrackTintColor="Theme.colors.neutral[200]"
+                  minimumTrackTintColor=theme.colors.primary[500]
+                  maximumTrackTintColor=theme.colors.neutral[200]
                 />
               </View>
               <View style={styles.ageSlider}>
@@ -236,8 +237,8 @@ const PreferencesSetupScreen = ({
                       max: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor="Theme.colors.primary[500]"
-                  maximumTrackTintColor="Theme.colors.neutral[200]"
+                  minimumTrackTintColor=theme.colors.primary[500]
+                  maximumTrackTintColor=theme.colors.neutral[200]
                 />
               </View>
             </View>
@@ -258,7 +259,7 @@ const PreferencesSetupScreen = ({
                     preferences.species.includes(option.value) &&
                       styles.selectedOption,
                   ])}
-                  onPress={() => {
+                   testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     toggleSpecies(option.value);
                   }}
                 >
@@ -291,7 +292,7 @@ const PreferencesSetupScreen = ({
                     preferences.intents.includes(option.value) &&
                       styles.selectedOption,
                   ])}
-                  onPress={() => {
+                   testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     toggleIntent(option.value);
                   }}
                 >
@@ -354,13 +355,13 @@ const PreferencesSetupScreen = ({
                     onValueChange={(value) => {
                       updateNotifications(option.key, value);
                     }}
-                    trackColor={{ false: "Theme.colors.neutral[200]", true: "#fce7f3" }}
+                    trackColor={{ false: theme.colors.neutral[200], true: "#fce7f3" }}
                     thumbColor={
                       preferences.notifications[
                         option.key as keyof typeof preferences.notifications
                       ]
-                        ? "Theme.colors.primary[500]"
-                        : "Theme.colors.neutral[400]"
+                        ? theme.colors.primary[500]
+                        : theme.colors.neutral[400]
                     }
                   />
                 </View>
@@ -382,14 +383,14 @@ const PreferencesSetupScreen = ({
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+           testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
         >
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.completeButton}
-          onPress={handleComplete}
+           testID="PreferencesSetupScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleComplete}
         >
           <Text style={styles.completeButtonText}>Complete Setup</Text>
         </TouchableOpacity>
@@ -401,7 +402,7 @@ const PreferencesSetupScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
   },
   content: {
     flex: 1,
@@ -417,12 +418,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
   },
   section: {
@@ -431,12 +432,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 8,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginBottom: 16,
     lineHeight: 20,
   },
@@ -448,7 +449,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   sliderThumb: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: theme.colors.primary[500],
     width: 20,
     height: 20,
   },
@@ -459,7 +460,7 @@ const styles = StyleSheet.create({
   },
   sliderLabel: {
     fontSize: 12,
-    color: "Theme.colors.neutral[400]",
+    color: theme.colors.neutral[400],
   },
   ageRangeContainer: {
     gap: 16,
@@ -470,7 +471,7 @@ const styles = StyleSheet.create({
   ageLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginBottom: 8,
   },
   optionsGrid: {
@@ -479,9 +480,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionButton: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -490,16 +491,16 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "Theme.colors.primary[500]",
+    borderColor: theme.colors.primary[500],
   },
   optionText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "500",
     textAlign: "center",
   },
   selectedOptionText: {
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
   notificationOptions: {
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderRadius: 12,
     padding: 16,
   },
@@ -520,12 +521,12 @@ const styles = StyleSheet.create({
   notificationLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 4,
   },
   notificationDescription: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
   },
   privacyNote: {
     backgroundColor: "#f0f9ff",
@@ -545,22 +546,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "Theme.colors.neutral[100]",
+    borderTopColor: theme.colors.neutral[100],
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
   },
   backButtonText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "600",
   },
   completeButton: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: theme.colors.primary[500],
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -569,7 +570,7 @@ const styles = StyleSheet.create({
   },
   completeButtonText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontWeight: "600",
   },
 });

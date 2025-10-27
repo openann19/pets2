@@ -113,6 +113,7 @@ export type EnhancedTypography = {
 
 export type EnhancedShadows = {
   depth: {
+    xs: any;
     sm: any;
     md: any;
     lg: any;
@@ -226,6 +227,7 @@ export const Theme = {
       700: "#374151",
       800: "#1f2937",
       900: "#111827",
+      950: "#030712",
     },
 
     // Status colors
@@ -524,10 +526,9 @@ export const Theme = {
     },
   },
 
-  // Z-index system
+  // Z-index system (RN-safe: numbers only, no 'auto')
   zIndex: {
     hide: -1,
-    auto: "auto",
     base: 0,
     docked: 10,
     dropdown: 1000,
@@ -581,5 +582,6 @@ export type { EnhancedShadows as TEnhancedShadows };
 export type { SemanticColors as TSemanticColors };
 export type { EnhancedTypography as TEnhancedTypography };
 export type { UnifiedTheme as TUnifiedTheme };
+// PrimaryScale and NeutralScale are already exported above as types
 
 export default Theme;

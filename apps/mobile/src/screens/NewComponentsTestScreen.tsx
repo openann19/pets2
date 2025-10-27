@@ -1,3 +1,4 @@
+import { useTheme } from '../theme/Provider';
 /**
  * NEW COMPONENTS TEST SCREEN
  *
@@ -11,7 +12,6 @@ import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
 // Import new architecture components
 import { EliteContainer, EliteHeader } from "../components";
 import {
-  Theme,
   EliteButton,
   EliteButtonPresets,
   FXContainer,
@@ -71,6 +71,9 @@ const mockPhotos = [
 ];
 
 export default function NewComponentsTestScreen() {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   const [photos, setPhotos] = useState(mockPhotos);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -334,65 +337,65 @@ export default function NewComponentsTestScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
   },
   scrollContent: {
-    padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing["4xl"],
+    padding: theme.spacing.lg,
+    paddingBottom: theme.spacing["4xl"],
   },
   heroSection: {
-    padding: Theme.spacing.xl,
-    marginBottom: Theme.spacing.lg,
+    padding: theme.spacing.xl,
+    marginBottom: theme.spacing.lg,
     alignItems: "center",
   },
   heroTitle: {
     textAlign: "center",
-    marginBottom: Theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
   heroSubtitle: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: theme.colors.textMuted,
   },
   section: {
-    padding: Theme.spacing.xl,
-    marginBottom: Theme.spacing.lg,
+    padding: theme.spacing.xl,
+    marginBottom: theme.spacing.lg,
   },
   sectionTitle: {
-    marginBottom: Theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   sectionSubtitle: {
-    marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
+    marginBottom: theme.spacing.lg,
+    color: theme.colors.textMuted,
   },
   buttonGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Theme.spacing.sm,
+    gap: theme.spacing.sm,
   },
   containerGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Theme.spacing.md,
+    gap: theme.spacing.md,
   },
   demoContainer: {
     flex: 1,
-    minWidth: (SCREEN_WIDTH - Theme.spacing.xl * 2 - Theme.spacing.md * 2) / 3,
-    padding: Theme.spacing.md,
+    minWidth: (SCREEN_WIDTH - theme.spacing.xl * 2 - theme.spacing.md * 2) / 3,
+    padding: theme.spacing.md,
     alignItems: "center",
   },
   swipeCardContainer: {
     height: 600,
-    marginHorizontal: -Theme.spacing.md,
+    marginHorizontal: -theme.spacing.md,
   },
   typographyShowcase: {
-    gap: Theme.spacing.md,
+    gap: theme.spacing.md,
   },
   successList: {
-    gap: Theme.spacing.sm,
+    gap: theme.spacing.sm,
   },
   successItem: {
-    paddingLeft: Theme.spacing.md,
+    paddingLeft: theme.spacing.md,
   },
 });

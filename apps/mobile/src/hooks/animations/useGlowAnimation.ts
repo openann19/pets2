@@ -27,7 +27,7 @@ export function useGlowAnimation(
   const glowIntensity = useSharedValue(0);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     const animate = () => {
       glowIntensity.value = withSequence(

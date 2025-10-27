@@ -385,7 +385,7 @@ export function useAdminUploadsScreen({
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 800));
 
-        uploadIds.forEach((id) => updateUploadStatus(id, "approved"));
+        uploadIds.forEach((id) => { updateUploadStatus(id, "approved"); });
 
         setStats((prev) => ({
           ...prev,
@@ -424,7 +424,7 @@ export function useAdminUploadsScreen({
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 800));
 
-        uploadIds.forEach((id) => updateUploadStatus(id, "rejected", reason));
+        uploadIds.forEach((id) => { updateUploadStatus(id, "rejected", reason); });
 
         setStats((prev) => ({
           ...prev,

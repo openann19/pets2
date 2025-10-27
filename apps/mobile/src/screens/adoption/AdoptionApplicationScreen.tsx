@@ -13,7 +13,8 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   AdoptionApplication: { petId: string; petName: string };
@@ -147,7 +148,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
                   styles.optionButton,
                   formData.experience === option && styles.selectedOption,
                 ])}
-                onPress={() => {
+                 testID="AdoptionApplicationScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   updateFormData("experience", option);
                 }}
               >
@@ -180,7 +181,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
                 styles.optionButton,
                 formData.livingSpace === option && styles.selectedOption,
               ])}
-              onPress={() => {
+               testID="AdoptionApplicationScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 updateFormData("livingSpace", option);
               }}
             >
@@ -361,7 +362,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity  testID="AdoptionApplicationScreen-button-2" accessibilityLabel="navigation.goBack()" accessibilityRole="button" onPress={() => navigation.goBack()}>
             <Text style={styles.backButton}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Apply for {petName}</Text>
@@ -391,7 +392,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
           {currentStep > 0 && (
             <TouchableOpacity
               style={styles.backStepButton}
-              onPress={() => {
+               testID="AdoptionApplicationScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 setCurrentStep((prev) => prev - 1);
               }}
             >
@@ -404,7 +405,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
               styles.nextButton,
               !validateStep() && styles.disabledButton,
             ])}
-            onPress={handleNext}
+             testID="AdoptionApplicationScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleNext}
             disabled={!validateStep()}
           >
             <Text style={styles.nextButtonText}>
@@ -420,7 +421,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
   },
   keyboardView: {
     flex: 1,
@@ -431,17 +432,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[100]",
+    borderBottomColor: theme.colors.neutral[100],
   },
   backButton: {
     fontSize: 16,
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   placeholder: {
     width: 50,
@@ -452,18 +453,18 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: "Theme.colors.neutral[200]",
+    backgroundColor: theme.colors.neutral[200],
     borderRadius: 2,
     marginBottom: 8,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: theme.colors.primary[500],
     borderRadius: 2,
   },
   progressText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
   },
   content: {
@@ -477,13 +478,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 16,
     marginTop: 8,
   },
@@ -493,27 +494,27 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 12,
   },
   textArea: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     textAlignVertical: "top",
     minHeight: 100,
   },
@@ -523,9 +524,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionButton: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -533,19 +534,19 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "Theme.colors.primary[500]",
+    borderColor: theme.colors.primary[500],
   },
   optionText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "500",
   },
   selectedOptionText: {
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
   referenceContainer: {
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -553,7 +554,7 @@ const styles = StyleSheet.create({
   referenceTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginBottom: 12,
   },
   agreementContainer: {
@@ -579,22 +580,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "Theme.colors.neutral[100]",
+    borderTopColor: theme.colors.neutral[100],
   },
   backStepButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
   },
   backStepButtonText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "600",
   },
   nextButton: {
-    backgroundColor: "Theme.colors.primary[500]",
+    backgroundColor: theme.colors.primary[500],
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -603,11 +604,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: "Theme.colors.neutral[300]",
+    backgroundColor: theme.colors.neutral[300],
   },
   nextButtonText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontWeight: "600",
   },
 });

@@ -9,6 +9,7 @@ import Pet from '../../models/Pet';
 import Match from '../../models/Match';
 import AuditLog from '../../models/AuditLog';
 import Conversation from '../../models/Conversation';
+import { getErrorMessage } from '../../utils/errorHandler';
 const logger = require('../../utils/logger');
 
 // Type definitions
@@ -109,12 +110,12 @@ export const getAllUsers = async (req: AdminRequest, res: Response): Promise<voi
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting all users:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get users',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -181,12 +182,12 @@ export const getUserDetails = async (req: AdminRequest, res: Response): Promise<
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting user details:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get user details',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -208,7 +209,7 @@ export const suspendUser = async (req: AdminRequest, res: Response): Promise<voi
       return;
     }
 
-    if (user.role === 'admin') {
+    if (user.role === 'administrator') {
       res.status(403).json({
         success: false,
         message: 'Cannot suspend admin users'
@@ -255,12 +256,12 @@ export const suspendUser = async (req: AdminRequest, res: Response): Promise<voi
       data: suspensionData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error suspending user:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to suspend user',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -282,7 +283,7 @@ export const banUser = async (req: AdminRequest, res: Response): Promise<void> =
       return;
     }
 
-    if (user.role === 'admin') {
+    if (user.role === 'administrator') {
       res.status(403).json({
         success: false,
         message: 'Cannot ban admin users'
@@ -325,12 +326,12 @@ export const banUser = async (req: AdminRequest, res: Response): Promise<void> =
       data: banData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error banning user:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to ban user',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -390,12 +391,12 @@ export const activateUser = async (req: AdminRequest, res: Response): Promise<vo
       data: activationData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error activating user:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to activate user',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -422,7 +423,7 @@ export const updateUserRole = async (req: AdminRequest, res: Response): Promise<
     const newRole = body.role;
 
     // Prevent demoting other admins
-    if (user.role === 'admin' && newRole !== 'admin') {
+    if (user.role === 'administrator' && newRole !== 'administrator') {
       res.status(403).json({
         success: false,
         message: 'Cannot demote admin users'
@@ -462,12 +463,12 @@ export const updateUserRole = async (req: AdminRequest, res: Response): Promise<
       data: roleUpdateData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error updating user role:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to update user role',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -504,12 +505,12 @@ export const getUserActivity = async (req: AdminRequest, res: Response): Promise
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error getting user activity:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to get user activity',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };

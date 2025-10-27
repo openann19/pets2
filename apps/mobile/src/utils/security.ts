@@ -18,12 +18,12 @@ function getRandomValues(array: Uint8Array): Uint8Array {
 export const UserInputSchemas = {
   // Authentication
   login: z.object({
-    email: z.string().email("Invalid email format"),
+    email: z.email("Invalid email format"),
     password: z.string().min(8, "Password must be at least 8 characters"),
   }),
 
   register: z.object({
-    email: z.string().email("Invalid email format"),
+    email: z.email("Invalid email format"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -81,7 +81,7 @@ export const UserInputSchemas = {
 
 // XSS Protection Utilities
 export class InputSanitizer {
-  private static instance: InputSanitizer;
+  private static instance: InputSanitizer | null = null;
 
   static getInstance(): InputSanitizer {
     if (!InputSanitizer.instance) {
@@ -124,7 +124,8 @@ export class InputSanitizer {
 
     // Remove null bytes and other dangerous characters
     return input
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "") // Remove control characters
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "") // Remove control characters
       .replace(/[<>]/g, "") // Remove angle brackets
       .trim()
       .slice(0, 10000); // Limit length
@@ -157,7 +158,7 @@ export class InputSanitizer {
 
 // Rate Limiting Implementation
 export class RateLimiter {
-  private static instance: RateLimiter;
+  private static instance: RateLimiter | null = null;
   private attempts = new Map<string, { count: number; resetTime: number }>();
 
   static getInstance(): RateLimiter {
@@ -176,7 +177,7 @@ export class RateLimiter {
     windowMs: number = 60000,
   ): boolean {
     const now = Date.now();
-    const key = `${identifier}`;
+    const key = identifier;
 
     const record = this.attempts.get(key);
 
@@ -220,7 +221,7 @@ export class RateLimiter {
 
 // CSRF Protection
 export class CSRFProtection {
-  private static instance: CSRFProtection;
+  private static instance: CSRFProtection | null = null;
   private tokens = new Map<string, { token: string; expires: number }>();
 
   static getInstance(): CSRFProtection {
@@ -281,7 +282,7 @@ export class CSRFProtection {
 
 // Input Validation Wrapper
 export class InputValidator {
-  private static instance: InputValidator;
+  private static instance: InputValidator | null = null;
   private sanitizer = InputSanitizer.getInstance();
   private rateLimiter = RateLimiter.getInstance();
 
@@ -295,11 +296,11 @@ export class InputValidator {
   /**
    * Validate and sanitize user input
    */
-  async validateInput<T>(
-    schema: z.ZodSchema<T>,
+  validateInput<T>(
+    schema: z.ZodType<T>,
     data: unknown,
     context: string = "unknown",
-  ): Promise<T> {
+  ): T {
     try {
       // First pass: sanitize if it's a string
       let sanitizedData = data;
@@ -326,10 +327,16 @@ export class InputValidator {
         logger.error("Input validation failed", {
           context,
           errors: error.issues,
-          input: typeof data === "object" ? JSON.stringify(data) : String(data),
+          input: typeof data === "object" && data !== null ? (() => {
+            try {
+              return JSON.stringify(data, null, 2);
+            } catch {
+              return "[Object]";
+            }
+          })() : String(data),
         });
         throw new Error(
-          `Validation failed: ${error.issues.map((e: any) => e.message).join(", ")}`,
+          `Validation failed: ${error.issues.map((e) => e.message).join(", ")}`,
         );
       }
 
@@ -380,7 +387,15 @@ export class InputValidator {
 }
 
 // Security Headers Middleware
-export const createSecurityHeaders = (req: any, res: any, next: () => void) => {
+interface SecurityRequest {
+  headers: Record<string, string>;
+}
+
+interface SecurityResponse {
+  setHeader: (name: string, value: string) => void;
+}
+
+export const createSecurityHeaders = (req: SecurityRequest, res: SecurityResponse, next: () => void) => {
   // Content Security Policy
   res.setHeader(
     "Content-Security-Policy",

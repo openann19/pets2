@@ -7,14 +7,9 @@ module.exports = {
   testRunner: {
     args: {
       '$0': 'jest',
-      config: 'e2e/jest.config.js'
+      config: 'detox/jest.config.cjs',
     },
-    jest: {
-      setupFilesAfterEnv: ['<rootDir>/e2e/setup.js'],
-      testEnvironment: 'node',
-      reporters: ['detox/runners/jest/reporter'],
-      verbose: true
-    }
+    jest: { setupTimeout: 120000 },
   },
   apps: {
     'ios.debug': {

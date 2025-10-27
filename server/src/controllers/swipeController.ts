@@ -1,12 +1,14 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import User from '../models/User';
 import Pet from '../models/Pet';
 import Match from '../models/Match';
 import logger from '../utils/logger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AuthRequest extends Request {
   userId: string;
-  user?: any;
+  user?: IUserDocument;
 }
 
 /**
@@ -62,6 +64,13 @@ export const rewindLastSwipe = async (req: AuthRequest, res: Response): Promise<
 
     // Get the most recent swipe
     const lastSwipe = swipedPets[swipedPets.length - 1];
+    if (!lastSwipe) {
+      res.status(400).json({
+        success: false,
+        message: 'No swipes to undo'
+      });
+      return;
+    }
     const petId = lastSwipe.petId;
 
     // Remove the last swipe from the array
@@ -94,12 +103,12 @@ export const rewindLastSwipe = async (req: AuthRequest, res: Response): Promise<
       restoredPet
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Rewind swipe error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to rewind swipe',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: getErrorMessage(error)
     });
   }
 };
@@ -121,7 +130,7 @@ export const likePet = async (req: AuthRequest, res: Response): Promise<void> =>
 
     // Check if already swiped
     const alreadySwiped = (user.swipedPets || []).some(
-      (swipe: any) => swipe.petId.toString() === petId
+      (swipe: { petId: string; action: string; swipedAt: Date }) => swipe.petId.toString() === petId
     );
 
     if (alreadySwiped) {
@@ -149,12 +158,12 @@ export const likePet = async (req: AuthRequest, res: Response): Promise<void> =>
 
     res.json({ success: true });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Like pet error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to like pet',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: getErrorMessage(error)
     });
   }
 };
@@ -176,7 +185,7 @@ export const passPet = async (req: AuthRequest, res: Response): Promise<void> =>
 
     // Check if already swiped
     const alreadySwiped = (user.swipedPets || []).some(
-      (swipe: any) => swipe.petId.toString() === petId
+      (swipe: { petId: string; action: string; swipedAt: Date }) => swipe.petId.toString() === petId
     );
 
     if (alreadySwiped) {
@@ -203,12 +212,12 @@ export const passPet = async (req: AuthRequest, res: Response): Promise<void> =>
 
     res.json({ success: true });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Pass pet error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to pass pet',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: getErrorMessage(error)
     });
   }
 };
@@ -246,7 +255,7 @@ export const superLikePet = async (req: AuthRequest, res: Response): Promise<voi
 
     // Check if already swiped
     const alreadySwiped = (user.swipedPets || []).some(
-      (swipe: any) => swipe.petId.toString() === petId
+      (swipe: { petId: string; action: string; swipedAt: Date }) => swipe.petId.toString() === petId
     );
 
     if (alreadySwiped) {
@@ -275,12 +284,12 @@ export const superLikePet = async (req: AuthRequest, res: Response): Promise<voi
 
     res.json({ success: true });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Super like pet error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to super like pet',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: getErrorMessage(error)
     });
   }
 };

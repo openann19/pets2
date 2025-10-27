@@ -20,6 +20,9 @@ export * from './types/animations';
 export * from './utils';
 export * from './utils/env';
 
+// Export logger specifically for web app
+export { logger, apiLogger, authLogger, uiLogger, navigationLogger, storageLogger, analyticsLogger, notificationLogger, mediaLogger } from './utils/logger';
+
 // Export global state stores
 export * from './stores';
 

@@ -1,10 +1,12 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
-import {
+import mongoose, { Schema, Model } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
+import type {
   IStory,
   IStoryMethods,
   IStoryModel,
   IStoryView,
-  IStoryReply
+  IStoryReply,
+  IStoryDocument
 } from '../types/mongoose.d';
 
 /**
@@ -120,7 +122,7 @@ storySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 /**
  * Add a view to the story (deduplicated by userId)
  */
-storySchema.methods.addView = function(this: any, userId: string): boolean {
+storySchema.methods.addView = function(this: IStoryDocument, userId: string): boolean {
   // Check if user already viewed
   const existingView = this.views.find(
     (view: IStoryView) => view.userId.toString() === userId.toString()
@@ -142,7 +144,7 @@ storySchema.methods.addView = function(this: any, userId: string): boolean {
 /**
  * Add a reply to the story
  */
-storySchema.methods.addReply = function(this: any, userId: string, message: string): void {
+storySchema.methods.addReply = function(this: IStoryDocument, userId: string, message: string): void {
   this.replies.push({
     userId,
     message,
@@ -155,14 +157,14 @@ storySchema.methods.addReply = function(this: any, userId: string, message: stri
 /**
  * Check if story is expired
  */
-storySchema.methods.isExpired = function(this: any): boolean {
+storySchema.methods.isExpired = function(this: IStoryDocument): boolean {
   return new Date() > this.expiresAt;
 };
 
 /**
  * Check if user has viewed this story
  */
-storySchema.methods.hasUserViewed = function(this: any, userId: string): boolean {
+storySchema.methods.hasUserViewed = function(this: IStoryDocument, userId: string): boolean {
   return this.views.some(
     (view: IStoryView) => view.userId.toString() === userId.toString()
   );
@@ -171,7 +173,7 @@ storySchema.methods.hasUserViewed = function(this: any, userId: string): boolean
 /**
  * Get active stories for a user's feed (following + own)
  */
-storySchema.statics.getActiveFeedStories = async function(userId: string, followingIds: string[] = [], options: Record<string, unknown> = {}): Promise<any> {
+storySchema.statics.getActiveFeedStories = async function(userId: string, followingIds: string[] = [], options: Record<string, unknown> = {}): Promise<IStoryDocument[]> {
   const interpretedAsOptions = followingIds && !Array.isArray(followingIds) && typeof followingIds === 'object';
   const normalizedFollowingIds = interpretedAsOptions ? [] : followingIds;
   const optionsConfig = interpretedAsOptions ? followingIds : options;
@@ -184,55 +186,53 @@ storySchema.statics.getActiveFeedStories = async function(userId: string, follow
     expiresAt: { $gt: now }
   };
 
-  if (optionsConfig && (optionsConfig as any).cursor) {
-    const cursorDate = new Date((optionsConfig as any).cursor);
+  if (optionsConfig && typeof optionsConfig === 'object' && 'cursor' in optionsConfig) {
+    const cursorDate = new Date(optionsConfig.cursor as string);
     if (!isNaN(cursorDate.getTime())) {
       query.createdAt = { $lt: cursorDate };
     }
   }
 
-  const limit = optionsConfig && Number.isInteger((optionsConfig as any).limit)
-    ? Math.max(1, Math.min((optionsConfig as any).limit, 100))
+  const limit = typeof optionsConfig === 'object' && optionsConfig !== null && Number.isInteger(optionsConfig.limit)
+    ? Math.max(1, Math.min(optionsConfig.limit as number, 100))
     : undefined;
 
   return this.find(query)
     .populate('userId', 'name profilePhoto username')
     .sort({ createdAt: -1 })
-    .limit(limit || 0)
-    .lean();
+    .limit(limit || 0);
 };
 
 /**
  * Get user's active stories
  */
-storySchema.statics.getUserActiveStories = async function(userId: string, options: Record<string, unknown> = {}): Promise<any> {
+storySchema.statics.getUserActiveStories = async function(userId: string, options: Record<string, unknown> = {}): Promise<IStoryDocument[]> {
   const now = new Date();
   const query: Record<string, unknown> = {
     userId,
     expiresAt: { $gt: now }
   };
 
-  if (options && (options as any).cursor) {
-    const cursorDate = new Date((options as any).cursor);
+  if (options && typeof options === 'object' && 'cursor' in options) {
+    const cursorDate = new Date(options.cursor as string);
     if (!isNaN(cursorDate.getTime())) {
       query.createdAt = { $lt: cursorDate };
     }
   }
 
-  const limit = options && Number.isInteger((options as any).limit) 
-    ? Math.max(1, Math.min((options as any).limit, 100)) 
+  const limit = typeof options === 'object' && options !== null && Number.isInteger(options.limit)
+    ? Math.max(1, Math.min(options.limit as number, 100)) 
     : undefined;
 
   return this.find(query)
     .sort({ createdAt: -1 })
-    .limit(limit || 0)
-    .lean();
+    .limit(limit || 0);
 };
 
 /**
  * Get stories grouped by user (for stories bar)
  */
-storySchema.statics.getStoriesGroupedByUser = async function(userId: string, followingIds: string[] = [], options: Record<string, unknown> = {}): Promise<any> {
+storySchema.statics.getStoriesGroupedByUser = async function(userId: string, followingIds: string[] = [], options: Record<string, unknown> = {}): Promise<Array<{ _id: string; stories: IStoryDocument[] }>> {
   const interpretedAsOptions = followingIds && !Array.isArray(followingIds) && typeof followingIds === 'object';
   const normalizedFollowingIds = interpretedAsOptions ? [] : followingIds;
   const optionsConfig = interpretedAsOptions ? followingIds : options;
@@ -244,14 +244,14 @@ storySchema.statics.getStoriesGroupedByUser = async function(userId: string, fol
     expiresAt: { $gt: now }
   };
 
-  if (optionsConfig && (optionsConfig as any).cursor) {
-    const cursorDate = new Date((optionsConfig as any).cursor);
+  if (typeof optionsConfig === 'object' && optionsConfig !== null && 'cursor' in optionsConfig) {
+    const cursorDate = new Date(optionsConfig.cursor as string);
     if (!isNaN(cursorDate.getTime())) {
       match.createdAt = { $lt: cursorDate };
     }
   }
 
-  const pipeline: any[] = [
+  const pipeline: Array<Record<string, unknown>> = [
     { $match: match },
     { $sort: { createdAt: -1 } },
     {
@@ -302,12 +302,12 @@ storySchema.statics.getStoriesGroupedByUser = async function(userId: string, fol
     { $sort: { hasUnseen: -1, latestStoryTime: -1 } }
   ];
 
-  if (optionsConfig && Number.isInteger((optionsConfig as any).limit)) {
-    const limit = Math.max(1, Math.min((optionsConfig as any).limit, 100));
+  if (typeof optionsConfig === 'object' && optionsConfig !== null && Number.isInteger(optionsConfig.limit)) {
+    const limit = Math.max(1, Math.min(optionsConfig.limit as number, 100));
     pipeline.push({ $limit: limit });
   }
 
-  return this.aggregate(pipeline);
+  return this.aggregate(pipeline) as Promise<Array<{ _id: string; stories: unknown }>>;
 };
 
 /**
@@ -326,7 +326,7 @@ storySchema.statics.deleteExpiredStories = async function(): Promise<number> {
 /**
  * Pre-save hook: Set expiresAt if not already set (24 hours from creation)
  */
-storySchema.pre('save', function(this: any, next) {
+storySchema.pre('save', function(this: IStoryDocument, next) {
   if (!this.expiresAt) {
     const baseDate = this.createdAt instanceof Date ? this.createdAt : new Date();
     this.expiresAt = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
@@ -337,11 +337,11 @@ storySchema.pre('save', function(this: any, next) {
 /**
  * Virtual properties
  */
-storySchema.virtual('isActive').get(function(this: any): boolean {
+storySchema.virtual('isActive').get(function(this: IStoryDocument): boolean {
   return new Date() < this.expiresAt;
 });
 
-storySchema.virtual('timeRemaining').get(function(this: any): number {
+storySchema.virtual('timeRemaining').get(function(this: IStoryDocument): number {
   const now = new Date();
   return Math.max(0, this.expiresAt.getTime() - now.getTime());
 });

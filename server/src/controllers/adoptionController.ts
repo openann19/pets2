@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import * as mongoose from 'mongoose';
 import Pet from '../models/Pet';
 import User from '../models/User';
@@ -12,7 +13,7 @@ const logger = require('../utils/logger');
 
 // Type definitions
 interface AuthRequest extends Request {
-  user?: any;
+  user?: IUserDocument;
   userId?: string;
 }
 

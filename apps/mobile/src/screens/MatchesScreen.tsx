@@ -15,9 +15,11 @@ import MatchesFilterModal from "../components/matches/MatchesFilterModal";
 import { useMatchesData } from "../hooks/useMatchesData";
 import { logger } from "../services/logger";
 import type { Match } from "../hooks/useMatchesData";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 import { useScrollOffsetTracker } from "../hooks/navigation/useScrollOffsetTracker";
 import { useTabReselectRefresh } from "../hooks/navigation/useTabReselectRefresh";
+import { useTranslation } from 'react-i18next';
 
 interface MatchesScreenProps {
   navigation: {
@@ -29,6 +31,8 @@ interface MatchesScreenProps {
 }
 
 export default function MatchesScreen({ navigation }: MatchesScreenProps) {
+  const themeHook = useTheme();
+  const { t } = useTranslation('common');
   const {
     matches,
     likedYou,
@@ -74,7 +78,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
       header={
         <AdvancedHeader
           {...HeaderConfigs.glass({
-            title: "Matches",
+            title: t('matches.title'),
             rightButtons: [
               {
                 type: "filter",
@@ -126,7 +130,7 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Theme.colors.primary[500]}
+            tintColor={theme.colors.primary}
           />
         }
       />
@@ -137,8 +141,5 @@ export default function MatchesScreen({ navigation }: MatchesScreenProps) {
 const styles = StyleSheet.create({
   list: {
     flex: 1,
-  },
-  listContent: {
-    padding: Theme.spacing.md,
   },
 });

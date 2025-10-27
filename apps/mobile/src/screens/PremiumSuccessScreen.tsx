@@ -48,7 +48,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
         {isVerified ? (
           <>
             <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color="Theme.colors.status.success" />
+              <Ionicons name="checkmark-circle" size={80} color={theme.colors.success} }/>
             </View>
 
             <Text
@@ -69,7 +69,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
 
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="heart" size={20} color="Theme.colors.status.success" />
+                <Ionicons name="heart" size={20} color={theme.colors.success} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -80,7 +80,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="eye" size={20} color="Theme.colors.status.success" />
+                <Ionicons name="eye" size={20} color={theme.colors.success} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -91,7 +91,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="flash" size={20} color="Theme.colors.status.success" />
+                <Ionicons name="flash" size={20} color={theme.colors.success} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
@@ -108,7 +108,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 styles.continueButton,
                 { backgroundColor: colors.primary },
               ])}
-              onPress={handleContinue}
+               testID="PremiumSuccessScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleContinue}
             >
               <Text style={styles.continueButtonText}>Start Matching</Text>
             </TouchableOpacity>

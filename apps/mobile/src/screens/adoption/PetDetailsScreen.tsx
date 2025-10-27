@@ -16,7 +16,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   PetDetails: { petId: string };
@@ -103,15 +104,15 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "Theme.colors.status.success";
+        return theme.colors.success;
       case "pending":
-        return "Theme.colors.status.warning";
+        return theme.colors.warning;
       case "adopted":
         return "#8b5cf6";
       case "paused":
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
       default:
-        return "Theme.colors.neutral[500]";
+        return theme.colors.neutral[500];
     }
   };
 
@@ -149,7 +150,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <Text style={styles.emptySubtitle}>Unable to load pet details</Text>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+             testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </TouchableOpacity>
@@ -168,13 +169,13 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+             testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
             <Ionicons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Pet Details</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.headerButton}>
+            <TouchableOpacity style={styles.headerButton} testID="PetDetailsScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
               <Ionicons name="share-outline" size={20} color="#333" />
             </TouchableOpacity>
           </View>
@@ -185,7 +186,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <Image source={{ uri: pet.photos[0] }} style={styles.mainPhoto} />
           {pet.featured && (
             <View style={styles.featuredBadge}>
-              <Ionicons name="star" size={16} color="Theme.colors.neutral[0]" />
+              <Ionicons name="star" size={16} color={theme.colors.neutral[0]} }/>
               <Text style={styles.featuredText}>Featured</Text>
             </View>
           )}
@@ -266,7 +267,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       : "close-circle"
                   }
                   size={20}
-                  color={pet.healthInfo.vaccinated ? "Theme.colors.status.success" : "Theme.colors.status.error"}
+                  color={pet.healthInfo.vaccinated ? theme.colors.success : theme.colors.danger}
                 />
                 <Text style={styles.healthText}>Vaccinated</Text>
               </View>
@@ -278,7 +279,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       : "close-circle"
                   }
                   size={20}
-                  color={pet.healthInfo.spayedNeutered ? "Theme.colors.status.success" : "Theme.colors.status.error"}
+                  color={pet.healthInfo.spayedNeutered ? theme.colors.success : theme.colors.danger}
                 />
                 <Text style={styles.healthText}>Spayed/Neutered</Text>
               </View>
@@ -290,7 +291,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       : "close-circle"
                   }
                   size={20}
-                  color={pet.healthInfo.microchipped ? "Theme.colors.status.success" : "Theme.colors.status.error"}
+                  color={pet.healthInfo.microchipped ? theme.colors.success : theme.colors.danger}
                 />
                 <Text style={styles.healthText}>Microchipped</Text>
               </View>
@@ -304,7 +305,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <View style={styles.actionsGrid}>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
+               testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 Alert.alert(
                   "Coming Soon",
                   "Application review feature coming soon!",
@@ -312,10 +313,10 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               }}
             >
               <LinearGradient
-                colors={["Theme.colors.status.info", "#1d4ed8"]}
+                colors={[theme.colors.status.info, "#1d4ed8"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="document-text" size={24} color="Theme.colors.neutral[0]" />
+                <Ionicons name="document-text" size={24} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.actionText}>Review Applications</Text>
                 <Text style={styles.actionCount}>({pet.applications})</Text>
               </LinearGradient>
@@ -323,15 +324,15 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => {
+               testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 Alert.alert("Edit", "Edit pet details coming soon!");
               }}
             >
               <LinearGradient
-                colors={["Theme.colors.status.success", "#047857"]}
+                colors={[theme.colors.success, "#047857"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="create" size={24} color="Theme.colors.neutral[0]" />
+                <Ionicons name="create" size={24} color={theme.colors.neutral[0]} }/>
                 <Text style={styles.actionText}>Edit Details</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -350,7 +351,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                     styles.statusOption,
                     pet.status === status && styles.statusOptionActive,
                   ])}
-                  onPress={() => {
+                   testID="PetDetailsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     handleStatusChange(status);
                   }}
                 >
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -449,14 +450,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   featuredText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 12,
     fontWeight: "bold",
     marginLeft: 4,
   },
   infoSection: {
     padding: 20,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
   },
   nameRow: {
     flexDirection: "row",
@@ -467,7 +468,7 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -480,7 +481,7 @@ const styles = StyleSheet.create({
   },
   petBreed: {
     fontSize: 18,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginBottom: 16,
   },
   statsRow: {
@@ -489,7 +490,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "Theme.colors.neutral[100]",
+    borderColor: theme.colors.neutral[100],
   },
   statItem: {
     alignItems: "center",
@@ -497,12 +498,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
   },
   section: {
     padding: 20,
@@ -510,7 +511,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 12,
   },
   sectionCard: {
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: "Theme.colors.neutral[600]",
+    color: theme.colors.neutral[600],
   },
   tagsContainer: {
     flexDirection: "row",
@@ -529,14 +530,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tag: {
-    backgroundColor: "Theme.colors.neutral[100]",
+    backgroundColor: theme.colors.neutral[100],
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   tagText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     fontWeight: "500",
   },
   healthInfo: {
@@ -549,7 +550,7 @@ const styles = StyleSheet.create({
   },
   healthText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     fontWeight: "500",
   },
   actionsGrid: {
@@ -564,13 +565,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
     marginTop: 8,
   },
   actionCount: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     opacity: 0.9,
     marginTop: 4,
@@ -587,16 +588,16 @@ const styles = StyleSheet.create({
   },
   statusOptionActive: {
     backgroundColor: "#fdf2f8",
-    borderColor: "Theme.colors.primary[500]",
+    borderColor: theme.colors.primary[500],
   },
   statusOptionText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "500",
     textAlign: "center",
   },
   statusOptionTextActive: {
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
   backButton: {
@@ -604,7 +605,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
     fontWeight: "600",
   },
 });

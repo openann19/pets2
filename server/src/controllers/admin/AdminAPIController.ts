@@ -4,14 +4,17 @@
  */
 
 import type { Request, Response } from 'express';
+import type { IUserDocument } from '../../types/mongoose';
 import AnalyticsEvent from '../../models/AnalyticsEvent';
 import { analyticsService } from '../../services/monitoring';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 const logger = require('../../utils/logger');
 
 // Type definitions
 interface AdminRequest extends Request {
   userId?: string;
+  user?: IUserDocument;
 }
 
 interface GetAPIEndpointsQuery {
@@ -144,7 +147,7 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
       totalCalls,
       avgResponseTime: Math.round(avgResponseTime),
       errorRate: errorRate.toFixed(1),
-      uptime: parseFloat(uptime),
+      uptime: typeof uptime === 'string' ? parseFloat(uptime) : uptime,
       throughput: {
         requestsPerSecond: Math.round(requestsPerSecond * 10) / 10,
         dataTransferred: parseFloat(dataTransferred)
@@ -158,18 +161,19 @@ export const getAPIStats = async (req: AdminRequest, res: Response): Promise<voi
       }
     };
 
-    await logAdminActivity(req, 'VIEW_API_STATS', { statsRequested: true }, true);
+    await logAdminActivity(req as any, 'VIEW_API_STATS', { statsRequested: true }, true);
 
     res.json({
       success: true,
       data: stats
     });
-  } catch (error: any) {
-    logger.error('Failed to fetch API stats', { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error);
+    logger.error('Failed to fetch API stats', { error: errorMessage });
     res.status(500).json({
       success: false,
       error: 'Failed to fetch API statistics',
-      message: error.message
+      message: errorMessage
     });
   }
 };
@@ -266,19 +270,20 @@ export const getAPIEndpoints = async (req: AdminRequest, res: Response): Promise
       );
     }
 
-    await logAdminActivity(req, 'VIEW_API_ENDPOINTS', { filters: { method, status, search } }, true);
+    await logAdminActivity(req as any, 'VIEW_API_ENDPOINTS', { filters: { method, status, search } }, true);
 
     res.json({
       success: true,
       data: endpoints,
       total: endpoints.length
     });
-  } catch (error: any) {
-    logger.error('Failed to fetch API endpoints', { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error);
+    logger.error('Failed to fetch API endpoints', { error: errorMessage });
     res.status(500).json({
       success: false,
       error: 'Failed to fetch API endpoints',
-      message: error.message
+      message: errorMessage
     });
   }
 };
@@ -290,6 +295,14 @@ export const testAPIEndpoint = async (req: AdminRequest, res: Response): Promise
   try {
     const { endpointId } = req.params;
     const { testCase } = req.body as TestAPIEndpointBody;
+
+    if (!endpointId) {
+      res.status(400).json({
+        success: false,
+        error: 'Endpoint ID is required'
+      });
+      return;
+    }
 
     // Parse endpoint from ID
     const [method, path] = endpointId.split(':');
@@ -335,7 +348,7 @@ export const testAPIEndpoint = async (req: AdminRequest, res: Response): Promise
         }
       });
 
-      await logAdminActivity(req, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: true }, true);
+      await logAdminActivity(req as any, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: true }, true);
 
       res.json({
         success: true,
@@ -345,7 +358,7 @@ export const testAPIEndpoint = async (req: AdminRequest, res: Response): Promise
           timestamp: new Date().toISOString()
         }
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       
       // Track the failed test
@@ -358,28 +371,29 @@ export const testAPIEndpoint = async (req: AdminRequest, res: Response): Promise
           endpoint: path,
           method,
           testCase,
-          error: error.message
+          error: getErrorMessage(error)
         }
       });
 
-      await logAdminActivity(req, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: false }, false, error.message);
+      await logAdminActivity(req as any, 'TEST_API_ENDPOINT', { endpointId, testCase, duration, success: false }, false, getErrorMessage(error));
 
       res.json({
         success: false,
         data: {
           status: error.response?.status || 500,
           responseTime: duration,
-          error: error.message,
+          error: getErrorMessage(error),
           timestamp: new Date().toISOString()
         }
       });
     }
-  } catch (error: any) {
-    logger.error('Failed to test API endpoint', { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error);
+    logger.error('Failed to test API endpoint', { error: errorMessage });
     res.status(500).json({
       success: false,
       error: 'Failed to test API endpoint',
-      message: error.message
+      message: errorMessage
     });
   }
 };
@@ -394,7 +408,7 @@ export const updateAPIEndpoint = async (req: AdminRequest, res: Response): Promi
 
     // In a real implementation, this would update endpoint configuration
     // For now, we'll just log the update attempt
-    await logAdminActivity(req, 'UPDATE_API_ENDPOINT', { endpointId, updates }, true);
+    await logAdminActivity(req as any, 'UPDATE_API_ENDPOINT', { endpointId, updates }, true);
 
     logger.info('API endpoint configuration update requested', {
       endpointId,
@@ -410,12 +424,13 @@ export const updateAPIEndpoint = async (req: AdminRequest, res: Response): Promi
         updates
       }
     });
-  } catch (error: any) {
-    logger.error('Failed to update API endpoint', { error: error.message });
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error);
+    logger.error('Failed to update API endpoint', { error: errorMessage });
     res.status(500).json({
       success: false,
       error: 'Failed to update API endpoint',
-      message: error.message
+      message: errorMessage
     });
   }
 };

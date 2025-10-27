@@ -1,7 +1,11 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import MapPin from '../models/MapPin';
 import logger from '../utils/logger';
+
+interface AuthenticatedRequest extends Request {
+  userId: string;
+}
 
 const router = Router();
 
@@ -9,9 +13,9 @@ const router = Router();
  * POST /api/map/activity/start
  * Create a new activity pin
  */
-router.post('/activity/start', authenticateToken, async (req, res) => {
+router.post('/activity/start', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.userId;
     const { petId, activity, message, shareToMap, location, radiusMeters } = req.body;
 
     if (!petId || !activity || !location || !location.latitude || !location.longitude) {
@@ -38,7 +42,7 @@ router.post('/activity/start', authenticateToken, async (req, res) => {
     }
 
     res.json({ success: true, data: pin });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to start activity', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to start activity' });
   }
@@ -48,9 +52,9 @@ router.post('/activity/start', authenticateToken, async (req, res) => {
  * POST /api/map/activity/end
  * End an active activity pin
  */
-router.post('/activity/end', authenticateToken, async (req, res) => {
+router.post('/activity/end', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.userId;
     const { activityId } = req.body;
 
     const pin = await MapPin.findOneAndUpdate(
@@ -70,7 +74,7 @@ router.post('/activity/end', authenticateToken, async (req, res) => {
     }
 
     res.json({ success: true, data: pin });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to end activity', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to end activity' });
   }
@@ -80,7 +84,7 @@ router.post('/activity/end', authenticateToken, async (req, res) => {
  * GET /api/map/pins
  * Get nearby activity pins
  */
-router.get('/pins', authenticateToken, async (req, res) => {
+router.get('/pins', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { latitude, longitude, maxDistance = 5000 } = req.query;
 
@@ -108,7 +112,7 @@ router.get('/pins', authenticateToken, async (req, res) => {
       .lean();
 
     res.json({ success: true, data: pins });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to fetch pins', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to fetch pins' });
   }
@@ -118,9 +122,9 @@ router.get('/pins', authenticateToken, async (req, res) => {
  * POST /api/map/pins/:pinId/like
  * Like a pin
  */
-router.post('/pins/:pinId/like', authenticateToken, async (req, res) => {
+router.post('/pins/:pinId/like', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.userId;
     const pin = await MapPin.findById(req.params.pinId);
 
     if (!pin) {
@@ -132,7 +136,7 @@ router.post('/pins/:pinId/like', authenticateToken, async (req, res) => {
     if (hasLiked) {
       pin.likes = pin.likes.filter(l => l.userId.toString() !== userId);
     } else {
-      pin.likes.push({ userId: userId as any, likedAt: new Date() });
+      pin.likes.push({ userId: req.userId, likedAt: new Date() });
     }
 
     await pin.save();
@@ -144,7 +148,7 @@ router.post('/pins/:pinId/like', authenticateToken, async (req, res) => {
     }
 
     res.json({ success: true, data: { likes: pin.likes.length } });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to like pin', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to like pin' });
   }
@@ -154,9 +158,9 @@ router.post('/pins/:pinId/like', authenticateToken, async (req, res) => {
  * POST /api/map/pins/:pinId/comment
  * Add comment to a pin
  */
-router.post('/pins/:pinId/comment', authenticateToken, async (req, res) => {
+router.post('/pins/:pinId/comment', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = (req as any).userId;
+    const userId = req.userId;
     const { text } = req.body;
 
     if (!text || text.trim().length === 0) {
@@ -170,7 +174,7 @@ router.post('/pins/:pinId/comment', authenticateToken, async (req, res) => {
     }
 
     pin.comments.push({
-      userId: userId as any,
+      userId: req.userId,
       text: text.trim(),
       createdAt: new Date()
     });
@@ -184,7 +188,7 @@ router.post('/pins/:pinId/comment', authenticateToken, async (req, res) => {
     }
 
     res.json({ success: true, data: { comments: pin.comments.length } });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to comment on pin', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to comment on pin' });
   }

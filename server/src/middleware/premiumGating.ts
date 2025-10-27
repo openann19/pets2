@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 
 interface PremiumFeatures {
@@ -414,16 +414,3 @@ async function updatePremiumUsage(userId: string, featureName: string): Promise<
     logger.error('Error updating premium usage', { error, userId, featureName });
   }
 }
-
-export {
-  requireUnlimitedSwipes,
-  requireSeeWhoLiked,
-  requireProfileBoost,
-  requireSuperLikes,
-  requireAdvancedFilters,
-  requireAIMatching,
-  requireGlobalPassport,
-  requirePrioritySupport,
-  requirePremiumFeatureGate,
-  trackPremiumUsage
-};

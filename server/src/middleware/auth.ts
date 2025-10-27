@@ -1,6 +1,8 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import crypto from 'crypto';
-import { Request, Response, NextFunction } from 'express';
+import * as jwt from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { StringValue } from 'ms';
+import * as crypto from 'crypto';
+import type { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import logger from '../utils/logger';
 
@@ -33,11 +35,12 @@ export function generateTokens(userId: string): Tokens {
 
   const accessOptions: jwt.SignOptions = {};
   if (!isTest) {
-    accessOptions.expiresIn = process.env.JWT_ACCESS_EXPIRY || process.env.JWT_EXPIRE || '15m';
+    const accessExpiry = process.env.JWT_ACCESS_EXPIRY || process.env.JWT_EXPIRE || '15m';
+    accessOptions.expiresIn = accessExpiry as StringValue;
   }
 
   const refreshOptions: jwt.SignOptions = {
-    expiresIn: process.env.JWT_REFRESH_EXPIRY || process.env.JWT_REFRESH_EXPIRE || '7d'
+    expiresIn: (process.env.JWT_REFRESH_EXPIRY || process.env.JWT_REFRESH_EXPIRE || '7d') as StringValue
   };
 
   const accessToken = jwt.sign(accessPayload, accessSecret!, accessOptions);
@@ -129,7 +132,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 
     // Add user and token info to request object
     req.user = user;
-    req.userId = user._id;
+    req.userId = user._id.toString();
     req.jti = decoded.jti; // Store jti for logout revocation
     
     // Attach subscription status for premium middleware
@@ -240,7 +243,7 @@ export const refreshAccessToken = async (req: Request, res: Response): Promise<R
     }
 
     // Generate new tokens
-    const tokens = generateTokens(user._id);
+    const tokens = generateTokens(user._id.toString());
 
     // Replace old refresh token with new one
     user.refreshTokens = user.refreshTokens.filter((token: string) => token !== refreshToken);
@@ -297,7 +300,7 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
           return next();
         }
         req.user = user;
-        req.userId = user._id;
+        req.userId = user._id.toString();
       }
     }
 
@@ -308,12 +311,3 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-export {
-  generateTokens,
-  authenticateToken,
-  requirePremium,
-  requirePremiumFeature,
-  requireAdmin,
-  refreshAccessToken,
-  optionalAuth
-};

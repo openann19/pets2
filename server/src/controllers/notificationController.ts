@@ -1,56 +1,40 @@
-import { Response } from 'express';
+import type { Request, Response } from 'express';
 import NotificationPreference from '../models/NotificationPreference';
 import Notification from '../models/Notification';
 import logger from '../utils/logger';
+import type { AuthRequest } from '../types/express';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Request interfaces
  */
-interface AuthenticatedRequest {
+
+interface NotificationQuery {
   userId: string;
-  user?: any;
+  type?: string;
+  read?: boolean;
 }
 
-interface GetNotificationPreferencesRequest extends AuthenticatedRequest {}
-
-interface UpdateNotificationPreferencesRequest extends AuthenticatedRequest {
-  body: {
-    enabled?: boolean;
-    matches?: boolean;
-    messages?: boolean;
-    likes?: boolean;
-    reminders?: boolean;
-    frequency?: 'instant' | 'batched' | 'daily';
-    sound?: boolean;
-    vibration?: boolean;
-    quietHours?: {
-      enabled?: boolean;
-      start?: string;
-      end?: string;
-    };
+interface NotificationPreferencesData {
+  enabled: boolean;
+  matches: boolean;
+  messages: boolean;
+  likes: boolean;
+  reminders: boolean;
+  frequency: 'instant' | 'batched' | 'daily';
+  sound: boolean;
+  vibration: boolean;
+  quietHours?: {
+    enabled: boolean;
+    start?: string;
+    end?: string;
   };
 }
 
-interface SendTestNotificationRequest extends AuthenticatedRequest {
-  body: {
-    type?: string;
-  };
-}
 
-interface GetNotificationHistoryRequest extends AuthenticatedRequest {
-  query: {
-    limit?: string;
-    offset?: string;
-    type?: string;
-    unreadOnly?: string;
-  };
-}
 
-interface MarkNotificationReadRequest extends AuthenticatedRequest {
-  params: {
-    notificationId: string;
-  };
-}
+
+
 
 /**
  * Get user's notification preferences
@@ -58,7 +42,7 @@ interface MarkNotificationReadRequest extends AuthenticatedRequest {
  * @access Private
  */
 export const getNotificationPreferences = async (
-  req: GetNotificationPreferencesRequest,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
@@ -94,12 +78,12 @@ export const getNotificationPreferences = async (
       data: preferences
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Get notification preferences error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get notification preferences',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -110,17 +94,17 @@ export const getNotificationPreferences = async (
  * @access Private
  */
 export const updateNotificationPreferences = async (
-  req: UpdateNotificationPreferencesRequest,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
     const userId = req.userId;
-    const preferencesData = req.body;
+    const preferencesData = req.body as NotificationPreferencesData;
 
     // Validate required fields
-    const requiredFields = ['enabled', 'matches', 'messages', 'likes', 'reminders', 'frequency', 'sound', 'vibration'];
+    const requiredFields: (keyof NotificationPreferencesData)[] = ['enabled', 'matches', 'messages', 'likes', 'reminders', 'frequency', 'sound', 'vibration'];
     for (const field of requiredFields) {
-      if (preferencesData[field as keyof typeof preferencesData] === undefined) {
+      if (preferencesData[field] === undefined) {
         res.status(400).json({
           success: false,
           message: `Field '${field}' is required`
@@ -169,12 +153,12 @@ export const updateNotificationPreferences = async (
       data: preferences
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Update notification preferences error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to update notification preferences',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -185,7 +169,7 @@ export const updateNotificationPreferences = async (
  * @access Private
  */
 export const sendTestNotification = async (
-  req: SendTestNotificationRequest,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
@@ -245,12 +229,12 @@ export const sendTestNotification = async (
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Send test notification error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to send test notification',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -261,28 +245,29 @@ export const sendTestNotification = async (
  * @access Private
  */
 export const getNotificationHistory = async (
-  req: GetNotificationHistoryRequest,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
     const userId = req.userId;
     const { limit = '20', offset = '0', type, unreadOnly } = req.query;
+    const limitNum = parseInt(limit as string, 10);
+    const offsetNum = parseInt(offset as string, 10);
 
     // Build query
-    const query: any = { userId };
-    if (type) query.type = type;
+    const query: NotificationQuery = { userId };
+    if (type) query.type = type as string;
     if (unreadOnly === 'true') query.read = false;
 
     // Fetch notifications from database
-    const [notifications, total, unreadCount] = await Promise.all([
-      Notification.find(query)
-        .sort({ createdAt: -1 })
-        .skip(parseInt(offset))
-        .limit(parseInt(limit))
-        .lean(),
-      Notification.countDocuments(query),
-      (Notification as any).getUnreadCount ? (Notification as any).getUnreadCount(userId) : 0
-    ]);
+    const notifications = await Notification.find(query)
+      .sort({ createdAt: -1 })
+      .limit(limitNum)
+      .skip(offsetNum)
+      .lean();
+
+    const total = await Notification.countDocuments(query);
+    const unreadCount = typeof Notification.getUnreadCount === 'function' ? Notification.getUnreadCount(userId) : 0;
 
     res.json({
       success: true,
@@ -290,16 +275,16 @@ export const getNotificationHistory = async (
         notifications,
         total,
         unread: unreadCount,
-        hasMore: total > parseInt(offset) + parseInt(limit)
+        hasMore: total > offsetNum + limitNum
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Get notification history error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get notification history',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -310,7 +295,7 @@ export const getNotificationHistory = async (
  * @access Private
  */
 export const markNotificationRead = async (
-  req: MarkNotificationReadRequest,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
@@ -328,7 +313,13 @@ export const markNotificationRead = async (
       return;
     }
 
-    await (notification as any).markAsRead();
+    if (typeof notification.markAsRead === 'function') {
+      await notification.markAsRead();
+    } else {
+      notification.read = true;
+      notification.readAt = new Date();
+      await notification.save();
+    }
     logger.info('Notification marked as read', { userId, notificationId });
 
     res.json({
@@ -337,12 +328,12 @@ export const markNotificationRead = async (
       data: notification
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Mark notification read error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to mark notification as read',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -356,7 +347,7 @@ export const markNotificationRead = async (
  */
 function parseTime(timeString: string): number {
   const [hours, minutes] = timeString.split(':').map(Number);
-  return hours * 60 + minutes;
+  return (hours || 0) * 60 + (minutes || 0);
 }
 
 /**

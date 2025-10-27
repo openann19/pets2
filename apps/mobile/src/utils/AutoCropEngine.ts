@@ -63,8 +63,8 @@ async function getImageSize(uri: string): Promise<{ w: number; h: number }> {
   return new Promise((resolve) => {
     RNImage.getSize(
       uri,
-      (w, h) => resolve({ w, h }),
-      () => resolve({ w: 0, h: 0 }),
+      (w, h) => { resolve({ w, h }); },
+      () => { resolve({ w: 0, h: 0 }); },
     );
   });
 }

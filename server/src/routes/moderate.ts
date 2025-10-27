@@ -4,8 +4,9 @@
  * Handles manual and automated content moderation for uploads
  */
 
-import { Router, Request, Response } from 'express';
+import express from 'express';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
+import type { AuthRequest } from '../types/express';
 import Upload from '../models/Upload';
 import PhotoAnalysis from '../models/PhotoAnalysis';
 import { moderateImage, isSafeForAutoApprove } from '../services/safetyModeration';
@@ -14,14 +15,14 @@ import logger from '../utils/logger';
 import multer from 'multer';
 import sharp from 'sharp';
 
-const router = Router();
+const router = express.Router();
 const upload = multer();
 
 /**
  * POST /api/admin/uploads/:id/moderate
  * Manual moderation decision
  */
-router.post('/uploads/:id/moderate', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
+router.post('/uploads/:id/moderate', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
     const upload = await Upload.findById(req.params.id);
     if (!upload) {
@@ -67,7 +68,7 @@ router.post('/uploads/:id/moderate', authenticateToken, requireAdmin, async (req
     });
 
     res.json({ success: true, data: { upload } });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Moderation error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
@@ -77,11 +78,11 @@ router.post('/uploads/:id/moderate', authenticateToken, requireAdmin, async (req
  * GET /api/admin/moderation/queue
  * Get moderation queue
  */
-router.get('/moderation/queue', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
+router.get('/moderation/queue', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
     const { status, priority, limit = 50 } = req.query;
 
-    const query: any = { status: status || 'pending' };
+    const query: Record<string, unknown> = { status: status || 'pending' };
     if (priority) {
       query.priority = priority;
     }
@@ -93,7 +94,7 @@ router.get('/moderation/queue', authenticateToken, requireAdmin, async (req: Req
       .populate('associatedPet', 'name');
 
     res.json({ success: true, data: { uploads } });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Get moderation queue error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
@@ -103,7 +104,7 @@ router.get('/moderation/queue', authenticateToken, requireAdmin, async (req: Req
  * POST /api/admin/moderation/analyze
  * Trigger AI analysis for an upload
  */
-router.post('/moderation/analyze/:uploadId', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
+router.post('/moderation/analyze/:uploadId', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
     const upload = await Upload.findById(req.params.uploadId);
     if (!upload) {
@@ -123,7 +124,7 @@ router.post('/moderation/analyze/:uploadId', authenticateToken, requireAdmin, as
       success: true, 
       message: 'Analysis triggered (async)' 
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Analysis trigger error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
@@ -133,7 +134,7 @@ router.post('/moderation/analyze/:uploadId', authenticateToken, requireAdmin, as
  * POST /api/admin/moderation/batch
  * Batch moderate multiple uploads
  */
-router.post('/moderation/batch', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
+router.post('/moderation/batch', authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
   try {
     const { uploadIds, decision, reasonCode } = req.body;
 
@@ -159,7 +160,7 @@ router.post('/moderation/batch', authenticateToken, requireAdmin, async (req: Re
     );
 
     res.json({ success: true, data: { results } });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Batch moderation error:', error);
     res.status(500).json({ success: false, error: error.message });
   }

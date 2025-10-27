@@ -189,9 +189,9 @@ router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
         percentage: 0
       },
       activity: {
-        swipes: (userAnalytics as any).totalSwipes || 0,
+        swipes: (userAnalytics as { totalSwipes?: number }).totalSwipes || 0,
         playdates: 0,
-        events: Array.isArray((userAnalytics as any).events) ? (userAnalytics as any).events.length : 0,
+        events: Array.isArray((userAnalytics as { events?: unknown[] }).events) ? (userAnalytics as { events?: unknown[] }).events.length : 0,
         trend: 'stable' as const,
         percentage: 0
       }
@@ -225,7 +225,7 @@ router.get('/pack-suggestions', authenticateToken, async (req: Request, res: Res
     const userPetIds = new Set(userPets.map(p => String(p._id)));
 
     // If no user location, return empty
-    const coords = (user as any)?.location?.coordinates;
+    const coords = (user as { location?: { coordinates?: [number, number] } })?.location?.coordinates;
     if (!coords || coords.length !== 2) {
       return res.json({ success: true, data: [] });
     }
@@ -247,7 +247,7 @@ router.get('/pack-suggestions', authenticateToken, async (req: Request, res: Res
       .lean();
 
     // Simple compatibility scoring
-    const tagSetArray = (arr: any) => new Set(Array.isArray(arr) ? arr : []);
+    const tagSetArray = (arr: unknown[]) => new Set(Array.isArray(arr) ? arr : []);
     const intersectionSize = (a: Set<string>, b: Set<string>) => {
       let size = 0; for (const t of a) if (b.has(t)) size++; return size;
     };
@@ -257,12 +257,12 @@ router.get('/pack-suggestions', authenticateToken, async (req: Request, res: Res
       const base = userPets.some(up => up.species === p.species) ? 40 : 20;
       const intentBoost = userPets.some(up => up.intent === p.intent || up.intent === 'all' || p.intent === 'all') ? 20 : 0;
       // personality overlap
-      const userTags = tagSetArray(userPets.flatMap(up => (up as any).personalityTags || []));
-      const petTags = tagSetArray((p as any).personalityTags || []);
+      const userTags = tagSetArray(userPets.flatMap(up => (up as { personalityTags?: unknown[] }).personalityTags || []));
+      const petTags = tagSetArray((p as { personalityTags?: unknown[] }).personalityTags || []);
       const tagScore = Math.min(20, intersectionSize(userTags, petTags) * 5);
       // distance dampening (closer is better)
-      const dLng = (p as any).location?.coordinates?.[0] ?? 0 - coords[0];
-      const dLat = (p as any).location?.coordinates?.[1] ?? 0 - coords[1];
+      const dLng = (p as { location?: { coordinates?: [number, number] } }).location?.coordinates?.[0] ?? 0 - coords[0];
+      const dLat = (p as { location?: { coordinates?: [number, number] } }).location?.coordinates?.[1] ?? 0 - coords[1];
       const approxDist = Math.sqrt(dLng * dLng + dLat * dLat);
       const distanceScore = Math.max(0, 20 - approxDist * 1000);
       const total = Math.round(base + intentBoost + tagScore + distanceScore);
@@ -282,9 +282,9 @@ router.get('/pack-suggestions', authenticateToken, async (req: Request, res: Res
         name: names[i] || `Suggested Pack ${i + 1}`,
         description: 'Suggested group based on proximity and compatibility',
         members: slice.map(({ pet, score }) => ({
-          id: String((pet as any)._id),
-          name: (pet as any).name,
-          avatar: (pet as any).photos?.find((ph: any) => ph.isPrimary)?.url || (pet as any).photos?.[0]?.url || null,
+          id: String((pet as { _id: unknown })._id),
+          name: (pet as { name?: string }).name,
+          avatar: (pet as { photos?: Array<{ isPrimary?: boolean; url?: string }> }).photos?.find((ph: { isPrimary?: boolean }) => ph.isPrimary)?.url || (pet as { photos?: Array<{ url?: string }> }).photos?.[0]?.url || null,
           compatibility: score
         })),
         activity: 'Community meetups and playdates',

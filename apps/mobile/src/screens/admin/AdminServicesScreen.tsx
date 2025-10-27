@@ -18,7 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import { api } from "../../services/api";
-import { Theme } from '../../theme/unified-theme';
+
 import { logger } from '../../services/logger';
 
 interface ServiceStatus {
@@ -137,13 +137,13 @@ export default function AdminServicesScreen({
   const getStatusColor = (status: ServiceStatus['status']) => {
     switch (status) {
       case 'operational':
-        return Theme.colors.status.success;
+        return theme.colors.success;
       case 'degraded':
-        return Theme.colors.status.warning;
+        return theme.colors.warning;
       case 'down':
-        return Theme.colors.status.error;
+        return theme.colors.danger;
       default:
-        return Theme.colors.neutral[500];
+        return theme.colors.neutral[500];
     }
   };
 
@@ -176,7 +176,7 @@ export default function AdminServicesScreen({
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity  testID="AdminServicesScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.neutral[200],
+    borderBottomColor: theme.colors.neutral[200],
   },
   title: {
     fontSize: 20,

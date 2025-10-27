@@ -141,7 +141,7 @@ export async function processImagePipeline(
   if (!opts.export) {
     // Default: PNG (lossless, EXIF stripped)
     const blob = await new Promise<Blob>((r) =>
-      canvas.toBlob((b) => r(b!), "image/png")
+      { canvas.toBlob((b) => { r(b!); }, "image/png"); }
     );
     return { blob, report, canvas };
   }
@@ -160,7 +160,7 @@ export async function processImagePipeline(
     for (let iter = 0; iter < 7; iter++) {
       const q = (lo + hi) / 2;
       const candidate = await new Promise<Blob>((r) =>
-        canvas.toBlob((b) => r(b!), mime(target), q)
+        { canvas.toBlob((b) => { r(b!); }, mime(target), q); }
       );
       const compCanvas = await loadImageToCanvas(candidate);
       const ssim = await ssimApprox(opts.export.adaptive.baselineCanvas, compCanvas);
@@ -180,7 +180,7 @@ export async function processImagePipeline(
     const blob =
       bestBlob ??
       (await new Promise<Blob>((r) =>
-        canvas.toBlob((b) => r(b!), mime(target), maxQ)
+        { canvas.toBlob((b) => { r(b!); }, mime(target), maxQ); }
       ));
 
     report.export = {
@@ -197,11 +197,11 @@ export async function processImagePipeline(
   const target = opts.export?.target ?? 'png';
   const quality = opts.export?.quality ?? 0.9;
   const blob = await new Promise<Blob>((r) =>
-    canvas.toBlob(
-      (b) => r(b!),
+    { canvas.toBlob(
+      (b) => { r(b!); },
       mime(target),
       quality
-    )
+    ); }
   );
 
   report.export = {

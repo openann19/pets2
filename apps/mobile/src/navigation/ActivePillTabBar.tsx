@@ -20,20 +20,24 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
-type TabRoute = { key: string; name: string };
-type State = { index: number; routes: TabRoute[] };
+type IoniconsName = string;
 
-type Props = {
-  state: State;
-  descriptors: any;
-  navigation: any;
+type RouteName = "Home" | "Swipe" | "Map" | "Matches" | "Profile" | "AdoptionManager" | "Premium";
+
+const getSpringConfig = (reducedMotion: boolean) => {
+  if (reducedMotion) {
+    return { damping: 1000, stiffness: 1000, mass: 0.9 };
+  }
+  return { damping: 22, stiffness: 260, mass: 0.9 };
 };
 
-const SPRING = { damping: 22, stiffness: 260, mass: 0.9 };
-
-const getIcon = (routeName: string, focused: boolean): any => {
-  switch (routeName) {
+const getIcon = (routeName: string, focused: boolean): IoniconsName => {
+  const route = routeName as RouteName;
+  
+  switch (route) {
     case "Home":
       return focused ? "home" : "home-outline";
     case "Swipe":
@@ -57,9 +61,10 @@ export default function ActivePillTabBar({
   state,
   descriptors,
   navigation,
-}: Props) {
+}: BottomTabBarProps) {
   const { colors, dark } = useTheme();
   const insets = useSafeAreaInsets();
+  const reducedMotion = useReducedMotion();
 
   // measure each tab
   const layoutsRef = useRef<Record<string, { x: number; w: number }>>({});
@@ -86,18 +91,26 @@ export default function ActivePillTabBar({
     const layout = layoutsRef.current[route.key];
     if (!layout) return;
 
-    indicatorX.value = withSpring(layout.x, SPRING);
-    indicatorW.value = withSpring(layout.w, SPRING);
+    const springConfig = getSpringConfig(reducedMotion);
+    
+    indicatorX.value = reducedMotion ? withTiming(layout.x, { duration: 0 }) : withSpring(layout.x, springConfig);
+    indicatorW.value = reducedMotion ? withTiming(layout.w, { duration: 0 }) : withSpring(layout.w, springConfig);
 
     // bounce the focused icon a touch
     const s = iconScales[state.index];
     if (s) {
-      s.value = 1.15;
-      s.value = withSpring(1, { damping: 12, stiffness: 300 });
+      if (reducedMotion) {
+        s.value = 1;
+      } else {
+        s.value = 1.15;
+        s.value = withSpring(1, { damping: 12, stiffness: 300 });
+      }
     }
     // subtle haptic
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-  }, [state.index, iconScales, indicatorX, indicatorW, state.routes]);
+    if (!reducedMotion) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, [state.index, iconScales, indicatorX, indicatorW, state.routes, reducedMotion]);
 
   const pillStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: indicatorX.value }],
@@ -163,10 +176,13 @@ export default function ActivePillTabBar({
         {state.routes.map((route, index) => {
           const descriptor = descriptors[route.key];
           const options = descriptor?.options ?? {};
-          const label =
+          const rawLabel =
             options.tabBarLabel ??
             options.title ??
             route.name;
+          
+          // Ensure label is always a string
+          const label = typeof rawLabel === 'string' ? rawLabel : String(rawLabel);
 
           const isFocused = state.index === index;
           const badgeCount = getBadgeCount(route.name);
@@ -184,7 +200,7 @@ export default function ActivePillTabBar({
             lastTapRef.current[route.key] = now;
 
             // Bounce animation on icon press
-            if (scale) {
+            if (scale && !reducedMotion) {
               scale.value = 0.9;
               scale.value = withSpring(1, { damping: 10, stiffness: 420 });
             }
@@ -197,7 +213,8 @@ export default function ActivePillTabBar({
 
             // Double-tap detection: if focused and tapped within 300ms, fire custom event
             if (isFocused && delta < 300) {
-              navigation.emit({ type: "tabDoublePress", target: route.key });
+              // Fire custom event with proper typing
+              (navigation as any).emit({ type: "tabDoublePress", target: route.key });
             }
 
             if (!isFocused && !event.defaultPrevented) {
@@ -222,7 +239,7 @@ export default function ActivePillTabBar({
               style={styles.tab}
               activeOpacity={0.9}
             >
-              <View style={styles.iconWrap}>
+              <View style={styles.iconWrap} accessibilityRole="button" accessibilityLabel={`${label} icon`}>
                 <Animated.View style={iconStyle}>
                   <Ionicons
                     name={getIcon(route.name, isFocused)}
@@ -240,6 +257,7 @@ export default function ActivePillTabBar({
                         borderColor: dark ? "#0b0d11" : "#ffffff",
                       },
                     ]}
+                    testID={`${label}.badge`}
                   >
                     <Text style={styles.badgeText}>
                       {badgeCount > 99 ? "99+" : String(badgeCount)}
@@ -257,6 +275,7 @@ export default function ActivePillTabBar({
                   },
                 ]}
                 numberOfLines={1}
+                accessibilityRole="text"
               >
                 {label}
               </Text>

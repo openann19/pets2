@@ -24,7 +24,7 @@ jest.mock("../../components/map", () => {
     PinDetailsModal: ({ visible, onClose }: any) =>
       visible ? (
         <View testID="PinDetailsModal">
-          <TouchableOpacity accessibilityLabel="close-pin" onPress={onClose}>
+          <TouchableOpacity accessibilityLabel="close-pin"  testID="MapScreen.interactions.test-button-2" accessibilityRole="button" onPress={onClose}>
             <Text>Close Pin</Text>
           </TouchableOpacity>
         </View>

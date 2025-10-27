@@ -54,7 +54,7 @@ export const useFeatureGating = (): UseFeatureGatingReturn => {
           feature === "superLikesPerDay"
         ) {
           // Handle numeric limits
-          const limit = limits[feature] as number;
+          const limit = limits[feature];
           const isUnlimited = limit === -1;
 
           return {
@@ -69,7 +69,7 @@ export const useFeatureGating = (): UseFeatureGatingReturn => {
           };
         } else {
           // Handle boolean features
-          const canUse = limits[feature] as boolean;
+          const canUse = limits[feature];
 
           return {
             canUse,

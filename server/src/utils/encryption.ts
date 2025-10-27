@@ -64,8 +64,8 @@ async function deriveKey(key: Buffer, salt: Buffer): Promise<Buffer> {
       parallelization: 1, // p parameter (parallelization)
       maxmem: 64 * 1024 * 1024 // 64MB - prevent DOS attacks
     }) as Buffer;
-  } catch (error: any) {
-    logger.error('Key derivation failed', { error: error.message });
+  } catch (error) {
+    logger.error('Key derivation failed', { error: error instanceof Error ? error.message : 'Unknown error' });
     throw new Error('Encryption key derivation failed');
   }
 }
@@ -112,8 +112,8 @@ export async function encrypt(text: string, keyVersion: number = CURRENT_KEY_VER
       tag,
       encrypted
     ]).toString('base64');
-  } catch (error: any) {  
-    logger.error('Encryption failed', { error: error.message });
+  } catch (error) {  
+    logger.error('Encryption failed', { error: error instanceof Error ? error.message : 'Unknown error' });
     throw new Error('Encryption failed');
   }
 }
@@ -158,8 +158,8 @@ export async function decrypt(enc: string): Promise<string> {
     
     const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
     return decrypted.toString('utf8');
-  } catch (error: any) {
-    logger.error('Decryption failed', { error: error.message });
+  } catch (error) {
+    logger.error('Decryption failed', { error: error instanceof Error ? error.message : 'Unknown error' });
     throw new Error('Decryption failed. Data may be corrupted or tampered with.');
   }
 }
@@ -226,10 +226,3 @@ export function getEncryptionInfo(encryptedData: string): {
   }
 }
 
-export { 
-  encrypt, 
-  decrypt,
-  rotateKey,
-  isEncrypted,
-  getEncryptionInfo
-};

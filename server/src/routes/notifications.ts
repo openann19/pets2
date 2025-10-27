@@ -3,7 +3,8 @@
  * Handles notification preferences and delivery
  */
 
-import express, { type Request, type Response, Router } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken } from '../middleware/auth';
 import {
@@ -18,16 +19,8 @@ import {
 import { registerPushToken } from '../controllers/pushTokenController';
 import { unregisterPushToken } from '../controllers/pushTokenController';
 
-interface AuthenticatedRequest extends Request {
-  userId?: string;
-  user?: {
-    _id: string;
-    email: string;
-    [key: string]: any;
-  };
-}
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // Validation rules
 const updatePreferencesValidation = [
@@ -59,12 +52,16 @@ const testNotificationValidation = [
  */
 router.get('/preferences', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    await getNotificationPreferences(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await getNotificationPreferences(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to get notification preferences',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -86,12 +83,16 @@ router.put('/preferences', authenticateToken, updatePreferencesValidation, async
       return;
     }
 
-    await updateNotificationPreferences(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await updateNotificationPreferences(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to update notification preferences',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -113,12 +114,16 @@ router.post('/test', authenticateToken, testNotificationValidation, async (req: 
       return;
     }
 
-    await sendTestNotification(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await sendTestNotification(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to send test notification',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -130,12 +135,16 @@ router.post('/test', authenticateToken, testNotificationValidation, async (req: 
  */
 router.get('/history', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    await getNotificationHistory(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await getNotificationHistory(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to get notification history',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -147,12 +156,16 @@ router.get('/history', authenticateToken, async (req: Request, res: Response): P
  */
 router.put('/:notificationId/read', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    await markNotificationRead(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await markNotificationRead(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to mark notification as read',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -164,12 +177,16 @@ router.put('/:notificationId/read', authenticateToken, async (req: Request, res:
  */
 router.post('/register-token', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    await registerPushToken(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await registerPushToken(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to register push token',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -181,12 +198,16 @@ router.post('/register-token', authenticateToken, async (req: Request, res: Resp
  */
 router.delete('/unregister-token', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    await unregisterPushToken(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+    if (!req.userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+    await unregisterPushToken(req, res);
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Failed to unregister push token',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

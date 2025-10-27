@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
-import {
+import mongoose, { Schema, Model } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
+import type {
   IPet,
   IPetMethods,
   IPetModel,
@@ -11,7 +12,8 @@ import {
   IPetLocation,
   IPetAIData,
   IPetFeatured,
-  IPetAnalytics
+  IPetAnalytics,
+  IPetDocument
 } from '../types/mongoose.d';
 
 /**
@@ -289,7 +291,7 @@ petSchema.pre('save', function(this: IPetDocument, next) {
 });
 
 // Instance methods
-petSchema.methods.updateAnalytics = async function(this: any, action: 'view' | 'like' | 'match' | 'message'): Promise<any> {
+petSchema.methods.updateAnalytics = async function(this: IPetDocument, action: 'view' | 'like' | 'match' | 'message'): Promise<void> {
   switch (action) {
     case 'view':
       this.analytics.views += 1;
@@ -308,7 +310,7 @@ petSchema.methods.updateAnalytics = async function(this: any, action: 'view' | '
   return this.save();
 };
 
-petSchema.methods.isCompatibleWith = function(this: any, otherPet: IPet): boolean {
+petSchema.methods.isCompatibleWith = function(this: IPetDocument, otherPet: IPet): boolean {
   // Basic compatibility check
   if (this.species !== otherPet.species) return false;
   if (this.intent === 'mating' && otherPet.intent === 'mating') {
@@ -317,7 +319,7 @@ petSchema.methods.isCompatibleWith = function(this: any, otherPet: IPet): boolea
   return true;
 };
 
-petSchema.methods.toJSON = function(this: any): Partial<IPet> {
+petSchema.methods.toJSON = function(this: IPetDocument): Partial<IPet> {
   const pet = this.toObject();
   return pet;
 };

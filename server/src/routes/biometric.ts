@@ -20,7 +20,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -47,7 +47,7 @@ const authenticationOptionsValidation = [
 router.post('/register/options', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
     await generateRegistrationOptionsHandler(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       message: 'Failed to generate registration options',
@@ -74,7 +74,7 @@ router.post('/register/verify', authenticateToken, verifyRegistrationValidation,
     }
 
     await verifyRegistrationHandler(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       message: 'Registration verification failed',
@@ -101,7 +101,7 @@ router.post('/authenticate/options', authenticationOptionsValidation, async (req
     }
 
     await generateAuthenticationOptionsHandler(req, res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       message: 'Failed to generate authentication options',
@@ -128,7 +128,7 @@ router.post('/authenticate/verify', verifyAuthenticationValidation, async (req: 
     }
 
     await verifyAuthenticationHandler(req, res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       message: 'Authentication verification failed',
@@ -145,7 +145,7 @@ router.post('/authenticate/verify', verifyAuthenticationValidation, async (req: 
 router.delete('/remove', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
     await removeBiometric(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       message: 'Removal failed',
@@ -162,7 +162,7 @@ router.delete('/remove', authenticateToken, async (req: Request, res: Response):
 router.get('/status', authenticateToken, async (req: Request, res: Response): Promise<void> => {
   try {
     await getBiometricStatus(req as AuthenticatedRequest, res);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       message: 'Failed to get status',

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 import { sendAdminNotification } from '../services/adminNotificationService';
 
@@ -10,14 +10,13 @@ interface Error {
   code?: number | string;
   type?: string;
   status?: number;
-  errors?: any;
-  keyValue?: Record<string, any>;
+  errors?: Record<string, unknown>;
+  keyValue?: Record<string, unknown>;
   retryAfter?: number;
 }
 
 export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction): void => {
-  let error: any = { ...err };
-  error.message = err.message;
+  let error: Error & { statusCode?: number; details?: string[]; message: string; retryAfter?: number } = { ...err, message: err.message };
 
   // Generate unique error ID for tracking
   const errorId = `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -31,36 +30,36 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
     url: req.url,
     ip: req.ip,
     userAgent: req.get('User-Agent'),
-    userId: (req as any).user?.id,
+    userId: (req as { user?: { id?: string } }).user?.id,
     body: req.method === 'POST' ? req.body : undefined,
     query: req.query,
     params: req.params,
   });
 
   // Send admin notification for critical errors
-  const shouldNotifyAdmin = (err as any).statusCode >= 500 || 
+  const shouldNotifyAdmin = (err as Error & { statusCode?: number }).statusCode >= 500 || 
                            err.name === 'MongoNetworkError' || 
                            err.name === 'MongoTimeoutError' ||
-                           (err as any).type === 'StripeCardError' ||
+                           (err as Error & { type?: string }).type === 'StripeCardError' ||
                            err.message?.includes('AI service');
 
   if (shouldNotifyAdmin) {
     sendAdminNotification({
       type: 'error',
-      severity: (err as any).statusCode >= 500 ? 'critical' : 'high',
+      severity: (err as Error & { statusCode?: number }).statusCode >= 500 ? 'critical' : 'high',
       title: 'Server Error Alert',
       message: `Error ${errorId}: ${err.message}`,
       metadata: {
         errorId,
         method: req.method,
         url: req.url,
-        userId: (req as any).user?.id,
+        userId: (req as { user?: { id?: string } }).user?.id,
         stack: err.stack,
       },
-    }).catch((notificationError: any) => {
+    }).catch((notificationError: unknown) => {
       logger.error('Failed to send admin notification', {
         originalError: err.message,
-        notificationError: notificationError.message,
+        notificationError: notificationError instanceof Error ? notificationError.message : 'Unknown error',
       });
     });
   }
@@ -74,19 +73,21 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
   if (err.code === 11000) {
     let message = 'Duplicate entry detected';
     
-    const field = Object.keys((err as any).keyValue || {})[0];
+    const field = Object.keys((err as Error & { keyValue?: Record<string, unknown> }).keyValue || {})[0];
     const fieldMessages: Record<string, string> = {
       email: 'An account with this email already exists',
       username: 'This username is already taken',
       phone: 'This phone number is already registered',
     };
     
-    message = fieldMessages[field] || message;
+    if (field) {
+      message = fieldMessages[field] || message;
+    }
     error = { message, statusCode: 409 }; // Conflict
   }
 
   if (err.name === 'ValidationError') {
-    const messages = Object.values((err as any).errors).map((val: any) => val.message);
+    const messages = Object.values((err as Error & { errors?: Record<string, { message?: string }> }).errors || {}).map((val) => (val as { message?: string }).message).filter((msg): msg is string => !!msg);
     error = { 
       message: 'Validation failed', 
       statusCode: 422,
@@ -119,11 +120,11 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
   }
 
   // Rate limiting errors
-  if ((err as any).status === 429) {
+  if ((err as Error & { status?: number; retryAfter?: number }).status === 429) {
     error = {
       message: 'Too many requests. Please slow down and try again later',
       statusCode: 429,
-      retryAfter: (err as any).retryAfter || 60,
+      retryAfter: (err as Error & { retryAfter?: number }).retryAfter || 60,
     };
   }
 
@@ -144,7 +145,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
   }
 
   // Payment processing errors
-  if ((err as any).type === 'StripeCardError') {
+  if ((err as Error & { type?: string }).type === 'StripeCardError') {
     error = {
       message: 'Payment failed. Please check your card details',
       statusCode: 402,
@@ -156,7 +157,19 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
   const message = error.message || 'An unexpected error occurred';
 
   // Enhanced response with more context
-  const response: any = {
+  interface ErrorResponse {
+    success: boolean;
+    message: string;
+    errorId: string;
+    timestamp: string;
+    details?: string[];
+    retryAfter?: number;
+    stack?: string;
+    originalError?: string;
+    errorType?: string;
+  }
+  
+  const response: ErrorResponse = {
     success: false,
     message,
     errorId,

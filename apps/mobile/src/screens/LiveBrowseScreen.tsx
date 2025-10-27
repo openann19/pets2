@@ -48,7 +48,7 @@ export default function LiveBrowseScreen({ navigation }: LiveBrowseScreenProps) 
     <View style={[styles.container, { paddingTop: top }]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Live Streams</Text>
-        <TouchableOpacity onPress={() => refetch()}>
+        <TouchableOpacity  testID="LiveBrowseScreen-button-2" accessibilityLabel="refetch()" accessibilityRole="button" onPress={() => refetch()}>
           <Ionicons name="refresh" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -62,7 +62,7 @@ export default function LiveBrowseScreen({ navigation }: LiveBrowseScreenProps) 
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate("LiveViewer", { streamId: item._id })}
+             testID="LiveBrowseScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("LiveViewer", { streamId: item._id })}
           >
             <Image
               source={{ uri: item.coverUrl || "https://picsum.photos/400" }}

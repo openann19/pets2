@@ -6,9 +6,17 @@ import { useNavigation } from "@react-navigation/native";
 import { useUserIntent } from "../domains/onboarding/useUserIntent";
 import type { OnboardingScreenProps } from "../../navigation/types";
 
+interface UserIntent {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
 interface UseUserIntentScreenReturn {
   // From domain hook
-  intents: any[];
+  intents: UserIntent[];
   selectedIntent: string | null;
   isNavigating: boolean;
   selectIntent: (intentId: string) => void;
@@ -20,7 +28,7 @@ interface UseUserIntentScreenReturn {
 }
 
 export const useUserIntentScreen = (): UseUserIntentScreenReturn => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<OnboardingScreenProps<"UserIntent">['navigation']>();
 
   const {
     intents,

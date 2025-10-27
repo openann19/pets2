@@ -295,4 +295,5 @@ export interface AppConfig {
 }
 
 // Export React for JSX compatibility
-export { React, ComponentType };
+export { React };
+export type { ComponentType };

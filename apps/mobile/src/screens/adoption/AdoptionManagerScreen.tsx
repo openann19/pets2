@@ -28,7 +28,7 @@ import {
   Shadows,
 } from "../../animation";
 import type { RootStackScreenProps } from "../../navigation/types";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 import { useAdoptionManagerScreen } from "../../hooks/screens/useAdoptionManagerScreen";
 import type { PetListing as PetListingFromHook } from "../../hooks/screens/useAdoptionManagerScreen";
 
@@ -38,7 +38,7 @@ const sp = (key: keyof typeof Spacing): number => {
   if (typeof value === 'string') {
     return Number.parseFloat(value.replace('rem', '')) * 16;
   }
-  return value as number;
+  return value;
 };
 
 type AdoptionManagerScreenProps = RootStackScreenProps<"AdoptionManager">;
@@ -104,7 +104,7 @@ const normalizeListing = (listing: unknown): PetListing => {
     featured: typeof item.featured === "boolean" ? item.featured : false,
     listedAt:
       typeof item.listedAt === "string"
-        ? (item.listedAt as string)
+        ? (item.listedAt)
         : new Date().toISOString(),
   };
 };
@@ -130,7 +130,7 @@ const normalizeApplication = (application: unknown): AdoptionApplication => {
         : "pending",
     submittedAt:
       typeof item.submittedAt === "string"
-        ? (item.submittedAt as string)
+        ? (item.submittedAt)
         : new Date().toISOString(),
     experience:
       (item.experience as string) ??
@@ -187,7 +187,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 styles.statusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
               ])}
-              onPress={() => {
+               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 setSelectedPet(pet);
                 setShowStatusModal(true);
               }}
@@ -222,7 +222,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <View style={styles.listingActions}>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() =>
+               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() =>
                 navigation.navigate("PetDetails", { petId: pet.id })
               }
             >
@@ -233,7 +233,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 styles.actionButton,
                 styles.primaryButton,
               ])}
-              onPress={() =>
+               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() =>
                 navigation.navigate("ApplicationReview", {
                   applicationId: pet.id,
                 })
@@ -270,7 +270,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 styles.eliteStatusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
               ])}
-              onPress={() => {
+               testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setSelectedPet(pet);
                 setShowStatusModal(true);
@@ -364,19 +364,19 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
 
           <View style={styles.eliteApplicationDetails}>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="mail" size={16} color={Colors.gray500} />
+              <Ionicons name="mail" size={16} color={Colors.neutral[500]} />
               <Text style={styles.eliteDetailText}>{app.applicantEmail}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="home" size={16} color={Colors.gray500} />
+              <Ionicons name="home" size={16} color={Colors.neutral[500]} />
               <Text style={styles.eliteDetailText}>{app.livingSpace}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="star" size={16} color={Colors.gray500} />
+              <Ionicons name="star" size={16} color={Colors.neutral[500]} />
               <Text style={styles.eliteDetailText}>{app.experience}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="people" size={16} color={Colors.gray500} />
+              <Ionicons name="people" size={16} color={Colors.neutral[500]} />
               <Text style={styles.eliteDetailText}>
                 {app.references} references
               </Text>
@@ -409,7 +409,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
                 }}
                 style={{ flex: 1 }}
                 gradientEffect
-                gradientColors={[Colors.success, "Theme.colors.status.success"]}
+                gradientColors={[Colors.success, theme.colors.success]}
               />
             </View>
           )}
@@ -452,14 +452,14 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               styles.eliteTab,
               activeTab === "listings" && styles.eliteActiveTab,
             ])}
-            onPress={() => {
+             testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               handleTabPress("listings", tabScale1);
             }}
           >
             <Ionicons
               name="list"
               size={20}
-              color={activeTab === "listings" ? Colors.white : Colors.gray500}
+              color={activeTab === "listings" ? Colors.neutral[0] : Colors.neutral[500]}
             />
             <Text
               style={StyleSheet.flatten([
@@ -478,7 +478,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               styles.eliteTab,
               activeTab === "applications" && styles.eliteActiveTab,
             ])}
-            onPress={() => {
+             testID="AdoptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               handleTabPress("applications", tabScale2);
             }}
           >
@@ -486,7 +486,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               name="document-text"
               size={20}
               color={
-                activeTab === "applications" ? Colors.white : Colors.gray500
+                activeTab === "applications" ? Colors.neutral[0] : Colors.neutral[500]
               }
             />
             <Text
@@ -507,8 +507,8 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.primary}
-            colors={[Colors.primary]}
+            tintColor={Colors.primary[300]}
+            colors={[Colors.primary[300]]}
           />
         }
       >
@@ -582,12 +582,12 @@ const styles = {
     padding: sp("md"),
   },
   listingCard: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.neutral[0],
     borderRadius: 12,
     padding: sp("md"),
     marginBottom: sp("sm"),
     borderWidth: 1,
-    borderColor: Colors.gray200,
+    borderColor: Colors.neutral[700],
     ...Shadows.sm,
   },
   listingHeader: {
@@ -602,19 +602,19 @@ const styles = {
   petName: {
     fontSize: 18,
     fontWeight: "600" as const,
-    color: Colors.gray900,
+    color: Colors.neutral[900],
     marginBottom: 4,
   },
   petBreed: {
     fontSize: 14,
-    color: Colors.gray600,
+    color: Colors.neutral[600],
   },
   statusBadge: {
     paddingHorizontal: sp("sm"),
     paddingVertical: sp("3"),
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.gray300,
+    borderColor: Colors.neutral[700],
   },
   statusText: {
     fontSize: 12,
@@ -626,7 +626,7 @@ const styles = {
     paddingVertical: sp("sm"),
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: Colors.gray200,
+    borderColor: Colors.neutral[700],
     marginVertical: sp("sm"),
   },
   stat: {
@@ -635,12 +635,12 @@ const styles = {
   statNumber: {
     fontSize: 20,
     fontWeight: "700" as const,
-    color: Colors.primary,
+    color: Colors.primary[300],
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: Colors.gray600,
+    color: Colors.neutral[600],
     textAlign: "center" as const,
   },
   listingActions: {
@@ -653,21 +653,21 @@ const styles = {
     paddingHorizontal: sp("lg"),
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.gray300,
-    backgroundColor: Colors.white,
+    borderColor: Colors.neutral[700],
+    backgroundColor: Colors.neutral[0],
     alignItems: "center" as const,
   },
   actionButtonText: {
     fontSize: 14,
     fontWeight: "600" as const,
-    color: Colors.gray700,
+    color: Colors.neutral[700],
   },
   primaryButton: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: Colors.primary[600],
+    borderColor: Colors.primary[600],
   },
   primaryButtonText: {
-    color: Colors.white,
+    color: Colors.neutral[0],
   },
 
   // === ELITE TAB SYSTEM ===
@@ -685,23 +685,23 @@ const styles = {
     paddingVertical: sp("lg"),
     paddingHorizontal: sp("md"),
     borderRadius: 16,
-    backgroundColor: Colors.glassWhite,
+    backgroundColor: Colors.neutral[50],
     borderWidth: 1,
-    borderColor: Colors.glassWhiteDark,
+    borderColor: Colors.neutral[700],
     gap: sp("xs"),
   },
   eliteActiveTab: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primaryLight,
+    backgroundColor: Colors.primary[600],
+    borderColor: Colors.primary[600],
     ...Shadows.md,
   },
   eliteTabText: {
     fontSize: 14,
     fontWeight: "600" as const,
-    color: Colors.gray500,
+    color: Colors.neutral[500],
   },
   eliteActiveTabText: {
-    color: Colors.white,
+    color: Colors.neutral[0],
   },
 
   // === ELITE LISTING STYLES ===
@@ -715,7 +715,7 @@ const styles = {
     paddingVertical: sp("3"),
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.glassWhiteDark,
+    borderColor: Colors.neutral[700],
   },
   eliteStatusText: {
     fontSize: 12,
@@ -726,10 +726,10 @@ const styles = {
     justifyContent: "space-around" as const,
     paddingVertical: sp("lg"),
     marginVertical: sp("lg"),
-    backgroundColor: Colors.glassWhiteLight,
+    backgroundColor: Colors.neutral[50],
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.glassWhiteDark,
+    borderColor: Colors.neutral[700],
   },
   eliteStat: {
     alignItems: "center" as const,
@@ -737,12 +737,12 @@ const styles = {
   eliteStatNumber: {
     fontSize: 20,
     fontWeight: "700" as const,
-    color: Colors.primary,
+    color: Colors.primary[300],
     marginBottom: sp("2"),
   },
   eliteStatLabel: {
     fontSize: 12,
-    color: Colors.gray500,
+    color: Colors.neutral[500],
     fontWeight: "500" as const,
   },
   eliteActionsContainer: {
@@ -767,14 +767,14 @@ const styles = {
     gap: sp("sm"),
     paddingVertical: sp("3"),
     paddingHorizontal: sp("sm"),
-    backgroundColor: Colors.glassWhiteLight,
+    backgroundColor: Colors.neutral[100],
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.glassWhiteDark,
+    borderColor: Colors.neutral[200],
   },
   eliteDetailText: {
     fontSize: 14,
-    color: Colors.gray600,
+    color: Colors.neutral[600],
     fontWeight: "500" as const,
     flex: 1,
   },

@@ -1,0 +1,109 @@
+{
+  "app": {
+    "name": "PawfectMatch",
+    "tagline": "Encuentra el match perfecto para tu mascota"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "signup": "Registrarse",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "createAccount": "Crear Cuenta",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?"
+  },
+  "discovery": {
+    "title": "Descubrir",
+    "swipeLeft": "Pasar",
+    "swipeRight": "Me Gusta",
+    "superLike": "Super Me Gusta",
+    "noMorePets": "No hay más mascotas para mostrar",
+    "refresh": "Desliza para actualizar"
+  },
+  "matches": {
+    "title": "Matches",
+    "noMatches": "Aún no hay matches",
+    "startSwiping": "¡Comienza a deslizar para encontrar matches!",
+    "matchFound": "¡Es un match!",
+    "messageButton": "Mensaje"
+  },
+  "chat": {
+    "title": "Chat",
+    "typeMessage": "Escribe un mensaje...",
+    "send": "Enviar",
+    "delivered": "Entregado",
+    "read": "Leído",
+    "online": "En línea",
+    "offline": "Desconectado",
+    "typing": "Escribiendo...",
+    "noMessages": "Aún no hay mensajes",
+    "startConversation": "¡Inicia la conversación!"
+  },
+  "profile": {
+    "title": "Perfil",
+    "edit": "Editar Perfil",
+    "settings": "Configuración",
+    "premium": "Premium",
+    "logout": "Cerrar Sesión",
+    "deleteAccount": "Eliminar Cuenta"
+  },
+  "settings": {
+    "title": "Configuración",
+    "account": "Cuenta",
+    "notifications": "Notificaciones",
+    "privacy": "Privacidad",
+    "help": "Ayuda y Soporte",
+    "about": "Acerca de",
+    "version": "Versión",
+    "gdpr": {
+      "export": "Exportar Mis Datos",
+      "delete": "Eliminar Mi Cuenta",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar tu cuenta? Esto no se puede deshacer.",
+      "gracePeriod": "Tienes {days} días para recuperar tu cuenta"
+    }
+  },
+  "premium": {
+    "title": "Premium",
+    "upgrade": "Mejorar a Premium",
+    "features": {
+      "unlimitedSwipes": "Deslizamientos Ilimitados",
+      "seeLikes": "Ver Quién Te Dio Like",
+      "noAds": "Sin Anuncios",
+      "boost": "Impulsa Tu Perfil",
+      "superLikes": "Super Me Gustas"
+    },
+    "subscribe": "Suscribirse Ahora",
+    "restore": "Restaurar Compras"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Por favor, intenta de nuevo.",
+    "network": "Error de red. Verifica tu conexión.",
+    "notFound": "No encontrado",
+    "unauthorized": "Por favor, inicia sesión de nuevo.",
+    "unknown": "Ocurrió un error desconocido"
+  },
+  "loading": {
+    "generic": "Cargando...",
+    "pleaseWait": "Por favor espera..."
+  },
+  "success": {
+    "profileUpdated": "Perfil actualizado exitosamente",
+    "messageSent": "Mensaje enviado",
+    "photoUploaded": "Foto subida exitosamente"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "done": "Hecho",
+    "retry": "Reintentar",
+    "dismiss": "Descartar"
+  }
+}

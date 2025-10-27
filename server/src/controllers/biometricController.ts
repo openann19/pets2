@@ -3,7 +3,7 @@
  * Handles WebAuthn-based biometric authentication
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import User from '../models/User';
 import BiometricCredential from '../models/BiometricCredential';
 import jwt from 'jsonwebtoken';
@@ -12,9 +12,13 @@ import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
-  verifyAuthenticationResponse,
+  verifyAuthenticationResponse
+} from '@simplewebauthn/server';
+import { getErrorMessage } from '../../utils/errorHandler';
+import type {
   GenerateRegistrationOptionsOpts,
-  GenerateAuthenticationOptionsOpts
+  GenerateAuthenticationOptionsOpts,
+  AuthenticatorTransportFuture
 } from '@simplewebauthn/server';
 
 // WebAuthn configuration from environment
@@ -33,7 +37,15 @@ interface GenerateRegistrationRequest extends AuthenticatedRequest {}
 
 interface VerifyRegistrationRequest extends AuthenticatedRequest {
   body: {
-    credential: any;
+    credential: {
+      id: string;
+      rawId: string;
+      response: {
+        clientDataJSON: string;
+        attestationObject: string;
+      };
+      type: 'public-key';
+    };
   };
 }
 
@@ -45,7 +57,17 @@ interface GenerateAuthRequest extends Request {
 
 interface VerifyAuthRequest extends Request {
   body: {
-    credential: any;
+    credential: {
+      id: string;
+      rawId: string;
+      response: {
+        clientDataJSON: string;
+        authenticatorData: string;
+        signature: string;
+        userHandle?: string;
+      };
+      type: 'public-key';
+    };
   };
 }
 
@@ -84,10 +106,11 @@ export const generateRegistrationOptionsHandler = async (
     }
 
     // Generate registration options
+    const userIDBuffer = Buffer.from(userId.toString());
     const options = await generateRegistrationOptions({
       rpName,
       rpID,
-      userID: userId.toString(),
+      userID: new Uint8Array(userIDBuffer),
       userName: user.email,
       userDisplayName: user.firstName + ' ' + user.lastName,
       // Timeout after 5 minutes
@@ -106,7 +129,7 @@ export const generateRegistrationOptionsHandler = async (
 
     // Store challenge temporarily in user session or cache
     // For now, we'll store it in the user document
-    (user as any).webauthnChallenge = options.challenge;
+    user.webauthnChallenge = options.challenge;
     await user.save();
 
     logger.info('Registration options generated', { userId });
@@ -115,12 +138,12 @@ export const generateRegistrationOptionsHandler = async (
       success: true,
       options
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Registration options generation error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to generate registration options',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -148,7 +171,7 @@ export const verifyRegistrationHandler = async (
 
     // Get user and challenge
     const user = await User.findById(userId);
-    if (!user || !(user as any).webauthnChallenge) {
+    if (!user || !user.webauthnChallenge) {
       res.status(400).json({
         success: false,
         message: 'No registration in progress'
@@ -156,7 +179,7 @@ export const verifyRegistrationHandler = async (
       return;
     }
 
-    const expectedChallenge = (user as any).webauthnChallenge;
+    const expectedChallenge = user.webauthnChallenge;
 
     // Verify the registration response
     const verification = await verifyRegistrationResponse({
@@ -178,13 +201,18 @@ export const verifyRegistrationHandler = async (
     }
 
     const {
-      credentialPublicKey,
-      credentialID,
-      counter,
       aaguid,
       credentialDeviceType,
       credentialBackedUp
     } = registrationInfo;
+    
+    const credentialPublicKey = registrationInfo.credential?.publicKey;
+    const credentialID = registrationInfo.credential?.id;
+    const counter = registrationInfo.credential?.counter || 0;
+
+    if (!credentialPublicKey || !credentialID) {
+      throw new Error('Invalid registration information');
+    }
 
     // Store the credential
     const biometricCredential = new BiometricCredential({
@@ -195,13 +223,13 @@ export const verifyRegistrationHandler = async (
       aaguid,
       credentialDeviceType,
       credentialBackedUp,
-      transports: credential.response?.transports || []
+      transports: (credential.response?.transports as string[]) || []
     });
 
     await biometricCredential.save();
 
     // Clear the challenge
-    (user as any).webauthnChallenge = undefined;
+    user.webauthnChallenge = undefined;
     await user.save();
 
     logger.info('Biometric credential registered', { userId });
@@ -211,13 +239,22 @@ export const verifyRegistrationHandler = async (
       message: 'Biometric authentication registered successfully',
       credentialId: biometricCredential.credentialId
     });
-  } catch (error: any) {
-    logger.error('Registration verification error', { error });
-    res.status(500).json({
-      success: false,
-      message: 'Failed to verify registration',
-      error: error.message
-    });
+  } catch (error) {
+    if (error instanceof Error) {
+      logger.error('Biometric registration verification error', { error });
+      res.status(500).json({
+        success: false,
+        message: 'Failed to verify biometric registration',
+        error: getErrorMessage(error)
+      });
+    } else {
+      logger.error('Unknown error during biometric registration verification', { error });
+      res.status(500).json({
+        success: false,
+        message: 'Failed to verify biometric registration',
+        error: 'Unknown error'
+      });
+    }
   }
 };
 
@@ -262,19 +299,19 @@ export const generateAuthenticationOptionsHandler = async (
     }
 
     // Generate authentication options
+    const credentialIdBuffer = Buffer.from(biometricCredential.credentialId, 'base64url');
     const options = await generateAuthenticationOptions({
       rpID,
       timeout: 300000,
       allowCredentials: [{
-        id: Buffer.from(biometricCredential.credentialId, 'base64url'),
-        type: 'public-key',
-        transports: biometricCredential.transports
+        id: credentialIdBuffer,
+        transports: biometricCredential.transports || []
       }],
       userVerification: 'preferred'
     });
 
     // Store challenge in credential document
-    (biometricCredential as any).currentChallenge = options.challenge;
+    biometricCredential.currentChallenge = options.challenge;
     await biometricCredential.save();
 
     logger.info('Authentication options generated', { userId: user._id });
@@ -283,12 +320,12 @@ export const generateAuthenticationOptionsHandler = async (
       success: true,
       options
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Authentication options generation error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to generate authentication options',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -319,7 +356,7 @@ export const verifyAuthenticationHandler = async (
       credentialId: credentialIdBase64
     }).populate('userId');
 
-    if (!biometricCredential || !(biometricCredential as any).currentChallenge) {
+    if (!biometricCredential || !(biometricCredential as { currentChallenge?: string }).currentChallenge) {
       res.status(401).json({
         success: false,
         message: 'Invalid credential or no authentication in progress'
@@ -327,7 +364,7 @@ export const verifyAuthenticationHandler = async (
       return;
     }
 
-    const user: any = biometricCredential.userId;
+    const user = biometricCredential.userId as { isActive: boolean };
 
     // Check if user account is active
     if (!user.isActive) {
@@ -346,7 +383,7 @@ export const verifyAuthenticationHandler = async (
       return;
     }
 
-    const expectedChallenge = (biometricCredential as any).currentChallenge;
+    const expectedChallenge = (biometricCredential as { currentChallenge?: string }).currentChallenge;
 
     // Verify the authentication response
     const verification = await verifyAuthenticationResponse({
@@ -354,13 +391,8 @@ export const verifyAuthenticationHandler = async (
       expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
-      authenticator: {
-        credentialID: Buffer.from(biometricCredential.credentialId, 'base64url'),
-        credentialPublicKey: Buffer.from(biometricCredential.publicKey, 'base64url'),
-        counter: biometricCredential.counter
-      },
       requireUserVerification: true
-    });
+    } as Parameters<typeof verifyAuthenticationResponse>[0]);
 
     const { verified, authenticationInfo } = verification;
 
@@ -374,8 +406,8 @@ export const verifyAuthenticationHandler = async (
 
     // Update counter (prevents replay attacks)
     biometricCredential.counter = authenticationInfo.newCounter;
-    (biometricCredential as any).lastUsed = new Date();
-    (biometricCredential as any).currentChallenge = null;
+    (biometricCredential as { lastUsed?: Date }).lastUsed = new Date();
+    (biometricCredential as { currentChallenge?: string | null }).currentChallenge = null;
     await biometricCredential.save();
 
     // Generate JWT tokens
@@ -407,12 +439,12 @@ export const verifyAuthenticationHandler = async (
         refreshToken
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Authentication verification error', { error });
     res.status(500).json({
       success: false,
       message: 'Authentication verification failed',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -446,12 +478,12 @@ export const removeBiometric = async (
       success: true,
       message: 'Biometric authentication removed successfully'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Biometric removal error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to remove biometric authentication',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -478,12 +510,12 @@ export const getBiometricStatus = async (
         createdAt: biometricCredential?.createdAt
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Biometric status error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get biometric status',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };

@@ -3,15 +3,19 @@
  * Provides real-time analytics data for the admin dashboard
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import User from '../models/User';
 import Pet from '../models/Pet';
 import Match from '../models/Match';
 import AdminActivityLog from '../models/AdminActivityLog';
 import logger from '../utils/logger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 // Try to import Message model, with fallback handling
-let Message: any;
+let Message: { 
+  countDocuments: (filter?: Record<string, unknown>) => Promise<number>;
+  aggregate?: (pipeline: any[]) => Promise<any[]>;
+};
 try {
   Message = require('../models/Message');
 } catch {
@@ -19,18 +23,22 @@ try {
   try {
     const Conversation = require('../models/Conversation');
     Message = {
-      countDocuments: async (filter?: any) => {
+      countDocuments: async (filter?: Record<string, unknown>) => {
         // Approximate: count total embedded messages across conversations
         const res = await Conversation.aggregate([
           { $project: { count: { $size: { $ifNull: ['$messages', []] } } } },
           { $group: { _id: null, total: { $sum: '$count' } } }
         ]);
         return res?.[0]?.total || 0;
-      }
+      },
+      aggregate: async () => []
     };
   } catch {
     // As ultimate fallback in tests, provide stubbed countDocuments
-    Message = { countDocuments: async () => 0 };
+    Message = { 
+      countDocuments: async () => 0,
+      aggregate: async () => []
+    };
   }
 }
 
@@ -166,12 +174,12 @@ export const getAnalytics = async (req: AdminAnalyticsRequest, res: Response): P
       },
       generatedAt: new Date().toISOString()
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get analytics', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to fetch analytics data',
-      message: error.message
+      message: getErrorMessage(error)
     });
   }
 };
@@ -322,11 +330,12 @@ const getRevenueStats = async (startDate: Date): Promise<RevenueStats> => {
     });
 
     // Calculate MRR
-    const monthlyRecurringRevenue = subscriptions.data.reduce((sum: number, sub: any) => {
-      const plan = sub.items.data[0].plan;
+    const monthlyRecurringRevenue = subscriptions.data?.reduce((sum: number, sub: { items: { data: Array<{ plan: { interval: string; amount: number } }> } }) => {
+      const plan = sub.items.data[0]?.plan;
+      if (!plan) return sum;
       const monthlyFactor = plan.interval === 'year' ? (1 / 12) : 1;
       return sum + (plan.amount * monthlyFactor);
-    }, 0);
+    }, 0) || 0;
 
     // Get total revenue from balance transactions
     const balanceTransactions = await stripeClient.balanceTransactions.list({
@@ -334,7 +343,7 @@ const getRevenueStats = async (startDate: Date): Promise<RevenueStats> => {
       limit: 100
     });
 
-    const totalRevenue = balanceTransactions.data.reduce((sum: number, transaction: any) => {
+    const totalRevenue = balanceTransactions.data.reduce((sum: number, transaction: { type: string; status: string; amount: number }) => {
       if (transaction.type === 'charge' && transaction.status === 'available') {
         return sum + transaction.amount;
       }
@@ -367,7 +376,7 @@ const getRevenueStats = async (startDate: Date): Promise<RevenueStats> => {
       conversionRate: Number(conversionRate.toFixed(2)),
       churnRate: Number(churnRate.toFixed(2))
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get revenue stats', { error });
     // Return zeros if Stripe is not configured
     return {
@@ -383,9 +392,9 @@ const getRevenueStats = async (startDate: Date): Promise<RevenueStats> => {
 /**
  * Get time series data
  */
-const getTimeSeries = async (startDate: Date, timeRange: string): Promise<any[]> => {
+const getTimeSeries = async (startDate: Date, timeRange: string): Promise<Array<any>> => {
   const days = parseInt(timeRange) || 30;
-  const timeSeries: any[] = [];
+  const timeSeries: Array<any> = [];
 
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
@@ -415,7 +424,7 @@ const getTimeSeries = async (startDate: Date, timeRange: string): Promise<any[]>
 /**
  * Get top performers
  */
-const getTopPerformers = async (): Promise<any[]> => {
+const getTopPerformers = async (): Promise<Array<{ petId: string; name: string; matchCount: number }>> => {
   // Get top pets by match count
   const topPets = await Match.aggregate([
     { $group: { _id: '$pet1', count: { $sum: 1 } } },
@@ -450,7 +459,7 @@ const getTopPerformers = async (): Promise<any[]> => {
 /**
  * Get geographic data
  */
-const getGeographicData = async (): Promise<any[]> => {
+const getGeographicData = async (): Promise<Array<{ location: string; userCount: number }>> => {
   const geographicData = await User.aggregate([
     {
       $group: {
@@ -476,22 +485,22 @@ const getGeographicData = async (): Promise<any[]> => {
 /**
  * Get device statistics
  */
-const getDeviceStats = async (): Promise<any[]> => {
+const getDeviceStats = async (): Promise<Array<{ device: string; percentage: number }>> => {
   // This would require tracking device info in user sessions
   // For now, return estimated distribution
   const totalUsers = await User.countDocuments();
 
   return [
-    { device: 'Mobile', count: Math.floor(totalUsers * 0.65), percentage: 65.0 },
-    { device: 'Desktop', count: Math.floor(totalUsers * 0.25), percentage: 25.0 },
-    { device: 'Tablet', count: Math.floor(totalUsers * 0.10), percentage: 10.0 }
-  ];
+    { device: 'Mobile', percentage: 65.0 },
+    { device: 'Desktop', percentage: 25.0 },
+    { device: 'Tablet', percentage: 10.0 }
+  ] as Array<{ device: string; percentage: number }>;
 };
 
 /**
  * Get security metrics
  */
-const getSecurityMetrics = async (): Promise<any> => {
+const getSecurityMetrics = async (): Promise<{ totalAlerts: number; criticalAlerts: number; resolvedAlerts: number }> => {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
   const [totalAlerts, criticalAlerts, resolvedAlerts] = await Promise.all([
@@ -510,8 +519,7 @@ const getSecurityMetrics = async (): Promise<any> => {
   return {
     totalAlerts,
     criticalAlerts,
-    resolvedAlerts,
-    averageResponseTime: 15 // minutes (would need actual tracking)
+    resolvedAlerts
   };
 };
 
@@ -587,12 +595,12 @@ export const exportAnalytics = async (req: AdminAnalyticsRequest, res: Response)
     }
 
     logger.info('Analytics exported', { format, timeRange });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to export analytics', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to export analytics data',
-      message: error.message
+      message: getErrorMessage(error)
     });
   }
 };
@@ -600,54 +608,60 @@ export const exportAnalytics = async (req: AdminAnalyticsRequest, res: Response)
 /**
  * Convert analytics data to CSV format
  */
-const convertToCSV = (data: any): string => {
+const convertToCSV = (data: Record<string, unknown>): string => {
   const rows: string[] = [];
 
   // Header
   rows.push('Metric,Value');
 
   // User stats
-  rows.push(`Total Users,${data.users.total}`);
-  rows.push(`Active Users,${data.users.active}`);
-  rows.push(`Suspended Users,${data.users.suspended}`);
-  rows.push(`Banned Users,${data.users.banned}`);
-  rows.push(`Verified Users,${data.users.verified}`);
-  rows.push(`Recent 24h Users,${data.users.recent24h}`);
-  rows.push(`User Growth,${data.users.growth}%`);
+  const users = data.users as any;
+  rows.push(`Total Users,${users?.total || 0}`);
+  rows.push(`Active Users,${users?.active || 0}`);
+  rows.push(`Suspended Users,${users?.suspended || 0}`);
+  rows.push(`Banned Users,${users?.banned || 0}`);
+  rows.push(`Verified Users,${users?.verified || 0}`);
+  rows.push(`Recent 24h Users,${users?.recent24h || 0}`);
+  rows.push(`User Growth,${users?.growth || 0}%`);
 
   // Pet stats
-  rows.push(`Total Pets,${data.pets.total}`);
-  rows.push(`Active Pets,${data.pets.active}`);
-  rows.push(`Recent 24h Pets,${data.pets.recent24h}`);
-  rows.push(`Pet Growth,${data.pets.growth}%`);
+  const pets = data.pets as any;
+  rows.push(`Total Pets,${pets?.total || 0}`);
+  rows.push(`Active Pets,${pets?.active || 0}`);
+  rows.push(`Recent 24h Pets,${pets?.recent24h || 0}`);
+  rows.push(`Pet Growth,${pets?.growth || 0}%`);
 
   // Match stats
-  rows.push(`Total Matches,${data.matches.total}`);
-  rows.push(`Active Matches,${data.matches.active}`);
-  rows.push(`Blocked Matches,${data.matches.blocked}`);
-  rows.push(`Recent 24h Matches,${data.matches.recent24h}`);
-  rows.push(`Match Growth,${data.matches.growth}%`);
+  const matches = data.matches as any;
+  rows.push(`Total Matches,${matches?.total || 0}`);
+  rows.push(`Active Matches,${matches?.active || 0}`);
+  rows.push(`Blocked Matches,${matches?.blocked || 0}`);
+  rows.push(`Recent 24h Matches,${matches?.recent24h || 0}`);
+  rows.push(`Match Growth,${matches?.growth || 0}%`);
 
   // Message stats
-  rows.push(`Total Messages,${data.messages.total}`);
-  rows.push(`Deleted Messages,${data.messages.deleted}`);
-  rows.push(`Recent 24h Messages,${data.messages.recent24h}`);
-  rows.push(`Message Growth,${data.messages.growth}%`);
+  const messages = data.messages as any;
+  rows.push(`Total Messages,${messages?.total || 0}`);
+  rows.push(`Deleted Messages,${messages?.deleted || 0}`);
+  rows.push(`Recent 24h Messages,${messages?.recent24h || 0}`);
+  rows.push(`Message Growth,${messages?.growth || 0}%`);
 
   // Engagement stats
-  rows.push(`Daily Active Users,${data.engagement.dailyActiveUsers}`);
-  rows.push(`Weekly Active Users,${data.engagement.weeklyActiveUsers}`);
-  rows.push(`Monthly Active Users,${data.engagement.monthlyActiveUsers}`);
-  rows.push(`Avg Session Duration,${data.engagement.averageSessionDuration} min`);
-  rows.push(`Bounce Rate,${data.engagement.bounceRate}%`);
-  rows.push(`Retention Rate,${data.engagement.retentionRate}%`);
+  const engagement = data.engagement as any;
+  rows.push(`Daily Active Users,${engagement?.dailyActiveUsers || 0}`);
+  rows.push(`Weekly Active Users,${engagement?.weeklyActiveUsers || 0}`);
+  rows.push(`Monthly Active Users,${engagement?.monthlyActiveUsers || 0}`);
+  rows.push(`Avg Session Duration,${engagement?.averageSessionDuration || 0} min`);
+  rows.push(`Bounce Rate,${engagement?.bounceRate || 0}%`);
+  rows.push(`Retention Rate,${engagement?.retentionRate || 0}%`);
 
   // Revenue stats
-  rows.push(`Total Revenue,$${data.revenue.totalRevenue.toFixed(2)}`);
-  rows.push(`MRR,$${data.revenue.monthlyRecurringRevenue.toFixed(2)}`);
-  rows.push(`ARPU,$${data.revenue.averageRevenuePerUser.toFixed(2)}`);
-  rows.push(`Conversion Rate,${data.revenue.conversionRate}%`);
-  rows.push(`Churn Rate,${data.revenue.churnRate}%`);
+  const revenue = data.revenue as any;
+  rows.push(`Total Revenue,$${(revenue?.totalRevenue || 0).toFixed(2)}`);
+  rows.push(`MRR,$${(revenue?.monthlyRecurringRevenue || 0).toFixed(2)}`);
+  rows.push(`ARPU,$${(revenue?.averageRevenuePerUser || 0).toFixed(2)}`);
+  rows.push(`Conversion Rate,${revenue?.conversionRate || 0}%`);
+  rows.push(`Churn Rate,${revenue?.churnRate || 0}%`);
 
   return rows.join('\n');
 };

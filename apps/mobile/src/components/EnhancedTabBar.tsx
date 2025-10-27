@@ -58,7 +58,7 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
     const t = setTimeout(() => {
       scale.value = withSpring(focused ? 1.1 : 1, { damping: 15, stiffness: 200 });
     }, 180);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); };
   }, [impulse, scale, ripple, focused]);
 
   useEffect(() => {
@@ -153,7 +153,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   const lastTapRef = useRef<Record<string, number>>({});
   const [impulses, setImpulses] = useState<Record<string, number>>({});
   const bump = (key: string) =>
-    setImpulses(prev => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
+    { setImpulses(prev => ({ ...prev, [key]: (prev[key] ?? 0) + 1 })); };
 
   // Animate tab bar based on interactions
   useEffect(() => {

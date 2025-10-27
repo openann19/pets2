@@ -3,14 +3,19 @@ import { authenticateToken } from "../middleware/auth";
 import Match from "../models/Match";
 import Pet from "../models/Pet";
 import logger from "../utils/logger";
+import type { AuthRequest } from "../types/express";
 
 const router = Router();
 
 /** GET /api/matches/search?q=&species=&maxKm=&sort=recent|alpha|distance */
-router.get("/", authenticateToken, async (req, res, next) => {
+router.get("/", authenticateToken, async (req: AuthRequest, res, next) => {
   try {
-    const userId = (req as any).userId;
-    const { q, species, maxKm, sort } = req.query as any;
+    const userId = req.userId || req.user?._id?.toString();
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+
+    const { q, species, maxKm, sort } = req.query as { q?: string; species?: string; maxKm?: string; sort?: string };
 
     // Find user's matches
     const matchDocs = await Match.find({
@@ -19,7 +24,7 @@ router.get("/", authenticateToken, async (req, res, next) => {
     }).populate('pet1 pet2').lean();
 
     // Build filter for matches with additional options
-    const filter: any = {
+    const filter: Record<string, unknown> = {
       $or: [{ userA: userId }, { userB: userId }],
       status: "active"
     };
@@ -44,7 +49,7 @@ router.get("/", authenticateToken, async (req, res, next) => {
     }
 
     // Sort options
-    let sortOption: any = { createdAt: -1 }; // default: newest first
+    let sortOption: Record<string, number> = { createdAt: -1 }; // default: newest first
     if (sort === "alpha") sortOption = { createdAt: 1 }; // oldest first
     else if (sort === "distance" && maxKm) {
       // Distance sort requires location - implement if needed

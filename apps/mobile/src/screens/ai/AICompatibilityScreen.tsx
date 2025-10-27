@@ -320,10 +320,10 @@ const AICompatibilityScreen = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return "Theme.colors.status.success";
-    if (score >= 80) return "Theme.colors.status.info";
-    if (score >= 70) return "Theme.colors.status.warning";
-    return "Theme.colors.status.error";
+    if (score >= 90) return theme.colors.success;
+    if (score >= 80) return theme.colors.status.info;
+    if (score >= 70) return theme.colors.warning;
+    return theme.colors.danger;
   };
 
   const getScoreLabel = (score: number) => {
@@ -341,7 +341,7 @@ const AICompatibilityScreen = ({
         (selectedPetA?.id === item.id || selectedPetB?.id === item.id) &&
           styles.petCardSelected,
       ])}
-      onPress={() => {
+       testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
         if (selectedPetA?.id === item.id) {
           handlePetSelection(item, true);
         } else if (selectedPetB?.id === item.id) {
@@ -442,7 +442,7 @@ const AICompatibilityScreen = ({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => {
+             testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               navigation.goBack();
             }}
             style={styles.backButton}
@@ -461,14 +461,14 @@ const AICompatibilityScreen = ({
                   styles.historyButton,
                   { backgroundColor: colors.primary },
                 ])}
-                onPress={() => {
+                 testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   Alert.alert(
                     "Analysis History",
                     `${analysisHistory.length} previous analyses`,
                   );
                 }}
               >
-                <Ionicons name="time" size={20} color="Theme.colors.neutral[0]" />
+                <Ionicons name="time" size={20} color={theme.colors.neutral[0]}} />
               </TouchableOpacity>
             )}
           </View>
@@ -541,17 +541,17 @@ const AICompatibilityScreen = ({
                 { backgroundColor: colors.primary },
                 isAnalyzing && styles.analyzeButtonDisabled,
               ])}
-              onPress={handleAnalyze}
+               testID="AICompatibilityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleAnalyze}
               disabled={isAnalyzing}
             >
               {isAnalyzing ? (
                 <>
-                  <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
+                  <ActivityIndicator size="small" color={theme.colors.neutral[0]} />
                   <Text style={styles.analyzeButtonText}>Analyzing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="analytics" size={20} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="analytics" size={20} color={theme.colors.neutral[0]} />
                   <Text style={styles.analyzeButtonText}>
                     Analyze Compatibility
                   </Text>
@@ -631,7 +631,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bar-chart" size={24} color="Theme.colors.status.info" />
+                <Ionicons name="bar-chart" size={24} color={theme.colors.status.info} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -686,7 +686,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="people" size={24} color="Theme.colors.secondary[500]" />
+                <Ionicons name="people" size={24} color={theme.colors.secondary[500]} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -730,7 +730,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="list" size={24} color="Theme.colors.status.success" />
+                <Ionicons name="list" size={24} color={theme.colors.success} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -746,7 +746,7 @@ const AICompatibilityScreen = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.factorGroupTitle,
-                      { color: "Theme.colors.status.success" },
+                      { color: theme.colors.success },
                     ])}
                   >
                     Strengths
@@ -757,7 +757,7 @@ const AICompatibilityScreen = ({
                         <Ionicons
                           name="checkmark-circle"
                           size={16}
-                          color="Theme.colors.status.success"
+                          color={theme.colors.success
                         />
                         <Text
                           style={StyleSheet.flatten([
@@ -776,7 +776,7 @@ const AICompatibilityScreen = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.factorGroupTitle,
-                      { color: "Theme.colors.status.warning" },
+                      { color: theme.colors.warning },
                     ])}
                   >
                     Concerns
@@ -784,7 +784,7 @@ const AICompatibilityScreen = ({
                   {analysisResult.score.factors.concerns.map(
                     (concern, index) => (
                       <View key={index} style={styles.factorItem}>
-                        <Ionicons name="warning" size={16} color="Theme.colors.status.warning" />
+                        <Ionicons name="warning" size={16} color={theme.colors.warning} />
                         <Text
                           style={StyleSheet.flatten([
                             styles.factorText,
@@ -802,7 +802,7 @@ const AICompatibilityScreen = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.factorGroupTitle,
-                      { color: "Theme.colors.status.info" },
+                      { color: theme.colors.status.info },
                     ])}
                   >
                     Recommendations
@@ -810,7 +810,7 @@ const AICompatibilityScreen = ({
                   {analysisResult.score.factors.recommendations.map(
                     (recommendation, index) => (
                       <View key={index} style={styles.factorItem}>
-                        <Ionicons name="bulb" size={16} color="Theme.colors.status.info" />
+                        <Ionicons name="bulb" size={16} color={theme.colors.status.info} />
                         <Text
                           style={StyleSheet.flatten([
                             styles.factorText,
@@ -834,7 +834,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="document-text" size={24} color="Theme.colors.neutral[500]" />
+                <Ionicons name="document-text" size={24} color={theme.colors.neutral[500]} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -862,7 +862,7 @@ const AICompatibilityScreen = ({
               ])}
             >
               <View style={styles.resultHeader}>
-                <Ionicons name="bulb-outline" size={24} color="Theme.colors.status.warning" />
+                <Ionicons name="bulb-outline" size={24} color={theme.colors.warning} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
@@ -878,7 +878,7 @@ const AICompatibilityScreen = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color="Theme.colors.status.warning"
+                      color={theme.colors.warning
                     />
                     <Text
                       style={StyleSheet.flatten([
@@ -977,7 +977,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -985,7 +985,7 @@ const styles = StyleSheet.create({
   },
   petCardSelected: {
     borderWidth: 2,
-    borderColor: "Theme.colors.status.info",
+    borderColor: theme.colors.status.info,
   },
   petInfo: {
     flexDirection: "row",
@@ -996,7 +996,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "Theme.colors.neutral[200]",
+    backgroundColor: theme.colors.neutral[200],
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -1027,7 +1027,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   petTagText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 10,
     fontWeight: "600",
   },
@@ -1049,7 +1049,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   analyzeButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
   },
@@ -1060,7 +1060,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1108,7 +1108,7 @@ const styles = StyleSheet.create({
   breakdownBar: {
     flex: 1,
     height: 8,
-    backgroundColor: "Theme.colors.neutral[200]",
+    backgroundColor: theme.colors.neutral[200],
     borderRadius: 4,
     overflow: "hidden",
   },

@@ -83,9 +83,10 @@ router.post('/photos/presign', authenticateToken, async (req: Request, res: Resp
         },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Presign error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
@@ -140,9 +141,10 @@ router.post('/', authenticateToken, async (req: Request, res: Response) => {
     // TODO: Queue job for ingestion (AV scan, EXIF strip, pHash, thumbnails, AI analysis)
 
     res.json({ success: true, data: { upload } });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Upload registration error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
@@ -177,9 +179,10 @@ router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
         analysis: analysis || undefined,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Get upload error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
@@ -222,9 +225,10 @@ router.post('/pets/:petId/photos', authenticateToken, async (req: Request, res: 
         },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Link photo error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 
@@ -293,9 +297,10 @@ router.post('/ai/analyze-photo', authenticateToken, async (req: Request, res: Re
     await upload.save();
 
     res.json({ success: true, data: { analysis } });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Analyze photo error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: errorMessage });
   }
 });
 

@@ -16,7 +16,8 @@ import {
 } from "react-native";
 
 import type { RootStackParamList } from "../../navigation/types";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -75,12 +76,12 @@ const AnimatedCheckmark = () => {
         ])}
       >
         <LinearGradient
-          colors={["#6D28D9", "#7C3AED", "Theme.colors.secondary[500]"]}
+          colors={["#6D28D9", "#7C3AED", theme.colors.primary[600]]}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Ionicons name="checkmark" size={64} color="Theme.colors.neutral[0]" />
+          <Ionicons name="checkmark" size={64} color={theme.colors.neutral[0}]}} />
         </LinearGradient>
       </Animated.View>
     </View>
@@ -151,7 +152,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
+           testID="SubscriptionSuccessScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             navigation.navigate("SubscriptionManager");
           }}
         >
@@ -160,7 +161,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
 
         <TouchableOpacity
           style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
-          onPress={() => {
+           testID="SubscriptionSuccessScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             navigation.navigate("Home");
           }}
         >
@@ -174,7 +175,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     padding: 24,
     justifyContent: "space-between",
   },
@@ -203,13 +204,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[900]",
+    color: theme.colors.neutral[900],
     textAlign: "center",
     marginBottom: 16,
   },
   message: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   featuresContainer: {
     width: "100%",
     padding: 16,
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg.secondary,
     borderRadius: 12,
     marginVertical: 24,
   },
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[900]",
+    color: theme.colors.neutral[900],
     marginLeft: 12,
   },
   buttonContainer: {
@@ -243,12 +244,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
   },
   secondaryButton: {
-    backgroundColor: "Theme.colors.neutral[100]",
+    backgroundColor: theme.colors.neutral[100],
   },
   secondaryButtonText: {
     color: "#6D28D9",

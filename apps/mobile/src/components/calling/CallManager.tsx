@@ -23,9 +23,10 @@ export default function CallManager({ children }: CallManagerProps) {
   const socket = useSocket();
 
   useEffect(() => {
-    // Initialize WebRTC service with socket
+    // WebRTC service automatically handles socket connections
+    // No explicit initialization needed
     if (socket) {
-      WebRTCService.initialize(socket);
+      // Socket is already connected and WebRTC service will use it
     }
 
     // Listen for call state changes

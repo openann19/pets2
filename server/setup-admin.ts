@@ -6,7 +6,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
-import { logger } from './src/utils/logger.js';
+import logger from './src/utils/logger.js';
 
 async function setupAdmin(): Promise<void> {
   try {

@@ -72,74 +72,27 @@ export interface ExtendedColors extends SemanticColors {
 /**
  * Adapter function to convert unified theme to extended colors
  * Provides backward compatibility for old component API
+ * 
+ * Note: Extended colors are now included directly in the core theme,
+ * but this function maintains type compatibility and ensures all
+ * properties are available even if the core theme changes.
  */
-export function getExtendedColors(theme: Theme): ExtendedColors {
+export function getExtendedColors(theme: Theme | any): ExtendedColors {
   const { colors } = theme;
-  const isDark = theme.scheme === "dark";
   
+  // Since extended colors are now in the core theme, we just return them
+  // with type assertion to satisfy ExtendedColors interface
   return {
-    // Core semantic colors
     ...colors,
-    
-    // Background aliases
-    background: colors.bg,
-    surface: colors.bg,
-    surfaceElevated: colors.bgElevated,
-    card: colors.bgElevated,
-    
-    // Text aliases
-    textSecondary: colors.textMuted,
-    interactive: colors.primary,
-    feedback: colors.success,
-    
-    // Monochrome palette
-    white: "#ffffff",
-    black: "#000000",
-    gray50: "#fafafa",
-    gray100: "#f5f5f5",
-    gray200: "#e5e5e5",
-    gray300: "#d4d4d4",
-    gray400: "#a3a3a3",
-    gray500: "#737373",
-    gray600: "#525252",
-    gray700: "#404040",
-    gray800: "#262626",
-    gray900: "#171717",
-    gray950: "#0a0a0a",
-    
-    // Primary variants (can be customized based on brand)
-    primaryLight: isDark ? "#fce7f3" : "#ec4899",
-    primaryDark: isDark ? "#831843" : "#be185d",
-    
-    // Secondary variants
-    secondary: "#a855f7",
-    secondaryLight: isDark ? "#f3e8ff" : "#9333ea",
-    secondaryDark: isDark ? "#581c87" : "#7e22ce",
-    
-    // Accent variants
-    accent: "#10b981",
-    accentLight: isDark ? "#dcfce7" : "#059669",
-    accentDark: isDark ? "#064e3b" : "#047857",
-    
-    // Glass effects
-    glass: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.8)",
-    glassLight: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.6)",
-    glassWhite: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.9)",
-    glassWhiteLight: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.95)",
-    glassWhiteDark: isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.98)",
-    glassDark: isDark ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.9)",
-    glassDarkMedium: isDark ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.7)",
-    glassDarkStrong: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.5)",
-    
-    // Status colors
-    info: "#3b82f6",
-    error: colors.danger,
-    
-    // Additional properties
-    tertiary: colors.warning,
-    inverse: isDark ? "#ffffff" : "#000000",
-    shadow: isDark ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.1)",
-  };
+    // Ensure all aliases are available
+    background: colors.background ?? colors.bg,
+    surface: colors.surface ?? colors.bg,
+    surfaceElevated: colors.surfaceElevated ?? colors.bgElevated,
+    card: colors.card ?? colors.bgElevated,
+    textSecondary: colors.textSecondary ?? colors.textMuted,
+    interactive: colors.interactive ?? colors.primary,
+    feedback: colors.feedback ?? colors.success,
+  } as ExtendedColors;
 }
 
 /**

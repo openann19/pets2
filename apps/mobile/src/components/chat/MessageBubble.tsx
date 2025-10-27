@@ -416,7 +416,7 @@ export function MessageBubble({
       {/* Context menu */}
       <MorphingContextMenu
         visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
+        onClose={() => { setMenuVisible(false); }}
         anchor={anchor}
         actions={actions}
         theme={{

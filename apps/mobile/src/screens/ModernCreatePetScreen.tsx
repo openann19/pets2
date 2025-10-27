@@ -23,7 +23,6 @@ import {
 
 // Import new architecture components
 import {
-  Theme,
   EliteButton,
   EliteButtonPresets,
   FXContainerPresets,
@@ -33,6 +32,7 @@ import {
   Label,
   useStaggeredAnimation,
 } from "../components";
+import { useTheme } from "../theme/Provider";
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components";
@@ -45,6 +45,7 @@ type CreatePetScreenProps = RootStackScreenProps<"CreatePet">;
 export default function ModernCreatePetScreen({
   navigation,
 }: CreatePetScreenProps) {
+  const theme = useTheme();
   const {
     formData,
     photos,
@@ -64,6 +65,59 @@ export default function ModernCreatePetScreen({
   React.useEffect(() => {
     startStaggeredAnimation();
   }, [startStaggeredAnimation]);
+
+  // Dynamic styles that depend on theme
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      padding: theme.spacing.lg,
+      paddingBottom: theme.spacing["4xl"],
+    },
+    section: {
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+    },
+    sectionTitle: {
+      marginBottom: theme.spacing.sm,
+    },
+    sectionSubtitle: {
+      marginBottom: theme.spacing.lg,
+      color: theme.colors.textMuted,
+    },
+    formGroup: {
+      marginBottom: theme.spacing.lg,
+    },
+    input: {
+      backgroundColor: theme.colors.bgElevated,
+      borderRadius: theme.radius.lg,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      fontSize: 16,
+      color: theme.colors.text,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    textArea: {
+      height: 100,
+      textAlignVertical: "top",
+    },
+    optionsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    submitContainer: {
+      paddingTop: theme.spacing.xl,
+    },
+    submitButton: {
+      width: "100%",
+    },
+  });
 
   // Submit handler
   const onSubmit = async () => {
@@ -150,9 +204,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.name}
-                  onChangeText={(value) => updateFormData("name", value)}
+                  onChangeText={(value) => { updateFormData("name", value); }}
                   placeholder="Enter your pet's name"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.textMuted}
                 />
               </View>
 
@@ -167,7 +221,7 @@ export default function ModernCreatePetScreen({
                         formData.species === species ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => updateFormData("species", species)}
+                      onPress={() => { updateFormData("species", species); }}
                     />
                   ))}
                 </View>
@@ -178,9 +232,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.breed}
-                  onChangeText={(value) => updateFormData("breed", value)}
+                  onChangeText={(value) => { updateFormData("breed", value); }}
                   placeholder="Enter breed"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.textMuted}
                 />
               </View>
 
@@ -189,9 +243,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={styles.input}
                   value={formData.age}
-                  onChangeText={(value) => updateFormData("age", value)}
+                  onChangeText={(value) => { updateFormData("age", value); }}
                   placeholder="e.g., 2 years, 6 months"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.textMuted}
                 />
               </View>
 
@@ -206,7 +260,7 @@ export default function ModernCreatePetScreen({
                         formData.gender === gender ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => updateFormData("gender", gender)}
+                      onPress={() => { updateFormData("gender", gender); }}
                     />
                   ))}
                 </View>
@@ -221,7 +275,7 @@ export default function ModernCreatePetScreen({
                       title={size}
                       variant={formData.size === size ? "primary" : "outline"}
                       size="sm"
-                      onPress={() => updateFormData("size", size)}
+                      onPress={() => { updateFormData("size", size); }}
                     />
                   ))}
                 </View>
@@ -238,9 +292,9 @@ export default function ModernCreatePetScreen({
                 <TextInput
                   style={StyleSheet.flatten([styles.input, styles.textArea])}
                   value={formData.description}
-                  onChangeText={(value) => updateFormData("description", value)}
+                  onChangeText={(value) => { updateFormData("description", value); }}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.textMuted}
                   multiline
                   numberOfLines={4}
                 />
@@ -263,7 +317,7 @@ export default function ModernCreatePetScreen({
                         formData.intent === intent ? "primary" : "outline"
                       }
                       size="sm"
-                      onPress={() => updateFormData("intent", intent)}
+                      onPress={() => { updateFormData("intent", intent); }}
                     />
                   ))}
                 </View>
@@ -290,7 +344,7 @@ export default function ModernCreatePetScreen({
                           : "outline"
                       }
                       size="sm"
-                      onPress={() => togglePersonalityTag(tag)}
+                      onPress={() => { togglePersonalityTag(tag); }}
                     />
                   ))}
                 </View>
@@ -311,10 +365,10 @@ export default function ModernCreatePetScreen({
                   style={styles.input}
                   value={formData.contactInfo.email}
                   onChangeText={(value) =>
-                    updateNestedFormData("contactInfo", "email", value)
+                    { updateNestedFormData("contactInfo", "email", value); }
                   }
                   placeholder="your@email.com"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.textMuted}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -326,10 +380,10 @@ export default function ModernCreatePetScreen({
                   style={styles.input}
                   value={formData.contactInfo.phone}
                   onChangeText={(value) =>
-                    updateNestedFormData("contactInfo", "phone", value)
+                    { updateNestedFormData("contactInfo", "phone", value); }
                   }
                   placeholder="(555) 123-4567"
-                  placeholderTextColor={Theme.colors.text.tertiary}
+                  placeholderTextColor={theme.colors.textMuted}
                   keyboardType="phone-pad"
                 />
               </View>
@@ -354,55 +408,3 @@ export default function ModernCreatePetScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: Theme.spacing.lg,
-    paddingBottom: Theme.spacing["4xl"],
-  },
-  section: {
-    padding: Theme.spacing.xl,
-    marginBottom: Theme.spacing.lg,
-  },
-  sectionTitle: {
-    marginBottom: Theme.spacing.sm,
-  },
-  sectionSubtitle: {
-    marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
-  },
-  formGroup: {
-    marginBottom: Theme.spacing.lg,
-  },
-  input: {
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.lg,
-    paddingHorizontal: Theme.spacing.lg,
-    paddingVertical: Theme.spacing.md,
-    fontSize: Theme.typography.fontSize.base,
-    color: Theme.colors.text.primary,
-    borderWidth: 1,
-    borderColor: Theme.colors.border.light,
-    ...Theme.shadows.depth.sm,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  optionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Theme.spacing.sm,
-  },
-  submitContainer: {
-    paddingTop: Theme.spacing.xl,
-  },
-  submitButton: {
-    width: "100%",
-  },
-});

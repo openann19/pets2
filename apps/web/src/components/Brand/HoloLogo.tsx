@@ -1,10 +1,9 @@
-'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SPRING_CONFIG } from '@/constants/animations';
 const HoloLogo = ({ size = 44, withText = true, monochrome = false }) => {
     const emblemSize = size;
-    return (<motion.div className="flex items-center gap-2 select-none" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={SPRING_CONFIG}>
+    return (<motion.div className="flex items-center gap-2 select-none" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={SPRING_CONFIG.standard}>
       {/* Heart with Paws Logo */}
       <div className="relative" style={{ width: emblemSize, height: emblemSize }} aria-hidden="true">
         <svg className="text-white drop-shadow-lg" viewBox="0 0 100 100" width={emblemSize} height={emblemSize} role="img" aria-label="Heart with paws logo" fill="currentColor" stroke="none">
@@ -13,7 +12,7 @@ const HoloLogo = ({ size = 44, withText = true, monochrome = false }) => {
       </div>
 
       {withText && (<div className="relative">
-          <motion.span className="block text-xl font-bold tracking-tight text-white/95" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} transition={SPRING_CONFIG}>
+          <motion.span className="block text-xl font-bold tracking-tight text-white/95" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} transition={SPRING_CONFIG.standard}>
             Pawfect<span className="text-pink-300">Match</span>
           </motion.span>
         </div>)}

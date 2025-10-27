@@ -1,21 +1,23 @@
-import React, { useEffect } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import React, { useEffect } from 'react';
+import { View, Image, Pressable, Text, StyleSheet } from 'react-native';
 import Animated, {
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
+  runOnJS,
+} from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/Provider';
+import { useTranslation } from 'react-i18next';
+import { useReduceMotion } from '../hooks/useReducedMotion';
+import { haptic } from '../ui/haptics';
 
 export type ReplyTarget = {
-  id: string;
   author?: string;
   text?: string;
-  thumbnail?: string; // optional small image uri
+  thumbnail?: string;
 };
 
 export default function ReplyPreviewBar({
@@ -23,20 +25,16 @@ export default function ReplyPreviewBar({
   visible = false,
   onCancel,
   onPress,
-  bg = "#111",
-  border = "rgba(255,255,255,0.08)",
-  text = "#fff",
-  sub = "#9ca3af",
 }: {
   target?: ReplyTarget | null;
   visible?: boolean;
   onCancel: () => void;
-  onPress?: () => void; // jump-to-thread
-  bg?: string;
-  border?: string;
-  text?: string;
-  sub?: string;
+  onPress?: () => void;
 }) {
+  const theme = useTheme();
+  const reduced = useReduceMotion();
+  const { t } = useTranslation('chat');
+
   const y = useSharedValue(20);
   const alpha = useSharedValue(0);
   const x = useSharedValue(0);
@@ -44,13 +42,15 @@ export default function ReplyPreviewBar({
   useEffect(() => {
     if (visible && target) {
       alpha.value = withTiming(1, { duration: 140 });
-      y.value = withSpring(0, { damping: 16, stiffness: 320 });
+      y.value = reduced
+        ? withTiming(0, { duration: 140 })
+        : withSpring(0, { damping: 16, stiffness: 320 });
     } else {
       alpha.value = withTiming(0, { duration: 120 });
       y.value = withTiming(20, { duration: 120 });
       x.value = 0;
     }
-  }, [visible, target]);
+  }, [visible, target, reduced]);
 
   const pan = Gesture.Pan()
     .onUpdate((e) => {
@@ -59,12 +59,15 @@ export default function ReplyPreviewBar({
     .onEnd(() => {
       const threshold = 64;
       if (Math.abs(x.value) > threshold) {
-        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
-        x.value = withTiming(Math.sign(x.value) * 260, { duration: 160 }, () =>
-          runOnJS(onCancel)(),
-        );
+        runOnJS(haptic.selection)();
+        const dir = Math.sign(x.value) || 1;
+        x.value = withTiming(dir * 260, { duration: 160 }, () => {
+          runOnJS(onCancel)();
+        });
       } else {
-        x.value = withSpring(0, { damping: 16, stiffness: 300 });
+        x.value = reduced
+          ? withTiming(0, { duration: 160 })
+          : withSpring(0, { damping: 16, stiffness: 300 });
       }
     });
 
@@ -75,85 +78,82 @@ export default function ReplyPreviewBar({
 
   if (!target) return null;
 
+  const styles = makeStyles(theme);
+
   return (
     <GestureDetector gesture={pan}>
       <Animated.View
-        style={[
-          styles.wrap,
-          { backgroundColor: bg, borderColor: border },
-          sty,
-        ]}
+        style={[styles.wrap, sty]}
+        testID="reply-preview"
+        accessibilityRole="summary"
       >
-        {/* leading bar */}
         <View style={styles.leading} />
-
-        {/* icon */}
         <View style={styles.iconWrap}>
-          <Ionicons name="arrow-undo" size={16} color={text} />
+          <Ionicons name="arrow-undo" size={16} color={theme.colors.text} />
         </View>
 
-        {/* content */}
-        <Pressable style={styles.content} onPress={onPress}>
-          <Text style={[styles.author, { color: sub }]} numberOfLines={1}>
-            {target.author ?? "Replying to"}
+        <Pressable style={styles.content} onPress={onPress} testID="reply-preview-content">
+          <Text style={styles.author} numberOfLines={1}>
+            {target.author ?? t('replyingTo')}
           </Text>
-          <Text style={[styles.snippet, { color: text }]} numberOfLines={1}>
-            {target.text ?? "Media"}
+          <Text style={styles.snippet} numberOfLines={1}>
+            {target.text ?? t('media')}
           </Text>
         </Pressable>
 
-        {/* thumb (optional) */}
         {target.thumbnail ? (
           <Image source={{ uri: target.thumbnail }} style={styles.thumb} />
         ) : null}
 
-        {/* close */}
         <Pressable
           onPress={() => {
-            Haptics.selectionAsync().catch(() => {});
+            haptic.selection();
             onCancel();
           }}
           style={styles.close}
-          hitSlop={8}
+          hitSlop={12}
+          testID="reply-preview-close"
+          accessibilityLabel={t('dismiss')}
+          accessibilityRole="button"
         >
-          <Ionicons name="close" size={16} color={sub} />
+          <Ionicons name="close" size={16} color={theme.colors.textMuted} />
         </Pressable>
       </Animated.View>
     </GestureDetector>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: {
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  leading: {
-    width: 3,
-    height: "100%",
-    borderRadius: 3,
-    backgroundColor: "#ec4899",
-  },
-  iconWrap: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.06)",
-  },
-  content: { flex: 1 },
-  author: { fontSize: 11, fontWeight: "700" },
-  snippet: { fontSize: 13, fontWeight: "600" },
-  thumb: { width: 28, height: 28, borderRadius: 6, marginLeft: 6 },
-  close: {
-    width: 24, height: 24, borderRadius: 12,
-    alignItems: "center", justifyContent: "center",
-  },
-});
-
+const makeStyles = (theme: any) =>
+  StyleSheet.create({
+    wrap: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.bgAlt,
+      borderColor: theme.colors.border,
+      borderWidth: 1,
+      borderRadius: theme.radius.md,
+      gap: theme.spacing.sm,
+    },
+    leading: {
+      width: 3,
+      height: 28,
+      borderRadius: theme.radius.sm,
+      backgroundColor: theme.colors.primary,
+    },
+    iconWrap: { width: 20, alignItems: 'center' },
+    content: { flex: 1, gap: 2 },
+    author: {
+      color: theme.colors.textMuted,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    snippet: {
+      color: theme.colors.text,
+      fontSize: 14,
+      fontWeight: '500',
+    },
+    thumb: { width: 28, height: 28, borderRadius: theme.radius.sm, marginLeft: theme.spacing.sm },
+    close: { padding: 6, marginLeft: theme.spacing.sm },
+  });

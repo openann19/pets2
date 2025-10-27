@@ -224,7 +224,7 @@ export const chatService = new ChatService();
 // Native voice note upload helper
 export async function sendVoiceNoteNative(matchId: string, p: { fileUri: string; duration: number }) {
   // presign
-  const presign = await request<{ url: string; key: string }>("/uploads/voice/presign", {
+  const presign = await request<{ url: string; key: string }>("/api/chat/voice/presign", {
     method: "POST",
     body: { contentType: "audio/webm" },
   });
@@ -238,7 +238,7 @@ export async function sendVoiceNoteNative(matchId: string, p: { fileUri: string;
   });
 
   // register message
-  await request(`/chat/${matchId}/voice-note`, {
+  await request(`/api/chat/${matchId}/voice-note`, {
     method: "POST",
     body: { key, duration: p.duration, waveform: [] },
   });

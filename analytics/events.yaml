@@ -1,0 +1,366 @@
+version: 1.0.0
+generated: 2025-01-30T00:00:00Z
+app: PawfectMatch Premium Mobile
+description: Analytics event taxonomy and properties
+
+events:
+  # Authentication events
+  - name: USER_REGISTERED
+    category: auth
+    properties:
+      - userId
+      - email
+      - registrationMethod
+      - onboardingCompleted
+      - source
+    description: User successfully registered new account
+  
+  - name: USER_LOGGED_IN
+    category: auth
+    properties:
+      - userId
+      - loginMethod
+      - timestamp
+    description: User successfully logged in
+  
+  - name: USER_LOGGED_OUT
+    category: auth
+    properties:
+      - userId
+      - sessionDuration
+    description: User logged out
+
+  # Swipe events
+  - name: SWIPE_STARTED
+    category: swipe
+    properties:
+      - userId
+      - petId
+      - sessionId
+      - timestamp
+    description: User started swiping
+  
+  - name: SWIPE_LIKED
+    category: swipe
+    properties:
+      - userId
+      - petId
+      - direction
+      - compatibilityScore
+    description: User swiped right (liked) on pet
+  
+  - name: SWIPE_PASSED
+    category: swipe
+    properties:
+      - userId
+      - petId
+      - direction
+    description: User swiped left (passed) on pet
+  
+  - name: SWIPE_SUPER_LIKED
+    category: swipe
+    properties:
+      - userId
+      - petId
+    description: User swiped up (super liked) on pet
+  
+  - name: SWIPE_UNDO
+    category: swipe
+    properties:
+      - userId
+      - petId
+      - timeSinceSwipe
+    description: User undid last swipe (premium feature)
+
+  # Match events
+  - name: MATCH_CREATED
+    category: match
+    properties:
+      - matchId
+      - userId1
+      - userId2
+      - pet1Id
+      - pet2Id
+      - compatibilityScore
+      - timestamp
+    description: New match created between two pets
+  
+  - name: MATCH_VIEWED
+    category: match
+    properties:
+      - matchId
+      - userId
+      - petId
+    description: User viewed match details
+  
+  - name: MATCH_CHAT_STARTED
+    category: match
+    properties:
+      - matchId
+      - userId
+      - firstMessage
+    description: User started conversation with match
+
+  # Chat events
+  - name: MESSAGE_SENT
+    category: chat
+    properties:
+      - messageId
+      - conversationId
+      - userId
+      - messageType
+      - length
+      - timestamp
+    description: User sent message in chat
+  
+  - name: MESSAGE_DELIVERED
+    category: chat
+    properties:
+      - messageId
+      - conversationId
+      - deliveredTo
+    description: Message delivered to recipient
+  
+  - name: MESSAGE_READ
+    category: chat
+    properties:
+      - messageId
+      - conversationId
+      - readBy
+    description: Message read by recipient
+  
+  - name: TYPING_STARTED
+    category: chat
+    properties:
+      - conversationId
+      - userId
+    description: User started typing
+  
+  - name: TYPING_STOPPED
+    category: chat
+    properties:
+      - conversationId
+      - userId
+    description: User stopped typing
+
+  # GDPR events
+  - name: GDPR_DELETE_REQUESTED
+    category: gdpr
+    properties:
+      - userId
+      - reason
+      - timestamp
+    description: User requested account deletion
+  
+  - name: GDPR_DELETE_CONFIRMED
+    category: gdpr
+    properties:
+      - userId
+      - deletionDate
+      - gracePeriodEndsAt
+    description: Account deletion confirmed (grace period starts)
+  
+  - name: GDPR_DELETE_CANCELLED
+    category: gdpr
+    properties:
+      - userId
+      - cancelledAt
+    description: Scheduled deletion cancelled by user
+  
+  - name: GDPR_DATA_EXPORTED
+    category: gdpr
+    properties:
+      - userId
+      - format
+      - timestamp
+    description: User exported their data
+
+  # Premium events
+  - name: PREMIUM_SHOWN
+    category: premium
+    properties:
+      - userId
+      - screen
+      - source
+    description: Premium screen/upsell shown to user
+  
+  - name: PREMIUM_SUBSCRIBED
+    category: premium
+    properties:
+      - userId
+      - tier
+      - price
+      - trialDays
+      - paymentMethod
+    description: User subscribed to premium
+  
+  - name: PREMIUM_TRIAL_STARTED
+    category: premium
+    properties:
+      - userId
+      - tier
+      - trialDays
+    description: Premium trial started
+  
+  - name: PREMIUM_EXPIRED
+    category: premium
+    properties:
+      - userId
+      - tier
+      - expiredAt
+    description: Premium subscription expired
+  
+  - name: PREMIUM_CANCELLED
+    category: premium
+    properties:
+      - userId
+      - tier
+      - reason
+    description: User cancelled premium subscription
+  
+  - name: PREMIUM_RENEWED
+    category: premium
+    properties:
+      - userId
+      - tier
+      - price
+    description: Premium subscription renewed
+
+  # AI events
+  - name: AI_BIO_GENERATED
+    category: ai
+    properties:
+      - petId
+      - userId
+      - bioLength
+      - qualityScore
+      - tone
+    description: AI generated bio for pet
+  
+  - name: AI_BIO_EDITED
+    category: ai
+    properties:
+      - petId
+      - userId
+      - edits
+    description: User edited AI-generated bio
+  
+  - name: AI_PHOTO_ANALYZED
+    category: ai
+    properties:
+      - petId
+      - userId
+      - breedDetected
+      - qualityScore
+      - healthScore
+    description: AI analyzed pet photo
+  
+  - name: AI_COMPATIBILITY_VIEWED
+    category: ai
+    properties:
+      - pet1Id
+      - pet2Id
+      - compatibilityScore
+    description: User viewed AI compatibility analysis
+
+  # Error events
+  - name: ERROR_OCCURRED
+    category: error
+    properties:
+      - errorType
+      - errorMessage
+      - stackTrace
+      - screen
+      - userId
+      - timestamp
+    description: Application error occurred
+  
+  - name: API_ERROR
+    category: error
+    properties:
+      - endpoint
+      - method
+      - statusCode
+      - errorMessage
+      - userId
+    description: API request failed
+
+  # Performance events
+  - name: PERFORMANCE_SLOW_RENDER
+    category: performance
+    properties:
+      - screen
+      - renderTime
+      - userId
+    description: Screen render took longer than 1000ms
+  
+  - name: PERFORMANCE_BUNDLE_SIZE
+    category: performance
+    properties:
+      - bundleSize
+      - platform
+    description: App bundle size measured
+
+  # Feature usage events
+  - name: SCREEN_VIEWED
+    category: navigation
+    properties:
+      - screen
+      - userId
+      - timestamp
+    description: User viewed screen
+  
+  - name: BUTTON_CLICKED
+    category: interaction
+    properties:
+      - buttonId
+      - screen
+      - userId
+    description: User clicked button
+  
+  - name: FILTER_APPLIED
+    category: filter
+    properties:
+      - screen
+      - filterType
+      - filterValue
+      - userId
+    description: User applied filter
+
+# Event groups for analytics
+eventGroups:
+  user_journey:
+    - USER_REGISTERED
+    - USER_LOGGED_IN
+    - SWIPE_STARTED
+    - SWIPE_LIKED
+    - MATCH_CREATED
+    - MATCH_CHAT_STARTED
+    - MESSAGE_SENT
+  
+  monetization:
+    - PREMIUM_SHOWN
+    - PREMIUM_SUBSCRIBED
+    - PREMIUM_TRIAL_STARTED
+    - PREMIUM_EXPIRED
+    - PREMIUM_CANCELLED
+  
+  ai_features:
+    - AI_BIO_GENERATED
+    - AI_PHOTO_ANALYZED
+    - AI_COMPATIBILITY_VIEWED
+  
+  retention:
+    - USER_LOGGED_IN
+    - SWIPE_STARTED
+    - MATCH_VIEWED
+    - MESSAGE_SENT
+    - SCREEN_VIEWED
+
+# Privacy considerations
+privacy:
+  - PII fields should be hashed before sending
+  - User consent required for analytics
+  - GDPR compliance: user data export available
+  - Data retention: 24 months
+  - Opt-out mechanism required

@@ -206,7 +206,7 @@ class LiveKitService {
    * Emit room events
    */
   private emit(event: string, data: LiveKitEventData): void {
-    this.listeners.get(event)?.forEach(callback => callback(data));
+    this.listeners.get(event)?.forEach(callback => { callback(data); });
   }
 }
 

@@ -18,18 +18,21 @@ import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
 import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
 
 const Stack = createNativeStackNavigator();
 
 export default function AdminNavigator(): React.JSX.Element {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   const { user, isLoading } = useAuthStore();
 
   // Loading state
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="Theme.colors.status.info" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
@@ -52,9 +55,9 @@ export default function AdminNavigator(): React.JSX.Element {
       initialRouteName="AdminDashboard"
       screenOptions={{
         headerStyle: {
-          backgroundColor: "Theme.colors.neutral[800]",
+          backgroundColor: theme.colors.bg,
         },
-        headerTintColor: "Theme.colors.neutral[0]",
+        headerTintColor: theme.colors.text,
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -148,35 +151,35 @@ export default function AdminNavigator(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.textMuted,
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: theme.colors.bg,
     paddingHorizontal: 32,
   },
   errorTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "Theme.colors.status.error",
+    color: theme.colors.danger,
     marginBottom: 16,
     textAlign: "center",
   },
   errorMessage: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.textMuted,
     textAlign: "center",
     lineHeight: 24,
   },

@@ -1,8 +1,13 @@
-import { Response } from 'express';
-import User, { IUserDocument } from '../models/User';
-import Pet, { IPetDocument } from '../models/Pet';
+import type { Response } from 'express';
+import User from '../models/User';
+import Pet from '../models/Pet';
+import type { HydratedDocument } from 'mongoose';
+import type { IPet } from '../types/mongoose';
 import logger from '../utils/logger';
-import { AuthRequest } from '../types/express';
+import type { AuthRequest } from '../types/express';
+import { getErrorMessage } from '../../utils/errorHandler';
+
+type IPetDocument = HydratedDocument<IPet>;
 
 /**
  * Request interfaces
@@ -90,12 +95,12 @@ export const updatePetProfile = async (req: UpdatePetProfileRequest, res: Respon
       data: pet,
       message: 'Pet profile updated successfully'
     });
-  } catch (error: any) {
-    logger.error('Failed to update pet profile', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to update pet profile', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to update pet profile',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -132,12 +137,12 @@ export const createPetProfile = async (req: CreatePetProfileRequest, res: Respon
       data: pet,
       message: 'Pet profile created successfully'
     });
-  } catch (error: any) {
-    logger.error('Failed to create pet profile', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to create pet profile', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to create pet profile',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -168,12 +173,12 @@ export const getMessageCount = async (req: GetMessageCountRequest, res: Response
       success: true,
       data: { count }
     });
-  } catch (error: any) {
-    logger.error('Failed to get message count', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to get message count', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to get message count',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -196,12 +201,12 @@ export const getPetCount = async (req: GetPetCountRequest, res: Response): Promi
       success: true,
       data: { count }
     });
-  } catch (error: any) {
-    logger.error('Failed to get pet count', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to get pet count', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to get pet count',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -230,7 +235,7 @@ export const getPrivacySettings = async (req: GetPrivacySettingsRequest, res: Re
 
     res.json({
       success: true,
-      data: user.privacySettings || {
+      data: (user as any).privacySettings || {
         profileVisibility: 'everyone',
         showOnlineStatus: true,
         showDistance: true,
@@ -241,12 +246,12 @@ export const getPrivacySettings = async (req: GetPrivacySettingsRequest, res: Re
         shareLocation: true
       }
     });
-  } catch (error: any) {
-    logger.error('Failed to get privacy settings', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to get privacy settings', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to get privacy settings',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -274,15 +279,15 @@ export const updatePrivacySettings = async (req: UpdatePrivacySettingsRequest, r
 
     res.json({
       success: true,
-      data: user?.privacySettings,
+      data: (user as any)?.privacySettings,
       message: 'Privacy settings updated successfully'
     });
-  } catch (error: any) {
-    logger.error('Failed to update privacy settings', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to update privacy settings', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to update privacy settings',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -325,12 +330,12 @@ export const exportUserData = async (req: ExportUserDataRequest, res: Response):
       data: exportData,
       message: 'User data exported successfully'
     });
-  } catch (error: any) {
-    logger.error('Failed to export user data', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to export user data', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to export user data',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -358,7 +363,7 @@ export const deleteAccount = async (req: DeleteAccountRequest, res: Response): P
       return;
     }
 
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await (user as any).comparePassword(password);
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,
@@ -384,12 +389,12 @@ export const deleteAccount = async (req: DeleteAccountRequest, res: Response): P
       success: true,
       message: 'Account deleted successfully'
     });
-  } catch (error: any) {
-    logger.error('Failed to delete account', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Failed to delete account', { error: getErrorMessage(error) });
     res.status(500).json({
       success: false,
       message: 'Failed to delete account',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };

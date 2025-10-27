@@ -1,6 +1,6 @@
 import logger from '../utils/logger';
 import { sendNotificationEmail } from './emailService';
-import nodemailer from 'nodemailer';
+import * as nodemailer from 'nodemailer';
 import type { SendMailOptions } from 'nodemailer';
 
 // Notification type definitions
@@ -13,13 +13,18 @@ export interface AdminNotification {
   severity?: SeverityLevel;
   title: string;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Health data interface
 export interface SystemHealthData {
   status: 'healthy' | 'unhealthy' | 'degraded';
-  checks?: Record<string, any>;
+  checks?: Record<string, {
+    status: 'pass' | 'fail' | 'warn';
+    message?: string;
+    responseTime?: number;
+    lastChecked?: string;
+  }>;
   timestamp?: string;
 }
 
@@ -99,10 +104,10 @@ export async function sendAdminNotification(notification: AdminNotification): Pr
     for (const adminEmail of adminEmails) {
       try {
         await sendNotificationEmail(adminEmail, subject, html);
-      } catch (emailError) {
+      } catch (emailError: unknown) {
         logger.error('Failed to send admin notification email', {
           email: adminEmail,
-          error: (emailError as Error).message
+          error: emailError instanceof Error ? emailError.message : 'Unknown error'
         });
       }
     }
@@ -120,10 +125,10 @@ export async function sendAdminNotification(notification: AdminNotification): Pr
     // Store notification in database for audit trail
     await storeNotification(notification);
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to send admin notification', {
-      error: (error as Error).message,
-      stack: (error as Error).stack,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
       notification: {
         type: notification.type,
         severity: notification.severity,
@@ -288,9 +293,9 @@ async function storeNotification(notification: AdminNotification): Promise<void>
       ip: 'system',
       userAgent: 'admin-notification-service'
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to store notification in database', {
-      error: (error as Error).message,
+      error: error instanceof Error ? error.message : 'Unknown error',
       notification: notification.title
     });
     // Don't throw error here as notification was already sent
@@ -311,7 +316,7 @@ export async function sendSystemHealthNotification(healthData: SystemHealthData)
     message: isHealthy 
       ? 'System is running normally'
       : 'System health issues detected. Please check the dashboard.',
-    metadata: healthData
+    metadata: healthData as unknown as Record<string, unknown>
   });
 }
 

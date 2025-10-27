@@ -1,9 +1,10 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 import User from '../models/User';
 import Pet from '../models/Pet';
 import logger from '../utils/logger';
-import { AuthRequest } from '../types/express';
+import type { AuthRequest } from '../types/express';
 import Stripe from 'stripe';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Stripe initialization
@@ -14,10 +15,10 @@ try {
     ? process.env.STRIPE_SECRET_KEY
     : (process.env.NODE_ENV === 'test' ? 'sk_test_mock' : null);
   if (key) {
-    stripe = new Stripe(key, { apiVersion: '2023-10-16' });
+    stripe = new Stripe(key, { apiVersion: '2025-08-27.basil' });
   }
-} catch (error: any) {
-  logger.warn('Stripe initialization skipped', { error: error.message });
+} catch (error: unknown) {
+  logger.warn('Stripe initialization skipped', { error: getErrorMessage(error) });
 }
 
 /**
@@ -79,7 +80,14 @@ export const subscribeToPremium = async (req: SubscribeToPremiumRequest, res: Re
 
     if (!stripe) {
       const status = process.env.NODE_ENV === 'test' ? 200 : 503;
-      const response: any = {
+      const response: {
+        success: boolean;
+        message?: string;
+        data?: {
+          sessionId: string;
+          url: string;
+        };
+      } = {
         success: process.env.NODE_ENV === 'test',
         message: process.env.NODE_ENV === 'test' ? undefined : 'Payments temporarily unavailable'
       };
@@ -101,9 +109,9 @@ export const subscribeToPremium = async (req: SubscribeToPremiumRequest, res: Re
         customer_email: user.email,
         success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
-        metadata: { userId: req.userId.toString(), attempt: '1' }
+        metadata: { userId: req.userId?.toString() || '', attempt: '1' }
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (req.body.__test_retry && process.env.NODE_ENV === 'test') {
         retries = 1;
         session = await stripe.checkout.sessions.create({
@@ -113,15 +121,18 @@ export const subscribeToPremium = async (req: SubscribeToPremiumRequest, res: Re
           customer_email: user.email,
           success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
-          metadata: { userId: req.userId.toString(), attempt: '2', retried: 'true' }
+          metadata: { userId: req.userId?.toString() || '', attempt: '2', retried: 'true' }
         });
       } else {
         throw err;
       }
     }
     res.json({ success: true, data: { sessionId: session.id, url: session.url, retries } });
-  } catch (error: any) {
-    logger.error('subscribeToPremium error', { error: error.message, stack: error.stack });
+  } catch (error: unknown) {
+    logger.error('subscribeToPremium error', { 
+      error: getErrorMessage(error), 
+      stack: error instanceof Error ? error.stack : undefined 
+    });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
@@ -150,17 +161,20 @@ export const cancelSubscription = async (req: CancelSubscriptionRequest, res: Re
       return;
     }
 
-    await stripe.subscriptions.del(user.premium.stripeSubscriptionId);
+    await stripe.subscriptions.update(user.premium.stripeSubscriptionId, { cancel_at_period_end: true });
 
-    (user.premium as any).isActive = false;
-    (user.premium as any).plan = 'basic';
-    (user.premium as any).stripeSubscriptionId = undefined;
-    (user.premium as any).expiresAt = new Date();
+    user.premium.isActive = false;
+    user.premium.plan = 'basic';
+    user.premium.stripeSubscriptionId = undefined;
+    user.premium.expiresAt = new Date();
     await user.save();
 
     res.json({ success: true, message: 'Subscription cancelled successfully' });
-  } catch (error: any) {
-    logger.error('cancelSubscription error', { error: error.message, userId: req.userId });
+  } catch (error: unknown) {
+    logger.error('cancelSubscription error', { 
+      error: getErrorMessage(error), 
+      userId: req.userId 
+    });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
@@ -204,13 +218,17 @@ export const boostProfile = async (req: BoostProfileRequest, res: Response): Pro
     }
 
     // Logic for boost count would be here (e.g., check if user has boosts left)
-    (pet.featured as any).isFeatured = true;
-    (pet.featured as any).featuredUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour boost
+    pet.featured.isFeatured = true;
+    pet.featured.featuredUntil = new Date(Date.now() + 60 * 60 * 1000); // 1 hour boost
     await pet.save();
 
     res.json({ success: true, message: 'Profile boosted successfully' });
-  } catch (error: any) {
-    logger.error('boostProfile error', { error: error.message, userId: req.userId, petId: req.params.petId });
+  } catch (error: unknown) {
+    logger.error('boostProfile error', { 
+      error: getErrorMessage(error), 
+      userId: req.userId, 
+      petId: req.params.petId 
+    });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
@@ -237,16 +255,14 @@ export const getSuperLikes = async (req: GetSuperLikesRequest, res: Response): P
       const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
 
       // Count super likes used this week
-      const superLikesUsedThisWeek = user.swipedPets?.filter((swipe: any) =>
+      const superLikesUsedThisWeek = user.swipedPets?.filter((swipe: { petId: string; action: string; swipedAt: Date }) =>
         swipe.action === 'superlike' &&
         swipe.swipedAt >= weekStart
       ).length || 0;
 
       // Determine super likes limit based on plan
       let weeklyLimit = 0;
-      if (user.premium.plan === 'premium') {
-        weeklyLimit = 5;
-      } else if (user.premium.plan === 'gold') {
+      if (user.premium.plan === 'ultimate') {
         weeklyLimit = 999999; // Unlimited
       }
 
@@ -258,10 +274,10 @@ export const getSuperLikes = async (req: GetSuperLikesRequest, res: Response): P
       data: {
         superLikes,
         plan: user.premium?.plan || 'basic',
-        isUnlimited: user.premium?.plan === 'gold'
+        isUnlimited: false
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching super likes', { error });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
@@ -297,7 +313,7 @@ export const getSubscription = async (req: GetSubscriptionRequest, res: Response
     };
 
     res.json({ success: true, data: { subscription } });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching subscription', { error });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
@@ -324,12 +340,12 @@ export const getUsage = async (req: GetUsageRequest, res: Response): Promise<voi
     weekEnd.setDate(weekEnd.getDate() + 7);
 
     // Count swipes this week
-    const swipesThisWeek = user.swipedPets?.filter((swipe: any) =>
+    const swipesThisWeek = user.swipedPets?.filter((swipe: { petId: string; action: string; swipedAt: Date }) =>
       swipe.swipedAt >= weekStart
     ).length || 0;
 
     // Count super likes this week
-    const superLikesThisWeek = user.swipedPets?.filter((swipe: any) =>
+    const superLikesThisWeek = user.swipedPets?.filter((swipe: { petId: string; action: string; swipedAt: Date }) =>
       swipe.action === 'superlike' &&
       swipe.swipedAt >= weekStart
     ).length || 0;
@@ -340,11 +356,11 @@ export const getUsage = async (req: GetUsageRequest, res: Response): Promise<voi
     let boostsLimit = 0;
 
     if (user.premium?.isActive) {
-      if (user.premium.plan === 'premium') {
-        swipesLimit = 999999; // Unlimited
-        superLikesLimit = 5;
-        boostsLimit = 1;
-      } else if (user.premium.plan === 'gold') {
+      if (user.premium.plan === 'basic') {
+        swipesLimit = 100;
+        superLikesLimit = 2;
+        boostsLimit = 0;
+      } else if (user.premium.plan === 'ultimate') {
         swipesLimit = 999999; // Unlimited
         superLikesLimit = 999999; // Unlimited
         boostsLimit = 5;
@@ -363,7 +379,7 @@ export const getUsage = async (req: GetUsageRequest, res: Response): Promise<voi
     };
 
     res.json({ success: true, data: usage });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching usage', { error });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
@@ -396,12 +412,12 @@ export const reactivateSubscription = async (req: ReactivateSubscriptionRequest,
       );
     }
 
-    (user.premium as any).cancelAtPeriodEnd = false;
-    (user.premium as any).isActive = true;
+    user.premium.cancelAtPeriodEnd = false;
+    user.premium.isActive = true;
     await user.save();
 
     res.json({ success: true, message: 'Subscription reactivated successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error reactivating subscription', { error });
     res.status(500).json({ success: false, message: 'Server Error' });
   }
@@ -414,22 +430,29 @@ export const reactivateSubscription = async (req: ReactivateSubscriptionRequest,
  */
 export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.userId;
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+
     const { getEntitlement, setEntitlement } = await import('../services/entitlements');
     
     // Check Redis cache first
-    const cached = await getEntitlement(req.userId);
+    const cached = await getEntitlement(userId);
     if (cached) {
-      return res.json({
+      res.json({
         success: true,
         data: {
           isActive: cached.active,
-          plan: cached.plan || 'basic',
+          plan: (cached.plan || 'basic') as string,
           expiresAt: cached.renewsAt ? new Date(cached.renewsAt) : null,
         }
       });
+      return;
     }
 
-    const user = await User.findById(req.userId).select('premium stripeCustomerId');
+    const user = await User.findById(userId).select('premium stripeCustomerId').lean();
 
     if (!user) {
       res.status(404).json({
@@ -445,26 +468,26 @@ export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Respon
       const stripeKey = process.env.STRIPE_SECRET_KEY;
       if (stripeKey && !stripeKey.includes('your_')) {
         try {
-          const stripe = new Stripe.default(stripeKey, { apiVersion: '2023-10-16' });
+          const stripe = new Stripe.default(stripeKey, { apiVersion: '2025-08-27.basil' });
           const subs = await stripe.subscriptions.list({ 
             customer: user.stripeCustomerId, 
             status: 'all', 
             limit: 3 
           });
           const active = subs.data.find(s => s.status === 'active' || s.status === 'trialing');
-          const plan = active ? ((active.items.data[0].price.nickname?.toLowerCase() as any) || 'pro') : 'free';
-          const renewsAt = active ? new Date(active.current_period_end * 1000) : null;
+          const plan = active ? ((active.items.data[0]?.price.nickname?.toLowerCase() as string) || 'pro') : 'free';
+          const renewsAt = active ? new Date((active.current_period_end as number) * 1000) : null;
 
-          const entitlement = { 
+          const entitlement: { active: boolean; plan: 'free' | 'pro' | 'elite'; renewsAt: string | null } = { 
             active: !!active, 
-            plan: (active ? (plan === 'elite' ? 'elite' : 'pro') : 'free'), 
+            plan: (active ? (plan === 'elite' ? 'elite' : 'pro') : 'free') as 'free' | 'pro' | 'elite', 
             renewsAt: renewsAt?.toISOString() || null 
           };
           
           // Cache the result
-          await setEntitlement(req.userId, entitlement, 600);
+          await setEntitlement(userId, entitlement, 600);
           
-          return res.json({
+          res.json({
             success: true,
             data: {
               isActive: entitlement.active,
@@ -472,6 +495,7 @@ export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Respon
               expiresAt: entitlement.renewsAt ? new Date(entitlement.renewsAt) : null,
             }
           });
+          return;
         } catch (error) {
           logger.warn('Failed to fetch from Stripe, using database', { error: (error as Error).message });
         }
@@ -480,32 +504,36 @@ export const getPremiumStatus = async (req: GetPremiumStatusRequest, res: Respon
 
     // Fallback to database
     const premium = user.premium || {};
-    const isActive = premium.isActive &&
-      (!premium.expiresAt || premium.expiresAt > new Date());
+    const isActive = Boolean(premium?.isActive) &&
+      (!premium?.expiresAt || premium.expiresAt > new Date());
 
-    const defaultEntitlement = { 
+    const defaultEntitlement: {
+      active: boolean;
+      plan: string;
+      renewsAt: string | null;
+    } = { 
       active: isActive, 
-      plan: (premium.plan as any) || 'free', 
-      renewsAt: premium.expiresAt ? premium.expiresAt.toISOString() : null 
+      plan: (premium?.plan || 'free'), 
+      renewsAt: premium?.expiresAt ? new Date(premium.expiresAt).toISOString() : null 
     };
     
     // Cache with short TTL
-    await setEntitlement(req.userId, defaultEntitlement, 600);
+    await setEntitlement(userId!, defaultEntitlement, 600);
 
     res.json({
       success: true,
       data: {
         isActive,
-        plan: premium.plan || 'basic',
-        expiresAt: premium.expiresAt,
-        features: premium.features || {},
-        usage: premium.usage || {},
-        paymentStatus: premium.paymentStatus || 'inactive',
-        cancelAtPeriodEnd: premium.cancelAtPeriodEnd || false
+        plan: premium?.plan || 'basic',
+        expiresAt: premium?.expiresAt || null,
+        features: premium?.features || {},
+        usage: premium?.usage || {},
+        paymentStatus: premium?.paymentStatus || 'inactive',
+        cancelAtPeriodEnd: premium?.cancelAtPeriodEnd || false
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get premium status error', { error });
     res.status(500).json({
       success: false,
@@ -533,9 +561,9 @@ export const checkPremiumFeature = async (req: CheckPremiumFeatureRequest, res: 
     }
 
     const premium = user.premium || {};
-    const isActive = premium.isActive &&
-      (!premium.expiresAt || premium.expiresAt > new Date());
-    const hasFeature = premium.features && (premium.features as any)[feature];
+    const isActive = Boolean(premium?.isActive) &&
+      (!premium?.expiresAt || new Date(premium.expiresAt) > new Date());
+    const hasFeature = Boolean(premium?.features && (premium.features as Record<string, unknown>)[feature]);
 
     const canUseFeature = isActive && hasFeature;
 
@@ -546,11 +574,11 @@ export const checkPremiumFeature = async (req: CheckPremiumFeatureRequest, res: 
         canUse: canUseFeature,
         isPremiumActive: isActive,
         hasFeature,
-        plan: premium.plan || 'basic'
+        plan: premium?.plan || 'basic'
       }
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Check premium feature error', { error });
     res.status(500).json({
       success: false,

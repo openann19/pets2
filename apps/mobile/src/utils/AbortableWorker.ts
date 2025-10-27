@@ -87,7 +87,7 @@ export class AbortableWorker<T> {
     try {
       // Create timeout promise
       const timeoutPromise = new Promise<T>((_, timeoutReject) => {
-        setTimeout(() => timeoutReject(new Error("Task timeout")), this.timeout);
+        setTimeout(() => { timeoutReject(new Error("Task timeout")); }, this.timeout);
       });
 
       // Race between task and timeout
@@ -145,7 +145,7 @@ export async function processWithAbort<T>(
   const result = await Promise.race([
     operation(),
     new Promise<never>((_, reject) => {
-      signal?.addEventListener("abort", () => reject(new Error("Aborted")));
+      signal?.addEventListener("abort", () => { reject(new Error("Aborted")); });
     }),
   ]);
 

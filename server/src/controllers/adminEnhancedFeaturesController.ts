@@ -3,19 +3,21 @@
  * Manages biometric auth, leaderboard, and smart notifications from admin console
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import User from '../models/User';
 const BiometricCredential = require('../models/BiometricCredential');
 const LeaderboardScore = require('../models/LeaderboardScore');
 const NotificationPreference = require('../models/NotificationPreference');
 import logger from '../utils/logger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Request interfaces
  */
 interface AuthenticatedRequest extends Request {
   userId?: string;
-  user?: any;
+  user?: IUserDocument;
 }
 
 interface GetManagementRequest extends AuthenticatedRequest {
@@ -38,7 +40,7 @@ interface UpdateNotificationsRequest extends AuthenticatedRequest {
   params: {
     userId: string;
   };
-  body: any;
+  body: Record<string, unknown>;
 }
 
 interface SendTestNotificationRequest extends AuthenticatedRequest {
@@ -67,14 +69,14 @@ interface BiometricStats {
   totalUsers: number;
   biometricUsers: number;
   adoptionRate: number;
-  recentRegistrations: any[];
+  recentRegistrations: Array<{ userId: string; createdAt: Date; [key: string]: unknown }>;
 }
 
 interface LeaderboardStats {
   totalScores: number;
   categories: string[];
   timeframes: string[];
-  topScores: any[];
+  topScores: Array<{ userId: string; score: number; [key: string]: unknown }>;
 }
 
 interface NotificationStats {
@@ -116,12 +118,12 @@ export const getEnhancedFeaturesOverview = async (
         recentActivity
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Enhanced features overview error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get enhanced features overview',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -140,7 +142,7 @@ export const getBiometricManagement = async (
     const skip = (Number(page) - 1) * Number(limit);
 
     // Build query
-    let query: any = {};
+    let query: Record<string, unknown> = {};
     if (search) {
       const users = await User.find({
         $or: [
@@ -173,12 +175,12 @@ export const getBiometricManagement = async (
         }
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Biometric management error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get biometric management data',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -214,12 +216,12 @@ export const removeUserBiometric = async (
       success: true,
       message: 'Biometric credential removed successfully'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Remove user biometric error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to remove biometric credential',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -276,12 +278,12 @@ export const getLeaderboardManagement = async (
         currentTimeframe: timeframe
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Leaderboard management error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get leaderboard management data',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -298,7 +300,7 @@ export const resetLeaderboard = async (
   try {
     const { category, timeframe, userId } = req.body;
 
-    let query: any = {};
+    let query: Record<string, string> = {};
     if (category) query.category = category;
     if (timeframe) query.timeframe = timeframe;
     if (userId) query.userId = userId;
@@ -315,12 +317,12 @@ export const resetLeaderboard = async (
       success: true,
       message: `Leaderboard reset successfully. ${result.deletedCount} entries removed.`
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Reset leaderboard error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to reset leaderboard',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -339,7 +341,7 @@ export const getNotificationManagement = async (
     const skip = (Number(page) - 1) * Number(limit);
 
     // Build query
-    let query: any = {};
+    let query: Record<string, unknown> = {};
     if (search) {
       const users = await User.find({
         $or: [
@@ -389,12 +391,12 @@ export const getNotificationManagement = async (
         }
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Notification management error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to get notification management data',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -440,12 +442,12 @@ export const updateUserNotifications = async (
       message: 'Notification preferences updated successfully',
       data: preferences
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Update user notifications error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to update notification preferences',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -512,12 +514,12 @@ export const sendTestNotificationToUser = async (
         notification
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Send test notification error', { error });
     res.status(500).json({
       success: false,
       message: 'Failed to send test notification',
-      error: error.message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -575,7 +577,7 @@ const getNotificationStats = async (): Promise<NotificationStats> => {
   };
 };
 
-const getRecentActivity = async (): Promise<any> => {
+const getRecentActivity = async (): Promise<Array<{ userId: string; [key: string]: unknown }>> => {
   const recentBiometric = await BiometricCredential.find()
     .populate('userId', 'firstName lastName email')
     .sort({ createdAt: -1 })

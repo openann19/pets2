@@ -18,9 +18,9 @@ interface AuthenticatedRequest extends Request {
   user?: {
     _id: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
-  files?: any[];
+  files?: Express.Multer.File[];
 }
 
 const router: Router = express.Router();

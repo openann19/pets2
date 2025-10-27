@@ -39,7 +39,7 @@ export function useSpringAnimation(
       };
 
       // Respect reduced motion preference
-      if (prefersReducedMotion) {
+      if (prefersReducedMotion()) {
         animatedValue.value = withTiming(toValue, {
           duration: TIMING_CONFIGS.standard,
         });

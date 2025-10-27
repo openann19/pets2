@@ -5,11 +5,7 @@ import { LiveStream } from "../models/LiveStream";
 import { createPublisherToken, createSubscriberToken, startRecording, stopRecording, createIngress } from "../services/livekitService";
 import { isValidObjectId } from "mongoose";
 import logger from "../utils/logger";
-
-interface AuthRequest extends Request {
-  user?: any;
-  userId?: string;
-}
+import type { AuthRequest } from "../types/express";
 
 const router: Router = Router();
 
@@ -104,7 +100,7 @@ router.get("/:id/watch", authenticateToken, async (req: AuthRequest, res: Respon
     }
 
     // Check if viewer is blocked
-    if (stream.blockedUserIds.some((bid: any) => String(bid) === req.user!.id)) {
+    if (stream.blockedUserIds.some((bid) => String(bid) === req.user!.id)) {
       return res.status(403).json({ error: "Access denied" });
     }
 

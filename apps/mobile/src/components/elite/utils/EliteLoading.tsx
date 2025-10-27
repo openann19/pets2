@@ -1,7 +1,7 @@
 import React from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, type ColorValue } from "react-native";
 
-import { Colors } from "../../../animation";
+import { Colors } from "../../../styles/GlobalStyles";
 
 /**
  * EliteLoading Component
@@ -10,16 +10,20 @@ import { Colors } from "../../../animation";
 
 interface EliteLoadingProps {
   size?: "small" | "large";
-  color?: string;
+  color?: ColorValue;
 }
 
 export const EliteLoading: React.FC<EliteLoadingProps> = ({
   size = "large",
-  color = Colors.primary,
+  color,
 }) => {
+  // Default to primary color as a string
+  const defaultColor = typeof Colors.primary === 'string' ? Colors.primary : "#ec4899";
+  const indicatorColor = color || defaultColor;
+  
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={indicatorColor} />
     </View>
   );
 };

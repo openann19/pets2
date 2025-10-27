@@ -1,6 +1,6 @@
 // Database connection with optimized indexes
 import mongoose from 'mongoose';
-import { logger } from './src/utils/logger.js';
+import logger from './src/utils/logger.js';
 
 const connectDB = async (): Promise<void> => {
   try {

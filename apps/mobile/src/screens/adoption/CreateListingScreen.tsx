@@ -16,7 +16,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 
 type AdoptionStackParamList = {
   CreateListing: undefined;
@@ -163,13 +164,13 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+             testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
             <Ionicons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Create Pet Listing</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.headerButton}>
+            <TouchableOpacity style={styles.headerButton} testID="CreateListingScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
               <Ionicons name="help-circle-outline" size={20} color="#333" />
             </TouchableOpacity>
           </View>
@@ -179,12 +180,12 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Photos *</Text>
           <BlurView intensity={20} style={styles.sectionCard}>
-            <TouchableOpacity style={styles.photoUpload} onPress={addPhoto}>
+            <TouchableOpacity style={styles.photoUpload}  testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={addPhoto}>
               <LinearGradient
-                colors={["Theme.colors.neutral[100]", "Theme.colors.neutral[200]"]}
+                colors={[theme.colors.neutral[100], theme.colors.neutral[200]]}
                 style={styles.photoUploadGradient}
               >
-                <Ionicons name="camera" size={32} color="Theme.colors.neutral[500]" />
+                <Ionicons name="camera" size={32} color={theme.colors.neutral[500]} }/>
                 <Text style={styles.photoUploadText}>Add Photos</Text>
                 <Text style={styles.photoUploadHint}>
                   Tap to upload pet photos
@@ -215,7 +216,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   handleInputChange("name", value);
                 }}
                 placeholder="Enter pet's name"
-                placeholderTextColor="Theme.colors.neutral[400]"
+                placeholderTextColor=theme.colors.neutral[400]
               />
             </View>
 
@@ -231,7 +232,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                         formData.species === species &&
                           styles.radioButtonActive,
                       ])}
-                      onPress={() => {
+                       testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                         handleInputChange("species", species);
                       }}
                     >
@@ -259,7 +260,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                         styles.radioButton,
                         formData.gender === gender && styles.radioButtonActive,
                       ])}
-                      onPress={() => {
+                       testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                         handleInputChange("gender", gender);
                       }}
                     >
@@ -286,7 +287,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   handleInputChange("breed", value);
                 }}
                 placeholder="Enter breed"
-                placeholderTextColor="Theme.colors.neutral[400]"
+                placeholderTextColor=theme.colors.neutral[400]
               />
             </View>
 
@@ -300,7 +301,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     handleInputChange("age", value);
                   }}
                   placeholder="e.g., 2 years"
-                  placeholderTextColor="Theme.colors.neutral[400]"
+                  placeholderTextColor=theme.colors.neutral[400]
                   keyboardType="numeric"
                 />
               </View>
@@ -315,7 +316,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                         styles.radioButton,
                         formData.size === size && styles.radioButtonActive,
                       ])}
-                      onPress={() => {
+                       testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                         handleInputChange("size", size);
                       }}
                     >
@@ -346,7 +347,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                 handleInputChange("description", value);
               }}
               placeholder="Tell potential adopters about your pet's personality, habits, and what makes them special..."
-              placeholderTextColor="Theme.colors.neutral[400]"
+              placeholderTextColor=theme.colors.neutral[400]
               multiline
               numberOfLines={6}
               textAlignVertical="top"
@@ -369,7 +370,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     styles.tag,
                     formData.personalityTags.includes(tag) && styles.tagActive,
                   ])}
-                  onPress={() => {
+                   testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     handlePersonalityToggle(tag);
                   }}
                 >
@@ -397,7 +398,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                 <TouchableOpacity
                   key={key}
                   style={styles.healthItem}
-                  onPress={() => {
+                   testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                     handleHealthToggle(key as keyof typeof formData.healthInfo);
                   }}
                 >
@@ -408,7 +409,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     ])}
                   >
                     {value && (
-                      <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />
+                      <Ionicons name="checkmark" size={16} color={theme.colors.neutral[0]} }/>
                     )}
                   </View>
                   <Text style={styles.healthText}>
@@ -427,23 +428,23 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               styles.submitButton,
               isSubmitting && styles.submitButtonDisabled,
             ])}
-            onPress={handleSubmit}
+             testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleSubmit}
             disabled={isSubmitting}
           >
             <LinearGradient
               colors={
-                isSubmitting ? ["Theme.colors.neutral[400]", "Theme.colors.neutral[500]"] : ["Theme.colors.primary[500]", "Theme.colors.primary[600]"]
+                isSubmitting ? [theme.colors.neutral[400], theme.colors.neutral[500]] : [theme.colors.primary[500], theme.colors.primary[600]]
               }
               style={styles.submitGradient}
             >
               {isSubmitting ? (
                 <>
-                  <Ionicons name="hourglass" size={20} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="hourglass" size={20} color={theme.colors.neutral[0]} }/>
                   <Text style={styles.submitText}>Creating Listing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="paw" size={20} color="Theme.colors.neutral[0]" />
+                  <Ionicons name="paw" size={20} color={theme.colors.neutral[0]} }/>
                   <Text style={styles.submitText}>Create Listing</Text>
                 </>
               )}
@@ -468,7 +469,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -493,12 +494,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
     marginBottom: 12,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginBottom: 16,
   },
   sectionCard: {
@@ -516,18 +517,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[300]",
+    borderColor: theme.colors.neutral[300],
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 16,
-    color: "Theme.colors.neutral[800]",
+    color: theme.colors.neutral[800],
   },
   textArea: {
     minHeight: 120,
@@ -544,20 +545,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[300]",
+    borderColor: theme.colors.neutral[300],
     alignItems: "center",
   },
   radioButtonActive: {
-    backgroundColor: "Theme.colors.primary[500]",
-    borderColor: "Theme.colors.primary[500]",
+    backgroundColor: theme.colors.primary[500],
+    borderColor: theme.colors.primary[500],
   },
   radioText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
   },
   radioTextActive: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
   },
   photoUpload: {
     borderRadius: 12,
@@ -571,12 +572,12 @@ const styles = StyleSheet.create({
   photoUploadText: {
     fontSize: 18,
     fontWeight: "600",
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     marginTop: 12,
   },
   photoUploadHint: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     marginTop: 4,
   },
   photoPreview: {
@@ -603,19 +604,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "Theme.colors.neutral[200]",
+    borderColor: theme.colors.neutral[200],
   },
   tagActive: {
     backgroundColor: "#fdf2f8",
-    borderColor: "Theme.colors.primary[500]",
+    borderColor: theme.colors.primary[500],
   },
   tagText: {
     fontSize: 14,
-    color: "Theme.colors.neutral[500]",
+    color: theme.colors.neutral[500],
     fontWeight: "500",
   },
   tagTextActive: {
-    color: "Theme.colors.primary[500]",
+    color: theme.colors.primary[500],
   },
   healthGrid: {
     gap: 12,
@@ -630,23 +631,23 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "Theme.colors.neutral[300]",
+    borderColor: theme.colors.neutral[300],
     justifyContent: "center",
     alignItems: "center",
   },
   healthCheckboxActive: {
-    backgroundColor: "Theme.colors.status.success",
-    borderColor: "Theme.colors.status.success",
+    backgroundColor: theme.colors.success,
+    borderColor: theme.colors.success,
   },
   healthText: {
     fontSize: 16,
-    color: "Theme.colors.neutral[700]",
+    color: theme.colors.neutral[700],
     fontWeight: "500",
   },
   submitButton: {
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -663,7 +664,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   submitText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 18,
     fontWeight: "bold",
   },

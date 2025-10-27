@@ -1,7 +1,8 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 import User from '../models/User';
 import logger from '../utils/logger';
-import { AuthRequest } from '../types/express';
+import type { AuthRequest } from '../types/express';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 /**
  * Request interfaces
@@ -38,7 +39,7 @@ export const changePassword = async (req: ChangePasswordRequest, res: Response):
       return;
     }
 
-    const ok = await user.comparePassword(currentPassword);
+    const ok = await (user as any).comparePassword(currentPassword);
     if (!ok) {
       res.status(401).json({ success: false, message: 'Invalid current password' });
       return;
@@ -50,8 +51,8 @@ export const changePassword = async (req: ChangePasswordRequest, res: Response):
     await user.save();
 
     res.json({ success: true, message: 'Password changed successfully' });
-  } catch (error: any) {
-    logger.error('Change password error', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Change password error', { error: getErrorMessage(error) });
     res.status(500).json({ success: false, message: 'Failed to change password' });
   }
 };
@@ -70,8 +71,8 @@ export const logoutAll = async (req: LogoutAllRequest, res: Response): Promise<v
       $set: { refreshTokens: [], tokensInvalidatedAt: new Date() }
     });
     res.json({ success: true, message: 'Logged out from all devices' });
-  } catch (error: any) {
-    logger.error('Logout all error', { error: error.message });
+  } catch (error: unknown) {
+    logger.error('Logout all error', { error: getErrorMessage(error) });
     res.status(500).json({ success: false, message: 'Failed to logout from all devices' });
   }
 };

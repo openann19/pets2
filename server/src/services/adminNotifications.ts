@@ -3,7 +3,7 @@
  * Broadcasts moderation events to all connected admin users via Socket.IO
  */
 
-import type { Server as SocketIOServer } from 'socket.io';
+import type { Server as SocketIOServer, Socket } from 'socket.io';
 import logger from '../utils/logger';
 
 // Type definitions
@@ -34,6 +34,15 @@ interface UserActionData {
   targetUserId: string;
   adminId: string;
   reason: string;
+}
+
+interface CustomNotificationData {
+  [key: string]: unknown;
+  timestamp?: string;
+}
+
+interface SystemEventDetails {
+  [key: string]: unknown;
 }
 
 class AdminNotificationService {
@@ -71,7 +80,7 @@ class AdminNotificationService {
       });
 
       logger.info('Admin notification sent: new-report', { reportId: report._id });
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error('Failed to send admin notification', { error: errorMessage });
     }
@@ -98,7 +107,7 @@ class AdminNotificationService {
       });
 
       logger.info('Admin notification sent: content-flagged', { contentId: data.contentId });
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error('Failed to send admin notification', { error: errorMessage });
     }
@@ -126,7 +135,7 @@ class AdminNotificationService {
         action: data.action, 
         targetUserId: data.targetUserId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error('Failed to send admin notification', { error: errorMessage });
     }
@@ -139,7 +148,7 @@ class AdminNotificationService {
   setupAdminRoom(socketIO: SocketIOServer): void {
     this.io = socketIO;
 
-    socketIO.on('connection', (socket: any) => {
+    socketIO.on('connection', (socket: Socket) => {
       // Check if user is admin (you'll need to pass user data via socket.handshake.auth)
       const userId = socket.handshake.auth?.userId;
       const isAdmin = socket.handshake.auth?.isAdmin;
@@ -158,7 +167,7 @@ class AdminNotificationService {
   /**
    * Send custom notification to admin room
    */
-  sendCustomNotification(type: string, data: any): void {
+  sendCustomNotification(type: string, data: CustomNotificationData): void {
     if (!this.io) {
       logger.warn('Socket.IO not initialized, cannot send custom notification');
       return;
@@ -171,7 +180,7 @@ class AdminNotificationService {
       });
 
       logger.info('Custom admin notification sent', { type });
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       logger.error('Failed to send custom notification', { type, error: errorMessage });
     }
@@ -180,7 +189,7 @@ class AdminNotificationService {
   /**
    * Notify admins of system event
    */
-  notifySystemEvent(event: string, details: Record<string, any>): void {
+  notifySystemEvent(event: string, details: SystemEventDetails): void {
     this.sendCustomNotification('system-event', {
       event,
       details

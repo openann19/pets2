@@ -99,7 +99,7 @@ export function ChatReactionExample() {
       <ReactionBarMagnetic
         reactions={customReactions}
         onSelect={handleReactionSelect}
-        onCancel={() => console.log('Reaction cancelled')}
+        onCancel={() => { console.log('Reaction cancelled'); }}
         influenceRadius={100}
         baseSize={32}
         backgroundColor="#fff"
@@ -155,7 +155,7 @@ export function CombinedGestureExample() {
         <View style={styles.reactionOverlay}>
           <ReactionBarMagnetic
             onSelect={handleReactionSelect}
-            onCancel={() => setShowReactions(false)}
+            onCancel={() => { setShowReactions(false); }}
           />
         </View>
       )}

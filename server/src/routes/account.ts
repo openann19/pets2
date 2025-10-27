@@ -11,11 +11,8 @@ import {
   getProfileStats,
   confirmAccountDeletion
 } from '../controllers/accountController';
-
-interface AuthenticatedRequest extends Request {
-  userId: string;
-  user?: IUserDocument;
-}
+import { createTypeSafeWrapper } from '../types/routes';
+import type { AuthRequest } from '../types/express';
 
 const router: Router = express.Router();
 
@@ -37,11 +34,7 @@ const deletionValidation = [
 ];
 
 // Type-safe wrapper function
-const wrapHandler = (handler: (req: any, res: Response) => Promise<void>) => {
-  return async (req: Request, res: Response): Promise<void> => {
-    return handler(req, res);
-  };
-};
+const wrapHandler = createTypeSafeWrapper<AuthRequest>;
 
 // Routes
 router.get('/status', wrapHandler(getAccountStatus));

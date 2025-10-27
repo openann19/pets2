@@ -1,22 +1,13 @@
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 /**
  * 📸 PHOTO UPLOAD SECTION
  * Extracted from AIPhotoAnalyzerScreen
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import React from "react";
-import {
-  Alert,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import * as Haptics from "expo-haptics";
-import { Theme } from '../../../theme/unified-theme';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { PinchZoomPro } from '../../../components/Gestures/PinchZoomPro';
 import { usePinchMetrics } from '../../../hooks/useInteractionMetrics';
 
@@ -24,90 +15,24 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PhotoUploadSectionProps {
   selectedImage: string | null;
-  onImageSelected: (uri: string) => void;
+  onPickImage: () => Promise<void>;
+  onTakePhoto: () => Promise<void>;
   colors: {
     text: string;
     textSecondary: string;
     card: string;
     primary: string;
+    secondary: string;
   };
 }
 
 export function PhotoUploadSection({
   selectedImage,
-  onImageSelected,
+  onPickImage,
+  onTakePhoto,
   colors,
 }: PhotoUploadSectionProps) {
   const { startInteraction, endInteraction } = usePinchMetrics();
-  const pickImage = async (): Promise<void> => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {
-      // Haptics not available
-    }
-
-    try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission needed",
-          "We need camera roll permissions to analyze your pet photo",
-        );
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const asset = result.assets[0];
-        if (asset) {
-          onImageSelected(asset.uri);
-        }
-      }
-    } catch (error) {
-      Alert.alert("Error", "Failed to pick image");
-    }
-  };
-
-  const takePhoto = async (): Promise<void> => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {
-      // Haptics not available
-    }
-
-    try {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission needed",
-          "We need camera permissions to take a photo",
-        );
-        return;
-      }
-
-      const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const asset = result.assets[0];
-        if (asset) {
-          onImageSelected(asset.uri);
-        }
-      }
-    } catch (error) {
-      Alert.alert("Error", "Failed to take photo");
-    }
-  };
 
   return (
     <View style={styles.imageSection}>
@@ -144,7 +69,10 @@ export function PhotoUploadSection({
               styles.changeImageButton,
               { backgroundColor: colors.primary },
             ])}
-            onPress={pickImage}
+            testID="PhotoUploadSection-change-button"
+            accessibilityLabel="Change photo"
+            accessibilityRole="button"
+            onPress={onPickImage}
           >
             <Ionicons name="camera" size={20} color="#ffffff" />
             <Text style={styles.changeImageText}>Change Photo</Text>
@@ -172,19 +100,25 @@ export function PhotoUploadSection({
                 styles.imageButton,
                 { backgroundColor: colors.primary },
               ])}
-              onPress={pickImage}
+              testID="PhotoUploadSection-gallery-button"
+              accessibilityLabel="Select from gallery"
+              accessibilityRole="button"
+              onPress={onPickImage}
             >
-              <Ionicons name="image" size={20} color="Theme.colors.neutral[0]" />
+              <Ionicons name="image" size={20} color="#ffffff" />
               <Text style={styles.imageButtonText}>Gallery</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.imageButton,
-                { backgroundColor: colors.primary },
+                { backgroundColor: colors.secondary },
               ])}
-              onPress={takePhoto}
+              testID="PhotoUploadSection-camera-button"
+              accessibilityLabel="Take photo"
+              accessibilityRole="button"
+              onPress={onTakePhoto}
             >
-              <Ionicons name="camera" size={20} color="Theme.colors.neutral[0]" />
+              <Ionicons name="camera" size={20} color="#ffffff" />
               <Text style={styles.imageButtonText}>Camera</Text>
             </TouchableOpacity>
           </View>
@@ -221,7 +155,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   changeImageText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     fontWeight: "600",
   },
@@ -250,7 +184,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   imageButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     fontSize: 14,
     fontWeight: "600",
   },

@@ -465,15 +465,15 @@ export const PremiumLabel: React.FC<PremiumLabelProps> = ({
   const getVariantStyle = (): TextStyle => {
     switch (variant) {
       case "success":
-        return { color: Colors.success };
+        return { color: Colors.success[600] };
       case "warning":
-        return { color: Colors.warning };
+        return { color: Colors.warning[600] };
       case "error":
-        return { color: Colors.error };
+        return { color: Colors.error[600] };
       case "info":
-        return { color: Colors.secondary };
+        return { color: Colors.secondary[600] };
       default:
-        return { color: Colors.gray700 };
+        return { color: Colors.neutral[700] };
     }
   };
 

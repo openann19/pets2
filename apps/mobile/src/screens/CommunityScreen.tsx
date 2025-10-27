@@ -32,13 +32,11 @@ import { PinchZoomPro } from "../components/Gestures/PinchZoomPro";
 import { ReactionBarMagnetic } from "../components/chat";
 import { useCommunityFeed } from "../hooks/useCommunityFeed";
 import { useTheme } from "../theme/Provider";
-import { getExtendedColors, type ExtendedColors } from "../theme/adapters";
 import { useDoubleTapMetrics, usePinchMetrics, useReactionMetrics } from "../hooks/useInteractionMetrics";
 import { useScrollOffsetTracker } from "../hooks/navigation/useScrollOffsetTracker";
 import { useTabReselectRefresh } from "../hooks/navigation/useTabReselectRefresh";
 import type { CommunityPost } from "../services/communityAPI";
 import { logger } from "../services/logger";
-import { Theme } from '../theme/unified-theme';
 import type { FlatList as FlatListType } from "react-native";
 
 interface CommunityScreenProps {
@@ -242,7 +240,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         <View style={styles.postHeader}>
           <TouchableOpacity
             style={styles.authorInfo}
-            onPress={() => {
+             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               // Navigate to user profile
             }}
           >
@@ -261,17 +259,17 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => {
+             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Alert.alert(
                 "Options",
                 "",
                 [
                   { text: "Cancel", style: "cancel" },
-                  { text: "Report", style: "destructive", onPress: () => handleReport(post) },
+                  { text: "Report", style: "destructive", onPress: () => { handleReport(post); } },
                   {
                     text: "Block User",
                     style: "destructive",
-                    onPress: () => handleBlockUser(post.author._id, post.author.name),
+                    onPress: () => { handleBlockUser(post.author._id, post.author.name); },
                   },
                 ],
               );
@@ -293,7 +291,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               <DoubleTapLikePlus
                 key={idx}
                 onDoubleTap={() => handleLike(post._id)}
-                onSingleTap={() => handlePostLongPress(post._id)}
+                onSingleTap={() => { handlePostLongPress(post._id); }}
                 heartColor="#ff3b5c"
                 particles={6}
                 haptics={{ enabled: true, style: "medium" }}
@@ -322,8 +320,8 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             {showReactions[post._id] && (
               <View style={styles.reactionOverlay}>
                 <ReactionBarMagnetic
-                  onSelect={(emoji) => handlePostReaction(post._id, emoji)}
-                  onCancel={() => setShowReactions((prev) => ({ ...prev, [post._id]: false }))}
+                  onSelect={(emoji) => { handlePostReaction(post._id, emoji); }}
+                  onCancel={() => { setShowReactions((prev) => ({ ...prev, [post._id]: false })); }}
                   influenceRadius={80}
                   baseSize={28}
                   backgroundColor={colors.card || "#ffffff"}
@@ -355,7 +353,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             {!post.activityDetails.attending && (
               <TouchableOpacity
                 style={StyleSheet.flatten([styles.joinButton, { backgroundColor: colors.accent }])}
-                onPress={() => handleJoinActivity(post._id)}
+                 testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleJoinActivity(post._id)}
               >
                 <Text style={styles.joinButtonText}>Join</Text>
               </TouchableOpacity>
@@ -367,18 +365,18 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => handleLike(post._id)}
+             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleLike(post._id)}
             disabled={likingPosts[post._id]}
           >
             <Ionicons
               name={post.liked ? "heart" : "heart-outline"}
               size={24}
-              color={post.liked ? Theme.colors.primary[500] : colors.textSecondary}
+              color={post.liked ? theme.colors.primary : colors.textSecondary}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.actionText,
-                { color: post.liked ? Theme.colors.primary[500] : colors.textSecondary },
+                { color: post.liked ? theme.colors.primary : colors.textSecondary },
               ])}
             >
               {post.likes}
@@ -387,7 +385,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
 
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => setSelectedPost(post)}
+             testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setSelectedPost(post); }}
           >
             <Ionicons name="chatbubble-outline" size={24} color={colors.textSecondary} />
             <Text style={StyleSheet.flatten([styles.actionText, { color: colors.textSecondary }])}>
@@ -395,7 +393,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} testID="CommunityScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
             <Ionicons name="share-outline" size={24} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
@@ -529,7 +527,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 16,
     borderWidth: 1,
-    shadowColor: Theme.colors.neutral[900],
+    shadowColor: theme.colors.border.medium,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -603,7 +601,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   joinButtonText: {
-    color: Theme.colors.neutral[0],
+    color: theme.colors.neutral[0],
     fontWeight: "600",
   },
   actions: {

@@ -27,6 +27,7 @@ import {
   useGlowEffect,
 } from "../hooks/useMotionSystem";
 import { usePremiumDemoScreen } from "../hooks/screens/usePremiumDemoScreen";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 // Import extracted demo components
@@ -105,14 +106,14 @@ const SemanticColors = {
     secondary: "#5856D6",
   },
   text: {
-    primary: "Theme.colors.neutral[950]",
+    primary: "#111827",
     secondary: "#666666",
-    inverse: "Theme.colors.neutral[0]",
+    inverse: "#ffffff",
   },
   background: {
-    primary: "Theme.colors.neutral[0]",
+    primary: "#ffffff",
     secondary: "#F8F9FA",
-    dark: "Theme.colors.neutral[950]",
+    dark: "#111827",
   },
 };
 

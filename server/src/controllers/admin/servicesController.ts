@@ -3,11 +3,12 @@
  * Handles admin panel endpoints for managing AI, upload, moderation, and push services
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import logger from '../../utils/logger';
 import { FLAGS } from '../../config/flags';
 import AnalyticsEvent from '../../models/AnalyticsEvent';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AdminRequest extends Request {
   userId?: string;
@@ -60,12 +61,12 @@ export const getServicesStatus = async (req: AdminRequest, res: Response): Promi
       success: true,
       data: services,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get services status', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get services status',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -131,12 +132,12 @@ export const getServicesAnalytics = async (req: AdminRequest, res: Response): Pr
       success: true,
       data: analytics,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get services analytics', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get services analytics',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -160,12 +161,12 @@ export const toggleService = async (req: AdminRequest, res: Response): Promise<v
       message: `Service ${service} ${enabled ? 'enabled' : 'disabled'}`,
       data: { service, enabled },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to toggle service', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to toggle service',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -225,12 +226,12 @@ export const getUploadStats = async (req: AdminRequest, res: Response): Promise<
       success: true,
       data: stats,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get upload stats', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get upload stats',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -296,12 +297,12 @@ export const getAIStats = async (req: AdminRequest, res: Response): Promise<void
       success: true,
       data: stats,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get AI stats', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get AI stats',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -358,12 +359,12 @@ export const getPushStats = async (req: AdminRequest, res: Response): Promise<vo
       success: true,
       data: stats,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get push stats', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get push stats',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };
@@ -463,12 +464,12 @@ export const getCombinedStats = async (req: AdminRequest, res: Response): Promis
       success: true,
       data: stats,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get combined stats', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get combined stats',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };

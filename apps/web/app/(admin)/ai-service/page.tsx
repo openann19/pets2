@@ -577,7 +577,7 @@ export default function AIServiceManagementPage() {
                   <EnhancedInput
                     type="password"
                     value={aiConfig.apiKey}
-                    onChange={(value) => setAiConfig({ ...aiConfig, apiKey: value })}
+                    onChange={(value: string) => setAiConfig({ ...aiConfig, apiKey: value })}
                     placeholder="sk-..."
                     ariaLabel="DeepSeek API key"
                   />
@@ -590,7 +590,7 @@ export default function AIServiceManagementPage() {
                   <EnhancedInput
                     type="text"
                     value={aiConfig.baseUrl}
-                    onChange={(value) => setAiConfig({ ...aiConfig, baseUrl: value })}
+                    onChange={(value: string) => setAiConfig({ ...aiConfig, baseUrl: value })}
                     placeholder="https://api.deepseek.com"
                     ariaLabel="AI service base URL"
                   />
@@ -606,7 +606,7 @@ export default function AIServiceManagementPage() {
                       { value: 'deepseek-coder', label: 'DeepSeek Coder' },
                     ]}
                     value={aiConfig.model}
-                    onChange={(value) => setAiConfig({ ...aiConfig, model: value })}
+                    onChange={(value: string) => setAiConfig({ ...aiConfig, model: value })}
                   />
                 </div>
 
@@ -617,7 +617,7 @@ export default function AIServiceManagementPage() {
                   <EnhancedInput
                     type="number"
                     value={aiConfig.maxTokens.toString()}
-                    onChange={(value) => setAiConfig({ ...aiConfig, maxTokens: parseInt(value) })}
+                    onChange={(value: string) => setAiConfig({ ...aiConfig, maxTokens: parseInt(value) })}
                     placeholder="4000"
                     ariaLabel="Maximum tokens"
                   />
@@ -633,7 +633,7 @@ export default function AIServiceManagementPage() {
                     min="0"
                     max="2"
                     value={aiConfig.temperature.toString()}
-                    onChange={(value) =>
+                    onChange={(value: string) =>
                       setAiConfig({ ...aiConfig, temperature: parseFloat(value) })
                     }
                     placeholder="0.7"

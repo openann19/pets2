@@ -20,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
-import { Theme } from '../../theme/unified-theme';
+
 
 interface ChatMessage {
   id: string;
@@ -217,7 +217,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
                 styles.actionButton,
                 styles.approveButton,
               ])}
-              onPress={() => handleMessageAction(item.id, "approve")}
+               testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "approve")}
             >
               <Ionicons name="checkmark" size={16} color="white" />
               <Text style={styles.actionButtonText}>Approve</Text>
@@ -228,7 +228,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
                 styles.actionButton,
                 styles.warnButton,
               ])}
-              onPress={() => handleMessageAction(item.id, "warn")}
+               testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "warn")}
             >
               <Ionicons name="warning" size={16} color="white" />
               <Text style={styles.actionButtonText}>Warn</Text>
@@ -239,7 +239,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
                 styles.actionButton,
                 styles.removeButton,
               ])}
-              onPress={() => handleMessageAction(item.id, "remove")}
+               testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleMessageAction(item.id, "remove")}
             >
               <Ionicons name="trash" size={16} color="white" />
               <Text style={styles.actionButtonText}>Remove</Text>
@@ -259,7 +259,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
       ])}
-      onPress={() => {
+       testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
         setFilter(filterType);
       }}
     >
@@ -289,7 +289,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         ])}
       >
         <TouchableOpacity
-          onPress={() => {
+           testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             navigation.goBack();
           }}
           style={styles.backButton}
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   backButton: {
     marginRight: 16,
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "Theme.colors.neutral[200]",
+    borderBottomColor: theme.colors.neutral[200],
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -524,13 +524,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   approveButton: {
-    backgroundColor: "Theme.colors.status.success",
+    backgroundColor: theme.colors.success,
   },
   warnButton: {
-    backgroundColor: "Theme.colors.status.warning",
+    backgroundColor: theme.colors.warning,
   },
   removeButton: {
-    backgroundColor: "Theme.colors.status.error",
+    backgroundColor: theme.colors.danger,
   },
   actionButtonText: {
     fontSize: 12,

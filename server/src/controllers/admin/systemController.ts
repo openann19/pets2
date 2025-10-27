@@ -3,10 +3,11 @@
  * Handles system health monitoring and metrics
  */
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import logger from '../../utils/logger';
 import { logAdminActivity } from '../../middleware/adminLogger';
+import { getErrorMessage } from '../../utils/errorHandler';
 
 interface AdminRequest extends Request {
   userId?: string;
@@ -57,12 +58,12 @@ export const getSystemHealth = async (req: AdminRequest, res: Response): Promise
       success: true,
       data: systemHealth,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Failed to get system health', { error });
     res.status(500).json({
       success: false,
       error: 'Failed to get system health',
-      message: error.message,
+      message: getErrorMessage(error),
     });
   }
 };

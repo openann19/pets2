@@ -60,13 +60,13 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
       <Animated.View entering={FadeInDown.duration(220).delay(index * 50)}>
         <TouchableOpacity
           style={styles.petCard}
-          onPress={() => handleNavigateToPetDetails(item)}
+           testID="MyPetsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleNavigateToPetDetails(item); }}
         >
         {/* Pet Photo with Gestures */}
         <View style={styles.petImageContainer}>
           {item.photos && item.photos.length > 0 ? (
             <DoubleTapLikePlus
-              onDoubleTap={() => handlePetLike(item)}
+              onDoubleTap={() => { handlePetLike(item); }}
               heartColor="#ff6b6b"
               particles={4}
               haptics={{ enabled: true, style: "light" }}
@@ -163,7 +163,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 styles.actionButton,
                 styles.viewButton,
               ])}
-              onPress={() => {
+               testID="MyPetsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 haptic.tap();
                 navigation.navigate("PetDetails", {
                   petId: item.id,
@@ -180,7 +180,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 styles.actionButton,
                 styles.editButton,
               ])}
-              onPress={() => {
+               testID="MyPetsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 haptic.confirm();
                 navigation.navigate("EditPet", { petId: item.id, pet: item });
               }}
@@ -193,7 +193,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 styles.actionButton,
                 styles.deleteButton,
               ])}
-              onPress={() => {
+               testID="MyPetsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 haptic.error();
                 handleDeletePet(item._id);
               }}
@@ -217,7 +217,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
       </Text>
       <TouchableOpacity
         style={styles.emptyButton}
-        onPress={() => {
+         testID="MyPetsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           haptic.confirm();
           navigation.navigate("CreatePet");
         }}

@@ -26,7 +26,8 @@ import type {
   LeaderboardFilter,
 } from "../../services/LeaderboardService";
 import LeaderboardService from "../../services/LeaderboardService";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from '../theme/Provider';
+import { Theme } from '../theme/unified-theme';
 import { useScrollOffsetTracker } from "../../hooks/navigation/useScrollOffsetTracker";
 import { useTabReselectRefresh } from "../../hooks/navigation/useTabReselectRefresh";
 
@@ -188,7 +189,7 @@ export default function LeaderboardScreen() {
           styles.categoryTab,
           selectedCategory === "all" && styles.categoryTabActive,
         ])}
-        onPress={() => {
+         testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           handleCategoryChange("all");
         }}
       >
@@ -209,14 +210,14 @@ export default function LeaderboardScreen() {
             styles.categoryTab,
             selectedCategory === category.id && styles.categoryTabActive,
           ])}
-          onPress={() => {
+           testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             handleCategoryChange(category.id);
           }}
         >
           <Ionicons
             name={category.icon as never}
             size={16}
-            color={selectedCategory === category.id ? Theme.colors.neutral[0] : "#666"}
+            color={selectedCategory === category.id ? theme.colors.neutral[0] : "#666"}
             style={styles.categoryTabIcon}
           />
           <Text
@@ -241,7 +242,7 @@ export default function LeaderboardScreen() {
             styles.periodTab,
             selectedPeriod === period && styles.periodTabActive,
           ])}
-          onPress={() => {
+           testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             handlePeriodChange(period);
           }}
         >
@@ -276,7 +277,7 @@ export default function LeaderboardScreen() {
 
             <View style={styles.userRankPet}>
               <View style={styles.userRankPetImage}>
-                <Ionicons name="paw" size={24} color="Theme.colors.neutral[0]" />
+                <Ionicons name="paw" size={24} color={theme.colors.neutral[0]} }/>
               </View>
               <Text style={styles.userRankPetName}>{userEntry.petName}</Text>
             </View>
@@ -300,7 +301,7 @@ export default function LeaderboardScreen() {
                 { backgroundColor: rankColors[index] },
               ])}
             >
-              <Ionicons name="trophy" size={16} color="Theme.colors.neutral[0]" />
+              <Ionicons name="trophy" size={16} color={theme.colors.neutral[0]} }/>
             </View>
           ) : (
             <Text style={styles.rankNumber}>#{entry.rank}</Text>
@@ -336,7 +337,7 @@ export default function LeaderboardScreen() {
                   { backgroundColor: badge.color },
                 ])}
               >
-                <Ionicons name="star" size={12} color="Theme.colors.neutral[0]" />
+                <Ionicons name="star" size={12} color={theme.colors.neutral[0]} }/>
               </View>
             ))}
             {entry.badges.length > 3 && (
@@ -376,7 +377,7 @@ export default function LeaderboardScreen() {
         <Text style={styles.headerTitle}>Leaderboard</Text>
         <TouchableOpacity
           style={styles.filterButton}
-          onPress={() => {
+           testID="LeaderboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
             setShowFilters(!showFilters);
           }}
         >
@@ -421,7 +422,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -434,7 +435,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   categoryTabs: {
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -463,11 +464,11 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   categoryTabTextActive: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
   },
   periodTabs: {
     flexDirection: "row",
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -490,14 +491,14 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   periodTabTextActive: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
   },
   userRankCard: {
     margin: 20,
     borderRadius: 12,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
   userRankNumber: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
     marginBottom: 4,
   },
   userRankScore: {
@@ -543,7 +544,7 @@ const styles = StyleSheet.create({
   userRankPetName: {
     fontSize: 14,
     fontWeight: "600",
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.neutral[0],
   },
   leaderboardList: {
     flex: 1,
@@ -552,12 +553,12 @@ const styles = StyleSheet.create({
   entryCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     padding: 16,
     marginBottom: 12,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,

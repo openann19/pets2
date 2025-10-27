@@ -16,6 +16,8 @@ import {
   favoriteMatch,
   getMatchStats
 } from '../controllers/matchController';
+import { createTypeSafeWrapper } from '../types/routes';
+import type { MatchRequest } from '../types/routes';
 
 interface AuthenticatedRequest extends Request {
   userId: string; // Required - set by authenticateToken middleware
@@ -40,11 +42,7 @@ const messageValidation = [
 ];
 
 // Type-safe wrapper functions that cast authenticated requests
-const wrapHandler = (handler: (req: any, res: Response) => Promise<void>) => {
-  return async (req: Request, res: Response): Promise<void> => {
-    return handler(req, res);
-  };
-};
+const wrapHandler = createTypeSafeWrapper;
 
 // Routes
 router.get('/recommendations', requirePremiumFeature('aiMatching'), wrapHandler(getRecommendations));

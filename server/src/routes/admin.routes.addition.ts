@@ -5,10 +5,12 @@ import { adminActionLogger } from '../middleware/adminLogger';
 import {
   getAllUsers,
   getUserDetails,
-  getUserActivity,
+  getUserActivity
+} from '../controllers/adminController';
+import {
   getAllChats,
   getChatDetails
-} from '../controllers/adminController.optimized';
+} from '../controllers/admin/AdminChatController';
 
 const router: Router = express.Router();
 

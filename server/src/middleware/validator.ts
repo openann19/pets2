@@ -1,4 +1,6 @@
-import { body, validationResult, ValidationChain, Request, Response, NextFunction } from 'express-validator';
+import { body, validationResult } from 'express-validator';
+import type { ValidationChain } from 'express-validator';
+import type { Request, Response, NextFunction } from 'express';
 
 /**
  * Validate API requests using express-validator

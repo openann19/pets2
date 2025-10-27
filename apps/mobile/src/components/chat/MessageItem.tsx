@@ -219,7 +219,7 @@ export function MessageItem({
                   style={styles.retryButton}
                   onPress={handleRetry}
                 >
-                  <Ionicons name="refresh" size={12} color={Theme.colors.status.error} />
+                  <Ionicons name="refresh" size={12} color={Theme.colors.status.erro}r}} />
                   <Text style={[styles.retryText, { color: Theme.colors.status.error }]}> 
                     Retry
                   </Text>
@@ -230,7 +230,7 @@ export function MessageItem({
                   <Ionicons
                     name="alert-circle"
                     size={12}
-                    color={Theme.colors.status.error}
+                    color={Theme.colors.status.erro}r}}
                   />
                 </View>
               )}
@@ -283,7 +283,7 @@ export function MessageItem({
       {/* Reaction Picker */}
       <ReactionPicker
         visible={showReactionPicker}
-        onClose={() => setShowReactionPicker(false)}
+        onClose={() => { setShowReactionPicker(false); }}
         onSelect={handleReactionSelect}
       />
     </View>

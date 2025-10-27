@@ -30,7 +30,7 @@ interface Props {
 export default function CreateActivityModal({ visible, onClose, pets, activityTypes }: Props) {
   const [pet, setPet] = useState<string | null>(pets?.[0]?._id ?? null);
   const [act, setAct] = useState<string | null>(
-    typeof activityTypes[0] === 'string' ? (activityTypes[0] as string) : (activityTypes[0] as ActivityType).id
+    typeof activityTypes[0] === 'string' ? (activityTypes[0]) : (activityTypes[0] as ActivityType).id
   );
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
         <Text style={s.header}>Start Activity</Text>
         <Text style={s.subHeader}>Pet</Text>
         {pets.map(p => (
-          <TouchableOpacity key={p._id} onPress={() => setPet(p._id)} style={[s.option, pet === p._id && s.selected]}>
+          <TouchableOpacity key={p._id} onPress={() => { setPet(p._id); }} style={[s.option, pet === p._id && s.selected]}>
             <Text>{p.name}</Text>
           </TouchableOpacity>
         ))}
@@ -65,7 +65,7 @@ export default function CreateActivityModal({ visible, onClose, pets, activityTy
           const id = typeof t === 'string' ? t : t.id;
           const label = typeof t === 'string' ? t : `${t.emoji ?? ''} ${t.label}`;
           return (
-            <TouchableOpacity key={id} onPress={() => setAct(id)} style={[s.option, act === id && s.selected]}>
+            <TouchableOpacity key={id} onPress={() => { setAct(id); }} style={[s.option, act === id && s.selected]}>
               <Text>{label}</Text>
             </TouchableOpacity>
           );

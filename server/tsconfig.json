@@ -6,6 +6,7 @@
     "lib": ["ES2022"],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,  // Required for verbatimModuleSyntax
+    "esModuleInterop": true,
     "outDir": "./dist",
     "declaration": true,
     "declarationMap": true,

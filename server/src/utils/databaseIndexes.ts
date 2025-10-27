@@ -6,6 +6,12 @@
 import User from '../models/User';
 import Pet from '../models/Pet';
 import Match from '../models/Match';
+import Reel from '../models/Reel';
+import Template from '../models/Template';
+import Track from '../models/Track';
+import Clip from '../models/Clip';
+import ShareEvent from '../models/ShareEvent';
+import ModerationFlag from '../models/ModerationFlag';
 import logger from './logger';
 
 let Message: any;
@@ -75,6 +81,35 @@ export const createIndexes = async (): Promise<void> => {
       await AuditLog.collection.createIndex({ userId: 1, createdAt: -1 });
     }
 
+    // Reel indexes
+    await Reel.collection.createIndex({ ownerId: 1, createdAt: -1 });
+    await Reel.collection.createIndex({ status: 1, createdAt: -1 });
+    await Reel.collection.createIndex({ remixOfId: 1 });
+    await Reel.collection.createIndex({ templateId: 1 });
+
+    // Template indexes
+    await Template.collection.createIndex({ isActive: 1, theme: 1 });
+    await Template.collection.createIndex({ name: 1 });
+
+    // Track indexes
+    await Track.collection.createIndex({ isActive: 1, genre: 1, mood: 1 });
+    await Track.collection.createIndex({ licenseExpiry: 1 });
+    await Track.collection.createIndex({ title: 1 });
+    await Track.collection.createIndex({ licenseId: 1 }, { unique: true });
+
+    // Clip indexes
+    await Clip.collection.createIndex({ reelId: 1, order: 1 });
+
+    // ShareEvent indexes
+    await ShareEvent.collection.createIndex({ reelId: 1, createdAt: -1 });
+    await ShareEvent.collection.createIndex({ channel: 1, createdAt: -1 });
+    await ShareEvent.collection.createIndex({ referrerUserId: 1 });
+
+    // ModerationFlag indexes
+    await ModerationFlag.collection.createIndex({ reelId: 1, status: 1 });
+    await ModerationFlag.collection.createIndex({ kind: 1, status: 1 });
+    await ModerationFlag.collection.createIndex({ status: 1, createdAt: -1 });
+
     // Compound indexes for complex queries
     await User.collection.createIndex({ role: 1, status: 1 });
     await User.collection.createIndex({ isEmailVerified: 1, createdAt: -1 });
@@ -94,7 +129,7 @@ export const dropIndexes = async (): Promise<void> => {
   try {
     logger.info('Dropping database indexes...');
 
-    const collections = [User, Pet, Match, Message, AuditLog].filter(Boolean);
+    const collections = [User, Pet, Match, Message, AuditLog, Reel, Template, Track, Clip, ShareEvent, ModerationFlag].filter(Boolean);
 
     for (const Model of collections) {
       const indexes = await Model.collection.indexes();
@@ -121,7 +156,13 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
       { model: Pet, name: 'pets' },
       { model: Match, name: 'matches' },
       Message && { model: Message, name: 'messages' },
-      AuditLog && { model: AuditLog, name: 'auditlogs' }
+      AuditLog && { model: AuditLog, name: 'auditlogs' },
+      { model: Reel, name: 'reels' },
+      { model: Template, name: 'templates' },
+      { model: Track, name: 'tracks' },
+      { model: Clip, name: 'clips' },
+      { model: ShareEvent, name: 'shareevents' },
+      { model: ModerationFlag, name: 'moderationflags' }
     ].filter(Boolean) as Array<{ model: any; name: string }>;
 
     for (const { model, name } of collections) {
@@ -135,5 +176,3 @@ export const getIndexStats = async (): Promise<Record<string, number>> => {
     throw error;
   }
 };
-
-export { createIndexes, dropIndexes, getIndexStats };

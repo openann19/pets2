@@ -41,6 +41,20 @@ global.TextDecoder = global.TextDecoder || require('util').TextDecoder;
   scheduleLayoutAnimation: jest.fn(),
 };
 
+// Load the Animated mock and make it globally available
+const AnimatedMock = require('./__mocks__/Animated.js');
+
+// Make Animated available globally for react-native
+(global as any).Animated = AnimatedMock;
+
+// Export it so react-native can access it
+if (typeof module !== 'undefined') {
+  Object.defineProperty(module, 'exports', {
+    get: () => AnimatedMock,
+    configurable: true,
+  });
+}
+
 // Global test setup with memory tracking
 let testStartMemory: number | null = null;
 

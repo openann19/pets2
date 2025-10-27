@@ -3,15 +3,15 @@
  * Prevents abuse of admin endpoints
  */
 
-import rateLimit, { RateLimitRequestHandler } from 'express-rate-limit';
-import { ipKeyGenerator } from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
+import type { Request, Response } from 'express';
 import { logAdminActivity } from './adminLogger';
 
 /**
  * Rate limiter for admin routes
  * Limits each admin to 100 requests per 15 minutes
  */
-export const adminRateLimiter: RateLimitRequestHandler = rateLimit({
+export const adminRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each admin to 100 requests per windowMs
   message: {
@@ -24,10 +24,10 @@ export const adminRateLimiter: RateLimitRequestHandler = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 
   // Custom key generator - use user ID instead of IP
-  keyGenerator: (req) => (req as any).user?._id?.toString() || ipKeyGenerator(req),
+  keyGenerator: (req: Request) => (req as any).user?._id?.toString() || ipKeyGenerator(req),
 
   // Custom handler for rate limit exceeded
-  handler: async (req, res) => {
+  handler: async (req: Request, res: Response) => {
     // Log rate limit exceeded event
     if ((req as any).user) {
       await logAdminActivity(
@@ -51,7 +51,7 @@ export const adminRateLimiter: RateLimitRequestHandler = rateLimit({
   },
 
   // Skip rate limiting for successful requests (only count failed/suspicious ones)
-  skip: (req) => {
+  skip: (req: Request) => {
     // Skip if not authenticated (will be caught by auth middleware)
     return !(req as any).user;
   }
@@ -61,7 +61,7 @@ export const adminRateLimiter: RateLimitRequestHandler = rateLimit({
  * Stricter rate limiter for sensitive operations
  * Limits to 20 requests per 15 minutes
  */
-export const strictRateLimiter: RateLimitRequestHandler = rateLimit({
+export const strictRateLimiterForAdmin = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   message: {
@@ -73,9 +73,9 @@ export const strictRateLimiter: RateLimitRequestHandler = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  keyGenerator: (req) => (req as any).user?._id?.toString() || ipKeyGenerator(req),
+  keyGenerator: (req: Request) => (req as any).user?._id?.toString() || ipKeyGenerator(req),
 
-  handler: async (req, res) => {
+  handler: async (req: Request, res: Response) => {
     if ((req as any).user) {
       await logAdminActivity(
         req as any,
@@ -102,7 +102,7 @@ export const strictRateLimiter: RateLimitRequestHandler = rateLimit({
  * Rate limiter for login attempts
  * Prevents brute force attacks
  */
-export const loginRateLimiter: RateLimitRequestHandler = rateLimit({
+export const loginRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5, // 5 login attempts per 15 minutes
   message: {
@@ -114,9 +114,8 @@ export const loginRateLimiter: RateLimitRequestHandler = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 
-  keyGenerator: (req) => `${(req as any).body?.email || 'unknown'}_${ipKeyGenerator(req)}`,
+  keyGenerator: (req: Request) => `${(req as any).body?.email || 'unknown'}_${ipKeyGenerator(req)}`,
 
   skipSuccessfulRequests: true // Only count failed login attempts
 });
 
-export { adminRateLimiter, strictRateLimiter, loginRateLimiter };

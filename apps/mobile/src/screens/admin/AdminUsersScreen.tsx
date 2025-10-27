@@ -18,7 +18,7 @@ import {
 import { useTheme } from "../../theme/Provider";
 import { useAdminUsersScreen } from "../../hooks/useAdminUsersScreen";
 import type { AdminScreenProps } from "../../navigation/types";
-import { Theme } from '../../theme/unified-theme';
+
 
 const FILTER_BUTTON_HIT_SLOP = {
   top: 8,
@@ -81,13 +81,13 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
             </Text>
           </View>
           <TouchableOpacity
-            onPress={state.onBackPress}
             style={StyleSheet.flatten([
               styles.backButton,
               { borderColor: colors.border },
             ])}
             accessibilityRole="button"
             accessibilityLabel="Go back"
+            onPress={state.onBackPress}
           >
             <Text
               style={StyleSheet.flatten([
@@ -127,6 +127,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
               return (
                 <TouchableOpacity
                   key={filter.value}
+                  testID={`filter-${filter.value}-button`}
                   onPress={filterHandlers[filter.value]}
                   style={StyleSheet.flatten([
                     styles.filterButton,
@@ -139,12 +140,13 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                   ])}
                   hitSlop={FILTER_BUTTON_HIT_SLOP}
                   accessibilityRole="button"
+                  accessibilityLabel={`Filter by ${filter.label}`}
                   accessibilityState={{ selected: isActive }}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.filterText,
-                      { color: isActive ? "Theme.colors.neutral[0]" : colors.text },
+                      { color: isActive ? colors.white : colors.text },
                     ])}
                   >
                     {filter.label}
@@ -190,8 +192,10 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                   styles.bulkButton,
                   { borderColor: colors.warning },
                 ])}
-                onPress={state.onBulkSuspend}
+                testID="bulk-suspend-button"
+                accessibilityLabel="Suspend selected users"
                 accessibilityRole="button"
+                onPress={state.onBulkSuspend}
               >
                 <Text
                   style={StyleSheet.flatten([
@@ -207,8 +211,10 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                   styles.bulkButton,
                   { borderColor: colors.success },
                 ])}
-                onPress={state.onBulkActivate}
+                testID="bulk-activate-button"
+                accessibilityLabel="Activate selected users"
                 accessibilityRole="button"
+                onPress={state.onBulkActivate}
               >
                 <Text
                   style={StyleSheet.flatten([
@@ -224,8 +230,10 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                   styles.bulkButton,
                   { borderColor: colors.error },
                 ])}
-                onPress={state.onBulkBan}
+                testID="bulk-ban-button"
+                accessibilityLabel="Ban selected users"
                 accessibilityRole="button"
+                onPress={state.onBulkBan}
               >
                 <Text
                   style={StyleSheet.flatten([

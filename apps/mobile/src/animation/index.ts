@@ -36,8 +36,8 @@ export const Spacing = {
   "4xl": 128,
 };
 export const BorderRadius = RADIUS;
-export const Colors = COLORS as any; // Add Colors for backward compatibility
-export const Typography = TYPOGRAPHY as any; // Add Typography for backward compatibility
-export const Shadows = SHADOWS as any; // Add Shadows for backward compatibility
-export const GlobalStyles = {} as any; // Add GlobalStyles placeholder for backward compatibility
+export const Colors = COLORS; // Re-export Colors for backward compatibility
+export const Typography = TYPOGRAPHY; // Re-export Typography for backward compatibility
+export const Shadows = SHADOWS; // Re-export Shadows for backward compatibility
+export const GlobalStyles: Record<string, unknown> = {}; // Add GlobalStyles placeholder for backward compatibility
 

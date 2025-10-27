@@ -16,7 +16,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { Theme } from "../theme/unified-theme";
+import { useTheme } from "../theme/Provider";
 import performanceMonitorInstance, {
   type PerformanceMetrics,
 } from "../utils/PerformanceMonitor";
@@ -52,6 +52,9 @@ interface TestState {
 export default function PerformanceTestSuite({
   onTestComplete,
 }: PerformanceTestSuiteProps) {
+  const theme = useTheme();
+  const styles = makeStyles(theme);
+  
   const [testState, setTestState] = useState<TestState>({
     isRunning: false,
     currentTest: "",
@@ -271,8 +274,8 @@ export default function PerformanceTestSuite({
                 {
                   color:
                     metrics.fps >= 55
-                      ? Theme.colors.status.success
-                      : Theme.colors.status.error,
+                      ? theme.colors.success
+                      : theme.colors.danger,
                 },
               ])}
             >
@@ -385,125 +388,125 @@ export default function PerformanceTestSuite({
 }
 
 // Helper function to get grade color
-function getGradeColor(grade: string): string {
+function getGradeColor(grade: string, theme: any): string {
   switch (grade) {
     case "A+":
     case "A":
-      return Theme.colors.status.success;
+      return theme.colors.success;
     case "B":
-      return Theme.colors.status.info;
+      return theme.colors.info;
     case "C":
-      return Theme.colors.status.warning;
+      return theme.colors.warning;
     case "D":
     case "F":
-      return Theme.colors.status.error;
+      return theme.colors.danger;
     default:
-      return Theme.colors.text.primary;
+      return theme.colors.text;
   }
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: any) => StyleSheet.create({
   container: {
-    padding: Theme.spacing.xl,
-    marginBottom: Theme.spacing.lg,
+    padding: theme.spacing.xl,
+    marginBottom: theme.spacing.lg,
   },
   title: {
-    marginBottom: Theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   subtitle: {
-    marginBottom: Theme.spacing.lg,
-    color: Theme.colors.text.secondary,
+    marginBottom: theme.spacing.lg,
+    color: theme.colors.textMuted,
   },
   metricsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: Theme.spacing.lg,
-    padding: Theme.spacing.md,
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.lg,
+    marginBottom: theme.spacing.lg,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.neutral[50],
+    borderRadius: theme.radius.lg,
   },
   metricRow: {
     alignItems: "center",
   },
   metricLabel: {
-    color: Theme.colors.text.secondary,
-    marginBottom: Theme.spacing.xs,
+    color: theme.colors.textMuted,
+    marginBottom: theme.spacing.xs,
   },
   metricValue: {
-    fontWeight: Theme.typography.fontWeight.bold,
+    fontWeight: "bold",
   },
   progressContainer: {
-    marginBottom: Theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   progressLabel: {
-    marginBottom: Theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
     textAlign: "center",
   },
   progressBar: {
     height: 8,
-    backgroundColor: Theme.colors.neutral[200],
+    backgroundColor: theme.colors.neutral[200],
     borderRadius: 4,
     overflow: "hidden",
-    marginBottom: Theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: Theme.semantic.interactive.primary,
+    backgroundColor: theme.colors.primary,
     borderRadius: 4,
   },
   progressText: {
     textAlign: "center",
-    color: Theme.colors.text.secondary,
+    color: theme.colors.textMuted,
   },
   testVisualization: {
     height: 100,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   testBox: {
     width: 50,
     height: 50,
-    backgroundColor: Theme.semantic.interactive.primary,
-    borderRadius: Theme.borderRadius.md,
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radius.md,
   },
   controlsContainer: {
-    marginBottom: Theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   testButton: {
     width: "100%",
   },
   resultsContainer: {
-    padding: Theme.spacing.lg,
-    backgroundColor: Theme.colors.neutral[50],
-    borderRadius: Theme.borderRadius.lg,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.neutral[50],
+    borderRadius: theme.radius.lg,
   },
   resultsTitle: {
-    marginBottom: Theme.spacing.md,
+    marginBottom: theme.spacing.md,
   },
   resultItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: Theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   resultLabel: {
-    color: Theme.colors.text.secondary,
+    color: theme.colors.textMuted,
   },
   resultValue: {
-    fontWeight: Theme.typography.fontWeight.bold,
+    fontWeight: "bold",
   },
   recommendationsContainer: {
-    marginTop: Theme.spacing.md,
-    paddingTop: Theme.spacing.md,
+    marginTop: theme.spacing.md,
+    paddingTop: theme.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border.light,
+    borderTopColor: theme.colors.border.light,
   },
   recommendationsTitle: {
-    marginBottom: Theme.spacing.sm,
-    color: Theme.colors.status.info,
+    marginBottom: theme.spacing.sm,
+    color: theme.colors.info,
   },
   recommendation: {
-    marginBottom: Theme.spacing.xs,
-    color: Theme.colors.text.secondary,
+    marginBottom: theme.spacing.xs,
+    color: theme.colors.textMuted,
   },
 });

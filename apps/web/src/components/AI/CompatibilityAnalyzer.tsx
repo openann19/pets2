@@ -1,7 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react'
-import { logger } from '@pawfectmatch/core';
-;
 import { motion, AnimatePresence } from 'framer-motion';
 import { HeartIcon, SparklesIcon, ChartBarIcon, UserGroupIcon, HomeIcon, ClockIcon, MapPinIcon, StarIcon, CheckCircleIcon, XCircleIcon, InformationCircleIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '@/lib/auth-store';

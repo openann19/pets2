@@ -4,12 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../services/api';
 
 interface PremiumGateProps {
-  navigation?: any;
+  navigation?: {
+    navigate?: (screen: string) => void;
+  };
 }
 
 interface PremiumStatus {
   status: 'active' | 'inactive' | 'expired';
   until?: string | null;
+}
+
+interface ApiResponse<T> {
+  data?: T;
 }
 
 /**
@@ -22,7 +28,8 @@ export function withPremiumGate<P extends object>(Component: React.ComponentType
       queryKey: ['premiumStatus'],
       queryFn: async () => {
         const response = await api.get('/premium/status');
-        return (response as any).data ?? (response as any);
+        const typedResponse = response as ApiResponse<PremiumStatus>;
+        return typedResponse.data ?? (response as PremiumStatus);
       },
     });
 

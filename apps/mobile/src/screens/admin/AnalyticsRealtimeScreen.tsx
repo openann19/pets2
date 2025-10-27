@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, RefreshControl } from "react-native";
 import { request } from "../../services/api";
-import { Theme } from "../../theme/unified-theme";
+
 
 type Row = { _id: string; count: number };
 
@@ -24,7 +24,7 @@ export default function AnalyticsRealtimeScreen() {
   useEffect(() => { 
     fetchAll(); 
     const id = setInterval(fetchAll, 15000); 
-    return () => clearInterval(id); 
+    return () => { clearInterval(id); }; 
   }, []);
 
   return (

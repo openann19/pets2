@@ -1,234 +1,272 @@
 /**
- * Mock Server for PawfectMatch Development
+ * Mock Server for PawfectMatch Mobile Development
  * 
- * Provides MSW (Mock Service Worker) handlers for all missing backend endpoints
- * Used during development and testing when real backend is unavailable
+ * Provides mock API endpoints for testing and development
+ * when backend is unavailable or for E2E testing
  */
 
-import { http, HttpResponse } from 'msw';
-import * as fs from 'fs';
-import * as path from 'path';
+import express from 'express';
+import cors from 'cors';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-// Base URL for API
-const API_BASE = process.env.API_BASE_URL || 'http://localhost:3000';
+const app = express();
+const PORT = 3001;
 
-/**
- * Load fixture data from JSON files
- */
-function loadFixture(fixturePath: string): any {
-  const fullPath = path.join(process.cwd(), 'mocks', 'fixtures', fixturePath);
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Mock Data
+const users = JSON.parse(
+  readFileSync(join(__dirname, '../mocks/fixtures/users.json'), 'utf-8')
+);
+const pets = JSON.parse(
+  readFileSync(join(__dirname, '../mocks/fixtures/pets.json'), 'utf-8')
+);
+const matches = JSON.parse(
+  readFileSync(join(__dirname, '../mocks/fixtures/matches.json'), 'utf-8')
+);
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Auth endpoints
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  const user = users.find((u: any) => u.email === email);
   
-  try {
-    const content = fs.readFileSync(fullPath, 'utf-8');
-    return JSON.parse(content);
-  } catch (error) {
-    console.error(`Failed to load fixture: ${fixturePath}`, error);
-    return { success: false, error: 'FIXTURE_NOT_FOUND', message: `Fixture ${fixturePath} not found` };
+  if (user && user.password === password) {
+    res.json({
+      token: 'mock-jwt-token',
+      refreshToken: 'mock-refresh-token',
+      user: { id: user.id, email: user.email, name: user.name }
+    });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
   }
-}
+});
 
-/**
- * Mock Service Worker handlers
- * All GDPR, Chat, AI, and Subscription endpoints
- */
-export const handlers = [
-  // ==================== GDPR Endpoints ====================
+app.post('/api/auth/register', (req, res) => {
+  res.json({
+    token: 'mock-jwt-token',
+    refreshToken: 'mock-refresh-token',
+    user: { id: 'new-user-id', ...req.body }
+  });
+});
+
+// GDPR endpoints
+app.delete('/api/users/delete-account', (req, res) => {
+  const gracePeriodEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   
-  /**
-   * DELETE /api/users/delete-account
-   * Request account deletion with 30-day grace period
-   */
-  http.delete(`${API_BASE}/api/users/delete-account`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { password?: string };
-    
-    // Simulate password validation
-    if (body.password !== 'correctpassword') {
-      return HttpResponse.json(loadFixture('gdpr/delete.invalid-password.json'), { status: 401 });
-    }
-    
-    return HttpResponse.json(loadFixture('gdpr/delete.success.json'));
-  }),
+  res.json({
+    success: true,
+    message: 'Account deletion scheduled',
+    requestId: `req-${Date.now()}`,
+    gracePeriodEndsAt: gracePeriodEndsAt.toISOString(),
+    canCancel: true,
+    exportUrl: `/api/users/export-data`
+  });
+});
+
+app.post('/api/users/confirm-deletion', (req, res) => {
+  const { token } = req.body;
   
-  /**
-   * POST /api/users/cancel-deletion
-   * Cancel pending account deletion
-   */
-  http.post(`${API_BASE}/api/users/cancel-deletion`, async () => {
-    return HttpResponse.json({
+  if (token === 'valid-token') {
+    res.json({
       success: true,
-      message: 'Account deletion cancelled successfully',
-      gracePeriodEndsAt: null
+      deletedAt: new Date().toISOString()
     });
-  }),
-  
-  /**
-   * POST /api/users/confirm-deletion
-   * Confirm and complete account deletion
-   */
-  http.post(`${API_BASE}/api/users/confirm-deletion`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { token?: string };
-    
-    if (!body.token) {
-      return HttpResponse.json({ success: false, error: 'MISSING_TOKEN', message: 'Invalid or missing token' }, { status: 400 });
-    }
-    
-    return HttpResponse.json({
-      success: true,
-      message: 'Account deleted successfully'
-    });
-  }),
-  
-  /**
-   * GET /api/users/export-data
-   * Export all user data (GDPR Article 20)
-   */
-  http.get(`${API_BASE}/api/users/export-data`, () => {
-    // Simulate export already in progress
-    return HttpResponse.json(loadFixture('gdpr/export.success.json'));
-  }),
-  
-  /**
-   * POST /api/users/request-export
-   * Initiate data export
-   */
-  http.post(`${API_BASE}/api/users/request-export`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { format?: 'json' | 'csv' };
-    
-    const format = body.format || 'json';
-    
-    return HttpResponse.json({
-      success: true,
-      message: 'Data export initiated',
-      estimatedTime: '5-10 minutes',
-      format,
-      estimatedCompletion: new Date(Date.now() + 10 * 60 * 1000).toISOString()
-    });
-  }),
+  } else {
+    res.status(400).json({ error: 'Invalid token' });
+  }
+});
 
-  // ==================== Chat Endpoints ====================
-  
-  /**
-   * POST /api/chat/reactions
-   * Send a reaction to a message
-   */
-  http.post(`${API_BASE}/api/chat/reactions`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { matchId?: string; messageId?: string; reaction?: string };
-    
-    if (!body.matchId || !body.messageId || !body.reaction) {
-      return HttpResponse.json({ success: false, error: 'MISSING_PARAMS', message: 'Missing required parameters' }, { status: 400 });
-    }
-    
-    return HttpResponse.json(loadFixture('chat/reaction.success.json'));
-  }),
-  
-  /**
-   * POST /api/chat/attachments
-   * Upload a file attachment
-   */
-  http.post(`${API_BASE}/api/chat/attachments`, async ({ request }) => {
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    
-    if (!file) {
-      return HttpResponse.json({ success: false, error: 'MISSING_FILE', message: 'No file provided' }, { status: 400 });
-    }
-    
-    // Simulate file size check
-    if (file.size > 10 * 1024 * 1024) { // 10MB
-      return HttpResponse.json(loadFixture('chat/attachment.error.json'), { status: 413 });
-    }
-    
-    return HttpResponse.json(loadFixture('chat/attachment.success.json'));
-  }),
-  
-  /**
-   * POST /api/chat/voice
-   * Upload a voice note
-   */
-  http.post(`${API_BASE}/api/chat/voice`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { matchId?: string; audioBlob?: Blob; duration?: number };
-    
-    if (!body.matchId || !body.duration) {
-      return HttpResponse.json({ success: false, error: 'MISSING_PARAMS', message: 'Missing required parameters' }, { status: 400 });
-    }
-    
-    // Simulate audio format check
-    if (body.duration > 300) { // 5 minutes
-      return HttpResponse.json({ success: false, error: 'DURATION_TOO_LONG', message: 'Voice note exceeds maximum duration' }, { status: 400 });
-    }
-    
-    return HttpResponse.json(loadFixture('chat/voice.success.json'));
-  }),
+app.get('/api/users/export-data', (req, res) => {
+  res.json({
+    url: 'https://example.com/export.json',
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    format: 'json'
+  });
+});
 
-  // ==================== AI Endpoints ====================
-  
-  /**
-   * POST /api/ai/compatibility
-   * Analyze compatibility between two pets
-   */
-  http.post(`${API_BASE}/api/ai/compatibility`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { petAId?: string; petBId?: string };
-    
-    if (!body.petAId || !body.petBId) {
-      return HttpResponse.json({ success: false, error: 'MISSING_PARAMS', message: 'Missing pet IDs' }, { status: 400 });
+app.post('/api/users/cancel-deletion', (req, res) => {
+  res.json({
+    success: true,
+    cancelledAt: new Date().toISOString()
+  });
+});
+
+// Matches endpoints
+app.get('/api/matches', (req, res) => {
+  res.json(matches);
+});
+
+app.get('/api/matches/:id', (req, res) => {
+  const match = matches.find((m: any) => m.id === req.params.id);
+  if (match) {
+    res.json(match);
+  } else {
+    res.status(404).json({ error: 'Match not found' });
+  }
+});
+
+app.post('/api/matches', (req, res) => {
+  const newMatch = {
+    id: `match-${Date.now()}`,
+    ...req.body,
+    createdAt: new Date().toISOString()
+  };
+  res.json(newMatch);
+});
+
+// Chat endpoints
+app.get('/api/chat/:conversationId/messages', (req, res) => {
+  res.json({
+    messages: [
+      {
+        id: 'msg-1',
+        text: 'Hello!',
+        senderId: 'user-1',
+        timestamp: new Date().toISOString()
+      }
+    ]
+  });
+});
+
+app.post('/api/chat/:conversationId/message', (req, res) => {
+  res.json({
+    id: `msg-${Date.now()}`,
+    ...req.body,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post('/api/chat/:conversationId/reaction', (req, res) => {
+  res.json({
+    success: true,
+    updatedMessage: {
+      ...req.body,
+      reactions: [{ type: req.body.reactionType, count: 1 }]
     }
-    
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return HttpResponse.json(loadFixture('ai/compatibility.success.json'));
-  }),
+  });
+});
 
-  // ==================== Subscription Endpoints ====================
-  
-  /**
-   * GET /api/subscription/plans
-   * Get available subscription plans
-   */
-  http.get(`${API_BASE}/api/subscription/plans`, () => {
-    return HttpResponse.json(loadFixture('subscription/plans.json'));
-  }),
-  
-  /**
-   * POST /api/subscription/checkout
-   * Create Stripe checkout session
-   */
-  http.post(`${API_BASE}/api/subscription/checkout`, async ({ request }) => {
-    const body = await request.json().catch(() => ({})) as { planId?: string; interval?: 'month' | 'year' };
-    
-    if (!body.planId || !body.interval) {
-      return HttpResponse.json({ success: false, error: 'MISSING_PARAMS', message: 'Missing plan ID or interval' }, { status: 400 });
+app.post('/api/chat/:conversationId/attachment', (req, res) => {
+  res.json({
+    success: true,
+    messageId: `msg-${Date.now()}`,
+    attachmentId: `att-${Date.now()}`,
+    url: 'https://example.com/attachment.jpg',
+    type: req.body.type,
+    fileSize: 1024 * 1024 // 1MB
+  });
+});
+
+app.post('/api/chat/:conversationId/voice', (req, res) => {
+  res.json({
+    success: true,
+    messageId: `msg-${Date.now()}`,
+    audioUrl: 'https://example.com/voice.mp3',
+    duration: req.body.duration
+  });
+});
+
+// Pets endpoints
+app.get('/api/pets', (req, res) => {
+  res.json(pets);
+});
+
+app.get('/api/pets/:id', (req, res) => {
+  const pet = pets.find((p: any) => p.id === req.params.id);
+  if (pet) {
+    res.json(pet);
+  } else {
+    res.status(404).json({ error: 'Pet not found' });
+  }
+});
+
+// Premium endpoints
+app.get('/api/premium/status', (req, res) => {
+  res.json({
+    hasActiveSubscription: false,
+    tier: 'free',
+    expiresAt: null
+  });
+});
+
+app.post('/api/premium/subscribe', (req, res) => {
+  res.json({
+    sessionId: `session-${Date.now()}`,
+    url: 'https://checkout.example.com'
+  });
+});
+
+// AI endpoints
+app.post('/api/ai/generate-bio', (req, res) => {
+  res.json({
+    bio: 'This is a generated bio',
+    keywords: ['friendly', 'active'],
+    sentiment: { score: 0.9, label: 'positive' },
+    matchScore: 85
+  });
+});
+
+app.post('/api/ai/analyze-photos', (req, res) => {
+  res.json({
+    breed_analysis: {
+      primary_breed: 'Golden Retriever',
+      confidence: 0.95
+    },
+    health_assessment: {
+      age_estimate: 3,
+      health_score: 90,
+      recommendations: []
+    },
+    photo_quality: {
+      overall_score: 0.9,
+      lighting_score: 0.9,
+      composition_score: 0.85,
+      clarity_score: 0.9
+    },
+    matchability_score: 85,
+    ai_insights: ['Well-groomed', 'Good lighting']
+  });
+});
+
+app.post('/api/ai/enhanced-compatibility', (req, res) => {
+  res.json({
+    compatibility_score: 85,
+    ai_analysis: 'These pets are highly compatible',
+    breakdown: {
+      personality_compatibility: 90,
+      lifestyle_compatibility: 85,
+      activity_compatibility: 80,
+      social_compatibility: 90,
+      environment_compatibility: 80
+    },
+    recommendations: {
+      meeting_suggestions: ['Dog park', 'Indoor play'],
+      activity_recommendations: ['Fetch', 'Tug of war'],
+      supervision_requirements: ['Close supervision initially'],
+      success_probability: 0.85
     }
-    
-    return HttpResponse.json(loadFixture('subscription/checkout.success.json'));
-  }),
-  
-  /**
-   * POST /api/subscription/webhook
-   * Handle Stripe webhook events
-   */
-  http.post(`${API_BASE}/api/subscription/webhook`, async ({ request }) => {
-    const body = await request.json().catch(() => ({}));
-    
-    // Simulate webhook processing
-    return HttpResponse.json({
-      success: true,
-      message: 'Webhook received',
-      eventType: body.type || 'unknown'
-    });
-  }),
-];
+  });
+});
 
-/**
- * Setup function for MSW
- */
-export function setupMockServer() {
-  console.log('📦 Mock Server initialized');
-  console.log('Available endpoints:');
-  console.log('  - GDPR: DELETE /api/users/delete-account, GET /api/users/export-data');
-  console.log('  - Chat: POST /api/chat/reactions, POST /api/chat/attachments, POST /api/chat/voice');
-  console.log('  - AI: POST /api/ai/compatibility');
-  console.log('  - Subscription: GET /api/subscription/plans, POST /api/subscription/checkout');
-  console.log(`Using API base URL: ${API_BASE}`);
-}
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Mock server running on http://localhost:${PORT}`);
+  console.log('📝 Available endpoints:');
+  console.log('  - POST /api/auth/login');
+  console.log('  - DELETE /api/users/delete-account');
+  console.log('  - GET /api/matches');
+  console.log('  - GET /api/pets');
+  console.log('  - POST /api/chat/:id/reaction');
+  console.log('  - POST /api/chat/:id/attachment');
+  console.log('  - POST /api/ai/generate-bio');
+});
 
+export default app;

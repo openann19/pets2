@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 interface ModerationToolsScreenProps {
@@ -43,7 +44,7 @@ function ModerationToolsScreen({
       title: "User Reports",
       description: "Review and moderate reported content",
       icon: "flag-outline",
-      color: "Theme.colors.status.error",
+      color: theme.colors.danger,
       badge: pendingReports.toString(),
       action: () => {
         Alert.alert("User Reports", "Reports moderation coming soon!");
@@ -54,7 +55,7 @@ function ModerationToolsScreen({
       title: "Content Moderation",
       description: "Review photos and profiles for violations",
       icon: "images-outline",
-      color: "Theme.colors.status.warning",
+      color: theme.colors.warning,
       action: () => {
         Alert.alert("Content Moderation", "Content moderation coming soon!");
       },
@@ -64,7 +65,7 @@ function ModerationToolsScreen({
       title: "Message Monitoring",
       description: "Monitor chat messages for inappropriate content",
       icon: "chatbubble-ellipses-outline",
-      color: "Theme.colors.secondary[500]",
+      color: theme.colors.secondary[500],
       action: () => {
         navigation.goBack();
       }, // Navigate back to admin chats
@@ -74,7 +75,7 @@ function ModerationToolsScreen({
       title: "User Management",
       description: "Manage user accounts and permissions",
       icon: "people-outline",
-      color: "Theme.colors.status.success",
+      color: theme.colors.success,
       action: () => {
         Alert.alert("User Management", "User management coming soon!");
       },
@@ -94,7 +95,7 @@ function ModerationToolsScreen({
       title: "Moderation Settings",
       description: "Configure moderation rules and thresholds",
       icon: "settings-outline",
-      color: "Theme.colors.primary[500]",
+      color: theme.colors.primary[500],
       action: () => {
         Alert.alert("Settings", "Moderation settings coming soon!");
       },
@@ -129,7 +130,7 @@ function ModerationToolsScreen({
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => {
+             testID="ModerationToolsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
                 () => {},
               );
@@ -177,7 +178,7 @@ function ModerationToolsScreen({
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.toolCard}
-              onPress={() => {
+               testID="ModerationToolsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleToolPress(item);
               }}
             >
@@ -218,8 +219,8 @@ function ModerationToolsScreen({
               <Ionicons
                 name="shield-checkmark-outline"
                 size={24}
-                color="Theme.colors.status.success"
-              />
+                color={theme.colors.success
+             } }/>
               <Text style={styles.infoText}>
                 Use these tools to maintain a safe and positive community for
                 all pet lovers.
@@ -232,34 +233,34 @@ function ModerationToolsScreen({
         <BlurView intensity={15} style={styles.quickActions}>
           <TouchableOpacity
             style={styles.quickActionButton}
-            onPress={() => {
+             testID="ModerationToolsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Alert.alert(
                 "Emergency",
                 "Emergency moderation mode coming soon!",
               );
             }}
           >
-            <Ionicons name="warning-outline" size={20} color="Theme.colors.status.error" />
+            <Ionicons name="warning-outline" size={20} color={theme.colors.danger} }/>
             <Text style={styles.quickActionText}>Emergency Mode</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.quickActionButton}
-            onPress={() => {
+             testID="ModerationToolsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Alert.alert("Guidelines", "Community guidelines coming soon!");
             }}
           >
-            <Ionicons name="document-text-outline" size={20} color="Theme.colors.status.info" />
+            <Ionicons name="document-text-outline" size={20} color={theme.colors.status.info} }/>
             <Text style={styles.quickActionText}>Guidelines</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.quickActionButton}
-            onPress={() => {
+             testID="ModerationToolsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
               Alert.alert("Training", "Moderator training coming soon!");
             }}
           >
-            <Ionicons name="school-outline" size={20} color="Theme.colors.status.success" />
+            <Ionicons name="school-outline" size={20} color={theme.colors.success} }/>
             <Text style={styles.quickActionText}>Training</Text>
           </TouchableOpacity>
         </BlurView>
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   badge: {
-    backgroundColor: "Theme.colors.status.error",
+    backgroundColor: theme.colors.danger,
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,

@@ -3,7 +3,7 @@
  * Implements double-submit cookie pattern for cookie-based authentication
  */
 
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import logger from '../utils/logger';
 
@@ -149,5 +149,3 @@ export function setCsrfToken(req: Request, res: Response, next: NextFunction): v
 
   next();
 }
-
-export { csrfProtection, setCsrfToken, generateCsrfToken };

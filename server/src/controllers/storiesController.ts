@@ -4,6 +4,7 @@
  */
 
 import type { Request, Response } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 import Story from '../models/Story';
 import AnalyticsEvent from '../models/AnalyticsEvent';
 import Notification from '../models/Notification';
@@ -14,7 +15,7 @@ const logger = require('../utils/logger');
 
 // Type definitions
 interface AuthRequest extends Request {
-  user?: any;
+  user?: IUserDocument;
 }
 
 interface CreateStoryBody {
@@ -65,19 +66,19 @@ const ALLOWED_IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'im
 const ALLOWED_VIDEO_MIME = new Set(['video/mp4', 'video/quicktime', 'video/webm']);
 
 // Helper functions
-function ok(res: Response, status: number, payload: any) {
-  return res.status(status).json({ success: true, ...payload });
+function ok(res: Response, status: number, payload: Record<string, unknown>): void {
+  res.status(status).json({ success: true, ...payload });
 }
 
-function fail(res: Response, status: number, message: string, meta?: any) {
-  const body: any = { success: false, message };
+function fail(res: Response, status: number, message: string, meta?: Record<string, unknown>): void {
+  const body: { success: boolean; message: string; meta?: Record<string, unknown> } = { success: false, message };
   if (meta && process.env.NODE_ENV !== 'production') {
     body.meta = meta;
   }
-  return res.status(status).json(body);
+  res.status(status).json(body);
 }
 
-async function track(eventType: string, payload: any = {}) {
+async function track(eventType: string, payload: Record<string, unknown> = {}) {
   try {
     await AnalyticsEvent.create({
       userId: payload.userId || undefined,
@@ -94,7 +95,7 @@ async function track(eventType: string, payload: any = {}) {
   }
 }
 
-function requireAuth(req: AuthRequest, res: Response): any {
+function requireAuth(req: AuthRequest, res: Response): IUserDocument | null {
   const user = req.user;
   if (!user || !user._id) {
     fail(res, 401, 'Unauthorized');
@@ -103,7 +104,7 @@ function requireAuth(req: AuthRequest, res: Response): any {
   return user;
 }
 
-function normalizeMediaType(mediaType: string | undefined, file: any): 'photo' | 'video' {
+function normalizeMediaType(mediaType: string | undefined, file: { mimetype: string; size: number }): 'photo' | 'video' {
   const raw = (mediaType || '').toLowerCase();
   if (raw === 'video') return 'video';
   if (raw === 'photo' || raw === 'image') return 'photo';
@@ -125,9 +126,9 @@ function cloudinaryOptions(normalizedType: 'photo' | 'video', userId: string) {
   if (normalizedType === 'video') {
     return {
       ...common,
-      resource_type: 'video',
+      resource_type: 'video' as const,
       transformation: [
-        ...common.transformation,
+        ...common.transformation!,
         { quality: 'auto', fetch_format: 'auto' },
       ],
       eager: [
@@ -139,9 +140,9 @@ function cloudinaryOptions(normalizedType: 'photo' | 'video', userId: string) {
 
   return {
     ...common,
-    resource_type: 'image',
+    resource_type: 'image' as const,
     transformation: [
-      ...common.transformation,
+      ...common.transformation!,
       { quality: 'auto:good' },
     ],
   };
@@ -170,35 +171,46 @@ export const createStory = async (req: AuthRequest, res: Response): Promise<void
     const { caption, duration, mediaType }: CreateStoryBody = req.body || {};
     const userId = authUser._id;
 
-    if (!req.files || !Array.isArray(req.files) || req.files.length === 0 || !req.files[0].buffer) {
-      return fail(res, 400, 'Media file is required');
+    if (!req.files || !Array.isArray(req.files) || req.files.length === 0 || !(req.files[0] as { buffer: Buffer }).buffer) {
+      fail(res, 400, 'Media file is required');
+      return;
     }
 
     const file = req.files[0];
+    if (!file || !file.buffer) {
+      fail(res, 400, 'Media file is required');
+      return;
+    }
     const normalizedType = normalizeMediaType(mediaType, file);
     const options = cloudinaryOptions(normalizedType, userId.toString());
 
     // File validations: mimetype and size caps
-    const { mimetype, size } = file;
+    const mimetype = file.mimetype;
+    const size = file.size;
     if (normalizedType === 'photo') {
       if (mimetype && !ALLOWED_IMAGE_MIME.has(mimetype)) {
-        return fail(res, 415, 'Unsupported image type');
+        fail(res, 415, 'Unsupported image type');
+        return;
       }
       if (typeof size === 'number' && size > MAX_IMAGE_SIZE_BYTES) {
-        return fail(res, 413, 'Image too large');
+        fail(res, 413, 'Image too large');
+        return;
       }
     } else {
       if (mimetype && !ALLOWED_VIDEO_MIME.has(mimetype)) {
-        return fail(res, 415, 'Unsupported video type');
+        fail(res, 415, 'Unsupported video type');
+        return;
       }
       if (typeof size === 'number' && size > MAX_VIDEO_SIZE_BYTES) {
-        return fail(res, 413, 'Video too large');
+        fail(res, 413, 'Video too large');
+        return;
       }
     }
 
     // Caption validation
     if (caption && typeof caption === 'string' && caption.length > MAX_CAPTION_LENGTH) {
-      return fail(res, 400, `Caption too long (max ${MAX_CAPTION_LENGTH} characters)`);
+      fail(res, 400, `Caption too long (max ${MAX_CAPTION_LENGTH} characters)`);
+      return;
     }
 
     // Duration validation
@@ -211,10 +223,18 @@ export const createStory = async (req: AuthRequest, res: Response): Promise<void
     }
 
     // Upload to Cloudinary
-    const uploadResult: CloudinaryUploadResult = await uploadToCloudinary(file.buffer, options);
+    const uploadResult: CloudinaryUploadResult = await uploadToCloudinary(file.buffer!, options);
 
     // Prepare story data
-    const storyData: any = {
+    const storyData: {
+      userId: string;
+      mediaUrl: string;
+      mediaPublicId: string;
+      mediaType: 'photo' | 'video';
+      caption?: string;
+      duration: number;
+      expiresAt: Date;
+    } = {
       userId,
       mediaType: normalizedType,
       mediaUrl: uploadResult.secure_url,
@@ -243,7 +263,7 @@ export const createStory = async (req: AuthRequest, res: Response): Promise<void
       metadata: { mediaType: normalizedType, hasCaption: !!caption }
     });
 
-    return ok(res, 201, {
+    ok(res, 201, {
       message: 'Story created successfully',
       story: {
         _id: story._id,
@@ -259,7 +279,7 @@ export const createStory = async (req: AuthRequest, res: Response): Promise<void
 
   } catch (error) {
     logger.error('Error creating story', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to create story');
+    fail(res, 500, 'Failed to create story');
   }
 };
 
@@ -280,16 +300,17 @@ export const getStoriesFeed = async (req: AuthRequest, res: Response): Promise<v
     if (mode === 'flat') {
       const items = await Story.getActiveFeedStories(userId, followingIds, { cursor, limit });
       const nextCursor = items.length === limit ? items[items.length - 1].createdAt : null;
-      return ok(res, 200, { stories: items, nextCursor });
+      ok(res, 200, { stories: items, nextCursor });
+      return;
     }
 
     // Default: grouped feed (existing behavior)
     const grouped = await Story.getStoriesGroupedByUser(userId, followingIds, { cursor, limit });
-    return ok(res, 200, { stories: grouped });
+    ok(res, 200, { stories: grouped });
 
   } catch (error) {
     logger.error('Error fetching stories feed', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to fetch stories');
+    fail(res, 500, 'Failed to fetch stories');
   }
 };
 
@@ -301,7 +322,8 @@ export const getUserStories = async (req: Request, res: Response): Promise<void>
   try {
     const { userId } = req.params || {};
     if (!userId) {
-      return fail(res, 400, 'userId is required');
+      fail(res, 400, 'userId is required');
+      return;
     }
 
     const { page: pageStr, limit: limitStr, cursor }: UserStoriesQuery = req.query || {};
@@ -311,11 +333,11 @@ export const getUserStories = async (req: Request, res: Response): Promise<void>
     const stories = await Story.getUserActiveStories(userId, { cursor, limit: limit || undefined });
     const nextCursor = stories.length === limit ? stories[stories.length - 1].createdAt : null;
 
-    return ok(res, 200, { stories, nextCursor, page, limit: limit || undefined });
+    ok(res, 200, { stories, nextCursor, page, limit: limit || undefined });
 
   } catch (error) {
     logger.error('Error fetching user stories', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to fetch user stories');
+    fail(res, 500, 'Failed to fetch user stories');
   }
 };
 
@@ -356,11 +378,11 @@ export const viewStory = async (req: AuthRequest, res: Response): Promise<void> 
       success: true
     });
 
-    return ok(res, 200, { message: 'Story viewed successfully' });
+    ok(res, 200, { message: 'Story viewed successfully' });
 
   } catch (error) {
     logger.error('Error viewing story', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to view story');
+    fail(res, 500, 'Failed to view story');
   }
 };
 
@@ -377,23 +399,25 @@ export const replyToStory = async (req: AuthRequest, res: Response): Promise<voi
     const { content, type }: ReplyToStoryBody = req.body;
 
     if (!storyId) {
-      return fail(res, 400, 'storyId is required');
+      fail(res, 400, 'storyId is required');
+      return;
     }
 
     if (!content || typeof content !== 'string' || content.trim().length === 0) {
-      return fail(res, 400, 'Reply content is required');
+      fail(res, 400, 'Reply content is required');
+      return;
     }
 
     const story = await Story.findById(storyId).populate('userId', 'name username');
     if (!story) {
-      return fail(res, 404, 'Story not found');
+      fail(res, 404, 'Story not found');
+      return;
     }
 
     // Create reply
     const reply = {
-      userId: authUser._id,
-      userName: authUser.name || authUser.username,
-      content: content.trim(),
+      userId: authUser._id.toString(),
+      message: content.trim(),
       createdAt: new Date()
     };
 
@@ -403,7 +427,12 @@ export const replyToStory = async (req: AuthRequest, res: Response): Promise<voi
     // If user requested DM creation
     if (type === 'dm') {
       try {
-        await createDMFromStoryReply(storyId, authUser._id, content.trim());
+        await createDMFromStoryReply(
+          authUser._id.toString(), 
+          (story.userId as { _id?: { toString: () => string } })._id?.toString() || story.userId.toString(),
+          content.trim(),
+          storyId
+        );
       } catch (dmError) {
         logger.warn('Failed to create DM from story reply', { error: dmError });
       }
@@ -418,11 +447,11 @@ export const replyToStory = async (req: AuthRequest, res: Response): Promise<voi
       metadata: { replyType: type || 'text' }
     });
 
-    return ok(res, 201, { message: 'Reply added successfully', reply });
+    ok(res, 201, { message: 'Reply added successfully', reply });
 
   } catch (error) {
     logger.error('Error replying to story', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to reply to story');
+    fail(res, 500, 'Failed to reply to story');
   }
 };
 
@@ -439,12 +468,14 @@ export const deleteStory = async (req: AuthRequest, res: Response): Promise<void
     const userId = authUser._id;
 
     if (!storyId) {
-      return fail(res, 400, 'storyId is required');
+      fail(res, 400, 'storyId is required');
+      return;
     }
 
     const story = await Story.findOne({ _id: storyId, userId });
     if (!story) {
-      return fail(res, 404, 'Story not found or not authorized');
+      fail(res, 404, 'Story not found or not authorized');
+      return;
     }
 
     // Delete from Cloudinary
@@ -465,11 +496,11 @@ export const deleteStory = async (req: AuthRequest, res: Response): Promise<void
       success: true
     });
 
-    return ok(res, 200, { message: 'Story deleted successfully' });
+    ok(res, 200, { message: 'Story deleted successfully' });
 
   } catch (error) {
     logger.error('Error deleting story', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to delete story');
+    fail(res, 500, 'Failed to delete story');
   }
 };
 
@@ -486,21 +517,23 @@ export const getStoryViews = async (req: AuthRequest, res: Response): Promise<vo
     const userId = authUser._id;
 
     if (!storyId) {
-      return fail(res, 400, 'storyId is required');
+      fail(res, 400, 'storyId is required');
+      return;
     }
 
     const story = await Story.findOne({ _id: storyId, userId })
       .populate('views.userId', 'name username profilePhoto');
 
     if (!story) {
-      return fail(res, 404, 'Story not found or not authorized');
+      fail(res, 404, 'Story not found or not authorized');
+      return;
     }
 
-    return ok(res, 200, { views: story.views, viewCount: story.viewCount });
+    ok(res, 200, { views: story.views, viewCount: story.viewCount });
 
   } catch (error) {
     logger.error('Error fetching story views', { error: (error as Error)?.message, stack: (error as Error)?.stack });
-    return fail(res, 500, 'Failed to fetch story views');
+    fail(res, 500, 'Failed to fetch story views');
   }
 };
 

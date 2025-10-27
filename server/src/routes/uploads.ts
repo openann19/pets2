@@ -1,24 +1,41 @@
-import { Router } from "express";
-import { authenticateToken } from "../middleware/auth";
-import crypto from "crypto";
-import { getSignedPutUrl } from "../services/s3";
+/**
+ * Uploads Routes for PawReels
+ */
+
+import { Router } from 'express';
+import { z } from 'zod';
+import { presignUpload, validatePresignedUpload } from '../services/s3';
 
 const router = Router();
 
-router.post("/voice/presign", authenticateToken, async (req, res) => {
-  const { contentType } = req.body as { contentType: string };
-  const key = `voice/${req.user.id}/${Date.now()}-${crypto.randomBytes(4).toString("hex")}.webm`;
-  const url = await getSignedPutUrl(key, contentType, 60);
-  res.json({ key, url });
+const presignSchema = z.object({
+  files: z.array(z.object({
+    key: z.string(),
+    contentType: z.string().optional(),
+  })),
 });
 
-router.post("/photos/presign", authenticateToken, async (req, res) => {
-  const { contentType } = req.body as { contentType: string };
-  const ext = contentType.includes("png") ? "png" : contentType.includes("webp") ? "webp" : "jpg";
-  const key = `photos/${req.user.id}/${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
-  const url = await getSignedPutUrl(key, contentType, 90);
-  res.json({ key, url });
+/**
+ * POST /uploads/sign
+ * Generate signed URLs for direct S3 uploads
+ */
+router.post('/sign', async (req, res) => {
+  try {
+    const body = presignSchema.parse(req.body);
+    
+    const urls = await Promise.all(
+      body.files.map(async (file) => {
+        if (file.contentType) {
+          validatePresignedUpload(file.key, file.contentType);
+        }
+        return await presignUpload({ key: file.key, contentType: file.contentType });
+      })
+    );
+    
+    res.json(urls);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 export default router;
-

@@ -131,8 +131,10 @@ export default function ARScentTrailsScreen() {
       <View style={styles.controls}>
         <TouchableOpacity
           style={styles.controlButton}
-          onPress={() => setShowHUD(!showHUD)}
           testID="btn-toggle-hud"
+          accessibilityLabel={showHUD ? "Hide HUD" : "Show HUD"}
+          accessibilityRole="button"
+          onPress={() => { setShowHUD(!showHUD); }}
         >
           <Ionicons name={showHUD ? "eye" : "eye-off"} size={24} color="#fff" />
         </TouchableOpacity>

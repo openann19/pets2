@@ -1,0 +1,107 @@
+{
+  "reels": {
+    "title": "PawReels",
+    "create_reel": "Create Reel",
+    "watch_reel": "Watch Reel",
+    "remix": "Remix",
+    "share": "Share",
+    "save": "Save to Camera Roll",
+    "likes": "{{count}} likes",
+    "shares": "{{count}} shares",
+    "views": "{{count}} views",
+    "loading": "Loading...",
+    "error": "Error loading reel",
+    "no_reels": "No reels available",
+    "select_template": "Select Template",
+    "select_track": "Select Track",
+    "add_clips": "Add Clips",
+    "preview": "Preview",
+    "render": "Render",
+    "rendering": "Rendering...",
+    "please_wait": "Please wait while we render your reel",
+    "render_complete": "Your reel is ready!",
+    "render_failed": "Failed to render reel. Please try again.",
+    "template_description": "Choose a template to style your reel",
+    "track_description": "Select a music track for your reel",
+    "clip_count": "{{current}}/{{max}} clips",
+    "add_captions": "Add Captions",
+    "caption_optional": "Optional: Add captions to your clips",
+    "watermark": "Watermark",
+    "watermark_description": "Add PawfectMatch watermark to your reel",
+    "export": "Export Reel",
+    "share_to": "Share to {{platform}}",
+    "copy_link": "Copy Link",
+    "link_copied": "Link copied!",
+    "share_success": "Reel shared successfully!",
+    "share_failed": "Failed to share reel",
+    "remix_success": "Remixed successfully!",
+    "remix_failed": "Failed to create remix",
+    "remix_description": "Create a remix of this reel using your own clips",
+    "deeplink_title": "Check out this PawReel!",
+    "deeplink_description": "Watch this awesome pet reel on PawfectMatch",
+    "channels": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "snapchat": "Snapchat",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "copy_link": "Copy Link",
+      "save": "Save to Photos"
+    },
+    "status": {
+      "draft": "Draft",
+      "rendering": "Rendering",
+      "public": "Public",
+      "flagged": "Flagged",
+      "removed": "Removed"
+    },
+    "themes": {
+      "pets": "Pets",
+      "adventure": "Adventure",
+      "cute": "Cute",
+      "trending": "Trending",
+      "seasonal": "Seasonal"
+    },
+    "genres": {
+      "pop": "Pop",
+      "electronic": "Electronic",
+      "hip_hop": "Hip Hop",
+      "rock": "Rock",
+      "folk": "Folk",
+      "jazz": "Jazz",
+      "classical": "Classical"
+    },
+    "moods": {
+      "happy": "Happy",
+      "energetic": "Energetic",
+      "chill": "Chill",
+      "dramatic": "Dramatic",
+      "romantic": "Romantic",
+      "funny": "Funny"
+    },
+    "cta": {
+      "adopt": "Adopt",
+      "follow": "Follow",
+      "join_challenge": "Join Challenge",
+      "learn_more": "Learn More"
+    },
+    "analytics": {
+      "title": "Reel Analytics",
+      "views": "Views",
+      "shares": "Shares",
+      "remixes": "Remixes",
+      "installs": "Installs",
+      "k_factor": "K-Factor"
+    },
+    "step_media": "Pick Media",
+    "step_template": "Choose Template",
+    "step_music": "Choose Track",
+    "step_share": "Share",
+    "pick_media": "Pick photos/videos",
+    "clips_range": "{{min}}–{{max}} clips",
+    "bpm": "{{bpm}} BPM",
+    "back": "Back",
+    "make_magic": "Make Magic"
+  }
+}
+

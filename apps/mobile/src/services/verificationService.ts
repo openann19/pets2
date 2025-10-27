@@ -223,6 +223,10 @@ class VerificationService {
     documentType: string,
     verificationType?: string
   ): Promise<string> {
+    if (!fileUri || fileUri.trim() === '') {
+      throw new Error('Empty file');
+    }
+
     try {
       const FormData = require('form-data');
       const formData = new FormData();

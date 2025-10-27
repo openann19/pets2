@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import React, { Component } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Theme } from '../theme/unified-theme';
 
 interface Props {
   children: ReactNode;
@@ -37,6 +36,10 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   override render() {
+    // Create a factory function for styles that can be called with theme values
+    // For now, we'll use default values that match the new theme system
+    const styles = makeStyles();
+    
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
@@ -48,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <Ionicons
               name="warning"
               size={64}
-              color="Theme.colors.status.error"
+              color="#DC2626" // danger color
               style={styles.icon}
             />
             <Text style={styles.title}>Oops! Something went wrong</Text>
@@ -75,7 +78,7 @@ export class ErrorBoundary extends Component<Props, State> {
               style={styles.retryButton}
               onPress={this.handleRetry}
             >
-              <Ionicons name="refresh" size={20} color="Theme.colors.neutral[0]" />
+              <Ionicons name="refresh" size={20} color="#FFFFFF" />
               <Text style={styles.retryText}>Try Again</Text>
             </TouchableOpacity>
           </View>
@@ -87,10 +90,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-const styles = StyleSheet.create({
+const makeStyles = () => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "Theme.colors.background.secondary",
+    backgroundColor: "#FFFFFF", // bg color
   },
   content: {
     flex: 1,
@@ -104,13 +107,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "Theme.colors.neutral[900]",
+    color: "#000000", // text color
     textAlign: "center",
     marginBottom: 12,
   },
   message: {
     fontSize: 16,
-    color: "Theme.colors.neutral[500]",
+    color: "#666666", // textMuted color
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
@@ -145,11 +148,11 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "Theme.colors.secondary[500]",
+    backgroundColor: "#3B82F6", // primary color
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
-    shadowColor: "Theme.colors.secondary[500]",
+    shadowColor: "#3B82F6",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -159,7 +162,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   retryText: {
-    color: "Theme.colors.neutral[0]",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,

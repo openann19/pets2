@@ -59,6 +59,7 @@ export interface IUserPremiumUsage {
   boostsLimit: number;
   messagesSent: number;
   profileViews: number;
+  rewindsUsed: number;
 }
 
 /**
@@ -167,6 +168,7 @@ export interface IUser extends Document {
   deletionFeedback?: string;
   deletionGracePeriodEndsAt?: Date;
   deletionCompletedAt?: Date;
+  stripeCustomerId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -349,7 +351,7 @@ export interface IPet extends Document {
  * Pet methods (instance methods)
  */
 export interface IPetMethods {
-  updateAnalytics(action: 'view' | 'like' | 'match' | 'message'): Promise<any>;
+  updateAnalytics(action: 'view' | 'like' | 'match' | 'message'): Promise<void>;
   isCompatibleWith(otherPet: IPet): boolean;
   toJSON(): Partial<IPet>;
 }
@@ -499,11 +501,11 @@ export interface IMatch extends Document {
  * Match methods (instance methods)
  */
 export interface IMatchMethods {
-  addMessage(senderId: string, content: string, messageType?: string, attachments?: IMatchMessageAttachment[]): Promise<any>;
-  markMessagesAsRead(userId: string): Promise<any>;
+  addMessage(senderId: string, content: string, messageType?: string, attachments?: IMatchMessageAttachment[]): Promise<IMatchDocument>;
+  markMessagesAsRead(userId: string): Promise<IMatchDocument>;
   isUserBlocked(userId: string): boolean;
-  toggleArchive(userId: string): Promise<any>;
-  toggleFavorite(userId: string): Promise<any>;
+  toggleArchive(userId: string): Promise<IMatchDocument>;
+  toggleFavorite(userId: string): Promise<IMatchDocument>;
 }
 
 /**
@@ -528,15 +530,39 @@ export interface IConversationMessageRead {
 }
 
 /**
+ * Conversation message reaction
+ */
+export interface IConversationMessageReaction {
+  userId: string;
+  emoji: string;
+  createdAt: Date;
+}
+
+/**
  * Conversation message
  */
 export interface IConversationMessage {
   _id?: string;
   sender: string;
   content: string;
+  messageType: 'text' | 'location' | 'image' | 'system';
   attachments: string[];
+  reactions: IConversationMessageReaction[];
+  isEdited: boolean;
+  editedAt?: Date;
+  isDeleted: boolean;
+  deletedAt?: Date;
   sentAt: Date;
   readBy: IConversationMessageRead[];
+}
+
+/**
+ * Conversation user actions
+ */
+export interface IConversationUserActions {
+  blockedBy: string[];
+  favoritedBy: string[];
+  archivedBy: string[];
 }
 
 /**
@@ -546,6 +572,9 @@ export interface IConversation extends Document {
   participants: string[];
   lastMessageAt: Date;
   messages: IConversationMessage[];
+  isArchivedBy: string[];
+  isUserBlocked: string[];
+  userActions: IConversationUserActions;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -554,16 +583,18 @@ export interface IConversation extends Document {
  * Conversation methods (instance methods)
  */
 export interface IConversationMethods {
-  addMessage(senderId: string, content: string, attachments?: string[]): Promise<any>;
+  addMessage(senderId: string, content: string, attachments?: string[]): Promise<IConversationDocument>;
   markMessagesAsRead(userId: string): Promise<boolean>;
+  toggleArchive(userId: string): Promise<void>;
+  toggleFavorite(userId: string): Promise<void>;
 }
 
 /**
  * Conversation statics (model methods)
  */
 export interface IConversationModel extends Model<IConversation, Record<string, never>, IConversationMethods> {
-  findOrCreateOneToOne(userA: string, userB: string): Promise<any>;
-  getMessagesPage(conversationId: string, options: { before?: string; limit?: number }): Promise<any>;
+  findOrCreateOneToOne(userA: string, userB: string): Promise<IConversationDocument>;
+  getMessagesPage(conversationId: string, options: { before?: string; limit?: number }): Promise<{ messages: IConversationMessage[]; hasMore: boolean; nextCursor?: string }>;
 }
 
 /**
@@ -622,9 +653,9 @@ export interface IStoryMethods {
  * Story statics (model methods)
  */
 export interface IStoryModel extends Model<IStory, Record<string, never>, IStoryMethods> {
-  getActiveFeedStories(userId: string, followingIds?: string[], options?: Record<string, unknown>): Promise<any>;
-  getUserActiveStories(userId: string, options?: Record<string, unknown>): Promise<any>;
-  getStoriesGroupedByUser(userId: string, followingIds?: string[], options?: Record<string, unknown>): Promise<any>;
+  getActiveFeedStories(userId: string, followingIds?: string[], options?: Record<string, unknown>): Promise<IStoryDocument[]>;
+  getUserActiveStories(userId: string, options?: Record<string, unknown>): Promise<IStoryDocument[]>;
+  getStoriesGroupedByUser(userId: string, followingIds?: string[], options?: Record<string, unknown>): Promise<Array<{ _id: string; stories: IStoryDocument[] }>>;
   deleteExpiredStories(): Promise<number>;
 }
 
@@ -655,7 +686,7 @@ export interface INotification extends Document {
  * Notification methods (instance methods)
  */
 export interface INotificationMethods {
-  markAsRead(): Promise<any>;
+  markAsRead(): Promise<INotificationDocument>;
 }
 
 /**
@@ -663,7 +694,7 @@ export interface INotificationMethods {
  */
 export interface INotificationModel extends Model<INotification, Record<string, never>, INotificationMethods> {
   getUnreadCount(userId: string): Promise<number>;
-  markAllAsRead(userId: string): Promise<any>;
+  markAllAsRead(userId: string): Promise<{ acknowledged: boolean; modifiedCount: number }>;
 }
 
 /**
@@ -690,7 +721,7 @@ export interface IFavoriteMethods {}
  * Favorite statics (model methods)
  */
 export interface IFavoriteModel extends Model<IFavorite, Record<string, never>, IFavoriteMethods> {
-  getUserFavorites(userId: string, pageOrOptions?: Record<string, unknown> | number, perPage?: number): Promise<any>;
+  getUserFavorites(userId: string, pageOrOptions?: Record<string, unknown> | number, perPage?: number): Promise<IFavoriteDocument[]>;
   isFavorited(userId: string, petId: string): Promise<boolean>;
   getPetFavoriteCount(petId: string): Promise<number>;
   getUserFavoriteCount(userId: string): Promise<number>;

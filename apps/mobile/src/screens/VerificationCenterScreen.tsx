@@ -178,7 +178,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         )}
 
         {verificationStatus.status === 'rejected' && (
-          <TouchableOpacity style={[styles.retryButton, { backgroundColor: colors.primary }]} onPress={handleRetry}>
+          <TouchableOpacity style={[styles.retryButton, { backgroundColor: colors.primary }]}  testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleRetry}>
             <Ionicons name="refresh" size={16} color={colors.white} />
             <Text style={[styles.retryButtonText, { color: colors.white }]}>Retry Verification</Text>
           </TouchableOpacity>
@@ -250,7 +250,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         {verificationStatus.status === 'not_started' && (
           <TouchableOpacity
             style={[styles.actionButton, { backgroundColor: colors.primary }]}
-            onPress={() => handleStartVerification('tier1')}
+             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleStartVerification('tier1'); }}
           >
             <Ionicons name="shield-checkmark" size={20} color={colors.white} />
             <Text style={[styles.actionButtonText, { color: colors.white }]}>
@@ -262,7 +262,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
         {verificationStatus.status === 'approved' && verificationStatus.tier === 'tier1' && (
           <TouchableOpacity
             style={[styles.actionButton, { backgroundColor: colors.secondary }]}
-            onPress={() => handleStartVerification('tier2')}
+             testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleStartVerification('tier2'); }}
           >
             <Ionicons name="paw" size={20} color={colors.white} />
             <Text style={[styles.actionButtonText, { color: colors.white }]}>

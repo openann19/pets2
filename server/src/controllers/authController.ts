@@ -10,6 +10,7 @@ import * as QRCode from 'qrcode';
 import User from '../models/User';
 import { generateTokens } from '../middleware/auth';
 import { sendEmail } from '../services/emailService';
+import { getErrorMessage } from '../../utils/errorHandler';
 const logger = require('../utils/logger');
 
 // Type definitions
@@ -133,12 +134,12 @@ export const setup2FASmsEmail = async (req: AuthRequest, res: Response) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Store code with expiry (10 minutes)
-    (user as any).twoFactorCode = code;
-    (user as any).twoFactorCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
-    (user as any).twoFactorMethod = method;
+    user.twoFactorCode = code;
+    user.twoFactorCodeExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    user.twoFactorMethod = method;
 
     if (method === 'sms') {
-      (user as any).phone = phone;
+      user.phone = phone;
       logger.info('2FA SMS setup - code sent to phone', { userId: user._id, phone });
     } else if (method === 'email') {
       user.email = email!;
@@ -170,7 +171,7 @@ export const setup2FASmsEmail = async (req: AuthRequest, res: Response) => {
       method: method
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('2FA SMS/Email setup error', { error });
     res.status(500).json({
       success: false,
@@ -194,21 +195,21 @@ export const verify2FASmsEmail = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    if (!(user as any).twoFactorCode || !(user as any).twoFactorCodeExpiry) {
+    if (!user.twoFactorCode || !user.twoFactorCodeExpiry) {
       return res.status(400).json({
         success: false,
         message: 'No verification code found'
       });
     }
 
-    if (Date.now() > (user as any).twoFactorCodeExpiry) {
+    if (Date.now() > (user.twoFactorCodeExpiry?.getTime() || 0)) {
       return res.status(400).json({
         success: false,
         message: 'Verification code expired'
       });
     }
 
-    if ((user as any).twoFactorCode !== code) {
+    if (user.twoFactorCode !== code) {
       return res.status(400).json({
         success: false,
         message: 'Invalid verification code'
@@ -216,9 +217,9 @@ export const verify2FASmsEmail = async (req: AuthRequest, res: Response) => {
     }
 
     // Enable 2FA
-    (user as any).twoFactorEnabled = true;
-    (user as any).twoFactorCode = undefined;
-    (user as any).twoFactorCodeExpiry = undefined;
+    user.twoFactorEnabled = true;
+    user.twoFactorCode = undefined;
+    user.twoFactorCodeExpiry = undefined;
     await user.save();
 
     res.json({
@@ -226,11 +227,11 @@ export const verify2FASmsEmail = async (req: AuthRequest, res: Response) => {
       message: '2FA enabled successfully'
     });
 
-  } catch (error) {
-    logger.error('2FA SMS/Email verify error', { error });
+  } catch (error: unknown) {
+    logger.error('2FA SMS/Email verification error', { error });
     res.status(500).json({
       success: false,
-      message: 'Failed to verify 2FA'
+      message: 'Failed to verify 2FA code'
     });
   }
 };
@@ -249,7 +250,7 @@ export const send2FACode = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    if (!(user as any).twoFactorEnabled) {
+    if (!user.twoFactorEnabled) {
       return res.status(400).json({
         success: false,
         message: '2FA is not enabled for this account'
@@ -260,16 +261,16 @@ export const send2FACode = async (req: AuthRequest, res: Response) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Store code with expiry (5 minutes for login)
-    (user as any).twoFactorCode = code;
-    (user as any).twoFactorCodeExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+    user.twoFactorCode = code;
+    user.twoFactorCodeExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
     await user.save();
 
     // Send code based on method
-    if ((user as any).twoFactorMethod === 'sms') {
+    if (user.twoFactorMethod === 'sms') {
       // In production, send SMS
-      logger.info('2FA SMS code sent for login', { userId: user._id, phone: (user as any).phone });
-    } else if ((user as any).twoFactorMethod === 'email') {
+      logger.info('2FA SMS code sent for login', { userId: user._id, phone: user.phone });
+    } else if (user.twoFactorMethod === 'email') {
       try {
         await sendEmail({
           email: user.email,
@@ -280,7 +281,7 @@ export const send2FACode = async (req: AuthRequest, res: Response) => {
             code: code
           }
         });
-      } catch (emailError) {
+      } catch (emailError: unknown) {
         logger.error('2FA login email sending error', { error: emailError });
         return res.status(500).json({
           success: false,
@@ -291,11 +292,11 @@ export const send2FACode = async (req: AuthRequest, res: Response) => {
 
     res.json({
       success: true,
-      message: `2FA code sent via ${(user as any).twoFactorMethod}`,
-      method: (user as any).twoFactorMethod
+      message: `2FA code sent via ${user.twoFactorMethod}`,
+      method: user.twoFactorMethod
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Send 2FA code error', { error });
     res.status(500).json({
       success: false,
@@ -340,11 +341,13 @@ export const biometricLogin = async (req: Request, res: Response) => {
     }
 
     // Generate tokens
-    const tokens = generateTokens((user as any)._id.toString());
+    const tokens = generateTokens(user._id.toString());
 
     // Store refresh token
     user.refreshTokens.push(tokens.refreshToken);
-    user.analytics.lastActive = new Date();
+    if (user.analytics) {
+      user.analytics.lastActive = new Date();
+    }
     await user.save();
 
     res.json({
@@ -357,12 +360,12 @@ export const biometricLogin = async (req: Request, res: Response) => {
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Biometric login error', { error });
     res.status(500).json({
       success: false,
       message: 'Biometric login failed',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -419,13 +422,13 @@ export const register = async (req: Request, res: Response) => {
 
     // Generate email verification token
     const emailVerificationToken = crypto.randomBytes(32).toString('hex');
-    (user as any).emailVerificationToken = emailVerificationToken;
-    (user as any).emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+    user.emailVerificationToken = emailVerificationToken;
+    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     await user.save();
 
     // Generate JWT tokens
-    const tokens = generateTokens((user as any)._id.toString());
+    const tokens = generateTokens(user._id.toString());
 
     // Store refresh token
     user.refreshTokens.push(tokens.refreshToken);
@@ -507,20 +510,22 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Check password
-    const isPasswordValid = await (user as any).comparePassword(password);
+    const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid password'
       });
     }
 
     // Generate tokens
-    const tokens = generateTokens((user as any)._id.toString());
+    const tokens = generateTokens(user._id.toString());
 
     // Store refresh token
     user.refreshTokens.push(tokens.refreshToken);
-    user.analytics.lastActive = new Date();
+    if (user.analytics) {
+      user.analytics.lastActive = new Date();
+    }
     await user.save();
 
     res.json({
@@ -533,12 +538,12 @@ export const login = async (req: Request, res: Response) => {
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Login error', { error });
     res.status(500).json({
       success: false,
       message: 'Login failed',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -553,7 +558,7 @@ export const logout = async (req: AuthRequest, res: Response) => {
     logger.info('Logout attempt', { userId: req.userId, jti: req.jti, refreshToken: !!refreshToken });
 
     // Revoke current access token by adding its jti to revoked list
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (req.jti) {
       updateData.$push = { revokedJtis: req.jti };
     }
@@ -630,8 +635,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
     }
 
     user.isEmailVerified = true;
-    (user as any).emailVerificationToken = undefined;
-    (user as any).emailVerificationExpires = undefined;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
     await user.save();
 
     res.json({
@@ -639,12 +644,12 @@ export const verifyEmail = async (req: Request, res: Response) => {
       message: 'Email verified successfully'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Email verification error', { error });
     res.status(500).json({
       success: false,
       message: 'Email verification failed',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -667,8 +672,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
-    (user as any).resetPasswordToken = resetToken;
-    (user as any).resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     await user.save();
 
@@ -722,8 +727,8 @@ export const resetPassword = async (req: Request, res: Response) => {
     }
 
     user.password = password;
-    (user as any).resetPasswordToken = undefined;
-    (user as any).resetPasswordExpires = undefined;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
     await user.save();
 
     res.json({
@@ -731,12 +736,12 @@ export const resetPassword = async (req: Request, res: Response) => {
       message: 'Password reset successfully'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Reset password error', { error });
     res.status(500).json({
       success: false,
       message: 'Password reset failed',
-      error: (error as Error).message
+      error: getErrorMessage(error)
     });
   }
 };
@@ -755,7 +760,7 @@ export const setup2FA = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    if ((user as any).twoFactorEnabled) {
+    if (user.twoFactorEnabled) {
       return res.status(400).json({
         success: false,
         message: '2FA is already enabled'
@@ -773,15 +778,15 @@ export const setup2FA = async (req: AuthRequest, res: Response) => {
     const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url!);
 
     // Save secret temporarily (not enabled until verified)
-    (user as any).twoFactorSecret = secret.base32;
-    (user as any).twoFactorEnabled = false;
+    user.twoFactorSecret = secret.base32;
+    user.twoFactorEnabled = false;
     await user.save();
 
     res.json({
       success: true,
       secret: secret.base32,
       qrCode: qrCodeUrl,
-      backupCodes: (secret as any).backup_codes || []
+      backupCodes: (secret as { backup_codes?: string[] }).backup_codes || []
     });
 
   } catch (error) {
@@ -808,7 +813,7 @@ export const verify2FA = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    if (!(user as any).twoFactorSecret) {
+    if (!user.twoFactorSecret) {
       return res.status(400).json({
         success: false,
         message: 'No 2FA secret found. Please setup 2FA first'
@@ -817,7 +822,7 @@ export const verify2FA = async (req: AuthRequest, res: Response) => {
 
     // Verify the code
     const verified = speakeasy.totp.verify({
-      secret: (user as any).twoFactorSecret,
+      secret: user.twoFactorSecret,
       encoding: 'base32',
       token: code,
       window: 2
@@ -831,7 +836,7 @@ export const verify2FA = async (req: AuthRequest, res: Response) => {
     }
 
     // Enable 2FA
-    (user as any).twoFactorEnabled = true;
+    user.twoFactorEnabled = true;
     await user.save();
 
     res.json({
@@ -839,7 +844,7 @@ export const verify2FA = async (req: AuthRequest, res: Response) => {
       message: '2FA enabled successfully'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('2FA verify error', { error });
     res.status(500).json({
       success: false,
@@ -872,7 +877,7 @@ export const validate2FA = async (req: Request, res: Response) => {
       });
     }
 
-    if (!(user as any).twoFactorEnabled) {
+    if (!user.twoFactorEnabled) {
       return res.status(400).json({
         success: false,
         message: '2FA is not enabled for this account'
@@ -880,15 +885,15 @@ export const validate2FA = async (req: Request, res: Response) => {
     }
 
     // Check if code matches stored code (for SMS/Email 2FA)
-    if ((user as any).twoFactorCode && (user as any).twoFactorCodeExpiry) {
-      if (Date.now() > (user as any).twoFactorCodeExpiry) {
+    if (user.twoFactorCode && user.twoFactorCodeExpiry) {
+      if (Date.now() > (user.twoFactorCodeExpiry?.getTime() || 0)) {
         return res.status(400).json({
           success: false,
           message: 'Verification code expired'
         });
       }
 
-      if ((user as any).twoFactorCode !== code) {
+      if (user.twoFactorCode !== code) {
         return res.status(400).json({
           success: false,
           message: 'Invalid verification code'
@@ -896,8 +901,8 @@ export const validate2FA = async (req: Request, res: Response) => {
       }
 
       // Clear code
-      (user as any).twoFactorCode = undefined;
-      (user as any).twoFactorCodeExpiry = undefined;
+      user.twoFactorCode = undefined;
+      user.twoFactorCodeExpiry = undefined;
       await user.save();
 
       res.json({
@@ -908,9 +913,9 @@ export const validate2FA = async (req: Request, res: Response) => {
     }
 
     // Verify TOTP code (for authenticator app)
-    if ((user as any).twoFactorSecret) {
+    if (user.twoFactorSecret) {
       const verified = speakeasy.totp.verify({
-        secret: (user as any).twoFactorSecret,
+        secret: user.twoFactorSecret,
         encoding: 'base32',
         token: code,
         window: 2
@@ -991,8 +996,8 @@ export const setupBiometric = async (req: AuthRequest, res: Response) => {
 
     // Generate refresh token for biometric
     const biometricRefreshToken = crypto.randomBytes(32).toString('hex');
-    (user as any).biometricRefreshTokens = (user as any).biometricRefreshTokens || [];
-    (user as any).biometricRefreshTokens.push(biometricRefreshToken);
+    user.biometricRefreshTokens = user.biometricRefreshTokens || [];
+    user.biometricRefreshTokens.push(biometricRefreshToken);
     await user.save();
 
     res.json({
@@ -1001,7 +1006,7 @@ export const setupBiometric = async (req: AuthRequest, res: Response) => {
       refreshToken: biometricRefreshToken
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Biometric setup error', { error });
     res.status(500).json({
       success: false,
@@ -1080,7 +1085,7 @@ export const refreshBiometricToken = async (req: Request, res: Response) => {
     }
 
     // Generate new tokens
-    const tokens = generateTokens((user as any)._id.toString());
+    const tokens = generateTokens(user._id.toString());
 
     res.json({
       success: true,
@@ -1090,7 +1095,7 @@ export const refreshBiometricToken = async (req: Request, res: Response) => {
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Biometric token refresh error', { error });
     res.status(500).json({
       success: false,
@@ -1114,7 +1119,7 @@ export const disable2FA = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    if (!(user as any).twoFactorEnabled) {
+    if (!user.twoFactorEnabled) {
       return res.status(400).json({
         success: false,
         message: '2FA is not enabled'
@@ -1123,7 +1128,7 @@ export const disable2FA = async (req: AuthRequest, res: Response) => {
 
     // Verify the code before disabling
     const verified = speakeasy.totp.verify({
-      secret: (user as any).twoFactorSecret,
+      secret: user.twoFactorSecret,
       encoding: 'base32',
       token: code,
       window: 2
@@ -1137,8 +1142,8 @@ export const disable2FA = async (req: AuthRequest, res: Response) => {
     }
 
     // Disable 2FA
-    (user as any).twoFactorEnabled = false;
-    (user as any).twoFactorSecret = undefined;
+    user.twoFactorEnabled = false;
+    user.twoFactorSecret = undefined;
     await user.save();
 
     res.json({
@@ -1146,7 +1151,7 @@ export const disable2FA = async (req: AuthRequest, res: Response) => {
       message: '2FA disabled successfully'
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('2FA disable error', { error });
     res.status(500).json({
       success: false,

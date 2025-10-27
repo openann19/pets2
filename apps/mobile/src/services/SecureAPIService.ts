@@ -186,7 +186,7 @@ class SecureAPIService {
         // If not the last attempt, wait before retrying
         if (attempt < retries - 1) {
           await new Promise<void>((resolve) => {
-            setTimeout(() => resolve(), retryDelay * (attempt + 1));
+            setTimeout(() => { resolve(); }, retryDelay * (attempt + 1));
           });
         }
       }

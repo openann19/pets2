@@ -31,6 +31,15 @@ jest.mock('../api', () => ({
   },
 }));
 
+// Setup and teardown
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+afterEach(() => {
+  offlineService.cleanup();
+});
+
 jest.mock('@pawfectmatch/core', () => ({
   logger: {
     info: jest.fn(),
@@ -48,23 +57,14 @@ const mockApi = api as jest.Mocked<typeof api>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('OfflineService', () => {
-  let service: OfflineService;
-  let mockNetworkListener: jest.Mock;
-
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Reset singleton instance
-    (OfflineService as any).instance = undefined;
 
     // Setup default mocks
     mockAsyncStorage.getItem.mockResolvedValue(null);
     mockAsyncStorage.setItem.mockResolvedValue(undefined);
     mockAsyncStorage.removeItem.mockResolvedValue(undefined);
     mockAsyncStorage.getAllKeys.mockResolvedValue(['offline_data', 'other_key']);
-
-    mockNetworkListener = jest.fn();
-    mockNetInfo.addEventListener.mockReturnValue({ remove: mockNetworkListener });
 
     mockNetInfo.fetch.mockResolvedValue({
       isConnected: true,
@@ -78,17 +78,11 @@ describe('OfflineService', () => {
     mockApi.getMessages.mockResolvedValue([]);
     mockApi.sendMessage.mockResolvedValue(undefined);
     mockApi.updateUserProfile.mockResolvedValue(undefined);
-
-    service = new OfflineService();
-  });
-
-  afterEach(() => {
-    jest.clearAllTimers();
   });
 
   describe('Initialization', () => {
     it('should initialize with default offline data', () => {
-      const offlineData = (service as any).offlineData;
+      const offlineData = (offlineService as any).offlineData;
 
       expect(offlineData.pets).toEqual([]);
       expect(offlineData.user).toBeNull();
@@ -140,7 +134,7 @@ describe('OfflineService', () => {
       const networkListener = mockNetInfo.addEventListener.mock.calls[0][0];
 
       // Start offline
-      (service as any).isOnline = false;
+      (offlineService as any).isOnline = false;
 
       // Go online
       networkListener({
@@ -149,7 +143,7 @@ describe('OfflineService', () => {
         isInternetReachable: true,
       } as NetInfoState);
 
-      expect((service as any).isOnline).toBe(true);
+      expect((offlineService as any).isOnline).toBe(true);
       // Note: triggerSync would be called, but we can't easily test the async call
     });
 
@@ -163,7 +157,7 @@ describe('OfflineService', () => {
         isInternetReachable: false,
       } as NetInfoState);
 
-      expect((service as any).isOnline).toBe(false);
+      expect((offlineService as any).isOnline).toBe(false);
     });
 
     it('should handle network state changes', () => {
@@ -179,14 +173,14 @@ describe('OfflineService', () => {
 
       states.forEach(state => {
         networkListener(state);
-        expect((service as any).isOnline).toBe(state.isConnected === true);
+        expect((offlineService as any).isOnline).toBe(state.isConnected === true);
       });
     });
   });
 
   describe('Sync Status and Listeners', () => {
     it('should provide current sync status', () => {
-      const status = service.getSyncStatus();
+      const status = offlineService.getSyncStatus();
 
       expect(status).toEqual({
         isOnline: true,
@@ -198,10 +192,10 @@ describe('OfflineService', () => {
     });
 
     it('should update sync status during sync', async () => {
-      (service as any).isSyncing = true;
-      (service as any).offlineData.pendingActions = [{ id: 'action1' }, { id: 'action2' }];
+      (offlineService as any).isSyncing = true;
+      (offlineService as any).offlineData.pendingActions = [{ id: 'action1' }, { id: 'action2' }];
 
-      const status = service.getSyncStatus();
+      const status = offlineService.getSyncStatus();
 
       expect(status.isSyncing).toBe(true);
       expect(status.pendingActionsCount).toBe(2);
@@ -212,18 +206,18 @@ describe('OfflineService', () => {
       const listener1 = jest.fn();
       const listener2 = jest.fn();
 
-      const unsubscribe1 = service.addSyncStatusListener(listener1);
-      const unsubscribe2 = service.addSyncStatusListener(listener2);
+      const unsubscribe1 = offlineService.addSyncStatusListener(listener1);
+      const unsubscribe2 = offlineService.addSyncStatusListener(listener2);
 
       // Trigger notification
-      (service as any).notifyListeners();
+      (offlineService as any).notifyListeners();
 
       expect(listener1).toHaveBeenCalledWith(expect.any(Object));
       expect(listener2).toHaveBeenCalledWith(expect.any(Object));
 
       // Unsubscribe
       unsubscribe1();
-      (service as any).notifyListeners();
+      (offlineService as any).notifyListeners();
 
       expect(listener1).toHaveBeenCalledTimes(1); // Not called again
       expect(listener2).toHaveBeenCalledTimes(2); // Still called
@@ -232,9 +226,9 @@ describe('OfflineService', () => {
 
   describe('Pending Actions', () => {
     it('should add pending actions', () => {
-      service.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
+      offlineService.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
 
-      const offlineData = (service as any).offlineData;
+      const offlineData = (offlineService as any).offlineData;
       expect(offlineData.pendingActions).toHaveLength(1);
 
       const action = offlineData.pendingActions[0];
@@ -246,10 +240,10 @@ describe('OfflineService', () => {
     });
 
     it('should generate unique action IDs', () => {
-      service.addPendingAction('message', { matchId: 'match1', message: 'Hello' });
-      service.addPendingAction('message', { matchId: 'match2', message: 'Hi' });
+      offlineService.addPendingAction('message', { matchId: 'match1', message: 'Hello' });
+      offlineService.addPendingAction('message', { matchId: 'match2', message: 'Hi' });
 
-      const offlineData = (service as any).offlineData;
+      const offlineData = (offlineService as any).offlineData;
       expect(offlineData.pendingActions).toHaveLength(2);
 
       const [action1, action2] = offlineData.pendingActions;
@@ -258,24 +252,24 @@ describe('OfflineService', () => {
 
     it('should sync pending actions successfully', async () => {
       // Add some pending actions
-      service.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
-      service.addPendingAction('message', { matchId: 'match1', message: 'Hello' });
+      offlineService.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
+      offlineService.addPendingAction('message', { matchId: 'match1', message: 'Hello' });
 
       // Mock successful execution
-      const executeActionSpy = jest.spyOn(service as any, 'executePendingAction');
+      const executeActionSpy = jest.spyOn(offlineService as any, 'executePendingAction');
       executeActionSpy.mockResolvedValue(undefined);
 
-      await (service as any).syncPendingActions();
+      await (offlineService as any).syncPendingActions();
 
       expect(executeActionSpy).toHaveBeenCalledTimes(2);
-      expect((service as any).offlineData.pendingActions).toHaveLength(0); // Actions cleared
+      expect((offlineService as any).offlineData.pendingActions).toHaveLength(0); // Actions cleared
     });
 
     it('should handle failed pending actions with retry logic', async () => {
-      service.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
-      service.addPendingAction('message', { matchId: 'match1', message: 'Hello' });
+      offlineService.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
+      offlineService.addPendingAction('message', { matchId: 'match1', message: 'Hello' });
 
-      const executeActionSpy = jest.spyOn(service as any, 'executePendingAction');
+      const executeActionSpy = jest.spyOn(offlineService as any, 'executePendingAction');
 
       // First action fails, second succeeds
       executeActionSpy.mockImplementationOnce(() => {
@@ -283,27 +277,27 @@ describe('OfflineService', () => {
       });
       executeActionSpy.mockImplementationOnce(() => Promise.resolve());
 
-      await (service as any).syncPendingActions();
+      await (offlineService as any).syncPendingActions();
 
-      const offlineData = (service as any).offlineData;
+      const offlineData = (offlineService as any).offlineData;
       expect(offlineData.pendingActions).toHaveLength(1); // Failed action remains
       expect(offlineData.pendingActions[0].retryCount).toBe(1);
     });
 
     it('should remove actions after max retries', async () => {
-      service.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
+      offlineService.addPendingAction('swipe', { petId: 'pet1', direction: 'like' });
 
-      const executeActionSpy = jest.spyOn(service as any, 'executePendingAction');
+      const executeActionSpy = jest.spyOn(offlineService as any, 'executePendingAction');
 
       // Fail multiple times
       executeActionSpy.mockRejectedValue(new Error('Persistent failure'));
 
       // Simulate multiple sync attempts
       for (let i = 0; i < 3; i++) {
-        await (service as any).syncPendingActions();
+        await (offlineService as any).syncPendingActions();
       }
 
-      expect((service as any).offlineData.pendingActions).toHaveLength(0); // Action removed
+      expect((offlineService as any).offlineData.pendingActions).toHaveLength(0); // Action removed
     });
   });
 
@@ -312,20 +306,20 @@ describe('OfflineService', () => {
       const onlinePets = [{ id: 'pet1', name: 'Buddy' }, { id: 'pet2', name: 'Luna' }];
       mockApi.getPets.mockResolvedValue(onlinePets);
 
-      const result = await service.getPets();
+      const result = await offlineService.getPets();
 
       expect(result).toEqual(onlinePets);
       expect(mockApi.getPets).toHaveBeenCalled();
-      expect((service as any).offlineData.pets).toEqual(onlinePets); // Should cache
+      expect((offlineService as any).offlineData.pets).toEqual(onlinePets); // Should cache
     });
 
     it('should fallback to offline pets when online fetch fails', async () => {
       const offlinePets = [{ id: 'pet1', name: 'Buddy' }];
-      (service as any).offlineData.pets = offlinePets;
+      (offlineService as any).offlineData.pets = offlinePets;
 
       mockApi.getPets.mockRejectedValue(new Error('Network error'));
 
-      const result = await service.getPets();
+      const result = await offlineService.getPets();
 
       expect(result).toEqual(offlinePets);
       expect(mockLogger.warn).toHaveBeenCalledWith(
@@ -335,11 +329,11 @@ describe('OfflineService', () => {
     });
 
     it('should return offline pets when offline', async () => {
-      (service as any).isOnline = false;
+      (offlineService as any).isOnline = false;
       const offlinePets = [{ id: 'pet1', name: 'Buddy' }];
-      (service as any).offlineData.pets = offlinePets;
+      (offlineService as any).offlineData.pets = offlinePets;
 
-      const result = await service.getPets();
+      const result = await offlineService.getPets();
 
       expect(result).toEqual(offlinePets);
       expect(mockApi.getPets).not.toHaveBeenCalled();
@@ -347,9 +341,9 @@ describe('OfflineService', () => {
 
     it('should get user data', () => {
       const user = { id: 'user1', name: 'John Doe' };
-      (service as any).offlineData.user = user;
+      (offlineService as any).offlineData.user = user;
 
-      const result = service.getUser();
+      const result = offlineService.getUser();
 
       expect(result).toEqual(user);
     });
@@ -358,10 +352,10 @@ describe('OfflineService', () => {
       const onlineMatches = [{ id: 'match1' }, { id: 'match2' }];
       mockApi.getMatches.mockResolvedValue(onlineMatches);
 
-      const result = await service.getMatches();
+      const result = await offlineService.getMatches();
 
       expect(result).toEqual(onlineMatches);
-      expect((service as any).offlineData.matches).toEqual(onlineMatches);
+      expect((offlineService as any).offlineData.matches).toEqual(onlineMatches);
     });
 
     it('should get messages for specific match', async () => {
@@ -370,9 +364,9 @@ describe('OfflineService', () => {
         { id: 'msg2', matchId: 'match2', content: 'Hi' },
         { id: 'msg3', matchId: 'match1', content: 'How are you?' },
       ];
-      (service as any).offlineData.messages = messages;
+      (offlineService as any).offlineData.messages = messages;
 
-      const result = await service.getMessages('match1');
+      const result = await offlineService.getMessages('match1');
 
       expect(result).toHaveLength(2);
       expect(result.every(msg => msg.matchId === 'match1')).toBe(true);
@@ -385,44 +379,44 @@ describe('OfflineService', () => {
       ];
       mockApi.getMessages.mockResolvedValue(onlineMessages);
 
-      const result = await service.getMessages('match1');
+      const result = await offlineService.getMessages('match1');
 
       expect(result).toEqual(onlineMessages);
-      expect((service as any).offlineData.messages).toEqual(onlineMessages);
+      expect((offlineService as any).offlineData.messages).toEqual(onlineMessages);
     });
   });
 
   describe('Offline-Aware Actions', () => {
     it('should perform swipe actions offline-aware', () => {
-      service.swipePet('pet1', 'like');
+      offlineService.swipePet('pet1', 'like');
 
-      const offlineData = (service as any).offlineData;
+      const offlineData = (offlineService as any).offlineData;
       expect(offlineData.pendingActions).toHaveLength(1);
       expect(offlineData.pendingActions[0].type).toBe('swipe');
       expect(offlineData.pendingActions[0].data).toEqual({ petId: 'pet1', direction: 'like' });
     });
 
     it('should send messages offline-aware', async () => {
-      await service.sendMessage('match1', 'Hello there!');
+      await offlineService.sendMessage('match1', 'Hello there!');
 
       expect(mockApi.sendMessage).toHaveBeenCalledWith('match1', 'Hello there!');
     });
 
     it('should queue messages when offline', async () => {
-      (service as any).isOnline = false;
+      (offlineService as any).isOnline = false;
 
-      await service.sendMessage('match1', 'Offline message');
+      await offlineService.sendMessage('match1', 'Offline message');
 
       expect(mockApi.sendMessage).not.toHaveBeenCalled();
-      expect((service as any).offlineData.pendingActions[0].type).toBe('message');
+      expect((offlineService as any).offlineData.pendingActions[0].type).toBe('message');
     });
 
     it('should queue messages when online send fails', async () => {
       mockApi.sendMessage.mockRejectedValue(new Error('Send failed'));
 
-      await service.sendMessage('match1', 'Failed message');
+      await offlineService.sendMessage('match1', 'Failed message');
 
-      expect((service as any).offlineData.pendingActions[0].type).toBe('message');
+      expect((offlineService as any).offlineData.pendingActions[0].type).toBe('message');
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'Failed to send message online, queuing for offline',
         expect.any(Object)
@@ -432,26 +426,26 @@ describe('OfflineService', () => {
     it('should update profile offline-aware', async () => {
       const profileData = { name: 'John Updated', bio: 'New bio' };
 
-      await service.updateProfile(profileData);
+      await offlineService.updateProfile(profileData);
 
       expect(mockApi.updateUserProfile).toHaveBeenCalledWith(profileData);
     });
 
     it('should queue profile updates when offline', async () => {
-      (service as any).isOnline = false;
+      (offlineService as any).isOnline = false;
       const profileData = { name: 'Offline Update' };
 
-      await service.updateProfile(profileData);
+      await offlineService.updateProfile(profileData);
 
       expect(mockApi.updateUserProfile).not.toHaveBeenCalled();
-      expect((service as any).offlineData.pendingActions[0].type).toBe('profile_update');
+      expect((offlineService as any).offlineData.pendingActions[0].type).toBe('profile_update');
     });
 
     it('should perform match actions', () => {
-      service.performMatchAction('match1', 'unmatch');
+      offlineService.performMatchAction('match1', 'unmatch');
 
-      expect((service as any).offlineData.pendingActions[0].type).toBe('match_action');
-      expect((service as any).offlineData.pendingActions[0].data).toEqual({
+      expect((offlineService as any).offlineData.pendingActions[0].type).toBe('match_action');
+      expect((offlineService as any).offlineData.pendingActions[0].data).toEqual({
         matchId: 'match1',
         action: 'unmatch'
       });
@@ -460,70 +454,70 @@ describe('OfflineService', () => {
 
   describe('Data Synchronization', () => {
     it('should trigger sync when online', async () => {
-      const syncPendingActionsSpy = jest.spyOn(service as any, 'syncPendingActions');
-      const syncFromServerSpy = jest.spyOn(service as any, 'syncFromServer');
+      const syncPendingActionsSpy = jest.spyOn(offlineService as any, 'syncPendingActions');
+      const syncFromServerSpy = jest.spyOn(offlineService as any, 'syncFromServer');
 
       syncPendingActionsSpy.mockResolvedValue(undefined);
       syncFromServerSpy.mockImplementation(() => {});
 
-      await service.triggerSync();
+      await offlineService.triggerSync();
 
       expect(syncPendingActionsSpy).toHaveBeenCalled();
       expect(syncFromServerSpy).toHaveBeenCalled();
-      expect((service as any).offlineData.lastSync).toBeDefined();
+      expect((offlineService as any).offlineData.lastSync).toBeDefined();
     });
 
     it('should not sync when offline', async () => {
-      (service as any).isOnline = false;
+      (offlineService as any).isOnline = false;
 
-      await service.triggerSync();
+      await offlineService.triggerSync();
 
-      expect((service as any).isSyncing).toBe(false);
+      expect((offlineService as any).isSyncing).toBe(false);
     });
 
     it('should not start concurrent syncs', async () => {
-      (service as any).isSyncing = true;
+      (offlineService as any).isSyncing = true;
 
-      await service.triggerSync();
+      await offlineService.triggerSync();
 
-      expect((service as any).isSyncing).toBe(true); // Still syncing
+      expect((offlineService as any).isSyncing).toBe(true); // Still syncing
     });
 
     it('should handle sync errors gracefully', async () => {
-      const syncPendingActionsSpy = jest.spyOn(service as any, 'syncPendingActions');
+      const syncPendingActionsSpy = jest.spyOn(offlineService as any, 'syncPendingActions');
       syncPendingActionsSpy.mockRejectedValue(new Error('Sync failed'));
 
-      await service.triggerSync();
+      await offlineService.triggerSync();
 
-      expect((service as any).isSyncing).toBe(false); // Should reset sync state
+      expect((offlineService as any).isSyncing).toBe(false); // Should reset sync state
       expect(mockLogger.error).toHaveBeenCalledWith('Sync failed', expect.any(Object));
     });
 
     it('should update sync progress during sync', async () => {
-      const syncPendingActionsSpy = jest.spyOn(service as any, 'syncPendingActions');
+      const syncPendingActionsSpy = jest.spyOn(offlineService as any, 'syncPendingActions');
       syncPendingActionsSpy.mockImplementation(async () => {
         // Simulate some work
         await new Promise(resolve => setTimeout(resolve, 10));
       });
 
-      const promise = service.triggerSync();
+      const promise = offlineService.triggerSync();
 
       // Should be syncing during the operation
-      expect(service.getSyncStatus().isSyncing).toBe(true);
+      expect(offlineService.getSyncStatus().isSyncing).toBe(true);
 
       await promise;
 
       // Should not be syncing after completion
-      expect(service.getSyncStatus().isSyncing).toBe(false);
+      expect(offlineService.getSyncStatus().isSyncing).toBe(false);
     });
   });
 
   describe('Data Persistence', () => {
     it('should save offline data to storage', async () => {
-      (service as any).offlineData.pets = [{ id: 'pet1' }];
-      (service as any).offlineData.user = { id: 'user1' };
+      (offlineService as any).offlineData.pets = [{ id: 'pet1' }];
+      (offlineService as any).offlineData.user = { id: 'user1' };
 
-      await (service as any).saveOfflineData();
+      await (offlineService as any).saveOfflineData();
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'offline_data',
@@ -538,7 +532,7 @@ describe('OfflineService', () => {
     it('should handle storage save errors gracefully', async () => {
       mockAsyncStorage.setItem.mockRejectedValue(new Error('Storage error'));
 
-      await (service as any).saveOfflineData();
+      await (offlineService as any).saveOfflineData();
 
       // Should not throw, should log error
       expect(mockLogger.error).toHaveBeenCalledWith(
@@ -549,20 +543,20 @@ describe('OfflineService', () => {
 
     it('should clear offline data', async () => {
       // Setup some data
-      (service as any).offlineData.pets = [{ id: 'pet1' }];
-      (service as any).offlineData.pendingActions = [{ id: 'action1' }];
+      (offlineService as any).offlineData.pets = [{ id: 'pet1' }];
+      (offlineService as any).offlineData.pendingActions = [{ id: 'action1' }];
 
-      await service.clearOfflineData();
+      await offlineService.clearOfflineData();
 
       expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith('offline_data');
-      expect((service as any).offlineData.pets).toEqual([]);
-      expect((service as any).offlineData.pendingActions).toEqual([]);
+      expect((offlineService as any).offlineData.pets).toEqual([]);
+      expect((offlineService as any).offlineData.pendingActions).toEqual([]);
     });
 
     it('should handle clear data errors gracefully', async () => {
       mockAsyncStorage.removeItem.mockRejectedValue(new Error('Clear error'));
 
-      await service.clearOfflineData();
+      await offlineService.clearOfflineData();
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to clear offline data',
@@ -583,7 +577,7 @@ describe('OfflineService', () => {
         return Promise.resolve(sizes[key] || null);
       });
 
-      const size = await service.getStorageSize();
+      const size = await offlineService.getStorageSize();
 
       expect(size).toBe(350); // 100 + 200 + 50
     });
@@ -591,7 +585,7 @@ describe('OfflineService', () => {
     it('should handle storage size calculation errors', async () => {
       mockAsyncStorage.getAllKeys.mockRejectedValue(new Error('Keys error'));
 
-      const size = await service.getStorageSize();
+      const size = await offlineService.getStorageSize();
 
       expect(size).toBe(0);
       expect(mockLogger.error).toHaveBeenCalledWith(
@@ -608,7 +602,7 @@ describe('OfflineService', () => {
         return Promise.resolve(null);
       });
 
-      const size = await service.getStorageSize();
+      const size = await offlineService.getStorageSize();
 
       expect(size).toBe(4); // Only 'data' length
     });
@@ -624,7 +618,7 @@ describe('OfflineService', () => {
     });
 
     it('should start periodic sync on initialization', () => {
-      const triggerSyncSpy = jest.spyOn(service, 'triggerSync');
+      const triggerSyncSpy = jest.spyOn(offlineService, 'triggerSync');
 
       // Fast-forward time to trigger periodic sync
       jest.advanceTimersByTime(35000);
@@ -637,7 +631,7 @@ describe('OfflineService', () => {
     it('should only sync periodically when online', () => {
       // This is hard to test with setInterval, but the logic is in place
       // The periodic sync checks isOnline && !isSyncing before calling triggerSync
-      expect((service as any).isOnline).toBe(true);
+      expect((offlineService as any).isOnline).toBe(true);
     });
   });
 
@@ -650,7 +644,7 @@ describe('OfflineService', () => {
       networkListener(undefined as any);
 
       // Should not crash
-      expect((service as any).isOnline).toBeDefined();
+      expect((offlineService as any).isOnline).toBeDefined();
     });
 
     it('should handle very large offline datasets', () => {
@@ -660,18 +654,18 @@ describe('OfflineService', () => {
         data: 'x'.repeat(1000), // Large data
       }));
 
-      (service as any).offlineData.pets = largePets;
+      (offlineService as any).offlineData.pets = largePets;
 
-      const result = service.getOfflineData();
+      const result = offlineService.getOfflineData();
       expect(result.pets).toHaveLength(1000);
     });
 
     it('should handle concurrent data access', async () => {
       const operations = [
-        service.getPets(),
-        service.getMatches(),
-        service.getMessages('match1'),
-        service.getUser(),
+        offlineService.getPets(),
+        offlineService.getMatches(),
+        offlineService.getMessages('match1'),
+        offlineService.getUser(),
       ];
 
       const results = await Promise.all(operations);
@@ -682,31 +676,31 @@ describe('OfflineService', () => {
 
     it('should handle rapid pending action additions', () => {
       for (let i = 0; i < 100; i++) {
-        service.addPendingAction('swipe', { petId: `pet${i}`, direction: 'like' });
+        offlineService.addPendingAction('swipe', { petId: `pet${i}`, direction: 'like' });
       }
 
-      expect((service as any).offlineData.pendingActions).toHaveLength(100);
+      expect((offlineService as any).offlineData.pendingActions).toHaveLength(100);
     });
 
     it('should handle listener cleanup', () => {
       const listener = jest.fn();
-      const unsubscribe = service.addSyncStatusListener(listener);
+      const unsubscribe = offlineService.addSyncStatusListener(listener);
 
-      expect((service as any).syncListeners).toContain(listener);
+      expect((offlineService as any).syncListeners).toContain(listener);
 
       unsubscribe();
 
-      expect((service as any).syncListeners).not.toContain(listener);
+      expect((offlineService as any).syncListeners).not.toContain(listener);
     });
 
     it('should handle multiple listeners', () => {
       const listeners = [jest.fn(), jest.fn(), jest.fn()];
 
       const unsubscribes = listeners.map(listener =>
-        service.addSyncStatusListener(listener)
+        offlineService.addSyncStatusListener(listener)
       );
 
-      (service as any).notifyListeners();
+      (offlineService as any).notifyListeners();
 
       listeners.forEach(listener => {
         expect(listener).toHaveBeenCalledTimes(1);
@@ -715,16 +709,16 @@ describe('OfflineService', () => {
       // Unsubscribe all
       unsubscribes.forEach(unsubscribe => unsubscribe());
 
-      expect((service as any).syncListeners).toHaveLength(0);
+      expect((offlineService as any).syncListeners).toHaveLength(0);
     });
 
     it('should handle circular references in offline data', () => {
       const data: any = { id: 'test' };
       data.self = data; // Circular reference
 
-      (service as any).offlineData.user = data;
+      (offlineService as any).offlineData.user = data;
 
-      const result = service.getOfflineData();
+      const result = offlineService.getOfflineData();
 
       // Should handle circular references (though JSON.stringify might not)
       expect(result.user?.id).toBe('test');
@@ -739,10 +733,10 @@ describe('OfflineService', () => {
         retryCount: 100, // Extreme retry count
       };
 
-      (service as any).offlineData.pendingActions = [action];
+      (offlineService as any).offlineData.pendingActions = [action];
 
       // Should handle gracefully
-      expect(() => service.getSyncStatus()).not.toThrow();
+      expect(() => offlineService.getSyncStatus()).not.toThrow();
     });
 
     it('should handle empty or invalid action data', () => {
@@ -756,7 +750,7 @@ describe('OfflineService', () => {
 
       invalidActions.forEach(invalidAction => {
         // Should not crash when processing
-        expect(() => service.addPendingAction('swipe', invalidAction as any)).not.toThrow();
+        expect(() => offlineService.addPendingAction('swipe', invalidAction as any)).not.toThrow();
       });
     });
   });

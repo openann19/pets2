@@ -20,6 +20,7 @@ export const createTheme = (scheme: ColorScheme): Theme => {
   return {
     scheme,
     colors: {
+      // Core semantic colors
       bg: isDark ? c.neutral[950] : c.neutral[0],
       bgElevated: isDark ? c.neutral[900] : c.neutral[50],
       text: isDark ? c.neutral[50] : c.neutral[950],
@@ -30,6 +31,63 @@ export const createTheme = (scheme: ColorScheme): Theme => {
       success: "#10b981",
       warning: "#f59e0b",
       danger: "#ef4444",
+      
+      // Extended semantic colors for backward compatibility
+      background: isDark ? c.neutral[950] : c.neutral[0],
+      surface: isDark ? c.neutral[950] : c.neutral[0],
+      surfaceElevated: isDark ? c.neutral[900] : c.neutral[50],
+      card: isDark ? c.neutral[900] : c.neutral[50],
+      textSecondary: isDark ? c.neutral[400] : c.neutral[600],
+      
+      // Monochrome palette
+      white: "#ffffff",
+      black: "#000000",
+      gray50: "#fafafa",
+      gray100: "#f5f5f5",
+      gray200: "#e5e5e5",
+      gray300: "#d4d4d4",
+      gray400: "#a3a3a3",
+      gray500: "#737373",
+      gray600: "#525252",
+      gray700: "#404040",
+      gray800: "#262626",
+      gray900: "#171717",
+      gray950: "#0a0a0a",
+      
+      // Primary variants
+      primaryLight: isDark ? "#fce7f3" : "#ec4899",
+      primaryDark: isDark ? "#831843" : "#be185d",
+      
+      // Secondary variants
+      secondary: "#a855f7",
+      secondaryLight: isDark ? "#f3e8ff" : "#9333ea",
+      secondaryDark: isDark ? "#581c87" : "#7e22ce",
+      
+      // Accent variants
+      accent: "#10b981",
+      accentLight: isDark ? "#dcfce7" : "#059669",
+      accentDark: isDark ? "#064e3b" : "#047857",
+      
+      // Glass effects
+      glass: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.8)",
+      glassLight: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.6)",
+      glassWhite: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.9)",
+      glassWhiteLight: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.95)",
+      glassWhiteDark: isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.98)",
+      glassDark: isDark ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.9)",
+      glassDarkMedium: isDark ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.7)",
+      glassDarkStrong: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.5)",
+      
+      // Status colors
+      info: "#3b82f6",
+      error: "#ef4444",
+      
+      // Additional properties
+      tertiary: "#f59e0b",
+      inverse: isDark ? "#ffffff" : "#000000",
+      shadow: isDark ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0.1)",
+      interactive: c.primary[600],
+      feedback: "#10b981",
     },
     spacing: {
       // Required numeric string properties

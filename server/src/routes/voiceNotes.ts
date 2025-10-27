@@ -44,7 +44,7 @@ router.post('/:matchId/voice', authenticateToken, upload.single('voice'), async 
     }
 
     res.json({ success: true, data: { message } });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Voice note upload failed', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to upload voice note' });
   }
@@ -65,7 +65,7 @@ router.get('/:matchId/voice/:messageId', authenticateToken, async (req, res) => 
 
     // Return Cloudinary URL (they handle streaming)
     res.json({ success: true, data: { url: message.content } });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Voice note fetch failed', { error: error.message });
     res.status(500).json({ success: false, error: 'Failed to fetch voice note' });
   }

@@ -158,7 +158,7 @@ export function VoiceRecorderUltra({
       // Call cleanup functions directly
       if (mediaRecorderRef.current?.state === "recording") {
         mediaRecorderRef.current.stop();
-        mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+        mediaRecorderRef.current.stream.getTracks().forEach((t) => { t.stop(); });
       }
       if (recordingRef.current) {
         void recordingRef.current.stopAndUnloadAsync();
@@ -180,7 +180,7 @@ export function VoiceRecorderUltra({
       } catch { /* ignore */ }
     } else if (backend === "web" && mediaRecorderRef.current?.state === "recording") {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+      mediaRecorderRef.current.stream.getTracks().forEach((t) => { t.stop(); });
       mediaRecorderRef.current = null;
       if (durationTimer.current) {
         clearInterval(durationTimer.current);
@@ -249,7 +249,7 @@ export function VoiceRecorderUltra({
 
         mr.start();
         setIsRecording(true);
-        durationTimer.current = setInterval(() => setDurationMs((p) => p + 1000), 1000);
+        durationTimer.current = setInterval(() => { setDurationMs((p) => p + 1000); }, 1000);
       } catch {
         Alert.alert("Permission needed", "Microphone access is required.");
       }
@@ -275,7 +275,7 @@ export function VoiceRecorderUltra({
       const mr = mediaRecorderRef.current;
       if (mr?.state === "recording") {
         mr.stop();
-        mr.stream.getTracks().forEach((t) => t.stop());
+        mr.stream.getTracks().forEach((t) => { t.stop(); });
       }
       mediaRecorderRef.current = null;
       if (durationTimer.current) {
@@ -290,7 +290,7 @@ export function VoiceRecorderUltra({
     setIsRecording(false);
     if (mediaRecorderRef.current?.state === "recording") {
       mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+      mediaRecorderRef.current.stream.getTracks().forEach((t) => { t.stop(); });
     }
     if (recordingRef.current) {
       void recordingRef.current.stopAndUnloadAsync();
@@ -519,7 +519,7 @@ export function VoiceRecorderUltra({
             <Ionicons
               name={isRecording ? "stop" : "mic"}
               size={22}
-              color={Theme.colors.neutral[0]}
+              color={Theme.colors.neutral[0}]}}
             />
           </TouchableOpacity>
 
@@ -544,7 +544,7 @@ export function VoiceRecorderUltra({
               <Ionicons
                 name={isLocked ? "lock-closed" : "lock-open"}
                 size={18}
-                color={Theme.colors.neutral[0]}
+                color={Theme.colors.neutral[0}]}}
               />
             </TouchableOpacity>
           )}
@@ -560,7 +560,7 @@ export function VoiceRecorderUltra({
               isPlaying={isPlaying}
               progress={progress}
               duration={Math.max(1, Math.round(durationMs / 1000))}
-              color={Theme.colors.primary[500]}
+              color={Theme.colors.primary[500}]}
               height={36}
               onSeek={async (p) => {
                 if (Platform.OS !== "web" && soundRef.current) {
@@ -611,12 +611,12 @@ export function VoiceRecorderUltra({
               <Ionicons
                 name={isPlaying ? "pause" : "play"}
                 size={18}
-                color={Theme.colors.neutral[0]}
+                color={Theme.colors.neutral[0}]}}
               />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleCancel} style={styles.actionBtn}>
-              <Ionicons name="trash" size={18} color={Theme.colors.status.error} />
+              <Ionicons name="trash" size={18} color={Theme.colors.status.erro}r}} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={send} disabled={isSending || activeProcessing} style={styles.sendBtn}>

@@ -12,9 +12,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAIBioScreen } from "../hooks/screens/ai";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 export default function AIBioScreen() {
+  const theme = useTheme();
   const {
     // Form state
     petName,
@@ -49,11 +51,13 @@ export default function AIBioScreen() {
     return "#ff6b6b";
   };
 
+  const styles = getStyles(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack}>
+        <TouchableOpacity  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
@@ -66,7 +70,7 @@ export default function AIBioScreen() {
         {/* Photo Upload */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pet Photo (Optional)</Text>
-          <TouchableOpacity style={styles.photoUpload} onPress={pickImage}>
+          <TouchableOpacity style={styles.photoUpload}  testID="AIBioScreen-button-2" accessibilityLabel="selectedPhoto ? (" accessibilityRole="button" onPress={pickImage}>
             {selectedPhoto ? (
               <Image
                 source={{ uri: selectedPhoto }}
@@ -149,7 +153,7 @@ export default function AIBioScreen() {
                   selectedTone === tone.id && styles.selectedTone,
                   { borderColor: tone.color },
                 ])}
-                onPress={() => {
+                 testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                   setSelectedTone(tone.id);
                 }}
               >
@@ -173,7 +177,7 @@ export default function AIBioScreen() {
             styles.generateButton,
             isGenerating && styles.generatingButton,
           ])}
-          onPress={generateBio}
+           testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={generateBio}
           disabled={isGenerating}
         >
           <LinearGradient
@@ -181,9 +185,9 @@ export default function AIBioScreen() {
             style={styles.generateButtonGradient}
           >
             {isGenerating ? (
-              <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
+              <ActivityIndicator color={theme.colors.neutral[0]} size="small" />
             ) : (
-              <Ionicons name="star" size={20} color="Theme.colors.neutral[0]" />
+              <Ionicons name="star" size={20} color={theme.colors.neutral[0]} />
             )}
             <Text style={styles.generateButtonText}>
               {isGenerating ? "Generating..." : "Generate Bio"}
@@ -244,13 +248,13 @@ export default function AIBioScreen() {
               <View style={styles.bioActions}>
                 <TouchableOpacity
                   style={styles.regenerateButton}
-                  onPress={generateBio}
+                   testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={generateBio}
                 >
                   <Ionicons name="refresh" size={16} color="#666" />
                   <Text style={styles.regenerateText}>Regenerate</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.saveButton} onPress={saveBio}>
-                  <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />
+                <TouchableOpacity style={styles.saveButton}  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={saveBio}>
+                  <Ionicons name="checkmark" size={16} color={theme.colors.neutral[0]} />
                   <Text style={styles.saveText}>Save Bio</Text>
                 </TouchableOpacity>
               </View>
@@ -277,19 +281,19 @@ export default function AIBioScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: theme.colors.bg,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: "Theme.colors.neutral[0]",
-    shadowColor: "Theme.colors.neutral[950]",
+    backgroundColor: theme.colors.bg,
+    shadowColor: theme.colors.text,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -297,8 +301,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: "bold" as const,
+    color: theme.colors.text,
   },
   headerRight: {
     width: 24,
@@ -312,16 +316,16 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: "bold" as const,
+    color: theme.colors.text,
     marginBottom: 15,
   },
   photoUpload: {
     height: 200,
     borderRadius: 15,
-    overflow: "hidden",
-    backgroundColor: "Theme.colors.neutral[0]",
-    shadowColor: "Theme.colors.neutral[950]",
+    overflow: "hidden" as const,
+    backgroundColor: theme.colors.bgElevated,
+    shadowColor: theme.colors.text,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -353,14 +357,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.neutral[950],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -378,7 +382,7 @@ const styles = StyleSheet.create({
   toneOption: {
     flex: 1,
     minWidth: "30%",
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.neutral[0],
     borderRadius: 10,
     padding: 15,
     alignItems: "center",
@@ -395,7 +399,7 @@ const styles = StyleSheet.create({
   toneLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
+    color: theme.colors.textMuted,
   },
   generateButton: {
     marginVertical: 20,
@@ -404,23 +408,23 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   generateButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     paddingVertical: 15,
     borderRadius: 25,
     gap: 10,
   },
   generateButtonText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.bg,
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "bold" as const,
   },
   bioContainer: {
-    backgroundColor: "Theme.colors.neutral[0]",
+    backgroundColor: theme.colors.bgElevated,
     borderRadius: 15,
     padding: 20,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.text,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -429,7 +433,7 @@ const styles = StyleSheet.create({
   bioText: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#333",
+    color: theme.colors.text,
     marginBottom: 20,
   },
   bioStats: {
@@ -437,7 +441,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginBottom: 20,
     paddingVertical: 15,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: theme.colors.bgElevated,
     borderRadius: 10,
   },
   statItem: {
@@ -445,7 +449,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: "#666",
+    color: theme.colors.textMuted,
     marginBottom: 5,
   },
   statValue: {
@@ -458,7 +462,7 @@ const styles = StyleSheet.create({
   keywordsTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
+    color: theme.colors.textMuted,
     marginBottom: 10,
   },
   keywordsList: {
@@ -467,58 +471,58 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   keywordTag: {
-    backgroundColor: "#ff6b6b",
+    backgroundColor: theme.colors.error,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
   },
   keywordText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.bg,
     fontSize: 12,
     fontWeight: "600",
   },
   bioActions: {
-    flexDirection: "row",
+    flexDirection: "row" as const,
     gap: 15,
   },
   regenerateButton: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     paddingVertical: 12,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: theme.colors.bgElevated,
     borderRadius: 10,
     gap: 8,
   },
   regenerateText: {
-    color: "#666",
+    color: theme.colors.textMuted,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "600" as const,
   },
   saveButton: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     paddingVertical: 12,
-    backgroundColor: "#69db7c",
+    backgroundColor: theme.colors.success,
     borderRadius: 10,
     gap: 8,
   },
   saveText: {
-    color: "Theme.colors.neutral[0]",
+    color: theme.colors.bg,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "600" as const,
   },
   historyItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "Theme.colors.neutral[0]",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    backgroundColor: theme.colors.bgElevated,
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    shadowColor: "Theme.colors.neutral[950]",
+    shadowColor: theme.colors.text,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -527,12 +531,14 @@ const styles = StyleSheet.create({
   historyText: {
     flex: 1,
     fontSize: 14,
-    color: "#666",
+    color: theme.colors.textMuted,
     marginRight: 15,
   },
   historyScore: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#69db7c",
+    color: theme.colors.success,
   },
 });
+
+const getStyles = (theme: any) => createStyles(theme);

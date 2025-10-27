@@ -6,7 +6,7 @@
 import type { Request, Response } from 'express';
 import axios from 'axios';
 import { z } from 'zod';
-import { notifyContentFlagged } from '../services/adminNotifications';
+import adminNotifications from '../services/adminNotifications';
 const logger = require('../utils/logger');
 
 // Type definitions
@@ -216,12 +216,13 @@ export const analyzeText = async (req: AuthRequest, res: Response): Promise<void
     // Notify admins if content is flagged
     if (overallFlagged && confidence > 0.7) {
       try {
-        await notifyContentFlagged({
-          contentType: validatedData.contentType || 'unknown',
-          content: text.substring(0, 200),
-          severity: action === 'reject' ? 'critical' : 'high',
-          aiResults: results,
-          userId: req.userId
+        await adminNotifications.notifyContentFlagged({
+          contentType: 'text', // All text content maps to 'text' type
+          contentId: text.substring(0, 50), // Use first 50 chars as ID
+          userId: req.userId || 'unknown',
+          scores: results[0]?.scores || {},
+          violatedCategories: results[0]?.categories || [],
+          provider: results[0]?.provider || 'ai-moderator'
         });
       } catch (notifyError) {
         logger.warn('Failed to notify admins of flagged content', { error: notifyError });
@@ -361,7 +362,7 @@ export const checkHealth = async (req: Request, res: Response): Promise<void> =>
     }
 
     const overallHealthy = Object.values(healthStatus).some(service =>
-      (service as any).available && (service as any).status === 'healthy'
+      (service as { available: boolean; status: string }).available && (service as { available: boolean; status: string }).status === 'healthy'
     );
 
     res.json({

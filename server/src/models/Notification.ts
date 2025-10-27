@@ -1,5 +1,6 @@
-import mongoose, { Schema, Model, HydratedDocument } from 'mongoose';
-import {
+import mongoose, { Schema, Model } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
+import type {
   INotification,
   INotificationMethods,
   INotificationModel
@@ -66,12 +67,12 @@ notificationSchema.index({ userId: 1, read: 1 });
 notificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // Auto-delete expired notifications
 
 // Virtual for checking if notification is expired
-notificationSchema.virtual('isExpired').get(function(this: any): boolean {
+notificationSchema.virtual('isExpired').get(function(this: INotificationDocument): boolean {
   return this.expiresAt && new Date() > this.expiresAt;
 });
 
 // Method to mark as read
-notificationSchema.methods.markAsRead = async function(this: any): Promise<any> {
+notificationSchema.methods.markAsRead = async function(this: INotificationDocument): Promise<INotificationDocument> {
   this.read = true;
   this.readAt = new Date();
   return await this.save();
@@ -83,7 +84,7 @@ notificationSchema.statics.getUnreadCount = async function(userId: string): Prom
 };
 
 // Static method to mark all as read
-notificationSchema.statics.markAllAsRead = async function(userId: string): Promise<any> {
+notificationSchema.statics.markAllAsRead = async function(userId: string): Promise<{ acknowledged: boolean; modifiedCount: number }> {
   return await this.updateMany(
     { userId, read: false },
     { $set: { read: true, readAt: new Date() } }

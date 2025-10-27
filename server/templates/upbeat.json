@@ -1,0 +1,32 @@
+{
+  "id": "tpl_upbeat_v1",
+  "name": "Upbeat • Punchy Cuts",
+  "version": 1,
+  "minClips": 5,
+  "maxClips": 12,
+  "canvas": { "w": 1080, "h": 1920, "fps": 30, "bg": "#000000" },
+  "music": { "bpm": 128, "offsetMs": 300 },
+  "timeline": [
+    { "t": 0,    "clip": 0, "inMs": 0, "durMs": 900,  "transOut": "dip" },
+    { "t": 900,  "clip": 1, "inMs": 0, "durMs": 800,  "transOut": "cut" },
+    { "t": 1700, "clip": 2, "inMs": 0, "durMs": 900,  "transOut": "slideUp" },
+    { "t": 2600, "clip": 3, "inMs": 0, "durMs": 900,  "transOut": "dip" },
+    { "t": 3500, "clip": 4, "inMs": 0, "durMs": 1000, "transOut": "cut" }
+  ],
+  "fx": [
+    { "t": 400,  "type": "zoomPunch", "amount": 0.08, "duration": 220 },
+    { "t": 1300, "type": "zoomPunch", "amount": 0.06, "duration": 200 },
+    { "t": 2100, "type": "furEnhance", "strength": 0.6 },
+    { "t": 3200, "type": "eyeSparkle", "strength": 0.7 }
+  ],
+  "overlays": [
+    { "t": 0, "durMs": 1200, "type": "text", "key": "reels.title_upbeat", "style": "titleLg", "pos": ["50%","12%"] },
+    { "t": 1800, "durMs": 600, "type": "sticker", "name": "paw", "pos": ["90%","86%"], "scale": 0.9 }
+  ],
+  "cta": { "variant": "adopt", "t": -1000 },
+  "styles": {
+    "titleLg": { "font": "Inter-Bold.ttf", "size": 64, "color": "#FFFFFF", "align": "center", "shadow": "000000CC:2:2" },
+    "caption": { "font": "Inter-Medium.ttf", "size": 36, "color": "#FFFFFF", "align": "center", "bg": "#00000080", "pad": 16 }
+  }
+}
+

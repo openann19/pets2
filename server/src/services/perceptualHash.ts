@@ -7,7 +7,8 @@
  */
 
 import { createHash } from 'crypto';
-import sharp from 'sharp';
+import * as sharp from 'sharp';
+// @ts-ignore - Sharp module import compatibility
 
 export interface PerceptualHashResult {
   hash: string;
@@ -32,7 +33,7 @@ export async function calculateAverageHash(
       })
       .greyscale();
 
-    const { data } = await image.raw().toBuffer({ resolveWithObject: true });
+    const data: { data: Buffer; info: sharp.OutputInfo } = await image.raw().toBuffer({ resolveWithObject: true });
 
     // Calculate average pixel value
     const pixels = Array.from(data.info.channels === 3 
@@ -49,7 +50,7 @@ export async function calculateAverageHash(
     }
 
     return hash;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error calculating average hash:', error);
     throw error;
   }
@@ -72,7 +73,7 @@ export async function calculateDifferenceHash(
       })
       .greyscale();
 
-    const { data } = await image.raw().toBuffer({ resolveWithObject: true });
+    const data: { data: Buffer; info: sharp.OutputInfo } = await image.raw().toBuffer({ resolveWithObject: true });
     const pixels = new Uint8Array(data.data);
 
     // Compare adjacent pixels horizontally
@@ -86,7 +87,7 @@ export async function calculateDifferenceHash(
     }
 
     return hash;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error calculating difference hash:', error);
     throw error;
   }
@@ -110,7 +111,7 @@ export async function calculatePerceptualHash(
       })
       .greyscale();
 
-    const { data } = await image.raw().toBuffer({ resolveWithObject: true });
+    const data: { data: Buffer; info: sharp.OutputInfo } = await image.raw().toBuffer({ resolveWithObject: true });
     const pixels = new Uint8Array(data.data);
 
     // DCT approximation (simplified)
@@ -125,7 +126,7 @@ export async function calculatePerceptualHash(
     }
 
     return hash;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error calculating perceptual hash:', error);
     throw error;
   }
@@ -266,9 +267,16 @@ export async function checkForDuplicates(
   const allMatches: SimilarImage[] = [];
   
   for (const hashType of ['average', 'difference', 'perceptual'] as const) {
+    // Map existingImages to match the expected format with imageId
+    const formattedImages = existingImages.map(img => ({
+      imageId: img.id,
+      url: img.url,
+      hashes: img.hashes
+    }));
+    
     const matches = await findSimilarImages(
       newHashes[hashType],
-      existingImages,
+      formattedImages,
       hashType,
       threshold.distance
     );

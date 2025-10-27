@@ -1,8 +1,9 @@
 {
   "success": true,
-  "url": "https://storage.example.com/exports/user123/data-export.json",
+  "exportId": "export_123456789",
   "estimatedTime": "5-10 minutes",
+  "message": "Data export initiated successfully",
   "format": "json",
-  "expiresAt": "2025-02-01T12:00:00.000Z"
+  "estimatedCompletion": "2025-02-01T12:00:00.000Z"
 }
 

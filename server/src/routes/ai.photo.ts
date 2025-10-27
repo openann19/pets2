@@ -137,7 +137,7 @@ router.post("/analyze-photo", authenticateToken, async (req: Request, res: Respo
         suggestions
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error("Photo analysis error", { error: error.message });
     res.status(500).json({ error: "Failed to analyze photo" });
   }

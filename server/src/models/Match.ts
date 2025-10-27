@@ -210,27 +210,25 @@ matchSchema.index({ compatibilityScore: -1 });
 
 // Virtual for getting the other user
 matchSchema.virtual('getOtherUser').get(function() {
-  return (currentUserId: any) => {
+  return (currentUserId: mongoose.Types.ObjectId | string) => {
     return this.user1.toString() === currentUserId.toString() ? this.user2 : this.user1;
   };
 });
 
 // Virtual for getting the other pet
 matchSchema.virtual('getOtherPet').get(function() {
-  return (currentUserId: any) => {
+  return (currentUserId: mongoose.Types.ObjectId | string) => {
     return this.user1.toString() === currentUserId.toString() ? this.pet2 : this.pet1;
   };
 });
 
-// Virtual for unread message count
-matchSchema.virtual('getUnreadCount').get(function() {
-  return (userId: any) => {
-    return this.messages.filter((message: any) => 
-      message.sender.toString() !== userId.toString() &&
-      !message.readBy.some((read: any) => read.user.toString() === userId.toString())
-    ).length;
-  };
-});
+// Instance method for unread message count
+matchSchema.methods.getUnreadCount = function(userId: mongoose.Types.ObjectId | string): number {
+  return this.messages.filter((message) => 
+    message.sender.toString() !== userId.toString() &&
+    !message.readBy.some((read) => read.user.toString() === userId.toString())
+  ).length;
+};
 
 // Pre-save middleware
 matchSchema.pre('save', function(next) {
@@ -239,7 +237,10 @@ matchSchema.pre('save', function(next) {
   
   // Update last message timestamp
   if (this.messages.length > 0) {
-    this.lastMessageAt = (this.messages[this.messages.length - 1] as any).sentAt;
+    const lastMessage = this.messages[this.messages.length - 1];
+    if (lastMessage) {
+      this.lastMessageAt = lastMessage.sentAt;
+    }
   }
   
   // Update last activity
@@ -251,7 +252,7 @@ matchSchema.pre('save', function(next) {
 });
 
 // Instance methods
-matchSchema.methods.addMessage = function(senderId: any, content: string, messageType = 'text', attachments: any[] = []) {
+matchSchema.methods.addMessage = function(senderId: mongoose.Types.ObjectId | string, content: string, messageType = 'text', attachments: Array<{ type?: string; fileType?: string; fileName?: string }> = []) {
   const message = {
     sender: senderId,
     content,
@@ -267,13 +268,13 @@ matchSchema.methods.addMessage = function(senderId: any, content: string, messag
   return this.save();
 };
 
-matchSchema.methods.markMessagesAsRead = function(userId: any) {
-  const unreadMessages = this.messages.filter((message: any) => 
+matchSchema.methods.markMessagesAsRead = function(userId: mongoose.Types.ObjectId | string) {
+  const unreadMessages = this.messages.filter((message) => 
     message.sender.toString() !== userId.toString() &&
-    !(message.readBy as any[]).some((read: any) => read.user.toString() === userId.toString())
+    !message.readBy.some((read) => read.user.toString() === userId.toString())
   );
   
-  unreadMessages.forEach((message: any) => {
+  unreadMessages.forEach((message) => {
     message.readBy.push({
       user: userId,
       readAt: new Date()
@@ -287,27 +288,27 @@ matchSchema.methods.markMessagesAsRead = function(userId: any) {
   return this.save();
 };
 
-matchSchema.methods.isUserBlocked = function(userId: any) {
+matchSchema.methods.isUserBlocked = function(userId: mongoose.Types.ObjectId | string) {
   const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
   const otherUserKey = userKey === 'user1' ? 'user2' : 'user1';
   
-  return (this.userActions as any)[userKey].isBlocked || (this.userActions as any)[otherUserKey].isBlocked;
+  return this.userActions[userKey].isBlocked || this.userActions[otherUserKey].isBlocked;
 };
 
-matchSchema.methods.toggleArchive = function(userId: any) {
+matchSchema.methods.toggleArchive = function(userId: mongoose.Types.ObjectId | string) {
   const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
-  (this.userActions as any)[userKey].isArchived = !(this.userActions as any)[userKey].isArchived;
+  this.userActions[userKey].isArchived = !this.userActions[userKey].isArchived;
   return this.save();
 };
 
-matchSchema.methods.toggleFavorite = function(userId: any) {
+matchSchema.methods.toggleFavorite = function(userId: mongoose.Types.ObjectId | string) {
   const userKey = this.user1.toString() === userId.toString() ? 'user1' : 'user2';
-  (this.userActions as any)[userKey].isFavorite = !(this.userActions as any)[userKey].isFavorite;
+  this.userActions[userKey].isFavorite = !this.userActions[userKey].isFavorite;
   return this.save();
 };
 
 // Static methods
-matchSchema.statics.findActiveMatchesForUser = function(userId: any) {
+matchSchema.statics.findActiveMatchesForUser = function(userId: mongoose.Types.ObjectId | string) {
   return this.find({
     status: 'active',
     $or: [
@@ -317,7 +318,7 @@ matchSchema.statics.findActiveMatchesForUser = function(userId: any) {
   }).populate('pet1 pet2 user1 user2', '-password -refreshTokens');
 };
 
-matchSchema.statics.findByPets = function(pet1Id: any, pet2Id: any) {
+matchSchema.statics.findByPets = function(pet1Id: mongoose.Types.ObjectId | string, pet2Id: mongoose.Types.ObjectId | string) {
   return this.findOne({
     $or: [
       { pet1: pet1Id, pet2: pet2Id },

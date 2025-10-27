@@ -1,68 +1,82 @@
 /**
  * useAIPhotoAnalyzerScreen Hook
  * Manages AI Photo Analyzer screen state and interactions
+ * Adapted for single-image photo analysis with transformation between formats
  */
 import { useNavigation } from "@react-navigation/native";
 import { useAIPhotoAnalyzer } from "../domains/ai/useAIPhotoAnalyzer";
+import { useCallback, useState } from "react";
 
 interface UseAIPhotoAnalyzerScreenReturn {
-  // State from domain hook
+  // State
   isAnalyzing: boolean;
   analysisResult: any | null;
   error: string | null;
-  selectedPhotos: string[];
+  selectedImage: string | null;
 
   // Actions
-  pickImages: () => Promise<void>;
+  pickImage: () => Promise<void>;
   takePhoto: () => Promise<void>;
-  analyzePhotos: () => Promise<void>;
-  removePhoto: (index: number) => void;
-  resetAnalysis: () => void;
+  analyzePhoto: () => Promise<void>;
+  clearImage: () => void;
   handleGoBack: () => void;
   clearError: () => void;
 }
 
 export const useAIPhotoAnalyzerScreen = (): UseAIPhotoAnalyzerScreenReturn => {
   const navigation = useNavigation();
-  const {
-    analyzePhotos: analyzePhotosDomain,
-    isAnalyzing,
-    analysisResult,
-    error,
-    selectedPhotos,
-    pickImages,
-    takePhoto,
-    removePhoto,
-    resetAnalysis,
-    clearError,
-  } = useAIPhotoAnalyzer();
+  const domain = useAIPhotoAnalyzer();
+  
+  // Single image state (UI-specific)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const analyzePhotos = async () => {
+  // Adapt single image selection to domain hook's multi-photo interface
+  const pickImage = useCallback(async (): Promise<void> => {
+    await domain.pickImages();
+    if (domain.selectedPhotos.length > 0) {
+      setSelectedImage(domain.selectedPhotos[0] ?? null);
+    }
+  }, [domain]);
+
+  const takePhoto = useCallback(async (): Promise<void> => {
+    await domain.takePhoto();
+    if (domain.selectedPhotos.length > 0) {
+      setSelectedImage(domain.selectedPhotos[0] ?? null);
+    }
+  }, [domain]);
+
+  const analyzePhoto = useCallback(async (): Promise<void> => {
+    if (!selectedImage) return;
+    
     try {
-      await analyzePhotosDomain(selectedPhotos);
+      await domain.analyzePhotos([selectedImage]);
     } catch (error) {
       // Error handling is done in the domain hook
     }
-  };
+  }, [selectedImage, domain]);
 
-  const handleGoBack = () => {
+  const clearImage = useCallback(() => {
+    setSelectedImage(null);
+    domain.resetAnalysis();
+  }, [domain]);
+
+  const handleGoBack = useCallback(() => {
     navigation.goBack();
-  };
+  }, [navigation]);
 
   return {
-    // State from domain hook
-    isAnalyzing,
-    analysisResult,
-    error,
-    selectedPhotos,
+    // State
+    isAnalyzing: domain.isAnalyzing,
+    analysisResult: domain.analysisResult,
+    error: domain.error,
+    selectedImage,
 
     // Actions
-    pickImages,
+    pickImage,
     takePhoto,
-    analyzePhotos,
-    removePhoto,
-    resetAnalysis,
+    analyzePhoto,
+    clearImage,
     handleGoBack,
-    clearError,
+    clearError: domain.clearError,
   };
 };

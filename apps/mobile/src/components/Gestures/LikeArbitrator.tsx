@@ -48,8 +48,8 @@ export default function LikeArbitrator({
     transform: [{ translateY: lift.value }],
   }));
 
-  const closeReactions = useCallback(() => setReactionsOpen(false), []);
-  const openReactions = useCallback(() => setReactionsOpen(true), []);
+  const closeReactions = useCallback(() => { setReactionsOpen(false); }, []);
+  const openReactions = useCallback(() => { setReactionsOpen(true); }, []);
 
   const handleDoubleTap = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});

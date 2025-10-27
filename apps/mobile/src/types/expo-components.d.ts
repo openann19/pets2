@@ -12,7 +12,9 @@ import {
 
 // Ionicons type declaration
 declare module "@expo/vector-icons" {
-  export interface IconProps {
+  import type { ViewProps } from "react-native";
+
+  export interface IconProps extends ViewProps {
     name: string;
     size?: number;
     color?: string;

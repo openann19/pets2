@@ -4,7 +4,7 @@ import { logger } from '@pawfectmatch/core';
 ;
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, ArrowDownTrayIcon, DevicePhoneMobileIcon, ComputerDesktopIcon, SparklesIcon } from '@heroicons/react/24/outline';
-import { InteractiveButton } from '../ui/Interactive';
+import { InteractiveButton } from '../UI/Interactive';
 export function InstallPrompt({ className = '' }) {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showPrompt, setShowPrompt] = useState(false);

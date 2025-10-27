@@ -432,12 +432,12 @@ export function useAdminBillingScreen({
               {
                 text: "Cancel",
                 style: "cancel",
-                onPress: () => resolve(false),
+                onPress: () => { resolve(false); },
               },
               {
                 text: "Refund",
                 style: "destructive",
-                onPress: () => resolve(true),
+                onPress: () => { resolve(true); },
               },
             ],
           );
@@ -494,12 +494,12 @@ export function useAdminBillingScreen({
               {
                 text: "Cancel",
                 style: "cancel",
-                onPress: () => resolve(false),
+                onPress: () => { resolve(false); },
               },
               {
                 text: "Confirm",
                 style: "destructive",
-                onPress: () => resolve(true),
+                onPress: () => { resolve(true); },
               },
             ],
           );

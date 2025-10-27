@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { ViewStyle } from "react-native";
 import { Animated, StyleSheet, View } from "react-native";
 
@@ -18,7 +18,7 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
   style,
   delay = 0,
 }) => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  const [animatedValue] = useState(() => new Animated.Value(0));
   const [visible, setVisible] = React.useState(delay === 0);
 
   useEffect(() => {
@@ -52,14 +52,21 @@ export const ShimmerPlaceholder: React.FC<ShimmerPlaceholderProps> = ({
     ).start();
   }, [visible, animatedValue]);
 
+  const translateX = useMemo(
+    () =>
+      animatedValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [
+          typeof width === "number" ? -width : -100,
+          typeof width === "number" ? width : 100,
+        ],
+      }),
+    [animatedValue, width],
+  );
+
   if (!visible) {
     return null;
   }
-
-  const translateX = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-width, width as number],
-  });
 
   return (
     <View

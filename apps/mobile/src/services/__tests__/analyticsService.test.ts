@@ -10,10 +10,10 @@
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { track, trackScreenView, trackUserAction, AnalyticsEvents } from '../analyticsService';
-import { api } from '../api';
 
 // Mock dependencies
 jest.mock('../api', () => ({
+  request: jest.fn(),
   api: {
     post: jest.fn(),
   },
@@ -22,10 +22,13 @@ jest.mock('../api', () => ({
 jest.mock('../logger', () => ({
   logger: {
     warn: jest.fn(),
+    error: jest.fn(),
   },
 }));
 
-const mockApi = api as jest.Mocked<typeof api>;
+import { request } from '../api';
+
+const mockRequest = request as jest.MockedFunction<typeof request>;
 
 describe('Analytics Service', () => {
   beforeEach(() => {
@@ -34,46 +37,46 @@ describe('Analytics Service', () => {
 
   describe('Happy Path - Basic Tracking', () => {
     it('should track event successfully', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('test_event', { property: 'value' });
 
-      expect(mockApi.post).toHaveBeenCalledWith(
+      expect(mockRequest).toHaveBeenCalledWith(
         '/admin/analytics/track',
-        { event: 'test_event', props: { property: 'value' } }
+        { method: 'POST', body: { event: 'test_event', props: { property: 'value' } } }
       );
     });
 
     it('should track event without properties', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('simple_event');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
+      expect(mockRequest).toHaveBeenCalledWith(
         '/admin/analytics/track',
-        { event: 'simple_event', props: undefined }
+        { method: 'POST', body: { event: 'simple_event', props: undefined } }
       );
     });
 
     it('should track screen views', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       trackScreenView('HomeScreen', { tab: 'main' });
 
-      expect(mockApi.post).toHaveBeenCalledWith(
+      expect(mockRequest).toHaveBeenCalledWith(
         '/admin/analytics/track',
-        { event: 'screen_view', props: { screen: 'HomeScreen', tab: 'main' } }
+        { method: 'POST', body: { event: 'screen_view', props: { screen: 'HomeScreen', tab: 'main' } } }
       );
     });
 
     it('should track user actions', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       trackUserAction('button_click', { buttonId: 'submit' });
 
-      expect(mockApi.post).toHaveBeenCalledWith(
+      expect(mockRequest).toHaveBeenCalledWith(
         '/admin/analytics/track',
-        { event: 'user_action', props: { action: 'button_click', buttonId: 'submit' } }
+        { method: 'POST', body: { event: 'user_action', props: { action: 'button_click', buttonId: 'submit' } } }
       );
     });
   });
@@ -130,53 +133,53 @@ describe('Analytics Service', () => {
 
   describe('Error Handling', () => {
     it('should handle tracking errors gracefully', async () => {
-      mockApi.post.mockRejectedValueOnce(new Error('Network error'));
+      mockRequest.mockRejectedValueOnce(new Error('Network error'));
 
       await expect(track('error_event')).resolves.not.toThrow();
     });
 
     it('should handle screen view errors gracefully', () => {
-      mockApi.post.mockRejectedValueOnce(new Error('Network error'));
+      mockRequest.mockRejectedValueOnce(new Error('Network error'));
 
       expect(() => trackScreenView('ErrorScreen')).not.toThrow();
     });
 
     it('should handle user action errors gracefully', () => {
-      mockApi.post.mockRejectedValueOnce(new Error('Network error'));
+      mockRequest.mockRejectedValueOnce(new Error('Network error'));
 
       expect(() => trackUserAction('error_action')).not.toThrow();
     });
 
     it('should handle null properties', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('null_event', null as any);
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
   });
 
   describe('Edge Cases', () => {
     it('should handle empty string events', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('');
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
 
     it('should handle very long property names', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       const longProps = { [`property_${'x'.repeat(1000)}`]: 'value' };
 
       await track('long_event', longProps);
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
 
     it('should handle nested objects in properties', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       const nestedProps = {
         user: {
@@ -190,40 +193,40 @@ describe('Analytics Service', () => {
 
       await track('nested_event', nestedProps);
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
 
     it('should handle array properties', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('array_event', { items: [1, 2, 3], tags: ['tag1', 'tag2'] });
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
 
     it('should handle undefined screen name gracefully', () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       trackScreenView(undefined as any);
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
   });
 
   describe('Integration', () => {
     it('should integrate with API service', async () => {
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('integration_event', { test: true });
 
-      expect(mockApi.post).toHaveBeenCalledWith(
+      expect(mockRequest).toHaveBeenCalledWith(
         '/admin/analytics/track',
         expect.any(Object)
       );
     });
 
     it('should allow chaining multiple track calls', async () => {
-      mockApi.post.mockResolvedValue(undefined);
+      mockRequest.mockResolvedValue(undefined);
 
       await Promise.all([
         track('event1', { id: 1 }),
@@ -231,7 +234,7 @@ describe('Analytics Service', () => {
         track('event3', { id: 3 }),
       ]);
 
-      expect(mockApi.post).toHaveBeenCalledTimes(3);
+      expect(mockRequest).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -252,11 +255,11 @@ describe('Analytics Service', () => {
         timestamp?: number;
       }
 
-      mockApi.post.mockResolvedValueOnce(undefined);
+      mockRequest.mockResolvedValueOnce(undefined);
 
       await track('typed_event', { userId: '123', timestamp: Date.now() });
 
-      expect(mockApi.post).toHaveBeenCalled();
+      expect(mockRequest).toHaveBeenCalled();
     });
   });
 });

@@ -9,7 +9,7 @@ import { logger } from "@pawfectmatch/core";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import type { ViewStyle } from "react-native";
 import {
   TouchableOpacity,
@@ -66,8 +66,8 @@ function PremiumButtonComponent({
   style,
 }: PremiumButtonProps): React.JSX.Element {
   const [isPressed, setIsPressed] = useState(false);
-  const animatedScale = useRef(new Animated.Value(1)).current;
-  const animatedGlow = useRef(new Animated.Value(0)).current;
+  const [animatedScale] = useState(() => new Animated.Value(1));
+  const [animatedGlow] = useState(() => new Animated.Value(0));
 
   // Enhanced haptic feedback with optimized patterns
   const triggerHaptic = async (

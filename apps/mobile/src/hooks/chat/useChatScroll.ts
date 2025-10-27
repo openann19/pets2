@@ -9,7 +9,7 @@ export interface UseChatScrollOptions {
 }
 
 export interface UseChatScrollReturn {
-  flatListRef: React.RefObject<FlatList<any>>;
+  flatListRef: React.RefObject<FlatList>;
   initialOffset: number;
   handleScroll: (offset: number) => Promise<void>;
 }
@@ -21,7 +21,7 @@ export function useChatScroll({
   matchId,
   enabled = true,
 }: UseChatScrollOptions): UseChatScrollReturn {
-  const flatListRef = useRef<FlatList<any>>(null);
+  const flatListRef = useRef<FlatList>(null);
   const [initialOffset, setInitialOffset] = useState(0);
   const didRestoreRef = useRef(false);
 

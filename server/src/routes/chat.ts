@@ -5,9 +5,6 @@ import { validate } from '../middleware/validation';
 import { authenticateToken } from '../middleware/auth';
 import { type IUserDocument } from '../models/User';
 import {
-  getChatHistory,
-  markMessagesRead,
-  getOnlineUsers,
   getMessages,
   sendMessage,
   editMessage,
@@ -17,11 +14,9 @@ import {
   searchMessages,
   getChatStats
 } from '../controllers/chatController';
-
-interface AuthenticatedRequest extends Request {
-  userId: string;
-  user?: IUserDocument;
-}
+import logger from '../utils/logger';
+import { createTypeSafeWrapper, handleRouteError, createRouteError } from '../types/routes';
+import type { ChatRequest, ReactionRequest, AuthenticatedFileRequest } from '../types/routes';
 
 // Multer configuration for file uploads
 const upload = multer({
@@ -45,7 +40,7 @@ const upload = multer({
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('File type not allowed'), false);
+      cb(new Error('File type not allowed') as Error, false);
     }
   },
 });
@@ -91,15 +86,14 @@ const searchValidation = [
     .withMessage('Search query must be at least 2 characters')
 ];
 
-// Type-safe wrapper function
-const wrapHandler = (handler: (req: any, res: Response) => Promise<void>) => {
+// Type-safe wrapper function  
+const wrapHandler = (handler: (req: AuthenticatedRequest, res: Response) => Promise<void>) => {
   return async (req: Request, res: Response): Promise<void> => {
-    return handler(req, res);
+    return handler(req as AuthenticatedRequest, res);
   };
 };
 
 // Message management routes
-router.get('/history/:matchId', wrapHandler(getChatHistory));
 router.get('/:matchId/messages', wrapHandler(getMessages));
 router.post('/:matchId/messages', messageValidation, validate, wrapHandler(sendMessage));
 router.put('/messages/:messageId', editMessageValidation, validate, wrapHandler(editMessage));
@@ -116,63 +110,140 @@ router.get('/:matchId/search', searchValidation, validate, wrapHandler(searchMes
 router.get('/stats', wrapHandler(getChatStats));
 
 // Chat reactions route (simple version for mobile compatibility)
-router.post('/reactions', async (req: Request, res: Response) => {
+router.post('/reactions', wrapHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { matchId, messageId, reaction } = req.body;
     
     if (!matchId || !messageId || !reaction) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'MISSING_PARAMS',
         message: 'Missing required parameters'
       });
+      return;
     }
-    
-    // In real implementation, add reaction to message
+
+    const match = await (await import('../models/Match')).default.findOne({
+      _id: matchId,
+      $or: [{ user1: req.userId }, { user2: req.userId }]
+    });
+
+    if (!match) {
+      res.status(404).json({
+        success: false,
+        error: 'MATCH_NOT_FOUND',
+        message: 'Match not found or access denied'
+      });
+      return;
+    }
+
+    const matchDoc = match as { messages: { id: (id: string) => unknown } };
+    const message = matchDoc.messages.id(messageId);
+    if (!message) {
+      res.status(404).json({
+        success: false,
+        error: 'MESSAGE_NOT_FOUND',
+        message: 'Message not found'
+      });
+      return;
+    }
+
+    // Add reaction if not already present
+    if (!message.reactions) {
+      message.reactions = [];
+    }
+
+    // Check if user already reacted with this emoji
+    const existingIndex = message.reactions.findIndex((r) =>
+      r.user?.toString() === req.userId && r.emoji === reaction
+    );
+
+    if (existingIndex >= 0) {
+      // Remove existing reaction
+      message.reactions.splice(existingIndex, 1);
+    } else {
+      // Add new reaction
+      message.reactions.push({
+        user: req.userId,
+        emoji: reaction,
+        reactedAt: new Date()
+      });
+    }
+
+    await match.save();
+
     res.json({
       success: true,
       messageId,
-      reactions: [{ emoji: reaction, userId: req.userId, timestamp: new Date().toISOString() }]
+      reactions: message.reactions.map((r) => ({
+        emoji: r.emoji,
+        userId: r.user?.toString(),
+        timestamp: r.reactedAt.toISOString()
+      }))
     });
   } catch (error) {
-    console.error('Reaction error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'INTERNAL_ERROR',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    logger.error('Reaction error:', error);
+    handleRouteError(error, res);
   }
-});
+}));
 
 // Chat attachments route
-router.post('/attachments', upload.single('file'), async (req: Request, res: Response) => {
+router.post('/attachments', upload.single('file'), async (req: AuthenticatedFileRequest, res: Response) => {
   try {
     const file = req.file;
     
     if (!file) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'MISSING_FILE',
         message: 'No file provided'
       });
+      return;
     }
-    
-    // In real implementation, upload to cloud storage
-    const mockUrl = `https://storage.pawfectmatch.com/uploads/${req.userId}/${Date.now()}-${file.originalname}`;
+
+    const userId = req.userId || req.user?._id;
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        error: 'UNAUTHORIZED',
+        message: 'User not authenticated'
+      });
+      return;
+    }
+
+    // Generate S3 key
+    const { generateKey } = await import('../services/s3Service');
+    const ext = file.mimetype.startsWith('image') ? '.jpg' : 
+                file.mimetype.startsWith('video') ? '.mp4' : '.bin';
+    const key = generateKey(userId, ext);
+
+    // Upload to S3
+    const { putSimple } = await import('../services/s3Service');
+    const url = await putSimple(key, file.mimetype, file.buffer);
+
+    // Register in Upload model for tracking
+    const Upload = await import('../models/Upload');
+    await Upload.default.create({
+      userId,
+      type: file.mimetype.startsWith('image') ? 'chat_image' : 
+            file.mimetype.startsWith('video') ? 'chat_video' : 'chat_file',
+      s3Key: key,
+      filename: file.originalname,
+      url,
+      mimeType: file.mimetype,
+      size: file.size,
+      status: 'uploaded'
+    });
     
     res.json({
       success: true,
-      url: mockUrl,
+      url,
       type: file.mimetype.startsWith('image') ? 'image' : 
             file.mimetype.startsWith('video') ? 'video' : 'file'
     });
   } catch (error) {
-    console.error('Attachment upload error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'UPLOAD_FAILED',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    logger.error('Attachment upload error:', error);
+    handleRouteError(error, res);
   }
 });
 
@@ -202,12 +273,12 @@ router.post('/:matchId/voice-note', async (req: Request, res: Response) => {
       createdAt: new Date(),
     };
     
-    (match as any).messages.push(message);
-    (match as any).lastActivity = new Date();
+    (match as unknown as { messages: unknown[]; lastActivity: Date }).messages.push(message);
+    (match as unknown as { lastActivity: Date }).lastActivity = new Date();
     await match.save();
     
     // Emit to other user via socket.io if available
-    const io = (global as any).io;
+    const io = (global as { io?: { to: (room: string) => { emit: (event: string, data: unknown) => void } } }).io;
     if (io) {
       io.to(req.params.matchId).emit('message:new', message);
     }
@@ -215,47 +286,43 @@ router.post('/:matchId/voice-note', async (req: Request, res: Response) => {
     res.json({ success: true, message });
   } catch (error) {
     console.error('Voice note error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'INTERNAL_ERROR',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    handleRouteError(error, res);
   }
 });
 
-router.post('/voice', async (req: Request, res: Response) => {
+// Voice notes presign route
+router.post('/voice/presign', async (req: AuthenticatedFileRequest, res: Response) => {
   try {
-    const { matchId, duration } = req.body;
+    const { contentType = 'audio/webm' } = req.body;
+    const userId = req.userId || req.user?._id;
     
-    if (!matchId || !duration) {
-      return res.status(400).json({
+    if (!userId) {
+      res.status(401).json({
         success: false,
-        error: 'MISSING_PARAMS',
-        message: 'Missing required parameters'
+        error: 'UNAUTHORIZED',
+        message: 'User not authenticated'
       });
+      return;
     }
     
-    // In real implementation, upload audio blob
-    const mockUrl = `https://storage.pawfectmatch.com/voice/${req.userId}/${Date.now()}.m4a`;
+    const { generateKey } = await import('../services/s3Service');
+    const key = generateKey(userId, '.webm');
+
+    const { getSignedPutUrl } = await import('../services/s3');
+    const url = await getSignedPutUrl(key, contentType, 300); // 5 minutes expiry
     
     res.json({
       success: true,
-      url: mockUrl,
-      duration: parseFloat(duration)
+      url,
+      key
     });
   } catch (error) {
-    console.error('Voice note error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'VOICE_UPLOAD_FAILED',
-      message: error instanceof Error ? error.message : 'Unknown error'
-    });
+    logger.error('Voice presign error:', error);
+    handleRouteError(error, res);
   }
 });
 
 // Legacy routes (for backward compatibility)
 router.post('/:matchId/send', messageValidation, validate, wrapHandler(sendMessage));
-router.post('/:matchId/read', wrapHandler(markMessagesRead));
-router.get('/online', wrapHandler(getOnlineUsers));
 
 export default router;

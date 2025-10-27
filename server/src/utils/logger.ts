@@ -3,9 +3,9 @@
  * Uses Winston for secure structured logging with compliance features
  */
 
-import winston from 'winston';
-import path from 'path';
-import fs from 'fs';
+import * as winston from 'winston';
+import * as path from 'path';
+import * as fs from 'fs';
 import { createHash } from 'crypto';
 
 // Define secured log format
@@ -45,7 +45,7 @@ function sanitizeLogData(data: Record<string, any> | undefined): Record<string, 
     'authorization', 'cookie', 'jwt', 'key', 'auth', 'credentials', 'ccNumber'];
   
   // Recursively sanitize objects
-  function sanitizeObj(obj: any): void {
+  function sanitizeObj(obj: Record<string, unknown>): void {
     if (!obj || typeof obj !== 'object') return;
     
     Object.keys(obj).forEach(key => {
@@ -167,8 +167,8 @@ if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
     }));
     
     logger.info('Sentry logging enabled');
-  } catch (e: any) {
-    logger.warn('Sentry transport configuration failed', { error: e.message });
+  } catch (e: unknown) {
+    logger.warn('Sentry transport configuration failed', { error: e instanceof Error ? e.message : String(e) });
   }
 }
 
@@ -189,18 +189,18 @@ interface RequestMetadata {
   path?: string;
   url?: string;
   ip?: string;
-  headers?: Record<string, any>;
+  headers?: Record<string, unknown>;
   id?: string;
-  user?: any;
+  user?: { id: string };
   userId?: string;
   duration?: number;
-  query?: Record<string, any>;
+  query?: Record<string, unknown>;
 }
 
 // Enhanced convenience methods with 2025 standardized fields
-logger.request = (req: any, message: string, additionalMeta: Record<string, any> = {}) => {
+(logger as ExtendedLogger).request = (req: RequestMetadata, message: string, additionalMeta: Record<string, unknown> = {}) => {
   // Extract basic request data safely
-  const meta: Record<string, any> = {
+  const meta: Record<string, unknown> = {
     method: req?.method,
     path: req?.path || req?.url,
     ip: req?.ip || req?.headers?.['x-forwarded-for'] || 'unknown',
@@ -216,14 +216,14 @@ logger.request = (req: any, message: string, additionalMeta: Record<string, any>
   return meta.requestId; // Return requestId for correlation
 };
 
-logger.apiError = (req: any, error: any, statusCode: number = 500, additionalMeta: Record<string, any> = {}) => {
-  const errorMeta: Record<string, any> = {
+(logger as ExtendedLogger).apiError = (req: RequestMetadata, error: Error | unknown, statusCode: number = 500, additionalMeta: Record<string, unknown> = {}) => {
+  const errorMeta: Record<string, unknown> = {
     method: req?.method,
     path: req?.path || req?.url,
     statusCode,
-    errorName: error?.name || 'Error',
-    errorMessage: error?.message || 'Unknown error',
-    stack: process.env.NODE_ENV !== 'production' ? error?.stack : undefined,
+    errorName: error instanceof Error ? error.name : 'Error',
+    errorMessage: error instanceof Error ? error.message : 'Unknown error',
+    stack: process.env.NODE_ENV !== 'production' && error instanceof Error ? error.stack : undefined,
     requestId: req?.id || req?.headers?.['x-request-id'] || generateRequestId(),
     userId: req?.userId || req?.user?.id || 'unauthenticated',
     ...additionalMeta
@@ -234,7 +234,7 @@ logger.apiError = (req: any, error: any, statusCode: number = 500, additionalMet
 };
 
 // Security event logging
-logger.security = (event: string, data: Record<string, any> = {}) => {
+(logger as ExtendedLogger).security = (event: string, data: Record<string, unknown> = {}) => {
   logger.warn(`Security: ${event}`, {
     securityEvent: true,
     timestamp: new Date().toISOString(),
@@ -244,7 +244,7 @@ logger.security = (event: string, data: Record<string, any> = {}) => {
 };
 
 // Performance monitoring
-logger.performance = (operation: string, durationMs: number, meta: Record<string, any> = {}) => {
+(logger as ExtendedLogger).performance = (operation: string, durationMs: number, meta: Record<string, unknown> = {}) => {
   logger.info(`Performance: ${operation}`, {
     performance: true,
     operation,
@@ -255,11 +255,11 @@ logger.performance = (operation: string, durationMs: number, meta: Record<string
 
 // Extended Logger interface
 export interface ExtendedLogger extends winston.Logger {
-  request: (req: any, message: string, additionalMeta?: Record<string, any>) => string;
-  apiError: (req: any, error: any, statusCode?: number, additionalMeta?: Record<string, any>) => string;
-  security: (event: string, data?: Record<string, any>) => void;
-  performance: (operation: string, durationMs: number, meta?: Record<string, any>) => void;
+  request: (req: RequestMetadata, message: string, additionalMeta?: Record<string, unknown>) => string;
+  apiError: (req: RequestMetadata, error: Error | unknown, statusCode?: number, additionalMeta?: Record<string, unknown>) => string;
+  security: (event: string, data?: Record<string, unknown>) => void;
+  performance: (operation: string, durationMs: number, meta?: Record<string, unknown>) => void;
 }
 
 // Export logger with enhanced types
-export default logger;
+export default logger as ExtendedLogger;

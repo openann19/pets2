@@ -1,9 +1,20 @@
 import AdminActivityLog from '../models/AdminActivityLog';
 import logger from '../utils/logger';
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import type { IUserDocument } from '../types/mongoose';
 
 interface AuthRequest extends Request {
-  user?: any;
+  user?: IUserDocument;
+}
+
+interface AdminActivityDetails {
+  [key: string]: unknown;
+}
+
+interface AdminActivityResponse {
+  success?: boolean;
+  message?: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -19,21 +30,21 @@ interface AuthRequest extends Request {
 export const logAdminActivity = async (
   req: AuthRequest,
   action: string,
-  details: Record<string, any> = {},
+  details: AdminActivityDetails = {},
   success: boolean = true,
   errorMessage: string | null = null
-): Promise<any> => {
+): Promise<unknown> => {
   try {
     if (!req.user || !req.user._id) {
       logger.error('Cannot log admin activity: No user in request');
       return null;
     }
 
-    const logEntry = await AdminActivityLog.create({
+    const logEntry = await (AdminActivityLog as any).create({
       adminId: req.user._id,
       action,
       details,
-      ipAddress: req.ip || (req as any).connection.remoteAddress,
+      ipAddress: req.ip || (req as any).connection?.remoteAddress,
       userAgent: req.headers['user-agent'],
       timestamp: new Date(),
       success,
@@ -41,9 +52,10 @@ export const logAdminActivity = async (
     });
     
     return logEntry;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Log to console but don't throw - this should never break the main flow
-    logger.error('Error logging admin activity:', { error: error.message });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error logging admin activity:', { error: errorMessage });
     return null;
   }
 };
@@ -60,13 +72,16 @@ export const adminActionLogger = (action: string) => {
     const originalJson = res.json.bind(res);
     
     // Override res.json to capture the response
-    res.json = function(data: any): Response {
+    res.json = function(data: AdminActivityResponse): Response {
       // Log the admin activity
       const success = res.statusCode >= 200 && res.statusCode < 400;
       const errorMessage = !success && data?.message ? data.message : null;
       
       logAdminActivity(req, action, req.body, success, errorMessage)
-        .catch((error: any) => logger.error('Failed to log admin activity:', { error: error.message }));
+        .catch((error: unknown) => {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          logger.error('Failed to log admin activity:', { error: errorMessage });
+        });
       
       // Call the original res.json with the data
       return originalJson(data);
@@ -76,4 +91,3 @@ export const adminActionLogger = (action: string) => {
   };
 };
 
-export { logAdminActivity, adminActionLogger };
