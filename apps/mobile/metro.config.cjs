@@ -70,6 +70,12 @@ config.watchFolders = [
   path.resolve(workspaceRoot, 'packages'),
 ];
 
+// Blocklist conflicting directories
+config.resolver.blockList = [
+  /package-for-refactor/,
+  /node_modules\/.*\/.*\/package-for-refactor/,
+];
+
 // Enable source maps in development for better debugging
 if (process.env.NODE_ENV === 'development') {
   config.transformer.sourceMap = true;

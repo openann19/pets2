@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "Shared TypeScript logic for PawfectMatch - validation schemas, types, API clients",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist-cjs/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc && pnpm build:cjs && pnpm build:merge-cjs",
+    "build": "tsc && pnpm build:cjs",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:merge-cjs": "node -e \"require('fs').cpSync('dist-cjs','dist',{recursive:true});\"",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "clean:all": "rm -rf dist node_modules/.cache",
@@ -67,42 +66,42 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "require": "./dist-cjs/index.js"
     },
     "./schemas": {
       "types": "./dist/schemas/index.d.ts",
       "import": "./dist/schemas/index.js",
-      "require": "./dist/schemas/index.js"
+      "require": "./dist-cjs/schemas/index.js"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/types/index.js",
-      "require": "./dist/types/index.js"
+      "require": "./dist-cjs/types/index.js"
     },
     "./api": {
       "types": "./dist/api/index.d.ts",
       "import": "./dist/api/index.js",
-      "require": "./dist/api/index.js"
+      "require": "./dist-cjs/api/index.js"
     },
     "./services": {
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.js",
-      "require": "./dist/services/index.js"
+      "require": "./dist-cjs/services/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.js"
+      "require": "./dist-cjs/utils/index.js"
     },
     "./stores": {
       "types": "./dist/stores/index.d.ts",
       "import": "./dist/stores/index.js",
-      "require": "./dist/stores/index.js"
+      "require": "./dist-cjs/stores/index.js"
     },
     "./mappers": {
       "types": "./dist/mappers/index.d.ts",
       "import": "./dist/mappers/index.js",
-      "require": "./dist/mappers/index.js"
+      "require": "./dist-cjs/mappers/index.js"
     }
   }
 }

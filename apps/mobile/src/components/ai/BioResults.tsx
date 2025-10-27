@@ -109,7 +109,7 @@ export function BioResults({
               <Ionicons
                 name="bookmark-outline"
                 size={20}
-                color={Theme.colors.text.primar}y}}
+                color={Theme.colors.text.primary}
               />
               <Text style={styles.actionText}>Save</Text>
             </TouchableOpacity>
@@ -124,7 +124,7 @@ export function BioResults({
               <Ionicons
                 name="refresh-outline"
                 size={20}
-                color={Theme.colors.text.primar}y}}
+                color={Theme.colors.text.primary}
               />
               <Text style={styles.actionText}>Regenerate</Text>
             </TouchableOpacity>

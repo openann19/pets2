@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { useReducedMotion } from '../hooks/useReducedMotion';
+import { useReduceMotion } from '../hooks/useReducedMotion';
 import { getAccessibilityProps } from '../utils/accessibilityUtils';
 
 import {
@@ -43,7 +43,7 @@ interface SettingItem {
 }
 
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReduceMotion();
   const theme = useTheme();
   const { t } = useTranslation('common');
   
@@ -478,61 +478,115 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Summary */}
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(220)}>
+        {reducedMotion ? (
           <ProfileSummarySection
             onEditProfile={() => { handleNavigation("profile"); }}
           />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(220)}>
+            <ProfileSummarySection
+              onEditProfile={() => { handleNavigation("profile"); }}
+            />
+          </Animated.View>
+        )}
 
         {/* Settings Sections */}
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(240).delay(50)}>
+        {reducedMotion ? (
           <NotificationSettingsSection
             settings={notificationSettings}
             onToggle={(id, value) => handleToggle("notifications", id, value)}
           />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+            <NotificationSettingsSection
+              settings={notificationSettings}
+              onToggle={(id, value) => handleToggle("notifications", id, value)}
+            />
+          </Animated.View>
+        )}
         
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(260).delay(100)}>
+        {reducedMotion ? (
           <SettingSection
             title="Preferences"
             items={preferenceSettings}
             category="preferences"
             onToggle={(id, value) => handleToggle("preferences", id, value)}
           />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(260).delay(100)}>
+            <SettingSection
+              title="Preferences"
+              items={preferenceSettings}
+              category="preferences"
+              onToggle={(id, value) => handleToggle("preferences", id, value)}
+            />
+          </Animated.View>
+        )}
         
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(280).delay(150)}>
+        {reducedMotion ? (
           <LanguageSection />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+            <LanguageSection />
+          </Animated.View>
+        )}
         
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(290).delay(175)}>
+        {reducedMotion ? (
           <AccountSettingsSection
             settings={accountSettings}
             onNavigate={handleNavigation}
           />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(290).delay(175)}>
+            <AccountSettingsSection
+              settings={accountSettings}
+              onNavigate={handleNavigation}
+            />
+          </Animated.View>
+        )}
         
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(310).delay(225)}>
+        {reducedMotion ? (
           <SettingSection
             title="Support"
             items={supportSettings}
             onItemPress={handleNavigation}
           />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(310).delay(225)}>
+            <SettingSection
+              title="Support"
+              items={supportSettings}
+              onItemPress={handleNavigation}
+            />
+          </Animated.View>
+        )}
         
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(320).delay(250)}>
+        {reducedMotion ? (
           <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(320).delay(250)}>
+            <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
+          </Animated.View>
+        )}
 
         {/* App Version */}
-        <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(340).delay(300)}>
+        {reducedMotion ? (
           <View style={styles.versionSection}>
             <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
             <Text style={styles.versionSubtitle}>
               Built with ❤️ for pet lovers
             </Text>
           </View>
-        </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown.duration(340).delay(300)}>
+            <View style={styles.versionSection}>
+              <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
+              <Text style={styles.versionSubtitle}>
+                Built with ❤️ for pet lovers
+              </Text>
+            </View>
+          </Animated.View>
+        )}
       </ScrollView>
     </ScreenShell>
   );

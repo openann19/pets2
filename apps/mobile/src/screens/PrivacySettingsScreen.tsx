@@ -34,7 +34,7 @@ type PrivacySettingsScreenProps = NativeStackScreenProps<
 
 function PrivacySettingsScreen({
   navigation,
-}: PrivacySettingsScreenProps): JSX.Element {
+}: PrivacySettingsScreenProps): React.JSX.Element {
   const { colors } = useTheme();
   const { settings, loading, updateSetting } = usePrivacySettingsScreen();
   const [loadingExport, setLoadingExport] = useState(false);

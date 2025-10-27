@@ -140,7 +140,7 @@ const voiceNotesRoutes = await import('./src/routes/voiceNotes');
 const reelsRoutes = await import('./src/routes/reels');
 const templatesRoutes = await import('./src/routes/templates');
 const tracksRoutes = await import('./src/routes/tracks');
-const reelUploadsRoutes = await import('./src/routes/reelUploads');
+const uploadsRoutes = await import('./src/routes/uploads');
 
 // Import middleware
 const errorHandler = await import('./src/middleware/errorHandler');
@@ -590,10 +590,10 @@ app.use('/api/community', authenticateToken, communityRoutes.default); // Regist
 app.use('/api/conversations', conversationsRoutes.default);
 
 // PawReels Routes
-app.use('/api/reels', reelsRoutes.default);
-app.use('/api/templates', templatesRoutes.default);
-app.use('/api/tracks', tracksRoutes.default);
-app.use('/api/reel-uploads', reelUploadsRoutes.default);
+app.use('/templates', templatesRoutes.default);
+app.use('/tracks', tracksRoutes.default);
+app.use('/uploads', uploadsRoutes.default);
+app.use('/reels', reelsRoutes.default);
 app.use('/api/profile', profileRoutes.default); // Profile routes (handles auth internally)
 app.use('/api/adoption', adoptionRoutes.default); // Adoption routes (handles auth internally)
 app.use('/api', petActivityRoutes.default); // Pet activity routes

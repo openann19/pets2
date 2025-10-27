@@ -319,7 +319,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               <Ionicons
                 name={showSplit ? 'contract-outline' : 'swap-horizontal'}
                 size={22}
-                color={Theme.colors.primary[500}]}}
+                color={Theme.colors.primary[500]}
               />
             </BouncePressable>
           </View>

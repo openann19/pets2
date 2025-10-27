@@ -519,7 +519,7 @@ export function VoiceRecorderUltra({
             <Ionicons
               name={isRecording ? "stop" : "mic"}
               size={22}
-              color={Theme.colors.neutral[0}]}}
+              color={Theme.colors.neutral[0]}
             />
           </TouchableOpacity>
 
@@ -544,7 +544,7 @@ export function VoiceRecorderUltra({
               <Ionicons
                 name={isLocked ? "lock-closed" : "lock-open"}
                 size={18}
-                color={Theme.colors.neutral[0}]}}
+                color={Theme.colors.neutral[0]}
               />
             </TouchableOpacity>
           )}
@@ -560,7 +560,7 @@ export function VoiceRecorderUltra({
               isPlaying={isPlaying}
               progress={progress}
               duration={Math.max(1, Math.round(durationMs / 1000))}
-              color={Theme.colors.primary[500}]}
+              color={Theme.colors.primary[500]}
               height={36}
               onSeek={async (p) => {
                 if (Platform.OS !== "web" && soundRef.current) {
@@ -611,12 +611,12 @@ export function VoiceRecorderUltra({
               <Ionicons
                 name={isPlaying ? "pause" : "play"}
                 size={18}
-                color={Theme.colors.neutral[0}]}}
+                color={Theme.colors.neutral[0]}
               />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleCancel} style={styles.actionBtn}>
-              <Ionicons name="trash" size={18} color={Theme.colors.status.erro}r}} />
+              <Ionicons name="trash" size={18} color={Theme.colors.status.error} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={send} disabled={isSending || activeProcessing} style={styles.sendBtn}>

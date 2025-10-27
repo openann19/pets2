@@ -21,7 +21,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useReduceMotion } from "../hooks/useReducedMotion";
 
 type IoniconsName = string;
 
@@ -64,7 +64,7 @@ export default function ActivePillTabBar({
 }: BottomTabBarProps) {
   const { colors, dark } = useTheme();
   const insets = useSafeAreaInsets();
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReduceMotion();
 
   // measure each tab
   const layoutsRef = useRef<Record<string, { x: number; w: number }>>({});

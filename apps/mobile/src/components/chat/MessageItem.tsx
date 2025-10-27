@@ -219,7 +219,7 @@ export function MessageItem({
                   style={styles.retryButton}
                   onPress={handleRetry}
                 >
-                  <Ionicons name="refresh" size={12} color={Theme.colors.status.erro}r}} />
+                  <Ionicons name="refresh" size={12} color={Theme.colors.status.error} />
                   <Text style={[styles.retryText, { color: Theme.colors.status.error }]}> 
                     Retry
                   </Text>
@@ -230,7 +230,7 @@ export function MessageItem({
                   <Ionicons
                     name="alert-circle"
                     size={12}
-                    color={Theme.colors.status.erro}r}}
+                    color={Theme.colors.status.error}
                   />
                 </View>
               )}

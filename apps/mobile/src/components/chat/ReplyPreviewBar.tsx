@@ -11,8 +11,8 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme/Provider';
 import { useTranslation } from 'react-i18next';
-import { useReduceMotion } from '../hooks/useReducedMotion';
-import { haptic } from '../ui/haptics';
+import { useReduceMotion } from '../../hooks/useReducedMotion';
+import { haptic } from '../../ui/haptics';
 
 export type ReplyTarget = {
   author?: string;

@@ -316,7 +316,7 @@ function ModernSwipeCardComponent({
                   <Ionicons
                     name="checkmark-circle"
                     size={24}
-                    color={colors.success}}
+                    color={colors.success}
                   />
                 </View>
               )}

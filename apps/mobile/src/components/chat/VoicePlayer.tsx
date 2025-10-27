@@ -90,7 +90,7 @@ export function VoicePlayer({ uri, durationSec, waveform, onError, testID }: Pro
           duration={duration}
           onSeek={onSeek}
           height={28}
-          color={Theme.colors.primary[500}]}}
+          color={Theme.colors.primary[500]}
         />
       </View>
 

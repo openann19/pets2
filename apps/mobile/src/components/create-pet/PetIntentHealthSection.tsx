@@ -187,3 +187,4 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 32,
   },
+});

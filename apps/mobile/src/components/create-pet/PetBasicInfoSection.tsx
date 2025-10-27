@@ -217,156 +217,26 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           value={formData.description}
           onChangeText={(value) => {
             onUpdateFormData("description", value);
+          }}
+          placeholder="Tell us about your pet..."
+          placeholderTextColor="#9ca3af"
+          multiline
+        />
+        {errors.description && (
+          <Text style={styles.errorText}>{errors.description}</Text>
+        )}
+      </View>
+    </View>
+  );
 };
 
 const makeStyles = (theme: any) => StyleSheet.create({
-section: {
-marginBottom: 32,
-},
-sectionTitle: {
-fontSize: 20,
-fontWeight: "bold",
-color: theme.colors.neutral[900],
-marginBottom: 16,
-},
-inputGroup: {
-marginBottom: 20,
-},
-label: {
-fontSize: 16,
-fontWeight: "600",
-color: theme.colors.neutral[700],
-marginBottom: 8,
-},
-input: {
-borderWidth: 1,
-borderColor: theme.colors.neutral[300],
-borderRadius: 8,
-padding: 12,
-fontSize: 16,
-backgroundColor: theme.colors.neutral[0],
-},
-inputError: {
-borderColor: theme.colors.status.error,
-},
-errorText: {
-fontSize: 14,
-color: theme.colors.status.error,
-marginTop: 4,
-},
-textArea: {
-borderWidth: 1,
-borderColor: theme.colors.neutral[300],
-borderRadius: 8,
-padding: 12,
-fontSize: 16,
-backgroundColor: theme.colors.neutral[0],
-height: 100,
-},
-row: {
-flexDirection: "row",
-},
-flex1: {
-flex: 1,
-},
-marginLeft: {
-marginLeft: 12,
-},
-optionsGrid: {
-flexDirection: "row",
-flexWrap: "wrap",
-gap: 8,
-},
-optionButton: {
-flexDirection: "row",
-alignItems: "center",
-padding: 12,
-borderWidth: 1,
-borderColor: theme.colors.neutral[300],
-borderRadius: 8,
-backgroundColor: theme.colors.neutral[0],
-flex: 1,
-minWidth: 150,
-justifyContent: "center",
-},
-optionButtonSelected: {
-borderColor: theme.colors.secondary[500],
-backgroundColor: theme.colors.neutral[100],
-},
-optionEmoji: {
-fontSize: 20,
-marginRight: 8,
-},
-optionText: {
-fontSize: 14,
-color: theme.colors.neutral[700],
-fontWeight: "500",
-},
-optionTextSelected: {
-color: theme.colors.secondary[500],
-},
-genderOptions: {
-flexDirection: "row",
-gap: 8,
-},
-genderButton: {
-flex: 1,
-flexDirection: "row",
-alignItems: "center",
-justifyContent: "center",
-padding: 12,
-borderWidth: 1,
-borderColor: theme.colors.neutral[300],
-borderRadius: 8,
-backgroundColor: theme.colors.neutral[0],
-},
-genderButtonSelected: {
-borderColor: theme.colors.secondary[500],
-backgroundColor: theme.colors.neutral[100],
-},
-genderEmoji: {
-fontSize: 16,
-marginRight: 6,
-},
-genderText: {
-fontSize: 14,
-color: theme.colors.neutral[700],
-fontWeight: "500",
-},
-genderTextSelected: {
-color: theme.colors.secondary[500],
-},
-sizeOptions: {
-gap: 8,
-},
-sizeButton: {
-padding: 12,
-borderWidth: 1,
-borderColor: theme.colors.neutral[300],
-borderRadius: 8,
-backgroundColor: theme.colors.neutral[0],
-alignItems: "center",
-},
-sizeButtonSelected: {
-borderColor: theme.colors.secondary[500],
-backgroundColor: theme.colors.neutral[100],
-},
-sizeLabel: {
-fontSize: 14,
-color: theme.colors.neutral[700],
-fontWeight: "600",
-},
-sizeLabelSelected: {
-color: theme.colors.secondary[500],
-},
-sizeDesc: {
-fontSize: 12,
-color: theme.colors.neutral[500],
-marginTop: 2,
-},
-sizeDescSelected: {
-color: "#7C3AED",
-},
+  section: {
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
     color: theme.colors.neutral[900],
     marginBottom: 16,
   },
@@ -506,6 +376,6 @@ color: "#7C3AED",
     marginTop: 2,
   },
   sizeDescSelected: {
-    color: "#7C3AED",
+    color: theme.colors.secondary[500],
   },
 });

@@ -69,7 +69,7 @@ export function PinDetailsModal({ visible, pin, activityTypes, onClose, onLike, 
           <View style={styles.header}>
             <Text style={styles.title}>{pin.activity.toUpperCase()}</Text>
             <TouchableOpacity onPress={onClose} testID="btn-close-pin">
-              <Ionicons name="close" size={24} color={Theme.colors.neutral[800}]}} />
+              <Ionicons name="close" size={24} color={Theme.colors.neutral[800]} />
             </TouchableOpacity>
           </View>
 
