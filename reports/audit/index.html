@@ -1,0 +1,422 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawfectMatch - Semantic Audit Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }
+        .header h1 { margin: 0; font-size: 2.5em; }
+        .header p { margin: 10px 0 0 0; opacity: 0.9; }
+        .content { padding: 30px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #f8f9fa; padding: 20px; border-radius: 6px; border-left: 4px solid #667eea; }
+        .stat-card h3 { margin: 0 0 10px 0; color: #333; }
+        .stat-card .number { font-size: 2em; font-weight: bold; color: #667eea; }
+        .severity-P0 { border-left-color: #dc3545; }
+        .severity-P1 { border-left-color: #fd7e14; }
+        .severity-P2 { border-left-color: #ffc107; }
+        .severity-P3 { border-left-color: #28a745; }
+        .section { margin-bottom: 40px; }
+        .section h2 { color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        .findings-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .findings-table th, .findings-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .findings-table th { background: #f8f9fa; font-weight: 600; }
+        .severity-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; color: white; }
+        .severity-P0 { background: #dc3545; }
+        .severity-P1 { background: #fd7e14; }
+        .severity-P2 { background: #ffc107; color: #000; }
+        .severity-P3 { background: #28a745; }
+        .file-path { font-family: monospace; background: #f1f3f4; padding: 2px 6px; border-radius: 3px; }
+        .category-badge { background: #e9ecef; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 PawfectMatch Semantic Audit</h1>
+            <p>Comprehensive codebase analysis - 10/27/2025</p>
+        </div>
+        
+        <div class="content">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Findings</h3>
+                    <div class="number">190556</div>
+                </div>
+                <div class="stat-card severity-P0">
+                    <h3>Critical (P0)</h3>
+                    <div class="number">222</div>
+                </div>
+                <div class="stat-card severity-P1">
+                    <h3>High (P1)</h3>
+                    <div class="number">141710</div>
+                </div>
+                <div class="stat-card severity-P2">
+                    <h3>Medium (P2)</h3>
+                    <div class="number">46390</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📊 By Category</h2>
+                <table class="findings-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            <tr>
+                                <td><span class="category-badge">Security</span></td>
+                                <td>449</td>
+                                <td>0.2%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="category-badge">i18n</span></td>
+                                <td>142155</td>
+                                <td>74.6%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="category-badge">Type</span></td>
+                                <td>7319</td>
+                                <td>3.8%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="category-badge">Theme</span></td>
+                                <td>3371</td>
+                                <td>1.8%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="category-badge">Performance</span></td>
+                                <td>35154</td>
+                                <td>18.4%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="category-badge">DeadCode</span></td>
+                                <td>2108</td>
+                                <td>1.1%</td>
+                            </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>📂 By Owner</h2>
+                <table class="findings-table">
+                    <thead>
+                        <tr>
+                            <th>Package</th>
+                            <th>Findings</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            <tr>
+                                <td>mobile</td>
+                                <td>107480</td>
+                                <td>56.4%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td>web</td>
+                                <td>81084</td>
+                                <td>42.6%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td>core</td>
+                                <td>295</td>
+                                <td>0.2%</td>
+                            </tr>
+                        
+                            <tr>
+                                <td>server</td>
+                                <td>1697</td>
+                                <td>0.9%</td>
+                            </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>🔥 Top 20 Critical Risks</h2>
+                <table class="findings-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Severity</th>
+                            <th>Category</th>
+                            <th>File</th>
+                            <th>Line</th>
+                            <th>Problem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00001</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/__tests__/advanced-regression.test.tsx</span></td>
+                                <td>866</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00002</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/__tests__/critical-journeys.test.tsx</span></td>
+                                <td>897</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00008</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/ModernPhotoUpload.test.tsx</span></td>
+                                <td>41</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00009</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/ModernPhotoUpload.test.tsx</span></td>
+                                <td>44</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00010</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/ModernPhotoUpload.test.tsx</span></td>
+                                <td>45</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00011</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/ModernPhotoUpload.test.tsx</span></td>
+                                <td>56</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00012</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/ModernPhotoUpload.test.tsx</span></td>
+                                <td>150</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00013</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/PhotoUploadComponent.test.tsx</span></td>
+                                <td>47</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00014</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/__tests__/PhotoUploadComponent.test.tsx</span></td>
+                                <td>435</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00015</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/ai/__tests__/ai-components.test.tsx</span></td>
+                                <td>28</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00016</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/chat/MessageInput.tsx</span></td>
+                                <td>125</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00021</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/compatibility/InteractionCompatibilityCard.tsx</span></td>
+                                <td>18</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00022</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/compatibility/InteractionCompatibilityCard.tsx</span></td>
+                                <td>22</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00003</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/ModernPhotoUpload.tsx</span></td>
+                                <td>81</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00004</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/ModernPhotoUploadWithEditor.tsx</span></td>
+                                <td>18</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00005</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/ModernPhotoUploadWithEditor.tsx</span></td>
+                                <td>38</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00006</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/ModernPhotoUploadWithEditor.tsx</span></td>
+                                <td>50</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00024</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/photo/Cropper.tsx</span></td>
+                                <td>200</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00007</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/components/PhotoUploadComponent.tsx</span></td>
+                                <td>56</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><code>AUD-SEC-00025</code></td>
+                                <td><span class="severity-badge severity-P0">P0</span></td>
+                                <td><span class="category-badge">Security</span></td>
+                                <td><span class="file-path">apps/mobile/src/hooks/__tests__/useNotifications.test.ts</span></td>
+                                <td>8</td>
+                                <td>Potential hardcoded secret or API key</td>
+                            </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>📁 Files with Most Findings</h2>
+                <table class="findings-table">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Findings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/web/src/services/WeatherService.ts</span></td>
+                                <td>1466</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/components/chat/VoiceRecorderUltra.tsx</span></td>
+                                <td>1418</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/__tests__/advanced-regression.test.tsx</span></td>
+                                <td>1323</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/components/Advanced/AdvancedHeader.tsx</span></td>
+                                <td>1224</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/components/HolographicEffects.tsx</span></td>
+                                <td>1196</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/components/Advanced/AdvancedCard.tsx</span></td>
+                                <td>1132</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/screens/ai/AIPhotoAnalyzerScreen.original.tsx</span></td>
+                                <td>1119</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/components/GlowShadowSystem.tsx</span></td>
+                                <td>1101</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/__tests__/performance.test.tsx</span></td>
+                                <td>1061</td>
+                            </tr>
+                        
+                            <tr>
+                                <td><span class="file-path">apps/mobile/src/services/api.ts</span></td>
+                                <td>1038</td>
+                            </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
