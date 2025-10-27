@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
+import { Theme } from '../../theme/unified-theme';
 
 type AdoptionStackParamList = {
   PetDetails: { petId: string };
@@ -90,7 +91,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           text: "Confirm",
           onPress: () => {
             if (pet) {
-              setPet({ ...pet, status: newStatus as any });
+              setPet({ ...pet, status: newStatus as PetDetails["status"] });
               Alert.alert("Success", `Status updated to ${newStatus}`);
             }
           },
@@ -102,15 +103,15 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "#10b981";
+        return "Theme.colors.status.success";
       case "pending":
-        return "#f59e0b";
+        return "Theme.colors.status.warning";
       case "adopted":
         return "#8b5cf6";
       case "paused":
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
       default:
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -184,7 +185,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <Image source={{ uri: pet.photos[0] }} style={styles.mainPhoto} />
           {pet.featured && (
             <View style={styles.featuredBadge}>
-              <Ionicons name="star" size={16} color="#fff" />
+              <Ionicons name="star" size={16} color="Theme.colors.neutral[0]" />
               <Text style={styles.featuredText}>Featured</Text>
             </View>
           )}
@@ -195,16 +196,16 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
           <View style={styles.nameRow}>
             <Text style={styles.petName}>{pet.name}</Text>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.statusBadge,
                 { backgroundColor: `${getStatusColor(pet.status)}20` },
-              ]}
+              ])}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusText,
                   { color: getStatusColor(pet.status) },
-                ]}
+                ])}
               >
                 {getStatusIcon(pet.status)}{" "}
                 {pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
@@ -265,7 +266,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       : "close-circle"
                   }
                   size={20}
-                  color={pet.healthInfo.vaccinated ? "#10b981" : "#ef4444"}
+                  color={pet.healthInfo.vaccinated ? "Theme.colors.status.success" : "Theme.colors.status.error"}
                 />
                 <Text style={styles.healthText}>Vaccinated</Text>
               </View>
@@ -277,7 +278,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       : "close-circle"
                   }
                   size={20}
-                  color={pet.healthInfo.spayedNeutered ? "#10b981" : "#ef4444"}
+                  color={pet.healthInfo.spayedNeutered ? "Theme.colors.status.success" : "Theme.colors.status.error"}
                 />
                 <Text style={styles.healthText}>Spayed/Neutered</Text>
               </View>
@@ -289,7 +290,7 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
                       : "close-circle"
                   }
                   size={20}
-                  color={pet.healthInfo.microchipped ? "#10b981" : "#ef4444"}
+                  color={pet.healthInfo.microchipped ? "Theme.colors.status.success" : "Theme.colors.status.error"}
                 />
                 <Text style={styles.healthText}>Microchipped</Text>
               </View>
@@ -311,10 +312,10 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               }}
             >
               <LinearGradient
-                colors={["#3b82f6", "#1d4ed8"]}
+                colors={["Theme.colors.status.info", "#1d4ed8"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="document-text" size={24} color="#fff" />
+                <Ionicons name="document-text" size={24} color="Theme.colors.neutral[0]" />
                 <Text style={styles.actionText}>Review Applications</Text>
                 <Text style={styles.actionCount}>({pet.applications})</Text>
               </LinearGradient>
@@ -327,10 +328,10 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               }}
             >
               <LinearGradient
-                colors={["#10b981", "#047857"]}
+                colors={["Theme.colors.status.success", "#047857"]}
                 style={styles.actionGradient}
               >
-                <Ionicons name="create" size={24} color="#fff" />
+                <Ionicons name="create" size={24} color="Theme.colors.neutral[0]" />
                 <Text style={styles.actionText}>Edit Details</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -345,19 +346,19 @@ const PetDetailsScreen = ({ navigation, route }: PetDetailsScreenProps) => {
               {["active", "pending", "adopted", "paused"].map((status) => (
                 <TouchableOpacity
                   key={status}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.statusOption,
                     pet.status === status && styles.statusOptionActive,
-                  ]}
+                  ])}
                   onPress={() => {
                     handleStatusChange(status);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.statusOptionText,
                       pet.status === status && styles.statusOptionTextActive,
-                    ]}
+                    ])}
                   >
                     {getStatusIcon(status)}{" "}
                     {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -412,7 +413,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -448,14 +449,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   featuredText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "bold",
     marginLeft: 4,
   },
   infoSection: {
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   nameRow: {
     flexDirection: "row",
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -479,7 +480,7 @@ const styles = StyleSheet.create({
   },
   petBreed: {
     fontSize: 18,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 16,
   },
   statsRow: {
@@ -488,7 +489,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#f3f4f6",
+    borderColor: "Theme.colors.neutral[100]",
   },
   statItem: {
     alignItems: "center",
@@ -496,12 +497,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   section: {
     padding: 20,
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 12,
   },
   sectionCard: {
@@ -520,7 +521,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#4b5563",
+    color: "Theme.colors.neutral[600]",
   },
   tagsContainer: {
     flexDirection: "row",
@@ -528,14 +529,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tag: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "Theme.colors.neutral[100]",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   tagText: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   healthInfo: {
@@ -548,7 +549,7 @@ const styles = StyleSheet.create({
   },
   healthText: {
     fontSize: 16,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   actionsGrid: {
@@ -563,13 +564,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
     marginTop: 8,
   },
   actionCount: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     opacity: 0.9,
     marginTop: 4,
@@ -586,16 +587,16 @@ const styles = StyleSheet.create({
   },
   statusOptionActive: {
     backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
+    borderColor: "Theme.colors.primary[500]",
   },
   statusOptionText: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
     textAlign: "center",
   },
   statusOptionTextActive: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
   backButton: {
@@ -603,7 +604,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
 });

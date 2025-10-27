@@ -1,37 +1,32 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, type IconProps } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Switch,
-  Alert,
-} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useMemo, type ComponentProps } from "react";
+import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { haptic } from '../ui/haptics';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { AdvancedCard, CardConfigs } from "../components/Advanced/AdvancedCard";
 import {
   AdvancedHeader,
   HeaderConfigs,
 } from "../components/Advanced/AdvancedHeader";
-import { AdvancedButton } from "../components/Advanced/AdvancedInteractionSystem";
 import { matchesAPI } from "../services/api";
 import { useAuthStore } from "@pawfectmatch/core";
+import gdprService from "../services/gdprService";
+import { useSettingsScreen } from "../hooks/screens/useSettingsScreen";
+import type { RootStackScreenProps } from "../navigation/types";
+import {
+  ProfileSummarySection,
+  NotificationSettingsSection,
+  AccountSettingsSection,
+  DangerZoneSection,
+} from "./settings";
 
-type RootStackParamList = {
-  Settings: undefined;
-  Home: undefined;
-  Profile: undefined;
-};
+import { Theme } from '../theme/unified-theme';
 
-type SettingsScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Settings"
->;
+type SettingsScreenProps = RootStackScreenProps<"Settings">;
 
 interface SettingItem {
   id: string;
@@ -44,20 +39,34 @@ interface SettingItem {
 }
 
 export default function SettingsScreen({ navigation }: SettingsScreenProps) {
-  const [notifications, setNotifications] = useState({
-    matches: true,
-    messages: true,
-    likes: false,
-    reminders: true,
-  });
-
-  const [preferences, setPreferences] = useState({
-    locationServices: true,
-    analytics: false,
-    darkMode: false,
-  });
+  const {
+    notifications,
+    preferences,
+    deletionStatus,
+    setNotifications,
+    setPreferences,
+    handleLogout,
+    handleDeleteAccount,
+    handleExportData,
+  } = useSettingsScreen();
 
   const notificationSettings: SettingItem[] = [
+    {
+      id: "email",
+      title: "Email Notifications",
+      subtitle: "Receive notifications via email",
+      icon: "mail",
+      type: "toggle",
+      value: notifications.email,
+    },
+    {
+      id: "push",
+      title: "Push Notifications",
+      subtitle: "Receive push notifications",
+      icon: "notifications",
+      type: "toggle",
+      value: notifications.push,
+    },
     {
       id: "matches",
       title: "New Matches",
@@ -74,48 +83,17 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       type: "toggle",
       value: notifications.messages,
     },
-    {
-      id: "likes",
-      title: "Likes & Super Likes",
-      subtitle: "Notifications for likes and super likes",
-      icon: "thumbs-up",
-      type: "toggle",
-      value: notifications.likes,
-    },
-    {
-      id: "reminders",
-      title: "Reminders",
-      subtitle: "Daily reminders to check your matches",
-      icon: "notifications",
-      type: "toggle",
-      value: notifications.reminders,
-    },
   ];
 
+  // Note: These are examples only - the actual preferences structure is for match filtering
   const preferenceSettings: SettingItem[] = [
+    // Add UI preferences here as needed - but won't be in User["preferences"]
     {
-      id: "locationServices",
-      title: "Location Services",
-      subtitle: "Allow access to location for better matches",
-      icon: "location",
-      type: "toggle",
-      value: preferences.locationServices,
-    },
-    {
-      id: "analytics",
-      title: "Analytics",
-      subtitle: "Help improve the app with usage data",
-      icon: "analytics",
-      type: "toggle",
-      value: preferences.analytics,
-    },
-    {
-      id: "darkMode",
-      title: "Dark Mode",
-      subtitle: "Switch to dark theme",
-      icon: "moon",
-      type: "toggle",
-      value: preferences.darkMode,
+      id: "placeholder",
+      title: "Preferences",
+      subtitle: "Coming soon",
+      icon: "settings",
+      type: "navigation",
     },
   ];
 
@@ -169,6 +147,13 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
 
   const dangerSettings: SettingItem[] = [
     {
+      id: "export-data",
+      title: "Export My Data",
+      subtitle: "Download a copy of your data (GDPR)",
+      icon: "download",
+      type: "action",
+    },
+    {
       id: "logout",
       title: "Log Out",
       subtitle: "Sign out of your account",
@@ -177,11 +162,15 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     },
     {
       id: "delete",
-      title: "Delete Account",
-      subtitle: "Permanently delete your account",
-      icon: "trash",
+      title: deletionStatus.isPending
+        ? `Cancel Account Deletion (${deletionStatus.daysRemaining} days left)`
+        : "Request Account Deletion",
+      subtitle: deletionStatus.isPending
+        ? "Cancel your pending deletion request"
+        : "Permanently delete your account (30-day grace period)",
+      icon: deletionStatus.isPending ? "close-circle" : "trash",
       type: "action",
-      destructive: true,
+      destructive: !deletionStatus.isPending,
     },
   ];
 
@@ -192,17 +181,20 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   ) => {
     try {
       if (category === "notifications") {
-        setNotifications((prev) => ({ ...prev, [id]: value }));
-        // Update API
+        const updatedNotifications = { ...notifications, [id]: value };
+        setNotifications(updatedNotifications);
+        // Update API - send full User["preferences"] structure
         await matchesAPI.updateUserSettings({
-          notifications: { ...notifications, [id]: value },
-        } as any);
+          maxDistance: preferences.maxDistance,
+          ageRange: preferences.ageRange,
+          species: preferences.species,
+          intents: preferences.intents,
+          notifications: updatedNotifications,
+        });
       } else {
-        setPreferences((prev) => ({ ...prev, [id]: value }));
-        // Update API
-        await matchesAPI.updateUserSettings({
-          preferences: { ...preferences, [id]: value },
-        } as any);
+        // Preferences are already in the right structure
+        const updatedPreferences = { ...preferences, [id]: value };
+        setPreferences(updatedPreferences);
       }
     } catch (error) {
       logger.error("Failed to update settings:", { error });
@@ -211,9 +203,10 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   };
 
   const handleNavigation = (id: string) => {
+    haptic.tap();
     switch (id) {
       case "profile":
-        navigation.navigate("Profile" as any);
+        navigation.navigate("Profile");
         break;
       case "privacy":
       case "subscription":
@@ -230,63 +223,25 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     }
   };
 
-  const handleAction = (id: string) => {
+  const handleAction = async (id: string) => {
+    if (id === "delete") {
+      haptic.error();
+    } else {
+      haptic.confirm();
+    }
+    
     switch (id) {
+      case "export-data":
+        await handleExportData();
+        break;
       case "logout":
-        Alert.alert("Log Out", "Are you sure you want to log out?", [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Log Out",
-            style: "destructive",
-            onPress: async () => {
-              try {
-                // Implement logout
-                await matchesAPI.auth.logout();
-                useAuthStore.getState().logout();
-                Alert.alert(
-                  "Logged Out",
-                  "You have been logged out successfully",
-                );
-                navigation.navigate("Home" as any);
-              } catch (error) {
-                logger.error("Logout failed:", { error });
-                Alert.alert("Error", "Failed to log out. Please try again.");
-              }
-            },
-          },
-        ]);
+        handleLogout();
         break;
       case "delete":
-        Alert.alert(
-          "Delete Account",
-          "This action cannot be undone. All your data will be permanently deleted.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Delete Account",
-              style: "destructive",
-              onPress: async () => {
-                try {
-                  // Implement account deletion
-                  await matchesAPI.user.deleteAccount();
-                  useAuthStore.getState().logout();
-                  Alert.alert(
-                    "Account Deleted",
-                    "Your account has been deleted",
-                  );
-                  navigation.navigate("Home" as any);
-                } catch (error) {
-                  logger.error("Account deletion failed:", { error });
-                  Alert.alert(
-                    "Error",
-                    "Failed to delete account. Please try again.",
-                  );
-                }
-              },
-            },
-          ],
-        );
+        handleDeleteAccount();
         break;
+      default:
+        logger.info(`Unknown action: ${id}`);
     }
   };
 
@@ -296,10 +251,10 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   ) => (
     <TouchableOpacity
       key={item.id}
-      style={[
+      style={StyleSheet.flatten([
         styles.settingItem,
         item.destructive && styles.settingItemDestructive,
-      ]}
+      ])}
       onPress={() => {
         if (item.type === "navigation") {
           handleNavigation(item.id);
@@ -311,32 +266,32 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     >
       <View style={styles.settingLeft}>
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.settingIcon,
             item.destructive && styles.settingIconDestructive,
-          ]}
+          ])}
         >
           <Ionicons
-            name={item.icon as any}
+            name={item.icon as ComponentProps<typeof Ionicons>["name"]}
             size={20}
-            color={item.destructive ? "#EF4444" : "#6B7280"}
+            color={item.destructive ? Theme.colors.status.error : Theme.colors.neutral[500]}
           />
         </View>
         <View style={styles.settingText}>
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.settingTitle,
               item.destructive && styles.settingTitleDestructive,
-            ]}
+            ])}
           >
             {item.title}
           </Text>
           {item.subtitle && (
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.settingSubtitle,
                 item.destructive && styles.settingSubtitleDestructive,
-              ]}
+              ])}
             >
               {item.subtitle}
             </Text>
@@ -351,12 +306,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
             onValueChange={(value) =>
               category && handleToggle(category, item.id, value)
             }
-            trackColor={{ false: "#D1D5DB", true: "#8B5CF6" }}
-            thumbColor={item.value ? "#FFFFFF" : "#F3F4F6"}
+            trackColor={{ false: Theme.colors.neutral[300], true: Theme.colors.secondary[500] }}
+            thumbColor={item.value ? Theme.colors.neutral[0] : Theme.colors.neutral[100]}
           />
         )}
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400]} />
         )}
       </View>
     </TouchableOpacity>
@@ -376,96 +331,88 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Advanced Header */}
-      <AdvancedHeader
-        {...HeaderConfigs.glass({
-          title: "Settings",
-          rightButtons: [
-            {
-              type: "search",
-              onPress: async () => {
-                logger.info("Search settings");
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "Settings",
+            rightButtons: [
+              {
+                type: "search",
+                onPress: async () => {
+                  haptic.tap();
+                  logger.info("Search settings");
+                },
+                variant: "minimal",
+                haptic: "light",
               },
-              variant: "minimal",
-              haptic: "light",
+            ],
+            apiActions: {
+              search: async () => {
+                logger.info("Search settings API action");
+              },
             },
-          ],
-          apiActions: {
-            search: async () => {
-              logger.info("Search settings API action");
-            },
-          },
-        })}
-      />
-
+          })}
+        />
+      }
+    >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Profile Summary */}
-        <View style={styles.profileSection}>
-          <AdvancedCard
-            {...CardConfigs.glass({
-              interactions: ["hover", "press", "glow"],
-              haptic: "light",
-              apiAction: async () => {
-                const userProfile = await matchesAPI.getUserProfile();
-                logger.info("Loaded user profile:", { userProfile });
-              },
-              actions: [
-                {
-                  icon: "pencil",
-                  title: "Edit",
-                  variant: "minimal",
-                  onPress: () => {
-                    handleNavigation("profile");
-                  },
-                },
-              ],
-            })}
-            style={styles.profileCard}
-          >
-            <View style={styles.profileCardContent}>
-              <View style={styles.profileAvatar}>
-                <Ionicons name="person" size={32} color="#9CA3AF" />
-              </View>
-              <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>John Doe</Text>
-                <Text style={styles.profileEmail}>john@example.com</Text>
-                <View style={styles.profileStatus}>
-                  <View style={styles.statusDot} />
-                  <Text style={styles.statusText}>Free Plan</Text>
-                </View>
-              </View>
-            </View>
-          </AdvancedCard>
-        </View>
+        <Animated.View entering={FadeInDown.duration(220)}>
+          <ProfileSummarySection
+            onEditProfile={() => handleNavigation("profile")}
+          />
+        </Animated.View>
 
         {/* Settings Sections */}
-        {renderSection("Notifications", notificationSettings, "notifications")}
-        {renderSection("Preferences", preferenceSettings, "preferences")}
-        {renderSection("Account", accountSettings)}
-        {renderSection("Support", supportSettings)}
-        {renderSection("Account Actions", dangerSettings)}
+        <Animated.View entering={FadeInDown.duration(240).delay(50)}>
+          <NotificationSettingsSection
+            settings={notificationSettings}
+            onToggle={(id, value) => handleToggle("notifications", id, value)}
+          />
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(260).delay(100)}>
+          {renderSection("Preferences", preferenceSettings, "preferences")}
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(280).delay(150)}>
+          <AccountSettingsSection
+            settings={accountSettings}
+            onNavigate={handleNavigation}
+          />
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(300).delay(200)}>
+          {renderSection("Support", supportSettings)}
+        </Animated.View>
+        
+        <Animated.View entering={FadeInDown.duration(320).delay(250)}>
+          <DangerZoneSection settings={dangerSettings} onAction={handleAction} />
+        </Animated.View>
 
         {/* App Version */}
-        <View style={styles.versionSection}>
-          <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
-          <Text style={styles.versionSubtitle}>
-            Built with ❤️ for pet lovers
-          </Text>
-        </View>
+        <Animated.View entering={FadeInDown.duration(340).delay(300)}>
+          <View style={styles.versionSection}>
+            <Text style={styles.versionText}>PawfectMatch v1.0.0</Text>
+            <Text style={styles.versionSubtitle}>
+              Built with ❤️ for pet lovers
+            </Text>
+          </View>
+        </Animated.View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
   },
   header: {
     flexDirection: "row",
@@ -473,9 +420,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   backButton: {
     padding: 8,
@@ -483,7 +430,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
   },
   placeholder: {
     width: 40,
@@ -499,12 +446,12 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   profileCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -517,7 +464,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
@@ -528,12 +475,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 2,
   },
   profileEmail: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 4,
   },
   profileStatus: {
@@ -544,12 +491,12 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
     marginRight: 6,
   },
   statusText: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   editProfileButton: {
@@ -562,15 +509,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 12,
   },
   sectionContent: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -585,7 +532,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   settingItemDestructive: {
     borderBottomColor: "#FEF2F2",
@@ -599,7 +546,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -613,15 +560,15 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 2,
   },
   settingTitleDestructive: {
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
   },
   settingSubtitle: {
     fontSize: 13,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
   settingSubtitleDestructive: {
     color: "#FCA5A5",
@@ -636,12 +583,12 @@ const styles = StyleSheet.create({
   },
   versionText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   versionSubtitle: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: "Theme.colors.neutral[400]",
     marginTop: 4,
   },
   profileCardContent: {

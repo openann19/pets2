@@ -134,7 +134,7 @@ export default function CalendarPage() {
             </p>
           </div>
 
-          <button onClick={() => handleAddEvent(new Date())} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg flex items-center transition-colors">
+          <button onClick={() => { handleAddEvent(new Date()); }} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg flex items-center transition-colors">
             <PlusIcon className="w-5 h-5 mr-1"/>
             <span>Add Event</span>
           </button>
@@ -142,10 +142,10 @@ export default function CalendarPage() {
 
         {/* Calendar and Event Form */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className={`${showEventForm ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
+          <div className={showEventForm ? 'lg:col-span-2' : 'lg:col-span-3'}>
             {isLoading ? (<div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 flex items-center justify-center min-h-[300px]">
                 <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"/>
-              </div>) : (<PetCalendar events={events} onDateClick={(date) => setSelectedDate(date)} onEventClick={handleEventClick} onAddEvent={handleAddEvent}/>)}
+              </div>) : (<PetCalendar events={events} onDateClick={(date) => { setSelectedDate(date); }} onEventClick={handleEventClick} onAddEvent={handleAddEvent}/>)}
           </div>
 
           {showEventForm ? <div className="lg:col-span-1">

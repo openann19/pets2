@@ -183,7 +183,7 @@ export default function AnalyticsVisualization({
       onRefresh();
     }, 30000); // Refresh every 30 seconds
 
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); };
   }, [autoRefresh, onRefresh]);
 
   // Memoized processed data for better performance
@@ -401,7 +401,7 @@ export default function AnalyticsVisualization({
           {/* Action Buttons */}
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => { setShowFilters(!showFilters); }}
               className={`p-2 rounded-lg transition-colors ${
                 showFilters
                   ? 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-400'
@@ -488,7 +488,7 @@ export default function AnalyticsVisualization({
                   <input
                     type="checkbox"
                     checked={autoRefresh}
-                    onChange={(e) => setAutoRefresh(e.target.checked)}
+                    onChange={(e) => { setAutoRefresh(e.target.checked); }}
                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">

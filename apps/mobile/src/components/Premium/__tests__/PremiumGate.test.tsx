@@ -3,11 +3,12 @@ import {} from "@testing-library/react-native";
 import "@testing-library/jest-native/extend-expect";
 import PremiumGate from "../../Premium/PremiumGate";
 import {} from "@pawfectmatch/core";
-import {} from "../../../contexts/ThemeContext";
+import {} from "../../../theme/Provider";
+import { Theme } from '../../../theme/unified-theme';
 
 // Mock dependencies
 jest.mock("@pawfectmatch/core");
-jest.mock("../../../contexts/ThemeContext");
+jest.mock("../../../theme/Provider");
 
 const mockNavigation = {
   navigate: jest.fn(),
@@ -21,9 +22,9 @@ describe("PremiumGate", () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: "#7c3aed",
-        secondary: "#ec4899",
-        background: "#ffffff",
-        text: "#000000",
+        secondary: "Theme.colors.primary[500]",
+        background: "Theme.colors.neutral[0]",
+        text: "Theme.colors.neutral[950]",
       },
       isDark: false,
     });
@@ -159,10 +160,10 @@ describe("PremiumGate", () => {
     (useTheme as jest.Mock).mockReturnValue({
       colors: {
         primary: "#7c3aed",
-        secondary: "#ec4899",
-        background: "#1f2937",
-        text: "#ffffff",
-        card: "#374151",
+        secondary: "Theme.colors.primary[500]",
+        background: "Theme.colors.neutral[800]",
+        text: "Theme.colors.neutral[0]",
+        card: "Theme.colors.neutral[700]",
       },
       isDark: true,
     });

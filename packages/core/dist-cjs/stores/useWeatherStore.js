@@ -89,4 +89,3 @@ exports._useWeatherStore = (0, zustand_1.create)()((0, immer_1.immer)((set, get)
         });
     },
 })));
-//# sourceMappingURL=useWeatherStore.js.map

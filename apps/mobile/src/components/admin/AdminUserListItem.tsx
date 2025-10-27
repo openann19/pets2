@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { ThemeColors } from "../../contexts/ThemeContext";
+import type { ThemeColors } from "../../theme/Provider";
 import type { AdminUserStatus } from "../../services/adminUsersService";
+import { Theme } from '../../theme/unified-theme';
 
 type IoniconName =
   | "paw"
@@ -88,46 +89,61 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
   ({ data, colors, onSelect, onPrimaryAction, onSecondaryAction }) => {
     return (
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.container,
           { backgroundColor: colors.surface },
           data.isSelected && styles.selectedContainer,
-        ]}
+        ])}
         onPress={onSelect}
         accessibilityRole="button"
         accessibilityLabel={`User ${data.fullName}`}
       >
         <View style={styles.headerRow}>
           <View style={styles.avatarContainer}>
-            <Text style={[styles.avatarText, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.avatarText,
+                { color: colors.text },
+              ])}
+            >
               {data.initials}
             </Text>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={[styles.fullName, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.fullName,
+                { color: colors.text },
+              ])}
+            >
               {data.fullName}
             </Text>
-            <Text style={[styles.email, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.email,
+                { color: colors.textMuted },
+              ])}
+            >
               {data.email}
             </Text>
             <View style={styles.badgeRow}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusBadge,
                   { backgroundColor: data.statusColor },
-                ]}
+                ])}
               >
-                <Ionicons name={data.statusIcon} size={12} color="#FFFFFF" />
+                <Ionicons name={data.statusIcon} size={12} color="Theme.colors.neutral[0]" />
                 <Text style={styles.statusText}>{data.statusLabel}</Text>
               </View>
               {data.verified ? (
                 <View
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.verifiedBadge,
                     { backgroundColor: colors.success },
-                  ]}
+                  ])}
                 >
-                  <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                  <Ionicons name="checkmark" size={12} color="Theme.colors.neutral[0]" />
                   <Text style={styles.verifiedText}>Verified</Text>
                 </View>
               ) : null}
@@ -135,40 +151,40 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           </View>
           <View style={styles.actionColumn}>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 { backgroundColor: data.primaryAction.tint },
-              ]}
+              ])}
               onPress={onPrimaryAction}
               accessibilityRole="button"
               accessibilityLabel={data.primaryAction.accessibilityLabel}
             >
               {data.isActionLoading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
               ) : (
                 <Ionicons
                   name={data.primaryAction.icon}
                   size={16}
-                  color="#FFFFFF"
+                  color="Theme.colors.neutral[0]"
                 />
               )}
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 { backgroundColor: data.secondaryAction.tint },
-              ]}
+              ])}
               onPress={onSecondaryAction}
               accessibilityRole="button"
               accessibilityLabel={data.secondaryAction.accessibilityLabel}
             >
               {data.isActionLoading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color="Theme.colors.neutral[0]" />
               ) : (
                 <Ionicons
                   name={data.secondaryAction.icon}
                   size={16}
-                  color="#FFFFFF"
+                  color="Theme.colors.neutral[0]"
                 />
               )}
             </TouchableOpacity>
@@ -183,7 +199,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="heart"
-            color="#EC4899"
+            color="Theme.colors.primary[500]"
             label={`${data.metrics.matches} matches`}
           />
           <MetricBadge
@@ -209,7 +225,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 6,
@@ -217,7 +233,7 @@ const styles = StyleSheet.create({
   },
   selectedContainer: {
     borderWidth: 1,
-    borderColor: "#8B5CF6",
+    borderColor: "Theme.colors.secondary[500]",
   },
   headerRow: {
     flexDirection: "row",
@@ -263,7 +279,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statusText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -276,7 +292,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   verifiedText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -304,7 +320,7 @@ const styles = StyleSheet.create({
   },
   metricText: {
     fontSize: 13,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
 });
 

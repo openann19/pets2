@@ -21,8 +21,8 @@ jest.mock('next-themes', () => ({
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    div: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
+    button: ({ children, ...props }: React.ComponentProps<'button'>) => <button {...props}>{children}</button>,
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
@@ -99,7 +99,7 @@ const SimpleInstallPrompt = () => (
 const SimpleSplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   React.useEffect(() => {
     const timer = setTimeout(onComplete, 100)
-    return () => clearTimeout(timer)
+    return () => { clearTimeout(timer); }
   }, [onComplete])
 
   return (
@@ -114,12 +114,12 @@ const SimplePWAManager = ({ children }: { children: React.ReactNode }) => {
   const [showSplash, setShowSplash] = React.useState(true)
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 100)
-    return () => clearTimeout(timer)
+    const timer = setTimeout(() => { setShowSplash(false); }, 100)
+    return () => { clearTimeout(timer); }
   }, [])
 
   if (showSplash) {
-    return <SimpleSplashScreen onComplete={() => setShowSplash(false)} />
+    return <SimpleSplashScreen onComplete={() => { setShowSplash(false); }} />
   }
 
   return (

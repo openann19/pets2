@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "messageId": "msg_abc123",
+  "reactions": {
+    "👍": 5,
+    "❤️": 3,
+    "😂": 2,
+    "😊": 1
+  },
+  "totalReactions": 11,
+  "timestamp": "2025-01-20T10:30:00Z"
+}

@@ -157,7 +157,7 @@ describe('Accessibility Tests', () => {
         </AccessibilityProvider>
       );
 
-      const fontSizeSelect = screen.getByLabelText(/font size/i) as HTMLSelectElement;
+      const fontSizeSelect = screen.getByLabelText(/font size/i);
       expect(fontSizeSelect.value).toBe('large');
     });
   });

@@ -62,21 +62,21 @@ export function useSoundKit(options: SoundKitOptions = {}) {
 
   // Preset sounds
   const sounds = {
-    tap: useCallback(() => playTone(800, 0.05, 'sine'), [playTone]),
+    tap: useCallback(() => { playTone(800, 0.05, 'sine'); }, [playTone]),
     success: useCallback(() => {
       playTone(523.25, 0.1, 'sine'); // C5
-      setTimeout(() => playTone(659.25, 0.15, 'sine'), 100); // E5
+      setTimeout(() => { playTone(659.25, 0.15, 'sine'); }, 100); // E5
     }, [playTone]),
     error: useCallback(() => {
       playTone(200, 0.1, 'sawtooth');
-      setTimeout(() => playTone(150, 0.15, 'sawtooth'), 100);
+      setTimeout(() => { playTone(150, 0.15, 'sawtooth'); }, 100);
     }, [playTone]),
     notification: useCallback(() => {
       playTone(880, 0.08, 'sine'); // A5
-      setTimeout(() => playTone(1046.5, 0.12, 'sine'), 80); // C6
+      setTimeout(() => { playTone(1046.5, 0.12, 'sine'); }, 80); // C6
     }, [playTone]),
-    click: useCallback(() => playTone(1200, 0.03, 'square'), [playTone]),
-    hover: useCallback(() => playTone(600, 0.02, 'sine'), [playTone]),
+    click: useCallback(() => { playTone(1200, 0.03, 'square'); }, [playTone]),
+    hover: useCallback(() => { playTone(600, 0.02, 'sine'); }, [playTone]),
   };
 
   return {
@@ -97,7 +97,7 @@ export function SoundToggle() {
 
   return (
     <button
-      onClick={() => setMuted(!muted)}
+      onClick={() => { setMuted(!muted); }}
       className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
       aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
     >

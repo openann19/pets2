@@ -1,6 +1,5 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { logger } from "@pawfectmatch/core";
-import React, { useState } from "react";
+import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,50 +12,24 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Define the navigation props type
-type RootStackParamList = {
-  Home: undefined;
-  Login: undefined;
-  Register: undefined;
-};
+import { useLoginScreen } from "../hooks/screens/useLoginScreen";
+import type { RootStackScreenProps } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
-type LoginScreenProps = NativeStackScreenProps<RootStackParamList, "Login">;
+type LoginScreenProps = RootStackScreenProps<"Login">;
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {},
-  );
+  const {
+    values,
+    errors,
+    setValue,
+    handleSubmit,
+    navigateToRegister,
+    navigateToForgotPassword,
+  } = useLoginScreen({ navigation });
 
-  const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {};
-
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email format is invalid";
-    }
-
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = () => {
-    if (validateForm()) {
-      // Handle login logic here
-      logger.info("Login with:", { email, password });
-
-      // For demo purposes, navigate to Home
-      // In a real app, you would authenticate first
-      navigation.navigate("Home");
-    }
+  const handleForgotPassword = () => {
+    navigateToForgotPassword();
   };
 
   return (
@@ -78,8 +51,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <Text style={styles.label}>Email</Text>
               <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={setEmail}
+                value={values.email}
+                onChangeText={(text) => setValue("email", text)}
                 placeholder="your@email.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -94,8 +67,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <Text style={styles.label}>Password</Text>
               <TextInput
                 style={styles.input}
-                value={password}
-                onChangeText={setPassword}
+                value={values.password}
+                onChangeText={(text) => setValue("password", text)}
                 placeholder="********"
                 secureTextEntry
               />
@@ -104,17 +77,20 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               )}
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword}>
+            <TouchableOpacity
+              style={styles.forgotPassword}
+              onPress={handleForgotPassword}
+            >
               <Text style={styles.forgotPasswordText}>Forgot password?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
 
             <View style={styles.registerContainer}>
               <Text style={styles.registerText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+              <TouchableOpacity onPress={navigateToRegister}>
                 <Text style={styles.registerLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>
@@ -128,7 +104,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   keyboardView: {
     flex: 1,
@@ -145,7 +121,7 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#ec4899", // pink-600
+    color: "Theme.colors.primary[500]", // pink-600
     marginBottom: 8,
   },
   tagline: {
@@ -153,10 +129,10 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   form: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -178,15 +154,15 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
   },
   errorText: {
-    color: "#ef4444",
+    color: "Theme.colors.status.error",
     fontSize: 12,
     marginTop: 4,
   },
@@ -195,18 +171,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   forgotPasswordText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontSize: 14,
   },
   button: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 8,
     padding: 15,
     alignItems: "center",
     marginVertical: 16,
   },
   buttonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -219,7 +195,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   registerLink: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "bold",
   },
 });

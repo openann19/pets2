@@ -1,19 +1,23 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState, forwardRef } from "react";
-import type { ViewStyle, TouchableOpacityProps } from "react-native";
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { View, TouchableOpacity, Text, Animated,  } from 'react-native';
+import type {
+  ViewStyle,
+  TouchableOpacityProps,
+} from "react-native";
+import { StyleSheet, TouchableOpacity as RNTouchableOpacity } from "react-native";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
+import { View, TouchableOpacity, Text, Animated } from "react-native";
 
 import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-import {
+import type {
   DynamicColors,
   EnhancedShadows,
   SemanticColors,
   EnhancedTypography,
-} from '../styles/EnhancedDesignTokens';
+} from "../theme/Provider";
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
@@ -33,9 +37,9 @@ export interface ImmersiveCardProps extends TouchableOpacityProps {
   tiltEnabled?: boolean;
   magneticHover?: boolean;
   shimmerEffect?: boolean;
-  entranceAnimation?: "fadeInUp" | "scaleIn" | "slideInLeft" | "none";
-  gradientName?: keyof typeof DynamicColors.gradients;
-  glowColor?: keyof typeof EnhancedShadows.glow;
+  entranceAnimation?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" | "none";
+  gradientName?: string;
+  glowColor?: string;
   style?: ViewStyle;
   contentStyle?: ViewStyle;
   onPress?: () => void;
@@ -65,7 +69,7 @@ const sizeConfigs = {
   },
 };
 
-const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
+const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
   (
     {
       children,
@@ -91,7 +95,7 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     // Animation hooks
     const gyroscope = useGyroscopeTilt(0.3, 10);
     const entrance = useEntranceAnimation(
-      entranceAnimation !== "none" ? entranceAnimation : "fadeInUp",
+      entranceAnimation !== "none" ? entranceAnimation : "slideIn",
     );
 
     // Size config
@@ -110,38 +114,58 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
         case "default":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.background.secondary,
-            ...EnhancedShadows.depth.lg,
+            backgroundColor: "#f9fafb",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            elevation: 8,
           };
 
         case "glass":
           return {
             ...baseStyles,
-            ...DynamicColors.glass.medium,
-            ...EnhancedShadows.depth.sm,
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
           };
 
         case "holographic":
           return {
             ...baseStyles,
             backgroundColor: "transparent",
-            ...EnhancedShadows.depth.lg,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            elevation: 8,
           };
 
         case "elevated":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.background.secondary,
-            ...EnhancedShadows.depth.xl,
+            backgroundColor: "#f9fafb",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 16 },
+            shadowOpacity: 0.2,
+            shadowRadius: 20,
+            elevation: 12,
           };
 
         case "minimal":
           return {
             ...baseStyles,
-            backgroundColor: SemanticColors.background.secondary,
-            ...EnhancedShadows.depth.sm,
+            backgroundColor: "#f9fafb",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
             borderWidth: 1,
-            borderColor: SemanticColors.border.subtle,
+            borderColor: "#e5e7eb",
           };
 
         default:
@@ -205,7 +229,6 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
               width: "20%",
               height: "100%",
               backgroundColor: "rgba(255,255,255,0.3)",
-              animation: "shimmer 2s infinite",
             }}
           />
         </Animated.View>
@@ -216,9 +239,35 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
     const getGlowStyle = (): ViewStyle => {
       if (!glowColor || !isHovered) return {};
 
-      return {
-        ...EnhancedShadows.glow[glowColor],
+      // Simple glow shadows
+      const glowShadows: Record<string, ViewStyle> = {
+        blue: {
+          shadowColor: "#3b82f6",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.8,
+          shadowRadius: 16,
+          elevation: 8,
+        },
+        purple: {
+          shadowColor: "#a855f7",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.8,
+          shadowRadius: 16,
+          elevation: 8,
+        },
+        pink: {
+          shadowColor: "#ec4899",
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.8,
+          shadowRadius: 16,
+          elevation: 8,
+        },
       };
+      
+      if (glowColor && glowShadows[glowColor]) {
+        return glowShadows[glowColor];
+      }
+      return {};
     };
 
     // Render card content
@@ -226,14 +275,14 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
       const content = (
         <View
           ref={cardRef}
-          style={[
+          style={StyleSheet.flatten([
             {
               padding: sizeConfig.padding,
               flex: 1,
               justifyContent: "center",
             },
             contentStyle,
-          ]}
+          ])}
         >
           {children}
           {renderShimmer()}
@@ -242,42 +291,41 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
 
       // Wrap with gradient for holographic variant
       if (variant === "holographic" && gradientName) {
-        const gradient = DynamicColors.gradients[gradientName];
-        return (
-          <LinearGradient
-            colors={gradient.colors as any}
-            locations={[...gradient.locations]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ flex: 1 }}
-          >
-            {content}
-          </LinearGradient>
-        );
+        const gradients: Record<string, { colors: string[]; locations: number[] }> = {
+          primary: { colors: ["#ec4899", "#f472b6", "#fbcfe8"], locations: [0, 0.5, 1] },
+          sunset: { colors: ["#f59e0b", "#f97316", "#fb923c"], locations: [0, 0.5, 1] },
+          ocean: { colors: ["#0ea5e9", "#38bdf8", "#7dd3fc"], locations: [0, 0.5, 1] },
+        };
+        const gradient = gradients[gradientName] ?? gradients.primary;
+        if (gradient) {
+          return (
+            <LinearGradient
+              colors={gradient.colors}
+              locations={gradient.locations}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ flex: 1 }}
+            >
+              {content}
+            </LinearGradient>
+          );
+        }
       }
 
       return content;
     };
 
-    // Main card render
+    // Main card render  
     const cardContent = (
       <Animated.View
-        ref={ref}
         style={[
           getVariantStyles(),
           getGlowStyle(),
-          {
-            transform: [
-              ...(tiltEnabled ? [gyroscope.transform] : []),
-              ...(entranceAnimation !== "none"
-                ? [entrance.style.transform]
-                : []),
-              ...(isPressed ? [{ scale: 0.98 }] : []),
-            ],
-            opacity: entranceAnimation !== "none" ? entrance.style.opacity : 1,
-          },
+          tiltEnabled ? gyroscope.transform : undefined,
+          entranceAnimation !== "none" ? entrance.style : undefined,
+          isPressed ? { transform: [{ scale: 0.98 }] } : undefined,
           style,
-        ]}
+        ].filter(Boolean) as any}
       >
         {renderContent()}
       </Animated.View>
@@ -299,8 +347,6 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               onPress={onPress}
-              onPressIn={handleTouchStart}
-              onPressOut={handleTouchEnd}
               activeOpacity={1}
               style={{ borderRadius: sizeConfig.borderRadius }}
               {...props}
@@ -319,8 +365,6 @@ const ImmersiveCard = forwardRef<View, ImmersiveCardProps>(
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onPress}
-        onPressIn={handleTouchStart}
-        onPressOut={handleTouchEnd}
         activeOpacity={1}
         style={{ borderRadius: sizeConfig.borderRadius }}
         {...props}

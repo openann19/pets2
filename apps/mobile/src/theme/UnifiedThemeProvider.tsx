@@ -1,5 +1,7 @@
 /**
- * 🎨 UNIFIED THEME PROVIDER
+ * @deprecated Use theme/Provider instead
+ * This file is kept for backward compatibility during migration
+ *
  * Professional theme provider for mobile app
  * Supports light/dark/system modes with seamless switching
  */
@@ -13,8 +15,17 @@ import React, {
   type ReactNode,
 } from "react";
 import { Appearance, type ColorSchemeName } from "react-native";
-import type { Theme, ThemeMode, ThemeContextValue } from "./types";
-import { lightTheme, darkTheme, createTheme } from "./tokens";
+import type { Theme, ThemeMode, ThemeContextValue, SemanticColors, Spacing, Radius, Motion } from "./types";
+import { createTheme as createNewTheme } from "./rnTokens";
+
+// Deprecation warning
+let warned = false;
+if (!warned && process.env.NODE_ENV !== "test") {
+  void import("../services/logger").then(({ logger }) => {
+    logger.warn("[DEPRECATION] theme/Provider → use theme/Provider instead.");
+  });
+  warned = true;
+}
 
 // ====== CONTEXT ======
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -54,9 +65,9 @@ export function UnifiedThemeProvider({
     return mode === "dark";
   }, [mode, systemColorScheme]);
 
-  // Get current theme based on mode
+  // Get current theme based on mode  
   const theme = useMemo<Theme>(() => {
-    return createTheme(isDark);
+    return createNewTheme(isDark ? "dark" : "light");
   }, [isDark]);
 
   // Toggle theme function
@@ -115,20 +126,14 @@ export function useColors() {
   return useThemeContext().theme.colors;
 }
 
-// Typography hook - returns just the typography for convenience
-export function useTypography() {
-  return useThemeContext().theme.typography;
-}
+// Typography hook removed - Theme doesn't have typography property
 
 // Spacing hook - returns just the spacing for convenience
 export function useSpacing() {
   return useThemeContext().theme.spacing;
 }
 
-// Shadows hook - returns just the shadows for convenience
-export function useShadows() {
-  return useThemeContext().theme.shadows;
-}
+// Shadows hook removed - Theme doesn't have shadows property
 
 // ====== DEFAULT EXPORT ======
 export default UnifiedThemeProvider;

@@ -117,6 +117,7 @@ export interface User {
 // Pet Types
 export interface Pet {
   _id: string;
+  id: string; // Alias for _id for consistency
   owner: User | string;
   name: string;
   species: 'dog' | 'cat' | 'bird' | 'rabbit' | 'other';
@@ -264,6 +265,8 @@ export interface Match {
       user2Feedback?: string;
     };
   };
+  isMatch: boolean; // Indicates if this is a mutual match
+  matchId?: string; // Optional ID for the match
   createdAt: string;
   updatedAt: string;
 }
@@ -281,6 +284,7 @@ export interface Message {
   isDeleted: boolean;
   duration?: number; // For voice/video messages
   thumbnailUrl?: string; // For video messages
+  replyTo?: { _id: string; author?: string; text?: string }; // Reply metadata
 }
 
 export interface Attachment {

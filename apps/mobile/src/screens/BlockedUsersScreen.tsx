@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Alert,
   FlatList,
@@ -14,7 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import { useBlockedUsersScreen } from "../hooks/screens/useBlockedUsersScreen";
+import { Theme } from '../theme/unified-theme';
 
 interface BlockedUser {
   id: string;
@@ -35,50 +37,33 @@ function BlockedUsersScreen({
   navigation,
 }: BlockedUsersScreenProps): JSX.Element {
   const { colors } = useTheme();
-  const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  // Mock data for demo - in real app this would come from API
-  const mockBlockedUsers: BlockedUser[] = [
-    {
-      id: "1",
-      name: "John Smith",
-      email: "john@example.com",
-      blockedAt: "2024-01-15T10:30:00Z",
-      reason: "Inappropriate behavior",
-    },
-    {
-      id: "2",
-      name: "Sarah Johnson",
-      email: "sarah@example.com",
-      blockedAt: "2024-01-10T14:20:00Z",
-      reason: "Spam messages",
-    },
-  ];
-
-  const loadBlockedUsers = useCallback(async (refresh = false) => {
-    try {
-      if (refresh) setRefreshing(true);
-      else setLoading(true);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setBlockedUsers(mockBlockedUsers);
-    } catch (error) {
-      logger.error("Failed to load blocked users:", { error });
-      Alert.alert("Error", "Failed to load blocked users. Please try again.");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+  const {
+    blockedUsers,
+    loading,
+    refreshing,
+    loadBlockedUsers,
+    refreshBlockedUsers,
+    unblockUser,
+  } = useBlockedUsersScreen();
 
   useEffect(() => {
     void loadBlockedUsers();
   }, [loadBlockedUsers]);
 
-  const handleUnblockUser = useCallback(
+  const handleUnblockUser = useCallback(async (userId: string) => {
+    Alert.alert("Unblock User", "Are you sure you want to unblock this user?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Unblock",
+        style: "destructive",
+        onPress: async () => {
+          await unblockUser(userId);
+        },
+      },
+    ]);
+  }, [unblockUser]);
+
+  const _handleUnblockUser = useCallback(
     async (userId: string, userName: string) => {
       Alert.alert(
         "Unblock User",
@@ -91,34 +76,28 @@ function BlockedUsersScreen({
             onPress: async () => {
               try {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-                // Simulate API call
-                await new Promise((resolve) => setTimeout(resolve, 500));
-
-                setBlockedUsers((prev) =>
-                  prev.filter((user) => user.id !== userId),
-                );
-                Alert.alert("Success", `${userName} has been unblocked.`);
+                await unblockUser(userId);
               } catch (error) {
                 logger.error("Failed to unblock user:", { error });
-                Alert.alert(
-                  "Error",
-                  "Failed to unblock user. Please try again.",
-                );
               }
             },
           },
         ],
       );
     },
-    [],
+    [unblockUser],
   );
 
   const renderBlockedUser = useCallback(
     ({ item }: { item: BlockedUser }) => (
       <BlurView intensity={20} style={styles.userCard}>
         <View style={styles.userInfo}>
-          <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+          <View
+            style={StyleSheet.flatten([
+              styles.avatar,
+              { backgroundColor: colors.primary },
+            ])}
+          >
             <Text style={styles.avatarText}>
               {item.name
                 .split(" ")
@@ -128,25 +107,48 @@ function BlockedUsersScreen({
             </Text>
           </View>
           <View style={styles.userDetails}>
-            <Text style={[styles.userName, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.userName,
+                { color: colors.text },
+              ])}
+            >
               {item.name}
             </Text>
-            <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.userEmail,
+                { color: colors.textSecondary },
+              ])}
+            >
               {item.email}
             </Text>
-            <Text style={[styles.blockedDate, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.blockedDate,
+                { color: colors.textSecondary },
+              ])}
+            >
               Blocked {new Date(item.blockedAt).toLocaleDateString()}
             </Text>
             {item.reason && (
-              <Text style={[styles.blockReason, { color: colors.error }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.blockReason,
+                  { color: colors.error },
+                ])}
+              >
                 Reason: {item.reason}
               </Text>
             )}
           </View>
         </View>
         <TouchableOpacity
-          style={[styles.unblockButton, { backgroundColor: colors.primary }]}
-          onPress={() => handleUnblockUser(item.id, item.name)}
+          style={StyleSheet.flatten([
+            styles.unblockButton,
+            { backgroundColor: colors.primary },
+          ])}
+          onPress={() => handleUnblockUser(item.id)}
         >
           <Ionicons name="person-remove-outline" size={16} color="white" />
           <Text style={styles.unblockButtonText}>Unblock</Text>
@@ -189,7 +191,7 @@ function BlockedUsersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color="#3B82F6"
+              color="Theme.colors.status.info"
             />
             <Text style={styles.infoText}>
               Blocked users cannot contact you or view your profile. You can
@@ -210,7 +212,7 @@ function BlockedUsersScreen({
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
-                  onRefresh={() => loadBlockedUsers(true)}
+                  onRefresh={refreshBlockedUsers}
                   tintColor="white"
                 />
               }

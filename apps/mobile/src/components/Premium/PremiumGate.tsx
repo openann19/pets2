@@ -4,6 +4,7 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
+import type { ComponentProps } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
@@ -17,7 +18,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -73,10 +75,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
           />
 
           <View
-            style={[
+            style={StyleSheet.flatten([
               styles.modal,
               { backgroundColor: (colors as any).surface ?? colors.background },
-            ]}
+            ])}
           >
             {/* Header */}
             <View style={styles.header}>
@@ -85,7 +87,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color={colors.textSecondary} />
+                <Ionicons name="close" size={24} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
             {/* Content */}
@@ -95,26 +97,38 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 colors={["#FFD700", "#FFA000"]}
                 style={styles.iconContainer}
               >
-                <Ionicons name="star" size={30} color="#fff" />
+                <Ionicons name="star" size={30} color="Theme.colors.neutral[0]" />
               </LinearGradient>
 
               {/* Feature Icon */}
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.featureIcon,
                   { backgroundColor: `${colors.primary}20` },
-                ]}
+                ])}
               >
-                <Ionicons name={icon as any} size={40} color={colors.primary} />
+                <Ionicons
+                  name={icon as ComponentProps<typeof Ionicons>["name"]}
+                  size={40}
+                  color={colors.primary}
+                />
               </View>
 
               {/* Text Content */}
-              <Text style={[styles.title, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.title,
+                  { color: colors.text },
+                ])}
+              >
                 Unlock {feature}
               </Text>
 
               <Text
-                style={[styles.description, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.description,
+                  { color: colors.textMuted },
+                ])}
               >
                 {description}
               </Text>
@@ -128,10 +142,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     color={colors.success}
                   />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
+                      { color: colors.textMuted },
+                    ])}
                   >
                     Unlimited access to all features
                   </Text>
@@ -143,10 +157,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     color={colors.success}
                   />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
+                      { color: colors.textMuted },
+                    ])}
                   >
                     Priority customer support
                   </Text>
@@ -158,10 +172,10 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     color={colors.success}
                   />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textSecondary },
-                    ]}
+                      { color: colors.textMuted },
+                    ])}
                   >
                     Advanced AI matching
                   </Text>
@@ -179,7 +193,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                     colors={["#FF6B6B", "#FF8E8E"]}
                     style={styles.upgradeButtonGradient}
                   >
-                    <Ionicons name="star" size={20} color="#fff" />
+                    <Ionicons name="star" size={20} color="Theme.colors.neutral[0]" />
                     <Text style={styles.upgradeButtonText}>
                       Upgrade to Premium
                     </Text>
@@ -187,18 +201,18 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.laterButton,
                     { backgroundColor: colors.background },
-                  ]}
+                  ])}
                   onPress={handleClose}
                   activeOpacity={0.8}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.laterButtonText,
-                      { color: colors.textSecondary },
-                    ]}
+                      { color: colors.textMuted },
+                    ])}
                   >
                     Maybe Later
                   </Text>
@@ -292,7 +306,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - 40,
     maxWidth: 400,
     borderRadius: 25,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -375,7 +389,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   upgradeButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 18,
     fontWeight: "700",
   },

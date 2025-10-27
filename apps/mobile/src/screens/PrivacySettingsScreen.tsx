@@ -4,10 +4,9 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import { logger, useAuthStore } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import * as Haptics from "expo-haptics";
-import React, { useEffect, useState } from "react";
+import { logger } from "@pawfectmatch/core";
+import React, { useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -18,96 +17,27 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
+import {
+  usePrivacySettingsScreen,
+  type PrivacySettings,
+} from "../hooks/screens/usePrivacySettingsScreen";
+
+import { Theme } from '../theme/unified-theme';
 
 type PrivacySettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "PrivacySettings"
 >;
 
-interface PrivacySettings {
-  profileVisibility: "public" | "friends" | "nobody";
-  showOnlineStatus: boolean;
-  showDistance: boolean;
-  showLastActive: boolean;
-  allowMessages: "everyone" | "matches" | "nobody";
-  showReadReceipts: boolean;
-  incognitoMode: boolean;
-  shareLocation: boolean;
-  dataSharing: boolean;
-  analyticsTracking: boolean;
-}
-
 function PrivacySettingsScreen({
   navigation,
 }: PrivacySettingsScreenProps): JSX.Element {
   const { colors } = useTheme();
-  const { user: _user } = useAuthStore();
-  const [settings, setSettings] = useState<PrivacySettings>({
-    profileVisibility: "nobody",
-    showOnlineStatus: true,
-    showDistance: true,
-    showLastActive: true,
-    allowMessages: "nobody",
-    showReadReceipts: true,
-    incognitoMode: false,
-    shareLocation: true,
-    dataSharing: false,
-    analyticsTracking: true,
-  });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadPrivacySettings();
-  }, []);
-
-  const loadPrivacySettings = async () => {
-    try {
-      setLoading(true);
-      const response = await request<PrivacySettings>("/api/profile/privacy", {
-        method: "GET",
-      });
-
-      if (response) {
-        setSettings(response);
-      }
-
-      logger.info("Privacy settings loaded");
-    } catch (error) {
-      logger.error("Failed to load privacy settings:", error);
-      // Don't show alert on first load - use defaults
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateSetting = async <K extends keyof PrivacySettings>(
-    key: K,
-    value: PrivacySettings[K],
-  ) => {
-    try {
-      setLoading(true);
-      await Haptics.selectionAsync();
-
-      const newSettings = { ...settings, [key]: value };
-      setSettings(newSettings);
-
-      // Save to API
-      await request("/api/profile/privacy", {
-        method: "PUT",
-        body: newSettings,
-      });
-
-      logger.info("Privacy setting updated", { key, value });
-    } catch (error) {
-      logger.error("Failed to update privacy setting:", error);
-      Alert.alert("Error", "Failed to update setting");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { settings, loading, updateSetting } = usePrivacySettingsScreen();
+  const [loadingExport, setLoadingExport] = useState(false);
 
   const renderSettingItem = (
     title: string,
@@ -115,17 +45,27 @@ function PrivacySettingsScreen({
     control: React.ReactNode,
     danger?: boolean,
   ) => (
-    <View style={[styles.settingItem, { backgroundColor: colors.card }]}>
+    <View
+      style={StyleSheet.flatten([
+        styles.settingItem,
+        { backgroundColor: colors.card },
+      ])}
+    >
       <View style={styles.settingContent}>
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.settingTitle,
             { color: danger ? colors.error : colors.text },
-          ]}
+          ])}
         >
           {title}
         </Text>
-        <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.settingSubtitle,
+            { color: colors.textSecondary },
+          ])}
+        >
           {subtitle}
         </Text>
       </View>
@@ -142,22 +82,22 @@ function PrivacySettingsScreen({
       {options.map((option) => (
         <TouchableOpacity
           key={option.value}
-          style={[
+          style={StyleSheet.flatten([
             styles.pickerOption,
             value === option.value && {
               backgroundColor: colors.primary,
               borderColor: colors.primary,
             },
-          ]}
+          ])}
           onPress={() => {
             onChange(option.value);
           }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.pickerOptionText,
               { color: value === option.value ? "white" : colors.text },
-            ]}
+            ])}
           >
             {option.label}
           </Text>
@@ -168,14 +108,17 @@ function PrivacySettingsScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.header,
           { backgroundColor: colors.card, borderBottomColor: colors.border },
-        ]}
+        ])}
       >
         <TouchableOpacity
           style={styles.backButton}
@@ -183,7 +126,12 @@ function PrivacySettingsScreen({
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.text },
+          ])}
+        >
           Privacy Settings
         </Text>
         <View style={styles.headerSpacer} />
@@ -195,7 +143,12 @@ function PrivacySettingsScreen({
       >
         {/* Profile Visibility */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Profile Visibility
           </Text>
           {renderSettingItem(
@@ -258,7 +211,12 @@ function PrivacySettingsScreen({
 
         {/* Communication */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Communication
           </Text>
           {renderSettingItem(
@@ -297,7 +255,12 @@ function PrivacySettingsScreen({
 
         {/* Privacy Features */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Privacy Features
           </Text>
           {renderSettingItem(
@@ -325,7 +288,12 @@ function PrivacySettingsScreen({
 
         {/* Data & Analytics */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Data & Analytics
           </Text>
           {renderSettingItem(
@@ -357,7 +325,12 @@ function PrivacySettingsScreen({
 
         {/* Danger Zone */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.error }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.error },
+            ])}
+          >
             Danger Zone
           </Text>
           {renderSettingItem(
@@ -383,7 +356,7 @@ function PrivacySettingsScreen({
               style={styles.actionButton}
               onPress={async () => {
                 try {
-                  setLoading(true);
+                  setLoadingExport(true);
 
                   const response = await request<{
                     url: string;
@@ -404,7 +377,7 @@ function PrivacySettingsScreen({
                     "Failed to initiate data export. Please try again.",
                   );
                 } finally {
-                  setLoading(false);
+                  setLoadingExport(false);
                 }
               }}
             >
@@ -464,7 +437,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -492,7 +465,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
   },
   pickerOptionText: {
     fontSize: 12,

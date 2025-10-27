@@ -16,7 +16,7 @@ export const SwipeCardPremiumEffects = ({ pet }) => {
                 transition: { duration: 0.5 },
             });
         }, 1000);
-        return () => clearTimeout(timer);
+        return () => { clearTimeout(timer); };
     }, [controls]);
     if (!isVisible)
         return null;

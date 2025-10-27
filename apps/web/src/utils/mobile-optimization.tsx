@@ -125,7 +125,7 @@ export const useIntersectionObserver = (options = {}) => {
                 ...options,
             });
             observer.observe(node);
-            return () => observer.disconnect();
+            return () => { observer.disconnect(); };
         }
     }, [hasIntersected, options]);
     return { elementRef, isIntersecting, hasIntersected };
@@ -152,7 +152,7 @@ export const LazyImage = ({ src, alt, width, height, className = '', ...props })
       {!isLoaded && !hasError && (<div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" style={{ width, height }}/>)}
       
       {/* Optimized image */}
-      {hasIntersected && (<img src={optimizedSrc} alt={alt} width={width} height={height} onLoad={() => setIsLoaded(true)} onError={() => setHasError(true)} className={`
+      {hasIntersected && (<img src={optimizedSrc} alt={alt} width={width} height={height} onLoad={() => { setIsLoaded(true); }} onError={() => { setHasError(true); }} className={`
             transition-opacity duration-300
             ${isLoaded ? 'opacity-100' : 'opacity-0'}
           `} loading="lazy" {...props}/>)}
@@ -240,7 +240,7 @@ export const useMemoryMonitor = () => {
         };
         const interval = setInterval(updateMemoryInfo, 5000);
         updateMemoryInfo();
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, []);
     return memoryInfo;
 };

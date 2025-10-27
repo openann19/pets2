@@ -56,8 +56,8 @@ function PWAStatusIndicator() {
         }
         else {
             // Hide after 3 seconds if online
-            const timer = setTimeout(() => setShowStatus(false), 3000);
-            return () => clearTimeout(timer);
+            const timer = setTimeout(() => { setShowStatus(false); }, 3000);
+            return () => { clearTimeout(timer); };
         }
     }, [isOnline, serviceWorkerRegistered]);
     if (!showStatus)
@@ -84,7 +84,7 @@ function OfflineActionsPanel() {
     if (offlineActions.length === 0)
         return null;
     return (<>
-      <button onClick={() => setIsOpen(true)} className="fixed bottom-4 left-4 z-50 bg-orange-500 text-white p-3 rounded-full shadow-lg hover:bg-orange-600 transition-colors" aria-label="View offline actions">
+      <button onClick={() => { setIsOpen(true); }} className="fixed bottom-4 left-4 z-50 bg-orange-500 text-white p-3 rounded-full shadow-lg hover:bg-orange-600 transition-colors" aria-label="View offline actions">
         <CloudArrowUpIcon className="h-5 w-5"/>
         {offlineActions.length > 0 && (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
             {offlineActions.length}
@@ -97,7 +97,7 @@ function OfflineActionsPanel() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Offline Actions
               </h3>
-              <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              <button onClick={() => { setIsOpen(false); }} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                 ✕
               </button>
             </div>
@@ -246,7 +246,7 @@ export function PWASettingsPanel() {
         getCacheUsage().then(setCacheUsage);
     };
     return (<>
-      <button onClick={() => setIsOpen(true)} className="fixed bottom-4 right-4 z-50 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors" aria-label="Open PWA settings">
+      <button onClick={() => { setIsOpen(true); }} className="fixed bottom-4 right-4 z-50 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors" aria-label="Open PWA settings">
         ⚙️
       </button>
 
@@ -256,7 +256,7 @@ export function PWASettingsPanel() {
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 PWA Settings
               </h2>
-              <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+              <button onClick={() => { setIsOpen(false); }} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                 ✕
               </button>
             </div>

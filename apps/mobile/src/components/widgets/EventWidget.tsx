@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../../theme/unified-theme';
 
 interface EventWidgetProps {
   event: {
@@ -36,13 +37,13 @@ export function EventWidget({
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      playdate: "#10B981",
-      training: "#3B82F6",
-      social: "#8B5CF6",
-      adoption: "#F59E0B",
-      health: "#EF4444",
+      playdate: "Theme.colors.status.success",
+      training: "Theme.colors.status.info",
+      social: "Theme.colors.secondary[500]",
+      adoption: "Theme.colors.status.warning",
+      health: "Theme.colors.status.error",
     };
-    return colors[category as keyof typeof colors] || "#6B7280";
+    return colors[category as keyof typeof colors] || "Theme.colors.neutral[500]";
   };
 
   return (
@@ -50,7 +51,7 @@ export function EventWidget({
       <View style={styles.header}>
         <Text style={styles.title}>Upcoming Event</Text>
         <TouchableOpacity onPress={onEventPress}>
-          <Ionicons name="open-outline" size={20} color="#8B5CF6" />
+          <Ionicons name="open-outline" size={20} color="Theme.colors.secondary[500]" />
         </TouchableOpacity>
       </View>
 
@@ -69,10 +70,10 @@ export function EventWidget({
               {event.title}
             </Text>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.categoryBadge,
                 { backgroundColor: getCategoryColor(event.category) },
-              ]}
+              ])}
             >
               <Text style={styles.categoryEmoji}>
                 {getCategoryEmoji(event.category)}
@@ -82,24 +83,24 @@ export function EventWidget({
 
           <View style={styles.eventDetails}>
             <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={14} color="#6B7280" />
+              <Ionicons name="calendar-outline" size={14} color="Theme.colors.neutral[500]" />
               <Text style={styles.detailText}>{event.date}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="time-outline" size={14} color="#6B7280" />
+              <Ionicons name="time-outline" size={14} color="Theme.colors.neutral[500]" />
               <Text style={styles.detailText}>{event.time}</Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="location-outline" size={14} color="#6B7280" />
+              <Ionicons name="location-outline" size={14} color="Theme.colors.neutral[500]" />
               <Text style={styles.detailText} numberOfLines={1}>
                 {event.location}
               </Text>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="people-outline" size={14} color="#6B7280" />
+              <Ionicons name="people-outline" size={14} color="Theme.colors.neutral[500]" />
               <Text style={styles.detailText}>
                 {event.attendees}/{event.maxAttendees} attending
               </Text>
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -136,10 +137,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
   },
   eventCard: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     flex: 1,
     marginRight: 8,
   },
@@ -183,12 +184,12 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginLeft: 6,
     flex: 1,
   },
   joinButton: {
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "Theme.colors.secondary[500]",
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,

@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../../theme/unified-theme';
 
 interface SwipeWidgetProps {
   pet: {
@@ -20,7 +21,7 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
       <View style={styles.header}>
         <Text style={styles.title}>Quick Swipe</Text>
         <TouchableOpacity onPress={onViewProfile}>
-          <Ionicons name="open-outline" size={20} color="#8B5CF6" />
+          <Ionicons name="open-outline" size={20} color="Theme.colors.secondary[500]" />
         </TouchableOpacity>
       </View>
 
@@ -40,21 +41,21 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
 
       <View style={styles.actions}>
         <TouchableOpacity
-          style={[styles.actionButton, styles.passButton]}
+          style={StyleSheet.flatten([styles.actionButton, styles.passButton])}
           onPress={() => {
             onSwipe("left");
           }}
         >
-          <Ionicons name="close" size={24} color="#EF4444" />
+          <Ionicons name="close" size={24} color="Theme.colors.status.error" />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.actionButton, styles.likeButton]}
+          style={StyleSheet.flatten([styles.actionButton, styles.likeButton])}
           onPress={() => {
             onSwipe("right");
           }}
         >
-          <Ionicons name="heart" size={24} color="#10B981" />
+          <Ionicons name="heart" size={24} color="Theme.colors.status.success" />
         </TouchableOpacity>
       </View>
     </View>
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     margin: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -82,10 +83,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
   },
   petCard: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     padding: 12,
     marginBottom: 16,
@@ -102,12 +103,12 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 2,
   },
   petDetails: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
   actions: {
     flexDirection: "row",
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

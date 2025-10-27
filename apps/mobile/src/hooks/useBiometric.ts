@@ -213,9 +213,9 @@ export const useBiometric = (): BiometricState & BiometricActions => {
       try {
         setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
-        const encrypted = await BiometricService.encryptWithBiometric(data);
+        await BiometricService.encryptWithBiometric(data, _key);
         // Persist encrypted if needed via app storage (omitted here)
-        const success = !!encrypted;
+        const success = true;
 
         setState((prev) => ({ ...prev, isLoading: false }));
         return success;

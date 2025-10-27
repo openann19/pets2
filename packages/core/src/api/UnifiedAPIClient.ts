@@ -25,7 +25,7 @@ export interface APIClientConfig {
   };
   queueConfig?: {
     maxSize: number;
-    persistence: 'memory' | 'localStorage' | 'indexedDB';
+    persistence: 'memory' | 'localStorage' | 'indexedDB' | 'asyncStorage';
   };
 }
 

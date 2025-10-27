@@ -131,7 +131,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
 
             {/* Tab Navigation */}
             <div className="flex border-b border-gray-200 dark:border-gray-700">
-              {tabs.map((tab) => (<button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex-1 px-6 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
+              {tabs.map((tab) => (<button key={tab.id} onClick={() => { setActiveTab(tab.id); }} className={`flex-1 px-6 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
                     ? 'border-pink-500 text-pink-600 dark:text-pink-400'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}>
                   <div className="flex items-center justify-center gap-2">
@@ -155,7 +155,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Species
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
-                        {speciesOptions.map((species) => (<button key={species.value} onClick={() => toggleArrayFilter('species', species.value)} className={`p-4 rounded-xl border-2 transition-all ${localFilters.species.includes(species.value)
+                        {speciesOptions.map((species) => (<button key={species.value} onClick={() => { toggleArrayFilter('species', species.value); }} className={`p-4 rounded-xl border-2 transition-all ${localFilters.species.includes(species.value)
                         ? `${species.color} scale-105`
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                             <div className="flex items-center gap-3">
@@ -198,7 +198,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Looking For
                       </h3>
                       <div className="grid grid-cols-4 gap-3">
-                        {intentOptions.map((intent) => (<button key={intent.value} onClick={() => updateFilter('intent', [intent.value])} className={`p-4 rounded-xl border-2 transition-all text-center ${localFilters.intent.includes(intent.value)
+                        {intentOptions.map((intent) => (<button key={intent.value} onClick={() => { updateFilter('intent', [intent.value]); }} className={`p-4 rounded-xl border-2 transition-all text-center ${localFilters.intent.includes(intent.value)
                         ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                             <div className="text-2xl mb-2">{intent.icon}</div>
@@ -216,7 +216,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Size
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
-                        {sizeOptions.map((size) => (<button key={size.value} onClick={() => toggleArrayFilter('sizes', size.value)} className={`p-4 rounded-xl border-2 transition-all ${localFilters.sizes.includes(size.value)
+                        {sizeOptions.map((size) => (<button key={size.value} onClick={() => { toggleArrayFilter('sizes', size.value); }} className={`p-4 rounded-xl border-2 transition-all ${localFilters.sizes.includes(size.value)
                         ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                             <div className="font-medium text-gray-900 dark:text-white">
@@ -235,9 +235,9 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Age Range (years)
                       </h3>
                       <div className="flex items-center gap-4">
-                        <input type="number" min="0" max="20" value={localFilters.ageRange[0]} onChange={(e) => updateFilter('ageRange', [parseInt(e.target.value) || 0, localFilters.ageRange[1]])} className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"/>
+                        <input type="number" min="0" max="20" value={localFilters.ageRange[0]} onChange={(e) => { updateFilter('ageRange', [parseInt(e.target.value) || 0, localFilters.ageRange[1]]); }} className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"/>
                         <span className="text-gray-500 dark:text-gray-400">to</span>
-                        <input type="number" min="0" max="20" value={localFilters.ageRange[1]} onChange={(e) => updateFilter('ageRange', [localFilters.ageRange[0], parseInt(e.target.value) || 20])} className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"/>
+                        <input type="number" min="0" max="20" value={localFilters.ageRange[1]} onChange={(e) => { updateFilter('ageRange', [localFilters.ageRange[0], parseInt(e.target.value) || 20]); }} className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"/>
                       </div>
                     </div>
 
@@ -247,7 +247,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Gender
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => toggleArrayFilter('gender', 'male')} className={`p-4 rounded-xl border-2 transition-all ${localFilters.gender.includes('male')
+                        <button onClick={() => { toggleArrayFilter('gender', 'male'); }} className={`p-4 rounded-xl border-2 transition-all ${localFilters.gender.includes('male')
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                           <div className="text-center">
@@ -256,7 +256,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                           </div>
                         </button>
                         
-                        <button onClick={() => toggleArrayFilter('gender', 'female')} className={`p-4 rounded-xl border-2 transition-all ${localFilters.gender.includes('female')
+                        <button onClick={() => { toggleArrayFilter('gender', 'female'); }} className={`p-4 rounded-xl border-2 transition-all ${localFilters.gender.includes('female')
                     ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                           <div className="text-center">
@@ -276,7 +276,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Energy Level
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
-                        {energyLevelOptions.map((energy) => (<button key={energy.value} onClick={() => toggleArrayFilter('energyLevels', energy.value)} className={`p-4 rounded-xl border-2 transition-all ${localFilters.energyLevels.includes(energy.value)
+                        {energyLevelOptions.map((energy) => (<button key={energy.value} onClick={() => { toggleArrayFilter('energyLevels', energy.value); }} className={`p-4 rounded-xl border-2 transition-all ${localFilters.energyLevels.includes(energy.value)
                         ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}>
                             <div className="text-center">
@@ -298,7 +298,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                         Temperament
                       </h3>
                       <div className="grid grid-cols-3 gap-2">
-                        {temperamentOptions.map((temperament) => (<button key={temperament} onClick={() => toggleArrayFilter('temperaments', temperament)} className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${localFilters.temperaments.includes(temperament)
+                        {temperamentOptions.map((temperament) => (<button key={temperament} onClick={() => { toggleArrayFilter('temperaments', temperament); }} className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${localFilters.temperaments.includes(temperament)
                         ? 'bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/20 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800'
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}>
                             {temperament.replace('-', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
@@ -313,7 +313,7 @@ export default function AdvancedFilterPanel({ filters, onFiltersChange, onApply,
                       </h3>
                       <div className="space-y-3">
                         <label className="flex items-center space-x-3 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-600 transition-colors">
-                          <input type="checkbox" checked={localFilters.apartmentFriendly === true} onChange={(e) => updateFilter('apartmentFriendly', e.target.checked ? true : null)} className="w-4 h-4 text-pink-600 bg-gray-100 border-gray-300 rounded focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                          <input type="checkbox" checked={localFilters.apartmentFriendly === true} onChange={(e) => { updateFilter('apartmentFriendly', e.target.checked ? true : null); }} className="w-4 h-4 text-pink-600 bg-gray-100 border-gray-300 rounded focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                           <span className="text-gray-700 dark:text-gray-300 font-medium">
                             Apartment Friendly
                           </span>

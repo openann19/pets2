@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { type ReactNode, useEffect } from "react";
-import { View, type ViewStyle, type ViewProps } from "react-native";
+import { View, type ViewStyle, type ViewProps, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,7 +12,8 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 
-import { BorderRadius, Spacing } from "../styles/GlobalStyles";
+import { MOBILE_SPACING, MOBILE_RADIUS } from '../constants/design-tokens';
+import { Theme } from '../theme/unified-theme';
 
 // === HOLOGRAPHIC CONSTANTS ===
 export const HOLOGRAPHIC_CONFIGS = {
@@ -21,16 +22,16 @@ export const HOLOGRAPHIC_CONFIGS = {
     rainbow: [
       "#ff0000",
       "#ff7f00",
-      "#ffff00",
+      "Theme.colors.neutral[0]f00",
       "#00ff00",
-      "#0000ff",
+      "Theme.colors.neutral[950]0ff",
       "#4b0082",
       "#9400d3",
     ],
     cyber: [
       "#00f5ff",
       "#ff00ff",
-      "#ffff00",
+      "Theme.colors.neutral[0]f00",
       "#00ff00",
       "#ff0080",
       "#8000ff",
@@ -57,7 +58,7 @@ export const HOLOGRAPHIC_CONFIGS = {
     neon: [
       "#00f5ff",
       "#ff00ff",
-      "#ffff00",
+      "Theme.colors.neutral[0]f00",
       "#00ff00",
       "#ff0080",
       "#8000ff",
@@ -172,20 +173,20 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         {
-          borderRadius: BorderRadius["2xl"],
+          borderRadius: MOBILE_RADIUS["2xl"],
           overflow: "hidden",
           position: "relative",
         },
         glow ? glowStyle : {},
         style,
-      ]}
+      ])}
       {...props}
     >
       {/* Animated Gradient Background */}
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           {
             position: "absolute",
             top: 0,
@@ -194,7 +195,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
             bottom: 0,
           },
           gradientStyle,
-        ]}
+        ])}
       >
         <LinearGradient
           colors={gradientColors}
@@ -202,7 +203,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
           end={{ x: 1, y: 1 }}
           style={{
             flex: 1,
-            borderRadius: BorderRadius["2xl"],
+            borderRadius: MOBILE_RADIUS["2xl"],
           }}
         />
       </Animated.View>
@@ -210,7 +211,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
       {/* Shimmer Effect */}
       {shimmer && (
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             {
               position: "absolute",
               top: 0,
@@ -220,7 +221,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
               backgroundColor: "rgba(255, 255, 255, 0.1)",
             },
             shimmerStyle,
-          ]}
+          ])}
         />
       )}
 
@@ -229,7 +230,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
         style={{
           position: "relative",
           zIndex: 1,
-          padding: Spacing.lg,
+          padding: MOBILE_SPACING[24],
         }}
       >
         {children}
@@ -262,13 +263,13 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
   const getSizeConfig = () => {
     switch (size) {
       case "sm":
-        return { padding: Spacing.md };
+        return { padding: MOBILE_SPACING[16] || 16 };
       case "lg":
-        return { padding: Spacing.xl };
+        return { padding: MOBILE_SPACING[32] || 32 };
       case "xl":
-        return { padding: Spacing["2xl"] };
+        return { padding: MOBILE_SPACING[48] || 48 };
       default:
-        return { padding: Spacing.lg };
+        return { padding: MOBILE_SPACING[24] || 24 };
     }
   };
 
@@ -280,7 +281,7 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
       animated={animated}
       shimmer={shimmer}
       glow={glow}
-      style={[sizeConfig, style]}
+      style={StyleSheet.flatten([sizeConfig, style])}
       {...props}
     >
       {children}
@@ -314,20 +315,20 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
     switch (size) {
       case "sm":
         return {
-          paddingHorizontal: Spacing.lg,
-          paddingVertical: Spacing.sm,
+          paddingHorizontal: MOBILE_SPACING[24] || 24,
+          paddingVertical: MOBILE_SPACING[8] || 8,
           minHeight: 36,
         };
       case "lg":
         return {
-          paddingHorizontal: Spacing["2xl"],
-          paddingVertical: Spacing.lg,
+          paddingHorizontal: MOBILE_SPACING[48] || 48,
+          paddingVertical: MOBILE_SPACING[24] || 24,
           minHeight: 56,
         };
       default:
         return {
-          paddingHorizontal: Spacing.xl,
-          paddingVertical: Spacing.md,
+          paddingHorizontal: MOBILE_SPACING[32] || 32,
+          paddingVertical: MOBILE_SPACING[16] || 16,
           minHeight: 48,
         };
     }
@@ -352,7 +353,7 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
 
   return (
     <Animated.View
-      style={[animatedStyle, style]}
+      style={StyleSheet.flatten([animatedStyle, style])}
       onTouchStart={handlePressIn}
       onTouchEnd={handlePressOut}
       onTouchCancel={handlePressOut}
@@ -363,14 +364,14 @@ export const HolographicButton: React.FC<HolographicButtonProps> = ({
         animated={true}
         shimmer={true}
         glow={true}
-        style={[
+        style={StyleSheet.flatten([
           sizeConfig,
           {
             justifyContent: "center",
             alignItems: "center",
             opacity: disabled ? 0.5 : 1,
           },
-        ]}
+        ])}
         {...props}
       >
         {children}
@@ -416,9 +417,9 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
   const gradientColors = [...HOLOGRAPHIC_CONFIGS.gradients[variant]];
 
   return (
-    <View style={[{ position: "relative" }, style]}>
+    <View style={StyleSheet.flatten([{ position: "relative" }, style])}>
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           {
             position: "absolute",
             top: 0,
@@ -427,7 +428,7 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
             bottom: 0,
           },
           gradientStyle,
-        ]}
+        ])}
       >
         <LinearGradient
           colors={gradientColors}
@@ -442,17 +443,11 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
         style={{
           position: "relative",
           zIndex: 1,
-          padding: Spacing.xs,
+          padding: MOBILE_SPACING[4],
         }}
       >
         {/* Text would go here - this is a placeholder for the actual text implementation */}
-        <View
-          style={{
-            fontSize: size,
-            fontWeight: weight,
-            color: "transparent",
-          }}
-        >
+        <View>
           {children}
         </View>
       </View>
@@ -526,7 +521,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
 
   return (
     <View
-      style={[
+      style={StyleSheet.flatten([
         {
           position: "absolute",
           top: 0,
@@ -536,14 +531,14 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
           overflow: "hidden",
         },
         style,
-      ]}
+      ])}
       {...props}
     >
       {particles.map((particle) => {
         const particleStyle = useAnimatedStyle(() => ({
-          position: "absolute",
-          left: `${particle.x.value}%`,
-          top: `${particle.y.value}%`,
+          position: "absolute" as const,
+          left: `${particle.x.value}%` as unknown as number,
+          top: `${particle.y.value}%` as unknown as number,
           width: 4,
           height: 4,
           borderRadius: 2,

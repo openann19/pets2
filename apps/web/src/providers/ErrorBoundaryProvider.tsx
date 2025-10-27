@@ -74,7 +74,7 @@ export const ErrorBoundaryProvider = ({ children }) => {
               </p>
               
               <div className="space-y-3">
-                <button onClick={() => window.location.reload()} className="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+                <button onClick={() => { window.location.reload(); }} className="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
                   <RefreshCw className="w-4 h-4"/>
                   Reload Application
                 </button>
@@ -108,7 +108,7 @@ export const ErrorBoundaryProvider = ({ children }) => {
                 <span className="text-sm text-orange-800">
                   An async operation failed. Please refresh the page.
                 </span>
-                <button onClick={() => window.location.reload()} className="ml-auto text-sm bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700 transition-colors">
+                <button onClick={() => { window.location.reload(); }} className="ml-auto text-sm bg-orange-600 text-white px-2 py-1 rounded hover:bg-orange-700 transition-colors">
                   Refresh
                 </button>
               </div>

@@ -9,21 +9,23 @@ import {
   type ViewStyle,
   type ImageStyle,
 } from "react-native";
-import FastImage, {
+import FastImage from "react-native-fast-image";
+import type {
   FastImageProps,
   Priority,
   ResizeMode,
+  Source,
 } from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 
-interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
+interface OptimizedImageProps {
   uri: string;
   style?: StyleProp<ImageStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   showLoadingIndicator?: boolean;
   showErrorState?: boolean;
-  fallbackIcon?: keyof typeof Ionicons.glyphMap;
+  fallbackIcon?: string;
   priority?: Priority;
   resizeMode?: ResizeMode;
   cache?: "immutable" | "web" | "cacheOnly";
@@ -45,23 +47,24 @@ interface OptimizedImageProps extends Omit<FastImageProps, "source"> {
  * - Preloading capabilities
  * - Memory management
  */
-export function OptimizedImage({
-  uri,
-  style,
-  containerStyle,
-  showLoadingIndicator = true,
-  showErrorState = true,
-  fallbackIcon = "image-outline",
-  priority = FastImage.priority.normal,
-  resizeMode = FastImage.resizeMode.cover,
-  cache = "immutable",
-  onLoadStart,
-  onLoadEnd,
-  onError,
-  accessible = true,
-  accessibilityLabel,
-  ...props
-}): React.ReactElement {
+export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
+  const {
+    uri,
+    style,
+    containerStyle,
+    showLoadingIndicator = true,
+    showErrorState = true,
+    fallbackIcon = "image-outline",
+    priority = "normal" as Priority,
+    resizeMode = "cover" as ResizeMode,
+    cache = "immutable",
+    onLoadStart,
+    onLoadEnd,
+    onError,
+    accessible = true,
+    accessibilityLabel,
+    ...restProps
+  } = props;
   const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -78,7 +81,7 @@ export function OptimizedImage({
   }, [onLoadEnd]);
 
   const handleError = useCallback(
-    (error: unknown) => {
+    (error: Error | unknown) => {
       setIsLoading(false);
       setHasError(true);
       onError?.(error);
@@ -90,22 +93,22 @@ export function OptimizedImage({
     [onError],
   );
 
-  const imageSource = {
+  const imageSource: Source = {
     uri,
-    priority,
-    cache,
-  };
+    priority: priority ?? "normal",
+    cache: cache ?? "immutable",
+  } as Source;
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={StyleSheet.flatten([styles.container, containerStyle])}>
       <FastImage
-        {...props}
+        {...restProps}
         source={imageSource}
-        style={[styles.image, style]}
-        resizeMode={resizeMode}
+        style={[styles.image, style] as any}
+        resizeMode={resizeMode ?? "cover"}
         onLoadStart={handleLoadStart}
         onLoadEnd={handleLoadEnd}
-        onError={handleError}
+        onError={handleError as any}
         accessible={accessible}
         accessibilityLabel={accessibilityLabel || `Image: ${uri}`}
         accessibilityRole="image"
@@ -113,7 +116,9 @@ export function OptimizedImage({
 
       {/* Loading Indicator */}
       {isLoading && showLoadingIndicator && (
-        <View style={[styles.overlay, styles.loadingOverlay]}>
+        <View
+          style={StyleSheet.flatten([styles.overlay, styles.loadingOverlay])}
+        >
           <ActivityIndicator
             size="small"
             color={colors.primary}
@@ -126,11 +131,11 @@ export function OptimizedImage({
       {/* Error State */}
       {hasError && showErrorState && (
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.overlay,
             styles.errorOverlay,
-            { backgroundColor: colors.card },
-          ]}
+            { backgroundColor: colors.bgElevated },
+          ])}
           accessible={true}
           accessibilityLabel="Image failed to load"
           accessibilityRole="alert"
@@ -141,7 +146,12 @@ export function OptimizedImage({
             color={colors.text}
             style={styles.errorIcon}
           />
-          <Text style={[styles.errorText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.errorText,
+              { color: colors.text },
+            ])}
+          >
             Image unavailable
           </Text>
         </View>
@@ -227,14 +237,14 @@ export function AvatarImage({
   return (
     <OptimizedImage
       {...props}
-      style={[
+      style={StyleSheet.flatten([
         {
           width: size,
           height: size,
           borderRadius: size / 2,
         },
         style,
-      ]}
+      ])}
       resizeMode={FastImage.resizeMode.cover}
       cache="web" // Use web cache for avatars as they might change
     />

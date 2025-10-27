@@ -24,7 +24,7 @@ export const LazyImage = ({ src, alt, className = '', placeholder, blurDataURL, 
         if (imgRef.current) {
             observer.observe(imgRef.current);
         }
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, [priority]);
     const handleLoad = () => {
         setIsLoaded(true);

@@ -13,6 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import type { PetFilters } from "@pawfectmatch/core";
+import { Theme } from '../../theme/unified-theme';
 
 interface AdvancedPetFiltersProps {
   value: PetFilters;
@@ -65,7 +66,7 @@ export const AdvancedPetFilters: React.FC<AdvancedPetFiltersProps> = ({
   return (
     <Animated.View style={animatedStyle}>
       <LinearGradient
-        colors={["#fceabb", "#f8b500", "#ec4899", "#a21caf"]}
+        colors={["#fceabb", "#f8b500", "Theme.colors.primary[500]", "#a21caf"]}
         style={styles.container}
       >
         <Text style={styles.title}>Advanced Filters</Text>
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 20,
     margin: 16,
-    shadowColor: "#ec4899",
+    shadowColor: "Theme.colors.primary[500]",
     shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 8,
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   picker: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 8,
     marginVertical: 4,
   },
@@ -220,13 +221,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   applyButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 24,
   },
   applyText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "bold",
     fontSize: 16,
   },

@@ -70,7 +70,7 @@ export const EnhancedCommunityFeed = ({ userId }) => {
       {/* Create Post Card */}
       <GlassCard variant="medium" blur="lg" className="p-6">
         <div className="space-y-4">
-          <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} placeholder="Share something amazing with your pack..." className="w-full min-h-[120px] bg-transparent border border-white/20 rounded-lg p-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"/>
+          <textarea value={newPostContent} onChange={(e) => { setNewPostContent(e.target.value); }} placeholder="Share something amazing with your pack..." className="w-full min-h-[120px] bg-transparent border border-white/20 rounded-lg p-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-brand-primary resize-none"/>
           <div className="flex justify-between items-center">
             <div className="flex gap-2">
               <AnimatedButton variant="ghost" size="sm">

@@ -10,8 +10,9 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
+import { Theme } from '../theme/unified-theme';
 
 const PremiumSuccessScreen = (): React.JSX.Element => {
   const { colors } = useTheme();
@@ -38,50 +39,75 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <View style={styles.content}>
         {isVerified ? (
           <>
             <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color="#10b981" />
+              <Ionicons name="checkmark-circle" size={80} color="Theme.colors.status.success" />
             </View>
 
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            >
               Welcome to Premium! 🎉
             </Text>
 
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.subtitle,
+                { color: colors.textSecondary },
+              ])}
+            >
               Your subscription has been activated successfully. Enjoy all
               premium features!
             </Text>
 
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="heart" size={20} color="#10b981" />
-                <Text style={[styles.featureText, { color: colors.text }]}>
+                <Ionicons name="heart" size={20} color="Theme.colors.status.success" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.featureText,
+                    { color: colors.text },
+                  ])}
+                >
                   Unlimited swipes
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="eye" size={20} color="#10b981" />
-                <Text style={[styles.featureText, { color: colors.text }]}>
+                <Ionicons name="eye" size={20} color="Theme.colors.status.success" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.featureText,
+                    { color: colors.text },
+                  ])}
+                >
                   See who liked you
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="flash" size={20} color="#10b981" />
-                <Text style={[styles.featureText, { color: colors.text }]}>
+                <Ionicons name="flash" size={20} color="Theme.colors.status.success" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.featureText,
+                    { color: colors.text },
+                  ])}
+                >
                   Priority matching
                 </Text>
               </View>
             </View>
 
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.continueButton,
                 { backgroundColor: colors.primary },
-              ]}
+              ])}
               onPress={handleContinue}
             >
               <Text style={styles.continueButtonText}>Start Matching</Text>
@@ -93,11 +119,18 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
               <Ionicons name="time" size={60} color={colors.primary} />
             </View>
 
-            <Text style={[styles.title, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            >
               Verifying Payment...
             </Text>
 
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.subtitle,
+                { color: colors.textSecondary },
+              ])}
+            >
               Please wait while we confirm your subscription.
             </Text>
           </>

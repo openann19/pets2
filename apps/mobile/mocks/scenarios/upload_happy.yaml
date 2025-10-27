@@ -1,0 +1,43 @@
+name: upload_happy
+description: Happy path upload flow - presign → upload → approve
+handlers:
+  - method: POST
+    url: '*/uploads/presign'
+    response:
+      status: 200
+      body:
+        success: true
+        data:
+          uploadUrl: "https://pawfectmatch-uploads.s3.amazonaws.com/test-upload"
+          key: "uploads/test-key-123"
+          fields:
+            "Content-Type": "image/jpeg"
+            "x-amz-algorithm": "AWS4-HMAC-SHA256"
+
+  - method: POST
+    url: '*/uploads'
+    response:
+      status: 200
+      body:
+        success: true
+        data:
+          uploadId: "upload-456"
+          petId: "pet-456"
+          status: "approved"
+          progress: 100
+          moderationResult:
+            status: "approved"
+            confidence: 0.95
+            categories: []
+          s3Key: "uploads/test-key-123"
+
+  - method: GET
+    url: '*/uploads/upload-456'
+    response:
+      status: 200
+      body:
+        success: true
+        data:
+          uploadId: "upload-456"
+          status: "approved"
+          progress: 100

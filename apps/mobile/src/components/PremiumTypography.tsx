@@ -3,8 +3,10 @@ import React, { type ReactNode, useEffect } from "react";
 import {
   Text,
   View,
+  Platform,
   type TextStyle,
-  type ViewStyle
+  type ViewStyle,
+  StyleSheet,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -15,26 +17,27 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
-
-import { Colors, Spacing, BorderRadius } from "../styles/GlobalStyles";
 import MaskedView from "@react-native-masked-view/masked-view";
+
+import { Colors, Spacing, BorderRadius } from "../animation";
+import { Theme } from '../theme/unified-theme';
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = {
-  primary: ["#ec4899", "#f472b6", "#f9a8d4"],
-  secondary: ["#0ea5e9", "#38bdf8", "#7dd3fc"],
-  premium: ["#a855f7", "#c084fc", "#d8b4fe"],
-  sunset: ["#f59e0b", "#f97316", "#fb923c"],
-  ocean: ["#0ea5e9", "#06b6d4", "#22d3ee"],
+  primary: ["Theme.colors.primary[500]", "Theme.colors.primary[400]", "#f9a8d4"],
+  secondary: ["Theme.colors.secondary[500]", "#38bdf8", "#7dd3fc"],
+  premium: ["Theme.colors.secondary[500]", "#c084fc", "#d8b4fe"],
+  sunset: ["Theme.colors.status.warning", "#f97316", "#fb923c"],
+  ocean: ["Theme.colors.secondary[500]", "#06b6d4", "#22d3ee"],
   holographic: ["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe"],
-  neon: ["#00f5ff", "#ff00ff", "#ffff00"],
+  neon: ["#00f5ff", "#ff00ff", "Theme.colors.neutral[0]f00"],
   gold: ["#ffd700", "#ffed4e", "#f39c12"],
   rainbow: [
     "#ff0000",
     "#ff7f00",
-    "#ffff00",
+    "Theme.colors.neutral[0]f00",
     "#00ff00",
-    "#0000ff",
+    "Theme.colors.neutral[950]0ff",
     "#4b0082",
     "#9400d3",
   ],
@@ -43,12 +46,12 @@ const TEXT_GRADIENTS = {
 // === PREMIUM TEXT SHADOWS ===
 const TEXT_SHADOWS = {
   primary: {
-    textShadowColor: "#ec4899",
+    textShadowColor: "Theme.colors.primary[500]",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
   secondary: {
-    textShadowColor: "#0ea5e9",
+    textShadowColor: "Theme.colors.secondary[500]",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
@@ -63,7 +66,7 @@ const TEXT_SHADOWS = {
     textShadowRadius: 15,
   },
   glow: {
-    textShadowColor: "#ffffff",
+    textShadowColor: "Theme.colors.neutral[0]",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },
@@ -197,11 +200,11 @@ export const GradientText: React.FC<GradientTextProps> = ({
     ...style,
   };
 
-  // For iOS, use MaskedViewIOS for gradient text
-  if (React.Platform.OS === "ios") {
+  // For iOS, use MaskedView for gradient text
+  if (Platform.OS === "ios") {
     return (
       <Animated.View style={animated ? animatedStyle : undefined}>
-        <MaskedViewIOS maskElement={<Text style={textStyle}>{children}</Text>}>
+        <MaskedView maskElement={<Text style={textStyle}>{children}</Text>}>
           <LinearGradient
             colors={gradientColors}
             start={{ x: 0, y: 0 }}
@@ -210,7 +213,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
           >
             {shimmer && (
               <Animated.View
-                style={[
+                style={StyleSheet.flatten([
                   {
                     position: "absolute",
                     top: 0,
@@ -220,12 +223,14 @@ export const GradientText: React.FC<GradientTextProps> = ({
                     backgroundColor: "rgba(255,255,255,0.3)",
                   },
                   shimmerStyle,
-                ]}
+                ])}
               />
             )}
-            <Text style={[textStyle, { opacity: 0 }]}>{children}</Text>
+            <Text style={StyleSheet.flatten([textStyle, { opacity: 0 }])}>
+              {children}
+            </Text>
           </LinearGradient>
-        </MaskedViewIOS>
+        </MaskedView>
       </Animated.View>
     );
   }
@@ -234,7 +239,9 @@ export const GradientText: React.FC<GradientTextProps> = ({
   return (
     <Animated.View style={animated ? animatedStyle : undefined}>
       <View style={{ position: "relative" }}>
-        <Text style={[textStyle, { color: "transparent" }]}>{children}</Text>
+        <Text style={StyleSheet.flatten([textStyle, { color: "transparent" }])}>
+          {children}
+        </Text>
         <View
           style={{
             position: "absolute",
@@ -252,7 +259,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
           >
             {shimmer && (
               <Animated.View
-                style={[
+                style={StyleSheet.flatten([
                   {
                     position: "absolute",
                     top: 0,
@@ -262,10 +269,12 @@ export const GradientText: React.FC<GradientTextProps> = ({
                     backgroundColor: "rgba(255,255,255,0.3)",
                   },
                   shimmerStyle,
-                ]}
+                ])}
               />
             )}
-            <Text style={[textStyle, { color: "transparent" }]}>
+            <Text
+              style={StyleSheet.flatten([textStyle, { color: "transparent" }])}
+            >
               {children}
             </Text>
           </LinearGradient>
@@ -347,7 +356,9 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   }));
 
   return (
-    <Animated.Text style={[style, animatedStyle]}>{children}</Animated.Text>
+    <Animated.Text style={StyleSheet.flatten([style, animatedStyle])}>
+      {children}
+    </Animated.Text>
   );
 };
 
@@ -397,7 +408,7 @@ export const PremiumHeading: React.FC<PremiumHeadingProps> = ({
       shimmer={shimmer}
       glow={glow}
       shadow="glow"
-      style={[getLevelStyle(), style]}
+      style={StyleSheet.flatten([getLevelStyle(), style])}
     >
       {children}
     </GradientText>
@@ -469,19 +480,21 @@ export const PremiumLabel: React.FC<PremiumLabelProps> = ({
   return (
     <AnimatedText
       animation={animated ? "fadeIn" : undefined}
-      style={[
+      style={StyleSheet.flatten([
         {
           fontSize: size === "xs" ? 12 : size === "base" ? 16 : 14,
           fontWeight: "500",
           ...getVariantStyle(),
         },
         style,
-      ]}
+      ])}
     >
       {children}
     </AnimatedText>
   );
 };
+
+export { TEXT_GRADIENTS, TEXT_SHADOWS };
 
 export default {
   GradientText,

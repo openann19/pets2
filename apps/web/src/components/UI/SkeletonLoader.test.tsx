@@ -6,7 +6,7 @@ import SkeletonLoader from './SkeletonLoader';
 // Mock framer-motion
 jest.mock('framer-motion', () => ({
   motion: {
-    div: React.forwardRef(({ children, className, ...props }: any, ref: any) => (
+    div: React.forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(({ children, className, ...props }, ref) => (
       <div ref={ref} className={className} data-testid="skeleton" {...props}>
         {children}
       </div>

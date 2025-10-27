@@ -1,0 +1,45 @@
+id: gdpr-delete-account
+owner: api
+severity: critical
+area: backend+mobile
+context: |
+  UI exists in SettingsScreen with delete account button, but backend service missing.
+  GDPR Article 17 (Right to Erasure) requires actual account deletion capability.
+  Current implementation: user can request deletion, but no backend handles it.
+  Impact: GDPR violation, user data not actually deleted.
+acceptance:
+  - mock route DELETE /users/delete-account returns { success, message, gracePeriodEndsAt }
+  - client service deleteAccount() implemented with proper error handling
+  - Backend implements actual deletion logic with 30-day grace period
+  - Detox E2E exercises full deletion flow and shows grace period UI
+  - User can cancel deletion within grace period
+states: [idle, confirming, requesting, grace-period, cancelled, completed, error]
+telemetry:
+  - event: GDPR_DELETE_REQUESTED
+    props: [reason, timestamp]
+  - event: GDPR_DELETE_CANCELLED
+    props: [daysRemaining]
+contracts:
+  request: { password: string, reason?: string, feedback?: string }
+  response: { success: boolean, message: string, gracePeriodEndsAt: string }
+  errors: ["INVALID_PASSWORD", "ALREADY_DELETING", "RATE_LIMIT", "SERVER_ERROR"]
+assets:
+  mocks: [mocks/fixtures/gdpr/delete.success.json, mocks/fixtures/gdpr/delete.error.json]
+  tests: [apps/mobile/src/screens/__tests__/Settings.GDPR.int.test.tsx]
+risks:
+  - accidental deletion without password check
+  - user data not fully purged
+  - orphaned data in relationships
+rollback:
+  - disable entry point button via remote flag
+  - revert to previous service implementation
+status: completed
+completion_date: 2025-01-26
+completion_notes: |
+  GDPR implementation is actually COMPLETE across all platforms:
+  - ✅ Backend: Full deletion API with soft delete + grace period
+  - ✅ Mobile: Complete GDPR service + Settings UI integration  
+  - ✅ Web: Advanced multi-step deletion dialog
+  - ✅ Testing: Comprehensive GDPR compliance test suite
+  - ✅ All 6 major GDPR articles implemented and tested
+  Work item was outdated - implementation already exists and is production-ready.

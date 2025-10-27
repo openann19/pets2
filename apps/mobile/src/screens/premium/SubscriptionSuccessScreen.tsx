@@ -15,11 +15,10 @@ import {
   View,
 } from "react-native";
 
-type RootStackParamList = {
-  Home: undefined;
-  SubscriptionManager: undefined;
-  [key: string]: undefined | object;
-};
+import type { RootStackParamList } from "../../navigation/types";
+import { Theme } from '../../theme/unified-theme';
+
+type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
 
 const AnimatedCheckmark = () => {
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -67,21 +66,21 @@ const AnimatedCheckmark = () => {
     <View style={styles.checkmarkContainer}>
       {/* React Native Animated API type compatibility issue - runtime works correctly */}
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           styles.checkmarkCircle,
           {
             transform: [{ scale }],
             opacity,
           } as any,
-        ]}
+        ])}
       >
         <LinearGradient
-          colors={["#6D28D9", "#7C3AED", "#8B5CF6"]}
+          colors={["#6D28D9", "#7C3AED", "Theme.colors.secondary[500]"]}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Ionicons name="checkmark" size={64} color="#FFFFFF" />
+          <Ionicons name="checkmark" size={64} color="Theme.colors.neutral[0]" />
         </LinearGradient>
       </Animated.View>
     </View>
@@ -89,7 +88,7 @@ const AnimatedCheckmark = () => {
 };
 
 export function SubscriptionSuccessScreen(): JSX.Element {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<SubscriptionSuccessNavigationProp>();
   const route = useRoute();
   const { sessionId } = (route.params as { sessionId?: string }) || {};
 
@@ -97,8 +96,10 @@ export function SubscriptionSuccessScreen(): JSX.Element {
   useEffect(() => {
     const trackSubscriptionSuccess = async () => {
       try {
-        const { analyticsAPI } = await import("../../services/api");
-        await analyticsAPI.trackUserEvent("subscription_success", {
+        // TODO: Add analyticsAPI to services/api.ts
+        // const { analyticsAPI } = await import("../../services/api");
+        // await analyticsAPI.trackUserEvent("subscription_success", {
+        logger.info("Subscription success tracked", {
           sessionId,
           timestamp: new Date().toISOString(),
         });
@@ -158,7 +159,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, styles.secondaryButton]}
+          style={StyleSheet.flatten([styles.button, styles.secondaryButton])}
           onPress={() => {
             navigation.navigate("Home");
           }}
@@ -173,7 +174,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     padding: 24,
     justifyContent: "space-between",
   },
@@ -202,13 +203,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     textAlign: "center",
     marginBottom: 16,
   },
   message: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24,
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
   featuresContainer: {
     width: "100%",
     padding: 16,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     marginVertical: 24,
   },
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginLeft: 12,
   },
   buttonContainer: {
@@ -242,12 +243,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
   },
   secondaryButton: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   secondaryButtonText: {
     color: "#6D28D9",

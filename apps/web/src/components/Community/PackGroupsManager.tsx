@@ -77,7 +77,7 @@ const PackGroupsManager = ({}) => {
               <p className="text-sm text-gray-600">Connect with other pet owners</p>
             </div>
           </div>
-          <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button onClick={() => { setShowCreateModal(true); }} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             <PlusIcon className="h-5 w-5"/>
             <span>Create Group</span>
           </button>
@@ -87,11 +87,11 @@ const PackGroupsManager = ({}) => {
         <div className="space-y-4">
           <div className="relative">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"/>
-            <input type="text" placeholder="Search groups..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            <input type="text" placeholder="Search groups..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); }} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
           </div>
 
           <div className="flex gap-2">
-            {['all', 'nearby', 'joined'].map((category) => (<button key={category} onClick={() => setSelectedCategory(category)} className={`
+            {['all', 'nearby', 'joined'].map((category) => (<button key={category} onClick={() => { setSelectedCategory(category); }} className={`
                   px-4 py-2 rounded-lg text-sm font-medium transition-colors
                   ${selectedCategory === category
                 ? 'bg-blue-600 text-white'
@@ -180,19 +180,19 @@ const PackGroupsManager = ({}) => {
           <UserGroupIcon className="h-16 w-16 text-gray-300 mx-auto mb-4"/>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No groups found</h3>
           <p className="text-gray-500 mb-4">Try adjusting your search or filters</p>
-          <button onClick={() => setShowCreateModal(true)} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button onClick={() => { setShowCreateModal(true); }} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             Create a New Group
           </button>
         </div>)}
 
       {/* Create Group Modal */}
-      {showCreateModal && (<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setShowCreateModal(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6">
+      {showCreateModal && (<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => { setShowCreateModal(false); }}>
+          <div onClick={(e) => { e.stopPropagation(); }} className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Create Pack Group</h3>
             <p className="text-sm text-gray-600 mb-6">
               This feature is coming soon! You'll be able to create custom pack groups for your community.
             </p>
-            <button onClick={() => setShowCreateModal(false)} className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-medium transition-colors">
+            <button onClick={() => { setShowCreateModal(false); }} className="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-medium transition-colors">
               Close
             </button>
           </div>

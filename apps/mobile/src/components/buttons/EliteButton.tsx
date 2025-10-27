@@ -13,6 +13,7 @@
 
 import React, { forwardRef } from "react";
 import type { View, ViewStyle } from "react-native";
+import { StyleSheet } from "react-native";
 
 import BaseButton, { type BaseButtonProps } from "./BaseButton";
 import {
@@ -39,11 +40,14 @@ export interface EliteButtonProps extends BaseButtonProps {
   glowIntensity?: number;
   magneticSensitivity?: number;
   shimmerDuration?: number;
-  gradientName?: keyof typeof import("../../theme/unified-theme").Theme.gradients;
+  gradientName?: "primary" | "secondary" | "success" | "warning" | "error" | "glass" | "glow";
   gradientColors?: string[];
 
   // Haptic feedback
   hapticFeedback?: boolean;
+  
+  // Icon support (inherited from BaseButtonProps)
+  icon?: string;
 }
 
 // === MAIN COMPONENT ===
@@ -70,6 +74,14 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
       hapticFeedback = true,
 
       // Base button props
+      title,
+      variant,
+      size,
+      loading,
+      disabled,
+      icon,
+      leftIcon,
+      rightIcon,
       style,
       onPress,
       ...baseProps
@@ -87,7 +99,19 @@ const EliteButton = forwardRef<View, EliteButtonProps>(
 
     // Create the button with all effects applied
     let ButtonComponent = (
-      <BaseButton {...baseProps} onPress={handlePress} style={style} />
+      <BaseButton
+        {...baseProps}
+        title={title}
+        variant={variant}
+        size={size}
+        loading={loading}
+        disabled={disabled}
+        icon={icon}
+        leftIcon={leftIcon}
+        rightIcon={rightIcon}
+        onPress={handlePress}
+        style={style}
+      />
     );
 
     // Apply effects in reverse order (outermost to innermost)
@@ -163,7 +187,7 @@ export const EliteButtonPresets = {
     <EliteButton
       {...props}
       gradientEffect={true}
-      gradientName="holographic"
+      gradientName="primary"
       shimmerEffect={true}
       glowEffect={true}
       rippleEffect={true}
@@ -190,14 +214,14 @@ export const EliteButtonPresets = {
       glowEffect={true}
       rippleEffect={true}
       pressEffect={true}
-      style={[
+      style={StyleSheet.flatten([
         {
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderWidth: 1,
           borderColor: "rgba(255, 255, 255, 0.2)",
         },
         props.style,
-      ]}
+      ])}
     />
   ),
 

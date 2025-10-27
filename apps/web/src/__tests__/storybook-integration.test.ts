@@ -85,22 +85,22 @@ describe('Storybook Integration Tests', () => {
 
   describe('Storybook Addons Integration', () => {
     test('should have accessibility addon configured', () => {
-      const mainConfig = require('../../.storybook/main.ts').default as any;
+      const mainConfig = require('../../.storybook/main.ts').default;
       expect(mainConfig.addons).toContain('@storybook/addon-a11y');
     });
 
     test('should have interactions addon configured', () => {
-      const mainConfig = require('../../.storybook/main.ts').default as any;
+      const mainConfig = require('../../.storybook/main.ts').default;
       expect(mainConfig.addons).toContain('@storybook/addon-interactions');
     });
 
     test('should have viewport addon configured', () => {
-      const mainConfig = require('../../.storybook/main.ts').default as any;
+      const mainConfig = require('../../.storybook/main.ts').default;
       expect(mainConfig.addons).toContain('@storybook/addon-viewport');
     });
 
     test('should have essentials addon configured', () => {
-      const mainConfig = require('../../.storybook/main.ts').default as any;
+      const mainConfig = require('../../.storybook/main.ts').default;
       expect(mainConfig.addons).toContain('@storybook/addon-essentials');
     });
   });
@@ -121,7 +121,7 @@ describe('Storybook Integration Tests', () => {
     });
 
     test('PremiumButton stories should export all variants', () => {
-      const stories = require('../components/UI/PremiumButton.stories.tsx').default as any;
+      const stories = require('../components/UI/PremiumButton.stories.tsx').default;
 
       // Check that stories export contains all expected variants
       expect(stories).toHaveProperty('Primary');
@@ -132,7 +132,7 @@ describe('Storybook Integration Tests', () => {
     });
 
     test('stories should have proper meta configuration', () => {
-      const stories = require('../components/UI/PremiumButton.stories.tsx').default as any;
+      const stories = require('../components/UI/PremiumButton.stories.tsx').default;
 
       expect(stories.meta).toBeDefined();
       expect(stories.meta.title).toBe('UI/PremiumButton');
@@ -181,7 +181,7 @@ describe('Component Documentation Tests', () => {
   });
 
   test('stories should have proper controls configuration', () => {
-    const stories = require('../components/UI/PremiumButton.stories.tsx').default as any;
+    const stories = require('../components/UI/PremiumButton.stories.tsx').default;
 
     // Check that stories have proper argTypes for controls
     expect(stories.meta.argTypes).toBeDefined();

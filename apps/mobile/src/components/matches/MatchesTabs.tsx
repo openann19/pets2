@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { AdvancedCard, CardConfigs } from "../Advanced/AdvancedCard";
+import { Theme } from '../../theme/unified-theme';
 
 interface MatchesTabsProps {
   selectedTab: "matches" | "likedYou";
@@ -22,7 +23,10 @@ export function MatchesTabs({
     >
       <View style={styles.tabContent}>
         <TouchableOpacity
-          style={[styles.tab, selectedTab === "matches" && styles.activeTab]}
+          style={StyleSheet.flatten([
+            styles.tab,
+            selectedTab === "matches" && styles.activeTab,
+          ])}
           onPress={() => {
             onTabChange("matches");
           }}
@@ -30,16 +34,19 @@ export function MatchesTabs({
           accessibilityState={{ selected: selectedTab === "matches" }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.tabText,
               selectedTab === "matches" && styles.activeTabText,
-            ]}
+            ])}
           >
             Matches
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, selectedTab === "likedYou" && styles.activeTab]}
+          style={StyleSheet.flatten([
+            styles.tab,
+            selectedTab === "likedYou" && styles.activeTab,
+          ])}
           onPress={() => {
             onTabChange("likedYou");
           }}
@@ -47,10 +54,10 @@ export function MatchesTabs({
           accessibilityState={{ selected: selectedTab === "likedYou" }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.tabText,
               selectedTab === "likedYou" && styles.activeTabText,
-            ]}
+            ])}
           >
             Liked You
           </Text>
@@ -63,7 +70,7 @@ export function MatchesTabs({
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -77,7 +84,7 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: "#ec4899",
+    borderBottomColor: "Theme.colors.primary[500]",
   },
   tabText: {
     fontSize: 16,
@@ -85,7 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   activeTabText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "bold",
   },
 });

@@ -1,68 +1,16 @@
 /**
- * 🎨 UNIFIED THEME SYSTEM
- * Main export file for the mobile theme system
+ * 🎨 UNIFIED THEME EXPORTS
+ * Single export point for all theme-related functionality
  */
 
-// Provider and Context
-export { UnifiedThemeProvider, useThemeContext } from "./UnifiedThemeProvider";
+export * from "./types";
+export * from "./Provider";
+export { createTheme } from "./rnTokens";
+export * from "./adapters";
 
-// Main Hooks
-export {
-  useTheme,
-  useThemeMode,
-  useColors,
-  useTypography,
-  useSpacing,
-  useShadows,
-  useRadii,
-  useOpacity,
-  useBorderWidth,
-  useIconSize,
-  useAnimation,
-  useZIndex,
-  useColor,
-  useTypographyVariant,
-  useSpacingValue,
-  useShadowConfig,
-  useRadius,
-  useLegacyTheme,
-} from "./hooks";
+// Re-export the extended theme hook for convenience
+export { useExtendedTheme, useExtendedColors } from "../hooks/useExtendedTheme";
 
-// Theme Creation
-export { createTheme, lightTheme, darkTheme } from "./tokens";
-
-// Types
-export type {
-  Theme,
-  ThemeMode,
-  ThemeContextValue,
-  ColorPalette,
-  TypographyScale,
-  TypographyVariant,
-  SpacingScale,
-  RadiusScale,
-  ShadowScale,
-  ShadowToken,
-  OpacityScale,
-  BorderWidthScale,
-  IconSizeScale,
-  AnimationScale,
-  ZIndexScale,
-  ThemeOverrides,
-  ColorToken,
-  TypographyVariantName,
-  SpacingToken,
-  RadiusToken,
-  ShadowTokenName,
-  OpacityToken,
-  BorderWidthToken,
-  IconSizeToken,
-  AnimationToken,
-  ZIndexToken,
-  ThemedComponentProps,
-  ThemedViewProps,
-  ThemedTextProps,
-} from "./types";
-
-// Default export
-export { default } from "./UnifiedThemeProvider";
+// Re-export unified theme for backward compatibility
+export { Theme, DarkTheme } from "./unified-theme";
+export type { ThemeType, ColorPalette, SpacingSize, BorderRadiusSize, FontSize, FontWeight } from "./unified-theme";

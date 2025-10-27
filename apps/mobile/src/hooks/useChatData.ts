@@ -2,19 +2,24 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { useAuthStore } from "@pawfectmatch/core";
+import type { Message as CoreMessage } from "@pawfectmatch/core";
 import { logger } from "../services/logger";
 import { matchesAPI } from "../services/api";
 import { useSocket } from "./useSocket";
 
 export interface Message {
   _id: string;
+  matchId?: string;
   content: string;
   senderId: string;
   timestamp: string;
   read: boolean;
-  type: "text" | "image" | "emoji";
+  type: "text" | "image" | "emoji" | "voice";
   status?: "sending" | "sent" | "failed";
   error?: boolean;
+  audioUrl?: string;
+  duration?: number;
+  replyTo?: { _id: string; author?: string; text?: string };
 }
 
 export interface ChatData {
@@ -28,7 +33,7 @@ export interface ChatData {
 }
 
 export interface ChatActions {
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, replyTo?: { _id: string; author?: string; text?: string }) => Promise<void>;
   loadMessages: () => Promise<void>;
   retryMessage: (messageId: string) => Promise<void>;
   markAsRead: () => Promise<void>;
@@ -120,16 +125,34 @@ export function useChatData(matchId: string): UseChatDataReturn {
     };
   }, [socket, matchId]);
 
+  // Helper to convert core Message to local Message format
+  const convertMessage = useCallback((coreMsg: CoreMessage): Message => {
+    const senderId = typeof coreMsg.sender === 'string' ? coreMsg.sender : coreMsg.sender._id;
+    return {
+      _id: coreMsg._id,
+      content: coreMsg.content,
+      senderId,
+      timestamp: coreMsg.sentAt,
+      read: coreMsg.readBy.length > 0,
+      type: coreMsg.messageType === 'text' ? 'text' : 
+            coreMsg.messageType === 'image' ? 'image' :
+            coreMsg.messageType === 'voice' ? 'voice' : 'text',
+      replyTo: coreMsg.replyTo,
+      error: false,
+    };
+  }, []);
+
   // Load messages from API
   const loadMessages = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const messagesData = await matchesAPI.getMessages(matchId);
+      const coreMessages = await matchesAPI.getMessages(matchId);
 
-      if (messagesData.length > 0) {
-        setMessages(messagesData);
+      if (coreMessages.length > 0) {
+        const convertedMessages = coreMessages.map(convertMessage);
+        setMessages(convertedMessages);
         await markAsRead();
       } else {
         setMessages([]);
@@ -137,17 +160,17 @@ export function useChatData(matchId: string): UseChatDataReturn {
     } catch (err) {
       const errorMessage =
         "Failed to load messages. Please check your connection and try again.";
-      logger.error("Failed to load messages", { error: err, matchId });
+      logger.error("Failed to load messages", { error: err instanceof Error ? err : new Error(String(err)), matchId });
       setError(errorMessage);
       Alert.alert("Connection Error", errorMessage);
     } finally {
       setIsLoading(false);
     }
-  }, [matchId]);
+  }, [matchId, convertMessage]);
 
   // Send message with optimistic updates
   const sendMessage = useCallback(
-    async (content: string): Promise<void> => {
+    async (content: string, replyTo?: { _id: string; author?: string; text?: string }): Promise<void> => {
       if (!content.trim() || isSending) return;
 
       const messageContent = content.trim();
@@ -162,6 +185,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
         read: false,
         type: "text",
         status: "sending",
+        replyTo: replyTo ? { _id: replyTo._id, author: replyTo.author, text: replyTo.text } : undefined,
       };
 
       setIsSending(true);
@@ -171,13 +195,15 @@ export function useChatData(matchId: string): UseChatDataReturn {
         const sentMessage = await matchesAPI.sendMessage(
           matchId,
           messageContent,
+          replyTo,
         );
 
-        // Replace optimistic message with server response
+        // Convert and replace optimistic message with server response
+        const convertedSentMessage = convertMessage(sentMessage);
         setMessages((prev) =>
           prev.map(
             (msg): Message =>
-              msg._id === tempId ? { ...sentMessage, status: "sent" } : msg,
+              msg._id === tempId ? { ...convertedSentMessage, status: "sent" } : msg,
           ),
         );
 
@@ -213,7 +239,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
         }, 800);
       } catch (err) {
         logger.error("Failed to send message", {
-          error: err,
+          error: err instanceof Error ? err : new Error(String(err)),
           matchId,
           content,
         });
@@ -262,7 +288,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
           ),
         );
       } catch (err) {
-        logger.error("Failed to retry message", { error: err, messageId });
+        logger.error("Failed to retry message", { error: err instanceof Error ? err : new Error(String(err)), messageId });
         setMessages((prev) =>
           prev.map((msg) =>
             msg._id === retryMessage._id
@@ -282,7 +308,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
       logger.debug("Messages marked as read", { matchId });
       setMessages((prev) => prev.map((msg) => ({ ...msg, read: true })));
     } catch (err) {
-      logger.error("Failed to mark messages as read", { error: err, matchId });
+      logger.error("Failed to mark messages as read", { error: err instanceof Error ? err : new Error(String(err)), matchId });
     }
   }, [matchId]);
 
@@ -365,7 +391,7 @@ function getIntelligentResponse(messageContent: string): string {
   }
 
   // Default contextual responses
-  const responses = [
+  const responses: string[] = [
     "That sounds absolutely perfect! I'm really looking forward to it 🎾",
     "Amazing! My pet is going to be so excited to meet yours 🐕💕",
     "Perfect! I think this is going to be the start of a beautiful friendship 😊",
@@ -373,5 +399,6 @@ function getIntelligentResponse(messageContent: string): string {
     "Fantastic! This is exactly what I was hoping for 🎉",
     "Love it! I have a really good feeling about this playdate ✨",
   ];
-  return responses[Math.floor(Math.random() * responses.length)];
+  const randomIndex = Math.floor(Math.random() * responses.length);
+  return responses[randomIndex] ?? "Sounds great!";
 }

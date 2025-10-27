@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../../theme/unified-theme';
 
 interface ErrorStateProps {
   onRetry: () => void;
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     marginBottom: 16,
   },
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   buttonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "bold",
     fontSize: 16,
   },

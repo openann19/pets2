@@ -109,7 +109,7 @@ interface EncryptedLogStorageItem {
  * Interface for Keychain options
  * @private
  */
-interface KeychainOptions {
+interface _KeychainOptions {
   accessible?: Keychain.ACCESSIBLE;
   accessControl?: Keychain.ACCESS_CONTROL;
 }
@@ -134,7 +134,7 @@ interface EncryptedData {
   tag?: string;
 }
 
-interface EncryptionKeys {
+interface _EncryptionKeys {
   key: string;
   salt: string;
 }
@@ -203,12 +203,12 @@ class MobileLogger {
   private async initializeEncryption(): Promise<void> {
     try {
       // Try to retrieve existing encryption keys
-      const storedKey = await Keychain.getGenericPassword(
-        this.ENCRYPTION_KEY_STORAGE_KEY,
-      );
-      const storedSalt = await Keychain.getGenericPassword(
-        this.ENCRYPTION_SALT_STORAGE_KEY,
-      );
+      const storedKey = await Keychain.getGenericPassword({
+        service: this.ENCRYPTION_KEY_STORAGE_KEY,
+      });
+      const storedSalt = await Keychain.getGenericPassword({
+        service: this.ENCRYPTION_SALT_STORAGE_KEY,
+      });
 
       if (storedKey && storedSalt) {
         this.encryptionKey = storedKey.password;
@@ -221,10 +221,15 @@ class MobileLogger {
         );
 
         // Store keys securely
-        await Keychain.setGenericPassword(this.ENCRYPTION_KEY_STORAGE_KEY, key);
+        await Keychain.setGenericPassword(
+          this.ENCRYPTION_KEY_STORAGE_KEY,
+          key,
+          { service: this.ENCRYPTION_KEY_STORAGE_KEY },
+        );
         await Keychain.setGenericPassword(
           this.ENCRYPTION_SALT_STORAGE_KEY,
           salt,
+          { service: this.ENCRYPTION_SALT_STORAGE_KEY },
         );
 
         this.encryptionKey = key;
@@ -242,6 +247,27 @@ class MobileLogger {
       this.encryptionKey = null;
       this.encryptionSalt = null;
     }
+  }
+
+  /**
+   * Compatibility helpers for observability service
+   */
+  setUserContext(
+    userId: string,
+    properties: Record<string, unknown> = {},
+  ): void {
+    // Update internal user info minimally
+    this.userInfo = { id: userId };
+    try {
+      sentry.setUser({ id: userId, ...properties });
+    } catch {
+      // ignore
+    }
+  }
+
+  clearUserContext(): void {
+    this.userInfo = null;
+    this.clearSentryContext();
   }
 
   /**
@@ -331,7 +357,7 @@ class MobileLogger {
   private setupLogRotation(): void {
     setInterval(() => {
       if (this.logBuffer.length > 0) {
-        this.rotateAndPersistLogs();
+        void this.rotateAndPersistLogs();
       }
     }, 60000); // Rotate every minute if needed
   }
@@ -464,7 +490,7 @@ class MobileLogger {
    * Sanitizes log data to comply with privacy regulations
    */
   private sanitizeMetadata(data?: Record<string, unknown>): LogMetadata {
-    if (data === undefined || data === null) {
+    if (data === undefined) {
       return {};
     }
 
@@ -776,7 +802,7 @@ class MobileLogger {
 
             const parsedItem = JSON.parse(encrypted) as EncryptedLogStorageItem;
             return { key, ...parsedItem };
-          } catch (error) {
+          } catch (_error) {
             // Clean up corrupted entries
             await EncryptedStorage.removeItem(key);
             return null;
@@ -897,7 +923,7 @@ class MobileLogger {
       // Buffer important logs that were rate limited
       if (level === LogLevel.ERROR || level === LogLevel.SECURITY) {
         const timestamp = new Date().toISOString();
-        this.bufferOfflineLog({
+        void this.bufferOfflineLog({
           message: `[Rate Limited] ${message}`,
           level,
           timestamp,
@@ -922,7 +948,7 @@ class MobileLogger {
       securityContext: {
         environment: this.isDevelopment ? "development" : "production",
         sessionHash: this.hashIdentifier(this.sessionId),
-        logId: this.hashIdentifier(`${level}_${Date.now()}_${message}`),
+        logId: this.hashIdentifier(`${level}_${String(Date.now())}_${message}`),
       },
     };
 
@@ -942,7 +968,7 @@ class MobileLogger {
     };
 
     // Add to buffer for potential offline persistence
-    this.bufferOfflineLog(logEntry);
+    void this.bufferOfflineLog(logEntry);
 
     // Console logging (only in development) - using logger methods instead of console
     if (this.isDevelopment) {
@@ -998,7 +1024,8 @@ class MobileLogger {
               : {}),
           });
         } else {
-          const sentryLevel = level === "security" ? "warning" : "error";
+          const sentryLevel =
+            String(level) === "security" ? "warning" : "error";
 
           // Set secure context before capturing message
           const secureContext = {
@@ -1212,20 +1239,22 @@ class MobileLogger {
           metadata: this.sanitizeMetadata(entry.metadata),
         }));
 
-      const exportData = {
+      const baseFilters: AuditLogFilters = {
+        startDate: (startDate ?? new Date(0)).toISOString(),
+        endDate: endDate.toISOString(),
+        levels,
+        includeMetrics,
+        contentHash: "",
+        totalEntries: 0,
+      };
+
+      const exportData: AuditLogExport = {
         logs: filteredLogs,
         ...(includeMetrics ? { metrics: this.getBufferMetrics() } : {}),
         exportMetadata: {
           timestamp: new Date().toISOString(),
           exportId: this.hashIdentifier(`audit_${Date.now()}`),
-          filters: {
-            startDate: startDate?.toISOString(),
-            endDate: endDate.toISOString(),
-            levels,
-            includeMetrics,
-            contentHash: undefined,
-            totalEntries: undefined,
-          },
+          filters: baseFilters,
         },
       };
 

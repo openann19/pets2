@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import React, { Component } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../theme/unified-theme';
 
 interface Props {
   children: ReactNode;
@@ -26,7 +27,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     logger.error("ErrorBoundary caught an error:", { error, errorInfo });
     this.setState({ errorInfo });
   }
@@ -35,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({ hasError: false, error: undefined, errorInfo: undefined });
   };
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
@@ -47,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <Ionicons
               name="warning"
               size={64}
-              color="#EF4444"
+              color="Theme.colors.status.error"
               style={styles.icon}
             />
             <Text style={styles.title}>Oops! Something went wrong</Text>
@@ -74,7 +75,7 @@ export class ErrorBoundary extends Component<Props, State> {
               style={styles.retryButton}
               onPress={this.handleRetry}
             >
-              <Ionicons name="refresh" size={20} color="#FFFFFF" />
+              <Ionicons name="refresh" size={20} color="Theme.colors.neutral[0]" />
               <Text style={styles.retryText}>Try Again</Text>
             </TouchableOpacity>
           </View>
@@ -89,7 +90,7 @@ export class ErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
   },
   content: {
     flex: 1,
@@ -103,13 +104,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     textAlign: "center",
     marginBottom: 12,
   },
   message: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
@@ -144,11 +145,11 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "Theme.colors.secondary[500]",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
-    shadowColor: "#8B5CF6",
+    shadowColor: "Theme.colors.secondary[500]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   retryText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,

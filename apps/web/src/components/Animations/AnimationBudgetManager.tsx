@@ -49,7 +49,7 @@ export function useShouldAnimate() {
     if (!success) {
       logger.warn('[Animation Budget] Animation rejected - budget exceeded');
     }
-    return () => unregisterAnimation();
+    return () => { unregisterAnimation(); };
   }, [registerAnimation, unregisterAnimation]);
 
   return {

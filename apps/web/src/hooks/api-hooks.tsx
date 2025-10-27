@@ -93,9 +93,9 @@ export function useAuth(): UseAuthReturn {
     };
 }
 // ============= USER PROFILE HOOKS =============
-export function useCurrentUser(): UseQueryResult<User, Error> {
+export function useCurrentUser(): UseQueryResult<User> {
     const { setUser, isAuthenticated } = useAuthStore();
-    return useQuery<User, Error>({
+    return useQuery<User>({
         queryKey: ['user', 'current'],
         queryFn: async () => {
             const response = await apiClient.getCurrentUser();
@@ -133,8 +133,8 @@ export function useUpdateProfile(): UseMutationResult<User, Error, UpdateProfile
     });
 }
 // ============= PETS HOOKS =============
-export function usePets(): UseQueryResult<Pet[], Error> {
-    return useQuery<Pet[], Error>({
+export function usePets(): UseQueryResult<Pet[]> {
+    return useQuery<Pet[]>({
         queryKey: ['pets'],
         queryFn: async () => {
             const response = await apiClient.getPets();
@@ -146,9 +146,9 @@ export function usePets(): UseQueryResult<Pet[], Error> {
     });
 }
 
-export function useMyPets(): UseQueryResult<Pet[], Error> {
+export function useMyPets(): UseQueryResult<Pet[]> {
     const { isAuthenticated } = useAuthStore();
-    return useQuery<Pet[], Error>({
+    return useQuery<Pet[]>({
         queryKey: ['pets', 'my'],
         queryFn: async () => {
             const response = await apiClient.getMyPets();
@@ -226,9 +226,9 @@ interface UseSwipeReturn {
     clearMatch: () => void;
 }
 
-export function useSwipeQueue(): UseQueryResult<Pet[], Error> {
+export function useSwipeQueue(): UseQueryResult<Pet[]> {
     const { isAuthenticated } = useAuthStore();
-    return useQuery<Pet[], Error>({
+    return useQuery<Pet[]>({
         queryKey: ['swipe', 'queue'],
         queryFn: async () => {
             const response = await apiClient.getSwipeQueue();
@@ -258,13 +258,13 @@ export function useSwipe(): UseSwipeReturn {
         swipe: swipeMutation.mutate,
         isLoading: swipeMutation.isPending,
         lastMatch,
-        clearMatch: () => setLastMatch(null)
+        clearMatch: () => { setLastMatch(null); }
     };
 }
 
-export function useMatches(): UseQueryResult<Match[], Error> {
+export function useMatches(): UseQueryResult<Match[]> {
     const { isAuthenticated } = useAuthStore();
-    return useQuery<Match[], Error>({
+    return useQuery<Match[]>({
         queryKey: ['matches'],
         queryFn: async () => {
             const response = await apiClient.getMatches();
@@ -278,8 +278,8 @@ export function useMatches(): UseQueryResult<Match[], Error> {
     });
 }
 
-export function useMatch(matchId: string | undefined): UseQueryResult<Match, Error> {
-    return useQuery<Match, Error>({
+export function useMatch(matchId: string | undefined): UseQueryResult<Match> {
+    return useQuery<Match>({
         queryKey: ['matches', matchId],
         queryFn: async () => {
             if (!matchId) throw new Error('Match ID is required');
@@ -301,9 +301,9 @@ interface TempMessage {
     read: boolean;
 }
 
-export function useMessages(matchId: string | undefined): UseQueryResult<Message[], Error> {
+export function useMessages(matchId: string | undefined): UseQueryResult<Message[]> {
     const queryClient = useQueryClient();
-    const query = useQuery<Message[], Error>({
+    const query = useQuery<Message[]>({
         queryKey: ['messages', matchId],
         queryFn: async () => {
             if (!matchId) throw new Error('Match ID is required');
@@ -370,10 +370,10 @@ export function useSendMessage(matchId: string | undefined): UseMutationResult<M
 
 export function useMarkMessagesAsRead(matchId: string | undefined): UseMutationResult<void, Error, void> {
     const queryClient = useQueryClient();
-    return useMutation<void, Error, void>({
+    return useMutation<void>({
         mutationFn: () => {
             if (!matchId) throw new Error('Match ID is required');
-            return apiClient.markMessagesAsRead(matchId);
+            apiClient.markMessagesAsRead(matchId);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['matches'] });
@@ -435,9 +435,9 @@ export function useSuggestImprovements(): UseMutationResult<ImprovementsResponse
     });
 }
 // ============= SUBSCRIPTION HOOKS =============
-export function useSubscription(): UseQueryResult<Subscription | null, Error> {
+export function useSubscription(): UseQueryResult<Subscription | null> {
     const { isAuthenticated } = useAuthStore();
-    return useQuery<Subscription | null, Error>({
+    return useQuery<Subscription | null>({
         queryKey: ['subscription'],
         queryFn: async () => {
             const response = await apiClient.getSubscription();
@@ -470,7 +470,7 @@ export function useCreateSubscription(): UseMutationResult<SubscriptionCheckoutR
 
 export function useCancelSubscription(): UseMutationResult<void, Error, void> {
     const queryClient = useQueryClient();
-    return useMutation<void, Error, void>({
+    return useMutation<void>({
         mutationFn: () => apiClient.cancelSubscription(),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['subscription'] });
@@ -495,8 +495,8 @@ export function useUpdateLocation(): UseMutationResult<User, Error, LocationData
     });
 }
 
-export function useNearbyPets(radius = 10): UseQueryResult<Pet[], Error> {
-    return useQuery<Pet[], Error>({
+export function useNearbyPets(radius = 10): UseQueryResult<Pet[]> {
+    return useQuery<Pet[]>({
         queryKey: ['pets', 'nearby', radius],
         queryFn: async () => {
             const response = await apiClient.getNearbyPets(radius);
@@ -509,9 +509,9 @@ export function useNearbyPets(radius = 10): UseQueryResult<Pet[], Error> {
 }
 
 // ============= NOTIFICATION HOOKS =============
-export function useNotifications(): UseQueryResult<Notification[], Error> {
+export function useNotifications(): UseQueryResult<Notification[]> {
     const { isAuthenticated } = useAuthStore();
-    return useQuery<Notification[], Error>({
+    return useQuery<Notification[]>({
         queryKey: ['notifications'],
         queryFn: async () => {
             const response = await apiClient.getNotifications();

@@ -18,13 +18,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { ReactNode } from "react";
 import React, { useMemo } from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  type AnimatedStyleProp,
+} from "react-native-reanimated";
 
 import {
   useGlowAnimation,
-  useShimmerEffect,
   useEntranceAnimation,
 } from "../../hooks/useUnifiedAnimations";
+import { useShimmerEffect } from "../../hooks/usePremiumAnimations";
 import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
@@ -45,7 +48,7 @@ export interface FXContainerProps {
   hasShimmer?: boolean;
   hasGlow?: boolean;
   hasEntrance?: boolean;
-  entranceType?: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight";
+  entranceType?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn";
   glowColor?: string;
   glowIntensity?: number;
   shimmerDuration?: number;
@@ -64,7 +67,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
   hasShimmer = false,
   hasGlow = false,
   hasEntrance = false,
-  entranceType = "fadeInUp",
+  entranceType = "slideIn",
   glowColor,
   glowIntensity = 1,
   shimmerDuration = 2000,
@@ -84,7 +87,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
       case "glass":
         return {
           ...styles,
-          backgroundColor: Theme.glass.light[variant],
+          backgroundColor: Theme.glass.light.backgroundColor,
           borderWidth: 1,
           borderColor: `rgba(255, 255, 255, ${variant === "subtle" ? 0.2 : variant === "strong" ? 0.4 : 0.3})`,
           ...Theme.shadows.depth.md,
@@ -94,7 +97,7 @@ const FXContainer: React.FC<FXContainerProps> = ({
         return {
           ...styles,
           backgroundColor: Theme.colors.neutral[0],
-          ...Theme.glow.primary,
+          ...Theme.glow.md,
         };
 
       case "holographic":
@@ -137,12 +140,12 @@ const FXContainer: React.FC<FXContainerProps> = ({
 
   // Shimmer animation
   const { animatedStyle: shimmerStyle } = useShimmerEffect(
-    disabled ? 0 : shimmerDuration,
+    !disabled && hasShimmer && isAnimated,
   );
 
   // Entrance animation
   const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation(entranceType, 0, "gentle");
+    useEntranceAnimation(entranceType, 0);
 
   // Start entrance animation if enabled
   React.useEffect(() => {
@@ -150,21 +153,6 @@ const FXContainer: React.FC<FXContainerProps> = ({
       startEntrance();
     }
   }, [hasEntrance, isAnimated, disabled, startEntrance]);
-
-  // Combined animated styles
-  const combinedAnimatedStyle = useAnimatedStyle(() => {
-    const styles: ViewStyle = {};
-
-    if (hasGlow && !disabled) {
-      Object.assign(styles, glowStyle.value);
-    }
-
-    if (hasEntrance && !disabled) {
-      Object.assign(styles, entranceStyle.value);
-    }
-
-    return styles;
-  });
 
   // Render content with appropriate wrapper
   const renderContent = () => {
@@ -176,13 +164,13 @@ const FXContainer: React.FC<FXContainerProps> = ({
         <View style={StyleSheet.absoluteFill}>
           {content}
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               StyleSheet.absoluteFill,
               {
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
               },
-              shimmerStyle,
-            ]}
+              shimmerStyle as any,
+            ])}
             pointerEvents="none"
           />
         </View>
@@ -190,13 +178,12 @@ const FXContainer: React.FC<FXContainerProps> = ({
     }
 
     // Apply gradient background
-    if (type === "gradient" || type === "holographic") {
-      const gradient = gradientName ? Theme.gradients[gradientName] : null;
-      const colors = gradientColors ||
-        gradient?.colors || [
-          Theme.colors.primary[500],
-          Theme.colors.primary[400],
-        ];
+    if (type === "gradient") {
+      const fallbackGradient = Theme.gradients?.primary ?? [
+        Theme.colors.primary[500],
+        Theme.colors.primary[400],
+      ];
+      const colors = gradientColors ?? fallbackGradient;
 
       content = (
         <LinearGradient
@@ -214,12 +201,36 @@ const FXContainer: React.FC<FXContainerProps> = ({
   };
 
   // Main container
-  const Container = isAnimated ? Animated.View : View;
+  const AnimatedContainer = Animated.View;
 
-  return (
-    <Container style={[baseStyles, isAnimated && combinedAnimatedStyle, style]}>
+  const appliedGlowStyle = (hasGlow && !disabled
+    ? glowStyle
+    : undefined) as AnimatedStyleProp<ViewStyle> | undefined;
+  const appliedEntranceStyle = (hasEntrance && !disabled
+    ? entranceStyle
+    : undefined) as AnimatedStyleProp<ViewStyle> | undefined;
+
+  type AnimatedViewStyle = ViewStyle | AnimatedStyleProp<ViewStyle>;
+
+  const animatedContainerStyle = [
+    baseStyles as AnimatedViewStyle,
+    appliedGlowStyle as AnimatedViewStyle,
+    appliedEntranceStyle as AnimatedViewStyle,
+    (style ?? null) as AnimatedViewStyle,
+  ].filter(
+    (value): value is AnimatedViewStyle => Boolean(value),
+  );
+
+  return isAnimated ? (
+    <AnimatedContainer
+      style={animatedContainerStyle}
+    >
       {renderContent()}
-    </Container>
+    </AnimatedContainer>
+  ) : (
+    <View style={StyleSheet.flatten([baseStyles, style])}>
+      {renderContent()}
+    </View>
   );
 };
 
@@ -228,18 +239,6 @@ export const FXContainerPresets = {
   // Glass morphism container
   glass: (props: Omit<FXContainerProps, "type">) => (
     <FXContainer {...props} type="glass" />
-  ),
-
-  // Holographic container with shimmer
-  holographic: (props: Omit<FXContainerProps, "type">) => (
-    <FXContainer
-      {...props}
-      type="holographic"
-      gradientName="holographic"
-      hasShimmer={true}
-      hasGlow={true}
-      hasEntrance={true}
-    />
   ),
 
   // Glowing container
@@ -268,7 +267,7 @@ export const FXContainerPresets = {
       gradientName="primary"
       hasGlow={true}
       hasEntrance={true}
-      entranceType="fadeInUp"
+      entranceType="slideIn"
     />
   ),
 };

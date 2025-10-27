@@ -10,6 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { Theme } from '../theme/unified-theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -105,13 +106,16 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#ec4899" />
+      <StatusBar barStyle="light-content" backgroundColor="Theme.colors.primary[500]" />
 
       <Animated.View
-        style={[styles.backgroundContainer, { opacity: backgroundOpacity }]}
+        style={StyleSheet.flatten([
+          styles.backgroundContainer,
+          { opacity: backgroundOpacity },
+        ])}
       >
         <LinearGradient
-          colors={["#ec4899", "#f97316", "#eab308"]}
+          colors={["Theme.colors.primary[500]", "#f97316", "#eab308"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -126,33 +130,28 @@ export const AnimatedSplash: React.FC<AnimatedSplashProps> = ({
       >
         {/* Animated Paw Icon */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.pawContainer,
             {
               transform: [{ scale: pawScale }],
               opacity: pawOpacity,
             },
-          ]}
+          ])}
         >
           <View style={styles.pawIconContainer}>
-            <Ionicons
-              name="paw"
-              size={80}
-              color="#ffffff"
-              style={styles.pawIcon}
-            />
+            <Ionicons name="paw" size={80} color="Theme.colors.neutral[0]" />
           </View>
         </Animated.View>
 
         {/* Animated Text */}
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.textContainer,
             {
               opacity: textOpacity,
               transform: [{ translateY: textTranslateY }],
             },
-          ]}
+          ])}
         >
           <Text style={styles.brandText}>PawfectMatch</Text>
           <Text style={styles.taglineText}>
@@ -218,12 +217,12 @@ const LoadingDots: React.FC = () => {
       {[dot1, dot2, dot3].map((dot, index) => (
         <Animated.View
           key={index}
-          style={[
+          style={StyleSheet.flatten([
             styles.dot,
             {
               opacity: dot,
             },
-          ]}
+          ])}
         />
       ))}
     </View>
@@ -233,7 +232,7 @@ const LoadingDots: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
   },
   backgroundContainer: {
     position: "absolute",
@@ -261,16 +260,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-  },
-  pawIcon: {
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
   },
   textContainer: {
     alignItems: "center",
@@ -279,7 +273,7 @@ const styles = StyleSheet.create({
   brandText: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#ffffff",
+    color: "Theme.colors.neutral[0]",
     textAlign: "center",
     marginBottom: 8,
     textShadowColor: "rgba(0, 0, 0, 0.3)",
@@ -305,7 +299,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#ffffff",
+    backgroundColor: "Theme.colors.neutral[0]",
     marginHorizontal: 4,
   },
 });

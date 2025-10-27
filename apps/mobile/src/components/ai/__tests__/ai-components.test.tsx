@@ -12,6 +12,7 @@ import {
   waitFor,
 } from "@testing-library/react-native";
 import { jest } from "@jest/globals";
+import { Theme } from '../../theme/unified-theme';
 
 // Mock dependencies
 jest.mock("@pawfectmatch/core", () => ({
@@ -37,11 +38,11 @@ jest.mock("expo-image-picker", () => ({
 jest.mock("../../theme/unified-theme", () => ({
   Theme: {
     colors: {
-      text: "#000000",
+      text: "Theme.colors.neutral[950]",
       textMuted: "#666666",
       border: "#cccccc",
       error: "#ff0000",
-      background: "#ffffff",
+      background: "Theme.colors.neutral[0]",
       surface: "#f9f9f9",
       primary: "#007bff",
       success: "#28a745",

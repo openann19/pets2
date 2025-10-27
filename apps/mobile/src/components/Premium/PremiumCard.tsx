@@ -18,6 +18,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { useTheme } from '../../theme/Provider';
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface PremiumCardProps {
@@ -51,6 +53,9 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   disabled = false,
   haptic = true,
 }) => {
+  const theme = useTheme();
+  const isDark = theme.scheme === "dark";
+  
   const animatedScale = useRef(new Animated.Value(1)).current;
   const animatedRotateX = useRef(new Animated.Value(0)).current;
   const animatedRotateY = useRef(new Animated.Value(0)).current;
@@ -184,16 +189,16 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   const getVariantStyles = () => {
     const variants = {
       default: {
-        colors: ["#ffffff", "#f8fafc"],
-        shadowColor: "#000000",
+        colors: isDark ? ["#262626", "#171717"] : ["#ffffff", "#fafafa"],
+        shadowColor: isDark ? "#000000" : "#000000",
       },
       glass: {
         colors: ["transparent", "transparent"],
-        shadowColor: "#000000",
+        shadowColor: isDark ? "#000000" : "#000000",
       },
       elevated: {
-        colors: ["#ffffff", "#f8fafc"],
-        shadowColor: "#000000",
+        colors: isDark ? ["#262626", "#171717"] : ["#ffffff", "#fafafa"],
+        shadowColor: isDark ? "#000000" : "#000000",
       },
       gradient: {
         colors: ["#667eea", "#764ba2"],
@@ -201,7 +206,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       },
       neon: {
         colors: ["#1a1a1a", "#1a1a1a"],
-        shadowColor: "#ec4899",
+        shadowColor: theme.colors.primary,
       },
       holographic: {
         colors: ["#ff6b6b", "#4ecdc4", "#45b7b8", "#96ceb4", "#ffeaa7"],
@@ -248,7 +253,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       case "elevated":
         return {
           ...baseStyle,
-          backgroundColor: "#ffffff",
+          backgroundColor: isDark ? "#262626" : "#ffffff",
           shadowColor: "#000000",
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.15,
@@ -262,8 +267,8 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           ...baseStyle,
           backgroundColor: "#1a1a1a",
           borderWidth: 2,
-          borderColor: "#ec4899",
-          shadowColor: "#ec4899",
+          borderColor: theme.colors.primary,
+          shadowColor: theme.colors.primary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.4,
           shadowRadius: 12,
@@ -285,7 +290,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
       default:
         return {
           ...baseStyle,
-          backgroundColor: "#ffffff",
+          backgroundColor: isDark ? "#262626" : "#ffffff",
           shadowColor: "#000000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
@@ -302,7 +307,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   if (variant === "glass") {
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           containerStyle,
           {
             transform: [
@@ -322,15 +327,15 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
             ],
           },
           style,
-        ]}
+        ])}
         {...(tilt ? panResponder.panHandlers : {})}
       >
         <BlurView intensity={30} style={StyleSheet.absoluteFillObject} />
         <View
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             { backgroundColor: "rgba(255, 255, 255, 0.1)" },
-          ]}
+          ])}
         />
 
         {onPress ? (
@@ -360,7 +365,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
 
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           containerStyle,
           {
             transform: [
@@ -380,17 +385,17 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
             ],
           },
           style,
-        ]}
+        ])}
         {...(tilt ? panResponder.panHandlers : {})}
       >
         <LinearGradient
           colors={gradientColors}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             { borderRadius: containerStyle.borderRadius },
-          ]}
+          ])}
         />
 
         {onPress ? (
@@ -411,7 +416,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
         {/* Glow overlay */}
         {glow && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               StyleSheet.absoluteFillObject,
               {
                 borderRadius: containerStyle.borderRadius,
@@ -421,7 +426,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
                   outputRange: [0, 0.2],
                 }),
               },
-            ]}
+            ])}
             pointerEvents="none"
           />
         )}
@@ -432,7 +437,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
   // Default implementation
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         containerStyle,
         {
           transform: [
@@ -452,7 +457,7 @@ export const PremiumCard: React.FC<PremiumCardProps> = ({
           ],
         },
         style,
-      ]}
+      ])}
       {...(tilt ? panResponder.panHandlers : {})}
     >
       {onPress ? (

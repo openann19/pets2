@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import { Theme } from '../theme/unified-theme';
 
 interface ErrorFallbackProps {
   error: Error;
@@ -19,10 +20,10 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 
   return (
     <View
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         isDark ? styles.containerDark : styles.containerLight,
-      ]}
+      ])}
     >
       <Ionicons
         name="warning"
@@ -31,25 +32,28 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
       />
 
       <Text
-        style={[styles.title, isDark ? styles.titleDark : styles.titleLight]}
+        style={StyleSheet.flatten([
+          styles.title,
+          isDark ? styles.titleDark : styles.titleLight,
+        ])}
       >
         Something went wrong
       </Text>
 
       <Text
-        style={[
+        style={StyleSheet.flatten([
           styles.message,
           isDark ? styles.messageDark : styles.messageLight,
-        ]}
+        ])}
       >
         Please try again or contact support if the issue persists.
       </Text>
 
       <TouchableOpacity
-        style={[styles.button, styles.retryButton]}
+        style={StyleSheet.flatten([styles.button, styles.retryButton])}
         onPress={resetError}
       >
-        <Ionicons name="refresh" size={20} color="#FFFFFF" />
+        <Ionicons name="refresh" size={20} color="Theme.colors.neutral[0]" />
         <Text style={styles.buttonText}>Try Again</Text>
       </TouchableOpacity>
     </View>
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   containerLight: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   containerDark: {
     backgroundColor: "#1E1E1E",
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
     color: "#1A1A1A",
   },
   titleDark: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
   message: {
     fontSize: 16,
@@ -107,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6B6B",
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
     marginLeft: 8,

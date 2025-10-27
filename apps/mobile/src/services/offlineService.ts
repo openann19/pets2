@@ -171,7 +171,7 @@ class OfflineService {
 
     for (const action of actionsToSync) {
       try {
-        this.executePendingAction(action);
+        await this.executePendingAction(action);
 
         // Remove successful action
         this.offlineData.pendingActions =

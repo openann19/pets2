@@ -27,12 +27,12 @@ export default function KeyboardShortcutsLegend() {
             }
         };
         window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
+        return () => { window.removeEventListener('keydown', handleKeyPress); };
     }, [isOpen]);
     const categories = Array.from(new Set(shortcuts.map(s => s.category)));
     return (<>
       {/* Floating help button */}
-      <button onClick={() => setIsOpen(true)} className="fixed bottom-6 right-6 p-3 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all hover:scale-110 z-40" aria-label="Show keyboard shortcuts">
+      <button onClick={() => { setIsOpen(true); }} className="fixed bottom-6 right-6 p-3 bg-purple-600 text-white rounded-full shadow-lg hover:bg-purple-700 transition-all hover:scale-110 z-40" aria-label="Show keyboard shortcuts">
         <Keyboard className="w-6 h-6"/>
       </button>
 
@@ -40,7 +40,7 @@ export default function KeyboardShortcutsLegend() {
       <AnimatePresence>
         {isOpen && (<>
             {/* Backdrop */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"/>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsOpen(false); }} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"/>
 
             {/* Legend panel */}
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -51,7 +51,7 @@ export default function KeyboardShortcutsLegend() {
                     <Keyboard className="w-6 h-6 text-purple-600"/>
                     <h2 className="text-xl font-bold text-gray-900">Keyboard Shortcuts</h2>
                   </div>
-                  <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/50 rounded-lg transition-colors" aria-label="Close">
+                  <button onClick={() => { setIsOpen(false); }} className="p-2 hover:bg-white/50 rounded-lg transition-colors" aria-label="Close">
                     <X className="w-5 h-5 text-gray-600"/>
                   </button>
                 </div>

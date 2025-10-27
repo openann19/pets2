@@ -1,0 +1,1124 @@
+openapi: 3.0.3
+info:
+  title: PawfectMatch Mobile API
+  description: API endpoints used by the PawfectMatch mobile application
+  version: 1.0.0
+  contact:
+    name: Mobile Engineering Team
+    email: mobile@pawfectmatch.com
+
+servers:
+  - url: https://api.pawfectmatch.com
+    description: Production server
+  - url: https://api-staging.pawfectmatch.com
+    description: Staging server
+  - url: http://localhost:3001
+    description: Local development server
+
+security:
+  - bearerAuth: []
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      summary: User login
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      token:
+                        type: string
+                        description: JWT access token
+                      refreshToken:
+                        type: string
+                        description: JWT refresh token
+
+  /auth/register:
+    post:
+      summary: User registration
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                name:
+                  type: string
+                  minLength: 2
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  # Pets
+  /pets:
+    get:
+      summary: Get pets for matching
+      tags: [Pets]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: filters
+          in: query
+          schema:
+            type: object
+            properties:
+              breed:
+                type: string
+              age:
+                type: object
+                properties:
+                  min:
+                    type: integer
+                  max:
+                    type: integer
+              distance:
+                type: integer
+      responses:
+        '200':
+          description: Pets retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      summary: Create a new pet profile
+      tags: [Pets]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - breed
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                breed:
+                  type: string
+                age:
+                  type: integer
+                  minimum: 0
+                  maximum: 30
+                gender:
+                  type: string
+                  enum: [male, female]
+                size:
+                  type: string
+                  enum: [small, medium, large]
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                  maxItems: 6
+                description:
+                  type: string
+                  maxLength: 500
+                vaccinated:
+                  type: boolean
+                neutered:
+                  type: boolean
+      responses:
+        '200':
+          description: Pet created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Pet'
+
+  /pets/{petId}:
+    get:
+      summary: Get pet details
+      tags: [Pets]
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pet details retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Pet'
+
+  # Uploads
+  /uploads/presign:
+    post:
+      summary: Get presigned URL for upload
+      tags: [Uploads]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - petId
+                - contentType
+              properties:
+                petId:
+                  type: string
+                contentType:
+                  type: string
+                  enum: [image/jpeg, image/png, image/webp]
+                fileSize:
+                  type: integer
+                  maximum: 10485760
+      responses:
+        '200':
+          description: Presigned URL generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      uploadUrl:
+                        type: string
+                        format: uri
+                      key:
+                        type: string
+                      fields:
+                        type: object
+                        additionalProperties:
+                          type: string
+
+  /uploads:
+    post:
+      summary: Register upload and start processing
+      tags: [Uploads]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - petId
+                - s3Key
+              properties:
+                petId:
+                  type: string
+                s3Key:
+                  type: string
+      responses:
+        '200':
+          description: Upload registered for processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Upload'
+
+    get:
+      summary: Get uploads for user
+      tags: [Uploads]
+      parameters:
+        - name: petId
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, ai_scanning, approved, rejected]
+      responses:
+        '200':
+          description: Uploads retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Upload'
+
+  /uploads/{uploadId}:
+    get:
+      summary: Get upload status
+      tags: [Uploads]
+      parameters:
+        - name: uploadId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Upload status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Upload'
+
+  # Verification
+  /verification/tier1:
+    post:
+      summary: Start Tier 1 verification
+      tags: [Verification]
+      responses:
+        '200':
+          description: Verification session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Verification'
+
+  /verification/tier2:
+    post:
+      summary: Start Tier 2 verification
+      tags: [Verification]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                governmentId:
+                  type: string
+                  format: binary
+                  description: Government issued ID
+                proofOfAddress:
+                  type: string
+                  format: binary
+                  description: Proof of address document
+      responses:
+        '200':
+          description: Tier 2 verification submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Verification'
+
+  /verification/status:
+    get:
+      summary: Get verification status
+      tags: [Verification]
+      responses:
+        '200':
+          description: Verification status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      currentTier:
+                        type: integer
+                        minimum: 0
+                        maximum: 2
+                      status:
+                        type: string
+                        enum: [unverified, pending, approved, rejected, requires_info]
+                      badges:
+                        type: array
+                        items:
+                          type: string
+                          enum: [id_verified, premium_verified]
+
+  # Matches
+  /matches:
+    get:
+      summary: Get user matches
+      tags: [Matches]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Matches retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Match'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /matches/{matchId}/like:
+    post:
+      summary: Like a match
+      tags: [Matches]
+      parameters:
+        - name: matchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Match liked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      liked:
+                        type: boolean
+                        example: true
+                      likes:
+                        type: integer
+                        minimum: 0
+
+  # Chat
+  /chats/{chatId}/messages:
+    get:
+      summary: Get chat messages
+      tags: [Chat]
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: before
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+      responses:
+        '200':
+          description: Messages retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      summary: Send message
+      tags: [Chat]
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                text:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+      responses:
+        '200':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Message'
+
+  # Map
+  /map/pins:
+    get:
+      summary: Get nearby map pins
+      tags: [Map]
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+            minimum: -90
+            maximum: 90
+        - name: longitude
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+            minimum: -180
+            maximum: 180
+        - name: radius
+          in: query
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 50000
+            default: 5000
+      responses:
+        '200':
+          description: Map pins retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MapPin'
+
+  /map/activity/start:
+    post:
+      summary: Start map activity
+      tags: [Map]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - petId
+                - activity
+                - location
+              properties:
+                petId:
+                  type: string
+                activity:
+                  type: string
+                  enum: [walk, play, feeding, rest, training, lost_pet]
+                message:
+                  type: string
+                  maxLength: 200
+                shareToMap:
+                  type: boolean
+                  default: true
+                location:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                      format: float
+                    lng:
+                      type: number
+                      format: float
+                radius:
+                  type: integer
+                  minimum: 50
+                  maximum: 50000
+                  default: 500
+      responses:
+        '200':
+          description: Activity started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/MapPin'
+
+  # Settings
+  /settings:
+    get:
+      summary: Get user settings
+      tags: [Settings]
+      responses:
+        '200':
+          description: Settings retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Settings'
+
+    put:
+      summary: Update user settings
+      tags: [Settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Settings'
+      responses:
+        '200':
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Settings updated successfully"
+
+  # GDPR
+  /gdpr/export:
+    post:
+      summary: Export user data
+      tags: [GDPR]
+      responses:
+        '200':
+          description: Data export initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      exportId:
+                        type: string
+                      status:
+                        type: string
+                        enum: [processing, ready, failed]
+                      estimatedCompletion:
+                        type: string
+                        format: date-time
+
+  /gdpr/delete-account:
+    delete:
+      summary: Delete user account
+      tags: [GDPR]
+      responses:
+        '200':
+          description: Account deletion scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      deletionId:
+                        type: string
+                      scheduledFor:
+                        type: string
+                        format: date-time
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        verified:
+          type: boolean
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Pet:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        breed:
+          type: string
+        age:
+          type: integer
+        gender:
+          type: string
+          enum: [male, female]
+        size:
+          type: string
+          enum: [small, medium, large]
+        photos:
+          type: array
+          items:
+            type: string
+            format: uri
+        ownerId:
+          type: string
+        vaccinated:
+          type: boolean
+        neutered:
+          type: boolean
+        description:
+          type: string
+        personality:
+          type: object
+          properties:
+            energy:
+              type: string
+              enum: [low, medium, high]
+            friendliness:
+              type: string
+              enum: [not_friendly, friendly, very_friendly]
+            playfulness:
+              type: string
+              enum: [low, medium, high]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Upload:
+      type: object
+      properties:
+        id:
+          type: string
+        petId:
+          type: string
+        status:
+          type: string
+          enum: [pending, ai_scanning, approved, rejected]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        s3Key:
+          type: string
+        moderationResult:
+          type: object
+          nullable: true
+          properties:
+            status:
+              type: string
+              enum: [approved, rejected]
+            reason:
+              type: string
+              enum: [safe, unsafe_content, duplicate]
+            confidence:
+              type: number
+              minimum: 0
+              maximum: 1
+            categories:
+              type: array
+              items:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Verification:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        tier:
+          type: integer
+          minimum: 1
+          maximum: 2
+        status:
+          type: string
+          enum: [pending, approved, rejected, requires_info]
+        sessionId:
+          type: string
+        verificationUrl:
+          type: string
+          format: uri
+        requiredDocuments:
+          type: array
+          items:
+            type: string
+        rejectionReason:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        petId:
+          type: string
+        compatibility:
+          type: integer
+          minimum: 0
+          maximum: 100
+        createdAt:
+          type: string
+          format: date-time
+        lastMessage:
+          type: object
+          nullable: true
+          properties:
+            text:
+              type: string
+            senderId:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        chatId:
+          type: string
+        senderId:
+          type: string
+        text:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        read:
+          type: boolean
+
+    MapPin:
+      type: object
+      properties:
+        _id:
+          type: string
+        petId:
+          type: string
+        activity:
+          type: string
+        location:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "Point"
+            coordinates:
+              type: array
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+        radius:
+          type: integer
+        active:
+          type: boolean
+        likes:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+              likedAt:
+                type: string
+                format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    Settings:
+      type: object
+      properties:
+        notifications:
+          type: object
+          properties:
+            matches:
+              type: boolean
+            messages:
+              type: boolean
+            likes:
+              type: boolean
+        privacy:
+          type: object
+          properties:
+            showOnlineStatus:
+              type: boolean
+            allowMessages:
+              type: string
+              enum: [everyone, matches, none]
+        preferences:
+          type: object
+          properties:
+            distanceUnit:
+              type: string
+              enum: [km, miles]
+            theme:
+              type: string
+              enum: [light, dark, system]
+
+    Subscription:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [free, active, expired, cancelled]
+        plan:
+          type: string
+          nullable: true
+          enum: [premium, premium_plus]
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserPreferences:
+      type: object
+      properties:
+        distanceUnit:
+          type: string
+          enum: [km, miles]
+          default: "km"
+        theme:
+          type: string
+          enum: [light, dark, system]
+          default: "light"
+        notifications:
+          type: object
+          properties:
+            matches:
+              type: boolean
+              default: true
+            messages:
+              type: boolean
+              default: true
+            likes:
+              type: boolean
+              default: false
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+        pages:
+          type: integer
+          minimum: 0
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+            token:
+              type: string
+            refreshToken:
+              type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

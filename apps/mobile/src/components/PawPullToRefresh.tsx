@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
+import { Theme } from '../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -133,7 +134,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
         onRefresh={onRefresh}
         tintColor={colors.primary}
         colors={[colors.primary]}
-        progressBackgroundColor={colors.background}
+        progressBackgroundColor={colors.bg}
         // Hide default spinner since we have custom animation
         style={{ opacity: 0 }}
       />
@@ -157,7 +158,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
   });
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={StyleSheet.flatten([styles.container, style])}>
       {/* Custom Refresh Indicator */}
       {refreshing && (
         <View
@@ -167,7 +168,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
           accessibilityRole="progressbar"
         >
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               styles.pawContainer,
               {
                 transform: [
@@ -178,14 +179,9 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                 ],
                 opacity: pawOpacity,
               },
-            ]}
+            ])}
           >
-            <Ionicons
-              name="paw"
-              size={24}
-              color={colors.primary}
-              style={styles.pawIcon}
-            />
+            <Ionicons name="paw" size={24} color={colors.primary} />
           </Animated.View>
 
           {/* Scratch marks effect */}
@@ -193,7 +189,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
             {[0, 1, 2].map((index) => (
               <Animated.View
                 key={index}
-                style={[
+                style={StyleSheet.flatten([
                   styles.scratchMark,
                   {
                     backgroundColor: colors.primary,
@@ -207,7 +203,7 @@ export const PawPullToRefresh: React.FC<PawPullToRefreshProps> = ({
                       },
                     ],
                   },
-                ]}
+                ])}
               />
             ))}
           </View>
@@ -252,16 +248,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  pawIcon: {
-    textShadowColor: "rgba(0, 0, 0, 0.1)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
   },
   scratchMarks: {
     position: "absolute",

@@ -88,7 +88,7 @@ export const GifPicker = ({ isOpen, onClose, onSelectGif }) => {
         return null;
     return (<AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4" onClick={onClose}>
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={(e) => { e.stopPropagation(); }}>
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Choose a GIF</h3>
@@ -102,7 +102,7 @@ export const GifPicker = ({ isOpen, onClose, onSelectGif }) => {
             <form onSubmit={handleSearch} className="flex space-x-2">
               <div className="flex-1 relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"/>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search for GIFs..." className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"/>
+                <input type="text" value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); }} placeholder="Search for GIFs..." className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"/>
               </div>
               <button type="submit" className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-medium transition-colors">
                 Search
@@ -113,7 +113,7 @@ export const GifPicker = ({ isOpen, onClose, onSelectGif }) => {
           {/* Categories */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex space-x-2 overflow-x-auto">
-              {categories.map((category) => (<button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === category.id
+              {categories.map((category) => (<button key={category.id} onClick={() => { setSelectedCategory(category.id); }} className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === category.id
                 ? 'bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-200'
                 : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>
                   <span className="mr-1">{category.emoji}</span>
@@ -127,7 +127,7 @@ export const GifPicker = ({ isOpen, onClose, onSelectGif }) => {
             {isLoading ? (<div className="flex items-center justify-center h-32">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
               </div>) : (<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {gifs.map((gif) => (<motion.div key={gif.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="cursor-pointer rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700" onClick={() => handleGifSelect(gif)}>
+                {gifs.map((gif) => (<motion.div key={gif.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="cursor-pointer rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700" onClick={() => { handleGifSelect(gif); }}>
                     <img src={gif.preview} alt={gif.title} className="w-full h-32 object-cover" loading="lazy"/>
                     <div className="p-2">
                       <p className="text-xs text-gray-600 dark:text-gray-400 truncate">

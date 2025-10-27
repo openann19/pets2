@@ -24,11 +24,13 @@ import {
   type ViewStyle,
 } from "react-native";
 
-import { useStaggeredAnimation } from "../hooks/useUnifiedAnimations";
+import { useStaggeredAnimation } from "../hooks/usePremiumAnimations";
 import { Theme } from "../theme/unified-theme";
 
 import EliteButton from "./buttons/EliteButton";
 import FXContainer from "./containers/FXContainer";
+import { AdvancedPhotoEditor } from "./photo/AdvancedPhotoEditor";
+import { Modal } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const PHOTO_SIZE =
@@ -59,13 +61,14 @@ function ModernPhotoUpload({
   disabled = false,
 }: ModernPhotoUploadProps) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showPhotoEditor, setShowPhotoEditor] = useState(false);
+  const [photoToEdit, setPhotoToEdit] = useState<string | null>(null);
 
   // Staggered animation for photo grid
   const { start: startStaggeredAnimation, getAnimatedStyle } =
     useStaggeredAnimation(
       photos.length + 1, // +1 for add button
       100,
-      "gentle",
     );
 
   // Start staggered animation when photos change
@@ -100,29 +103,14 @@ function ModernPhotoUpload({
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
+        allowsEditing: false, // We'll use our own editor
+        quality: 1.0, // Get full quality for editing
       });
 
       if (!result.canceled && result.assets[0]) {
-        const newPhoto: PhotoItem = {
-          id: Date.now().toString(),
-          uri: result.assets[0].uri,
-          isUploading: true,
-        };
-
-        const updatedPhotos = [...photos, newPhoto];
-        onPhotosChange(updatedPhotos);
-
-        // Simulate upload process
-        setTimeout(() => {
-          const finalPhotos = updatedPhotos.map((photo) =>
-            photo.id === newPhoto.id ? { ...photo, isUploading: false } : photo,
-          );
-          onPhotosChange(finalPhotos);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        }, 2000);
+        // Show the editor for the newly selected image
+        setPhotoToEdit(result.assets[0].uri);
+        setShowPhotoEditor(true);
       }
     } catch (error) {
       logger.error("Error picking image:", { error });
@@ -144,6 +132,27 @@ function ModernPhotoUpload({
     onPhotosChange,
   ]);
 
+  // Handle photo editor save
+  const handlePhotoEditorSave = useCallback((editedUri: string) => {
+    const newPhoto: PhotoItem = {
+      id: Date.now().toString(),
+      uri: editedUri,
+      isUploading: false,
+    };
+
+    const updatedPhotos = [...photos, newPhoto];
+    onPhotosChange(updatedPhotos);
+    setShowPhotoEditor(false);
+    setPhotoToEdit(null);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  }, [photos, onPhotosChange]);
+
+  // Handle photo editor cancel
+  const handlePhotoEditorCancel = useCallback(() => {
+    setShowPhotoEditor(false);
+    setPhotoToEdit(null);
+  }, []);
+
   // Remove photo
   const removePhoto = useCallback(
     (photoId: string) => {
@@ -161,10 +170,9 @@ function ModernPhotoUpload({
   const renderPhotoItem = useCallback(
     (photo: PhotoItem, index: number) => {
       const AnimatedView = require("react-native-reanimated").default.View;
-      const animatedStyle = getAnimatedStyle(index);
 
       return (
-        <AnimatedView key={photo.id} style={animatedStyle}>
+        <AnimatedView key={photo.id} style={getAnimatedStyle}>
           <FXContainer
             type="glass"
             variant="medium"
@@ -228,10 +236,9 @@ function ModernPhotoUpload({
   // Render add button
   const renderAddButton = useCallback(() => {
     const AnimatedView = require("react-native-reanimated").default.View;
-    const animatedStyle = getAnimatedStyle(photos.length);
 
     return (
-      <AnimatedView style={animatedStyle}>
+      <AnimatedView style={getAnimatedStyle}>
         <EliteButton
           title="Add Photo"
           size="lg"
@@ -266,11 +273,25 @@ function ModernPhotoUpload({
   }, [photos, maxPhotos, renderPhotoItem, renderAddButton]);
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={StyleSheet.flatten([styles.container, style])}>
       <Text style={styles.title}>Pet Photos</Text>
       <Text style={styles.subtitle}>
         Add up to {maxPhotos} photos ({photos.length}/{maxPhotos})
       </Text>
+
+      {/* Photo Editor Modal */}
+      {showPhotoEditor && photoToEdit && (
+        <Modal visible={showPhotoEditor} animationType="slide" presentationStyle="fullScreen">
+          <AdvancedPhotoEditor
+            imageUri={photoToEdit}
+            onSave={handlePhotoEditorSave}
+            onCancel={handlePhotoEditorCancel}
+            aspectRatio={[1, 1]}
+            maxWidth={1920}
+            maxHeight={1920}
+          />
+        </Modal>
+      )}
 
       <View style={styles.grid}>{gridItems}</View>
 
@@ -279,7 +300,7 @@ function ModernPhotoUpload({
           type="glass"
           variant="subtle"
           hasEntrance={true}
-          entranceType="fadeInUp"
+          entranceType="slideIn"
           style={styles.emptyState}
         >
           <Ionicons
@@ -306,7 +327,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: Theme.typography.fontSize["2xl"],
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.sm,
   },
   subtitle: {
@@ -386,7 +407,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Theme.typography.fontSize.lg,
     fontWeight: Theme.typography.fontWeight.semibold,
-    color: Theme.colors.text.primary.primary,
+    color: Theme.colors.text.primary,
     marginBottom: Theme.spacing.sm,
   },
   emptySubtitle: {

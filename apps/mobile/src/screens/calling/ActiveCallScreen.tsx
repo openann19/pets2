@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RTCView } from "react-native-webrtc";
 
 import type { CallState } from "../../services/WebRTCService";
+import { Theme } from '../../theme/unified-theme';
 
 interface ActiveCallScreenProps {
   callState: CallState;
@@ -61,10 +62,12 @@ export default function ActiveCallScreen({
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: Animated.event(
-      [null, { dx: localVideoAnim.x, dy: localVideoAnim.y }],
-      { useNativeDriver: false },
-    ),
+    onPanResponderMove: (evt, gestureState) => {
+      localVideoAnim.setValue({
+        x: 20 + gestureState.dx,
+        y: 100 + gestureState.dy,
+      });
+    },
     onPanResponderRelease: (evt, gestureState) => {
       // Snap to edges
       const { dx, dy } = gestureState;
@@ -127,12 +130,12 @@ export default function ActiveCallScreen({
       {/* Local Video (Draggable Picture-in-Picture) */}
       {callState.localStream && callState.isVideoEnabled && (
         <Animated.View
-          style={[
+          style={StyleSheet.flatten([
             styles.localVideoContainer,
             {
               transform: localVideoAnim.getTranslateTransform(),
             },
-          ]}
+          ])}
           {...panResponder.panHandlers}
         >
           <RTCView
@@ -145,7 +148,7 @@ export default function ActiveCallScreen({
             style={styles.switchCameraButton}
             onPress={onSwitchCamera}
           >
-            <Ionicons name="camera-reverse" size={20} color="#fff" />
+            <Ionicons name="camera-reverse" size={20} color="Theme.colors.neutral[0]" />
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -170,7 +173,7 @@ export default function ActiveCallScreen({
         <View style={styles.avatarContainer}>
           <View style={styles.avatarRing}>
             <View style={styles.avatar}>
-              <Ionicons name="person" size={60} color="#fff" />
+              <Ionicons name="person" size={60} color="Theme.colors.neutral[0]" />
             </View>
           </View>
         </View>
@@ -206,13 +209,13 @@ export default function ActiveCallScreen({
 
       {/* Controls Overlay */}
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           styles.controlsOverlay,
           {
             opacity: fadeAnim,
             pointerEvents: controlsVisible ? "auto" : "none",
           },
-        ]}
+        ])}
       >
         <SafeAreaView style={styles.controlsContent}>
           {/* Header */}
@@ -231,16 +234,16 @@ export default function ActiveCallScreen({
           <View style={styles.callControls}>
             {/* Mute Button */}
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.controlButton,
                 callState.isMuted && styles.controlButtonActive,
-              ]}
+              ])}
               onPress={onToggleMute}
             >
               <Ionicons
                 name={callState.isMuted ? "mic-off" : "mic"}
                 size={24}
-                color={callState.isMuted ? "#ff4757" : "#fff"}
+                color={callState.isMuted ? "#ff4757" : "Theme.colors.neutral[0]"}
               />
             </TouchableOpacity>
 
@@ -249,29 +252,32 @@ export default function ActiveCallScreen({
               style={styles.controlButton}
               onPress={onToggleSpeaker}
             >
-              <Ionicons name="volume-high" size={24} color="#fff" />
+              <Ionicons name="volume-high" size={24} color="Theme.colors.neutral[0]" />
             </TouchableOpacity>
 
             {/* Video Toggle (only for video calls) */}
             {callState.callData?.callType === "video" && (
               <TouchableOpacity
-                style={[
+                style={StyleSheet.flatten([
                   styles.controlButton,
                   !callState.isVideoEnabled && styles.controlButtonActive,
-                ]}
+                ])}
                 onPress={onToggleVideo}
               >
                 <Ionicons
                   name={callState.isVideoEnabled ? "videocam" : "videocam-off"}
                   size={24}
-                  color={!callState.isVideoEnabled ? "#ff4757" : "#fff"}
+                  color={!callState.isVideoEnabled ? "#ff4757" : "Theme.colors.neutral[0]"}
                 />
               </TouchableOpacity>
             )}
 
             {/* End Call Button */}
             <TouchableOpacity
-              style={[styles.controlButton, styles.endCallButton]}
+              style={StyleSheet.flatten([
+                styles.controlButton,
+                styles.endCallButton,
+              ])}
               onPress={onEndCall}
             >
               <LinearGradient
@@ -281,7 +287,7 @@ export default function ActiveCallScreen({
                 <Ionicons
                   name="call"
                   size={24}
-                  color="#fff"
+                  color="Theme.colors.neutral[0]"
                   style={{ transform: [{ rotate: "135deg" }] }}
                 />
               </LinearGradient>
@@ -296,7 +302,7 @@ export default function ActiveCallScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
   },
 
   // Video Call Styles
@@ -305,7 +311,7 @@ const styles = StyleSheet.create({
   },
   remoteVideo: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "Theme.colors.neutral[950]",
   },
   localVideoContainer: {
     position: "absolute",
@@ -314,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -381,19 +387,19 @@ const styles = StyleSheet.create({
   callerName: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 12,
     textAlign: "center",
   },
   callStatus: {
     fontSize: 18,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     opacity: 0.8,
     marginBottom: 8,
   },
   callDuration: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     opacity: 0.6,
   },
 
@@ -418,12 +424,12 @@ const styles = StyleSheet.create({
   callerNameHeader: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 4,
   },
   callDurationHeader: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     opacity: 0.8,
   },
   callControls: {

@@ -12,17 +12,20 @@
  */
 
 import type { ReactNode } from "react";
-import React, { forwardRef } from "react";
+import React, { forwardRef, type Ref } from "react";
 import { View, type ViewStyle } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { LinearGradient } from "expo-linear-gradient";
+import Animated, { type AnimatedStyleProp } from "react-native-reanimated";
 
 import {
   useGlowAnimation,
+  usePressAnimation,
+} from "../../hooks/useUnifiedAnimations";
+import {
   useMagneticEffect,
   useRippleEffect,
   useShimmerEffect,
-  usePressAnimation,
-} from "../../hooks/useUnifiedAnimations";
+} from "../../hooks/animations";
 import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
@@ -39,7 +42,7 @@ interface WithGlowFXProps extends EffectWrapperProps {
   duration?: number;
 }
 
-export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
+export const WithGlowFX = forwardRef<Animated.View, WithGlowFXProps>(
   (
     {
       children,
@@ -49,7 +52,7 @@ export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
       style,
       disabled = false,
     },
-    ref,
+    ref: Ref<Animated.View>,
   ) => {
     const { animatedStyle: glowStyle } = useGlowAnimation(
       disabled ? "transparent" : color,
@@ -58,7 +61,7 @@ export const WithGlowFX = forwardRef<View, WithGlowFXProps>(
     );
 
     return (
-      <Animated.View ref={ref} style={[glowStyle, style]}>
+      <Animated.View ref={ref} style={[glowStyle as AnimatedStyleProp<ViewStyle>, style]}>
         {children}
       </Animated.View>
     );
@@ -73,30 +76,21 @@ interface WithMagneticFXProps extends EffectWrapperProps {
   maxDistance?: number;
 }
 
-export const WithMagneticFX = forwardRef<View, WithMagneticFXProps>(
+export const WithMagneticFX = forwardRef<Animated.View, WithMagneticFXProps>(
   (
     { children, sensitivity = 0.3, maxDistance = 30, style, disabled = false },
-    ref,
+    ref: Ref<Animated.View>,
   ) => {
     const {
-      handleTouchStart,
-      handleTouchEnd,
-      animatedStyle: magneticStyle,
-    } = useMagneticEffect(disabled ? 0 : sensitivity, maxDistance);
+      magneticStyle,
+      handleMagneticMove,
+      resetMagnetic,
+    } = useMagneticEffect(!disabled);
 
     return (
       <Animated.View
         ref={ref}
-        style={[magneticStyle, style]}
-        onTouchStart={(event) => {
-          if (disabled) return;
-          const { pageX, pageY } = event.nativeEvent;
-          // Get center position (would need proper measurement in real implementation)
-          const centerX = 0; // This would be calculated
-          const centerY = 0; // This would be calculated
-          handleTouchStart(pageX, pageY, centerX, centerY);
-        }}
-        onTouchEnd={disabled ? undefined : handleTouchEnd}
+        style={[magneticStyle as AnimatedStyleProp<ViewStyle>, style]}
       >
         {children}
       </Animated.View>
@@ -116,11 +110,11 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
     { children, color = "rgba(255, 255, 255, 0.3)", style, disabled = false },
     ref,
   ) => {
-    const { startRipple, animatedStyle: rippleStyle } = useRippleEffect();
+    const { triggerRipple, rippleStyle } = useRippleEffect();
 
     const handlePressIn = () => {
       if (!disabled) {
-        startRipple();
+        triggerRipple();
       }
     };
 
@@ -140,8 +134,8 @@ export const WithRippleFX = forwardRef<View, WithRippleFXProps>(
                 backgroundColor: color,
                 marginTop: -50,
                 marginLeft: -50,
-              },
-              rippleStyle,
+              } as ViewStyle,
+              rippleStyle as AnimatedStyleProp<ViewStyle>,
             ]}
             pointerEvents="none"
           />
@@ -170,9 +164,7 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
     },
     ref,
   ) => {
-    const { animatedStyle: shimmerStyle } = useShimmerEffect(
-      disabled ? 0 : duration,
-    );
+    const { shimmerStyle } = useShimmerEffect(!disabled && duration > 0);
 
     return (
       <View ref={ref} style={style}>
@@ -187,8 +179,8 @@ export const WithShimmerFX = forwardRef<View, WithShimmerFXProps>(
                 right: 0,
                 bottom: 0,
                 backgroundColor: color,
-              },
-              shimmerStyle,
+              } as ViewStyle,
+              shimmerStyle as AnimatedStyleProp<ViewStyle>,
             ]}
             pointerEvents="none"
           />
@@ -205,8 +197,8 @@ interface WithPressFXProps extends EffectWrapperProps {
   config?: "gentle" | "standard" | "bouncy" | "snappy";
 }
 
-export const WithPressFX = forwardRef<View, WithPressFXProps>(
-  ({ children, config = "snappy", style, disabled = false }, ref) => {
+export const WithPressFX = forwardRef<Animated.View, WithPressFXProps>(
+  ({ children, config = "snappy", style, disabled = false }, ref: Ref<Animated.View>) => {
     const {
       handlePressIn,
       handlePressOut,
@@ -216,7 +208,7 @@ export const WithPressFX = forwardRef<View, WithPressFXProps>(
     return (
       <Animated.View
         ref={ref}
-        style={[pressStyle, style]}
+        style={[pressStyle as AnimatedStyleProp<ViewStyle>, style]}
         onTouchStart={disabled ? undefined : handlePressIn}
         onTouchEnd={disabled ? undefined : handlePressOut}
       >
@@ -228,9 +220,8 @@ export const WithPressFX = forwardRef<View, WithPressFXProps>(
 
 WithPressFX.displayName = "WithPressFX";
 
-// === 6. GRADIENT WRAPPER ===
 interface WithGradientFXProps extends EffectWrapperProps {
-  gradient?: keyof typeof Theme.gradients;
+  gradient?: "primary" | "secondary" | "success" | "warning" | "error" | "glass" | "glow";
   colors?: string[];
   angle?: number;
 }
@@ -239,12 +230,11 @@ export const WithGradientFX = forwardRef<View, WithGradientFXProps>(
   ({ children, gradient, colors, angle = 135, style }, ref) => {
     const { LinearGradient } = require("expo-linear-gradient");
 
-    const gradientConfig = gradient ? Theme.gradients[gradient] : null;
-    const gradientColors = colors ||
-      gradientConfig?.colors || [
-        Theme.colors.primary[500],
-        Theme.colors.primary[400],
-      ];
+    const gradientConfig = gradient ? (Theme.gradients as any)[gradient] : null;
+    const gradientColors =
+      colors || Array.isArray(gradientConfig?.colors)
+        ? gradientConfig?.colors
+        : [Theme.colors.primary[500], Theme.colors.primary[400]];
 
     return (
       <LinearGradient

@@ -35,7 +35,7 @@ export function useAuth() {
                 const timeout = setTimeout(() => {
                     refreshAccessToken();
                 }, refreshTime - currentTime);
-                return () => clearTimeout(timeout);
+                return () => { clearTimeout(timeout); };
             }
         }
         catch (error) {

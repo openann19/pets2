@@ -197,7 +197,7 @@ function PostCard({ post, index, onLike, onComment, onShare, onBookmark, onVideo
               {post.isLiked ? (<HeartSolidIcon className="w-6 h-6"/>) : (<HeartIcon className="w-6 h-6"/>)}
             </button>
 
-            <button onClick={() => setShowComments(!showComments)} className="p-2 rounded-full text-neutral-600 hover:bg-neutral-100 transition-colors">
+            <button onClick={() => { setShowComments(!showComments); }} className="p-2 rounded-full text-neutral-600 hover:bg-neutral-100 transition-colors">
               <ChatBubbleLeftRightIcon className="w-6 h-6"/>
             </button>
 
@@ -236,7 +236,7 @@ function PostCard({ post, index, onLike, onComment, onShare, onBookmark, onVideo
           </div>)}
 
         {/* Comments */}
-        {post.comments > 0 && (<button onClick={() => setShowComments(!showComments)} className="text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">
+        {post.comments > 0 && (<button onClick={() => { setShowComments(!showComments); }} className="text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">
             View all {post.comments} {post.comments === 1 ? 'comment' : 'comments'}
           </button>)}
 
@@ -244,7 +244,7 @@ function PostCard({ post, index, onLike, onComment, onShare, onBookmark, onVideo
         <AnimatePresence>
           {showComments && (<motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center space-x-3">
-                <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Add a comment..." className="flex-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" onKeyPress={(e) => {
+                <input type="text" value={commentText} onChange={(e) => { setCommentText(e.target.value); }} placeholder="Add a comment..." className="flex-1 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" onKeyPress={(e) => {
                 if (e.key === 'Enter') {
                     handleComment();
                 }

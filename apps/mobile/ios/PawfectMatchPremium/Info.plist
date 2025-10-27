@@ -59,6 +59,8 @@
     <string>PawfectMatch uses your location to find compatible pets nearby</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>PawfectMatch uses the microphone for video calls with pet matches</string>
+    <key>NSMotionUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your device motion</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>PawfectMatch needs access to your photo library to upload pet pictures</string>
     <key>RCTNewArchEnabled</key>

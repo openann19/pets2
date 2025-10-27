@@ -13,7 +13,6 @@ interface EnhancedErrorBoundaryProps {
     children: ReactNode;
     level?: 'component' | 'critical';
     fallback?: ReactNode;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 

@@ -183,7 +183,7 @@ export function StoryViewer({ storyGroups, initialGroupIndex, onClose, currentUs
                 setIsPaused(prev => !prev);
         };
         window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        return () => { window.removeEventListener('keydown', handleKeyDown); };
     }, [onClose, goToPreviousStory, goToNextStory]);
     if (!currentGroup || !currentStory)
         return null;

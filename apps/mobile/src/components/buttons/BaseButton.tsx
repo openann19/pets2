@@ -35,8 +35,9 @@ export interface BaseButtonProps extends TouchableOpacityProps {
   size?: ButtonSize;
   loading?: boolean;
   disabled?: boolean;
-  leftIcon?: keyof typeof Ionicons.glyphMap;
-  rightIcon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
+  leftIcon?: string;
+  rightIcon?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
   onPress?: () => void;
@@ -87,6 +88,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       size = "md",
       loading = false,
       disabled = false,
+      icon,
       leftIcon,
       rightIcon,
       style,
@@ -96,6 +98,8 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     },
     ref,
   ) => {
+    // Map icon to leftIcon for convenience
+    const effectiveLeftIcon = icon || leftIcon;
     const sizeConfig = SIZE_CONFIGS[size];
     const isDisabled = disabled || loading;
 
@@ -153,7 +157,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         case "secondary":
           return {
             ...baseTextStyles,
-            color: Theme.colors.text.primary.inverse,
+            color: Theme.colors.text.inverse,
           };
         case "ghost":
         case "outline":
@@ -164,7 +168,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         default:
           return {
             ...baseTextStyles,
-            color: Theme.colors.text.primary.primary,
+            color: Theme.colors.text.primary,
           };
       }
     };
@@ -174,12 +178,12 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
       switch (variant) {
         case "primary":
         case "secondary":
-          return Theme.colors.text.primary.inverse;
+          return Theme.colors.text.inverse;
         case "ghost":
         case "outline":
           return Theme.semantic.interactive.primary;
         default:
-          return Theme.colors.text.primary.primary;
+          return Theme.colors.text.primary;
       }
     };
 
@@ -195,7 +199,12 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
         return (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="small" color={getIconColor()} />
-            <Text style={[getTextStyles(), { marginLeft: Theme.spacing.sm }]}>
+            <Text
+              style={StyleSheet.flatten([
+                getTextStyles(),
+                { marginLeft: Theme.spacing.sm },
+              ])}
+            >
               Loading...
             </Text>
           </View>
@@ -204,15 +213,17 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
 
       return (
         <>
-          {leftIcon && (
+          {effectiveLeftIcon && (
             <Ionicons
-              name={leftIcon}
+              name={effectiveLeftIcon}
               size={sizeConfig.iconSize}
               color={getIconColor()}
               style={{ marginRight: Theme.spacing.sm }}
             />
           )}
-          <Text style={[getTextStyles(), textStyle]}>{title}</Text>
+          <Text style={StyleSheet.flatten([getTextStyles(), textStyle])}>
+            {title}
+          </Text>
           {rightIcon && (
             <Ionicons
               name={rightIcon}
@@ -228,7 +239,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
     return (
       <TouchableOpacity
         ref={ref}
-        style={[
+        style={StyleSheet.flatten([
           getVariantStyles(),
           {
             paddingHorizontal: sizeConfig.paddingHorizontal,
@@ -236,7 +247,7 @@ const BaseButton = forwardRef<TouchableOpacity, BaseButtonProps>(
             opacity: isDisabled ? 0.6 : 1,
           },
           style,
-        ]}
+        ])}
         onPress={handlePress}
         disabled={isDisabled}
         activeOpacity={0.8}

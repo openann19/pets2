@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 
 interface SwipeFiltersProps {
   visible: boolean;
@@ -38,11 +38,24 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
       onRequestClose={onClose}
     >
       <View
-        style={[styles.modalContainer, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.modalContainer,
+          { backgroundColor: colors.bg },
+        ])}
       >
-        <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.modalContent,
+            { backgroundColor: colors.bgElevated },
+          ])}
+        >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.modalTitle,
+                { color: colors.text },
+              ])}
+            >
               Filter Preferences
             </Text>
             <TouchableOpacity onPress={onClose}>
@@ -52,7 +65,12 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
 
           {/* Species Filter */}
           <View style={styles.filterSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.sectionTitle,
+                { color: colors.text },
+              ])}
+            >
               Species
             </Text>
             <View style={styles.speciesGrid}>
@@ -60,15 +78,15 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                 (species) => (
                   <TouchableOpacity
                     key={species}
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.speciesButton,
                       {
                         backgroundColor: filters.species.includes(species)
                           ? colors.primary
-                          : colors.card,
+                          : colors.bgElevated,
                         borderColor: colors.border,
                       },
-                    ]}
+                    ])}
                     onPress={() => {
                       const updated = filters.species.includes(species)
                         ? filters.species.filter((s) => s !== species)
@@ -77,14 +95,14 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                     }}
                   >
                     <Text
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.speciesText,
                         {
                           color: filters.species.includes(species)
                             ? "white"
                             : colors.text,
                         },
-                      ]}
+                      ])}
                     >
                       {species.charAt(0).toUpperCase() + species.slice(1)}
                     </Text>
@@ -96,7 +114,12 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
 
           {/* Age Range Filter */}
           <View style={styles.filterSection}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.sectionTitle,
+                { color: colors.text },
+              ])}
+            >
               Age Range
             </Text>
             {/* Age slider implementation would go here */}
@@ -105,7 +128,12 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
           {/* Verified Only */}
           <View style={styles.filterSection}>
             <View style={styles.switchRow}>
-              <Text style={[styles.switchLabel, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.switchLabel,
+                  { color: colors.text },
+                ])}
+              >
                 Verified Profiles Only
               </Text>
               <Switch
@@ -120,7 +148,10 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
           </View>
 
           <TouchableOpacity
-            style={[styles.applyButton, { backgroundColor: colors.primary }]}
+            style={StyleSheet.flatten([
+              styles.applyButton,
+              { backgroundColor: colors.primary },
+            ])}
             onPress={onClose}
           >
             <Text style={styles.applyButtonText}>Apply Filters</Text>

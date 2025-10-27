@@ -14,9 +14,11 @@ import AdminBillingScreen from "../screens/admin/AdminBillingScreen";
 import AdminChatsScreen from "../screens/admin/AdminChatsScreen";
 import AdminDashboardScreen from "../screens/admin/AdminDashboardScreen";
 import AdminSecurityScreen from "../screens/admin/AdminSecurityScreen";
+import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
 import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
+import { Theme } from '../theme/unified-theme';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,7 +29,7 @@ export default function AdminNavigator(): React.JSX.Element {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3B82F6" />
+        <ActivityIndicator size="large" color="Theme.colors.status.info" />
         <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
@@ -50,9 +52,9 @@ export default function AdminNavigator(): React.JSX.Element {
       initialRouteName="AdminDashboard"
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#1F2937",
+          backgroundColor: "Theme.colors.neutral[800]",
         },
-        headerTintColor: "#FFFFFF",
+        headerTintColor: "Theme.colors.neutral[0]",
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -132,6 +134,16 @@ export default function AdminNavigator(): React.JSX.Element {
           headerShown: false,
         }}
       />
+
+      {/* Services Management */}
+      <Stack.Screen
+        name="AdminServices"
+        component={AdminServicesScreen as React.ComponentType<any>}
+        options={{
+          title: "Services Management",
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -141,30 +153,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
     paddingHorizontal: 32,
   },
   errorTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
     marginBottom: 16,
     textAlign: "center",
   },
   errorMessage: {
     fontSize: 16,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     lineHeight: 24,
   },

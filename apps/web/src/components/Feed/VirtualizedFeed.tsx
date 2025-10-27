@@ -25,7 +25,7 @@ export default function VirtualizedFeed({ items, itemHeight, onLoadMore, renderI
         };
         updateHeight();
         window.addEventListener('resize', updateHeight);
-        return () => window.removeEventListener('resize', updateHeight);
+        return () => { window.removeEventListener('resize', updateHeight); };
     }, []);
     // Load more items when scrolling near the end
     const handleItemsRendered = useCallback(({ visibleStopIndex }) => {

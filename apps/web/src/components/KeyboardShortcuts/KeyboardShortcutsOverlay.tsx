@@ -53,7 +53,7 @@ export const KeyboardShortcutsOverlay = () => {
      */
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        return () => { window.removeEventListener('keydown', handleKeyDown); };
     }, [handleKeyDown]);
     /**
      * Group shortcuts by category
@@ -71,7 +71,7 @@ export const KeyboardShortcutsOverlay = () => {
     return (<AnimatePresence>
             {isVisible && (<>
                     {/* Backdrop */}
-                    <motion.div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsVisible(false)} aria-hidden="true"/>
+                    <motion.div className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsVisible(false); }} aria-hidden="true"/>
 
                     {/* Overlay Panel */}
                     <motion.div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
@@ -82,7 +82,7 @@ export const KeyboardShortcutsOverlay = () => {
                                     <h2 id="shortcuts-title" className="text-2xl font-bold">
                                         ⌨️ Keyboard Shortcuts
                                     </h2>
-                                    <button onClick={() => setIsVisible(false)} className="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label="Close shortcuts overlay">
+                                    <button onClick={() => { setIsVisible(false); }} className="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label="Close shortcuts overlay">
                                         <XMarkIcon className="w-6 h-6"/>
                                     </button>
                                 </div>

@@ -1,10 +1,46 @@
-import {
-  SPECIES_OPTIONS,
-  SIZE_OPTIONS,
-  INTENT_OPTIONS,
-  PERSONALITY_TAGS,
-} from "@pawfectmatch/core";
 import { logger } from "@pawfectmatch/core";
+
+// Local option definitions
+interface Option {
+  value: string;
+  label: string;
+}
+
+const SPECIES_OPTIONS: Option[] = [
+  { value: "dog", label: "🐕 Dog" },
+  { value: "cat", label: "🐱 Cat" },
+  { value: "bird", label: "🐦 Bird" },
+  { value: "rabbit", label: "🐰 Rabbit" },
+  { value: "other", label: "🐾 Other" },
+];
+
+const SIZE_OPTIONS: Option[] = [
+  { value: "tiny", label: "Tiny (0-10 lbs)" },
+  { value: "small", label: "Small (10-25 lbs)" },
+  { value: "medium", label: "Medium (25-55 lbs)" },
+  { value: "large", label: "Large (55-85 lbs)" },
+  { value: "extra-large", label: "Extra Large (85+ lbs)" },
+];
+
+const INTENT_OPTIONS: Option[] = [
+  { value: "adoption", label: "Adoption" },
+  { value: "mating", label: "Mating" },
+  { value: "playdate", label: "Playdate" },
+  { value: "all", label: "Open to All" },
+];
+
+const PERSONALITY_TAGS: string[] = [
+  "friendly",
+  "energetic",
+  "playful",
+  "calm",
+  "shy",
+  "protective",
+  "good-with-kids",
+  "good-with-pets",
+  "trained",
+  "house-trained",
+];
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
@@ -17,14 +53,17 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
 } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
+  interpolate,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../../theme/unified-theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -84,6 +123,7 @@ const PetProfileSetupScreen = ({
     },
   });
 
+  const { width: screenWidth } = useWindowDimensions();
   const progressValue = useSharedValue(0);
   const slideValue = useSharedValue(0);
 
@@ -91,11 +131,16 @@ const PetProfileSetupScreen = ({
     progressValue.value = withTiming((currentStep + 1) / 4, { duration: 300 });
   }, [currentStep]);
 
-  const progressStyle = useAnimatedStyle(() => ({
-    width: `${progressValue.value * 100}%`,
-  }));
+  const progressStyle = useAnimatedStyle(() => {
+    return {
+      width: progressValue.value * screenWidth,
+    };
+  });
 
-  const updateFormData = (field: string, value: any) => {
+  const updateFormData = (
+    field: string,
+    value: import("../../types/forms").FormFieldValue,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -212,20 +257,20 @@ const PetProfileSetupScreen = ({
           {SPECIES_OPTIONS.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.species === option.value && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("species", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.species === option.value &&
                     styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -274,19 +319,19 @@ const PetProfileSetupScreen = ({
           {["male", "female"].map((gender) => (
             <TouchableOpacity
               key={gender}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.gender === gender && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("gender", gender);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.gender === gender && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {gender.charAt(0).toUpperCase() + gender.slice(1)}
               </Text>
@@ -301,19 +346,19 @@ const PetProfileSetupScreen = ({
           {SIZE_OPTIONS.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.size === option.value && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("size", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.size === option.value && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -335,19 +380,19 @@ const PetProfileSetupScreen = ({
           {INTENT_OPTIONS.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.intent === option.value && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("intent", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.intent === option.value && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -364,20 +409,20 @@ const PetProfileSetupScreen = ({
           {PERSONALITY_TAGS.slice(0, 12).map((tag) => (
             <TouchableOpacity
               key={tag}
-              style={[
+              style={StyleSheet.flatten([
                 styles.tagButton,
                 formData.personalityTags.includes(tag) && styles.selectedTag,
-              ]}
+              ])}
               onPress={() => {
                 togglePersonalityTag(tag);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.tagText,
                   formData.personalityTags.includes(tag) &&
                     styles.selectedTagText,
-                ]}
+                ])}
               >
                 {tag}
               </Text>
@@ -389,7 +434,7 @@ const PetProfileSetupScreen = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Description (Optional)</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={StyleSheet.flatten([styles.input, styles.textArea])}
           value={formData.description}
           onChangeText={(text) => {
             updateFormData("description", text);
@@ -417,12 +462,12 @@ const PetProfileSetupScreen = ({
         ].map((option) => (
           <TouchableOpacity
             key={option.key}
-            style={[
+            style={StyleSheet.flatten([
               styles.healthOption,
               formData.healthInfo[
                 option.key as keyof typeof formData.healthInfo
               ] && styles.selectedHealthOption,
-            ]}
+            ])}
             onPress={() => {
               updateHealthInfo(
                 option.key,
@@ -434,12 +479,12 @@ const PetProfileSetupScreen = ({
           >
             <Text style={styles.healthIcon}>{option.icon}</Text>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.healthLabel,
                 formData.healthInfo[
                   option.key as keyof typeof formData.healthInfo
                 ] && styles.selectedHealthLabel,
-              ]}
+              ])}
             >
               {option.label}
             </Text>
@@ -464,7 +509,9 @@ const PetProfileSetupScreen = ({
         <View style={styles.header}>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
-              <Animated.View style={[styles.progressFill, progressStyle]} />
+              <Animated.View
+                style={[styles.progressFill, progressStyle]}
+              />
             </View>
             <Text style={styles.progressText}>Step {currentStep + 1} of 4</Text>
           </View>
@@ -482,10 +529,10 @@ const PetProfileSetupScreen = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.nextButton,
               !validateStep() && styles.disabledButton,
-            ]}
+            ])}
             onPress={handleNext}
             disabled={!validateStep()}
           >
@@ -502,7 +549,7 @@ const PetProfileSetupScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
   },
   keyboardView: {
     flex: 1,
@@ -526,6 +573,7 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#ec4899",
     borderRadius: 2,
+    maxWidth: "100%",
   },
   progressText: {
     fontSize: 14,
@@ -542,12 +590,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 32,
   },
   inputGroup: {
@@ -556,17 +604,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   textArea: {
     height: 100,
@@ -582,9 +630,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionButton: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -593,7 +641,7 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
+    borderColor: "Theme.colors.primary[500]",
   },
   optionText: {
     fontSize: 14,
@@ -624,7 +672,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   selectedTagText: {
-    color: "#fff",
+    color: "#ffffff",
   },
   healthOptions: {
     gap: 16,
@@ -649,7 +697,7 @@ const styles = StyleSheet.create({
   },
   healthLabel: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   selectedHealthLabel: {
@@ -658,7 +706,7 @@ const styles = StyleSheet.create({
   },
   healthNote: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     lineHeight: 20,
     fontStyle: "italic",
   },
@@ -694,7 +742,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#ffffff",
     fontWeight: "600",
   },
 });

@@ -64,7 +64,7 @@ const createColorPalette = (isDark: boolean): ColorPalette => {
     backgroundTertiary: isDark ? colors.neutral[700] : colors.neutral[100],
 
     surface: isDark ? colors.neutral[800] : colors.neutral[0],
-    surfaceMuted: isDark ? colors.neutral[750] : colors.neutral[50],
+    surfaceMuted: isDark ? colors.neutral[700] : colors.neutral[50],
     surfaceElevated: isDark ? colors.neutral[700] : colors.neutral[100],
 
     border: isDark ? colors.neutral[600] : colors.neutral[300],
@@ -205,6 +205,7 @@ const createRadiusScale = (): RadiusScale => {
     xl: pxToNumber(DESIGN_RADIUS["2xl"]),
     "2xl": pxToNumber(DESIGN_RADIUS["3xl"]),
     full: pxToNumber(DESIGN_RADIUS.full),
+    pill: 9999,
   };
 };
 

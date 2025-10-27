@@ -213,22 +213,20 @@ export const matchesAPI = {
     );
   },
 
-  // Get matches
-
-  // Get liked you (pets that liked current user)
-  getLikedYou: async (): Promise<Match[]> => {
-    return resolveData(
-      apiClient.get<Match[]>("/matches/liked-you"),
-      "Failed to fetch liked you",
-    );
-  },
-
   // Get user's matches
   getMatches: async (): Promise<Match[]> => {
     return resolveData(
       apiClient.get<Match[]>("/matches"),
       "Failed to fetch matches",
     );
+  },
+  // Get user's matches with filter
+  getMatchesWithFilter: async (queryString: string): Promise<{ data: { matches: Match[]; pagination: { page: number; limit: number; total: number; pages: number } } }> => {
+    const response = await resolveData(
+      apiClient.get<{ matches: Match[]; pagination: { page: number; limit: number; total: number; pages: number } }>(`/matches?${queryString}`),
+      "Failed to fetch matches",
+    );
+    return { data: response };
   },
   getMatch: async (matchId: string): Promise<Match> => {
     return resolveData(
@@ -245,6 +243,18 @@ export const matchesAPI = {
     );
   },
 
+  // Like a user
+  likeUser: async (userId: string): Promise<{ success: boolean }> => {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL || process.env.API_URL || "";
+    const res = await fetch(`${API_URL}/api/matches/like-user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId }),
+    });
+    if (!res.ok) throw new Error("likeUser failed");
+    return res.json();
+  },
+
   // Get chat messages for a match
   getMessages: async (matchId: string): Promise<Message[]> => {
     return resolveData(
@@ -254,10 +264,67 @@ export const matchesAPI = {
   },
 
   // Send a message
-  sendMessage: async (matchId: string, content: string): Promise<Message> => {
+  sendMessage: async (matchId: string, content: string, replyTo?: { _id: string; author?: string; text?: string }): Promise<Message> => {
     return resolveData(
-      apiClient.post<Message>(`/matches/${matchId}/messages`, { content }),
+      apiClient.post<Message>(`/matches/${matchId}/messages`, { content, replyTo }),
       "Failed to send message",
+    );
+  },
+
+  // Delete a message
+  deleteMessage: async (matchId: string, messageId: string): Promise<void> => {
+    return resolveData(
+      apiClient.delete(`/matches/${matchId}/messages/${messageId}`),
+      "Failed to delete message",
+    );
+  },
+
+  // Chat methods
+  chat: {
+    // Send typing indicator
+    sendTypingIndicator: async (
+      matchId: string,
+      isTyping: boolean,
+    ): Promise<void> => {
+      return resolveData(
+        apiClient.post(`/matches/${matchId}/typing`, { isTyping }),
+        "Failed to send typing indicator",
+      );
+    },
+
+    // Mark messages as read
+    markAsRead: async (
+      matchId: string,
+      messageIds: string[],
+    ): Promise<void> => {
+      return resolveData(
+        apiClient.put(`/matches/${matchId}/messages/read`, { messageIds }),
+        "Failed to mark messages as read",
+      );
+    },
+  },
+
+  // Unmatch with a user
+  unmatch: async (matchId: string): Promise<boolean> => {
+    return resolveBoolean(
+      apiClient.delete<boolean>(`/matches/${matchId}`),
+      "Failed to unmatch",
+    );
+  },
+
+  // Block a user from a match
+  block: async (matchId: string): Promise<boolean> => {
+    return resolveBoolean(
+      apiClient.post<boolean>(`/matches/${matchId}/block`, {}),
+      "Failed to block user",
+    );
+  },
+
+  // Report a match
+  report: async (matchId: string, reason: string): Promise<boolean> => {
+    return resolveBoolean(
+      apiClient.post<boolean>(`/matches/${matchId}/report`, { reason }),
+      "Failed to report user",
     );
   },
 
@@ -427,6 +494,16 @@ export const matchesAPI = {
     );
   },
 
+  // Update user preferences (onboarding/initial setup)
+  updateUserPreferences: async (
+    preferences: User["preferences"],
+  ): Promise<User["preferences"]> => {
+    return resolveData(
+      apiClient.put<User["preferences"]>("/users/preferences", preferences),
+      "Failed to update user preferences",
+    );
+  },
+
   // Get notifications
   getNotifications: async (): Promise<
     Array<{
@@ -590,6 +667,125 @@ export const matchesAPI = {
       "Failed to fetch app version",
     );
   },
+
+  // ===== GDPR Compliance Methods =====
+  // Request account deletion with grace period
+  requestAccountDeletion: async (data: {
+    reason?: string;
+  }): Promise<{
+    success: boolean;
+    message: string;
+    requestId: string;
+    scheduledDeletionDate: string;
+    canCancel: boolean;
+  }> => {
+    return resolveData(
+      apiClient.post("/account/delete", { reason: data.reason }),
+      "Failed to request account deletion",
+    );
+  },
+
+  // Cancel account deletion (within grace period)
+  cancelAccountDeletion: async (data?: {
+    requestId?: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    return resolveData(
+      apiClient.post("/account/cancel-deletion", data ?? {}),
+      "Failed to cancel account deletion",
+    );
+  },
+
+  // Get account deletion status
+  getAccountDeletionStatus: async (): Promise<{
+    success: boolean;
+    status: "pending" | "processing" | "completed" | "not-found";
+    requestedAt?: string;
+    scheduledDeletionDate?: string;
+    daysRemaining?: number;
+    canCancel?: boolean;
+    requestId?: string;
+  }> => {
+    return resolveData(
+      apiClient.get("/account/status"),
+      "Failed to get account status",
+    );
+  },
+
+  // Export user data (GDPR Article 20)
+  exportUserData: async (options: {
+    format?: "json" | "csv";
+    includeMessages?: boolean;
+    includeMatches?: boolean;
+    includeProfileData?: boolean;
+    includePreferences?: boolean;
+  }): Promise<{
+    success: boolean;
+    exportId: string;
+    estimatedTime: string;
+    message: string;
+    exportData?: unknown;
+  }> => {
+    return resolveData(
+      apiClient.post("/account/export-data", options),
+      "Failed to export user data",
+    );
+  },
+};
+
+// Premium/Subscription API
+export const premiumAPI = {
+  getCurrentSubscription: async (): Promise<{
+    id: string;
+    status: string;
+    plan: string;
+    currentPeriodEnd: string;
+  } | null> => {
+    try {
+      return await resolveData(
+        apiClient.get("/premium/subscription"),
+        "Failed to get current subscription",
+      );
+    } catch {
+      return null;
+    }
+  },
+  cancelSubscription: async (): Promise<boolean> => {
+    return resolveBoolean(
+      apiClient.post("/premium/subscription/cancel"),
+      "Failed to cancel subscription",
+    );
+  },
+};
+
+// Adoption API
+export const adoptionAPI = {
+  getListings: async (): Promise<Pet[]> => {
+    return resolveData(
+      apiClient.get("/adoption/listings"),
+      "Failed to get adoption listings",
+    );
+  },
+  getApplications: async (): Promise<AdoptionApplication[]> => {
+    return resolveData(
+      apiClient.get("/adoption/applications"),
+      "Failed to get adoption applications",
+    );
+  },
+};
+
+// Subscription API for Stripe checkout
+export const _subscriptionAPI = {
+  createCheckoutSession: async (data: {
+    priceId: string;
+    successUrl: string;
+    cancelUrl: string;
+    metadata?: Record<string, string>;
+  }): Promise<{ url: string }> => {
+    return resolveData(
+      apiClient.post("/subscription/checkout", data),
+      "Failed to create checkout session",
+    );
+  },
 };
 
 // Export the main API service instance
@@ -693,14 +889,38 @@ export const aiAPI = {
   },
 };
 
+export async function presignVoice(contentType: string) {
+  return resolveData(
+    apiClient.post<{ key: string; url: string }>("/uploads/voice/presign", { contentType }),
+    "Failed to get presign URL",
+  );
+}
+
+export async function presignPhoto(contentType: string) {
+  return resolveData(
+    apiClient.post<{ key: string; url: string }>("/uploads/photos/presign", { contentType }),
+    "Failed to get presign URL",
+  );
+}
+
 export const api = {
   ...matchesAPI,
+  chat: matchesAPI.chat,
   ai: aiAPI,
   request,
+  presignVoice,
+  presignPhoto,
+  get: <T = unknown>(url: string, config?: unknown): Promise<T> => {
+    return request<T>(url, { method: "GET", headers: config as Record<string, string> });
+  },
+  post: <T = unknown>(url: string, data?: unknown, config?: unknown): Promise<T> => {
+    return request<T>(url, { method: "POST", body: data, headers: config as Record<string, string> });
+  },
 };
 
-// Export adoption API (alias for now, can be extended later)
-export const adoptionAPI = matchesAPI;
+// Re-export admin API for backwards compatibility
+export { _adminAPI } from "./adminAPI";
+export { api as _petAPI };
 
 // ===== SECURITY CONTROLS =====
 

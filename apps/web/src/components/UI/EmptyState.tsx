@@ -60,7 +60,7 @@ const contextualMessages = {
         noPets: {
             title: "No pets to discover yet",
             description: "Check back soon! New pets are joining PawfectMatch every day.",
-            action: { label: "Refresh", onClick: () => window.location.reload() },
+            action: { label: "Refresh", onClick: () => { window.location.reload(); } },
         },
         noMatches: {
             title: "Keep swiping to find matches!",
@@ -89,7 +89,7 @@ const contextualMessages = {
         noNotifications: {
             title: "All caught up!",
             description: "You're all up to date. New notifications will appear here.",
-            action: { label: "Refresh", onClick: () => window.location.reload() },
+            action: { label: "Refresh", onClick: () => { window.location.reload(); } },
         },
     },
 };
@@ -132,7 +132,7 @@ export function EmptyState({ type, title, description, action, secondaryAction, 
 export function DiscoverEmptyState({ scenario = 'noPets', onRefresh, onStartSwiping, onAdjustFilters, }) {
     const config = contextualMessages.discover[scenario];
     const actionMap = {
-        noPets: { label: "Refresh", onClick: onRefresh || (() => window.location.reload()) },
+        noPets: { label: "Refresh", onClick: onRefresh || (() => { window.location.reload(); }) },
         noMatches: { label: "Start Swiping", onClick: onStartSwiping || (() => { }) },
         filtersTooStrict: { label: "Adjust Filters", onClick: onAdjustFilters || (() => { }) },
     };
@@ -148,7 +148,7 @@ export function ChatEmptyState({ scenario = 'noConversations', onStartSwiping, o
 }
 export function NotificationsEmptyState({ onRefresh, }) {
     const config = contextualMessages.notifications.noNotifications;
-    return (<EmptyState type="notifications" title={config.title} description={config.description} action={{ label: "Refresh", onClick: onRefresh || (() => window.location.reload()) }}/>);
+    return (<EmptyState type="notifications" title={config.title} description={config.description} action={{ label: "Refresh", onClick: onRefresh || (() => { window.location.reload(); }) }}/>);
 }
 // Loading empty state with skeleton
 export function LoadingEmptyState({ type = 'discover', className = '', }) {

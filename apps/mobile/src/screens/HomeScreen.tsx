@@ -1,12 +1,10 @@
-import React, { useState } from "react";
-import { logger } from "@pawfectmatch/core";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useRef } from "react";
 import { useAuthStore } from "@pawfectmatch/core";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 import {
   Dimensions,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -14,30 +12,14 @@ import {
 
 // Import new architecture components
 import {
-  Theme,
   EliteButton,
-  EliteButtonPresets,
-  FXContainer,
-  FXContainerPresets,
-  Heading1,
-  Heading2,
-  Heading3,
-  Body,
-  BodySmall,
-  Label,
-  useStaggeredAnimation,
-  useEntranceAnimation,
-} from "../components/NewComponents";
-
-// Import legacy components for backward compatibility
-import {
-  EliteContainer,
-  EliteScrollContainer,
-  EliteHeader,
   EliteCard,
+  Heading2,
   FadeInUp,
   StaggeredContainer,
-} from "../components/EliteComponents";
+  useStaggeredAnimation,
+  useEntranceAnimation,
+} from "../components";
 
 // Import premium components
 import {
@@ -47,43 +29,44 @@ import {
   GlowContainer,
   ParticleEffect,
 } from "../components/PremiumComponents";
-import { matchesAPI } from "../services/api";
+import { useHomeScreen } from "../hooks/screens/useHomeScreen";
+import { useScrollOffsetTracker, useTabReselectRefresh } from "../hooks/navigation";
+import { Theme } from '../theme/unified-theme';
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 
 const { width: screenWidth } = Dimensions.get("window");
 
-type RootStackParamList = {
-  Home: undefined;
-  Swipe: undefined;
-  Matches: undefined;
-  Profile: undefined;
-  AdoptionManager: undefined;
-  Settings: undefined;
-  MyPets: undefined;
-  CreatePet: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function HomeScreen() {
-  const navigation = useNavigation<NavigationProp>();
   const { user } = useAuthStore();
-  const [refreshing, setRefreshing] = useState(false);
-  const [stats, setStats] = useState({
-    matches: 0,
-    messages: 0,
-    pets: 0,
-  });
+  const scrollRef = useRef<ScrollView>(null);
+  const { onScroll, getOffset } = useScrollOffsetTracker();
+
+  const {
+    stats,
+    refreshing,
+    onRefresh,
+    handleProfilePress,
+    handleSettingsPress,
+    handleSwipePress,
+    handleMatchesPress,
+    handleMessagesPress,
+    handleMyPetsPress,
+    handleCreatePetPress,
+    handleCommunityPress,
+  } = useHomeScreen();
 
   // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      6, // Number of sections
-      150,
-      "gentle",
-    );
+  const { start: startStaggeredAnimation } = useStaggeredAnimation(6, 100);
+  const { start: startEntranceAnimation } = useEntranceAnimation("fadeIn", 0);
 
-  const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "bouncy");
+  useTabReselectRefresh({
+    listRef: scrollRef,
+    onRefresh,
+    getOffset,
+    topThreshold: 100,
+    cooldownMs: 700,
+  });
 
   // Start animations
   React.useEffect(() => {
@@ -91,122 +74,49 @@ export default function HomeScreen() {
     startEntranceAnimation();
   }, [startStaggeredAnimation, startEntranceAnimation]);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-      // Fetch real data from API
-      const [matches, stats] = await Promise.all([
-        matchesAPI.getMatches().catch(() => []),
-        matchesAPI
-          .getUserStats()
-          .catch(() => ({ matches: 0, messages: 0, pets: 0 })),
-      ]);
-
-      setStats({
-        matches: matches.length,
-        messages: stats.messages,
-        pets: stats.pets,
-      });
-    } catch (error) {
-      logger.error("Failed to refresh data:", { error });
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const handleQuickAction = (action: string) => {
-    try {
-      // ✅ REAL NAVIGATION - Navigate to actual screens
-      switch (action) {
-        case "swipe":
-          navigation.navigate("Swipe");
-          break;
-        case "matches":
-          navigation.navigate("Matches");
-          break;
-        case "messages":
-          // Navigate to Matches screen since Messages is not a separate screen
-          navigation.navigate("Matches");
-          break;
-        case "profile":
-          navigation.navigate("Profile");
-          break;
-        case "settings":
-          navigation.navigate("Settings");
-          break;
-        case "my-pets":
-          navigation.navigate("MyPets");
-          break;
-        case "create-pet":
-          navigation.navigate("CreatePet");
-          break;
-        case "premium":
-          // Navigate to Profile screen since Premium is part of profile
-          navigation.navigate("Profile");
-          break;
-        default:
-          logger.warn(`Unknown action: ${action}`);
-      }
-    } catch (error) {
-      logger.error("Navigation error:", { error });
-    }
-  };
-
-  const handleProfilePress = () => {
-    handleQuickAction("profile");
-  };
-  const handleSettingsPress = () => {
-    handleQuickAction("settings");
-  };
-  const handleSwipePress = () => {
-    handleQuickAction("swipe");
-  };
-  const handleMatchesPress = () => {
-    handleQuickAction("matches");
-  };
-  const handleMessagesPress = () => {
-    handleQuickAction("messages");
-  };
-  const handleAdoptionPress = () => {
-    handleQuickAction("adoption");
-  };
-
   return (
-    <EliteContainer gradient="primary">
-      {/* Premium Glass Header */}
-      <EliteHeader
-        title="PawfectMatch"
-        subtitle={`Welcome back, ${user?.firstName ?? "Pet Lover"}!`}
-        blur={true}
-        rightComponent={
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            <EliteButton
-              title=""
-              variant="glass"
-              size="sm"
-              icon="person"
-              onPress={handleProfilePress}
-            />
-            <EliteButton
-              title=""
-              variant="glass"
-              size="sm"
-              icon="settings"
-              onPress={handleSettingsPress}
-            />
-          </View>
-        }
-      />
-
-      <EliteScrollContainer
-        gradient="primary"
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "PawfectMatch",
+            subtitle: `Welcome back, ${user?.firstName ?? "Pet Lover"}!`,
+            showBackButton: false,
+            rightButtons: [
+              {
+                type: "custom",
+                icon: "person-outline",
+                onPress: handleProfilePress,
+                variant: "glass",
+                haptic: "light",
+                customComponent: undefined,
+              },
+              {
+                type: "custom",
+                icon: "settings-outline",
+                onPress: handleSettingsPress,
+                variant: "glass",
+                haptic: "light",
+                customComponent: undefined,
+              },
+            ],
+          })}
+        />
+      }
+    >
+      <ScrollView
+        ref={scrollRef}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#ec4899"
+            tintColor={Theme.colors.primary[500]}
           />
         }
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
       >
         {/* Quick Actions with Premium Effects */}
         <FadeInUp delay={0}>
@@ -226,12 +136,12 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
-                          { backgroundColor: "#ec4899" },
-                        ]}
+                          { backgroundColor: Theme.colors.primary[500] },
+                        ])}
                       >
-                        <Ionicons name="heart" size={24} color="#fff" />
+                        <Ionicons name="heart" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -258,12 +168,12 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
-                          { backgroundColor: "#10b981" },
-                        ]}
+                          { backgroundColor: Theme.colors.status.success },
+                        ])}
                       >
-                        <Ionicons name="people" size={24} color="#fff" />
+                        <Ionicons name="people" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -295,12 +205,12 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
-                          { backgroundColor: "#3b82f6" },
-                        ]}
+                          { backgroundColor: Theme.colors.status.info },
+                        ])}
                       >
-                        <Ionicons name="chatbubbles" size={24} color="#fff" />
+                        <Ionicons name="chatbubbles" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -322,13 +232,7 @@ export default function HomeScreen() {
               <FadeInUp delay={300}>
                 <EliteCard
                   variant="glass"
-                  tilt={true}
-                  magnetic={true}
-                  shimmer={true}
-                  entrance="scaleIn"
-                  onPress={() => {
-                    handleQuickAction("profile");
-                  }}
+                  onPress={handleProfilePress}
                   style={styles.actionCard}
                 >
                   <GlowContainer
@@ -338,12 +242,12 @@ export default function HomeScreen() {
                   >
                     <View style={styles.actionContent}>
                       <View
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.actionIcon,
                           { backgroundColor: "#8b5cf6" },
-                        ]}
+                        ])}
                       >
-                        <Ionicons name="person" size={24} color="#fff" />
+                        <Ionicons name="person" size={24} color={Theme.colors.neutral[0]} />
                       </View>
                       <PremiumBody
                         size="sm"
@@ -351,6 +255,38 @@ export default function HomeScreen() {
                         gradient="premium"
                       >
                         Profile
+                      </PremiumBody>
+                    </View>
+                  </GlowContainer>
+                </EliteCard>
+              </FadeInUp>
+
+              <FadeInUp delay={400}>
+                <EliteCard
+                  variant="glass"
+                  onPress={handleCommunityPress}
+                  style={styles.actionCard}
+                >
+                  <GlowContainer
+                    color="warning"
+                    intensity="medium"
+                    animated={true}
+                  >
+                    <View style={styles.actionContent}>
+                      <View
+                        style={StyleSheet.flatten([
+                          styles.actionIcon,
+                          { backgroundColor: Theme.colors.status.warning },
+                        ])}
+                      >
+                        <Ionicons name="people" size={24} color={Theme.colors.neutral[0]} />
+                      </View>
+                      <PremiumBody
+                        size="sm"
+                        weight="semibold"
+                        gradient="secondary"
+                      >
+                        Community
                       </PremiumBody>
                     </View>
                   </GlowContainer>
@@ -382,7 +318,7 @@ export default function HomeScreen() {
                       animated={true}
                     >
                       <View style={styles.activityIcon}>
-                        <Ionicons name="heart" size={20} color="#ec4899" />
+                        <Ionicons name="heart" size={20} color={Theme.colors.primary[500]} />
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
@@ -397,7 +333,7 @@ export default function HomeScreen() {
                         You and Buddy liked each other
                       </PremiumBody>
                     </View>
-                    <PremiumBody size="xs" weight="regular">
+                    <PremiumBody size="sm" weight="regular">
                       2m ago
                     </PremiumBody>
                   </View>
@@ -411,7 +347,7 @@ export default function HomeScreen() {
                       animated={true}
                     >
                       <View style={styles.activityIcon}>
-                        <Ionicons name="chatbubble" size={20} color="#3b82f6" />
+                        <Ionicons name="chatbubble" size={20} color={Theme.colors.status.info} />
                       </View>
                     </GlowContainer>
                     <View style={styles.activityContent}>
@@ -426,7 +362,7 @@ export default function HomeScreen() {
                         From Luna: &quot;Hey there! 🐾&quot;
                       </PremiumBody>
                     </View>
-                    <PremiumBody size="xs" weight="regular">
+                    <PremiumBody size="sm" weight="regular">
                       5m ago
                     </PremiumBody>
                   </View>
@@ -463,7 +399,7 @@ export default function HomeScreen() {
                       intensity="heavy"
                       animated={true}
                     >
-                      <Ionicons name="diamond" size={32} color="#fbbf24" />
+                      <Ionicons name="star" size={32} color="#fbbf24" />
                     </GlowContainer>
                     <PremiumHeading
                       level={3}
@@ -481,16 +417,9 @@ export default function HomeScreen() {
                   <View style={styles.premiumActions}>
                     <EliteButton
                       title="Upgrade Now"
-                      variant="holographic"
+                      variant="primary"
                       size="lg"
-                      icon="diamond"
-                      magnetic={true}
-                      ripple={true}
-                      glow={true}
-                      shimmer={true}
-                      onPress={() => {
-                        handleQuickAction("premium");
-                      }}
+                      onPress={handleProfilePress}
                     />
                   </View>
                 </View>
@@ -498,8 +427,8 @@ export default function HomeScreen() {
             </View>
           </View>
         </FadeInUp>
-      </EliteScrollContainer>
-    </EliteContainer>
+      </ScrollView>
+    </ScreenShell>
   );
 }
 
@@ -519,7 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -580,7 +509,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -8,
     right: -8,
-    backgroundColor: "#ef4444",
+    backgroundColor: Theme.colors.status.error,
     borderRadius: 12,
     minWidth: 24,
     height: 24,
@@ -589,7 +518,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   badgeText: {
-    color: "#fff",
+    color: Theme.colors.neutral[0],
     fontSize: 12,
     fontWeight: "bold",
   },
@@ -597,10 +526,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   activityCard: {
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -637,16 +566,16 @@ const styles = StyleSheet.create({
   },
   activityTime: {
     fontSize: 12,
-    color: "#9ca3af",
+    color: Theme.colors.neutral[400],
   },
   premiumSection: {
     padding: 20,
   },
   premiumCard: {
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
     borderRadius: 12,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: Theme.colors.neutral[900],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -677,14 +606,14 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   premiumButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: Theme.colors.primary[500],
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
     alignItems: "center",
   },
   premiumButtonText: {
-    color: "#fff",
+    color: Theme.colors.neutral[0],
     fontSize: 16,
     fontWeight: "600",
   },

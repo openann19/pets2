@@ -4,12 +4,11 @@
  */
 import { fetch as sslFetch } from "react-native-ssl-pinning";
 import { logger } from "../services/logger";
+import type { SSLFetch, SSLResponse, SSLPinningConfig } from "../types/ssl-pinning";
 
 const BASE_URL =
   process.env["EXPO_PUBLIC_API_URL"] ??
-  ((global as any).__DEV__ === true
-    ? "http://localhost:3001/api"
-    : "https://api.pawfectmatch.com/api");
+  (__DEV__ ? "http://localhost:3001/api" : "https://api.pawfectmatch.com/api");
 
 // Certificate fingerprints for SSL pinning
 // In production, these should be obtained from your server certificates
@@ -41,7 +40,7 @@ interface SSLConfig {
 interface SSLRequestConfig {
   method: string;
   headers: Record<string, string>;
-  body: string | null;
+  body?: string;
   timeoutInterval: number;
   sslPinning: {
     certs: string | Array<{ algorithm: string; value: string }>;
@@ -78,11 +77,13 @@ class SecureAPIService {
   /**
    * Get SSL configuration for a domain
    */
-  private getSSLConfig(domain: string): Record<string, unknown> {
+  private getSSLConfig(domain: string): {
+    sslPinning: { certs: string | Array<{ algorithm: string; value: string }> };
+  } {
     const certs = SSL_CERTIFICATES[domain];
     if (certs === undefined || certs.length === 0) {
       // In development, allow untrusted certificates
-      if ((global as any).__DEV__ === true) {
+      if (__DEV__) {
         return {
           sslPinning: {
             certs: "public",
@@ -133,10 +134,10 @@ class SecureAPIService {
     const requestConfig: SSLRequestConfig = {
       method: fetchOptions.method ?? "GET",
       headers,
-      body: (fetchOptions.body ?? null) as string | null,
+      body: fetchOptions.body ? String(fetchOptions.body) : undefined,
       timeoutInterval: timeout,
       ...sslConfig,
-    } as SSLRequestConfig;
+    };
 
     let lastError: Error | null = null;
 
@@ -151,14 +152,14 @@ class SecureAPIService {
           },
         );
 
-        const response = await sslFetch(url, requestConfig as any);
+        const response = (await sslFetch(url, {
+          ...requestConfig,
+          method: requestConfig.method as "GET" | "POST" | "PUT" | "DELETE",
+        } as any)) as SSLResponse;
         const status = response.status;
         const ok = status >= 200 && status < 300;
         if (!ok) {
-          const statusText =
-            (response as any).statusText !== ""
-              ? (response as any).statusText
-              : "";
+          const statusText = response.statusText || "";
           throw new Error(`HTTP ${String(status)}: ${statusText}`);
         }
 
@@ -184,9 +185,9 @@ class SecureAPIService {
 
         // If not the last attempt, wait before retrying
         if (attempt < retries - 1) {
-          await new Promise<void>((resolve) =>
-            setTimeout(resolve, retryDelay * (attempt + 1)),
-          );
+          await new Promise<void>((resolve) => {
+            setTimeout(() => resolve(), retryDelay * (attempt + 1));
+          });
         }
       }
     }
@@ -222,8 +223,9 @@ class SecureAPIService {
     return this.request<T>(endpoint, {
       ...(config ?? {}),
       method: "POST",
-      body: data !== null && data !== undefined ? JSON.stringify(data) : null,
-    } as RequestInit & SSLConfig);
+      body:
+        data !== null && data !== undefined ? JSON.stringify(data) : undefined,
+    });
   }
 
   /**
@@ -237,8 +239,9 @@ class SecureAPIService {
     return this.request<T>(endpoint, {
       ...(config ?? {}),
       method: "PUT",
-      body: data !== null && data !== undefined ? JSON.stringify(data) : null,
-    } as RequestInit & SSLConfig);
+      body:
+        data !== null && data !== undefined ? JSON.stringify(data) : undefined,
+    });
   }
 
   /**
@@ -255,11 +258,13 @@ class SecureAPIService {
     try {
       const sslConfig = this.getSSLConfig(domain);
       // Perform a test request to validate SSL pinning
-      await sslFetch(`https://${domain}`, {
+      const testConfig: SSLPinningConfig = {
         method: "HEAD",
+        headers: {},
         timeoutInterval: 5000,
         ...sslConfig,
-      } as any);
+      };
+      await sslFetch(`https://${domain}`, testConfig as any);
       return true;
     } catch (error) {
       logger.error("SSL certificate validation failed", {
@@ -290,12 +295,12 @@ class SecureAPIService {
  * Custom error class for secure API errors
  */
 export class SecureAPIError extends Error {
-  constructor(
-    message: string,
-    public originalError?: Error,
-  ) {
+  public originalError?: Error;
+
+  constructor(message: string, originalError?: Error) {
     super(message);
     this.name = "SecureAPIError";
+    this.originalError = originalError;
   }
 }
 

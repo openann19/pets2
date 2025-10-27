@@ -1,87 +1,85 @@
 /**
  * 🎨 UNIFIED THEME TYPES
- * Complete TypeScript definitions for the mobile theme system
- * Extends @pawfectmatch/design-tokens with React Native-specific types
+ * Single source of truth for theme types across the mobile app
  */
 
-import type { TextStyle, ViewStyle } from "react-native";
+export type ColorScheme = "light" | "dark";
 
-// ====== COLOR SYSTEM ======
-export interface ColorPalette {
-  // Brand colors
+export interface SemanticColors {
+  bg: string;
+  bgElevated: string;
+  text: string;
+  textMuted: string;
   primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  primaryForeground: string;
-
-  secondary: string;
-  secondaryLight: string;
-  secondaryDark: string;
-  secondaryForeground: string;
-
-  // Status colors
+  primaryText: string;
+  border: string;
   success: string;
   warning: string;
-  error: string;
-  info: string;
-
-  // Semantic colors
-  background: string;
-  backgroundSecondary: string;
-  backgroundTertiary: string;
-
-  surface: string;
-  surfaceMuted: string;
-  surfaceElevated: string;
-
-  border: string;
-  borderLight: string;
-  borderDark: string;
-
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  textInverse: string;
-
-  // Overlay colors
-  overlay: string;
-  overlayDark: string;
-
-  // Special colors
-  glass: string;
-  glassLight: string;
-  glassDark: string;
+  danger: string;
+  // Additional properties used in components
+  background?: string;
+  card?: string;
+  textSecondary?: string;
+  error?: string;
+  white?: string;
+  gray50?: string;
+  gray100?: string;
+  gray200?: string;
+  gray300?: string;
+  gray400?: string;
+  gray500?: string;
+  gray600?: string;
+  gray700?: string;
+  gray800?: string;
+  gray900?: string;
+  gray950?: string;
+  interactive?: string;
+  feedback?: string;
+  surface?: string;
+  surfaceElevated?: string;
+  info?: string;
+  accent?: string;
+  inverse?: string;
+  gradientPrimary?: string[];
+  gradientSecondary?: string[];
+  gradientAccent?: string[];
+  gradientSuccess?: string[];
+  gradientWarning?: string[];
+  gradientError?: string[];
 }
 
-// ====== TYPOGRAPHY SYSTEM ======
-export interface TypographyVariant
-  extends Pick<TextStyle, "fontFamily" | "fontWeight"> {
-  fontSize: number;
-  lineHeight: number;
-  letterSpacing?: number;
-}
-
-export interface TypographyScale {
-  heading1: TypographyVariant;
-  heading2: TypographyVariant;
-  heading3: TypographyVariant;
-  heading4: TypographyVariant;
-  heading5: TypographyVariant;
-  heading6: TypographyVariant;
-  subtitle: TypographyVariant;
-  subtitleSmall: TypographyVariant;
-  body: TypographyVariant;
-  bodySmall: TypographyVariant;
-  callout: TypographyVariant;
-  caption: TypographyVariant;
-  overline: TypographyVariant;
-  button: TypographyVariant;
-  label: TypographyVariant;
-}
-
-// ====== SPACING SYSTEM ======
-export interface SpacingScale {
-  none: number;
+export interface Spacing {
+  readonly 0: string;
+  readonly 1: string;
+  readonly 2: string;
+  readonly 3: string;
+  readonly 4: string;
+  readonly 5: string;
+  readonly 6: string;
+  readonly 7: string;
+  readonly 8: string;
+  readonly 9: string;
+  readonly 10: string;
+  readonly 11: string;
+  readonly 12: string;
+  readonly 14: string;
+  readonly 16: string;
+  readonly 20: string;
+  readonly 24: string;
+  readonly 28: string;
+  readonly 32: string;
+  readonly 36: string;
+  readonly 40: string;
+  readonly 44: string;
+  readonly 48: string;
+  readonly 52: string;
+  readonly 56: string;
+  readonly 60: string;
+  readonly 64: string;
+  readonly 72: string;
+  readonly 80: string;
+  readonly 96: string;
+  // Named spacing helpers
   xs: number;
   sm: number;
   md: number;
@@ -92,8 +90,7 @@ export interface SpacingScale {
   "4xl": number;
 }
 
-// ====== BORDER RADIUS SYSTEM ======
-export interface RadiusScale {
+export interface Radius {
   none: number;
   xs: number;
   sm: number;
@@ -102,99 +99,29 @@ export interface RadiusScale {
   xl: number;
   "2xl": number;
   full: number;
+  pill: number;
 }
 
-// ====== SHADOW SYSTEM ======
-export interface ShadowToken {
-  shadowColor: string;
-  shadowOffset: { width: number; height: number };
-  shadowOpacity: number;
-  shadowRadius: number;
-  elevation: number;
+export interface Motion {
+  duration: { fast: number; normal: number; slow: number };
+  easing: { standard: (t: number) => number };
+  spring: { stiff: { stiffness: number; damping: number; mass: number } };
 }
 
-export interface ShadowScale {
-  none: ShadowToken;
-  xs: ShadowToken;
-  sm: ShadowToken;
-  md: ShadowToken;
-  lg: ShadowToken;
-  xl: ShadowToken;
-  "2xl": ShadowToken;
-}
-
-// ====== OPACITY SYSTEM ======
-export interface OpacityScale {
-  transparent: number;
-  invisible: number;
-  disabled: number;
-  hover: number;
-  focus: number;
-  pressed: number;
-  selected: number;
-}
-
-// ====== BORDER WIDTH SYSTEM ======
-export interface BorderWidthScale {
-  none: number;
-  thin: number;
-  medium: number;
-  thick: number;
-}
-
-// ====== ICON SIZES ======
-export interface IconSizeScale {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-  "2xl": number;
-}
-
-// ====== ANIMATION SYSTEM ======
-export interface AnimationConfig {
-  duration: number;
-  easing: string;
-}
-
-export interface AnimationScale {
-  instant: AnimationConfig;
-  fast: AnimationConfig;
-  normal: AnimationConfig;
-  slow: AnimationConfig;
-  slower: AnimationConfig;
-}
-
-// ====== Z-INDEX SYSTEM ======
-export interface ZIndexScale {
-  hide: number;
-  base: number;
-  docked: number;
-  dropdown: number;
-  sticky: number;
-  overlay: number;
-  modal: number;
-  popover: number;
-  tooltip: number;
-  toast: number;
-}
-
-// ====== COMPLETE THEME INTERFACE ======
 export interface Theme {
-  colors: ColorPalette;
-  typography: TypographyScale;
-  spacing: SpacingScale;
-  radii: RadiusScale;
-  shadows: ShadowScale;
-  opacity: OpacityScale;
-  borderWidth: BorderWidthScale;
-  iconSize: IconSizeScale;
-  animation: AnimationScale;
-  zIndex: ZIndexScale;
+  scheme: ColorScheme;
+  colors: SemanticColors;
+  spacing: Spacing;
+  radius: Radius;
+  motion: Motion;
+  
+  // Backward compatibility helpers
+  isDark?: boolean; // Use scheme === 'dark' instead
+  styles?: Record<string, unknown>; // For legacy component support
+  shadows?: Record<string, unknown>; // For legacy component support
 }
 
-// ====== THEME MODE ======
+// Additional types for theme providers
 export type ThemeMode = "light" | "dark" | "system";
 
 export interface ThemeContextValue {
@@ -205,49 +132,115 @@ export interface ThemeContextValue {
   toggleTheme: () => void;
 }
 
-// ====== THEME OVERRIDES ======
-export interface ThemeOverrides {
-  colors?: Partial<ColorPalette>;
-  typography?: Partial<TypographyScale>;
-  spacing?: Partial<SpacingScale>;
-  radii?: Partial<RadiusScale>;
-  shadows?: Partial<ShadowScale>;
-  opacity?: Partial<OpacityScale>;
-  borderWidth?: Partial<BorderWidthScale>;
-  iconSize?: Partial<IconSizeScale>;
-  animation?: Partial<AnimationScale>;
-  zIndex?: Partial<ZIndexScale>;
+// Color Palette type for backward compatibility
+export interface ColorPalette {
+  [key: string]: string;
 }
 
-// ====== UTILITY TYPES ======
-export type ColorToken = keyof ColorPalette;
-export type TypographyVariantName = keyof TypographyScale;
-export type SpacingToken = keyof SpacingScale;
-export type RadiusToken = keyof RadiusScale;
-export type ShadowTokenName = keyof ShadowScale;
-export type OpacityToken = keyof OpacityScale;
-export type BorderWidthToken = keyof BorderWidthScale;
-export type IconSizeToken = keyof IconSizeScale;
-export type AnimationToken = keyof AnimationScale;
-export type ZIndexToken = keyof ZIndexScale;
-
-// ====== COMPONENT PROP TYPES ======
-export interface ThemedComponentProps {
-  variant?: string;
-  tone?: ColorToken;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+// Typography Scale type for backward compatibility
+export interface TypographyScale {
+  [key: string]: {
+    fontSize: number;
+    lineHeight: number;
+    fontWeight: string | number;
+    letterSpacing?: number;
+  };
 }
 
-export interface ThemedViewProps extends ThemedComponentProps {
-  padding?: SpacingToken;
-  margin?: SpacingToken;
-  radius?: RadiusToken;
-  shadow?: ShadowTokenName;
-  borderWidth?: BorderWidthToken;
+// Spacing Scale type for backward compatibility
+export interface SpacingScale {
+  [key: string]: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+  "3xl": number;
+  "4xl": number;
 }
 
-export interface ThemedTextProps extends ThemedComponentProps {
-  variant?: TypographyVariantName;
-  color?: ColorToken;
-  align?: "auto" | "left" | "right" | "center" | "justify";
+// Shadow Scale type for backward compatibility
+export interface ShadowScale {
+  [key: string]: {
+    shadowColor: string;
+    shadowOffset: { width: number; height: number };
+    shadowOpacity: number;
+    shadowRadius: number;
+    elevation: number;
+  };
+}
+
+// Radius Scale type for backward compatibility
+export interface RadiusScale {
+  [key: string]: number;
+  none: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+  full: number;
+  pill: number;
+}
+
+// Opacity Scale type
+export interface OpacityScale {
+  [key: string]: number;
+  transparent: number;
+  invisible: number;
+  disabled: number;
+  hover: number;
+  focus: number;
+  pressed: number;
+  selected: number;
+}
+
+// Border Width Scale type
+export interface BorderWidthScale {
+  [key: string]: number;
+  none: number;
+  thin: number;
+  medium: number;
+  thick: number;
+}
+
+// Icon Size Scale type
+export interface IconSizeScale {
+  [key: string]: number;
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+  xl: number;
+  "2xl": number;
+}
+
+// Animation Scale type
+export interface AnimationScale {
+  [key: string]: {
+    duration: number;
+    easing: string;
+  };
+  instant: { duration: number; easing: string };
+  fast: { duration: number; easing: string };
+  normal: { duration: number; easing: string };
+  slow: { duration: number; easing: string };
+  slower: { duration: number; easing: string };
+}
+
+// Z-Index Scale type
+export interface ZIndexScale {
+  [key: string]: number;
+  hide: number;
+  base: number;
+  docked: number;
+  dropdown: number;
+  sticky: number;
+  overlay: number;
+  modal: number;
+  popover: number;
+  tooltip: number;
+  toast: number;
 }

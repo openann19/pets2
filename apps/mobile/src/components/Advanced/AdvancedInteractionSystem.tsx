@@ -22,6 +22,8 @@ import {
   AccessibilityInfo,
 } from "react-native";
 
+import { Theme } from '../../theme/unified-theme';
+
 // Lazy load dimensions to avoid issues in test environment
 const getScreenDimensions = () => {
   try {
@@ -62,7 +64,7 @@ const HAPTIC_PATTERNS = {
   light: Haptics.ImpactFeedbackStyle.Light,
   medium: Haptics.ImpactFeedbackStyle.Medium,
   heavy: Haptics.ImpactFeedbackStyle.Heavy,
-  selection: Haptics.SelectionFeedbackStyle.Selection,
+  selection: 0, // Using light impact as fallback since SelectionFeedbackStyle not available
   notification: Haptics.NotificationFeedbackType.Success,
 };
 
@@ -124,8 +126,8 @@ function AdvancedButtonComponent({
   textStyle,
   children,
   apiAction,
-  glowColor = "#ec4899",
-  gradientColors = ["#ec4899", "#db2777"],
+  glowColor = "Theme.colors.primary[500]",
+  gradientColors = ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
   blurIntensity = 20,
 }: AdvancedButtonProps): React.JSX.Element {
   // Animation Values
@@ -379,7 +381,7 @@ function AdvancedButtonComponent({
           ...baseStyles,
           backgroundColor: "transparent",
           borderWidth: 1,
-          borderColor: "#e5e7eb",
+          borderColor: "Theme.colors.neutral[200]",
         };
       case "premium":
         return {
@@ -391,7 +393,7 @@ function AdvancedButtonComponent({
       default:
         return {
           ...baseStyles,
-          backgroundColor: "#ec4899",
+          backgroundColor: "Theme.colors.primary[500]",
         };
     }
   }, [variant, glowColor]);
@@ -422,22 +424,22 @@ function AdvancedButtonComponent({
       <View style={styles.contentContainer}>
         {icon && (
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.icon,
               textStyle,
               { fontSize: getSizeStyles().minHeight * 0.4 },
-            ]}
+            ])}
           >
             {icon}
           </Text>
         )}
         {title && (
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.title,
               textStyle,
               { fontSize: getSizeStyles().minHeight * 0.35 },
-            ]}
+            ])}
           >
             {title}
           </Text>
@@ -488,7 +490,7 @@ function AdvancedButtonComponent({
         {/* Glow Overlay */}
         {interactions.includes("glow") && (
           <Animated.View
-            style={[
+            style={StyleSheet.flatten([
               StyleSheet.absoluteFillObject,
               {
                 backgroundColor: glowColor,
@@ -498,7 +500,7 @@ function AdvancedButtonComponent({
                 }),
                 borderRadius: getVariantStyles().borderRadius,
               },
-            ]}
+            ])}
             pointerEvents="none"
           />
         )}
@@ -542,7 +544,7 @@ function AdvancedButtonComponent({
         {(loading || isLoading) && (
           <View style={styles.loadingOverlay}>
             <Animated.View
-              style={[
+              style={StyleSheet.flatten([
                 styles.loadingSpinner,
                 {
                   transform: [
@@ -554,7 +556,7 @@ function AdvancedButtonComponent({
                     },
                   ],
                 },
-              ]}
+              ])}
             />
           </View>
         )}
@@ -632,8 +634,8 @@ export function AdvancedCard({
   onPress,
   disabled = false,
   style,
-  glowColor = "#ec4899",
-  gradientColors = ["#ec4899", "#db2777"],
+  glowColor = "Theme.colors.primary[500]",
+  gradientColors = ["Theme.colors.primary[500]", "Theme.colors.primary[600]"],
   blurIntensity = 20,
   padding = "md",
 }: AdvancedCardProps): React.JSX.Element {
@@ -650,7 +652,12 @@ export function AdvancedCard({
       gradientColors={gradientColors}
       blurIntensity={blurIntensity}
     >
-      <View style={[styles.cardContent, { padding: getPaddingValue(padding) }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.cardContent,
+          { padding: getPaddingValue(padding) },
+        ])}
+      >
         {children}
       </View>
     </AdvancedButton>
@@ -684,10 +691,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 8,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   title: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
     textAlign: "center",
   },
@@ -701,7 +708,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: "Theme.colors.neutral[0]",
     borderTopColor: "transparent",
     borderRadius: 10,
   },

@@ -1,7 +1,8 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
-import SwipeCard from "../../components/SwipeCard";
-import { ThemeContext } from "../../contexts/ThemeContext";
+import SwipeCard from "../../components/ModernSwipeCard";
+import { ThemeContext } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 // Mock expo modules
 jest.mock("expo-haptics", () => ({
@@ -24,9 +25,9 @@ jest.mock("@expo/vector-icons", () => ({
 // Mock theme context
 const mockTheme = {
   colors: {
-    primary: "#ec4899",
-    background: "#ffffff",
-    text: "#000000",
+    primary: "Theme.colors.primary[500]",
+    background: "Theme.colors.neutral[0]",
+    text: "Theme.colors.neutral[950]",
     card: "#f8f9fa",
     border: "#e9ecef",
   },

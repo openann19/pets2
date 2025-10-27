@@ -1,0 +1,271 @@
+# PawfectMatch Gap Log
+# Initial audit identifying missing features vs product model
+
+gaps:
+  - id: gdpr-delete-account-backend
+    owner: api
+    severity: critical
+    area: backend+mobile
+    context: |
+      User can request account deletion from Settings, but backend DELETE /users/delete-account endpoint is missing.
+      GDPR requires actual deletion capability with 30-day grace period.
+    acceptance:
+      - mock route DELETE /users/delete-account returns { success, message, gracePeriodEndsAt }
+      - Backend implements actual account deletion logic
+      - Client service deleteAccount() works with proper error handling
+      - E2E test verifies full deletion flow
+    states: [idle, requesting, grace-period, cancelled, completed, error]
+    telemetry:
+      - event: GDPR_DELETE_REQUESTED
+        props: [reason, timestamp]
+      - event: GDPR_DELETE_CANCELLED
+        props: [daysRemaining]
+    contracts:
+      request: { password: string, reason?: string, feedback?: string }
+      response: { success: boolean, message: string, gracePeriodEndsAt: string }
+      errors: ["INVALID_PASSWORD", "ALREADY_DELETING", "RATE_LIMIT"]
+    assets:
+      mocks: [mocks/fixtures/gdpr/delete.success.json, mocks/fixtures/gdpr/delete.error.json]
+      tests: [apps/mobile/src/screens/__tests__/Settings.GDPR.int.test.tsx]
+    risks:
+      - accidental deletion without password confirmation
+      - data not fully purged
+    rollback:
+      - disable deletion button via feature flag
+    status: open
+    
+  - id: gdpr-export-data-backend
+    owner: api
+    severity: critical
+    area: backend+mobile
+    context: |
+      User can initiate data export, but backend GET /users/export-data endpoint is not implemented.
+      GDPR Article 20 (Right to Data Portability) requires exportable data.
+    acceptance:
+      - GET /users/export-data returns downloadable blob with user data
+      - Export includes: profile, matches, messages, preferences
+      - Export format is JSON with proper structure
+      - Client service exportUserData() provides loading states
+    states: [idle, requesting, processing, ready, downloaded, error]
+    telemetry:
+      - event: GDPR_EXPORT_REQUESTED
+        props: [format, includes]
+    contracts:
+      response: { blob: Blob, estimatedTime: string, format: "json" | "csv" }
+      errors: ["EXPORT_IN_PROGRESS", "RATE_LIMIT"]
+    assets:
+      mocks: [mocks/fixtures/gdpr/export.success.json]
+      tests: [apps/mobile/src/screens/__tests__/Settings.GDPR.int.test.tsx]
+    status: open
+    
+  - id: chat-reactions-orphan-ui
+    owner: api
+    severity: high
+    area: mobile+contracts
+    context: |
+      MessageBubble component shows reaction buttons in UI, but reactions don't actually work.
+      Service method sendReaction() is missing, no backend endpoint.
+    acceptance:
+      - service: add sendReaction(matchId, messageId, reaction) method
+      - backend: POST /chat/reactions
+      - UI: long-press message → reaction picker modal
+      - UI: reactions display on messages
+      - State: reaction sends with debounce, optimistic UI update
+    states: [idle, selecting, sending, sent, error]
+    telemetry:
+      - event: CHAT_REACTION_SENT
+        props: [reaction, messageId]
+    contracts:
+      request: { matchId: string, messageId: string, reaction: string }
+      response: { success: boolean, messageId: string, reactions: object }
+    assets:
+      mocks: [mocks/fixtures/chat/reaction.success.json]
+      tests: [apps/mobile/src/components/chat/__tests__/MessageBubble.test.tsx]
+    status: open
+    
+  - id: chat-attachments-orphan-ui
+    owner: api
+    severity: high
+    area: mobile+contracts
+    context: |
+      MessageInput component has "attach" button that shows "coming soon" alert.
+      No attachment service exists, no backend endpoint for file uploads.
+    acceptance:
+      - service: add sendAttachment(matchId, file, type) method
+      - backend: POST /chat/attachments with multipart/form-data
+      - UI: photo picker integration, file type validation
+      - UI: attachment preview before send, progress indicator
+      - Compression for images
+    states: [idle, picking, uploading, sent, error]
+    telemetry:
+      - event: CHAT_ATTACHMENT_SENT
+        props: [type, size]
+    contracts:
+      request: FormData with matchId, file, type
+      response: { success: boolean, url: string, type: string }
+      errors: ["FILE_TOO_LARGE", "INVALID_TYPE", "UPLOAD_FAILED"]
+    assets:
+      mocks: [mocks/fixtures/chat/attachment.success.json]
+      tests: [apps/mobile/src/components/chat/__tests__/MessageInput.attachments.test.tsx]
+    status: open
+    
+  - id: chat-voice-notes-orphan-ui
+    owner: api
+    severity: high
+    area: mobile+contracts
+    context: |
+      MobileChat component has voice recorder UI but it's not functional.
+      No audio recording, encoding, or playback service exists.
+    acceptance:
+      - service: add sendVoiceNote(matchId, audioBlob) method
+      - backend: POST /chat/voice with audio data
+      - UI: record button press-and-hold, waveform visualization
+      - UI: playback controls with seek, pause/resume
+      - Audio compression to reduce payload size
+    states: [idle, recording, processing, sent, playback]
+    telemetry:
+      - event: CHAT_VOICE_NOTE_SENT
+        props: [duration]
+    contracts:
+      request: { matchId: string, audioBlob: Blob, duration: number }
+      response: { success: boolean, url: string, duration: number }
+    assets:
+      mocks: [mocks/fixtures/chat/voice.success.json]
+      tests: [apps/mobile/src/components/chat/__tests__/MobileChat.voice.test.tsx]
+    status: open
+    
+  - id: premium-subscription-purchase-flow
+    owner: api
+    severity: medium
+    area: backend+mobile
+    context: |
+      PremiumScreen shows subscription plans but Stripe integration is incomplete.
+      No checkout session creation, no webhook handling for subscription events.
+    acceptance:
+      - service: createSubscription(planId) → Stripe checkout session
+      - backend: POST /subscription/checkout
+      - backend: POST /subscription/webhook (handle Stripe events)
+      - Success/cancel redirects work correctly
+      - Subscription status synced with user object
+    states: [idle, loading_plans, selecting, checking_out, completed, cancelled, error]
+    telemetry:
+      - event: PREMIUM_PURCHASE_STARTED
+        props: [plan, duration]
+      - event: PREMIUM_PURCHASE_COMPLETED
+        props: [plan, amount]
+    contracts:
+      request: { planId: string, interval: "month" | "year" }
+      response: { checkoutUrl: string, sessionId: string }
+    assets:
+      mocks: [mocks/fixtures/subscription/checkout.success.json]
+      tests: [apps/mobile/src/screens/__tests__/PremiumScreen.subscription.test.tsx]
+    status: open
+    
+  - id: premium-features-gated-implementation
+    owner: api
+    severity: medium
+    area: mobile+backend
+    context: |
+      PremiumService has checks for hasActiveSubscription() but features aren't properly gated.
+      Users can access AI features and advanced filters without subscription.
+    acceptance:
+      - PremiumGate component properly blocks premium features
+      - Backend validates subscription before processing premium requests
+      - User sees upgrade prompts when accessing locked features
+      - Subscription status synced across app
+    states: [free, premium_active, premium_expired, grace_period]
+    assets:
+      tests: [apps/mobile/src/components/__tests__/PremiumGate.test.tsx]
+    status: open
+    
+  - id: swipe-screen-state-matrices-incomplete
+    owner: ux
+    severity: medium
+    area: mobile
+    context: |
+      SwipeScreen lacks exhaustive state coverage. Edge cases like no cards left,
+      network error during swipe, and super like limits not handled properly.
+    acceptance:
+      - States: loading, loaded, swiping, match, no_cards, error, premium_gate
+      - Empty state shows "No more pets" with refresh option
+      - Error state shows retry button
+      - Network errors handled gracefully with offline queue
+      - Super like limits enforced with upgrade prompt
+    states: [loading, idle, swiping, match, empty, error, network_error, premium_required]
+    assets:
+      tests: [apps/mobile/src/screens/__tests__/SwipeScreen.states.test.tsx]
+    status: open
+    
+  - id: ai-compatibility-no-backend
+    owner: api
+    severity: high
+    area: backend+mobile
+    context: |
+      AICompatibilityScreen exists but has no backend integration.
+      AI service endpoint for compatibility analysis is missing.
+    acceptance:
+      - POST /ai/compatibility with petIds returns analysis
+      - Client service analyzeCompatibility(petA, petB) works
+      - Results display: compatibility score, reasons, recommendations
+      - Loading state with progress indicator
+    states: [idle, analyzing, ready, error]
+    telemetry:
+      - event: AI_COMPATIBILITY_CHECKED
+        props: [petAId, petBId, score]
+    contracts:
+      request: { petAId: string, petBId: string }
+      response: { score: number, reasons: string[], recommendations: string[] }
+    assets:
+      mocks: [mocks/fixtures/ai/compatibility.success.json]
+      tests: [apps/mobile/src/screens/__tests__/AICompatibilityScreen.test.tsx]
+    status: open
+    
+  - id: a11y-missing-roles-and-labels
+    owner: a11y
+    severity: medium
+    area: mobile
+    context: |
+      Components lack accessibility labels and roles. Screen readers won't work properly.
+      No reduce motion support, no proper semantic roles for interactive elements.
+    acceptance:
+      - All TouchableOpacity have accessibilityLabel
+      - All images have accessible images with alt text
+      - Disabled buttons clearly communicate state
+      - Form inputs have proper labels and hints
+      - Reduce motion preferences respected
+      - Screen reader tested with VoiceOver/TalkBack
+    assets:
+      tests: [apps/mobile/src/__tests__/a11y/accessibility.test.tsx]
+    status: open
+    
+  - id: performance-bundle-size-too-large
+    owner: pp
+    severity: low
+    area: mobile
+    context: |
+      Bundle size exceeds budget. Too many large dependencies.
+      Lazy loading not implemented for heavy screens.
+    acceptance:
+      - Bundle analysis shows < 2MB for mobile
+      - Code splitting implemented for routes
+      - Images lazy loaded
+      - Unused dependencies removed
+    assets:
+      tests: [pnpm mobile:perf]
+    status: open
+    
+  - id: type-safety-typescript-errors
+    owner: tg
+    severity: critical
+    area: mobile
+    context: |
+      TypeScript errors exist in codebase. Reports show baseline errors.
+      Many @ts-expect-error suppressions, unsafe any types.
+    acceptance:
+      - pnpm mobile:tsc passes with zero errors
+      - All @ts-expect-error suppressions removed or justified
+      - No any types in changed code
+      - Strict mode enabled everywhere
+    assets:
+      tests: [pnpm mobile:tsc]
+    status: open

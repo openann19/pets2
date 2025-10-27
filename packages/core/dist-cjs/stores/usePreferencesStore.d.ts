@@ -183,4 +183,3 @@ export declare const _usePreferencesStore: import("zustand").UseBoundStore<Omit<
 }, "setState"> & {
     setState(nextStateOrUpdater: PreferencesState | Partial<PreferencesState> | ((state: import("immer").WritableDraft<PreferencesState>) => void), shouldReplace?: boolean | undefined): void;
 }>;
-//# sourceMappingURL=usePreferencesStore.d.ts.map

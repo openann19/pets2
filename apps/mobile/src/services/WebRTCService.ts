@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import { EventEmitter } from "events";
 
 import InCallManager from "react-native-incall-manager";
@@ -10,6 +11,36 @@ import {
 } from "react-native-webrtc";
 
 import { logger } from "./logger";
+import { useAuthStore } from "../stores/useAuthStore";
+import { hasNativeCameraSwitch } from "../types/native-webrtc";
+
+// Extended RTCIceServer with React Native WebRTC compatibility
+interface ExtendedRTCIceServer {
+  urls: string | string[];
+  username?: string;
+  credential?: string;
+}
+
+// Media constraints type for React Native WebRTC
+interface MediaStreamConstraints {
+  video?: boolean | {
+    width?: { min?: number; ideal?: number; max?: number };
+    height?: { min?: number; ideal?: number; max?: number };
+    frameRate?: { min?: number; ideal?: number; max?: number };
+  };
+  audio?: boolean;
+}
+
+// Type-safe video track with extended methods for React Native WebRTC
+interface MediaStreamTrackWithSwitchCamera {
+  _switchCamera?: () => void;
+  enabled: boolean;
+  id: string;
+  kind: string;
+  label: string;
+  muted: boolean;
+  readyState: MediaStreamTrackState;
+}
 
 export interface CallData {
   callId: string;
@@ -56,18 +87,35 @@ class WebRTCService extends EventEmitter {
   private currentCallId: string | null = null;
   private callStartTime = 0;
 
-  // STUN/TURN configuration
+  // STUN/TURN configuration with environment support
   private readonly rtcConfiguration = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "stun:stun1.l.google.com:19302" },
-      // Add TURN servers for production
-      // {
-      //   urls: 'turn:your-turn-server.com:3478',
-      //   username: 'username',
-      //   credential: 'password'
-      // }
-    ],
+    iceServers: (() => {
+      const servers: ExtendedRTCIceServer[] = [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+      ];
+
+      // Add TURN servers from environment if configured
+      const turnUrl = process.env.EXPO_PUBLIC_TURN_SERVER_URL;
+      const turnUsername = process.env.EXPO_PUBLIC_TURN_USERNAME;
+      const turnCredential = process.env.EXPO_PUBLIC_TURN_CREDENTIAL;
+
+      if (turnUrl && turnUsername && turnCredential) {
+        const turnServer: ExtendedRTCIceServer = {
+          urls: turnUrl,
+          username: turnUsername,
+          credential: turnCredential,
+        };
+        servers.push(turnServer);
+        logger.info("TURN server configured", { url: turnUrl });
+      } else {
+        logger.warn(
+          "No TURN server configured. Calls may fail across NAT/firewalls.",
+        );
+      }
+
+      return servers;
+    })(),
     iceCandidatePoolSize: 10,
   };
 
@@ -158,7 +206,7 @@ class WebRTCService extends EventEmitter {
             : false,
       };
 
-      this.localStream = await mediaDevices.getUserMedia(constraints);
+      this.localStream = await mediaDevices.getUserMedia(constraints as MediaStreamConstraints);
 
       // Create peer connection
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
@@ -175,11 +223,16 @@ class WebRTCService extends EventEmitter {
       const callId = `call_${String(Date.now())}_${Math.random().toString(36).substring(2, 11)}`;
       this.currentCallId = callId;
 
+      // Get user data from auth store
+      const { user } = useAuthStore.getState();
+      const callerId = user?._id ?? user?.id ?? "unknown";
+      const callerName = user?.firstName ?? "Unknown User";
+
       const callData: CallData = {
         callId,
         matchId,
-        callerId: "current-user-id", // Get from auth store
-        callerName: "Current User", // Get from auth store
+        callerId,
+        callerName,
         callType,
         timestamp: Date.now(),
       };
@@ -232,7 +285,7 @@ class WebRTCService extends EventEmitter {
             : false,
       };
 
-      this.localStream = await mediaDevices.getUserMedia(constraints);
+      this.localStream = await mediaDevices.getUserMedia(constraints as MediaStreamConstraints);
 
       // Create peer connection
       this.peerConnection = new RTCPeerConnection(this.rtcConfiguration);
@@ -398,12 +451,8 @@ class WebRTCService extends EventEmitter {
       const videoTracks = this.localStream.getVideoTracks();
       if (videoTracks.length > 0) {
         const videoTrack = videoTracks[0];
-        // React Native WebRTC specific method
-        if (
-          "_switchCamera" in videoTrack &&
-          typeof (videoTrack as any)._switchCamera === "function"
-        ) {
-          (videoTrack as any)._switchCamera();
+        if (videoTrack && hasNativeCameraSwitch(videoTrack)) {
+          videoTrack._switchCamera();
         }
       }
     }
@@ -417,33 +466,46 @@ class WebRTCService extends EventEmitter {
     }
   }
 
-  // Private methods for WebRTC signaling
+  // Private methods for WebRTC signaling  
   private setupPeerConnectionListeners() {
     if (this.peerConnection === null) return;
 
-    this.peerConnection.addEventListener(
-      "icecandidate",
-      (event: RTCPeerConnectionIceEvent) => {
-        if (event.candidate !== null) {
-          if (this.socket !== null) {
-            this.socket.emit("webrtc-ice-candidate", {
-              callId: this.currentCallId,
-              candidate: event.candidate,
-            });
-          }
+    // Type assertion for react-native-webrtc compatibility
+    // The library supports event handlers but types don't match exactly
+    const peerConnection = this.peerConnection as RTCPeerConnection & {
+      onicecandidate: ((event: RTCPeerConnectionIceEvent | null) => void) | null;
+      ontrack: ((event: RTCTrackEvent) => void) | null;
+      onconnectionstatechange: (() => void) | null;
+    };
+
+    // ICE candidate handler - typed properly
+    peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent | null) => {
+      if (event !== null && event.candidate !== null && event.candidate !== undefined) {
+        if (this.socket !== null) {
+          this.socket.emit("webrtc-ice-candidate", {
+            callId: this.currentCallId,
+            candidate: event.candidate,
+          });
         }
-      },
-    );
-
-    this.peerConnection.addEventListener("track", (event: RTCTrackEvent) => {
-      if (event.streams.length > 0) {
-        this.remoteStream = event.streams[0] as any;
-        this.callState.remoteStream = this.remoteStream;
-        this.emit("callStateChanged", this.callState);
       }
-    });
+    };
 
-    this.peerConnection.addEventListener("connectionstatechange", () => {
+    // Track handler - typed properly  
+    peerConnection.ontrack = (event: RTCTrackEvent) => {
+      if (event.streams && event.streams.length > 0) {
+        // Cast to React Native WebRTC MediaStream type
+        // Using double cast to bridge browser WebRTC and React Native WebRTC types
+        const stream = event.streams[0] as unknown as MediaStream;
+        if (stream !== undefined && stream !== null) {
+          this.remoteStream = stream;
+          this.callState.remoteStream = stream;
+          this.emit("callStateChanged", this.callState);
+        }
+      }
+    };
+
+    // Connection state change handler - typed properly
+    peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
       if (state === "connected") {
         this.callState.isConnected = true;
@@ -452,7 +514,29 @@ class WebRTCService extends EventEmitter {
       } else if (state === "disconnected" || state === "failed") {
         this.endCall();
       }
-    });
+    };
+
+    // Additional event listeners for comprehensive state tracking
+    // Using type assertion for optional handlers
+    const extendedPeerConnection = this.peerConnection as RTCPeerConnection & {
+      oniceconnectionstatechange?: (() => void) | null;
+      onicegatheringstatechange?: (() => void) | null;
+    };
+
+    extendedPeerConnection.oniceconnectionstatechange = () => {
+      const iceState = this.peerConnection?.iceConnectionState;
+      logger.debug("ICE connection state changed", { state: iceState });
+      
+      if (iceState === "failed") {
+        logger.error("ICE connection failed");
+        this.emit("callError", new Error("ICE connection failed"));
+      }
+    };
+
+    extendedPeerConnection.onicegatheringstatechange = () => {
+      const gatheringState = this.peerConnection?.iceGatheringState;
+      logger.debug("ICE gathering state changed", { state: gatheringState });
+    };
   }
 
   private handleIncomingCall(callData: CallData) {
@@ -493,7 +577,11 @@ class WebRTCService extends EventEmitter {
   private async handleOffer(data: WebRTCSignalingData) {
     if (this.peerConnection !== null) {
       if (data.offer !== undefined) {
-        await this.peerConnection.setRemoteDescription(data.offer as any);
+        const offer = new RTCSessionDescriptionImpl({
+          sdp: data.offer.sdp ?? '',
+          type: data.offer.type as RTCSdpType,
+        });
+        await this.peerConnection.setRemoteDescription(offer);
       }
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
@@ -510,7 +598,11 @@ class WebRTCService extends EventEmitter {
   private async handleAnswer(data: WebRTCSignalingData) {
     if (this.peerConnection !== null) {
       if (data.answer !== undefined) {
-        await this.peerConnection.setRemoteDescription(data.answer as any);
+        const answer = new RTCSessionDescriptionImpl({
+          sdp: data.answer.sdp ?? '',
+          type: data.answer.type as RTCSdpType,
+        });
+        await this.peerConnection.setRemoteDescription(answer);
       }
     }
   }
@@ -525,7 +617,7 @@ class WebRTCService extends EventEmitter {
 
   private startCallTimer() {
     this.callStartTime = Date.now();
-    const timer = setInterval(() => {
+    const timer: ReturnType<typeof setInterval> = setInterval(() => {
       if (this.callState.isActive && this.callState.isConnected) {
         this.callState.callDuration = Math.floor(
           (Date.now() - this.callStartTime) / 1000,

@@ -87,7 +87,7 @@ export function Button({
       accessibilityState={{ disabled }}
       testID={testID}
     >
-      <View style={[styles.content, { gap }]}>
+      <View style={StyleSheet.flatten([styles.content, { gap }])}>
         {icon != null && iconPosition === "left" ? icon : null}
         {loading ? (
           <ActivityIndicator color={colors[contentTone]} />

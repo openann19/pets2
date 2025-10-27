@@ -79,7 +79,7 @@ export function NameSuggestionWidget({ petInfo, onNameSelect, className = '', sh
       {showCategories && (<div className="flex flex-wrap gap-2 mb-6">
           {categories.map((category) => {
                 const Icon = category.icon;
-                return (<button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`
+                return (<button key={category.id} onClick={() => { setSelectedCategory(category.id); }} className={`
                   flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                   ${selectedCategory === category.id
                         ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
@@ -117,7 +117,7 @@ export function NameSuggestionWidget({ petInfo, onNameSelect, className = '', sh
                   ${selectedName === suggestion.name
                     ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}
-                `} onClick={() => handleNameSelect(suggestion.name)}>
+                `} onClick={() => { handleNameSelect(suggestion.name); }}>
                 {/* Selected Indicator */}
                 {selectedName === suggestion.name && (<div className="absolute top-2 right-2">
                     <CheckCircleIcon className="w-5 h-5 text-pink-500"/>
@@ -210,7 +210,7 @@ export function CompactNameSuggestion({ petInfo, onNameSelect, className = '' })
         }
     }, [showSuggestions, petInfo, suggestions.length, generateSuggestions]);
     return (<div className={`relative ${className}`}>
-      <InteractiveButton onClick={() => setShowSuggestions(!showSuggestions)} variant="outline" size="sm" className="text-gray-600 hover:text-gray-800" icon={<SparklesIcon className="w-4 h-4"/>}>
+      <InteractiveButton onClick={() => { setShowSuggestions(!showSuggestions); }} variant="outline" size="sm" className="text-gray-600 hover:text-gray-800" icon={<SparklesIcon className="w-4 h-4"/>}>
         {isLoading ? 'Generating...' : 'Get AI Names'}
       </InteractiveButton>
 

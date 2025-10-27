@@ -67,4 +67,3 @@ Object.defineProperty(window, 'cancelAnimationFrame', {
 // beforeAll(() => server.listen());
 // afterEach(() => server.resetHandlers());
 // afterAll(() => server.close());
-//# sourceMappingURL=setupTests.js.map

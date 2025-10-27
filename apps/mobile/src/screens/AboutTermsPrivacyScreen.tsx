@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../theme/unified-theme';
 
 interface AboutTermsPrivacyScreenProps {
   navigation: {
@@ -119,7 +120,7 @@ function AboutTermsPrivacyScreen({
           {/* App Info */}
           <BlurView intensity={15} style={styles.appInfoCard}>
             <View style={styles.appIcon}>
-              <Ionicons name="paw-outline" size={40} color="#3B82F6" />
+              <Ionicons name="paw-outline" size={40} color="Theme.colors.status.info" />
             </View>
             <View style={styles.appDetails}>
               <Text style={styles.appName}>PawfectMatch</Text>
@@ -134,7 +135,7 @@ function AboutTermsPrivacyScreen({
           <TouchableOpacity style={styles.websiteCard} onPress={handleWebsite}>
             <BlurView intensity={20} style={styles.websiteBlur}>
               <View style={styles.websiteContent}>
-                <Ionicons name="globe-outline" size={24} color="#10B981" />
+                <Ionicons name="globe-outline" size={24} color="Theme.colors.status.success" />
                 <View style={styles.websiteText}>
                   <Text style={styles.websiteTitle}>Visit Our Website</Text>
                   <Text style={styles.websiteDescription}>
@@ -164,10 +165,10 @@ function AboutTermsPrivacyScreen({
               <BlurView intensity={20} style={styles.documentBlur}>
                 <View style={styles.documentContent}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.documentIcon,
-                      { backgroundColor: "#8B5CF6" },
-                    ]}
+                      { backgroundColor: "Theme.colors.secondary[500]" },
+                    ])}
                   >
                     <Ionicons name={document.icon} size={20} color="white" />
                   </View>
@@ -188,21 +189,23 @@ function AboutTermsPrivacyScreen({
           ))}
 
           {/* Contact Info */}
-          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>
+          <Text
+            style={StyleSheet.flatten([styles.sectionTitle, { marginTop: 32 }])}
+          >
             Contact Information
           </Text>
 
           <BlurView intensity={15} style={styles.contactCard}>
             <View style={styles.contactItem}>
-              <Ionicons name="mail-outline" size={20} color="#3B82F6" />
+              <Ionicons name="mail-outline" size={20} color="Theme.colors.status.info" />
               <Text style={styles.contactText}>support@pawfectmatch.com</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="call-outline" size={20} color="#10B981" />
+              <Ionicons name="call-outline" size={20} color="Theme.colors.status.success" />
               <Text style={styles.contactText}>1-800-PET-MATCH</Text>
             </View>
             <View style={styles.contactItem}>
-              <Ionicons name="location-outline" size={20} color="#F59E0B" />
+              <Ionicons name="location-outline" size={20} color="Theme.colors.status.warning" />
               <Text style={styles.contactText}>San Francisco, CA</Text>
             </View>
           </BlurView>

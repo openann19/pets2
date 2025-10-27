@@ -1,0 +1,59 @@
+{
+  "testUser": {
+    "id": "user-123",
+    "email": "test@example.com",
+    "name": "Test User",
+    "avatar": "https://example.com/avatar.jpg",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "verified": true,
+    "subscription": {
+      "status": "free",
+      "plan": null,
+      "expiresAt": null
+    },
+    "preferences": {
+      "distanceUnit": "km",
+      "theme": "light",
+      "notifications": {
+        "matches": true,
+        "messages": true,
+        "likes": false
+      }
+    }
+  },
+  "premiumUser": {
+    "id": "user-premium",
+    "email": "premium@example.com",
+    "name": "Premium User",
+    "avatar": "https://example.com/premium-avatar.jpg",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "verified": true,
+    "subscription": {
+      "status": "active",
+      "plan": "premium",
+      "expiresAt": "2025-12-31T23:59:59Z"
+    },
+    "preferences": {
+      "distanceUnit": "km",
+      "theme": "dark",
+      "notifications": {
+        "matches": true,
+        "messages": true,
+        "likes": true
+      }
+    }
+  },
+  "unverifiedUser": {
+    "id": "user-unverified",
+    "email": "unverified@example.com",
+    "name": "Unverified User",
+    "avatar": null,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "verified": false,
+    "subscription": {
+      "status": "free",
+      "plan": null,
+      "expiresAt": null
+    }
+  }
+}

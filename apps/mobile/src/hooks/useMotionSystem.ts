@@ -1,48 +1,84 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Easing, Dimensions, Platform } from "react-native";
+import { Easing, Dimensions, Platform } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+  withSpring,
+  withRepeat,
+  withSequence,
+  withDelay,
+  interpolate,
+  Extrapolate,
+  type SharedValue,
+} from "react-native-reanimated";
 
-// import { MotionSystem, Accessibility } from '../styles/EnhancedDesignTokens'; // === PROJECT HYPERION: MOTION & ANIMATION HOOKS ===
+// Simplified MotionSystem and Accessibility definitions
+const MotionSystem = {
+  springs: {
+    standard: { tension: 300, friction: 30 },
+    gentle: { tension: 120, friction: 14 },
+    bouncy: { tension: 180, friction: 12 },
+  },
+  timings: {
+    fast: 200,
+    standard: 300,
+    slow: 500,
+  },
+  easings: {
+    standard: Easing.bezier(0.4, 0.0, 0.2, 1),
+    decelerate: Easing.bezier(0.0, 0.0, 0.2, 1),
+    accelerate: Easing.bezier(0.4, 0.0, 1, 1),
+  },
+};
+
+const Accessibility = {
+  reduceMotion: false,
+  motion: {
+    prefersReducedMotion: false,
+    reducedMotionConfigs: {
+      timings: {
+        standard: 300,
+      },
+    },
+  },
+};
 
 // Custom hook for spring animations with physics
 export const useSpring = (
   initialValue = 0,
   config: keyof typeof MotionSystem.springs = "standard",
 ) => {
-  const animatedValue = useRef(new Animated.Value(initialValue)).current;
-  const [value, setValue] = useState(initialValue);
-
-  // Listen to animation value changes
-  useEffect(() => {
-    const listener = animatedValue.addListener(({ value: newValue }) => {
-      setValue(newValue);
-    });
-    return () => {
-      animatedValue.removeListener(listener);
-    };
-  }, [animatedValue]);
+  const animatedValue = useSharedValue(initialValue);
 
   const animate = (
     toValue: number,
-    customConfig?: Partial<typeof MotionSystem.springs.standard>,
+    customConfig?: Partial<{ tension: number; friction: number }>,
   ) => {
-    const springConfig = {
-      ...MotionSystem.springs[config],
-      ...customConfig,
-      toValue,
-      useNativeDriver: true,
-    };
-
-    // Check for reduced motion preference
     const { prefersReducedMotion } = Accessibility.motion;
+    
     if (prefersReducedMotion) {
-      springConfig.timing =
-        Accessibility.motion.reducedMotionConfigs.timings.standard;
+      animatedValue.value = withTiming(toValue, { duration: 200 });
+      return { start: () => {} };
     }
 
-    return Animated.spring(animatedValue, springConfig);
+    // Convert Animated.spring config to Reanimated 2 withSpring config
+    const springConfig = customConfig
+      ? {
+          damping: customConfig.friction ?? 15,
+          stiffness: customConfig.tension ?? 300,
+        }
+      : {
+          damping: MotionSystem.springs[config].friction,
+          stiffness: MotionSystem.springs[config].tension,
+        };
+
+    animatedValue.value = withSpring(toValue, springConfig);
+    return { start: () => {} };
   };
 
-  return { value, animatedValue, animate };
+  return { value: animatedValue, animatedValue, animate };
 };
 
 // Hook for transform animations
@@ -52,28 +88,32 @@ export const useTransform = (
 ) => {
   const { value, animatedValue, animate } = useSpring(initialValue, config);
 
-  const transforms = {
-    translateX: animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 50],
-    }),
-    translateY: animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 20],
-    }),
-    scale: animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.8, 1],
-    }),
-    rotate: animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["0deg", "360deg"],
-    }),
-    opacity: animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1],
-    }),
-  };
+  const transforms = useAnimatedStyle(() => ({
+    translateX: interpolate(
+      animatedValue.value,
+      [0, 1],
+      [0, 50],
+      Extrapolate.CLAMP,
+    ),
+    translateY: interpolate(
+      animatedValue.value,
+      [0, 1],
+      [0, 20],
+      Extrapolate.CLAMP,
+    ),
+    scale: interpolate(
+      animatedValue.value,
+      [0, 1],
+      [0.8, 1],
+      Extrapolate.CLAMP,
+    ),
+    opacity: interpolate(
+      animatedValue.value,
+      [0, 1],
+      [0, 1],
+      Extrapolate.CLAMP,
+    ),
+  }));
 
   return { value, animatedValue, animate, transforms };
 };
@@ -85,125 +125,146 @@ export const useStaggeredFadeIn = (
   config: keyof typeof MotionSystem.springs = "gentle",
 ) => {
   const animatedValues = useRef(
-    Array.from({ length: itemCount }, () => new Animated.Value(0)),
+    Array.from({ length: itemCount }, () => useSharedValue(0)),
   ).current;
 
   const [values, setValues] = useState(new Array(itemCount).fill(0));
 
-  // Listen to all animation values
   useEffect(() => {
-    const listeners = animatedValues.map((animatedValue, index) =>
-      animatedValue.addListener(({ value: newValue }) => {
-        setValues((prev) => {
-          const newValues = [...prev];
-          newValues[index] = newValue;
-          return newValues;
-        });
-      }),
-    );
-
-    return () => {
-      listeners.forEach((listener, index) => {
-        animatedValues[index].removeListener(listener);
+    animatedValues.forEach((animatedValue, index) => {
+      animatedValue.value = withDelay(
+        index * delay,
+        withSpring(1, {
+          damping: MotionSystem.springs[config].friction,
+          stiffness: MotionSystem.springs[config].tension,
+        }),
+      );
+      // Update local state for compatibility
+      setValues((prev) => {
+        const newValues = [...prev];
+        newValues[index] = 1;
+        return newValues;
       });
-    };
-  }, [animatedValues]);
+    });
+  }, [animatedValues, delay, config]);
+
+  const transforms = animatedValues.map((animatedValue) => {
+    return useAnimatedStyle(() => ({
+      opacity: interpolate(
+        animatedValue.value,
+        [0, 1],
+        [0, 1],
+        Extrapolate.CLAMP,
+      ),
+      transform: [
+        {
+          translateY: interpolate(
+            animatedValue.value,
+            [0, 1],
+            [20, 0],
+            Extrapolate.CLAMP,
+          ),
+        },
+      ],
+    }));
+  });
 
   const animate = () => {
-    const animations = animatedValues.map((animatedValue, index) =>
-      Animated.spring(animatedValue, {
-        ...MotionSystem.springs[config],
-        toValue: 1,
-        delay: index * delay,
-        useNativeDriver: true,
-      }),
-    );
-
-    return Animated.stagger(delay, animations);
-  };
-
-  const transforms = animatedValues.map((animatedValue, index) => ({
-    opacity: animatedValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1],
-    }),
-    transform: [
-      {
-        translateY: animatedValue.interpolate({
-          inputRange: [0, 1],
-          outputRange: [20, 0],
+    // Start all animations
+    animatedValues.forEach((animatedValue, index) => {
+      animatedValue.value = withDelay(
+        index * delay,
+        withSpring(1, {
+          damping: MotionSystem.springs[config].friction,
+          stiffness: MotionSystem.springs[config].tension,
         }),
-      },
-    ],
-  }));
+      );
+    });
+    return Promise.resolve();
+  };
 
   return { values, animatedValues, animate, transforms };
 };
 
 // Hook for entrance animations with different effects
 export const useEntranceAnimation = (
-  type: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight" = "fadeInUp",
+  type: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn" = "slideIn",
   config: keyof typeof MotionSystem.springs = "standard",
 ) => {
   const { value, animatedValue, animate } = useSpring(0, config);
 
-  const getTransform = () => {
+  const animatedStyle = useAnimatedStyle(() => {
     switch (type) {
-      case "fadeInUp":
+      case "slideIn":
         return {
-          opacity: animatedValue,
+          opacity: interpolate(
+            animatedValue.value,
+            [0, 1],
+            [0, 1],
+            Extrapolate.CLAMP,
+          ),
           transform: [
             {
-              translateY: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [30, 0],
-              }),
+              translateY: interpolate(
+                animatedValue.value,
+                [0, 1],
+                [30, 0],
+                Extrapolate.CLAMP,
+              ),
             },
           ],
         };
       case "scaleIn":
         return {
-          opacity: animatedValue,
+          opacity: interpolate(
+            animatedValue.value,
+            [0, 1],
+            [0, 1],
+            Extrapolate.CLAMP,
+          ),
           transform: [
             {
-              scale: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.8, 1],
-              }),
+              scale: interpolate(
+                animatedValue.value,
+                [0, 1],
+                [0.8, 1],
+                Extrapolate.CLAMP,
+              ),
             },
           ],
         };
-      case "slideInLeft":
+      case "bounceIn":
         return {
-          opacity: animatedValue,
+          opacity: interpolate(
+            animatedValue.value,
+            [0, 1],
+            [0, 1],
+            Extrapolate.CLAMP,
+          ),
           transform: [
             {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-50, 0],
-              }),
+              scale: interpolate(
+                animatedValue.value,
+                [0, 1],
+                [0.7, 1],
+                Extrapolate.CLAMP,
+              ),
             },
           ],
         };
-      case "slideInRight":
-        return {
-          opacity: animatedValue,
-          transform: [
-            {
-              translateX: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50, 0],
-              }),
-            },
-          ],
-        };
+      case "fadeIn":
       default:
         return {
-          opacity: animatedValue,
+          opacity: interpolate(
+            animatedValue.value,
+            [0, 1],
+            [0, 1],
+            Extrapolate.CLAMP,
+          ),
           transform: [{ translateY: 0 }],
         };
     }
-  };
+  });
 
   const startEntrance = () => {
     return animate(1);
@@ -213,7 +274,7 @@ export const useEntranceAnimation = (
     value,
     animatedValue,
     animate: startEntrance,
-    style: getTransform(),
+    style: animatedStyle,
   };
 };
 
@@ -323,76 +384,60 @@ export const useGyroscopeTilt = (sensitivity = 0.5, maxTilt = 15) => {
 export const useRippleEffect = (
   duration: number = MotionSystem.timings.standard,
 ) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const opacityAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useSharedValue(0);
+  const opacityAnim = useSharedValue(1);
 
   const startRipple = (callback?: () => void) => {
-    Animated.parallel([
-      Animated.timing(scaleAnim, {
-        toValue: 2,
-        duration,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      // Reset for next use
-      scaleAnim.setValue(0);
-      opacityAnim.setValue(1);
-      callback?.();
-    });
+    scaleAnim.value = withSequence(
+      withTiming(2, { duration }),
+      withTiming(0, { duration: 0 }),
+    );
+    opacityAnim.value = withSequence(
+      withTiming(1, { duration: 0 }),
+      withTiming(0, { duration }),
+      withTiming(1, { duration: 0 }),
+    );
+    // Execute callback after animation completes
+    setTimeout(() => callback?.(), duration * 2);
   };
 
-  const rippleStyle = {
-    transform: [{ scale: scaleAnim }],
-    opacity: opacityAnim,
-  };
+  const rippleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }],
+    opacity: opacityAnim.value,
+  }));
 
   return { startRipple, rippleStyle };
 };
 
 // Hook for shimmer/glow effects
 export const useGlowEffect = (intensity = 1, duration = 2000) => {
-  const glowAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useSharedValue(0);
 
   useEffect(() => {
-    const startGlow = () => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(glowAnim, {
-            toValue: intensity,
-            duration: duration / 2,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: false, // Glow effects need layout
-          }),
-          Animated.timing(glowAnim, {
-            toValue: 0,
-            duration: duration / 2,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: false,
-          }),
-        ]),
-      ).start();
-    };
-
-    startGlow();
+    glowAnim.value = withRepeat(
+      withSequence(
+        withTiming(intensity, { duration: duration / 2 }),
+        withTiming(0, { duration: duration / 2 }),
+      ),
+      -1,
+      false,
+    );
   }, [glowAnim, intensity, duration]);
 
-  const glowStyle = {
-    shadowOpacity: glowAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0.1, 0.8],
-    }),
-    shadowRadius: glowAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [4, 16],
-    }),
-  };
+  const glowStyle = useAnimatedStyle(() => ({
+    shadowOpacity: interpolate(
+      glowAnim.value,
+      [0, 1],
+      [0.1, 0.8],
+      Extrapolate.CLAMP,
+    ),
+    shadowRadius: interpolate(
+      glowAnim.value,
+      [0, 1],
+      [4, 16],
+      Extrapolate.CLAMP,
+    ),
+  }));
 
   return { glowStyle, glowValue: glowAnim };
 };

@@ -13,9 +13,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme/Provider";
 import type { RootStackParamList } from "../navigation/types";
-import { _subscriptionAPI as premiumAPI } from "../services/api";
+import { premiumAPI } from "../services/api";
+import { Theme } from '../theme/unified-theme';
 
 type ManageSubscriptionScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -59,9 +60,11 @@ const ManageSubscriptionScreen = ({
       const data = await premiumAPI.getCurrentSubscription();
       // Map API response to local format
       if (data) {
+        const validStatuses: Array<"active" | "canceled" | "past_due" | "unpaid" | "incomplete" | "inactive"> = ["active", "inactive", "canceled", "past_due", "unpaid", "incomplete"];
+        const status = (data.status && validStatuses.includes(data.status as any)) ? data.status as "active" | "canceled" | "past_due" | "unpaid" | "incomplete" | "inactive" : undefined;
         setSubscription({
           id: data.id,
-          status: data.status,
+          status,
           plan:
             typeof data.plan === "string"
               ? { name: data.plan }
@@ -138,10 +141,18 @@ const ManageSubscriptionScreen = ({
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading subscription...
           </Text>
         </View>
@@ -151,11 +162,19 @@ const ManageSubscriptionScreen = ({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={[styles.header, { backgroundColor: colors.card }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.header,
+            { backgroundColor: colors.card },
+          ])}
+        >
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -165,28 +184,48 @@ const ManageSubscriptionScreen = ({
           >
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.headerTitle,
+              { color: colors.text },
+            ])}
+          >
             Manage Subscription
           </Text>
           <View style={{ width: 24 }} /> {/* Spacer for alignment */}
         </View>
 
         {/* Subscription Info */}
-        <View style={[styles.section, { backgroundColor: colors.card }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.section,
+            { backgroundColor: colors.card },
+          ])}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Current Plan
           </Text>
 
           <View style={styles.planInfo}>
             <Ionicons name="star" size={30} color={colors.primary} />
             <View style={styles.planDetails}>
-              <Text style={[styles.planName, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.planName,
+                  { color: colors.text },
+                ])}
+              >
                 {typeof subscription?.plan === "object"
                   ? subscription.plan.name
                   : subscription?.plan || "Free Plan"}
               </Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.planStatus,
                   {
                     color:
@@ -194,7 +233,7 @@ const ManageSubscriptionScreen = ({
                         ? colors.success
                         : colors.error,
                   },
-                ]}
+                ])}
               >
                 {subscription?.status === "active" ? "Active" : "Inactive"}
               </Text>
@@ -205,11 +244,19 @@ const ManageSubscriptionScreen = ({
             <>
               <View style={styles.billingInfo}>
                 <Text
-                  style={[styles.billingLabel, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.billingLabel,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Billing Period:
                 </Text>
-                <Text style={[styles.billingValue, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.billingValue,
+                    { color: colors.text },
+                  ])}
+                >
                   {typeof subscription?.plan === "object"
                     ? subscription.plan.duration
                     : "monthly"}
@@ -218,22 +265,38 @@ const ManageSubscriptionScreen = ({
 
               <View style={styles.billingInfo}>
                 <Text
-                  style={[styles.billingLabel, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.billingLabel,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Next Billing Date:
                 </Text>
-                <Text style={[styles.billingValue, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.billingValue,
+                    { color: colors.text },
+                  ])}
+                >
                   {subscription?.nextBillingDate || "N/A"}
                 </Text>
               </View>
 
               <View style={styles.billingInfo}>
                 <Text
-                  style={[styles.billingLabel, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.billingLabel,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Amount:
                 </Text>
-                <Text style={[styles.billingValue, { color: colors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.billingValue,
+                    { color: colors.text },
+                  ])}
+                >
                   $
                   {typeof subscription?.plan === "object"
                     ? subscription.plan.price
@@ -245,23 +308,44 @@ const ManageSubscriptionScreen = ({
         </View>
 
         {/* Actions */}
-        <View style={[styles.section, { backgroundColor: colors.card }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.section,
+            { backgroundColor: colors.card },
+          ])}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Actions
           </Text>
 
           {subscription?.status === "active" ? (
             <TouchableOpacity
-              style={[styles.actionButton, styles.cancelButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.cancelButton,
+              ])}
               onPress={handleCancelSubscription}
             >
-              <Text style={[styles.actionButtonText, { color: colors.error }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  { color: colors.error },
+                ])}
+              >
                 Cancel Subscription
               </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: colors.primary }]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                { backgroundColor: colors.primary },
+              ])}
               onPress={() => navigation.navigate("Premium")}
             >
               <Text style={styles.actionButtonText}>Upgrade to Premium</Text>
@@ -269,18 +353,36 @@ const ManageSubscriptionScreen = ({
           )}
 
           <TouchableOpacity
-            style={[styles.actionButton, styles.restoreButton]}
+            style={StyleSheet.flatten([
+              styles.actionButton,
+              styles.restoreButton,
+            ])}
             onPress={handleRestorePurchases}
           >
-            <Text style={[styles.actionButtonText, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.actionButtonText,
+                { color: colors.text },
+              ])}
+            >
               Restore Purchases
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Plan Features */}
-        <View style={[styles.section, { backgroundColor: colors.card }]}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.section,
+            { backgroundColor: colors.card },
+          ])}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Premium Features
           </Text>
 
@@ -291,7 +393,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 Unlimited swipes
               </Text>
             </View>
@@ -302,7 +409,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 See who liked you
               </Text>
             </View>
@@ -313,7 +425,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 Priority matching
               </Text>
             </View>
@@ -324,7 +441,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 Advanced filters
               </Text>
             </View>
@@ -335,7 +457,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 AI bio generation
               </Text>
             </View>
@@ -346,7 +473,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 Photo analysis
               </Text>
             </View>
@@ -357,7 +489,12 @@ const ManageSubscriptionScreen = ({
                 size={20}
                 color={colors.success}
               />
-              <Text style={[styles.featureText, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.featureText,
+                  { color: colors.text },
+                ])}
+              >
                 Compatibility insights
               </Text>
             </View>
@@ -400,7 +537,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 15,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

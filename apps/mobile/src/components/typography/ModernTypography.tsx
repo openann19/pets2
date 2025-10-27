@@ -38,7 +38,7 @@ export type TextVariant =
   | "label";
 
 export type TextWeight = keyof typeof Theme.typography.fontWeight;
-export type TextColor = keyof typeof Theme.semantic.text;
+export type TextColor = keyof typeof Theme.colors.text;
 
 export interface ModernTextProps extends TextProps {
   variant?: TextVariant;
@@ -47,7 +47,7 @@ export interface ModernTextProps extends TextProps {
   gradient?: keyof typeof Theme.gradients;
   gradientColors?: string[];
   animated?: boolean;
-  animationType?: "fadeInUp" | "scaleIn" | "slideInLeft" | "slideInRight";
+  animationType?: "fadeIn" | "slideIn" | "scaleIn" | "bounceIn";
   children: ReactNode;
 }
 
@@ -155,7 +155,7 @@ function ModernText({
   gradient,
   gradientColors,
   animated = false,
-  animationType = "fadeInUp",
+  animationType = "slideIn",
   style,
   children,
   ...props
@@ -163,7 +163,8 @@ function ModernText({
   const variantConfig = VARIANT_CONFIGS[variant];
 
   // Get text color
-  const textColor = Theme.colors.text.primary[color];
+  const textColorKey = color || 'primary';
+  const textColor = Theme.colors.text[textColorKey as keyof typeof Theme.colors.text];
 
   // Build text style
   const textStyle: TextStyle = {
@@ -174,7 +175,7 @@ function ModernText({
 
   // Entrance animation
   const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation(animationType, 0, "gentle");
+    useEntranceAnimation(animationType);
 
   // Start entrance animation if enabled
   React.useEffect(() => {
@@ -185,9 +186,9 @@ function ModernText({
 
   // Render gradient text
   if (gradient || gradientColors) {
-    const gradientConfig = gradient ? Theme.gradients[gradient] : null;
+    const gradientConfig = gradient ? (Theme.gradients && Theme.gradients[gradient as keyof typeof Theme.gradients]) : null;
     const colors = gradientColors ||
-      gradientConfig?.colors || [
+      (gradientConfig && typeof gradientConfig === 'object' && 'colors' in gradientConfig ? (gradientConfig as any).colors : null) || [
         Theme.colors.primary[500],
         Theme.colors.primary[400],
       ];
@@ -199,7 +200,10 @@ function ModernText({
         end={{ x: 1, y: 1 }}
         style={styles.gradientContainer}
       >
-        <Text style={[textStyle, styles.gradientText, style]} {...props}>
+        <Text
+          style={StyleSheet.flatten([textStyle, styles.gradientText, style])}
+          {...props}
+        >
           {children}
         </Text>
       </LinearGradient>
@@ -219,14 +223,17 @@ function ModernText({
   // Render regular text
   if (animated) {
     return (
-      <Animated.Text style={[textStyle, entranceStyle, style]} {...props}>
+      <Animated.Text
+        style={StyleSheet.flatten([textStyle, entranceStyle, style])}
+        {...props}
+      >
         {children}
       </Animated.Text>
     );
   }
 
   return (
-    <Text style={[textStyle, style]} {...props}>
+    <Text style={StyleSheet.flatten([textStyle, style])} {...props}>
       {children}
     </Text>
   );
@@ -290,15 +297,15 @@ export const Label: React.FC<Omit<ModernTextProps, "variant">> = (props) => (
 // === GRADIENT TEXT COMPONENTS ===
 export const GradientHeading: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText variant="h1" gradient="primary" {...props} />;
+) => <ModernText variant="h1" gradient={("primary" as any)} {...props} />;
 
 export const GradientText: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText gradient="primary" {...props} />;
+) => <ModernText gradient={("primary" as any)} {...props} />;
 
 export const HolographicText: React.FC<Omit<ModernTextProps, "gradient">> = (
   props,
-) => <ModernText gradient="holographic" {...props} />;
+) => <ModernText gradient={("holographic" as any)} {...props} />;
 
 // === ANIMATED TEXT COMPONENTS ===
 export const AnimatedHeading: React.FC<Omit<ModernTextProps, "animated">> = (

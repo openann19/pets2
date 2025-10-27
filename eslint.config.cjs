@@ -102,6 +102,64 @@ module.exports = [
       // Disable rules that are stylistic or handled by Prettier
       'arrow-body-style': 'off',
       'react/prop-types': 'off', // Not needed with TypeScript
+
+      // Prevent deprecated imports (Mobile Consistency Remediation)
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/contexts/ThemeContext*'],
+              message: 'Use theme/Provider instead',
+            },
+            {
+              group: ['**/theme/UnifiedThemeProvider*'],
+              message: 'Use theme/Provider instead',
+            },
+            {
+              group: ['**/theme/ThemeProvider*'],
+              message: 'Use theme/Provider instead',
+            },
+            {
+              group: ['**/constants/design-tokens*'],
+              message: 'Use @pawfectmatch/design-tokens instead',
+            },
+            {
+              group: ['**/styles/EnhancedDesignTokens*'],
+              message: 'Use theme/Provider wrapper instead',
+            },
+            {
+              group: ['**/hooks/animations/**', '**/styles/GlobalStyles*'],
+              message: 'Use animation/index.ts instead',
+            },
+            {
+              group: ['**/components/index.tsx', '**/components/NewComponents*', '**/components/EliteComponents*'],
+              message: 'Import from components/index instead',
+            },
+          ],
+        },
+      ],
+
+      // Enforce Theme tokens only (UI & Motion Contract)
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/]',
+          message: 'Use Theme.colors.* tokens instead of hex colors',
+        },
+        {
+          selector: 'Property[key.name="borderRadius"] > Literal[value=/^[0-9]+$/]',
+          message: 'Use Theme.borderRadius.* instead of raw numbers',
+        },
+        {
+          selector: 'Property[key.name="padding"] > Literal[value=/^[0-9]+$/]',
+          message: 'Use Theme.spacing.* instead of raw numbers',
+        },
+        {
+          selector: 'Property[key.name="margin"] > Literal[value=/^[0-9]+$/]',
+          message: 'Use Theme.spacing.* instead of raw numbers',
+        },
+      ],
     },
     settings: {
       react: {

@@ -19,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
+import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface AdminStats {
@@ -69,7 +70,8 @@ interface SystemHealth {
 export default function AdminDashboardScreen({
   navigation,
 }: AdminScreenProps<"AdminDashboard">): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors: ExtendedColors = getExtendedColors(theme);
   const { user: _user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
@@ -131,6 +133,9 @@ export default function AdminDashboardScreen({
       case "verifications":
         navigation.navigate("AdminVerifications");
         break;
+      case "services":
+        navigation.navigate("AdminServices");
+        break;
       default:
         logger.info(`Quick action: ${action}`);
     }
@@ -139,24 +144,32 @@ export default function AdminDashboardScreen({
   const getStatusColor = (status: string): string => {
     switch (status) {
       case "healthy":
-        return "#10B981";
+        return "Theme.colors.status.success";
       case "warning":
-        return "#F59E0B";
+        return "Theme.colors.status.warning";
       case "error":
-        return "#EF4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6B7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
   if (loading) {
     return (
       <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={StyleSheet.flatten([
+          styles.container,
+          { backgroundColor: colors.background },
+        ])}
       >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.text },
+            ])}
+          >
             Loading dashboard...
           </Text>
         </View>
@@ -166,7 +179,10 @@ export default function AdminDashboardScreen({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       <ScrollView
         style={styles.scrollView}
@@ -180,49 +196,75 @@ export default function AdminDashboardScreen({
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+          >
             Admin Dashboard
           </Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.subtitle,
+              { color: colors.textSecondary },
+            ])}
+          >
             Welcome, {_user?.firstName} {_user?.lastName}
           </Text>
         </View>
 
         {/* System Health */}
         {systemHealth ? (
-          <View style={[styles.card, { backgroundColor: colors.card }]}>
+          <View
+            style={StyleSheet.flatten([
+              styles.card,
+              { backgroundColor: colors.card },
+            ])}
+          >
             <View style={styles.cardHeader}>
               <Ionicons
                 name="server-outline"
                 size={24}
                 color={getStatusColor(systemHealth.status)}
               />
-              <Text style={[styles.cardTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.cardTitle,
+                  { color: colors.text },
+                ])}
+              >
                 System Status
               </Text>
             </View>
             <View style={styles.healthInfo}>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.healthStatus,
                   { color: getStatusColor(systemHealth.status) },
-                ]}
+                ])}
               >
                 {systemHealth.status.toUpperCase()}
               </Text>
               <Text
-                style={[styles.healthDetails, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.healthDetails,
+                  { color: colors.textSecondary },
+                ])}
               >
                 Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
                 {Math.floor((systemHealth.uptime % 3600) / 60)}m
               </Text>
               <Text
-                style={[styles.healthDetails, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.healthDetails,
+                  { color: colors.textSecondary },
+                ])}
               >
                 Database: {systemHealth.database.status}
               </Text>
               <Text
-                style={[styles.healthDetails, { color: colors.textSecondary }]}
+                style={StyleSheet.flatten([
+                  styles.healthDetails,
+                  { color: colors.textSecondary },
+                ])}
               >
                 Memory: {systemHealth.memory.used}MB /{" "}
                 {systemHealth.memory.total}MB
@@ -233,80 +275,173 @@ export default function AdminDashboardScreen({
 
         {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.sectionTitle,
+              { color: colors.text },
+            ])}
+          >
             Quick Actions
           </Text>
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity
-              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
               onPress={() => {
                 handleQuickAction("analytics");
               }}
             >
-              <Ionicons name="analytics-outline" size={32} color="#3B82F6" />
-              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+              <Ionicons name="analytics-outline" size={32} color="Theme.colors.status.info" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Analytics
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
               onPress={() => {
                 handleQuickAction("users");
               }}
             >
-              <Ionicons name="people-outline" size={32} color="#8B5CF6" />
-              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+              <Ionicons name="people-outline" size={32} color="Theme.colors.secondary[500]" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Users
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
               onPress={() => {
                 handleQuickAction("security");
               }}
             >
-              <Ionicons name="shield-outline" size={32} color="#EF4444" />
-              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+              <Ionicons name="shield-outline" size={32} color="Theme.colors.status.error" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Security
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
               onPress={() => {
                 handleQuickAction("billing");
               }}
             >
-              <Ionicons name="card-outline" size={32} color="#10B981" />
-              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+              <Ionicons name="card-outline" size={32} color="Theme.colors.status.success" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Billing
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
               onPress={() => {
                 handleQuickAction("chats");
               }}
             >
               ?{" "}
-              <Ionicons name="chatbubbles-outline" size={32} color="#F59E0B" />
-              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+              <Ionicons name="chatbubbles-outline" size={32} color="Theme.colors.status.warning" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Chats
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.quickActionCard, { backgroundColor: colors.card }]}
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
               onPress={() => {
                 handleQuickAction("uploads");
               }}
             >
               <Ionicons name="cloud-upload-outline" size={32} color="#06B6D4" />
-              <Text style={[styles.quickActionTitle, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
                 Uploads
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
+              onPress={() => {
+                handleQuickAction("verifications");
+              }}
+            >
+              <Ionicons name="shield-checkmark-outline" size={32} color="#10B981" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
+                Verifications
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={StyleSheet.flatten([
+                styles.quickActionCard,
+                { backgroundColor: colors.card },
+              ])}
+              onPress={() => {
+                handleQuickAction("services");
+              }}
+            >
+              <Ionicons name="server-outline" size={32} color="#8b5cf6" />
+              <Text
+                style={StyleSheet.flatten([
+                  styles.quickActionTitle,
+                  { color: colors.text },
+                ])}
+              >
+                Services
               </Text>
             </TouchableOpacity>
           </View>
@@ -315,108 +450,218 @@ export default function AdminDashboardScreen({
         {/* Statistics */}
         {stats ? (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.sectionTitle,
+                { color: colors.text },
+              ])}
+            >
               Platform Statistics
             </Text>
 
             {/* Users Stats */}
-            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.statCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.statHeader}>
-                <Ionicons name="people" size={24} color="#3B82F6" />
-                <Text style={[styles.statTitle, { color: colors.text }]}>
+                <Ionicons name="people" size={24} color="Theme.colors.status.info" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   Users
                 </Text>
               </View>
-              <Text style={[styles.statNumber, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.statNumber,
+                  { color: colors.text },
+                ])}
+              >
                 {stats.users.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Active: {stats.users.active}
                 </Text>
                 <Text
-                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Verified: {stats.users.verified}
                 </Text>
-                <Text style={[styles.statDetail, { color: "#F59E0B" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: "Theme.colors.status.warning" },
+                  ])}
+                >
                   Suspended: {stats.users.suspended}
                 </Text>
-                <Text style={[styles.statDetail, { color: "#EF4444" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: "Theme.colors.status.error" },
+                  ])}
+                >
                   Banned: {stats.users.banned}
                 </Text>
               </View>
             </View>
 
             {/* Pets Stats */}
-            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.statCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.statHeader}>
-                <Ionicons name="paw" size={24} color="#10B981" />
-                <Text style={[styles.statTitle, { color: colors.text }]}>
+                <Ionicons name="paw" size={24} color="Theme.colors.status.success" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   Pets
                 </Text>
               </View>
-              <Text style={[styles.statNumber, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.statNumber,
+                  { color: colors.text },
+                ])}
+              >
                 {stats.pets.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Active: {stats.pets.active}
                 </Text>
-                <Text style={[styles.statDetail, { color: "#10B981" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: "Theme.colors.status.success" },
+                  ])}
+                >
                   +{stats.pets.recent24h} today
                 </Text>
               </View>
             </View>
 
             {/* Matches Stats */}
-            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.statCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.statHeader}>
-                <Ionicons name="heart" size={24} color="#EC4899" />
-                <Text style={[styles.statTitle, { color: colors.text }]}>
+                <Ionicons name="heart" size={24} color="Theme.colors.primary[500]" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   Matches
                 </Text>
               </View>
-              <Text style={[styles.statNumber, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.statNumber,
+                  { color: colors.text },
+                ])}
+              >
                 {stats.matches.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Active: {stats.matches.active}
                 </Text>
-                <Text style={[styles.statDetail, { color: "#EF4444" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: "Theme.colors.status.error" },
+                  ])}
+                >
                   Blocked: {stats.matches.blocked}
                 </Text>
-                <Text style={[styles.statDetail, { color: "#10B981" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: "Theme.colors.status.success" },
+                  ])}
+                >
                   +{stats.matches.recent24h} today
                 </Text>
               </View>
             </View>
 
             {/* Messages Stats */}
-            <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.statCard,
+                { backgroundColor: colors.card },
+              ])}
+            >
               <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color="#8B5CF6" />
-                <Text style={[styles.statTitle, { color: colors.text }]}>
+                <Ionicons name="chatbubble" size={24} color="Theme.colors.secondary[500]" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statTitle,
+                    { color: colors.text },
+                  ])}
+                >
                   Messages
                 </Text>
               </View>
-              <Text style={[styles.statNumber, { color: colors.text }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.statNumber,
+                  { color: colors.text },
+                ])}
+              >
                 {stats.messages.total.toLocaleString()}
               </Text>
               <View style={styles.statDetails}>
                 <Text
-                  style={[styles.statDetail, { color: colors.textSecondary }]}
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: colors.textSecondary },
+                  ])}
                 >
                   Deleted: {stats.messages.deleted}
                 </Text>
-                <Text style={[styles.statDetail, { color: "#10B981" }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statDetail,
+                    { color: "Theme.colors.status.success" },
+                  ])}
+                >
                   +{stats.messages.recent24h} today
                 </Text>
               </View>
@@ -463,7 +708,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -510,7 +755,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -529,7 +774,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: {
       width: 0,
       height: 2,

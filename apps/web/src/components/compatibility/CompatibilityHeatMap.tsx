@@ -58,7 +58,7 @@ export function CompatibilityHeatMap({ pet1Id, pet2Id, compatibilityData, classN
         {factors.map((factor) => {
             const score = compatibilityData[factor.key];
             const color = getScoreColor(score);
-            return (<motion.div key={factor.key} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative cursor-pointer" onClick={() => setSelectedFactor(selectedFactor === factor.key ? null : factor.key)}>
+            return (<motion.div key={factor.key} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative cursor-pointer" onClick={() => { setSelectedFactor(selectedFactor === factor.key ? null : factor.key); }}>
               <div className="aspect-square rounded-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-200" style={{ backgroundColor: color }}>
                 {score}%
               </div>

@@ -1388,6 +1388,96 @@ router.delete('/users/:userId', checkPermission('users:delete'), strictRateLimit
   }
 });
 
+// Bulk User Operations
+router.post('/users/bulk-action', checkPermission('users:update'), async (req, res) => {
+  try {
+    const { userIds, action, reason } = req.body;
+
+    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'User IDs array is required'
+      });
+    }
+
+    if (!action || !['suspend', 'activate', 'ban'].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid action (suspend, activate, ban) is required'
+      });
+    }
+
+    const results = [];
+    
+    for (const userId of userIds) {
+      try {
+        const user = await User.findById(userId);
+        if (!user) {
+          results.push({ userId, success: false, error: 'User not found' });
+          continue;
+        }
+
+        const updateData = { reason, modifiedBy: req.userId };
+        
+        switch (action) {
+          case 'suspend':
+            user.status = 'suspended';
+            await AuditLog.create({
+              action: 'BULK_SUSPEND',
+              userId: user._id,
+              adminId: req.userId,
+              metadata: { reason }
+            });
+            break;
+          case 'activate':
+            user.status = 'active';
+            await AuditLog.create({
+              action: 'BULK_ACTIVATE',
+              userId: user._id,
+              adminId: req.userId,
+              metadata: { reason }
+            });
+            break;
+          case 'ban':
+            user.status = 'banned';
+            await AuditLog.create({
+              action: 'BULK_BAN',
+              userId: user._id,
+              adminId: req.userId,
+              metadata: { reason }
+            });
+            break;
+        }
+
+        await user.save();
+        results.push({ userId, success: true });
+      } catch (error) {
+        results.push({ userId, success: false, error: error.message });
+      }
+    }
+
+    await logAdminActivity(req, 'BULK_USER_ACTION', { action, count: userIds.length });
+
+    res.json({
+      success: true,
+      message: `Bulk ${action} completed`,
+      data: {
+        total: userIds.length,
+        successful: results.filter(r => r.success).length,
+        failed: results.filter(r => !r.success).length,
+        results
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to perform bulk action', { error });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to perform bulk action',
+      error: error.message
+    });
+  }
+});
+
 // Reports Management Routes
 router.get('/reports', checkPermission('reports:read'), async (req, res) => {
   try {

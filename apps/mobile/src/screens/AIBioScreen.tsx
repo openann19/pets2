@@ -1,12 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
-import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -16,146 +11,37 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAIBioScreen } from "../hooks/screens/ai";
+import { Theme } from '../theme/unified-theme';
 
-import { api } from "../services/api";
-import type { NavigationProp } from "../navigation/types";
+export default function AIBioScreen() {
+  const {
+    // Form state
+    petName,
+    setPetName,
+    petBreed,
+    setPetBreed,
+    petAge,
+    setPetAge,
+    petPersonality,
+    setPetPersonality,
+    selectedTone,
+    setSelectedTone,
+    selectedPhoto,
+    setSelectedPhoto,
 
-interface AIBioScreenProps {
-  navigation: NavigationProp;
-}
+    // UI state
+    isGenerating,
+    generatedBio,
+    bioHistory,
+    tones,
 
-interface GeneratedBio {
-  bio: string;
-  keywords: string[];
-  sentiment: {
-    score: number;
-    label: string;
-  };
-  matchScore: number;
-}
-
-export default function AIBioScreen({ navigation }: AIBioScreenProps) {
-  const { user } = useAuthStore();
-  const [petName, setPetName] = useState("");
-  const [petBreed, setPetBreed] = useState("");
-  const [petAge, setPetAge] = useState("");
-  const [petPersonality, setPetPersonality] = useState("");
-  const [selectedTone, setSelectedTone] = useState("playful");
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedBio, setGeneratedBio] = useState<GeneratedBio | null>(null);
-  const [bioHistory, setBioHistory] = useState<GeneratedBio[]>([]);
-
-  const tones = [
-    { id: "playful", label: "Playful", icon: "🎾", color: "#ff6b6b" },
-    { id: "professional", label: "Professional", icon: "💼", color: "#4dabf7" },
-    { id: "casual", label: "Casual", icon: "😊", color: "#69db7c" },
-    { id: "romantic", label: "Romantic", icon: "💕", color: "#f783ac" },
-    { id: "funny", label: "Funny", icon: "😄", color: "#ffd43b" },
-  ];
-
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission needed",
-        "We need camera roll permissions to analyze your pet photo",
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-
-    if (
-      !result.canceled &&
-      result.assets &&
-      result.assets.length > 0 &&
-      result.assets[0]
-    ) {
-      setSelectedPhoto(result.assets[0].uri);
-    }
-  };
-
-  const generateBio = async () => {
-    if (!petName.trim()) {
-      Alert.alert("Missing Information", "Please enter your pet's name");
-      return;
-    }
-
-    setIsGenerating(true);
-    try {
-      const bioData = await api.ai.generateBio({
-        petName: petName.trim(),
-        keywords: petPersonality
-          .trim()
-          .split(",")
-          .map((p) => p.trim()),
-        tone: "playful",
-        length: "medium",
-        petType: "dog",
-        age: parseInt(petAge.trim()) || 1,
-        breed: petBreed.trim(),
-      });
-
-      const newBio: GeneratedBio = {
-        bio: (bioData as any).bio,
-        keywords: (bioData as any).keywords || [],
-        sentiment: (bioData as any).sentiment || {
-          score: 0.8,
-          label: "positive",
-        },
-        matchScore: (bioData as any).matchScore || 85,
-      };
-
-      setGeneratedBio(newBio);
-      setBioHistory((prev) => [newBio, ...prev.slice(0, 4)]); // Keep last 5
-    } catch (error) {
-      // Fallback generation for demo
-      const fallbackBio: GeneratedBio = {
-        bio: `Meet ${petName}! This adorable ${petBreed || "furry friend"} is ${petAge || "young"} and full of personality. ${petPersonality || "They love making new friends"} and would be perfect for someone looking for a ${selectedTone} companion. Ready for adventures and lots of love! 🐾`,
-        keywords: ["friendly", "playful", "loving", "adventurous"],
-        sentiment: { score: 0.9, label: "positive" },
-        matchScore: 88,
-      };
-
-      setGeneratedBio(fallbackBio);
-      setBioHistory((prev) => [fallbackBio, ...prev.slice(0, 4)]);
-      logger.info("Using fallback bio generation:", { error });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const saveBio = async () => {
-    if (!generatedBio) return;
-
-    try {
-      // Update pet profile with generated bio
-      if (user?._id && generatedBio) {
-        // Assuming we have a petId from route params or user's first pet
-        const userPets = await api.getUserPets();
-        if (userPets && userPets.length > 0 && userPets[0]?._id) {
-          await api.updatePet(userPets[0]._id, {
-            description: generatedBio.bio,
-          });
-
-          Alert.alert("Success", "Pet profile updated successfully!");
-          navigation.goBack();
-        } else {
-          Alert.alert("Saved Locally", "Bio has been saved to your device");
-        }
-      } else {
-        Alert.alert("Saved Locally", "Bio has been saved to your device");
-      }
-    } catch (error) {
-      Alert.alert("Saved Locally", "Bio has been saved to your device");
-    }
-  };
+    // Actions
+    pickImage,
+    generateBio,
+    saveBio,
+    handleGoBack,
+  } = useAIBioScreen();
 
   const getSentimentColor = (score: number) => {
     if (score >= 0.7) return "#69db7c";
@@ -167,12 +53,12 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => { navigation.goBack(); }}>
+        <TouchableOpacity onPress={handleGoBack}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
         <View style={styles.headerRight}>
-          <Ionicons name="sparkles" size={24} color="#ff6b6b" />
+          <Ionicons name="star" size={24} color="#ff6b6b" />
         </View>
       </View>
 
@@ -237,7 +123,10 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Personality Traits</Text>
             <TextInput
-              style={[styles.textInput, styles.multilineInput]}
+              style={StyleSheet.flatten([
+                styles.textInput,
+                styles.multilineInput,
+              ])}
               value={petPersonality}
               onChangeText={setPetPersonality}
               placeholder="Describe your pet's personality..."
@@ -255,21 +144,21 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             {tones.map((tone) => (
               <TouchableOpacity
                 key={tone.id}
-                style={[
+                style={StyleSheet.flatten([
                   styles.toneOption,
                   selectedTone === tone.id && styles.selectedTone,
                   { borderColor: tone.color },
-                ]}
+                ])}
                 onPress={() => {
                   setSelectedTone(tone.id);
                 }}
               >
                 <Text style={styles.toneEmoji}>{tone.icon}</Text>
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.toneLabel,
                     selectedTone === tone.id && { color: tone.color },
-                  ]}
+                  ])}
                 >
                   {tone.label}
                 </Text>
@@ -280,10 +169,10 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
 
         {/* Generate Button */}
         <TouchableOpacity
-          style={[
+          style={StyleSheet.flatten([
             styles.generateButton,
             isGenerating && styles.generatingButton,
-          ]}
+          ])}
           onPress={generateBio}
           disabled={isGenerating}
         >
@@ -292,9 +181,9 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             style={styles.generateButtonGradient}
           >
             {isGenerating ? (
-              <ActivityIndicator color="#fff" size="small" />
+              <ActivityIndicator color="Theme.colors.neutral[0]" size="small" />
             ) : (
-              <Ionicons name="sparkles" size={20} color="#fff" />
+              <Ionicons name="star" size={20} color="Theme.colors.neutral[0]" />
             )}
             <Text style={styles.generateButtonText}>
               {isGenerating ? "Generating..." : "Generate Bio"}
@@ -313,19 +202,24 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
               <View style={styles.bioStats}>
                 <View style={styles.statItem}>
                   <Text style={styles.statLabel}>Match Score</Text>
-                  <Text style={[styles.statValue, { color: "#69db7c" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.statValue,
+                      { color: "#69db7c" },
+                    ])}
+                  >
                     {generatedBio.matchScore}%
                   </Text>
                 </View>
                 <View style={styles.statItem}>
                   <Text style={styles.statLabel}>Sentiment</Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.statValue,
                       {
                         color: getSentimentColor(generatedBio.sentiment.score),
                       },
-                    ]}
+                    ])}
                   >
                     {generatedBio.sentiment.label}
                   </Text>
@@ -337,7 +231,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                 <View style={styles.keywordsContainer}>
                   <Text style={styles.keywordsTitle}>Keywords:</Text>
                   <View style={styles.keywordsList}>
-                    {generatedBio.keywords.map((keyword, index) => (
+                    {generatedBio.keywords.map((keyword: string, index: number) => (
                       <View key={index} style={styles.keywordTag}>
                         <Text style={styles.keywordText}>{keyword}</Text>
                       </View>
@@ -356,7 +250,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                   <Text style={styles.regenerateText}>Regenerate</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.saveButton} onPress={saveBio}>
-                  <Ionicons name="checkmark" size={16} color="#fff" />
+                  <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />
                   <Text style={styles.saveText}>Save Bio</Text>
                 </TouchableOpacity>
               </View>
@@ -369,18 +263,12 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Previous Versions</Text>
             {bioHistory.slice(1).map((bio, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.historyItem}
-                onPress={() => {
-                  setGeneratedBio(bio);
-                }}
-              >
+              <View key={index} style={styles.historyItem}>
                 <Text style={styles.historyText} numberOfLines={2}>
                   {bio.bio}
                 </Text>
                 <Text style={styles.historyScore}>{bio.matchScore}%</Text>
-              </TouchableOpacity>
+              </View>
             ))}
           </View>
         )}
@@ -400,8 +288,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    backgroundColor: "Theme.colors.neutral[0]",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -432,8 +320,8 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 15,
     overflow: "hidden",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+    backgroundColor: "Theme.colors.neutral[0]",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -465,14 +353,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#e0e0e0",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -490,7 +378,7 @@ const styles = StyleSheet.create({
   toneOption: {
     flex: 1,
     minWidth: "30%",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 10,
     padding: 15,
     alignItems: "center",
@@ -524,15 +412,15 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   generateButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 18,
     fontWeight: "bold",
   },
   bioContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 15,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -585,7 +473,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   keywordText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
     fontWeight: "600",
   },
@@ -619,18 +507,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   saveText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 14,
     fontWeight: "600",
   },
   historyItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,

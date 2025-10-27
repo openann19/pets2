@@ -223,7 +223,7 @@ export default function SettingsPage() {
                       Add an extra layer of security to your account
                     </p>
                   </div>
-                  {!user.twoFactorEnabled && (<button onClick={() => setShow2FASetup(true)} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-medium transition-colors">
+                  {!user.twoFactorEnabled && (<button onClick={() => { setShow2FASetup(true); }} className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-medium transition-colors">
                       Enable 2FA
                     </button>)}
                 </div>
@@ -241,7 +241,7 @@ export default function SettingsPage() {
                     body: JSON.stringify({ code }),
                 });
                 return response.ok;
-            }} onCancel={() => setShow2FASetup(false)}/>)}
+            }} onCancel={() => { setShow2FASetup(false); }}/>)}
 
                 {user.twoFactorEnabled && (<div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
                     <ShieldCheckIcon className="w-5 h-5"/>
@@ -318,7 +318,7 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       Temporarily deactivate your account. You can reactivate it anytime by logging back in.
                     </p>
-                    <button onClick={() => setShowDeactivateDialog(true)} className="mt-4 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition-colors">
+                    <button onClick={() => { setShowDeactivateDialog(true); }} className="mt-4 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition-colors">
                       Deactivate Account
                     </button>
                   </div>
@@ -341,7 +341,7 @@ export default function SettingsPage() {
                         <strong>Warning:</strong> This will delete all your data including profile, pets, matches, messages, and photos.
                       </p>
                     </div>
-                    <button onClick={() => setShowDeleteDialog(true)} className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
+                    <button onClick={() => { setShowDeleteDialog(true); }} className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
                       Delete My Account
                     </button>
                   </div>
@@ -374,7 +374,7 @@ export default function SettingsPage() {
                       Temporarily suspend your account. You can reactivate it anytime.
                     </p>
                   </div>
-                  <button onClick={() => setShowDeactivateDialog(true)} className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors">
+                  <button onClick={() => { setShowDeactivateDialog(true); }} className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors">
                     Deactivate
                   </button>
                 </div>
@@ -394,7 +394,7 @@ export default function SettingsPage() {
                       Permanently delete your account and all data (GDPR Article 17)
                     </p>
                   </div>
-                  <button onClick={() => setShowDeleteDialog(true)} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
+                  <button onClick={() => { setShowDeleteDialog(true); }} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
                     Delete Account
                   </button>
                 </div>

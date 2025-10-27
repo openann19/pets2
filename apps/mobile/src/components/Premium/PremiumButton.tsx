@@ -19,8 +19,10 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  TextStyle,
+  type TextStyle,
 } from "react-native";
+
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -31,7 +33,7 @@ interface PremiumButtonProps {
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: string;
   iconPosition?: "left" | "right";
   fullWidth?: boolean;
   haptic?: "light" | "medium" | "heavy";
@@ -155,45 +157,45 @@ function PremiumButtonComponent({
 
   // Get variant styles
   const getVariantStyles = (): VariantStyle => {
-    const variants: Record<string, VariantStyle> = {
+    const variants: Record<NonNullable<typeof variant>, VariantStyle> = {
       primary: {
-        colors: ["#ec4899", "#f472b6"],
-        textColor: "#ffffff",
-        shadowColor: "#ec4899",
+        colors: ["Theme.colors.primary[500]", "Theme.colors.primary[400]"],
+        textColor: "Theme.colors.neutral[0]",
+        shadowColor: "Theme.colors.primary[500]",
       },
       secondary: {
-        colors: ["#0ea5e9", "#38bdf8"],
-        textColor: "#ffffff",
-        shadowColor: "#0ea5e9",
+        colors: ["Theme.colors.secondary[500]", "#38bdf8"],
+        textColor: "Theme.colors.neutral[0]",
+        shadowColor: "Theme.colors.secondary[500]",
       },
       glass: {
         colors: ["transparent", "transparent"],
-        textColor: "#374151",
-        shadowColor: "#000000",
+        textColor: "Theme.colors.neutral[700]",
+        shadowColor: "Theme.colors.neutral[950]",
         blur: true,
       },
       gradient: {
         colors: ["#667eea", "#764ba2", "#f093fb", "#f5576c"],
-        textColor: "#ffffff",
+        textColor: "Theme.colors.neutral[0]",
         shadowColor: "#667eea",
       },
       neon: {
         colors: ["#1a1a1a", "#1a1a1a"],
-        textColor: "#ec4899",
-        shadowColor: "#ec4899",
+        textColor: "Theme.colors.primary[500]",
+        shadowColor: "Theme.colors.primary[500]",
         border: true,
-        borderColor: "#ec4899",
+        borderColor: "Theme.colors.primary[500]",
       },
       ghost: {
         colors: ["transparent", "transparent"],
-        textColor: "#6b7280",
+        textColor: "Theme.colors.neutral[500]",
         shadowColor: "transparent",
         border: true,
-        borderColor: "#d1d5db",
+        borderColor: "Theme.colors.neutral[300]",
       },
     };
 
-    return variants[variant] || variants.primary;
+    return variants[variant] ?? variants.primary;
   };
 
   // Get size styles
@@ -245,19 +247,19 @@ function PremiumButtonComponent({
   if (variant === "glass") {
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           buttonStyle,
           {
             transform: [{ scale: animatedScale }],
           },
-        ]}
+        ])}
       >
         <BlurView intensity={80} style={StyleSheet.absoluteFill} />
         <View
-          style={[
+          style={StyleSheet.flatten([
             StyleSheet.absoluteFillObject,
             { backgroundColor: "rgba(255, 255, 255, 0.1)" },
-          ]}
+          ])}
         />
 
         <TouchableOpacity
@@ -270,10 +272,10 @@ function PremiumButtonComponent({
         >
           {iconPosition === "left" && renderIcon()}
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.buttonText,
               { color: variantStyle.textColor, fontSize: sizeStyle.fontSize },
-            ]}
+            ])}
           >
             {title}
           </Text>
@@ -282,10 +284,10 @@ function PremiumButtonComponent({
           {loading && (
             <View style={styles.loadingContainer}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.loadingDot,
                   { backgroundColor: variantStyle.textColor },
-                ]}
+                ])}
               />
             </View>
           )}
@@ -298,12 +300,12 @@ function PremiumButtonComponent({
   if (variant === "gradient") {
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           buttonStyle,
           {
             transform: [{ scale: animatedScale }],
           },
-        ]}
+        ])}
       >
         <LinearGradient
           colors={variantStyle.colors}
@@ -322,10 +324,10 @@ function PremiumButtonComponent({
         >
           {iconPosition === "left" && renderIcon()}
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.buttonText,
               { color: variantStyle.textColor, fontSize: sizeStyle.fontSize },
-            ]}
+            ])}
           >
             {title}
           </Text>
@@ -334,10 +336,10 @@ function PremiumButtonComponent({
           {loading && (
             <View style={styles.loadingContainer}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.loadingDot,
                   { backgroundColor: variantStyle.textColor },
-                ]}
+                ])}
               />
             </View>
           )}
@@ -349,7 +351,7 @@ function PremiumButtonComponent({
   // Standard variants (primary, secondary, neon, ghost)
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         buttonStyle,
         {
           backgroundColor: variantStyle.colors[0],
@@ -362,7 +364,7 @@ function PremiumButtonComponent({
           shadowRadius: 12,
           elevation: 8,
         },
-      ]}
+      ])}
     >
       <TouchableOpacity
         onPress={handlePress}
@@ -374,10 +376,10 @@ function PremiumButtonComponent({
       >
         {iconPosition === "left" && renderIcon()}
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.buttonText,
             { color: variantStyle.textColor, fontSize: sizeStyle.fontSize },
-          ]}
+          ])}
         >
           {title}
         </Text>
@@ -386,10 +388,10 @@ function PremiumButtonComponent({
         {loading && (
           <View style={styles.loadingContainer}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.loadingDot,
                 { backgroundColor: variantStyle.textColor },
-              ]}
+              ])}
             />
           </View>
         )}

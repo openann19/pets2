@@ -47,7 +47,7 @@ export default function LeaderboardPage() {
         {/* Leaderboard */}
         {isLoading ? (<div className="flex items-center justify-center py-20">
             <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"/>
-          </div>) : (<Leaderboard entries={entries} category={category} timeframe={timeframe} onCategoryChange={(newCategory) => setCategory(newCategory)} onTimeframeChange={(newTimeframe) => setTimeframe(newTimeframe)}/>)}
+          </div>) : (<Leaderboard entries={entries} category={category} timeframe={timeframe} onCategoryChange={(newCategory) => { setCategory(newCategory); }} onTimeframeChange={(newTimeframe) => { setTimeframe(newTimeframe); }}/>)}
 
         {/* Info Cards */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">

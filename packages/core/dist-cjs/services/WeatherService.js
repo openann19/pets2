@@ -192,4 +192,3 @@ function getPosition() {
     });
 }
 exports.default = { fetchWeather, useWeather, useEnhancedWeather };
-//# sourceMappingURL=WeatherService.js.map

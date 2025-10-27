@@ -187,6 +187,15 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
   emailVerificationToken: String,
   emailVerificationExpires: Date,
+
+  // Push notification tokens for mobile devices
+  pushTokens: [{
+    token: { type: String, required: true },
+    platform: { type: String, enum: ['ios', 'android', 'web'], default: 'unknown' },
+    deviceId: { type: String, required: true },
+    registeredAt: { type: Date, default: Date.now },
+    lastUsedAt: { type: Date, default: Date.now }
+  }],
   lastLoginAt: { type: Date },
   lastLoginIP: { type: String },
   // Two-Factor Authentication
@@ -200,7 +209,15 @@ const userSchema = new mongoose.Schema({
   biometricToken: String,
   biometricTokenExpiry: Date,
   // WebAuthn challenge (temporary storage during registration)
-  webauthnChallenge: { type: String, default: null }
+  webauthnChallenge: { type: String, default: null },
+
+  // GDPR Deletion Fields
+  deletionRequestedAt: { type: Date, default: null },
+  deletionRequestId: { type: String, default: null },
+  deletionReason: { type: String, default: null },
+  deletionFeedback: { type: String, default: null },
+  deletionGracePeriodEndsAt: { type: Date, default: null },
+  deletionCompletedAt: { type: Date, default: null }
 
 }, {
   timestamps: true,

@@ -16,7 +16,6 @@ export interface BiometricCapabilities {
   hasHardware: boolean;
   isEnrolled: boolean;
   supportedTypes: LocalAuthentication.AuthenticationType[];
-  securityLevel: LocalAuthentication.SecurityLevel;
 }
 
 class BiometricService {
@@ -32,20 +31,17 @@ class BiometricService {
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
       const supportedTypes =
         await LocalAuthentication.supportedAuthenticationTypesAsync();
-      const securityLevel = await LocalAuthentication.getEnrolledLevelAsync();
 
       const capabilities: BiometricCapabilities = {
         hasHardware,
         isEnrolled,
         supportedTypes,
-        securityLevel,
       };
 
       logger.info("Biometric capabilities checked", {
         hasHardware,
         isEnrolled,
         supportedTypes: supportedTypes.length,
-        securityLevel,
       });
 
       return capabilities;
@@ -55,7 +51,6 @@ class BiometricService {
         hasHardware: false,
         isEnrolled: false,
         supportedTypes: [],
-        securityLevel: LocalAuthentication.SecurityLevel.NONE,
       };
     }
   }
@@ -230,20 +225,37 @@ class BiometricService {
 
   /**
    * Encrypt sensitive data with biometric protection
-   * Note: This is a placeholder - actual implementation would require
-   * platform-specific keychain/keystore integration
+   * Uses SecureStore with biometric authentication for production-grade encryption
    */
-  encryptWithBiometric(data: string): string {
-    // This would require native module implementation
-    // For now, return the data as-is with a warning
-    logger.warn("Biometric encryption not implemented - using fallback");
-    return btoa(data); // Simple base64 encoding as fallback
+  async encryptWithBiometric(data: string, key: string): Promise<void> {
+    try {
+      // Authenticate first
+      const authResult = await this.authenticate("Encrypt sensitive data");
+      if (!authResult.success) {
+        throw new Error("Biometric authentication required for encryption");
+      }
+
+      // Store securely in keychain with biometric protection
+      await SecureStore.setItemAsync(key, data, {
+        requireAuthentication: true,
+        authenticationPrompt: "Authenticate to access encrypted data",
+        showPrompt: true,
+      });
+
+      logger.info("Data encrypted securely with biometric authentication", {
+        key,
+        biometricType: authResult.biometricType,
+      });
+    } catch (error) {
+      logger.error("Failed to encrypt data with biometric protection", { error });
+      throw error;
+    }
   }
 
   /**
    * Decrypt data protected by biometrics
    */
-  async decryptWithBiometric(encryptedData: string): Promise<string> {
+  async decryptWithBiometric(key: string): Promise<string | null> {
     try {
       // First authenticate
       const authResult = await this.authenticate("Decrypt sensitive data");
@@ -251,10 +263,34 @@ class BiometricService {
         throw new Error("Biometric authentication required");
       }
 
-      // Decrypt (placeholder implementation)
-      return atob(encryptedData);
+      // Retrieve from secure store (triggers biometric prompt)
+      const decryptedData = await SecureStore.getItemAsync(key, {
+        requireAuthentication: true,
+        authenticationPrompt: "Authenticate to decrypt sensitive data",
+        showPrompt: true,
+      });
+
+      logger.info("Data decrypted successfully with biometric authentication", {
+        key,
+        biometricType: authResult.biometricType,
+      });
+
+      return decryptedData;
     } catch (error) {
       logger.error("Failed to decrypt biometric data", { error });
+      throw error;
+    }
+  }
+
+  /**
+   * Remove encrypted data from biometric-protected storage
+   */
+  async removeBiometricData(key: string): Promise<void> {
+    try {
+      await SecureStore.deleteItemAsync(key);
+      logger.info("Biometric-protected data removed", { key });
+    } catch (error) {
+      logger.error("Failed to remove biometric data", { error });
       throw error;
     }
   }

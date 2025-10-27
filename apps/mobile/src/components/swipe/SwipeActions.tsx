@@ -1,9 +1,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-import { EliteButton } from "../EliteButton";
-import { StaggeredContainer } from "../StaggeredContainer";
-import { FadeInUp } from "../FadeInUp";
+import { EliteButton, StaggeredContainer, FadeInUp } from "../EliteComponents";
+import { Theme } from '../../theme/unified-theme';
 
 interface SwipeActionsProps {
   onPass: () => void;
@@ -25,7 +24,6 @@ export function SwipeActions({
             variant="glass"
             size="xl"
             icon="close"
-            magnetic={true}
             ripple={true}
             glow={true}
             onPress={onPass}
@@ -36,10 +34,9 @@ export function SwipeActions({
         <FadeInUp delay={100}>
           <EliteButton
             title=""
-            variant="holographic"
+            variant="primary"
             size="lg"
             icon="star"
-            magnetic={true}
             ripple={true}
             glow={true}
             shimmer={true}
@@ -54,7 +51,6 @@ export function SwipeActions({
             variant="primary"
             size="xl"
             icon="heart"
-            magnetic={true}
             ripple={true}
             glow={true}
             onPress={onLike}
@@ -81,7 +77,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 15,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

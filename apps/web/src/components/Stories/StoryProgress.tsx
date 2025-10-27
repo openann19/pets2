@@ -19,7 +19,7 @@ export function StoryProgress({ stories, currentIndex, isPaused }) {
                 clearInterval(interval);
             }
         }, 16); // ~60fps
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [currentIndex, stories, isPaused]);
     // Reset progress when story changes
     useEffect(() => {

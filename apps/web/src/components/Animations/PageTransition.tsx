@@ -72,7 +72,7 @@ export function PageTransition({ children, preset = 'fade', className = '', vari
             setPrefersReducedMotion(e.matches);
         };
         mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
+        return () => { mediaQuery.removeEventListener('change', handleChange); };
     }, []);
     // Skip animations if disabled or user prefers reduced motion
     if (disabled || prefersReducedMotion) {

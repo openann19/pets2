@@ -17,7 +17,7 @@ import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Theme } from "../../theme/unified-theme";
-import { GeneratedBio } from "../../hooks/useAIBio";
+import type { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {
   generatedBio: GeneratedBio;
@@ -86,13 +86,15 @@ export function BioResults({
             <Ionicons
               name={copied ? "checkmark-circle" : "copy-outline"}
               size={20}
-              color={copied ? Theme.colors.status.success : Theme.colors.text.primary}
+              color={
+                copied ? Theme.colors.status.success : Theme.colors.text.primary
+              }
             />
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionText,
                 copied && { color: Theme.colors.status.success },
-              ]}
+              ])}
             >
               {copied ? "Copied!" : "Copy"}
             </Text>
@@ -139,16 +141,16 @@ export function BioResults({
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Match Score</Text>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.metricValue,
                 { color: getMatchScoreColor(generatedBio.matchScore) },
-              ]}
+              ])}
             >
               {generatedBio.matchScore}/100
             </Text>
             <View style={styles.progressBar}>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.progressFill,
                   {
                     width: `${generatedBio.matchScore}%`,
@@ -156,7 +158,7 @@ export function BioResults({
                       generatedBio.matchScore,
                     ),
                   },
-                ]}
+                ])}
               />
             </View>
           </View>
@@ -165,10 +167,10 @@ export function BioResults({
           <View style={styles.metricCard}>
             <Text style={styles.metricLabel}>Sentiment</Text>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.metricValue,
                 { color: getSentimentColor(generatedBio.sentiment.score) },
-              ]}
+              ])}
             >
               {generatedBio.sentiment.label}
             </Text>
@@ -211,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     marginBottom: Theme.spacing.xl,
-    shadowColor: Theme.shadow,
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -231,7 +233,7 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.lg,
     paddingTop: Theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border,
+    borderTopColor: Theme.colors.border.light,
   },
   actionButton: {
     flexDirection: "row",
@@ -263,7 +265,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.background.primary,
     borderRadius: Theme.borderRadius.md,
     padding: Theme.spacing.md,
     alignItems: "center",
@@ -285,7 +287,7 @@ const styles = StyleSheet.create({
   progressBar: {
     width: "100%",
     height: 4,
-    backgroundColor: Theme.colors.border,
+    backgroundColor: Theme.colors.border.light,
     borderRadius: Theme.borderRadius.full,
     overflow: "hidden",
   },
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
   },
   keywordsSection: {
     borderTopWidth: 1,
-    borderTopColor: Theme.colors.border,
+    borderTopColor: Theme.colors.border.light,
     paddingTop: Theme.spacing.lg,
   },
   keywordsTitle: {
@@ -310,7 +312,7 @@ const styles = StyleSheet.create({
     gap: Theme.spacing.sm,
   },
   keywordChip: {
-    backgroundColor: Theme.colors.primary,
+    backgroundColor: Theme.colors.primary[500],
     borderRadius: Theme.borderRadius.full,
     paddingHorizontal: Theme.spacing.sm,
     paddingVertical: Theme.spacing.xs,

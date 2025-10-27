@@ -70,7 +70,7 @@ export default function NavigationUnderline({ items, activeItem, variant = 'unde
     };
     return (<nav className={`relative ${styles.container} ${variantStyle.container} ${className}`}>
       <div className="flex items-center h-full">
-        {items.map((item) => (<button key={item.id} ref={(el) => (itemRefs.current[item.id] = el)} onClick={() => handleItemClick(item)} className={`
+        {items.map((item) => (<button key={item.id} ref={(el) => (itemRefs.current[item.id] = el)} onClick={() => { handleItemClick(item); }} className={`
               ${styles.item}
               relative flex items-center space-x-2
               font-medium transition-colors duration-200

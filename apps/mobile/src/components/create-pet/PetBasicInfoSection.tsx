@@ -7,12 +7,15 @@ import {
   View,
 } from "react-native";
 
-import { PetFormData } from "../../hooks/usePetForm";
+import type { PetFormData } from "../../hooks/usePetForm";
+
+import type { FormFieldValue } from "../../types/forms";
+import { Theme } from '../../theme/unified-theme';
 
 interface PetBasicInfoSectionProps {
   formData: PetFormData;
   errors: Record<string, string>;
-  onUpdateFormData: (field: string, value: any) => void;
+  onUpdateFormData: (field: string, value: FormFieldValue) => void;
 }
 
 const speciesOptions = [
@@ -43,13 +46,16 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, errors.name && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            errors.name ? styles.inputError : undefined,
+          ])}
           value={formData.name}
           onChangeText={(value) => {
             onUpdateFormData("name", value);
           }}
           placeholder="Enter your pet's name"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="Theme.colors.neutral[400]"
         />
         {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
       </View>
@@ -60,22 +66,22 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           {speciesOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.species === option.value &&
                   styles.optionButtonSelected,
-              ]}
+              ])}
               onPress={() => {
                 onUpdateFormData("species", option.value);
               }}
             >
               <Text style={styles.optionEmoji}>{option.emoji}</Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.species === option.value &&
                     styles.optionTextSelected,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
@@ -90,34 +96,46 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Breed *</Text>
         <TextInput
-          style={[styles.input, errors.breed && styles.inputError]}
+          style={StyleSheet.flatten([
+            styles.input,
+            errors.breed ? styles.inputError : undefined,
+          ])}
           value={formData.breed}
           onChangeText={(value) => {
             onUpdateFormData("breed", value);
           }}
           placeholder="e.g., Golden Retriever, Siamese"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="Theme.colors.neutral[400]"
         />
         {errors.breed && <Text style={styles.errorText}>{errors.breed}</Text>}
       </View>
 
       <View style={styles.row}>
-        <View style={[styles.inputGroup, styles.flex1]}>
+        <View style={StyleSheet.flatten([styles.inputGroup, styles.flex1])}>
           <Text style={styles.label}>Age (years) *</Text>
           <TextInput
-            style={[styles.input, errors.age && styles.inputError]}
+            style={StyleSheet.flatten([
+              styles.input,
+              errors.age ? styles.inputError : undefined,
+            ])}
             value={formData.age}
             onChangeText={(value) => {
               onUpdateFormData("age", value);
             }}
             placeholder="0-30"
             keyboardType="numeric"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="Theme.colors.neutral[400]"
           />
           {errors.age && <Text style={styles.errorText}>{errors.age}</Text>}
         </View>
 
-        <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
+        <View
+          style={StyleSheet.flatten([
+            styles.inputGroup,
+            styles.flex1,
+            styles.marginLeft,
+          ])}
+        >
           <Text style={styles.label}>Gender *</Text>
           <View style={styles.genderOptions}>
             {[
@@ -126,22 +144,22 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
             ].map((option) => (
               <TouchableOpacity
                 key={option.value}
-                style={[
+                style={StyleSheet.flatten([
                   styles.genderButton,
                   formData.gender === option.value &&
                     styles.genderButtonSelected,
-                ]}
+                ])}
                 onPress={() => {
                   onUpdateFormData("gender", option.value);
                 }}
               >
                 <Text style={styles.genderEmoji}>{option.emoji}</Text>
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.genderText,
                     formData.gender === option.value &&
                       styles.genderTextSelected,
-                  ]}
+                  ])}
                 >
                   {option.label}
                 </Text>
@@ -160,27 +178,27 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
           {sizeOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
-              style={[
+              style={StyleSheet.flatten([
                 styles.sizeButton,
                 formData.size === option.value && styles.sizeButtonSelected,
-              ]}
+              ])}
               onPress={() => {
                 onUpdateFormData("size", option.value);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.sizeLabel,
                   formData.size === option.value && styles.sizeLabelSelected,
-                ]}
+                ])}
               >
                 {option.label}
               </Text>
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.sizeDesc,
                   formData.size === option.value && styles.sizeDescSelected,
-                ]}
+                ])}
               >
                 {option.desc}
               </Text>
@@ -193,13 +211,13 @@ export const PetBasicInfoSection: React.FC<PetBasicInfoSectionProps> = ({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Description</Text>
         <TextInput
-          style={[styles.textArea]}
+          style={StyleSheet.flatten([styles.textArea])}
           value={formData.description}
           onChangeText={(value) => {
             onUpdateFormData("description", value);
           }}
           placeholder="Tell us about your pet's personality, habits, and what makes them special..."
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="Theme.colors.neutral[400]"
           multiline
           numberOfLines={4}
           textAlignVertical="top"
@@ -216,7 +234,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 16,
   },
   inputGroup: {
@@ -225,32 +243,32 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   inputError: {
-    borderColor: "#EF4444",
+    borderColor: "Theme.colors.status.error",
   },
   errorText: {
     fontSize: 14,
-    color: "#EF4444",
+    color: "Theme.colors.status.error",
     marginTop: 4,
   },
   textArea: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     height: 100,
   },
   row: {
@@ -272,16 +290,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 12,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     flex: 1,
     minWidth: 150,
     justifyContent: "center",
   },
   optionButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   optionEmoji: {
     fontSize: 20,
@@ -289,11 +307,11 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   optionTextSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
   },
   genderOptions: {
     flexDirection: "row",
@@ -306,13 +324,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 12,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   genderButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   genderEmoji: {
     fontSize: 16,
@@ -320,11 +338,11 @@ const styles = StyleSheet.create({
   },
   genderText: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   genderTextSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
   },
   sizeOptions: {
     gap: 8,
@@ -332,26 +350,26 @@ const styles = StyleSheet.create({
   sizeButton: {
     padding: 12,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     alignItems: "center",
   },
   sizeButtonSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   sizeLabel: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "600",
   },
   sizeLabelSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
   },
   sizeDesc: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 2,
   },
   sizeDescSelected: {

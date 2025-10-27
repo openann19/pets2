@@ -1,7 +1,21 @@
+/**
+ * @deprecated Use theme/Provider instead
+ * This file is kept for backward compatibility during migration
+ */
+
 import React, { createContext, useContext, useMemo, useState } from "react";
 import type { Theme } from "./theme";
 import { darkTheme, lightTheme, type ThemeName } from "./theme";
 import { useColorScheme } from "../hooks/useColorScheme";
+
+// Deprecation warning
+let warned = false;
+if (!warned && process.env.NODE_ENV !== "test") {
+  void import("../services/logger").then(({ logger }) => {
+    logger.warn("[DEPRECATION] theme/Provider → use theme/Provider instead.");
+  });
+  warned = true;
+}
 
 interface ThemeContextValue {
   theme: Theme;

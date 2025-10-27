@@ -292,7 +292,7 @@ export function useMobileAnalytics(config = {}) {
             }
         };
         const interval = setInterval(trackMemory, 60000); // Every minute
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [trackEvent, finalConfig.enableMemoryTracking]);
     // Track battery level
     useEffect(() => {
@@ -315,7 +315,7 @@ export function useMobileAnalytics(config = {}) {
             }
         };
         const interval = setInterval(trackBattery, 300000); // Every 5 minutes
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); };
     }, [trackEvent, finalConfig.enableBatteryTracking]);
     return {
         session,
@@ -388,7 +388,7 @@ export function usePerformanceMonitoring() {
         catch (error) {
             logger.warn('Performance Observer not fully supported:', { error });
         }
-        return () => observer.disconnect();
+        return () => { observer.disconnect(); };
     }, []);
     const stopMonitoring = useCallback(() => {
         setIsMonitoring(false);

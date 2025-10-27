@@ -26,6 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { matchesAPI } from "../../services/api";
 
 import { AdvancedButton } from "./AdvancedInteractionSystem";
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -96,10 +97,10 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
   rightButtons = [],
   onBackPress,
   showBackButton = true,
-  backgroundColor = "#fff",
-  textColor = "#333",
+  backgroundColor = Theme.colors.neutral[0],
+  textColor = Theme.colors.text.primary,
   blurIntensity = 20,
-  gradientColors = ["#ec4899", "#db2777"],
+  gradientColors = [Theme.colors.primary[500], Theme.colors.primary[600]],
   style,
   titleStyle,
   subtitleStyle,
@@ -154,8 +155,9 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         }
 
         // Execute API action from props
-        if (apiActions[button.type]) {
-          await apiActions[button.type]();
+        const action = apiActions?.[button.type];
+        if (action) {
+          await action();
         }
       } catch (error) {
         logger.error("Header button action failed:", { error });
@@ -243,11 +245,11 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
         onPress={() => handleButtonPress(button)}
         disabled={button.disabled}
         loading={button.loading || isLoading}
-        style={[
+        style={StyleSheet.flatten([
           styles.headerButton,
           isLeft ? styles.leftButton : styles.rightButton,
-        ]}
-        glowColor={variant === "primary" ? "#ec4899" : "#6b7280"}
+        ])}
+        glowColor={variant === "primary" ? Theme.colors.primary[500] : Theme.colors.neutral[500]}
       >
         {button.badge && button.badge > 0 && (
           <View style={styles.badge}>
@@ -300,7 +302,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           ...baseStyles,
           backgroundColor: transparent ? "transparent" : "transparent",
           borderBottomWidth: 1,
-          borderBottomColor: "#f3f4f6",
+          borderBottomColor: Theme.colors.neutral[100],
         };
       case "floating":
         return {
@@ -309,7 +311,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           borderRadius: 12,
           marginHorizontal: 16,
           marginTop: 8,
-          shadowColor: "#000",
+          shadowColor: Theme.colors.neutral[900],
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -320,7 +322,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
           ...baseStyles,
           backgroundColor: transparent ? "transparent" : backgroundColor,
           borderBottomWidth: 1,
-          borderBottomColor: "#e5e7eb",
+          borderBottomColor: Theme.colors.neutral[200],
         };
     }
   };
@@ -331,13 +333,13 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
 
     return (
       <Animated.View
-        style={[
+        style={StyleSheet.flatten([
           headerStyle,
           {
             opacity: headerOpacity,
             transform: [{ translateY: headerTranslateY }],
           },
-        ]}
+        ])}
       >
         {/* Left Section */}
         <View style={styles.leftSection}>
@@ -350,7 +352,7 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
               haptic="light"
               onPress={handleBackPress}
               style={styles.backButton}
-              glowColor="#6b7280"
+              glowColor="Theme.colors.neutral[500]"
             />
           )}
           {leftButtons.map((button, index) => (
@@ -368,13 +370,23 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
             }}
           >
             {title && (
-              <Text style={[styles.title, { color: textColor }, titleStyle]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.title,
+                  { color: textColor },
+                  titleStyle,
+                ])}
+              >
                 {title}
               </Text>
             )}
             {subtitle && (
               <Text
-                style={[styles.subtitle, { color: textColor }, subtitleStyle]}
+                style={StyleSheet.flatten([
+                  styles.subtitle,
+                  { color: textColor },
+                  subtitleStyle,
+                ])}
               >
                 {subtitle}
               </Text>
@@ -429,12 +441,11 @@ export const AdvancedHeader: React.FC<AdvancedHeaderProps> = ({
 
   return (
     <SafeAreaView
-      style={[
+      style={StyleSheet.flatten([
         styles.container,
         floating && styles.floatingContainer,
         transparent && styles.transparentContainer,
-      ]}
-      edges={["top"]}
+      ])}
     >
       <StatusBar
         barStyle={
@@ -468,7 +479,7 @@ export const HeaderConfigs = {
     variant: "glass" as HeaderVariant,
     showBackButton: true,
     blurIntensity: 20,
-    textColor: "#fff",
+    textColor: Theme.colors.neutral[0],
     ...props,
   }),
 
@@ -476,8 +487,8 @@ export const HeaderConfigs = {
   gradient: (props: Partial<AdvancedHeaderProps>) => ({
     variant: "gradient" as HeaderVariant,
     showBackButton: true,
-    gradientColors: ["#ec4899", "#db2777"],
-    textColor: "#fff",
+    gradientColors: [Theme.colors.primary[500], Theme.colors.primary[600]],
+    textColor: Theme.colors.neutral[0],
     ...props,
   }),
 
@@ -493,7 +504,7 @@ export const HeaderConfigs = {
   minimal: (props: Partial<AdvancedHeaderProps>) => ({
     variant: "minimal" as HeaderVariant,
     showBackButton: true,
-    textColor: "#6b7280",
+    textColor: Theme.colors.neutral[500],
     ...props,
   }),
 
@@ -509,7 +520,7 @@ export const HeaderConfigs = {
 // Styles
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: Theme.colors.neutral[0],
   },
   floatingContainer: {
     backgroundColor: "transparent",
@@ -568,17 +579,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: "#ef4444",
+    backgroundColor: Theme.colors.status.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#fff",
+    borderColor: Theme.colors.neutral[0],
   },
   badgeText: {
-    color: "#fff",
+    color: Theme.colors.neutral[0],
     fontSize: 10,
     fontWeight: "bold",
   },

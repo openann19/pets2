@@ -24,6 +24,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../../theme/unified-theme';
 
 const { width } = Dimensions.get("window");
 
@@ -165,9 +166,13 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
           showsVerticalScrollIndicator={false}
           bounces={true}
         >
-          <Animated.View style={[styles.content, animatedContainerStyle]}>
+          <Animated.View
+            style={StyleSheet.flatten([styles.content, animatedContainerStyle])}
+          >
             {/* Elite Header with Glassmorphic Design */}
-            <Animated.View style={[styles.header, animatedHeaderStyle]}>
+            <Animated.View
+              style={StyleSheet.flatten([styles.header, animatedHeaderStyle])}
+            >
               <BlurView intensity={20} style={styles.logoContainer}>
                 <Text style={styles.logo}>🐾 PawfectMatch</Text>
               </BlurView>
@@ -180,12 +185,17 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
             {/* Elite Intent Cards */}
             <View style={styles.intentCards}>
               {/* Adopt a Pet Card */}
-              <Animated.View style={[styles.intentCard, animatedCard1Style]}>
+              <Animated.View
+                style={StyleSheet.flatten([
+                  styles.intentCard,
+                  animatedCard1Style,
+                ])}
+              >
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.cardButton,
                     selectedIntent === "adopt" && styles.selectedCard,
-                  ]}
+                  ])}
                   onPress={() => {
                     handleIntentSelect("adopt", scale1);
                   }}
@@ -206,7 +216,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={["#ec4899", "#be185d"]}
+                          colors={["Theme.colors.primary[500]", "Theme.colors.primary[700]"]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>🏠</Text>
@@ -245,12 +255,17 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
               </Animated.View>
 
               {/* List Pets Card */}
-              <Animated.View style={[styles.intentCard, animatedCard2Style]}>
+              <Animated.View
+                style={StyleSheet.flatten([
+                  styles.intentCard,
+                  animatedCard2Style,
+                ])}
+              >
                 <TouchableOpacity
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.cardButton,
                     selectedIntent === "list" && styles.selectedCard,
-                  ]}
+                  ])}
                   onPress={() => {
                     handleIntentSelect("list", scale2);
                   }}
@@ -271,7 +286,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={["#0ea5e9", "#0284c7"]}
+                          colors={["Theme.colors.secondary[500]", "Theme.colors.secondary[600]"]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>📝</Text>
@@ -310,7 +325,10 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
 
             {/* Elite Footer */}
             <Animated.View
-              style={[styles.additionalOptions, animatedFooterStyle]}
+              style={StyleSheet.flatten([
+                styles.additionalOptions,
+                animatedFooterStyle,
+              ])}
             >
               <BlurView intensity={25} style={styles.footerBlur}>
                 <Text style={styles.optionsTitle}>
@@ -378,14 +396,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "800",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     textAlign: "center",
     marginBottom: 16,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 18,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     lineHeight: 26,
     paddingHorizontal: 24,
@@ -435,7 +453,7 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -447,14 +465,14 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     textAlign: "center",
     marginBottom: 16,
     letterSpacing: -0.3,
   },
   cardDescription: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     lineHeight: 24,
     marginBottom: 24,
@@ -485,7 +503,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 15,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "600",
     flex: 1,
     lineHeight: 20,
@@ -514,7 +532,7 @@ const styles = StyleSheet.create({
   },
   optionsSubtext: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     lineHeight: 22,
     fontWeight: "500",

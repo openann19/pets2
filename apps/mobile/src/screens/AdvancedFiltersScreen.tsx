@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   Alert,
   ScrollView,
@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
+import { useAdvancedFiltersScreen } from "../hooks/screens/useAdvancedFiltersScreen";
+import { Theme } from '../theme/unified-theme';
 
 interface AdvancedFiltersScreenProps {
   navigation: {
@@ -29,130 +31,13 @@ interface FilterOption {
 function AdvancedFiltersScreen({
   navigation,
 }: AdvancedFiltersScreenProps): JSX.Element {
-  const [filters, setFilters] = useState<FilterOption[]>([
-    // Pet Characteristics
-    {
-      id: "neutered",
-      label: "Neutered/Spayed Only",
-      value: false,
-      category: "characteristics",
-    },
-    {
-      id: "vaccinated",
-      label: "Fully Vaccinated",
-      value: true,
-      category: "characteristics",
-    },
-    {
-      id: "microchipped",
-      label: "Microchipped",
-      value: false,
-      category: "characteristics",
-    },
-    {
-      id: "house_trained",
-      label: "House Trained",
-      value: true,
-      category: "characteristics",
-    },
-
-    // Size Preferences
-    {
-      id: "small_only",
-      label: "Small Dogs Only",
-      value: false,
-      category: "size",
-    },
-    {
-      id: "medium_only",
-      label: "Medium Dogs Only",
-      value: false,
-      category: "size",
-    },
-    {
-      id: "large_only",
-      label: "Large Dogs Only",
-      value: false,
-      category: "size",
-    },
-
-    // Energy Level
-    {
-      id: "low_energy",
-      label: "Low Energy Pets",
-      value: false,
-      category: "energy",
-    },
-    {
-      id: "high_energy",
-      label: "High Energy Pets",
-      value: true,
-      category: "energy",
-    },
-
-    // Special Needs
-    {
-      id: "special_needs",
-      label: "Include Special Needs Pets",
-      value: true,
-      category: "special",
-    },
-    {
-      id: "senior_pets",
-      label: "Include Senior Pets (7+ years)",
-      value: true,
-      category: "special",
-    },
-    {
-      id: "rescue_pets",
-      label: "Rescue Pets Only",
-      value: false,
-      category: "special",
-    },
-  ]);
-
-  const toggleFilter = useCallback((filterId: string) => {
-    Haptics.selectionAsync().catch(() => {});
-    setFilters((prev) =>
-      prev.map((filter) =>
-        filter.id === filterId ? { ...filter, value: !filter.value } : filter,
-      ),
-    );
-  }, []);
-
-  const resetFilters = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    Alert.alert(
-      "Reset Filters",
-      "Are you sure you want to reset all advanced filters?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Reset",
-          style: "destructive",
-          onPress: () => {
-            setFilters((prev) =>
-              prev.map((filter) => ({ ...filter, value: false })),
-            );
-          },
-        },
-      ],
-    );
-  }, []);
-
-  const saveFilters = useCallback(() => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-      () => {},
-    );
-    Alert.alert("Success", "Advanced filters saved successfully!");
-  }, []);
-
-  const getFiltersByCategory = useCallback(
-    (category: string) => {
-      return filters.filter((filter) => filter.category === category);
-    },
-    [filters],
-  );
+  const {
+    filters,
+    toggleFilter,
+    resetFilters,
+    saveFilters,
+    getFiltersByCategory,
+  } = useAdvancedFiltersScreen();
 
   const renderCategory = useCallback(
     (category: string, title: string) => {
@@ -164,10 +49,10 @@ function AdvancedFiltersScreen({
           {categoryFilters.map((filter) => (
             <TouchableOpacity
               key={filter.id}
-              style={[
+              style={StyleSheet.flatten([
                 styles.filterCard,
                 filter.value && styles.filterCardActive,
-              ]}
+              ])}
               onPress={() => {
                 toggleFilter(filter.id);
               }}
@@ -178,18 +63,18 @@ function AdvancedFiltersScreen({
               >
                 <View style={styles.filterContent}>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.filterLabel,
                       filter.value && styles.filterLabelActive,
-                    ]}
+                    ])}
                   >
                     {filter.label}
                   </Text>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.checkbox,
                       filter.value && styles.checkboxActive,
-                    ]}
+                    ])}
                   >
                     {filter.value && (
                       <Ionicons name="checkmark" size={16} color="white" />
@@ -240,7 +125,7 @@ function AdvancedFiltersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color="#3B82F6"
+              color="Theme.colors.status.info"
             />
             <Text style={styles.infoText}>
               Advanced filters help you find pets that match your specific
@@ -373,8 +258,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkboxActive: {
-    backgroundColor: "#10B981",
-    borderColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
+    borderColor: "Theme.colors.status.success",
   },
   saveButton: {
     borderRadius: 16,

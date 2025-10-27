@@ -1,11 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useAuthStore } from "@pawfectmatch/core";
 import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -16,9 +12,17 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../contexts/ThemeContext";
+import { ScreenShell } from '../ui/layout/ScreenShell';
+import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
+import { haptic } from '../ui/haptics';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useEditProfileScreen } from "../hooks/screens/useEditProfileScreen";
+import type { ProfileData } from "../hooks/screens/useEditProfileScreen";
+import { Theme } from '../theme/unified-theme';
+import { AdvancedPhotoEditor } from "../components/photo/AdvancedPhotoEditor";
 
 interface EditProfileScreenProps {
   navigation: {
@@ -26,168 +30,115 @@ interface EditProfileScreenProps {
   };
 }
 
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  bio: string;
-  location: string;
-  avatar: string | undefined;
-}
-
 function EditProfileScreen({
   navigation,
 }: EditProfileScreenProps): JSX.Element {
-  const { colors: _colors } = useTheme();
-  const { user } = useAuthStore();
-  const [profileData, setProfileData] = useState<ProfileData>(() => ({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    bio: user?.bio || "",
-    location: user?.location?.address || "",
-    avatar: user?.avatar,
-  }));
-  const [loading, setLoading] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [showPhotoEditor, setShowPhotoEditor] = useState(false);
+  const [avatarToEdit, setAvatarToEdit] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    // Check if form has changes
-    const originalData = {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      phone: user?.phone || "",
-      bio: user?.bio || "",
-      location: user?.location?.address || "",
-      avatar: user?.avatar,
-    };
+  const {
+    profileData,
+    loading,
+    hasChanges,
+    updateField,
+    handleSelectAvatar,
+    handleSave,
+    handleCancel,
+  } = useEditProfileScreen();
 
-    const changed = Object.keys(profileData).some(
-      (key) =>
-        profileData[key as keyof ProfileData] !==
-        originalData[key as keyof ProfileData],
-    );
-    setHasChanges(changed);
-  }, [profileData, user]);
-
-  const updateField = useCallback((field: keyof ProfileData, value: string) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
-  }, []);
-
-  const handleSelectAvatar = useCallback(async () => {
+  const handleSelectAvatarWithEditor = async () => {
     try {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert(
-          "Permission required",
-          "Please enable photo library access to change your avatar.",
-        );
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        updateField("avatar", result.assets[0].uri);
-        Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success,
-        ).catch(() => {});
+      // This will launch the image picker
+      await handleSelectAvatar();
+      // If an avatar was selected, show the editor
+      if (profileData.avatar) {
+        setAvatarToEdit(profileData.avatar);
+        setShowPhotoEditor(true);
       }
     } catch (error) {
-      logger.error("Error selecting avatar:", { error });
-      Alert.alert("Error", "Failed to select avatar. Please try again.");
+      // Handle error
     }
-  }, [updateField]);
+  };
 
-  const handleSave = useCallback(async () => {
-    if (!hasChanges) {
-      navigation.goBack();
-      return;
+  const handlePhotoEditorSave = (editedUri: string) => {
+    updateField("avatar", editedUri);
+    setShowPhotoEditor(false);
+    setAvatarToEdit(undefined);
+  };
+
+  const handlePhotoEditorCancel = () => {
+    setShowPhotoEditor(false);
+    setAvatarToEdit(undefined);
+  };
+
+  const onSubmit = async () => {
+    haptic.success();
+    const result = await handleSave();
+    if (result?.shouldNavigate) {
+      if (hasChanges) {
+        Alert.alert("Success", "Profile updated successfully!", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        navigation.goBack();
+      }
     }
+  };
 
-    setLoading(true);
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // In a real app, this would call an API
-      Alert.alert("Success", "Profile updated successfully!", [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.goBack();
-          },
-        },
-      ]);
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
-        () => {},
-      );
-    } catch (error) {
-      logger.error("Error updating profile:", { error });
-      Alert.alert("Error", "Failed to update profile. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [hasChanges, navigation]);
-
-  const handleCancel = useCallback(() => {
-    if (hasChanges) {
-      Alert.alert(
-        "Discard Changes",
-        "Are you sure you want to discard your changes?",
-        [
-          { text: "Keep Editing", style: "cancel" },
-          {
-            text: "Discard",
-            style: "destructive",
-            onPress: () => {
-              navigation.goBack();
-            },
-          },
-        ],
-      );
-    } else {
+  const onCancel = () => {
+    haptic.tap();
+    const shouldNavigate = handleCancel();
+    if (shouldNavigate) {
       navigation.goBack();
     }
-  }, [hasChanges, navigation]);
+  };
+  
+  const handleBackPress = () => {
+    haptic.tap();
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#6366f1", "#8b5cf6", "#ec4899"]}
+        colors={["#6366f1", "#8b5cf6", Theme.colors.primary[500]]}
         style={StyleSheet.absoluteFillObject}
       />
+
+      {/* Photo Editor Modal */}
+      {showPhotoEditor && avatarToEdit && (
+        <Modal visible={showPhotoEditor} animationType="slide" presentationStyle="fullScreen">
+          <AdvancedPhotoEditor
+            imageUri={avatarToEdit}
+            onSave={handlePhotoEditorSave}
+            onCancel={handlePhotoEditorCancel}
+            aspectRatio={[1, 1]}
+            maxWidth={512}
+            maxHeight={512}
+          />
+        </Modal>
+      )}
 
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
             <Ionicons name="close" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Profile</Text>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.saveButton,
               (!hasChanges || loading) && styles.saveButtonDisabled,
-            ]}
-            onPress={handleSave}
+            ])}
+            onPress={onSubmit}
             disabled={!hasChanges || loading}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.saveButtonText,
                 (!hasChanges || loading) && styles.saveButtonTextDisabled,
-              ]}
+              ])}
             >
               {loading ? "Saving..." : "Save"}
             </Text>
@@ -207,7 +158,7 @@ function EditProfileScreen({
               <Text style={styles.sectionTitle}>Profile Picture</Text>
               <TouchableOpacity
                 style={styles.avatarContainer}
-                onPress={handleSelectAvatar}
+                onPress={handleSelectAvatarWithEditor}
               >
                 <BlurView intensity={20} style={styles.avatarBlur}>
                   {profileData.avatar ? (

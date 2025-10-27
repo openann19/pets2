@@ -2,10 +2,12 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { EliteButton } from "../EliteButton";
-import { GlowContainer } from "../GlowContainer";
-import { PremiumHeading } from "../PremiumHeading";
-import { PremiumBody } from "../PremiumBody";
+import { EliteButton } from "../EliteComponents";
+import { GlowContainer } from "../GlowShadowSystem";
+import PremiumTypography from "../PremiumTypography";
+import { Theme } from '../../theme/unified-theme';
+
+const { PremiumHeading, PremiumBody } = PremiumTypography;
 
 interface EmptyStateProps {
   type: "error" | "empty";
@@ -34,12 +36,12 @@ export function EmptyState({
         <Ionicons
           name={isError ? "alert-circle-outline" : "heart-outline"}
           size={80}
-          color={isError ? "#ff6b6b" : "#ec4899"}
+          color={isError ? "#ff6b6b" : "Theme.colors.primary[500]"}
         />
       </GlowContainer>
       <PremiumHeading
         level={2}
-        gradient={isError ? "error" : "primary"}
+        gradient="primary"
         animated={true}
       >
         {title}

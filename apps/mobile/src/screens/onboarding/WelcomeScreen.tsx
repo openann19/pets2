@@ -1,33 +1,54 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect } from "react";
-import type { TextStyle, ViewStyle } from "react-native";
 import {
   Dimensions,
-  InteractionManager,
-  StatusBar,
   StyleSheet,
   Text,
   View,
+  StatusBar,
+  InteractionManager,
 } from "react-native";
 import Animated, {
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
-  withSequence,
   withSpring,
   withTiming,
+  withDelay,
+  withSequence,
+  runOnJS,
 } from "react-native-reanimated";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect } from "react";
+import { EliteButton } from "../../components";
+import { useWelcomeScreen } from "../../hooks/screens/onboarding";
+import { useTheme, getExtendedColors } from "../../theme/Provider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Haptics from "expo-haptics";
+import { logger } from "@pawfectmatch/core";
+import { BlurView } from "expo-blur";
+import type { ViewStyle, TextStyle } from "react-native";
+import React from "react";
+import { lightTheme } from "../../theme/tokens";
 
-import { EliteButton } from "../../components/EliteComponents";
-import { useTheme } from "../../contexts/ThemeContext";
-import { AnimationConfigs, Spacing } from "../../styles/GlobalStyles";
+// Create spacing object for backward compatibility
+const Spacing = lightTheme.spacing;
+
+// Animation configurations
+const SPRING_BOUNCY = {
+  damping: 8,
+  stiffness: 300,
+  mass: 1,
+};
+
+const SPRING = {
+  damping: 15,
+  stiffness: 300,
+  mass: 1,
+};
+
+const TIMING = {
+  duration: 400,
+};
 
 const { width, height } = Dimensions.get("window");
 
@@ -51,7 +72,10 @@ const SPRING_CONFIG = {
 
 const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   // Theme context
-  const { colors, styles, isDark } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
+  const styles = theme.styles || {};
+  const isDark = theme.scheme === 'dark';
   const localStyles = createLocalStyles(colors);
 
   // Animation values
@@ -73,56 +97,29 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
     // Elite staggered entrance animations
     InteractionManager.runAfterInteractions(() => {
       // Logo entrance with bounce
-      logoScale.value = withSpring(1, AnimationConfigs.springBouncy);
-      logoOpacity.value = withTiming(1, AnimationConfigs.timing);
+      logoScale.value = withSpring(1, SPRING_BOUNCY);
+      logoOpacity.value = withTiming(1, TIMING);
 
       // Title with elegant slide-up
-      titleOpacity.value = withDelay(
-        300,
-        withTiming(1, AnimationConfigs.timing),
-      );
-      titleTranslateY.value = withDelay(
-        300,
-        withSpring(0, AnimationConfigs.spring),
-      );
+      titleOpacity.value = withDelay(300, withTiming(1, TIMING));
+      titleTranslateY.value = withDelay(300, withSpring(0, SPRING));
 
       // Subtitle follows smoothly
-      subtitleOpacity.value = withDelay(
-        600,
-        withTiming(1, AnimationConfigs.timing),
-      );
-      subtitleTranslateY.value = withDelay(
-        600,
-        withSpring(0, AnimationConfigs.spring),
-      );
+      subtitleOpacity.value = withDelay(600, withTiming(1, TIMING));
+      subtitleTranslateY.value = withDelay(600, withSpring(0, SPRING));
 
       // Features with subtle delay
-      featuresOpacity.value = withDelay(
-        900,
-        withTiming(1, AnimationConfigs.timing),
-      );
-      featuresTranslateY.value = withDelay(
-        900,
-        withSpring(0, AnimationConfigs.spring),
-      );
+      featuresOpacity.value = withDelay(900, withTiming(1, TIMING));
+      featuresTranslateY.value = withDelay(900, withSpring(0, SPRING));
 
       // Button with satisfying scale
-      buttonOpacity.value = withDelay(
-        1200,
-        withTiming(1, AnimationConfigs.timing),
-      );
-      buttonScale.value = withDelay(
-        1200,
-        withSpring(1, AnimationConfigs.springBouncy),
-      );
+      buttonOpacity.value = withDelay(1200, withTiming(1, TIMING));
+      buttonScale.value = withDelay(1200, withSpring(1, SPRING_BOUNCY));
 
       // Confetti celebration
       confettiScale.value = withDelay(
         500,
-        withSequence(
-          withSpring(1.3, AnimationConfigs.springBouncy),
-          withSpring(1, AnimationConfigs.spring),
-        ),
+        withSequence(withSpring(1.3, SPRING_BOUNCY), withSpring(1, SPRING)),
       );
     });
   }, []);
@@ -170,8 +167,8 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
 
       // Celebration animation before navigation
       confettiScale.value = withSequence(
-        withSpring(1.5, AnimationConfigs.springBouncy),
-        withSpring(1, AnimationConfigs.spring),
+        withSpring(1.5, SPRING_BOUNCY),
+        withSpring(1, SPRING),
       );
 
       logger.info("🎉 Onboarding completed! Welcome to PawfectMatch!");
@@ -193,7 +190,12 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
   );
 
   return (
-    <View style={[styles.container as ViewStyle, containerStyle]}>
+    <View
+      style={StyleSheet.flatten([
+        styles.container as ViewStyle,
+        containerStyle,
+      ])}
+    >
       <LinearGradient
         colors={
           isDark
@@ -204,18 +206,21 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
       >
         {/* Elite Confetti Background */}
         <Animated.View
-          style={[localStyles.confettiContainer, confettiAnimatedStyle]}
+          style={StyleSheet.flatten([
+            localStyles.confettiContainer,
+            confettiAnimatedStyle,
+          ])}
         >
           {Array.from({ length: 8 }).map((_, index) => (
             <Text
               key={index}
-              style={[
+              style={StyleSheet.flatten([
                 localStyles.confetti,
                 {
                   top: `${10 + index * 5}%`,
                   left: `${20 + index * 10}%`,
                 },
-              ]}
+              ])}
             >
               {index % 2 === 0 ? "🎉" : "✨"}
             </Text>
@@ -224,7 +229,12 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
 
         <View style={localStyles.container}>
           {/* Elite Logo with Glassmorphic Design */}
-          <Animated.View style={[localStyles.logoContainer, logoAnimatedStyle]}>
+          <Animated.View
+            style={StyleSheet.flatten([
+              localStyles.logoContainer,
+              logoAnimatedStyle,
+            ])}
+          >
             <BlurView intensity={30} style={localStyles.logoBlur}>
               <LinearGradient
                 colors={[colors.success, `${colors.success}DD`]}
@@ -244,11 +254,11 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
           {/* Elite Subtitle */}
           <Animated.View style={subtitleAnimatedStyle}>
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.subtitle as TextStyle,
                 localStyles.subtitle,
                 { color: colors.gray600 },
-              ]}
+              ])}
             >
               Welcome to the PawfectMatch community! Your profile is ready and
               we're excited to help you find amazing connections.
@@ -257,7 +267,10 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
 
           {/* Elite Features */}
           <Animated.View
-            style={[localStyles.eliteFeaturesContainer, featuresAnimatedStyle]}
+            style={StyleSheet.flatten([
+              localStyles.eliteFeaturesContainer,
+              featuresAnimatedStyle,
+            ])}
           >
             <BlurView intensity={20} style={localStyles.eliteFeaturesBlur}>
               <View style={localStyles.eliteFeature}>
@@ -269,18 +282,18 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
                       { color: colors.gray800 },
-                    ]}
+                    ])}
                   >
                     Smart Matching
                   </Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
                       { color: colors.gray600 },
-                    ]}
+                    ])}
                   >
                     AI-powered recommendations based on your preferences
                   </Text>
@@ -296,18 +309,18 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
                       { color: colors.gray800 },
-                    ]}
+                    ])}
                   >
                     Safe Messaging
                   </Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
                       { color: colors.gray600 },
-                    ]}
+                    ])}
                   >
                     Connect securely with other pet lovers
                   </Text>
@@ -323,18 +336,18 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
                       { color: colors.gray800 },
-                    ]}
+                    ])}
                   >
                     Local Connections
                   </Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
                       { color: colors.gray600 },
-                    ]}
+                    ])}
                   >
                     Find pets and owners in your area
                   </Text>
@@ -354,18 +367,18 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
                       { color: colors.gray800 },
-                    ]}
+                    ])}
                   >
                     Verified Profiles
                   </Text>
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
                       { color: colors.gray600 },
-                    ]}
+                    ])}
                   >
                     Trust and safety are our top priorities
                   </Text>
@@ -380,10 +393,10 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
               <View style={localStyles.eliteTipsHeader}>
                 <Ionicons name="bulb" size={20} color={colors.warning} />
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     localStyles.eliteTipsTitle,
                     { color: colors.gray800 },
-                  ]}
+                  ])}
                 >
                   Pro Tips
                 </Text>
@@ -392,10 +405,10 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 <View style={localStyles.eliteTip}>
                   <Ionicons name="camera" size={16} color={colors.success} />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteTipText,
                       { color: colors.gray700 },
-                    ]}
+                    ])}
                   >
                     Add photos to get 3x more matches
                   </Text>
@@ -403,10 +416,10 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 <View style={localStyles.eliteTip}>
                   <Ionicons name="heart" size={16} color={colors.secondary} />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteTipText,
                       { color: colors.gray700 },
-                    ]}
+                    ])}
                   >
                     Be honest about your pet's personality
                   </Text>
@@ -414,10 +427,10 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 <View style={localStyles.eliteTip}>
                   <Ionicons name="time" size={16} color={colors.primary} />
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       localStyles.eliteTipText,
                       { color: colors.gray700 },
-                    ]}
+                    ])}
                   >
                     Respond to messages within 24 hours
                   </Text>
@@ -429,19 +442,26 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
 
         {/* Elite Get Started Button */}
         <Animated.View
-          style={[localStyles.eliteButtonContainer, buttonAnimatedStyle]}
+          style={StyleSheet.flatten([
+            localStyles.eliteButtonContainer,
+            buttonAnimatedStyle,
+          ])}
         >
           <EliteButton
             title="Start Matching! 🚀"
-            size="large"
+            size="lg"
             icon="rocket"
             onPress={handleGetStarted}
-            gradient={[colors.success, `${colors.success}DD`]}
+            gradientEffect
+            gradientColors={[colors.success, `${colors.success}DD`]}
             style={localStyles.eliteGetStartedButton}
           />
 
           <Text
-            style={[localStyles.eliteFooterText, { color: colors.gray500 }]}
+            style={StyleSheet.flatten([
+              localStyles.eliteFooterText,
+              { color: colors.gray500 },
+            ])}
           >
             You can update your preferences anytime in settings
           </Text>
@@ -490,7 +510,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
     eliteContent: {
       flex: 1,
       justifyContent: "center",
-      paddingHorizontal: Spacing["2xl"],
+      paddingHorizontal: Spacing["4xl"],
       paddingVertical: Spacing["4xl"],
     },
 
@@ -511,13 +531,13 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
 
     // === ELITE LOGO ===
     eliteLogoContainer: {
-      alignItems: "center",
-      marginBottom: Spacing["6xl"],
+      alignItems: "center" as const,
+      marginBottom: Spacing["3xl"],
     },
     eliteLogoBlur: {
       borderRadius: 40,
       overflow: "hidden",
-      padding: Spacing.lg,
+      padding: Spacing.md,
     },
     eliteLogoGradient: {
       width: 80,
@@ -540,7 +560,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       fontSize: 16,
       textAlign: "center" as const,
       color: colors.gray500,
-      marginBottom: Spacing["5xl"],
+      marginBottom: Spacing["4xl"],
     } as const,
     eliteFeaturesContainer: {
       marginBottom: Spacing["4xl"],
@@ -568,7 +588,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       marginRight: Spacing.sm,
     },
     eliteButtonContainer: {
-      marginBottom: Spacing["2xl"],
+      marginBottom: Spacing["4xl"],
     },
     eliteGetStartedButton: {
       backgroundColor: colors.primary,
@@ -585,7 +605,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       fontSize: 12,
       textAlign: "center" as const,
       color: colors.gray500,
-      marginTop: Spacing["2xl"],
+      marginTop: Spacing["4xl"],
     } as const,
 
     // === ELITE TITLE ===
@@ -600,7 +620,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
     // === ELITE FEATURES ===
     eliteFeaturesBlur: {
       borderRadius: 20,
-      padding: Spacing["2xl"],
+      padding: Spacing["4xl"],
       overflow: "hidden" as const,
       backgroundColor: colors.glassWhiteLight,
       borderWidth: 1,
@@ -633,7 +653,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
 
     // === ELITE TIPS ===
     eliteTipsContainer: {
-      marginBottom: Spacing["5xl"],
+      marginBottom: Spacing["4xl"],
     },
     eliteTipsBlur: {
       borderRadius: 16,

@@ -20,8 +20,8 @@ export function SharedOverlayProvider({ children }: { children: React.ReactNode 
   const hostRef = useRef<HTMLDivElement>(null);
   const [node, setNode] = useState<React.ReactNode>(null);
   
-  const mount = useCallback((n: React.ReactNode) => setNode(n), []);
-  const clear = useCallback(() => setNode(null), []);
+  const mount = useCallback((n: React.ReactNode) => { setNode(n); }, []);
+  const clear = useCallback(() => { setNode(null); }, []);
   
   return (
     <SharedOverlayCtx.Provider value={{ mount, clear }}>

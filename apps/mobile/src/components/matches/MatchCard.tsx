@@ -10,9 +10,10 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import type { Match } from "@pawfectmatch/core";
+import type { Match } from "../../hooks/useMatchesData";
 import * as Haptics from "expo-haptics";
 import OptimizedImage from "../OptimizedImage";
+import { Theme } from '../../theme/unified-theme';
 
 interface MatchCardProps {
   match: Match;
@@ -50,7 +51,7 @@ function MatchCardBase({
   const handleUnmatch = async () => {
     try {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      await onUnmatch?.(match._id, displayPet.name);
+      await onUnmatch?.(match._id, match.petName);
     } catch (error) {
       logger.error("Error unmatching:", { error });
     }
@@ -59,14 +60,14 @@ function MatchCardBase({
   const handleArchive = async () => {
     try {
       void Haptics.selectionAsync();
-      await onArchive?.(match._id, displayPet.name);
+      await onArchive?.(match._id, match.petName);
     } catch (error) {
       logger.error("Error archiving:", { error });
     }
   };
 
   const handleReport = () => {
-    Alert.alert("Report Match", `Report this match with ${displayPet.name}?`, [
+    Alert.alert("Report Match", `Report this match with ${match.petName}?`, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Report",
@@ -75,7 +76,7 @@ function MatchCardBase({
           void Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Warning,
           );
-          onReport?.(match._id, displayPet.name);
+          onReport?.(match._id, match.petName);
         },
       },
     ]);
@@ -86,11 +87,9 @@ function MatchCardBase({
     opacity: opacity.value,
   }));
 
-  // Choose which pet to display (pet2 if current user owns pet1, otherwise pet1)
-  const displayPet = match.pet2; // For now, show pet2
-  const displayUser = match.user2; // For now, show user2
-  const petPhoto = displayPet.photos?.[0]?.url || "";
-  const lastMessage = match.messages?.[match.messages.length - 1];
+  // Use simplified match data
+  const petPhoto = match.petPhoto || "";
+  const lastMessage = match.lastMessage;
 
   return (
     <Animated.View style={animatedStyle}>
@@ -100,45 +99,49 @@ function MatchCardBase({
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        accessibilityLabel={`View match with ${displayPet.name}`}
+        accessibilityLabel={`View match with ${match.petName}`}
       >
         <LinearGradient
-          colors={["#fceabb", "#f8b500", "#ec4899", "#a21caf"]}
+          colors={["#fceabb", "#f8b500", "Theme.colors.primary[500]", "#a21caf"]}
           style={styles.gradient}
         >
           <OptimizedImage
-            source={{ uri: petPhoto }}
+            uri={petPhoto}
             style={styles.photo}
-            resizeMode="cover"
-            accessibilityLabel={`${displayPet.name} photo`}
-            priority="high"
+            containerStyle={{}}
+            accessibilityLabel={`${match.petName} photo`}
+            priority="normal"
+            onLoadStart={() => {}}
+            onLoadEnd={() => {}}
+            onError={() => {}}
           />
           <View style={styles.info}>
-            <Text style={styles.name}>{displayPet.name}</Text>
+            <Text style={styles.name}>{match.petName}</Text>
             <Text style={styles.meta}>
-              {displayPet.breed}, {displayPet.age} years old
+              {match.petBreed}, {match.petAge} years old
             </Text>
-            <Text style={styles.owner}>
-              {displayUser.firstName} {displayUser.lastName}
-            </Text>
+            <Text style={styles.owner}>Owner information</Text>
             {lastMessage ? (
               <Text style={styles.lastMessage} numberOfLines={1}>
                 {lastMessage.content}
               </Text>
             ) : null}
             <Text style={styles.matchedAt}>
-              Matched {new Date(match.createdAt).toLocaleDateString()}
+              Matched {new Date(match.matchedAt).toLocaleDateString()}
             </Text>
           </View>
           {(onUnmatch || onArchive || onReport) && (
             <View style={styles.actions}>
               {onReport && (
                 <TouchableOpacity
-                  style={[styles.actionButton, styles.reportButton]}
+                  style={StyleSheet.flatten([
+                    styles.actionButton,
+                    styles.reportButton,
+                  ])}
                   onPress={handleReport}
                   accessibilityLabel="Report match"
                 >
-                  <Ionicons name="flag-outline" size={20} color="#f59e0b" />
+                  <Ionicons name="flag-outline" size={20} color="Theme.colors.status.warning" />
                 </TouchableOpacity>
               )}
               {onArchive && (
@@ -152,7 +155,10 @@ function MatchCardBase({
               )}
               {onUnmatch && (
                 <TouchableOpacity
-                  style={[styles.actionButton, styles.unmatchButton]}
+                  style={StyleSheet.flatten([
+                    styles.actionButton,
+                    styles.unmatchButton,
+                  ])}
                   onPress={handleUnmatch}
                   accessibilityLabel="Unmatch"
                 >
@@ -175,7 +181,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 24,
     margin: 12,
-    shadowColor: "#ec4899",
+    shadowColor: "Theme.colors.primary[500]",
     shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 8,
@@ -214,7 +220,7 @@ const styles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 13,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 2,
   },
   matchedAt: {

@@ -60,6 +60,7 @@ export const ColorsDark = {
   // Additional UI Colors
   background: "#111827",
   surface: "#1f2937",
+  surfaceElevated: "#273449",
   text: "#f9fafb",
   textSecondary: "#9ca3af",
   border: "#374151",
@@ -67,6 +68,7 @@ export const ColorsDark = {
   card: "#1f2937",
   tertiary: "#374151",
   inverse: "#f9fafb",
+  shadow: "rgba(0, 0, 0, 0.5)",
 };
 
 // Dark Theme Shadows
@@ -109,14 +111,14 @@ export const ShadowsDark = {
 
   // Colored Shadows for Dark Theme
   primaryShadow: {
-    shadowColor: ColorsDark.primary,
+    shadowColor: "#a78bfa",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 24,
     elevation: 12,
   },
   secondaryShadow: {
-    shadowColor: ColorsDark.secondary,
+    shadowColor: "#f472b6",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 24,

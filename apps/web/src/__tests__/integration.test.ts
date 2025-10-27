@@ -157,7 +157,7 @@ describe('System Integration Tests', () => {
 
       const mainConfigPath = path.join(storybookDir, 'main.ts');
       if (fs.existsSync(mainConfigPath)) {
-        const mainConfig = require(mainConfigPath).default as any;
+        const mainConfig = require(mainConfigPath).default;
         expect(mainConfig.framework.name).toBe('@storybook/nextjs');
       }
     });

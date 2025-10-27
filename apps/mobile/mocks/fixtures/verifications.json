@@ -1,0 +1,80 @@
+{
+  "create_tier1_session": {
+    "success": true,
+    "data": {
+      "id": "verification-123",
+      "userId": "user-123",
+      "tier": 1,
+      "status": "pending",
+      "sessionId": "session-123",
+      "verificationUrl": "https://verification-provider.com/session/123",
+      "expiresAt": "2024-01-01T13:00:00Z",
+      "createdAt": "2024-01-01T12:00:00Z"
+    }
+  },
+  "requires_info": {
+    "success": true,
+    "data": {
+      "id": "verification-789",
+      "userId": "user-123",
+      "tier": 2,
+      "status": "requires_info",
+      "requiredDocuments": [
+        "government_id",
+        "proof_of_address"
+      ],
+      "rejectionReason": "Documents need to be clearer - please ensure all text is readable",
+      "submittedDocuments": [
+        {
+          "type": "government_id",
+          "filename": "id-front.jpg",
+          "status": "rejected",
+          "rejectionReason": "Text not readable"
+        }
+      ],
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T14:00:00Z"
+    }
+  },
+  "approved": {
+    "success": true,
+    "data": {
+      "id": "verification-456",
+      "userId": "user-123",
+      "tier": 1,
+      "status": "approved",
+      "sessionId": "session-456",
+      "approvedAt": "2024-01-01T13:00:00Z",
+      "badge": "id_verified",
+      "expiresAt": "2025-01-01T12:00:00Z",
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T13:00:00Z"
+    }
+  },
+  "tier2_approved": {
+    "success": true,
+    "data": {
+      "id": "verification-999",
+      "userId": "user-123",
+      "tier": 2,
+      "status": "approved",
+      "approvedAt": "2024-01-01T16:00:00Z",
+      "badge": "premium_verified",
+      "expiresAt": "2025-01-01T12:00:00Z",
+      "documents": [
+        {
+          "type": "government_id",
+          "filename": "id-front.jpg",
+          "status": "approved"
+        },
+        {
+          "type": "proof_of_address",
+          "filename": "utility-bill.pdf",
+          "status": "approved"
+        }
+      ],
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T16:00:00Z"
+    }
+  }
+}

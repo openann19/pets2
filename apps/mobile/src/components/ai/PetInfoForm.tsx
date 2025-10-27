@@ -6,9 +6,10 @@
 
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import type { ColorValue } from "react-native";
 import { TextInput } from "react-native";
 
-import { Theme } from "../theme/unified-theme";
+import { Theme } from "../../theme/unified-theme";
 
 interface PetInfoFormProps {
   petName: string;
@@ -44,11 +45,14 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Name *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petName && styles.inputError]}
+          style={[
+            styles.input,
+            validationErrors.petName ? styles.inputError : undefined,
+          ]}
           value={petName}
           onChangeText={setPetName}
           placeholder="Enter your pet's name"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
           maxLength={50}
         />
         {validationErrors.petName && (
@@ -60,11 +64,14 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Breed *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petBreed && styles.inputError]}
+          style={[
+            styles.input,
+            validationErrors.petBreed ? styles.inputError : undefined,
+          ]}
           value={petBreed}
           onChangeText={setPetBreed}
           placeholder="e.g., Golden Retriever, Mixed Breed"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
           maxLength={100}
         />
         {validationErrors.petBreed && (
@@ -76,11 +83,14 @@ export function PetInfoForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Pet Age *</Text>
         <TextInput
-          style={[styles.input, validationErrors.petAge && styles.inputError]}
+          style={[
+            styles.input,
+            validationErrors.petAge ? styles.inputError : undefined,
+          ]}
           value={petAge}
           onChangeText={setPetAge}
           placeholder="e.g., 2 years old, 6 months"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
           maxLength={50}
         />
         {validationErrors.petAge && (
@@ -94,12 +104,12 @@ export function PetInfoForm({
         <TextInput
           style={[
             styles.textarea,
-            validationErrors.petPersonality && styles.inputError,
+            validationErrors.petPersonality ? styles.inputError : undefined,
           ]}
           value={petPersonality}
           onChangeText={setPetPersonality}
           placeholder="Describe your pet's personality, habits, and quirks (e.g., energetic, loves belly rubs, afraid of thunderstorms)"
-          placeholderTextColor={Theme.colors.text.secondary}
+          placeholderTextColor={Theme.colors.text.secondary as ColorValue}
           multiline
           numberOfLines={4}
           maxLength={500}
@@ -144,23 +154,23 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: Theme.colors.border,
+    borderColor: Theme.colors.border.medium,
     borderRadius: Theme.borderRadius.md,
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
     fontSize: Theme.typography.fontSize.base,
     color: Theme.colors.text.primary,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.background.primary,
   },
   textarea: {
     borderWidth: 1,
-    borderColor: Theme.colors.border,
+    borderColor: Theme.colors.border.medium,
     borderRadius: Theme.borderRadius.md,
     paddingHorizontal: Theme.spacing.md,
     paddingVertical: Theme.spacing.sm,
     fontSize: Theme.typography.fontSize.base,
     color: Theme.colors.text.primary,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.background.primary,
     minHeight: 100,
   },
   inputError: {

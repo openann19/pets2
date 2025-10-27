@@ -62,10 +62,9 @@ export function ToneSelector({
             key={tone.id}
             style={[
               styles.toneCard,
-              selectedTone === tone.id && styles.selectedCard,
+              selectedTone === tone.id ? styles.selectedCard : undefined,
               {
-                borderColor:
-                  selectedTone === tone.id ? tone.color : Theme.colors.border,
+                borderColor: selectedTone === tone.id ? tone.color : String(Theme.colors.border),
               },
             ]}
             onPress={() => {
@@ -75,7 +74,10 @@ export function ToneSelector({
             accessibilityState={{ selected: selectedTone === tone.id }}
           >
             <View
-              style={[styles.iconContainer, { backgroundColor: tone.color }]}
+              style={StyleSheet.flatten([
+                styles.iconContainer,
+                { backgroundColor: tone.color },
+              ])}
             >
               <Text style={styles.icon}>{tone.icon}</Text>
             </View>
@@ -85,10 +87,10 @@ export function ToneSelector({
 
             {selectedTone === tone.id && (
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.selectedIndicator,
                   { backgroundColor: tone.color },
-                ]}
+                ])}
               >
                 <Text style={styles.checkmark}>✓</Text>
               </View>
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: Theme.spacing.md,
     alignItems: "center",
-    shadowColor: Theme.shadow,
+    shadowColor: "rgba(0, 0, 0, 0.1)",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

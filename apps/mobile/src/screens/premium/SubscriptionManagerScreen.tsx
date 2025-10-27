@@ -16,11 +16,10 @@ import {
   View,
 } from "react-native";
 import { _subscriptionAPI as subscriptionApi } from "../../services/api";
+import type { RootStackParamList } from "../../navigation/types";
+import { Theme } from '../../theme/unified-theme';
 
-type RootStackParamList = {
-  Premium: undefined;
-  [key: string]: undefined | object;
-};
+type SubscriptionManagerNavigationProp = NavigationProp<RootStackParamList>;
 
 interface Subscription {
   id: string;
@@ -76,7 +75,7 @@ const createCheckoutSession = async <T extends { url: string }>(payload: {
 };
 
 export const SubscriptionManagerScreen = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<SubscriptionManagerNavigationProp>();
 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
@@ -90,7 +89,7 @@ export const SubscriptionManagerScreen = () => {
       setError(null);
       // Fetch current subscription using the core SDK
       const subscriptionData = await (
-        subscriptionApi as {
+        subscriptionApi as unknown as {
           getCurrentSubscription: () => Promise<Subscription | null>;
         }
       ).getCurrentSubscription();
@@ -327,12 +326,17 @@ export const SubscriptionManagerScreen = () => {
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Current Plan</Text>
               <View
-                style={[
+                style={StyleSheet.flatten([
                   styles.statusBadge,
                   { backgroundColor: statusColors.bg },
-                ]}
+                ])}
               >
-                <Text style={[styles.statusText, { color: statusColors.text }]}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.statusText,
+                    { color: statusColors.text },
+                  ])}
+                >
                   {subscription.status.charAt(0).toUpperCase() +
                     subscription.status.slice(1)}
                 </Text>
@@ -384,13 +388,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Swipes</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100))}%`,
+                        width: `${Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100)}%`,
                         backgroundColor: "#7C3AED",
                       },
-                    ]}
+                    ])}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -403,13 +407,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Super Likes</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100))}%`,
-                        backgroundColor: "#0EA5E9",
+                        width: `${Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100)}%`,
+                        backgroundColor: "Theme.colors.secondary[500]",
                       },
-                    ]}
+                    ])}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -422,13 +426,13 @@ export const SubscriptionManagerScreen = () => {
                 <Text style={styles.usageLabel}>Boosts</Text>
                 <View style={styles.usageBar}>
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.usageProgress,
                       {
-                        width: `${String(Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100))}%`,
+                        width: `${Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100)}%`,
                         backgroundColor: "#F97316",
                       },
-                    ]}
+                    ])}
                   />
                 </View>
                 <Text style={styles.usageText}>
@@ -460,7 +464,12 @@ export const SubscriptionManagerScreen = () => {
                     size={24}
                     color="#D92D20"
                   />
-                  <Text style={[styles.actionButtonText, { color: "#D92D20" }]}>
+                  <Text
+                    style={StyleSheet.flatten([
+                      styles.actionButtonText,
+                      { color: "#D92D20" },
+                    ])}
+                  >
                     Cancel Subscription
                   </Text>
                 </TouchableOpacity>
@@ -469,11 +478,19 @@ export const SubscriptionManagerScreen = () => {
             {subscription.status === "canceled" ||
             subscription.cancelAtPeriodEnd ? (
               <TouchableOpacity
-                style={[styles.actionButton, styles.reactivateButton]}
+                style={StyleSheet.flatten([
+                  styles.actionButton,
+                  styles.reactivateButton,
+                ])}
                 onPress={() => void handleReactivateSubscription()}
               >
-                <Ionicons name="refresh-outline" size={24} color="#FFFFFF" />
-                <Text style={[styles.actionButtonText, { color: "#FFFFFF" }]}>
+                <Ionicons name="refresh-outline" size={24} color="Theme.colors.neutral[0]" />
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.actionButtonText,
+                    { color: "Theme.colors.neutral[0]" },
+                  ])}
+                >
                   Reactivate Subscription
                 </Text>
               </TouchableOpacity>
@@ -484,7 +501,12 @@ export const SubscriptionManagerScreen = () => {
               onPress={() => void handleUpdatePaymentMethod()}
             >
               <Ionicons name="card-outline" size={24} color="#6D28D9" />
-              <Text style={[styles.actionButtonText, { color: "#6D28D9" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  { color: "#6D28D9" },
+                ])}
+              >
                 Update Payment Method
               </Text>
             </TouchableOpacity>
@@ -496,7 +518,12 @@ export const SubscriptionManagerScreen = () => {
               }}
             >
               <Ionicons name="pricetag-outline" size={24} color="#6D28D9" />
-              <Text style={[styles.actionButtonText, { color: "#6D28D9" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.actionButtonText,
+                  { color: "#6D28D9" },
+                ])}
+              >
                 Change Plan
               </Text>
             </TouchableOpacity>
@@ -510,7 +537,7 @@ export const SubscriptionManagerScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
   },
   contentContainer: {
     padding: 16,
@@ -520,7 +547,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "Theme.colors.background.secondary",
   },
   loadingText: {
     marginTop: 16,
@@ -535,7 +562,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
   errorContainer: {
     padding: 24,
@@ -557,16 +584,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   retryButtonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
   noSubscriptionContainer: {
     padding: 24,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 12,
     alignItems: "center",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -574,13 +601,13 @@ const styles = StyleSheet.create({
   noSubscriptionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginTop: 16,
     marginBottom: 8,
   },
   noSubscriptionText: {
     fontSize: 16,
-    color: "#4B5563",
+    color: "Theme.colors.neutral[600]",
     textAlign: "center",
     marginBottom: 24,
   },
@@ -591,17 +618,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   upgradeButtonText: {
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
     fontSize: 16,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -615,7 +642,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -632,7 +659,7 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 4,
   },
   planPrice: {
@@ -642,7 +669,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     marginVertical: 16,
   },
   detailRow: {
@@ -653,11 +680,11 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 16,
-    color: "#4B5563",
+    color: "Theme.colors.neutral[600]",
   },
   detailValue: {
     fontSize: 16,
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     fontWeight: "500",
   },
   detailValueHighlight: {
@@ -670,12 +697,12 @@ const styles = StyleSheet.create({
   },
   usageLabel: {
     fontSize: 16,
-    color: "#4B5563",
+    color: "Theme.colors.neutral[600]",
     marginBottom: 8,
   },
   usageBar: {
     height: 8,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 4,
     overflow: "hidden",
     marginBottom: 4,
@@ -686,11 +713,11 @@ const styles = StyleSheet.create({
   },
   usageText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
   },
   usageResetText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     marginTop: 8,
   },
@@ -699,7 +726,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "Theme.colors.neutral[100]",
     borderRadius: 8,
     marginBottom: 12,
   },

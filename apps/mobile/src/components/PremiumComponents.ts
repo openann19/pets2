@@ -15,9 +15,7 @@ export {
   ElitePageHeader,
   EliteCard,
   EliteButton,
-  EliteLoading,
-  EliteEmptyState,
-  EliteAvatar,
+  // Note: EliteLoading, EliteEmptyState, EliteAvatar are not exported from EliteComponents
   // Advanced Animation Components
   FadeInUp,
   ScaleIn,
@@ -147,7 +145,7 @@ export const USAGE_EXAMPLES = {
   premiumButton: `
     <EliteButton
       title="Premium Action"
-      variant="holographic"
+      variant="primary"
       size="lg"
       magnetic={true}
       ripple={true}

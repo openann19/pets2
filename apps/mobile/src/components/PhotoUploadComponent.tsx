@@ -15,6 +15,8 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+import { Theme } from '../theme/unified-theme';
+
 const { width } = Dimensions.get("window");
 const PHOTO_SIZE = (width - 60) / 3;
 
@@ -167,7 +169,8 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
           // If we removed the primary photo, make the first remaining photo primary
           if (
             updatedPhotos.length > 0 &&
-            !updatedPhotos.some((p) => p.isPrimary)
+            !updatedPhotos.some((p) => p.isPrimary) &&
+            updatedPhotos[0]
           ) {
             updatedPhotos[0].isPrimary = true;
           }
@@ -211,7 +214,10 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={[styles.actionButton, styles.removeButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.removeButton,
+              ])}
               onPress={() => {
                 removePhoto(photo.id);
               }}
@@ -224,7 +230,9 @@ const PhotoUploadComponent: React.FC<PhotoUploadComponentProps> = ({
 
       {/* Add Photo Button */}
       {photos.length < maxPhotos && (
-        <Animated.View style={[styles.addPhotoContainer, animatedStyle]}>
+        <Animated.View
+          style={StyleSheet.flatten([styles.addPhotoContainer, animatedStyle])}
+        >
           <TouchableOpacity
             style={styles.addPhotoButton}
             onPress={showImageOptions}
@@ -294,12 +302,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   photoGrid: {
     flexDirection: "row",
@@ -316,19 +324,19 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 12,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   primaryBadge: {
     position: "absolute",
     top: 8,
     left: 8,
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
   },
   primaryBadgeText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 10,
     fontWeight: "600",
   },
@@ -351,11 +359,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(239, 68, 68, 0.8)",
   },
   actionButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 12,
   },
   removeButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 10,
     fontWeight: "bold",
   },
@@ -368,11 +376,11 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
   },
   addPhotoIcon: {
     fontSize: 32,
@@ -380,14 +388,14 @@ const styles = StyleSheet.create({
   },
   addPhotoText: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
     textAlign: "center",
   },
   emptyState: {
     alignItems: "center",
     padding: 40,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 16,
     marginBottom: 20,
   },
@@ -398,24 +406,24 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   emptyStateText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 20,
   },
   emptyStateButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   emptyStateButtonText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
   tips: {

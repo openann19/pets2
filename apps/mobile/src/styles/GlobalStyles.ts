@@ -90,6 +90,7 @@ const Colors = {
   // Additional UI Colors
   background: COLORS.neutral[0],
   surface: COLORS.neutral[50],
+  surfaceElevated: COLORS.neutral[100],
   text: COLORS.neutral[900],
   textSecondary: COLORS.neutral[600],
   border: COLORS.neutral[200],
@@ -97,6 +98,7 @@ const Colors = {
   card: COLORS.neutral[50],
   tertiary: COLORS.neutral[400],
   inverse: COLORS.neutral[900],
+  shadow: "rgba(0, 0, 0, 0.1)",
 };
 
 // Legacy typography mappings
@@ -680,6 +682,6 @@ export const Device = {
 };
 
 // Export utility objects for use by other files (e.g., DarkTheme.ts)
-export { Typography, Spacing, BorderRadius, Shadows };
+export { Colors, Typography, Spacing, BorderRadius, Shadows };
 
 export default GlobalStyles;

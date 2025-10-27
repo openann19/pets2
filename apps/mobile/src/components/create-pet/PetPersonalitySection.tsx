@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { PetFormData } from "../../hooks/usePetForm";
+import type { PetFormData } from "../../hooks/usePetForm";
+import type { FormFieldValue } from "../../types/forms";
+import { Theme } from '../../theme/unified-theme';
 
 interface PetPersonalitySectionProps {
   formData: PetFormData;
-  onUpdateFormData: (field: string, value: any) => void;
+  onUpdateFormData: (field: string, value: FormFieldValue) => void;
 }
 
 const personalityTags = [
@@ -46,20 +48,20 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
         {personalityTags.map((tag) => (
           <TouchableOpacity
             key={tag}
-            style={[
+            style={StyleSheet.flatten([
               styles.tag,
               formData.personalityTags.includes(tag) && styles.tagSelected,
-            ]}
+            ])}
             onPress={() => {
               togglePersonalityTag(tag);
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.tagText,
                 formData.personalityTags.includes(tag) &&
                   styles.tagTextSelected,
-              ]}
+              ])}
             >
               {tag.replace("-", " ")}
             </Text>
@@ -77,12 +79,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#111827",
+    color: "Theme.colors.neutral[900]",
     marginBottom: 16,
   },
   sectionDesc: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 16,
   },
   tagsContainer: {
@@ -94,20 +96,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   tagSelected: {
-    borderColor: "#8B5CF6",
-    backgroundColor: "#F3F4F6",
+    borderColor: "Theme.colors.secondary[500]",
+    backgroundColor: "Theme.colors.neutral[100]",
   },
   tagText: {
     fontSize: 14,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
   },
   tagTextSelected: {
-    color: "#8B5CF6",
+    color: "Theme.colors.secondary[500]",
     fontWeight: "600",
   },
 });

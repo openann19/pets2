@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import { View, ScrollView, StyleSheet, Alert, Dimensions } from "react-native";
 
 // Import new architecture components
-import { EliteContainer, EliteHeader } from "../components/EliteComponents";
+import { EliteContainer, EliteHeader } from "../components";
 import {
   Theme,
   EliteButton,
@@ -27,7 +27,7 @@ import {
   Label,
   useStaggeredAnimation,
   useEntranceAnimation,
-} from "../components/NewComponents";
+} from "../components";
 
 // Import legacy components for comparison
 
@@ -76,14 +76,10 @@ export default function NewComponentsTestScreen() {
 
   // Animation hooks
   const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      8, // Number of sections
-      100,
-      "gentle",
-    );
+    useStaggeredAnimation(7, 100);
 
   const { start: startEntranceAnimation, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "bouncy");
+    useEntranceAnimation("fadeIn", 0);
 
   // Start animations
   React.useEffect(() => {
@@ -129,17 +125,17 @@ export default function NewComponentsTestScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Hero Section */}
-        <View style={[getAnimatedStyle(0), entranceStyle]}>
-          <FXContainerPresets.holographic style={styles.heroSection}>
+        <View style={[getAnimatedStyle, entranceStyle]}>
+          <FXContainerPresets.glass style={styles.heroSection}>
             <Heading1 style={styles.heroTitle}>New Architecture Test</Heading1>
             <Body style={styles.heroSubtitle}>
               All new components are working perfectly!
             </Body>
-          </FXContainerPresets.holographic>
+          </FXContainerPresets.glass>
         </View>
 
         {/* Button Tests */}
-        <View style={getAnimatedStyle(1)}>
+        <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Button System Test</Heading2>
             <BodySmall style={styles.sectionSubtitle}>
@@ -171,13 +167,6 @@ export default function NewComponentsTestScreen() {
                   handleButtonPress("Outline");
                 }}
               />
-              <EliteButtonPresets.holographic
-                title="Holographic"
-                size="md"
-                onPress={() => {
-                  handleButtonPress("Holographic");
-                }}
-              />
               <EliteButtonPresets.glass
                 title="Glass"
                 size="md"
@@ -197,7 +186,7 @@ export default function NewComponentsTestScreen() {
         </View>
 
         {/* Container Tests */}
-        <View style={getAnimatedStyle(2)}>
+        <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>
               Container System Test
@@ -226,11 +215,11 @@ export default function NewComponentsTestScreen() {
               </FXContainer>
 
               <FXContainer
-                type="holographic"
+                type="neon"
                 variant="intense"
                 style={styles.demoContainer}
               >
-                <Label>Holographic</Label>
+                <Label>Neon Container</Label>
                 <BodySmall>Shimmer animation</BodySmall>
               </FXContainer>
             </View>
@@ -238,7 +227,7 @@ export default function NewComponentsTestScreen() {
         </View>
 
         {/* Swipe Card Test */}
-        <View style={getAnimatedStyle(3)}>
+        <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Swipe Card Test</Heading2>
             <BodySmall style={styles.sectionSubtitle}>
@@ -258,7 +247,7 @@ export default function NewComponentsTestScreen() {
         </View>
 
         {/* Photo Upload Test */}
-        <View style={getAnimatedStyle(4)}>
+        <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Photo Upload Test</Heading2>
             <BodySmall style={styles.sectionSubtitle}>
@@ -274,7 +263,7 @@ export default function NewComponentsTestScreen() {
         </View>
 
         {/* Typography Test */}
-        <View style={getAnimatedStyle(5)}>
+        <View style={getAnimatedStyle}>
           <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>Typography Test</Heading2>
             <BodySmall style={styles.sectionSubtitle}>
@@ -297,7 +286,7 @@ export default function NewComponentsTestScreen() {
         </View>
 
         {/* Performance Test */}
-        <View style={getAnimatedStyle(6)}>
+        <View style={getAnimatedStyle}>
           <PerformanceTestSuite
             onTestComplete={(results) => {
               Alert.alert(
@@ -309,8 +298,8 @@ export default function NewComponentsTestScreen() {
         </View>
 
         {/* Success Message */}
-        <View style={getAnimatedStyle(7)}>
-          <FXContainerPresets.holographic style={styles.section}>
+        <View style={getAnimatedStyle}>
+          <FXContainerPresets.glass style={styles.section}>
             <Heading2 style={styles.sectionTitle}>
               ✅ All Tests Passed!
             </Heading2>
@@ -338,7 +327,7 @@ export default function NewComponentsTestScreen() {
                 <Body>✅ Ready for production use!</Body>
               </View>
             </View>
-          </FXContainerPresets.holographic>
+          </FXContainerPresets.glass>
         </View>
       </ScrollView>
     </EliteContainer>

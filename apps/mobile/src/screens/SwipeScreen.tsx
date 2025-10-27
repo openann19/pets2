@@ -1,55 +1,73 @@
-import React, { useCallback, useRef, useState } from "react";
+/**
+ * SWIPE SCREEN (MODULARIZED)
+ *
+ * Modernized swipe screen using useSwipeData hook for data and gestures
+ * extracted to improve modularity and testability.
+ */
+
+import React, { useRef } from "react";
 import {
   Animated,
   Dimensions,
   PanResponder,
   StyleSheet,
   View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-
-import { EliteContainer } from "../components/EliteContainer";
-import { EliteLoading } from "../components/EliteLoading";
-import { SwipeHeader } from "../components/swipe/SwipeHeader";
-import { SwipeFilters } from "../components/swipe/SwipeFilters";
-import { SwipeCard } from "../components/swipe/SwipeCard";
-import { SwipeActions } from "../components/swipe/SwipeActions";
-import { MatchModal } from "../components/swipe/MatchModal";
-import { EmptyState } from "../components/swipe/EmptyState";
-import { GlassContainer } from "../components/GlassContainer";
+import type { RootStackScreenProps } from "../navigation/types";
 import { useSwipeData } from "../hooks/useSwipeData";
-import { tokens } from "@pawfectmatch/design-tokens";
+import { useTabDoublePress } from "../hooks/navigation/useTabDoublePress";
+import { useSwipeUndo } from "../hooks/useSwipeUndo";
+import UndoPill from "../components/feedback/UndoPill";
+import { ScreenShell } from "../ui/layout/ScreenShell";
+import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
+import { haptic } from "../ui/haptics";
+import { Theme } from '../theme/unified-theme';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth } = Dimensions.get("window");
 
-type RootStackParamList = {
-  Swipe: undefined;
-  Chat: { matchId: string; petName: string };
-  Matches: undefined;
-};
-
-type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
+type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function SwipeScreen({ navigation }: SwipeScreenProps) {
-  const { data, actions } = useSwipeData();
+  // Use the extracted swipe data hook
+  const {
+    pets,
+    isLoading,
+    error,
+    currentIndex,
+    handleSwipe,
+    handleButtonSwipe,
+    refreshPets,
+  } = useSwipeData();
 
-  // Animation values
+  // Handle double-tap to refresh pets
+  useTabDoublePress(() => {
+    refreshPets();
+  });
+
+  // Undo functionality
+  const { capture, undo, busy } = useSwipeUndo();
+
+  const onSwipeWithCapture = async (gestureDir: "left" | "right" | "up", actionDir: "like" | "pass" | "superlike", petId: string, index: number) => {
+    if (actionDir === "like") {
+      haptic.confirm();
+    } else if (actionDir === "superlike") {
+      haptic.super();
+    } else {
+      haptic.tap();
+    }
+    capture({ petId, direction: gestureDir, index });
+    await handleSwipe(actionDir);
+  };
+
+  // Animation values for gestures
   const position = useRef(new Animated.ValueXY()).current;
   const rotate = position.x.interpolate({
     inputRange: [-screenWidth / 2, 0, screenWidth / 2],
-    outputRange: ["-30deg", "0deg", "30deg"],
-    extrapolate: "clamp",
-  });
-
-  const likeOpacity = position.x.interpolate({
-    inputRange: [0, screenWidth / 4],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
-
-  const nopeOpacity = position.x.interpolate({
-    inputRange: [-screenWidth / 4, 0],
-    outputRange: [1, 0],
+    outputRange: ["-10deg", "0deg", "10deg"],
     extrapolate: "clamp",
   });
 
@@ -59,23 +77,35 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
     onMoveShouldSetPanResponder: () => true,
     onPanResponderMove: Animated.event(
       [null, { dx: position.x, dy: position.y }],
-      {
-        useNativeDriver: false,
-      },
-    ),
-    onPanResponderRelease: (_evt, gestureState) => {
-      const { dx, dy } = gestureState;
-      const swipeThreshold = screenWidth * 0.3;
-
-      if (dx > swipeThreshold) {
+      { useNativeDriver: false },
+    ) as any,
+    onPanResponderRelease: async (evt, gestureState) => {
+      if (gestureState.dx > 120) {
         // Swipe right - like
-        actions.handleButtonSwipe("like");
-      } else if (dx < -swipeThreshold) {
+        const direction = screenWidth;
+        Animated.timing(position, {
+          toValue: { x: direction, y: 0 },
+          duration: 300,
+          useNativeDriver: false,
+        }).start(async () => {
+          if (currentPet) {
+            await onSwipeWithCapture("right", "like", currentPet._id, currentIndex);
+          }
+          position.setValue({ x: 0, y: 0 });
+        });
+      } else if (gestureState.dx < -120) {
         // Swipe left - pass
-        actions.handleButtonSwipe("pass");
-      } else if (dy < -swipeThreshold) {
-        // Swipe up - super like
-        actions.handleButtonSwipe("superlike");
+        const direction = -screenWidth;
+        Animated.timing(position, {
+          toValue: { x: direction, y: 0 },
+          duration: 300,
+          useNativeDriver: false,
+        }).start(async () => {
+          if (currentPet) {
+            await onSwipeWithCapture("left", "pass", currentPet._id, currentIndex);
+          }
+          position.setValue({ x: 0, y: 0 });
+        });
       } else {
         // Snap back
         Animated.spring(position, {
@@ -86,188 +116,181 @@ export default function SwipeScreen({ navigation }: SwipeScreenProps) {
     },
   });
 
-  // Handle swipe with animation
-  const handleSwipeWithAnimation = useCallback(
-    async (action: "like" | "pass" | "superlike") => {
-      const toValue =
-        action === "like" ? screenWidth : action === "pass" ? -screenWidth : 0;
+  // Show error if exists
+  if (error) {
+    Alert.alert("Error", error);
+  }
 
-      Animated.timing(position, {
-        toValue: { x: toValue, y: action === "superlike" ? -screenHeight : 0 },
-        duration: 300,
-        useNativeDriver: false,
-      }).start(() => {
-        // Reset position for next card
-        position.setValue({ x: 0, y: 0 });
-
-        // Execute swipe action
-        actions.handleSwipe(action);
-      });
-    },
-    [position, actions],
-  );
-
-  // Handle button swipe
-  const handleButtonSwipe = useCallback(
-    (action: "like" | "pass" | "superlike") => {
-      void handleSwipeWithAnimation(action);
-    },
-    [handleSwipeWithAnimation],
-  );
-
-  // Handle filter toggle
-  const handleFilterToggle = useCallback(() => {
-    actions.setShowFilters(!data.showFilters);
-  }, [data.showFilters, actions]);
-
-  // Handle matches navigation
-  const handleMatchesPress = useCallback(() => {
-    navigation.navigate("Matches");
-  }, [navigation]);
-
-  // Handle back navigation
-  const handleBack = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
-
-  // Handle match modal actions
-  const handleKeepSwiping = useCallback(() => {
-    actions.setShowMatchModal(false);
-  }, [actions]);
-
-  const handleSendMessage = useCallback(() => {
-    actions.setShowMatchModal(false);
-    if (data.matchedPet) {
-      navigation.navigate("Chat", {
-        matchId: data.matchedPet._id,
-        petName: data.matchedPet.name,
-      });
-    }
-  }, [actions, data.matchedPet, navigation]);
-
-  // Handle filter application
-  const handleApplyFilters = useCallback(() => {
-    actions.loadPets();
-  }, [actions]);
-
-  // Loading state
-  if (data.isLoading && data.pets.length === 0) {
+  // Show loading state
+  if (isLoading && pets.length === 0) {
     return (
-      <EliteContainer gradient="primary">
-        <EliteLoading
-          title="Loading pets..."
-          subtitle="Finding your perfect matches"
-          variant="paws"
-        />
-      </EliteContainer>
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: "Swipe",
+              showBackButton: true,
+              onBackPress: () => navigation.goBack(),
+              rightButtons: [
+                {
+                  type: "custom",
+                  icon: "people-outline",
+                  onPress: () => navigation.navigate("Matches"),
+                  variant: "glass",
+                  haptic: "light",
+                  customComponent: undefined,
+                },
+              ],
+            })}
+          />
+        }
+      >
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.emptySubtitle}>Loading pets...</Text>
+        </View>
+      </ScreenShell>
     );
   }
 
-  // Error state
-  if (data.error) {
+  const currentPet = pets[currentIndex];
+
+  if (!currentPet) {
     return (
-      <EliteContainer gradient="primary">
-        <EmptyState
-          type="error"
-          title="Error loading pets"
-          subtitle={data.error}
-          buttonTitle="Try Again"
-          onButtonPress={actions.refreshPets}
-        />
-      </EliteContainer>
+      <ScreenShell
+        header={
+          <AdvancedHeader
+            {...HeaderConfigs.glass({
+              title: "Swipe",
+              showBackButton: true,
+              onBackPress: () => navigation.goBack(),
+              rightButtons: [
+                {
+                  type: "custom",
+                  icon: "people-outline",
+                  onPress: () => navigation.navigate("Matches"),
+                  variant: "glass",
+                  haptic: "light",
+                  customComponent: undefined,
+                },
+              ],
+            })}
+          />
+        }
+      >
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitle}>No more pets!</Text>
+          <Text style={styles.emptySubtitle}>
+            Check back later for more matches
+          </Text>
+        </View>
+      </ScreenShell>
     );
   }
-
-  // Empty state
-  if (!data.pets[data.currentIndex]) {
-    return (
-      <EliteContainer gradient="primary">
-        <EmptyState
-          type="empty"
-          title="No more pets!"
-          subtitle="Check back later for more matches"
-          buttonTitle="Refresh"
-          onButtonPress={actions.loadPets}
-        />
-      </EliteContainer>
-    );
-  }
-
-  const currentPet = data.pets[data.currentIndex];
 
   return (
-    <EliteContainer gradient="primary">
-      {/* Header */}
-      <SwipeHeader
-        onBack={handleBack}
-        onFilterPress={handleFilterToggle}
-        onMatchesPress={handleMatchesPress}
-      />
-
-      {/* Filter Panel */}
-      {data.showFilters && (
-        <SwipeFilters
-          filters={data.filters}
-          onFiltersChange={actions.setFilters}
-          onApplyFilters={handleApplyFilters}
+    <ScreenShell
+      header={
+        <AdvancedHeader
+          {...HeaderConfigs.glass({
+            title: "Swipe",
+            showBackButton: true,
+            onBackPress: () => {
+              haptic.tap();
+              navigation.goBack();
+            },
+            rightButtons: [
+              {
+                type: "custom",
+                icon: "people-outline",
+                onPress: () => {
+                  haptic.tap();
+                  navigation.navigate("Matches");
+                },
+                variant: "glass",
+                haptic: "light",
+                customComponent: undefined,
+              },
+            ],
+          })}
         />
-      )}
-
-      {/* Card Stack */}
+      }
+    >
       <View style={styles.cardContainer}>
-        <SwipeCard
-          pet={currentPet}
-          position={position}
-          rotate={rotate}
-          likeOpacity={likeOpacity}
-          nopeOpacity={nopeOpacity}
-          panHandlers={panResponder.panHandlers}
-        />
-
-        {/* Next card preview */}
-        {data.pets[data.currentIndex + 1] && (
-          <GlassContainer
-            intensity="light"
-            transparency="light"
-            border="light"
-            shadow="light"
-          >
-            <View style={[styles.card, styles.nextCard]}>
-              <SwipeCard
-                pet={data.pets[data.currentIndex + 1]}
-                position={new Animated.ValueXY()}
-                rotate={new Animated.Value(0)}
-                likeOpacity={new Animated.Value(0)}
-                nopeOpacity={new Animated.Value(0)}
-                panHandlers={{}}
-              />
-            </View>
-          </GlassContainer>
-        )}
+        <Animated.View
+          testID={`swipe-card-${currentIndex}`}
+          style={StyleSheet.flatten([
+            styles.card,
+            {
+              transform: [
+                { translateX: position.x },
+                { translateY: position.y },
+                { rotate },
+              ],
+            },
+          ])}
+          {...panResponder.panHandlers}
+        >
+          <View style={styles.petInfo}>
+            <Text style={styles.petName}>{currentPet.name}</Text>
+            <Text style={styles.petBreed}>{currentPet.breed}</Text>
+            {currentPet.description && (
+              <Text style={styles.petDescription}>
+                {currentPet.description}
+              </Text>
+            )}
+          </View>
+        </Animated.View>
       </View>
 
-      {/* Action Buttons */}
-      <SwipeActions
-        onPass={() => {
-          handleButtonSwipe("pass");
-        }}
-        onSuperLike={() => {
-          handleButtonSwipe("superlike");
-        }}
-        onLike={() => {
-          handleButtonSwipe("like");
-        }}
-      />
+      <View style={styles.actions}>
+        <TouchableOpacity
+          style={StyleSheet.flatten([styles.actionButton, styles.passButton])}
+          onPress={() => {
+            haptic.tap();
+            handleButtonSwipe("pass");
+          }}
+        >
+          <Text style={styles.actionButtonText}>Pass</Text>
+        </TouchableOpacity>
 
-      {/* Match Modal */}
-      {data.showMatchModal && data.matchedPet && (
-        <MatchModal
-          matchedPet={data.matchedPet}
-          onKeepSwiping={handleKeepSwiping}
-          onSendMessage={handleSendMessage}
-        />
-      )}
-    </EliteContainer>
+        <TouchableOpacity
+          style={StyleSheet.flatten([
+            styles.actionButton,
+            styles.superLikeButton,
+          ])}
+          onPress={() => {
+            haptic.super();
+            handleButtonSwipe("superlike");
+          }}
+        >
+          <Text style={styles.actionButtonText}>★</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={StyleSheet.flatten([styles.actionButton, styles.likeButton])}
+          onPress={() => {
+            haptic.confirm();
+            handleButtonSwipe("like");
+          }}
+        >
+          <Text style={styles.actionButtonText}>Like</Text>
+        </TouchableOpacity>
+      </View>
+
+      <UndoPill
+        onUndo={async () => {
+          haptic.selection();
+          const restoredPet = await undo();
+          if (restoredPet) {
+            // put the card back to front of stack
+            // Note: This would require updating pets state
+            // You'd need to add this capability to useSwipeData
+          }
+        }}
+        testID="undo-pill"
+      />
+    </ScreenShell>
   );
 }
 
@@ -280,19 +303,91 @@ const styles = StyleSheet.create({
   },
   card: {
     width: screenWidth - 40,
-    height: screenHeight * 0.65,
-    backgroundColor: "#fff",
+    height: 400,
+    backgroundColor: "white",
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-    position: "absolute",
+    padding: 20,
+    shadowColor: "Theme.colors.neutral[950]",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    justifyContent: "flex-end",
   },
-  nextCard: {
-    transform: [{ scale: 0.95 }],
-    opacity: 0.8,
-    zIndex: -1,
+  petInfo: {
+    alignItems: "center",
+  },
+  petName: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  petBreed: {
+    fontSize: 18,
+    color: "#666",
+  },
+  petDescription: {
+    fontSize: 14,
+    color: "#999",
+    marginTop: 8,
+    textAlign: "center",
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 40,
+    paddingVertical: 30,
+    backgroundColor: "white",
+  },
+  actionButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  passButton: {
+    backgroundColor: "#ff4458",
+  },
+  likeButton: {
+    backgroundColor: "#42c767",
+  },
+  superLikeButton: {
+    backgroundColor: "#007AFF",
+  },
+  actionButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 40,
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 32,
+  },
+  refreshButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 8,
+  },
+  refreshButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

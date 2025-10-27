@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import type { HelpOption } from "../../hooks/useHelpSupportData";
+import { Theme } from '../../theme/unified-theme';
 
 interface HelpOptionCardProps {
   option: HelpOption;
@@ -18,7 +19,9 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
   onPress,
 }) => {
   return (
-    <Animated.View style={[styles.optionCard, animatedStyle]}>
+    <Animated.View
+      style={StyleSheet.flatten([styles.optionCard, animatedStyle])}
+    >
       <TouchableOpacity
         onPress={() => {
           onPress(option);
@@ -26,8 +29,13 @@ export const HelpOptionCard: React.FC<HelpOptionCardProps> = ({
       >
         <BlurView intensity={20} style={styles.optionBlur}>
           <View style={styles.optionContent}>
-            <View style={[styles.optionIcon, { backgroundColor: "#3B82F6" }]}>
-              <Ionicons name={option.icon as any} size={20} color="white" />
+            <View
+              style={StyleSheet.flatten([
+                styles.optionIcon,
+                { backgroundColor: Theme.colors.status.info },
+              ])}
+            >
+              <Ionicons name={option.icon} size={20} color="white" />
             </View>
             <View style={styles.optionText}>
               <Text style={styles.optionTitle}>{option.title}</Text>

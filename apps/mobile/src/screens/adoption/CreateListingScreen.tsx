@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
+import { Theme } from '../../theme/unified-theme';
 
 type AdoptionStackParamList = {
   CreateListing: undefined;
@@ -180,10 +181,10 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
           <BlurView intensity={20} style={styles.sectionCard}>
             <TouchableOpacity style={styles.photoUpload} onPress={addPhoto}>
               <LinearGradient
-                colors={["#f3f4f6", "#e5e7eb"]}
+                colors={["Theme.colors.neutral[100]", "Theme.colors.neutral[200]"]}
                 style={styles.photoUploadGradient}
               >
-                <Ionicons name="camera" size={32} color="#6b7280" />
+                <Ionicons name="camera" size={32} color="Theme.colors.neutral[500]" />
                 <Text style={styles.photoUploadText}>Add Photos</Text>
                 <Text style={styles.photoUploadHint}>
                   Tap to upload pet photos
@@ -214,7 +215,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   handleInputChange("name", value);
                 }}
                 placeholder="Enter pet's name"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="Theme.colors.neutral[400]"
               />
             </View>
 
@@ -225,21 +226,21 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   {["dog", "cat"].map((species) => (
                     <TouchableOpacity
                       key={species}
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.species === species &&
                           styles.radioButtonActive,
-                      ]}
+                      ])}
                       onPress={() => {
                         handleInputChange("species", species);
                       }}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.radioText,
                           formData.species === species &&
                             styles.radioTextActive,
-                        ]}
+                        ])}
                       >
                         {species.charAt(0).toUpperCase() + species.slice(1)}
                       </Text>
@@ -254,19 +255,19 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   {["male", "female"].map((gender) => (
                     <TouchableOpacity
                       key={gender}
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.gender === gender && styles.radioButtonActive,
-                      ]}
+                      ])}
                       onPress={() => {
                         handleInputChange("gender", gender);
                       }}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.radioText,
                           formData.gender === gender && styles.radioTextActive,
-                        ]}
+                        ])}
                       >
                         {gender.charAt(0).toUpperCase() + gender.slice(1)}
                       </Text>
@@ -285,7 +286,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   handleInputChange("breed", value);
                 }}
                 placeholder="Enter breed"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="Theme.colors.neutral[400]"
               />
             </View>
 
@@ -299,7 +300,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     handleInputChange("age", value);
                   }}
                   placeholder="e.g., 2 years"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor="Theme.colors.neutral[400]"
                   keyboardType="numeric"
                 />
               </View>
@@ -310,19 +311,19 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   {["small", "medium", "large"].map((size) => (
                     <TouchableOpacity
                       key={size}
-                      style={[
+                      style={StyleSheet.flatten([
                         styles.radioButton,
                         formData.size === size && styles.radioButtonActive,
-                      ]}
+                      ])}
                       onPress={() => {
                         handleInputChange("size", size);
                       }}
                     >
                       <Text
-                        style={[
+                        style={StyleSheet.flatten([
                           styles.radioText,
                           formData.size === size && styles.radioTextActive,
-                        ]}
+                        ])}
                       >
                         {size.charAt(0).toUpperCase() + size.slice(1)}
                       </Text>
@@ -339,13 +340,13 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
           <Text style={styles.sectionTitle}>Description *</Text>
           <BlurView intensity={20} style={styles.sectionCard}>
             <TextInput
-              style={[styles.textInput, styles.textArea]}
+              style={StyleSheet.flatten([styles.textInput, styles.textArea])}
               value={formData.description}
               onChangeText={(value) => {
                 handleInputChange("description", value);
               }}
               placeholder="Tell potential adopters about your pet's personality, habits, and what makes them special..."
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="Theme.colors.neutral[400]"
               multiline
               numberOfLines={6}
               textAlignVertical="top"
@@ -364,20 +365,20 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
               {personalityOptions.map((tag) => (
                 <TouchableOpacity
                   key={tag}
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.tag,
                     formData.personalityTags.includes(tag) && styles.tagActive,
-                  ]}
+                  ])}
                   onPress={() => {
                     handlePersonalityToggle(tag);
                   }}
                 >
                   <Text
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.tagText,
                       formData.personalityTags.includes(tag) &&
                         styles.tagTextActive,
-                    ]}
+                    ])}
                   >
                     {tag}
                   </Text>
@@ -401,13 +402,13 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   }}
                 >
                   <View
-                    style={[
+                    style={StyleSheet.flatten([
                       styles.healthCheckbox,
                       value && styles.healthCheckboxActive,
-                    ]}
+                    ])}
                   >
                     {value && (
-                      <Ionicons name="checkmark" size={16} color="#fff" />
+                      <Ionicons name="checkmark" size={16} color="Theme.colors.neutral[0]" />
                     )}
                   </View>
                   <Text style={styles.healthText}>
@@ -422,27 +423,27 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
         {/* Submit Button */}
         <View style={styles.section}>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.submitButton,
               isSubmitting && styles.submitButtonDisabled,
-            ]}
+            ])}
             onPress={handleSubmit}
             disabled={isSubmitting}
           >
             <LinearGradient
               colors={
-                isSubmitting ? ["#9ca3af", "#6b7280"] : ["#ec4899", "#db2777"]
+                isSubmitting ? ["Theme.colors.neutral[400]", "Theme.colors.neutral[500]"] : ["Theme.colors.primary[500]", "Theme.colors.primary[600]"]
               }
               style={styles.submitGradient}
             >
               {isSubmitting ? (
                 <>
-                  <Ionicons name="hourglass" size={20} color="#fff" />
+                  <Ionicons name="hourglass" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.submitText}>Creating Listing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="paw" size={20} color="#fff" />
+                  <Ionicons name="paw" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.submitText}>Create Listing</Text>
                 </>
               )}
@@ -467,7 +468,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -492,12 +493,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 12,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginBottom: 16,
   },
   sectionCard: {
@@ -515,18 +516,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: "Theme.colors.neutral[300]",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   textArea: {
     minHeight: 120,
@@ -543,20 +544,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: "Theme.colors.neutral[300]",
     alignItems: "center",
   },
   radioButtonActive: {
-    backgroundColor: "#ec4899",
-    borderColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
+    borderColor: "Theme.colors.primary[500]",
   },
   radioText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
   },
   radioTextActive: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   photoUpload: {
     borderRadius: 12,
@@ -570,12 +571,12 @@ const styles = StyleSheet.create({
   photoUploadText: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginTop: 12,
   },
   photoUploadHint: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 4,
   },
   photoPreview: {
@@ -602,19 +603,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
   },
   tagActive: {
     backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
+    borderColor: "Theme.colors.primary[500]",
   },
   tagText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   tagTextActive: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
   },
   healthGrid: {
     gap: 12,
@@ -629,23 +630,23 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "#d1d5db",
+    borderColor: "Theme.colors.neutral[300]",
     justifyContent: "center",
     alignItems: "center",
   },
   healthCheckboxActive: {
-    backgroundColor: "#10b981",
-    borderColor: "#10b981",
+    backgroundColor: "Theme.colors.status.success",
+    borderColor: "Theme.colors.status.success",
   },
   healthText: {
     fontSize: 16,
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     fontWeight: "500",
   },
   submitButton: {
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -662,7 +663,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   submitText: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontSize: 18,
     fontWeight: "bold",
   },

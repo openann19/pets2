@@ -61,7 +61,7 @@ export const Leaderboard = ({ entries, category, timeframe, onCategoryChange, on
         <div className="flex space-x-2 overflow-x-auto pb-2">
           {categories.map((cat) => {
             const Icon = cat.icon;
-            return (<button key={cat.id} onClick={() => handleCategoryChange(cat.id)} className={`flex items-center space-x-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${selectedCategory === cat.id
+            return (<button key={cat.id} onClick={() => { handleCategoryChange(cat.id); }} className={`flex items-center space-x-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${selectedCategory === cat.id
                     ? 'bg-white text-pink-600'
                     : 'bg-white/20 text-white hover:bg-white/30'}`}>
                 <Icon className="w-4 h-4"/>
@@ -74,7 +74,7 @@ export const Leaderboard = ({ entries, category, timeframe, onCategoryChange, on
       {/* Timeframe Filter */}
       <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
         <div className="flex space-x-2">
-          {timeframes.map((tf) => (<button key={tf.id} onClick={() => handleTimeframeChange(tf.id)} className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${selectedTimeframe === tf.id
+          {timeframes.map((tf) => (<button key={tf.id} onClick={() => { handleTimeframeChange(tf.id); }} className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${selectedTimeframe === tf.id
                 ? 'bg-pink-500 text-white'
                 : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'}`}>
               {tf.label}

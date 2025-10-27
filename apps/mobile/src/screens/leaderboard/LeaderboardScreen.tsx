@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,10 +26,15 @@ import type {
   LeaderboardFilter,
 } from "../../services/LeaderboardService";
 import LeaderboardService from "../../services/LeaderboardService";
+import { Theme } from '../../theme/unified-theme';
+import { useScrollOffsetTracker } from "../../hooks/navigation/useScrollOffsetTracker";
+import { useTabReselectRefresh } from "../../hooks/navigation/useTabReselectRefresh";
 
 const { width: _screenWidth } = Dimensions.get("window");
 
 export default function LeaderboardScreen() {
+  const scrollRef = useRef<ScrollView>(null);
+  const { onScroll, getOffset } = useScrollOffsetTracker();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [categories, setCategories] = useState<LeaderboardCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -43,6 +48,66 @@ export default function LeaderboardScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Define refreshData after the functions it uses are defined
+  const loadLeaderboard = async (pageNum = 1) => {
+    try {
+      const filter: LeaderboardFilter =
+        selectedCategory === "all"
+          ? { period: selectedPeriod }
+          : { category: selectedCategory, period: selectedPeriod };
+
+      const response = await LeaderboardService.getLeaderboard(
+        filter,
+        pageNum,
+        20,
+      );
+
+      if (pageNum === 1) {
+        setEntries(response.entries);
+      } else {
+        setEntries((prev) => [...prev, ...response.entries]);
+      }
+
+      setHasMore(response.hasMore);
+      setPage(pageNum);
+    } catch (error) {
+      logger.error("Failed to load leaderboard:", { error });
+      Alert.alert("Error", "Failed to load leaderboard");
+    }
+  };
+
+  const loadUserRank = async () => {
+    try {
+      const userRankData = await LeaderboardService.getUserRank(
+        selectedCategory === "all" ? undefined : selectedCategory,
+      );
+      setUserRank(userRankData.rank);
+      setUserEntry(userRankData.entry);
+    } catch (error) {
+      logger.error("Failed to load user rank:", { error });
+    }
+  };
+
+  const refreshData = useCallback(async () => {
+    if (loading || refreshing) return;
+    setRefreshing(true);
+    try {
+      await Promise.all([loadLeaderboard(1), loadUserRank()]);
+    } catch (error) {
+      logger.error("Failed to refresh data:", { error });
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loading, refreshing, selectedCategory, selectedPeriod]);
+
+  useTabReselectRefresh({
+    listRef: scrollRef,
+    onRefresh: refreshData,
+    getOffset,
+    topThreshold: 80,
+    cooldownMs: 700,
+  });
 
   // Load initial data
   useEffect(() => {
@@ -87,56 +152,6 @@ export default function LeaderboardScreen() {
     }
   };
 
-  const loadLeaderboard = async (pageNum = 1) => {
-    try {
-      const filter: LeaderboardFilter =
-        selectedCategory === "all"
-          ? { period: selectedPeriod }
-          : { category: selectedCategory, period: selectedPeriod };
-
-      const response = await LeaderboardService.getLeaderboard(
-        filter,
-        pageNum,
-        20,
-      );
-
-      if (pageNum === 1) {
-        setEntries(response.entries);
-      } else {
-        setEntries((prev) => [...prev, ...response.entries]);
-      }
-
-      setHasMore(response.hasMore);
-      setPage(pageNum);
-    } catch (error) {
-      logger.error("Failed to load leaderboard:", { error });
-      Alert.alert("Error", "Failed to load leaderboard");
-    }
-  };
-
-  const loadUserRank = async () => {
-    try {
-      const rankData = await LeaderboardService.getUserRank(
-        selectedCategory === "all" ? undefined : selectedCategory,
-      );
-      setUserRank(rankData.rank);
-      setUserEntry(rankData.entry);
-    } catch (error) {
-      logger.error("Failed to load user rank:", { error });
-    }
-  };
-
-  const refreshData = async () => {
-    try {
-      setRefreshing(true);
-      await Promise.all([loadLeaderboard(1), loadUserRank()]);
-    } catch (error) {
-      logger.error("Failed to refresh data:", { error });
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   const loadMore = async () => {
     if (!hasMore || loading) return;
 
@@ -169,19 +184,19 @@ export default function LeaderboardScreen() {
       contentContainerStyle={styles.categoryTabsContent}
     >
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.categoryTab,
           selectedCategory === "all" && styles.categoryTabActive,
-        ]}
+        ])}
         onPress={() => {
           handleCategoryChange("all");
         }}
       >
         <Text
-          style={[
+          style={StyleSheet.flatten([
             styles.categoryTabText,
             selectedCategory === "all" && styles.categoryTabTextActive,
-          ]}
+          ])}
         >
           All
         </Text>
@@ -190,10 +205,10 @@ export default function LeaderboardScreen() {
       {categories.map((category) => (
         <TouchableOpacity
           key={category.id}
-          style={[
+          style={StyleSheet.flatten([
             styles.categoryTab,
             selectedCategory === category.id && styles.categoryTabActive,
-          ]}
+          ])}
           onPress={() => {
             handleCategoryChange(category.id);
           }}
@@ -201,14 +216,14 @@ export default function LeaderboardScreen() {
           <Ionicons
             name={category.icon as never}
             size={16}
-            color={selectedCategory === category.id ? "#fff" : "#666"}
+            color={selectedCategory === category.id ? Theme.colors.neutral[0] : "#666"}
             style={styles.categoryTabIcon}
           />
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.categoryTabText,
               selectedCategory === category.id && styles.categoryTabTextActive,
-            ]}
+            ])}
           >
             {category.name}
           </Text>
@@ -222,19 +237,19 @@ export default function LeaderboardScreen() {
       {(["daily", "weekly", "monthly", "all_time"] as const).map((period) => (
         <TouchableOpacity
           key={period}
-          style={[
+          style={StyleSheet.flatten([
             styles.periodTab,
             selectedPeriod === period && styles.periodTabActive,
-          ]}
+          ])}
           onPress={() => {
             handlePeriodChange(period);
           }}
         >
           <Text
-            style={[
+            style={StyleSheet.flatten([
               styles.periodTabText,
               selectedPeriod === period && styles.periodTabTextActive,
-            ]}
+            ])}
           >
             {period.replace("_", " ").toUpperCase()}
           </Text>
@@ -261,7 +276,7 @@ export default function LeaderboardScreen() {
 
             <View style={styles.userRankPet}>
               <View style={styles.userRankPetImage}>
-                <Ionicons name="paw" size={24} color="#fff" />
+                <Ionicons name="paw" size={24} color="Theme.colors.neutral[0]" />
               </View>
               <Text style={styles.userRankPetName}>{userEntry.petName}</Text>
             </View>
@@ -280,9 +295,12 @@ export default function LeaderboardScreen() {
         <View style={styles.entryRank}>
           {isTopThree ? (
             <View
-              style={[styles.rankBadge, { backgroundColor: rankColors[index] }]}
+              style={StyleSheet.flatten([
+                styles.rankBadge,
+                { backgroundColor: rankColors[index] },
+              ])}
             >
-              <Ionicons name="trophy" size={16} color="#fff" />
+              <Ionicons name="trophy" size={16} color="Theme.colors.neutral[0]" />
             </View>
           ) : (
             <Text style={styles.rankNumber}>#{entry.rank}</Text>
@@ -313,9 +331,12 @@ export default function LeaderboardScreen() {
             {entry.badges.slice(0, 3).map((badge) => (
               <View
                 key={badge.id}
-                style={[styles.badge, { backgroundColor: badge.color }]}
+                style={StyleSheet.flatten([
+                  styles.badge,
+                  { backgroundColor: badge.color },
+                ])}
               >
-                <Ionicons name="star" size={12} color="#fff" />
+                <Ionicons name="star" size={12} color="Theme.colors.neutral[0]" />
               </View>
             ))}
             {entry.badges.length > 3 && (
@@ -369,7 +390,10 @@ export default function LeaderboardScreen() {
       {renderUserRankCard()}
 
       <ScrollView
+        ref={scrollRef}
         style={styles.leaderboardList}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -397,7 +421,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -410,7 +434,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   categoryTabs: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderBottomWidth: 1,
     borderBottomColor: "#e9ecef",
   },
@@ -439,11 +463,11 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   categoryTabTextActive: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   periodTabs: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -466,14 +490,14 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   periodTabTextActive: {
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   userRankCard: {
     margin: 20,
     borderRadius: 12,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -497,7 +521,7 @@ const styles = StyleSheet.create({
   userRankNumber: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 4,
   },
   userRankScore: {
@@ -519,7 +543,7 @@ const styles = StyleSheet.create({
   userRankPetName: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   leaderboardList: {
     flex: 1,
@@ -528,12 +552,12 @@ const styles = StyleSheet.create({
   entryCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     padding: 16,
     marginBottom: 12,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,

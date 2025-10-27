@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Theme } from '../../theme/unified-theme';
 
 interface PetFormSubmitProps {
   isSubmitting: boolean;
@@ -14,10 +15,10 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({
   return (
     <View style={styles.submitContainer}>
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.submitButton,
           isSubmitting && styles.submitButtonDisabled,
-        ]}
+        ])}
         onPress={onSubmit}
         disabled={isSubmitting}
       >
@@ -26,14 +27,14 @@ export const PetFormSubmit: React.FC<PetFormSubmitProps> = ({
             <Ionicons
               name="sync"
               size={20}
-              color="#FFFFFF"
+              color="Theme.colors.neutral[0]"
               style={{ transform: [{ rotate: "45deg" }] }}
             />
             <Text style={styles.submitButtonText}>Creating Profile...</Text>
           </View>
         ) : (
           <View style={styles.submitContent}>
-            <Ionicons name="add-circle" size={20} color="#FFFFFF" />
+            <Ionicons name="add-circle" size={20} color="Theme.colors.neutral[0]" />
             <Text style={styles.submitButtonText}>Create Pet Profile</Text>
           </View>
         )}
@@ -48,11 +49,11 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   submitButton: {
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "Theme.colors.secondary[500]",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#8B5CF6",
+    shadowColor: "Theme.colors.secondary[500]",
     shadowOffset: {
       width: 0,
       height: 4,
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   submitButtonDisabled: {
-    backgroundColor: "#9CA3AF",
+    backgroundColor: "Theme.colors.neutral[400]",
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
     marginLeft: 8,
   },
 });

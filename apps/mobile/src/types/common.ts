@@ -6,37 +6,7 @@
 import React from "react";
 import type { ComponentType } from "react";
 import type { RouteProp, NavigationProp } from "@react-navigation/native";
-
-// Navigation Types
-export interface RootStackParamList {
-  Home: undefined;
-  Login: undefined;
-  Register: undefined;
-  Dashboard: undefined;
-  Swipe: undefined;
-  Matches: undefined;
-  Chat: { matchId: string };
-  Profile: { userId?: string };
-  CreatePet: undefined;
-  Settings: undefined;
-  Premium: undefined;
-  AIBio: undefined;
-  AIPhotoAnalyzer: undefined;
-  AICompatibility: { pet1Id?: string; pet2Id?: string };
-  AdoptionManager: undefined;
-  AdoptionApplication: { petId: string };
-  AdoptionContract: { applicationId: string };
-  Map: undefined;
-  MemoryWeave: { petId: string };
-  ARScentTrails: undefined;
-  PremiumDemo: undefined;
-  ComponentShowcase: undefined;
-  ComponentTest: undefined;
-  NewComponentsTest: undefined;
-  ModernSwipe: undefined;
-  ModernCreatePet: undefined;
-  MigrationExample: undefined;
-}
+import type { RootStackParamList } from "../navigation/types";
 
 // Screen Props Types
 export interface BaseScreenProps {

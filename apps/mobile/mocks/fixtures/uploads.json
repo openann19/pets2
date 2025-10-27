@@ -1,0 +1,95 @@
+{
+  "presign_ok": {
+    "success": true,
+    "data": {
+      "uploadUrl": "https://pawfectmatch-uploads.s3.amazonaws.com/test-upload",
+      "key": "uploads/test-key-123",
+      "fields": {
+        "Content-Type": "image/jpeg",
+        "x-amz-algorithm": "AWS4-HMAC-SHA256",
+        "x-amz-credential": "test-credential",
+        "x-amz-date": "20240101T120000Z",
+        "x-amz-signature": "test-signature",
+        "policy": "test-policy"
+      }
+    }
+  },
+  "upload_registered": {
+    "success": true,
+    "data": {
+      "uploadId": "upload-456",
+      "petId": "pet-456",
+      "status": "registered",
+      "s3Key": "uploads/test-key-123",
+      "createdAt": "2024-01-01T12:00:00Z"
+    }
+  },
+  "analysis_pending": {
+    "success": true,
+    "data": {
+      "uploadId": "upload-456",
+      "petId": "pet-456",
+      "status": "ai_scanning",
+      "progress": 50,
+      "s3Key": "uploads/test-key-123",
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:02:30Z"
+    }
+  },
+  "analysis_approved": {
+    "success": true,
+    "data": {
+      "uploadId": "upload-456",
+      "petId": "pet-456",
+      "status": "approved",
+      "progress": 100,
+      "s3Key": "uploads/test-key-123",
+      "moderationResult": {
+        "status": "approved",
+        "confidence": 0.95,
+        "categories": [],
+        "analysisTime": 2500
+      },
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:05:00Z"
+    }
+  },
+  "analysis_rejected_unsafe": {
+    "success": true,
+    "data": {
+      "uploadId": "upload-789",
+      "petId": "pet-456",
+      "status": "rejected",
+      "progress": 100,
+      "s3Key": "uploads/test-key-789",
+      "moderationResult": {
+        "status": "rejected",
+        "reason": "unsafe_content",
+        "confidence": 0.98,
+        "categories": ["violence"],
+        "analysisTime": 1800
+      },
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:03:00Z"
+    }
+  },
+  "analysis_rejected_duplicate": {
+    "success": true,
+    "data": {
+      "uploadId": "upload-999",
+      "petId": "pet-456",
+      "status": "rejected",
+      "progress": 100,
+      "s3Key": "uploads/test-key-999",
+      "moderationResult": {
+        "status": "rejected",
+        "reason": "duplicate",
+        "confidence": 0.99,
+        "duplicateOf": "upload-456",
+        "analysisTime": 1200
+      },
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:02:00Z"
+    }
+  }
+}

@@ -6,16 +6,18 @@ import {
   Text,
   StyleSheet,
   Animated,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 
 import { useThemeToggle } from "../hooks/useThemeToggle";
-import { Spacing, BorderRadius, Typography } from "../styles/GlobalStyles";
+import { MOBILE_SPACING } from "../constants/design-tokens";
 
 interface ThemeToggleProps {
   variant?: "icon" | "button" | "selector";
   size?: "small" | "medium" | "large";
   showLabel?: boolean;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({
@@ -48,9 +50,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   // Button sizes
   const buttonSizes = {
-    small: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },
-    medium: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md },
-    large: { paddingHorizontal: Spacing.xl, paddingVertical: Spacing.lg },
+    small: { paddingHorizontal: MOBILE_SPACING[16] || 16, paddingVertical: MOBILE_SPACING[8] || 8 },
+    medium: { paddingHorizontal: MOBILE_SPACING[24] || 24, paddingVertical: MOBILE_SPACING[16] || 16 },
+    large: { paddingHorizontal: MOBILE_SPACING[32] || 32, paddingVertical: MOBILE_SPACING[24] || 24 },
   };
 
   const iconColor = animatedValue.interpolate({
@@ -67,12 +69,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={toggleTheme}
-        style={[
+        style={StyleSheet.flatten([
           themeStyles.iconContainer,
           buttonSizes[size],
           { backgroundColor: colors.glassWhiteLight },
           style,
-        ]}
+        ])}
         activeOpacity={0.7}
       >
         <Animated.View>
@@ -83,7 +85,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           />
         </Animated.View>
         {showLabel && (
-          <Text style={[themeStyles.label, { color: colors.gray600 }]}>
+          <Text
+            style={StyleSheet.flatten([
+              themeStyles.label,
+              { color: colors.gray600 },
+            ])}
+          >
             {isDark ? "Dark" : "Light"}
           </Text>
         )}
@@ -98,7 +105,6 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         style={[
           themeStyles.buttonContainer,
           buttonSizes[size],
-          styles.buttonSecondary,
           style,
         ]}
         activeOpacity={0.8}
@@ -109,7 +115,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
             size={iconSizes[size]}
             color={colors.primary}
           />
-          <Text style={[themeStyles.buttonText, { color: colors.primary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              themeStyles.buttonText,
+              { color: colors.primary },
+            ])}
+          >
             {isDark ? "Dark Mode" : "Light Mode"}
           </Text>
         </View>
@@ -127,7 +138,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     return (
       <TouchableOpacity
         onPress={showThemeSelector}
-        style={[
+        style={StyleSheet.flatten([
           themeStyles.selectorContainer,
           buttonSizes[size],
           {
@@ -135,7 +146,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
             borderColor: colors.gray300,
           },
           style,
-        ]}
+        ])}
         activeOpacity={0.8}
       >
         <View style={themeStyles.selectorContent}>
@@ -151,7 +162,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
               size={iconSizes[size]}
               color={colors.primary}
             />
-            <Text style={[themeStyles.selectorText, { color: colors.gray700 }]}>
+            <Text
+              style={StyleSheet.flatten([
+                themeStyles.selectorText,
+                { color: colors.gray700 },
+              ])}
+            >
               Theme: {themeLabels[themeMode]}
             </Text>
           </View>
@@ -166,15 +182,15 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
 const themeStyles = StyleSheet.create({
   iconContainer: {
-    borderRadius: BorderRadius.full,
+    borderRadius: 9999,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: Spacing.xs,
+    gap: 4,
   },
 
   buttonContainer: {
-    borderRadius: BorderRadius.xl,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -182,16 +198,16 @@ const themeStyles = StyleSheet.create({
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
   },
 
   buttonText: {
-    fontSize: Typography.sizes.base,
-    fontWeight: Typography.weights.semibold,
+    fontSize: 16,
+    fontWeight: "600",
   },
 
   selectorContainer: {
-    borderRadius: BorderRadius.lg,
+    borderRadius: 12,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -207,17 +223,17 @@ const themeStyles = StyleSheet.create({
   selectorLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
   },
 
   selectorText: {
-    fontSize: Typography.sizes.base,
-    fontWeight: Typography.weights.medium,
+    fontSize: 16,
+    fontWeight: "500",
   },
 
   label: {
-    fontSize: Typography.sizes.sm,
-    fontWeight: Typography.weights.medium,
+    fontSize: 14,
+    fontWeight: "500",
   },
 });
 

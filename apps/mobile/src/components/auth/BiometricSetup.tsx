@@ -18,6 +18,7 @@ import {
   View,
 } from "react-native";
 import { useBiometric } from "../../hooks/useBiometric";
+import { Theme } from '../../theme/unified-theme';
 
 interface BiometricSetupProps {
   onComplete?: () => void;
@@ -154,7 +155,7 @@ export default function BiometricSetup({
               <Ionicons
                 name={biometryType === "Face ID" ? "face-id" : "finger-print"}
                 size={60}
-                color="#fff"
+                color="Theme.colors.neutral[0]"
               />
             </View>
             <Text style={styles.title}>Enable {biometryType}</Text>
@@ -166,15 +167,15 @@ export default function BiometricSetup({
           {/* Features */}
           <View style={styles.featuresContainer}>
             <View style={styles.feature}>
-              <Ionicons name="shield-checkmark" size={24} color="#fff" />
+              <Ionicons name="shield-checkmark" size={24} color="Theme.colors.neutral[0]" />
               <Text style={styles.featureText}>Enhanced Security</Text>
             </View>
             <View style={styles.feature}>
-              <Ionicons name="flash" size={24} color="#fff" />
+              <Ionicons name="flash" size={24} color="Theme.colors.neutral[0]" />
               <Text style={styles.featureText}>Quick Access</Text>
             </View>
             <View style={styles.feature}>
-              <Ionicons name="lock-closed" size={24} color="#fff" />
+              <Ionicons name="lock-closed" size={24} color="Theme.colors.neutral[0]" />
               <Text style={styles.featureText}>Secure Storage</Text>
             </View>
           </View>
@@ -187,7 +188,7 @@ export default function BiometricSetup({
               onValueChange={handleToggleBiometric}
               disabled={isToggling}
               trackColor={{ false: "#767577", true: "#4CAF50" }}
-              thumbColor={isEnabled ? "#fff" : "#f4f3f4"}
+              thumbColor={isEnabled ? "Theme.colors.neutral[0]" : "#f4f3f4"}
             />
           </View>
 
@@ -214,7 +215,7 @@ export default function BiometricSetup({
                   colors={["#4CAF50", "#45a049"]}
                   style={styles.demoButtonGradient}
                 >
-                  <Ionicons name="play" size={20} color="#fff" />
+                  <Ionicons name="play" size={20} color="Theme.colors.neutral[0]" />
                   <Text style={styles.demoButtonText}>Demo Authentication</Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     textAlign: "center",
     marginBottom: 8,
   },
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginLeft: 12,
     fontWeight: "500",
   },
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
   },
   toggleLabel: {
     fontSize: 18,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
   errorContainer: {
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
   demoTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 8,
   },
   demoDescription: {
@@ -382,7 +383,7 @@ const styles = StyleSheet.create({
   },
   demoButtonText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
     marginLeft: 8,
   },
@@ -409,7 +410,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "bold",
   },
 });

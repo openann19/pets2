@@ -20,6 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 // import { animationConfig } from '@pawfectmatch/core';
 import { logger } from "../services/logger";
+import { Theme } from '../theme/unified-theme';
 
 interface AnimatedButtonProps {
   onPress: () => void;
@@ -107,8 +108,8 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         variant === "danger"
           ? Haptics.ImpactFeedbackStyle.Medium
           : Haptics.ImpactFeedbackStyle.Light,
-      ).catch((error) => {
-        logger.error("AnimatedButton haptic error", { error });
+      ).catch((error: unknown) => {
+        logger.error("AnimatedButton haptic error", { error: error instanceof Error ? error : new Error(String(error)) });
       });
     }
   }, [
@@ -224,7 +225,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
   return (
     <Animated.View
-      style={[
+      style={StyleSheet.flatten([
         animatedStyle,
         styles.shadow,
         Platform.OS === "android" && {
@@ -234,16 +235,16 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
             [2, 4, 6],
           ) as unknown as number,
         },
-      ]}
+      ])}
     >
       <TouchableOpacity
-        style={[
+        style={StyleSheet.flatten([
           styles.button,
           variantStyles[variant],
           sizeStyles[size],
           style,
           disabled && styles.disabled,
-        ]}
+        ])}
         onPress={handlePress}
         disabled={disabled || loading}
         activeOpacity={0.7}
@@ -254,7 +255,11 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       >
         {typeof children === "string" ? (
           <Text
-            style={[styles.text, textStyle, disabled && styles.disabledText]}
+            style={StyleSheet.flatten([
+              styles.text,
+              textStyle,
+              disabled && styles.disabledText,
+            ])}
           >
             {loading ? "..." : children}
           </Text>
@@ -286,7 +291,7 @@ const styles = StyleSheet.create({
     borderColor: "#FF6B9D",
   },
   dangerButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   smallButton: {
     paddingHorizontal: 12,
@@ -303,10 +308,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "Theme.colors.neutral[0]",
   },
   shadow: {
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

@@ -1,0 +1,67 @@
+  import React, { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+} from "react-native-reanimated";
+
+export interface MessageTimestampBadgeProps {
+  iso: string;           // ISO time
+  visible?: boolean;     // controls anim in/out
+  textColor?: string;
+  bgColor?: string;
+  accentColor?: string;  // for tiny dot
+}
+
+function formatClock(iso: string): string {
+  const d = new Date(iso);
+  const hh = d.getHours();
+  const mm = d.getMinutes();
+  const h12 = ((hh + 11) % 12) + 1;
+  const ampm = hh >= 12 ? "PM" : "AM";
+  const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+  return `${h12}:${pad(mm)} ${ampm}`;
+}
+
+export default function MessageTimestampBadge({
+  iso,
+  visible = true,
+  textColor = "#fff",
+  bgColor = "rgba(0,0,0,0.35)",
+  accentColor = "rgba(255,255,255,0.65)",
+}: MessageTimestampBadgeProps) {
+  const shown = useSharedValue(visible ? 1 : 0);
+
+  useEffect(() => {
+    shown.value = visible ? withSpring(1, { damping: 16, stiffness: 320 }) : withTiming(0, { duration: 120 });
+  }, [visible]);
+
+  const sty = useAnimatedStyle(() => ({
+    opacity: shown.value,
+    transform: [{ scale: 0.96 + 0.04 * shown.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.wrap, { backgroundColor: bgColor }, sty]}>
+      <View style={[styles.dot, { backgroundColor: accentColor }]} />
+      <Text style={[styles.txt, { color: textColor }]}>{formatClock(iso)}</Text>
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    gap: 6,
+  },
+  dot: { width: 4, height: 4, borderRadius: 2 },
+  txt: { fontSize: 11, fontWeight: "600" },
+});
+

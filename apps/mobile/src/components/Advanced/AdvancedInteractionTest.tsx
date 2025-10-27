@@ -23,6 +23,7 @@ import { matchesAPI } from "../../services/api";
 import { AdvancedCard, CardConfigs } from "./AdvancedCard";
 import { AdvancedHeader, HeaderConfigs } from "./AdvancedHeader";
 import { AdvancedButton } from "./AdvancedInteractionSystem";
+import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -278,15 +279,15 @@ export function AdvancedInteractionTest() {
   const getStatusColor = (status: TestResult["status"]) => {
     switch (status) {
       case "pending":
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
       case "running":
-        return "#f59e0b";
+        return "Theme.colors.status.warning";
       case "passed":
-        return "#10b981";
+        return "Theme.colors.status.success";
       case "failed":
-        return "#ef4444";
+        return "Theme.colors.status.error";
       default:
-        return "#6b7280";
+        return "Theme.colors.neutral[500]";
     }
   };
 
@@ -355,13 +356,23 @@ export function AdvancedInteractionTest() {
               <Text style={styles.summaryLabel}>Total Tests</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNumber, { color: "#10b981" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.summaryNumber,
+                  { color: "Theme.colors.status.success" },
+                ])}
+              >
                 {passedTests}
               </Text>
               <Text style={styles.summaryLabel}>Passed</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNumber, { color: "#ef4444" }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.summaryNumber,
+                  { color: "Theme.colors.status.error" },
+                ])}
+              >
                 {failedTests}
               </Text>
               <Text style={styles.summaryLabel}>Failed</Text>
@@ -381,7 +392,7 @@ export function AdvancedInteractionTest() {
           disabled={isRunning}
           loading={isRunning}
           style={styles.runButton}
-          gradientColors={["#ec4899", "#db2777"]}
+          gradientColors={["Theme.colors.primary[500]", "Theme.colors.primary[600]"]}
         />
 
         {/* Test Results */}
@@ -399,7 +410,7 @@ export function AdvancedInteractionTest() {
               <View style={styles.resultContent}>
                 <View style={styles.resultLeft}>
                   <Ionicons
-                    name={getStatusIcon(test.status) as any}
+                    name={getStatusIcon(test.status)}
                     size={24}
                     color={getStatusColor(test.status)}
                   />
@@ -541,11 +552,11 @@ const styles = StyleSheet.create({
   summaryNumber: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   summaryLabel: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 4,
   },
   runButton: {
@@ -559,7 +570,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 12,
   },
   resultCard: {
@@ -582,11 +593,11 @@ const styles = StyleSheet.create({
   resultName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   resultMessage: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginTop: 2,
   },
   resultRight: {
@@ -594,7 +605,7 @@ const styles = StyleSheet.create({
   },
   resultDuration: {
     fontSize: 12,
-    color: "#9ca3af",
+    color: "Theme.colors.neutral[400]",
   },
   demoSection: {
     paddingHorizontal: 16,
@@ -619,7 +630,7 @@ const styles = StyleSheet.create({
   demoText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     textAlign: "center",
   },
 });

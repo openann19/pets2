@@ -1,15 +1,23 @@
 import { useState } from "react";
-import { logger } from "@pawfectmatch/core";
+import { logger, type Pet } from "@pawfectmatch/core";
 import { Alert } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { matchesAPI } from "../services/api";
 import type { RootStackParamList } from "../navigation/types";
+import type { FormFieldValue } from "../types/forms";
 
 export interface PetPhoto {
   uri: string;
   type: string;
   fileName?: string;
   isPrimary?: boolean;
+  // Upload tracking
+  isUploading?: boolean;
+  uploadProgress?: { uploaded: number; total: number; percentage: number };
+  uploadedUrl?: string;
+  thumbnailUrl?: string;
+  s3Key?: string;
+  error?: string;
 }
 
 export interface PetFormData {
@@ -34,7 +42,7 @@ export interface UsePetFormReturn {
   formData: PetFormData;
   errors: Record<string, string>;
   isSubmitting: boolean;
-  updateFormData: (field: string, value: string | boolean | string[]) => void;
+  updateFormData: (field: string, value: FormFieldValue) => void;
   validateForm: () => boolean;
   handleSubmit: (
     photos: PetPhoto[],
@@ -66,19 +74,28 @@ export const usePetForm = (): UsePetFormReturn => {
 
   const updateFormData = (
     field: string,
-    value: string | boolean | string[],
+    value: FormFieldValue,
   ) => {
+    // Handle null values by ignoring them
+    if (value === null) {
+      return;
+    }
+
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
+      const parentKey = parent as keyof typeof formData;
+      const childKey = child as string;
+      
       setFormData((prev) => ({
         ...prev,
-        [parent]: {
-          ...(prev[parent as keyof typeof prev] as Record<string, unknown>),
-          [child]: value,
-        },
+        [parentKey]: {
+          ...(prev[parentKey] as Record<string, unknown>),
+          [childKey]: value,
+        } as any,
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [field]: value }));
+      const fieldKey = field as keyof typeof formData;
+      setFormData((prev) => ({ ...prev, [fieldKey]: value }));
     }
 
     // Clear error when user starts typing
@@ -127,17 +144,17 @@ export const usePetForm = (): UsePetFormReturn => {
 
     try {
       // Create pet data
-      const petData = {
+      const petData: Partial<Pet> = {
         name: formData.name,
-        species: formData.species,
+        species: formData.species as "dog" | "cat" | "bird" | "rabbit" | "other",
         breed: formData.breed,
         age: Number(formData.age),
-        gender: formData.gender,
-        size: formData.size,
+        gender: formData.gender as "male" | "female",
+        size: formData.size as "tiny" | "small" | "medium" | "large" | "extra-large",
         description: formData.description,
-        intent: formData.intent,
+        intent: formData.intent as "adoption" | "mating" | "playdate" | "all",
         personalityTags: formData.personalityTags,
-        healthInfo: formData.healthInfo,
+        healthInfo: formData.healthInfo as any,
       };
 
       logger.info("Creating pet:", { petData });
@@ -145,18 +162,39 @@ export const usePetForm = (): UsePetFormReturn => {
       // Create pet profile via API
       const createdPet = await matchesAPI.createPet(petData);
 
-      // Upload photos if pet was created successfully
-      if (createdPet._id && photos.length > 0) {
-        const formData = new FormData();
-        photos.forEach((photo, index) => {
-          formData.append("photos", {
-            uri: photo.uri,
-            type: photo.type,
-            name: photo.fileName || `photo_${index}.jpg`,
-          } as unknown as Blob);
-        });
+      // Check if there are photos that need upload or are still uploading
+      const uploadingPhotos = photos.filter((p) => p.isUploading);
+      const unuploadedPhotos = photos.filter((p) => !p.uploadedUrl && !p.isUploading && !p.error);
 
-        await matchesAPI.uploadPetPhotos(createdPet._id, formData);
+      if (uploadingPhotos.length > 0) {
+        Alert.alert(
+          "Upload in Progress",
+          "Please wait for all photos to finish uploading before submitting."
+        );
+        return;
+      }
+
+      if (unuploadedPhotos.length > 0) {
+        Alert.alert(
+          "Photos Not Uploaded",
+          "Some photos failed to upload. Please remove them and try again."
+        );
+        return;
+      }
+
+      // All photos are uploaded, save their URLs to the pet
+      if (createdPet._id && photos.length > 0) {
+        const photoUrls = photos.map((photo) => ({
+          url: photo.uploadedUrl || photo.uri,
+          thumbnailUrl: photo.thumbnailUrl,
+          publicId: photo.s3Key,
+          isPrimary: photo.isPrimary,
+        }));
+
+        // Update pet with photo URLs
+        await matchesAPI.updatePet(createdPet._id, { 
+          photos: photoUrls 
+        } as any);
       }
 
       Alert.alert("Success!", "Pet profile created successfully!", [

@@ -10,8 +10,15 @@ import {
   View,
 } from "react-native";
 
+import { useTheme } from '../../theme/Provider';
+
 // Mock Siri Shortcuts API for non-iOS platforms
-let ExpoSiriShortcuts: any = null;
+interface ExpoSiriShortcutsModule {
+  getShortcuts: () => Promise<Array<{ identifier: string; title: string; subtitle: string }>>;
+  addShortcut: (shortcut: { identifier: string; title: string; subtitle: string; phrase: string; icon: { name: string; color: string } }) => Promise<void>;
+  removeShortcut: (identifier: string) => Promise<void>;
+}
+let ExpoSiriShortcuts: ExpoSiriShortcutsModule | null = null;
 if (Platform.OS === "ios") {
   try {
     ExpoSiriShortcuts = require("expo-siri-shortcuts");
@@ -25,11 +32,12 @@ interface SiriShortcut {
   title: string;
   description: string;
   phrase: string;
-  icon: string;
+  icon: any;
   isActive: boolean;
 }
 
 export function SiriShortcuts(): React.JSX.Element {
+  const theme = useTheme();
   const [shortcuts, setShortcuts] = useState<SiriShortcut[]>([
     {
       id: "find-pets",
@@ -83,7 +91,7 @@ export function SiriShortcuts(): React.JSX.Element {
     try {
       const activeShortcuts = await ExpoSiriShortcuts.getShortcuts();
       const activeIds = activeShortcuts.map(
-        (shortcut: any) => shortcut.identifier,
+        (shortcut) => shortcut.identifier,
       );
 
       setShortcuts((prev) =>
@@ -114,7 +122,7 @@ export function SiriShortcuts(): React.JSX.Element {
         phrase: shortcut.phrase,
         icon: {
           name: shortcut.icon,
-          color: "#8B5CF6",
+          color: theme.colors.primary,
         },
       });
 
@@ -162,9 +170,9 @@ export function SiriShortcuts(): React.JSX.Element {
             <View style={styles.shortcutInfo}>
               <View style={styles.shortcutHeader}>
                 <Ionicons
-                  name={shortcut.icon as any}
+                  name={shortcut.icon}
                   size={20}
-                  color="#8B5CF6"
+                  color={theme.colors.primary}
                 />
                 <Text style={styles.shortcutTitle}>{shortcut.title}</Text>
                 {shortcut.isActive ? (
@@ -182,10 +190,10 @@ export function SiriShortcuts(): React.JSX.Element {
             </View>
 
             <TouchableOpacity
-              style={[
+              style={StyleSheet.flatten([
                 styles.actionButton,
                 shortcut.isActive ? styles.deleteButton : styles.createButton,
-              ]}
+              ])}
               onPress={() =>
                 shortcut.isActive
                   ? deleteShortcut(shortcut)
@@ -227,12 +235,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "#1f2937",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "#6b7280",
     marginBottom: 16,
   },
   shortcutsList: {
@@ -243,7 +251,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: "#e5e7eb",
   },
   shortcutInfo: {
     flex: 1,
@@ -256,12 +264,12 @@ const styles = StyleSheet.create({
   shortcutTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "#1f2937",
     marginLeft: 8,
     flex: 1,
   },
   activeBadge: {
-    backgroundColor: "#10B981",
+    backgroundColor: "#10b981",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 12,
@@ -273,12 +281,12 @@ const styles = StyleSheet.create({
   },
   shortcutDescription: {
     fontSize: 14,
-    color: "#6B7280",
+    color: "#6b7280",
     marginBottom: 2,
   },
   shortcutPhrase: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: "#9ca3af",
     fontStyle: "italic",
   },
   actionButton: {
@@ -288,10 +296,10 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   createButton: {
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "#ec4899",
   },
   deleteButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "#ef4444",
   },
   actionButtonText: {
     color: "white",
@@ -299,19 +307,19 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   instructions: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#f9fafb",
     borderRadius: 8,
     padding: 12,
   },
   instructionsTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
+    color: "#1f2937",
     marginBottom: 4,
   },
   instructionsText: {
     fontSize: 12,
-    color: "#6B7280",
+    color: "#6b7280",
     lineHeight: 18,
   },
 });

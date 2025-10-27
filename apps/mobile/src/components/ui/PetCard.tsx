@@ -19,7 +19,7 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
         source={{ uri: pet.photo }}
         accessibilityLabel={`${pet.name}, ${pet.breed}`}
         resizeMode="cover"
-        style={[styles.image, { borderRadius: radii.md }]}
+        style={StyleSheet.flatten([styles.image, { borderRadius: radii.md }])}
       />
       <Spacer size="md" />
       <View style={styles.headerRow}>
@@ -32,14 +32,14 @@ export function PetCard({ pet }: PetCardProps): React.ReactElement {
         {pet.breed}
       </Text>
       <Spacer size="sm" />
-      <View style={[styles.tagRow, { gap: spacing.xs }]}>
+      <View style={StyleSheet.flatten([styles.tagRow, { gap: spacing.xs }])}>
         {pet.personality.map((trait) => (
           <View
             key={trait}
-            style={[
+            style={StyleSheet.flatten([
               styles.tag,
               { backgroundColor: colors.surfaceMuted, borderRadius: radii.sm },
-            ]}
+            ])}
           >
             <Text variant="caption" tone="primary">
               {trait}

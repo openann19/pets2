@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { Theme } from '../../theme/unified-theme';
 
 export function EmptyState(): React.JSX.Element {
   return (
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
   },
 });

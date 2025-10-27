@@ -471,4 +471,3 @@ export interface ApiHealthResponse {
 }
 export declare function isApiErrorResponse(response: unknown): response is ApiErrorResponse;
 export declare function isApiSuccessResponse<T>(response: unknown): response is ApiSuccessResponse<T>;
-//# sourceMappingURL=api-responses.d.ts.map

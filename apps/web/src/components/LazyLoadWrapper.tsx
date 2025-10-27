@@ -34,7 +34,7 @@ class LazyErrorBoundary extends React.Component {
         if (this.state.hasError) {
             return this.props.fallback || (<div className="p-8 text-center">
           <p className="text-red-500 mb-4">Failed to load component</p>
-          <button onClick={() => this.setState({ hasError: false })} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          <button onClick={() => { this.setState({ hasError: false }); }} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             Retry
           </button>
         </div>);

@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Animated } from "react-native";
-import { tokens } from "@pawfectmatch/design-tokens";
-import { useTheme } from "../../contexts/ThemeContext";
+import { Spacing, BorderRadius } from "../../animation";
+import { useTheme } from "../../theme/Provider";
+import { Theme } from '../../theme/unified-theme';
 
 interface TypingIndicatorProps {
   typingUsers: string[];
@@ -12,7 +13,7 @@ interface TypingIndicatorProps {
 export function TypingIndicator({
   typingUsers,
   animationValue,
-}: TypingIndicatorProps): React.JSX.Element {
+}: TypingIndicatorProps): React.JSX.Element | null {
   const { colors } = useTheme();
 
   if (typingUsers.length === 0) return null;
@@ -26,16 +27,16 @@ export function TypingIndicator({
         style={styles.avatar}
       />
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.typingBubble,
           { backgroundColor: colors.white, borderColor: colors.gray200 },
-        ]}
+        ])}
       >
         <View style={styles.typingDots}>
           {[0, 1, 2].map((i) => (
             <Animated.View
               key={i}
-              style={[
+              style={StyleSheet.flatten([
                 styles.typingDot,
                 {
                   backgroundColor: colors.gray500,
@@ -54,12 +55,17 @@ export function TypingIndicator({
                     },
                   ],
                 },
-              ]}
+              ])}
             />
           ))}
         </View>
         {typingUsers.length > 1 && (
-          <Text style={[styles.typingText, { color: colors.gray500 }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.typingText,
+              { color: colors.gray500 },
+            ])}
+          >
             {typingUsers.length} people are typing...
           </Text>
         )}
@@ -72,37 +78,36 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: tokens.spacing.lg,
-    marginBottom: tokens.spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: "#fff",
   },
   typingBubble: {
-    paddingHorizontal: tokens.spacing.md,
-    paddingVertical: tokens.spacing.sm,
-    borderRadius: tokens.borderRadius.xl,
-    borderBottomLeftRadius: tokens.borderRadius.sm,
-    marginLeft: tokens.spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: 12, // 0.75rem
+    borderBottomLeftRadius: 2, // 0.125rem
+    marginLeft: Spacing.xs,
     borderWidth: 0.5,
   },
   typingDots: {
     flexDirection: "row",
     alignItems: "center",
-    gap: tokens.spacing.xs,
+    gap: Spacing.xs,
   },
   typingDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
+    marginHorizontal: 2,
   },
   typingText: {
-    fontSize: tokens.typography.caption.fontSize,
+    fontSize: 12,
     fontStyle: "italic",
-    marginTop: tokens.spacing.xs,
+    marginTop: Spacing.xs,
   },
 });

@@ -1,12 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { logger } from "@pawfectmatch/core";
-import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
-  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,129 +9,22 @@ import {
   View,
 } from "react-native";
 import Footer from "../../components/Footer";
-
-type BillingPeriod = "monthly" | "yearly";
-
-interface SubscriptionTier {
-  id: string;
-  name: string;
-  price: {
-    monthly: number;
-    yearly: number;
-  };
-  stripePriceId: {
-    monthly: string;
-    yearly: string;
-  };
-  features: string[];
-  popular?: boolean;
-}
-
-const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
-  {
-    id: "basic",
-    name: "Basic",
-    price: { monthly: 0, yearly: 0 },
-    stripePriceId: {
-      monthly: "",
-      yearly: "",
-    },
-    features: [
-      "5 daily swipes",
-      "Basic matching",
-      "Standard chat",
-      "Weather updates",
-      "Community support",
-    ],
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    price: { monthly: 9.99, yearly: 99.99 },
-    stripePriceId: {
-      monthly: "price_premium_monthly",
-      yearly: "price_premium_yearly",
-    },
-    features: [
-      "Unlimited swipes",
-      "See who liked you",
-      "Advanced filters",
-      "Ad-free experience",
-      "Advanced matching algorithm",
-      "Priority in search results",
-      "Read receipts",
-      "Video calls",
-    ],
-    popular: true,
-  },
-  {
-    id: "ultimate",
-    name: "Ultimate",
-    price: { monthly: 19.99, yearly: 199.99 },
-    stripePriceId: {
-      monthly: "price_ultimate_monthly",
-      yearly: "price_ultimate_yearly",
-    },
-    features: [
-      "All Premium features",
-      "AI-powered recommendations",
-      "Exclusive events access",
-      "Priority support",
-      "Profile boost",
-      "Unlimited Super Likes",
-      "Advanced analytics",
-      "VIP status",
-    ],
-  },
-];
+import { usePremiumScreen } from "../../hooks/screens/premium";
+import { Theme } from '../../theme/unified-theme';
 
 export function PremiumScreen(): JSX.Element {
-  const navigation = useNavigation();
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("monthly");
-  const [selectedTier, setSelectedTier] = useState<string>("premium");
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    billingPeriod,
+    selectedTier,
+    isLoading,
+    subscriptionTiers,
+    setBillingPeriod,
+    setSelectedTier,
+    handleSubscribe,
+    handleGoBack,
+  } = usePremiumScreen();
 
-  const handleSubscribe = async (tierId: string) => {
-    setIsLoading(true);
-    try {
-      // Get the selected tier's price ID
-      const tier = SUBSCRIPTION_TIERS.find((t) => t.id === tierId);
-      if (!tier) {
-        throw new Error("Invalid subscription tier");
-      }
-
-      const priceId = tier.stripePriceId[billingPeriod];
-
-      // Create checkout session
-      const { _subscriptionAPI } = await import("../../services/api");
-      const session = await _subscriptionAPI.createCheckoutSession({
-        priceId,
-        successUrl: "pawfectmatch://subscription/success",
-        cancelUrl: "pawfectmatch://subscription/cancel",
-        metadata: {
-          tier: tierId,
-          billingPeriod,
-        },
-      });
-
-      // Open Stripe checkout in browser
-      if (session?.url) {
-        await Linking.openURL(session.url);
-      }
-    } catch (error) {
-      logger.error("Subscription error:", { error });
-      // Show error to user
-      Alert.alert(
-        "Subscription Error",
-        "Failed to start checkout process. Please try again.",
-        [{ text: "OK" }],
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const renderTierCard = (tier: SubscriptionTier) => {
+  const renderTierCard = (tier: (typeof subscriptionTiers)[0]) => {
     const isSelected = selectedTier === tier.id;
     const price = tier.price[billingPeriod];
     const yearlyDiscount =
@@ -150,11 +38,11 @@ export function PremiumScreen(): JSX.Element {
         onPress={() => {
           setSelectedTier(tier.id);
         }}
-        style={[
+        style={StyleSheet.flatten([
           styles.tierCard,
           isSelected && styles.tierCardSelected,
           tier.popular && styles.tierCardPopular,
-        ]}
+        ])}
         accessibilityLabel={`${tier.name} tier`}
       >
         {tier.popular ? (
@@ -182,22 +70,22 @@ export function PremiumScreen(): JSX.Element {
         <View style={styles.featuresContainer}>
           {tier.features.map((feature, index) => (
             <View key={index} style={styles.featureRow}>
-              <Ionicons name="checkmark-circle" size={20} color="#10b981" />
+              <Ionicons name="checkmark-circle" size={20} color="Theme.colors.status.success" />
               <Text style={styles.featureText}>{feature}</Text>
             </View>
           ))}
         </View>
 
         <TouchableOpacity
-          style={[
+          style={StyleSheet.flatten([
             styles.subscribeButton,
             isSelected && styles.subscribeButtonSelected,
-          ]}
+          ])}
           onPress={() => handleSubscribe(tier.id)}
           disabled={isLoading}
         >
           {isLoading && selectedTier === tier.id ? (
-            <ActivityIndicator color="#fff" testID="loading-indicator" />
+            <ActivityIndicator color="Theme.colors.neutral[0]" testID="loading-indicator" />
           ) : (
             <Text style={styles.subscribeButtonText}>
               {isSelected ? "Subscribe Now" : "Select Plan"}
@@ -210,7 +98,7 @@ export function PremiumScreen(): JSX.Element {
 
   return (
     <LinearGradient
-      colors={["#ec4899", "#8b5cf6", "#3b82f6"]}
+      colors={["Theme.colors.primary[500]", "#8b5cf6", "Theme.colors.status.info"]}
       style={styles.container}
     >
       <ScrollView
@@ -219,13 +107,11 @@ export function PremiumScreen(): JSX.Element {
       >
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
+            onPress={handleGoBack}
             style={styles.backButton}
             accessibilityLabel="Back"
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color="Theme.colors.neutral[0]" />
           </TouchableOpacity>
 
           <Text style={styles.title}>Upgrade to Premium</Text>
@@ -236,38 +122,38 @@ export function PremiumScreen(): JSX.Element {
 
         <View style={styles.billingToggle}>
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.billingOption,
               billingPeriod === "monthly" && styles.billingOptionActive,
-            ]}
+            ])}
             onPress={() => {
               setBillingPeriod("monthly");
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.billingText,
                 billingPeriod === "monthly" && styles.billingTextActive,
-              ]}
+              ])}
             >
               Monthly
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.billingOption,
               billingPeriod === "yearly" && styles.billingOptionActive,
-            ]}
+            ])}
             onPress={() => {
               setBillingPeriod("yearly");
             }}
           >
             <Text
-              style={[
+              style={StyleSheet.flatten([
                 styles.billingText,
                 billingPeriod === "yearly" && styles.billingTextActive,
-              ]}
+              ])}
             >
               Yearly
             </Text>
@@ -278,7 +164,7 @@ export function PremiumScreen(): JSX.Element {
         </View>
 
         <View style={styles.tiersContainer}>
-          {SUBSCRIPTION_TIERS.map(renderTierCard)}
+          {subscriptionTiers.map(renderTierCard)}
         </View>
 
         <View style={styles.footer}>
@@ -321,7 +207,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     marginBottom: 8,
   },
   subtitle: {
@@ -345,7 +231,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   billingOptionActive: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   billingText: {
     fontSize: 16,
@@ -359,7 +245,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -8,
     right: 8,
-    backgroundColor: "#10b981",
+    backgroundColor: "Theme.colors.status.success",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -367,14 +253,14 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 10,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   tiersContainer: {
     padding: 20,
     gap: 16,
   },
   tierCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
@@ -390,13 +276,13 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   tierCardPopular: {
-    borderColor: "#10b981",
+    borderColor: "Theme.colors.status.success",
   },
   popularBadge: {
     position: "absolute",
     top: -12,
     right: 20,
-    backgroundColor: "#10b981",
+    backgroundColor: "Theme.colors.status.success",
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
@@ -404,12 +290,12 @@ const styles = StyleSheet.create({
   popularText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   tierName: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 8,
   },
   priceContainer: {
@@ -420,22 +306,22 @@ const styles = StyleSheet.create({
   priceSymbol: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   priceAmount: {
     fontSize: 48,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   pricePeriod: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     marginLeft: 4,
   },
   discount: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#10b981",
+    color: "Theme.colors.status.success",
     marginBottom: 16,
   },
   featuresContainer: {
@@ -449,11 +335,11 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 14,
-    color: "#4b5563",
+    color: "Theme.colors.neutral[600]",
     flex: 1,
   },
   subscribeButton: {
-    backgroundColor: "#e5e7eb",
+    backgroundColor: "Theme.colors.neutral[200]",
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -464,7 +350,7 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
   },
   footer: {
     padding: 20,

@@ -131,7 +131,7 @@ export default function BreedSearchInput({ value, onChange, onSelect, species, p
         <div className="flex items-center px-4 py-3">
           <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 mr-3"/>
           
-          <input ref={inputRef} type="text" value={value} onChange={handleInputChange} onKeyDown={handleKeyDown} onFocus={() => setIsOpen(true)} placeholder={placeholder} className="flex-1 bg-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"/>
+          <input ref={inputRef} type="text" value={value} onChange={handleInputChange} onKeyDown={handleKeyDown} onFocus={() => { setIsOpen(true); }} placeholder={placeholder} className="flex-1 bg-transparent outline-none placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white"/>
           
           {value && (<motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} onClick={clearInput} className="p-1 text-gray-400 hover:text-gray-600 transition-colors">
               <XMarkIcon className="w-4 h-4"/>
@@ -145,7 +145,7 @@ export default function BreedSearchInput({ value, onChange, onSelect, species, p
       <AnimatePresence>
         {isOpen && suggestions.length > 0 && (<motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.95 }} transition={{ duration: 0.2 }} className={`absolute top-full left-0 right-0 mt-2 z-50 max-h-80 overflow-y-auto ${styles.suggestions}`}>
             <div className="p-2">
-              {suggestions.map((breed, index) => (<motion.button key={breed.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.05 }} onClick={() => handleSuggestionClick(breed)} className={`w-full p-3 rounded-xl transition-all duration-200 text-left ${index === selectedIndex
+              {suggestions.map((breed, index) => (<motion.button key={breed.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.05 }} onClick={() => { handleSuggestionClick(breed); }} className={`w-full p-3 rounded-xl transition-all duration-200 text-left ${index === selectedIndex
                     ? 'bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border border-pink-200 dark:border-pink-800'
                     : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 border border-transparent'}`}>
                   <div className="flex items-center justify-between">
@@ -192,7 +192,7 @@ export default function BreedSearchInput({ value, onChange, onSelect, species, p
       </AnimatePresence>
 
       {/* Click outside to close */}
-      {isOpen && (<div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}/>)}
+      {isOpen && (<div className="fixed inset-0 z-40" onClick={() => { setIsOpen(false); }}/>)}
     </div>);
 }
 //# sourceMappingURL=BreedSearchInput.jsx.map

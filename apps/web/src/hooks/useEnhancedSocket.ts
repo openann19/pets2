@@ -303,7 +303,7 @@ export const useEnhancedSocket = () => {
             setTypingUsers(prev => prev.filter(user => now - user.timestamp < 5000) // Remove after 5 seconds
             );
         }, 1000);
-        return () => clearInterval(cleanup);
+        return () => { clearInterval(cleanup); };
     }, []);
     // Page visibility handling
     useEffect(() => {

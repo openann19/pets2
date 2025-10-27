@@ -424,4 +424,3 @@ const isPromiseRejectionEvent = (event) => {
 const isErrorEvent = (event) => {
     return 'error' in event && 'filename' in event;
 };
-//# sourceMappingURL=Logger.js.map

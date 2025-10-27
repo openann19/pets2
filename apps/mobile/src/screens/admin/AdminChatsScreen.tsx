@@ -17,9 +17,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme/Provider";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
+import { Theme } from '../../theme/unified-theme';
 
 interface ChatMessage {
   id: string;
@@ -67,7 +68,9 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         });
 
         if (response?.success && response.data) {
-          setMessages(response.data);
+          // Ensure data is an array
+          const dataArray = Array.isArray(response.data) ? response.data : [response.data];
+          setMessages(dataArray as ChatMessage[]);
         }
       } catch (error) {
         errorHandler.handleError(
@@ -138,37 +141,70 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
 
   const renderMessage = useCallback(
     ({ item }: { item: ChatMessage }) => (
-      <View style={[styles.messageCard, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.messageCard,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <View style={styles.messageHeader}>
           <View style={styles.userInfo}>
-            <Text style={[styles.senderName, { color: colors.text }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.senderName,
+                { color: colors.text },
+              ])}
+            >
               {item.senderName} → {item.receiverName}
             </Text>
-            <Text style={[styles.timestamp, { color: colors.textSecondary }]}>
+            <Text
+              style={StyleSheet.flatten([
+                styles.timestamp,
+                { color: colors.textSecondary },
+              ])}
+            >
               {new Date(item.timestamp).toLocaleString()}
             </Text>
           </View>
           {item.flagged ? (
-            <View style={[styles.flagBadge, { backgroundColor: colors.error }]}>
+            <View
+              style={StyleSheet.flatten([
+                styles.flagBadge,
+                { backgroundColor: colors.error },
+              ])}
+            >
               <Ionicons name="flag" size={12} color="white" />
               <Text style={styles.flagText}>Flagged</Text>
             </View>
           ) : null}
         </View>
 
-        <Text style={[styles.messageText, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.messageText,
+            { color: colors.text },
+          ])}
+        >
           {item.message}
         </Text>
 
         {item.flagReason ? (
-          <Text style={[styles.flagReason, { color: colors.error }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.flagReason,
+              { color: colors.error },
+            ])}
+          >
             Reason: {item.flagReason}
           </Text>
         ) : null}
 
         {item.reviewed ? (
           <View
-            style={[styles.reviewedBadge, { backgroundColor: colors.success }]}
+            style={StyleSheet.flatten([
+              styles.reviewedBadge,
+              { backgroundColor: colors.success },
+            ])}
           >
             <Text style={styles.reviewedText}>
               {item.action?.toUpperCase()} by {item.reviewedBy}
@@ -177,7 +213,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         ) : (
           <View style={styles.actionButtons}>
             <TouchableOpacity
-              style={[styles.actionButton, styles.approveButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.approveButton,
+              ])}
               onPress={() => handleMessageAction(item.id, "approve")}
             >
               <Ionicons name="checkmark" size={16} color="white" />
@@ -185,7 +224,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, styles.warnButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.warnButton,
+              ])}
               onPress={() => handleMessageAction(item.id, "warn")}
             >
               <Ionicons name="warning" size={16} color="white" />
@@ -193,7 +235,10 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionButton, styles.removeButton]}
+              style={StyleSheet.flatten([
+                styles.actionButton,
+                styles.removeButton,
+              ])}
               onPress={() => handleMessageAction(item.id, "remove")}
             >
               <Ionicons name="trash" size={16} color="white" />
@@ -208,21 +253,21 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
 
   const renderFilterButton = (filterType: typeof filter, label: string) => (
     <TouchableOpacity
-      style={[
+      style={StyleSheet.flatten([
         styles.filterButton,
         {
           backgroundColor: filter === filterType ? colors.primary : colors.card,
         },
-      ]}
+      ])}
       onPress={() => {
         setFilter(filterType);
       }}
     >
       <Text
-        style={[
+        style={StyleSheet.flatten([
           styles.filterButtonText,
           { color: filter === filterType ? "white" : colors.text },
-        ]}
+        ])}
       >
         {label}
       </Text>
@@ -231,10 +276,18 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={StyleSheet.flatten([
+        styles.container,
+        { backgroundColor: colors.background },
+      ])}
     >
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.header,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
@@ -243,22 +296,35 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text }]}>
+        <Text
+          style={StyleSheet.flatten([
+            styles.headerTitle,
+            { color: colors.text },
+          ])}
+        >
           Chat Moderation
         </Text>
       </View>
 
       {/* Search and Filters */}
-      <View style={[styles.searchContainer, { backgroundColor: colors.card }]}>
+      <View
+        style={StyleSheet.flatten([
+          styles.searchContainer,
+          { backgroundColor: colors.card },
+        ])}
+      >
         <View
-          style={[
+          style={StyleSheet.flatten([
             styles.searchInputContainer,
             { backgroundColor: colors.background },
-          ]}
+          ])}
         >
           <Ionicons name="search" size={20} color={colors.textSecondary} />
           <TextInput
-            style={[styles.searchInput, { color: colors.text }]}
+            style={StyleSheet.flatten([
+              styles.searchInput,
+              { color: colors.text },
+            ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search messages..."
@@ -277,7 +343,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.loadingText,
+              { color: colors.textSecondary },
+            ])}
+          >
             Loading messages...
           </Text>
         </View>
@@ -301,7 +372,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
                 size={64}
                 color={colors.textSecondary}
               />
-              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              <Text
+                style={StyleSheet.flatten([
+                  styles.emptyText,
+                  { color: colors.textSecondary },
+                ])}
+              >
                 No messages found
               </Text>
             </View>
@@ -322,7 +398,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   backButton: {
     marginRight: 16,
@@ -334,7 +410,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: "Theme.colors.neutral[200]",
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -378,7 +454,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: "Theme.colors.neutral[950]",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -448,13 +524,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   approveButton: {
-    backgroundColor: "#10B981",
+    backgroundColor: "Theme.colors.status.success",
   },
   warnButton: {
-    backgroundColor: "#F59E0B",
+    backgroundColor: "Theme.colors.status.warning",
   },
   removeButton: {
-    backgroundColor: "#EF4444",
+    backgroundColor: "Theme.colors.status.error",
   },
   actionButtonText: {
     fontSize: 12,

@@ -47,7 +47,7 @@ export default function LikeAnimation({ show, onComplete }) {
             if ('vibrate' in navigator) {
                 navigator.vibrate([50, 50, 50]);
             }
-            return () => clearInterval(interval);
+            return () => { clearInterval(interval); };
         }
     }, [show, onComplete]);
     return (<AnimatePresence>
@@ -144,7 +144,7 @@ export function MatchAnimation({ show, onComplete }) {
             if ('vibrate' in navigator) {
                 navigator.vibrate([100, 50, 100, 50, 200]);
             }
-            return () => clearInterval(interval);
+            return () => { clearInterval(interval); };
         }
     }, [show, onComplete]);
     return (<AnimatePresence>

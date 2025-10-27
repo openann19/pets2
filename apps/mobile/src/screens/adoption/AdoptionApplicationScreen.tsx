@@ -13,6 +13,7 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Theme } from '../../theme/unified-theme';
 
 type AdoptionStackParamList = {
   AdoptionApplication: { petId: string; petName: string };
@@ -53,7 +54,10 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
     commitment: "",
   });
 
-  const updateFormData = (field: string, value: any) => {
+  const updateFormData = (
+    field: string,
+    value: import("../../types/forms").FormFieldValue,
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -80,7 +84,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
       case 1:
         return formData.workSchedule && formData.reason;
       case 2:
-        return formData.references[0].name && formData.references[0].phone;
+        return formData.references[0]?.name && formData.references[0]?.phone;
       case 3:
         return formData.commitment;
       default:
@@ -139,19 +143,19 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
             (option) => (
               <TouchableOpacity
                 key={option}
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionButton,
                   formData.experience === option && styles.selectedOption,
-                ]}
+                ])}
                 onPress={() => {
                   updateFormData("experience", option);
                 }}
               >
                 <Text
-                  style={[
+                  style={StyleSheet.flatten([
                     styles.optionText,
                     formData.experience === option && styles.selectedOptionText,
-                  ]}
+                  ])}
                 >
                   {option}
                 </Text>
@@ -172,19 +176,19 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
           ].map((option) => (
             <TouchableOpacity
               key={option}
-              style={[
+              style={StyleSheet.flatten([
                 styles.optionButton,
                 formData.livingSpace === option && styles.selectedOption,
-              ]}
+              ])}
               onPress={() => {
                 updateFormData("livingSpace", option);
               }}
             >
               <Text
-                style={[
+                style={StyleSheet.flatten([
                   styles.optionText,
                   formData.livingSpace === option && styles.selectedOptionText,
-                ]}
+                ])}
               >
                 {option}
               </Text>
@@ -368,10 +372,10 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View
-              style={[
+              style={StyleSheet.flatten([
                 styles.progressFill,
                 { width: `${((currentStep + 1) / 4) * 100}%` },
-              ]}
+              ])}
             />
           </View>
           <Text style={styles.progressText}>Step {currentStep + 1} of 4</Text>
@@ -396,10 +400,10 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
           )}
 
           <TouchableOpacity
-            style={[
+            style={StyleSheet.flatten([
               styles.nextButton,
               !validateStep() && styles.disabledButton,
-            ]}
+            ])}
             onPress={handleNext}
             disabled={!validateStep()}
           >
@@ -416,7 +420,7 @@ const AdoptionApplicationScreen = ({ navigation, route }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "Theme.colors.neutral[0]",
   },
   keyboardView: {
     flex: 1,
@@ -427,17 +431,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: "Theme.colors.neutral[100]",
   },
   backButton: {
     fontSize: 16,
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
   },
   placeholder: {
     width: 50,
@@ -448,18 +452,18 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: "#e5e7eb",
+    backgroundColor: "Theme.colors.neutral[200]",
     borderRadius: 2,
     marginBottom: 8,
   },
   progressFill: {
     height: "100%",
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     borderRadius: 2,
   },
   progressText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     textAlign: "center",
   },
   content: {
@@ -473,13 +477,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 16,
     marginTop: 8,
   },
@@ -489,27 +493,27 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     marginBottom: 12,
   },
   textArea: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: "#1f2937",
+    color: "Theme.colors.neutral[800]",
     textAlignVertical: "top",
     minHeight: 100,
   },
@@ -519,9 +523,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionButton: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -529,19 +533,19 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: "#fdf2f8",
-    borderColor: "#ec4899",
+    borderColor: "Theme.colors.primary[500]",
   },
   optionText: {
     fontSize: 14,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "500",
   },
   selectedOptionText: {
-    color: "#ec4899",
+    color: "Theme.colors.primary[500]",
     fontWeight: "600",
   },
   referenceContainer: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "Theme.colors.background.secondary",
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -549,7 +553,7 @@ const styles = StyleSheet.create({
   referenceTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: "Theme.colors.neutral[700]",
     marginBottom: 12,
   },
   agreementContainer: {
@@ -575,22 +579,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
+    borderTopColor: "Theme.colors.neutral[100]",
   },
   backStepButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "Theme.colors.neutral[200]",
   },
   backStepButtonText: {
     fontSize: 16,
-    color: "#6b7280",
+    color: "Theme.colors.neutral[500]",
     fontWeight: "600",
   },
   nextButton: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "Theme.colors.primary[500]",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -599,11 +603,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   disabledButton: {
-    backgroundColor: "#d1d5db",
+    backgroundColor: "Theme.colors.neutral[300]",
   },
   nextButtonText: {
     fontSize: 16,
-    color: "#fff",
+    color: "Theme.colors.neutral[0]",
     fontWeight: "600",
   },
 });

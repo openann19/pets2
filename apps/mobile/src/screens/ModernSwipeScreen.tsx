@@ -10,15 +10,10 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import {
-  useAuthStore,
-  useSwipeLogic,
-  type Pet,
-  type PetFilters,
-} from "@pawfectmatch/core";
+import { type Pet } from "@pawfectmatch/core";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
 
 // Import new architecture components
 import {
@@ -32,189 +27,40 @@ import {
   Heading2,
   Body,
   BodySmall,
-  useStaggeredAnimation,
-  useEntranceAnimation,
 } from "../components";
 
 // Import legacy components for gradual migration
-import { EliteContainer, EliteHeader } from "../components/EliteComponents";
-import { useTheme } from "../contexts/ThemeContext";
-import { matchesAPI } from "../services/api";
+import { EliteContainer, EliteHeader } from "../components";
+import { useTheme } from "../theme/Provider";
+import { useModernSwipeScreen } from "../hooks/screens/useModernSwipeScreen";
+import type { RootStackScreenProps } from "../navigation/types";
+import { CardStack, FilterPanel, MatchModal, SwipeGestureHints, SwipeGestureHintOverlay, PeekSheet } from "../components/swipe";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-type RootStackParamList = {
-  Swipe: undefined;
-  Matches: undefined;
-  Chat: { matchId: string; petName: string };
-};
-
-type SwipeScreenProps = NativeStackScreenProps<RootStackParamList, "Swipe">;
+type SwipeScreenProps = RootStackScreenProps<"Swipe">;
 
 export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
-  const { user } = useAuthStore();
-
-  // State management
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showMatchModal, setShowMatchModal] = useState(false);
-  const [matchedPet, setMatchedPet] = useState<Pet | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Filter state
-  const [filters, setFilters] = useState<PetFilters>({
-    breed: "",
-    species: "",
-    size: "",
-    maxDistance: 25,
-  });
-
-  // Swipe logic hook
-  const { handleLike, handlePass, handleSuperLike } = useSwipeLogic({
-    onMatch: (result) => {
-      if (result.isMatch) {
-        setShowMatchModal(true);
-      }
-    },
-  });
-
-  // Animation hooks
-  const { start: startStaggeredAnimation, getAnimatedStyle } =
-    useStaggeredAnimation(
-      3, // Number of action buttons
-      100,
-      "gentle",
-    );
-
-  const { start: startEntrance, animatedStyle: entranceStyle } =
-    useEntranceAnimation("fadeInUp", 0, "standard");
-
-  // Start animations
-  useEffect(() => {
-    startStaggeredAnimation();
-    startEntrance();
-  }, [startStaggeredAnimation, startEntrance]);
-
-  // Load pets function
-  const loadPets = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const realPets = await matchesAPI.getPets(filters);
-      setPets(realPets);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to load pets. Please check your connection.";
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filters]);
-
-  // Swipe pet function
-  const swipePet = useCallback(
-    async (petId: string, action: "like" | "pass" | "superlike") => {
-      try {
-        const pet = pets.find((p) => p._id === petId);
-        if (!pet) return null;
-
-        const corePet = {
-          ...pet,
-          bio: pet.description ?? "",
-          distance: 0,
-          compatibility: 0,
-          isVerified: true,
-          owner: { _id: "owner1", name: "Owner" },
-        };
-
-        switch (action) {
-          case "like":
-            return await handleLike(corePet);
-          case "pass":
-            return await handlePass(corePet);
-          case "superlike":
-            return await handleSuperLike(corePet);
-          default:
-            return null;
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error occurred";
-        Alert.alert("Error", `Failed to process swipe: ${errorMessage}`);
-        return null;
-      }
-    },
-    [pets, handleLike, handlePass, handleSuperLike],
-  );
-
-  // Swipe handlers
-  const handleSwipeLeft = useCallback(
-    async (pet: Pet) => {
-      const result = await swipePet(pet._id, "pass");
-      if (result?.isMatch) {
-        setMatchedPet(pet);
-        setShowMatchModal(true);
-      }
-      setCurrentIndex((prev) => prev + 1);
-    },
-    [swipePet],
-  );
-
-  const handleSwipeRight = useCallback(
-    async (pet: Pet) => {
-      const result = await swipePet(pet._id, "like");
-      if (result?.isMatch) {
-        setMatchedPet(pet);
-        setShowMatchModal(true);
-      }
-      setCurrentIndex((prev) => prev + 1);
-    },
-    [swipePet],
-  );
-
-  const handleSwipeUp = useCallback(
-    async (pet: Pet) => {
-      const result = await swipePet(pet._id, "superlike");
-      if (result?.isMatch) {
-        setMatchedPet(pet);
-        setShowMatchModal(true);
-      }
-      setCurrentIndex((prev) => prev + 1);
-    },
-    [swipePet],
-  );
-
-  // Button swipe handlers
-  const handleButtonSwipe = useCallback(
-    (action: "like" | "pass" | "superlike") => {
-      const currentPet = pets[currentIndex];
-      if (!currentPet) return;
-
-      switch (action) {
-        case "like":
-          handleSwipeRight(currentPet);
-          break;
-        case "pass":
-          handleSwipeLeft(currentPet);
-          break;
-        case "superlike":
-          handleSwipeUp(currentPet);
-          break;
-      }
-    },
-    [pets, currentIndex, handleSwipeRight, handleSwipeLeft, handleSwipeUp],
-  );
-
-  // Load pets on mount
-  useEffect(() => {
-    void loadPets();
-  }, [loadPets]);
-
-  const currentPet = pets[currentIndex];
+  const {
+    pets,
+    currentPet,
+    isLoading,
+    error,
+    currentIndex,
+    showMatchModal,
+    matchedPet,
+    showFilters,
+    filters,
+    setCurrentIndex,
+    setShowMatchModal,
+    setShowFilters,
+    setFilters,
+    loadPets,
+    handleButtonSwipe,
+    handleSwipeLeft,
+    handleSwipeRight,
+    handleSwipeUp,
+  } = useModernSwipeScreen();
 
   // Loading state
   if (isLoading && pets.length === 0) {
@@ -320,106 +166,45 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
       {/* Filter Panel */}
       {showFilters && (
         <View style={styles.filterContainer}>
-          <FXContainerPresets.glass style={styles.filterPanel}>
-            <Heading2 style={styles.filterTitle}>Quick Filters</Heading2>
-
-            {/* Breed Filters */}
-            <View style={styles.filterSection}>
-              <BodySmall style={styles.filterLabel}>Popular Breeds:</BodySmall>
-              <View style={styles.filterButtons}>
-                {[
-                  "Shiba Inu",
-                  "Golden Retriever",
-                  "Labrador",
-                  "Border Collie",
-                ].map((breed) => (
-                  <EliteButton
-                    key={breed}
-                    title={breed}
-                    variant={filters.breed === breed ? "primary" : "outline"}
-                    size="sm"
-                    onPress={() => {
-                      setFilters((prev) => ({
-                        ...prev,
-                        breed: prev.breed === breed ? "" : breed,
-                        species: "dog",
-                      }));
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
-
-            {/* Species Filters */}
-            <View style={styles.filterSection}>
-              <BodySmall style={styles.filterLabel}>Species:</BodySmall>
-              <View style={styles.filterButtons}>
-                {["All", "Dogs", "Cats", "Birds"].map((species) => (
-                  <EliteButton
-                    key={species}
-                    title={species}
-                    variant={
-                      (species === "All" ? "" : species.toLowerCase()) ===
-                      filters.species
-                        ? "secondary"
-                        : "outline"
-                    }
-                    size="sm"
-                    onPress={() => {
-                      setFilters((prev) => ({
-                        ...prev,
-                        species: species === "All" ? "" : species.toLowerCase(),
-                      }));
-                    }}
-                  />
-                ))}
-              </View>
-            </View>
-
-            <EliteButtonPresets.holographic
-              title="Apply Filters"
-              leftIcon="checkmark"
-              onPress={loadPets}
-            />
-          </FXContainerPresets.glass>
+          <FilterPanel
+            filters={filters}
+            onFilterChange={(newFilters) => {
+              setFilters({ ...filters, ...newFilters });
+            }}
+          />
         </View>
       )}
 
-      {/* Card Stack */}
-      <View style={styles.cardContainer}>
-        {/* Current Card */}
-        <ModernSwipeCard
-          pet={{
-            _id: currentPet._id,
-            name: currentPet.name,
-            age: currentPet.age,
-            breed: currentPet.breed,
-            photos: currentPet.photos.map((p) => p.url),
-            bio: currentPet.description || "",
-            distance: 2.5,
-            compatibility: 85,
-            isVerified: true,
-            tags: ["Friendly", "Active", "Playful"],
-          }}
-          onSwipeLeft={handleSwipeLeft}
-          onSwipeRight={handleSwipeRight}
-          onSwipeUp={handleSwipeUp}
-          isTopCard={true}
-        />
+      {/* Gesture Hints */}
+      <SwipeGestureHints />
+      
+      {/* First-time user gesture hints overlay */}
+      <SwipeGestureHintOverlay />
 
-        {/* Next Card Preview */}
-        {pets[currentIndex + 1] && (
-          <View style={styles.nextCardContainer}>
-            <FXContainerPresets.glass style={styles.nextCard}>
-              {/* Preview content would go here */}
-            </FXContainerPresets.glass>
-          </View>
-        )}
-      </View>
+      {/* Card Stack */}
+      <CardStack
+        currentPet={currentPet}
+        nextPet={pets[currentIndex + 1]}
+        currentIndex={currentIndex}
+        onSwipeLeft={() => {
+          handleSwipeLeft(currentPet);
+        }}
+        onSwipeRight={() => {
+          handleSwipeRight(currentPet);
+        }}
+        onSwipeUp={() => {
+          handleSwipeUp(currentPet);
+        }}
+      />
+
+      {/* Peek Sheet - Show next card */}
+      {pets[currentIndex + 1] && (
+        <PeekSheet nextPet={pets[currentIndex + 1]} show={true} />
+      )}
 
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
-        <View style={getAnimatedStyle(0)}>
+        <View>
           <EliteButtonPresets.glass
             title=""
             size="xl"
@@ -431,7 +216,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
           />
         </View>
 
-        <View style={getAnimatedStyle(1)}>
+        <View>
           <EliteButtonPresets.holographic
             title=""
             size="lg"
@@ -443,7 +228,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
           />
         </View>
 
-        <View style={getAnimatedStyle(2)}>
+        <View>
           <EliteButtonPresets.premium
             title=""
             size="xl"
@@ -458,45 +243,18 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
 
       {/* Match Modal */}
       {showMatchModal && matchedPet && (
-        <View style={styles.matchModal}>
-          <FXContainerPresets.holographic style={styles.matchModalContent}>
-            <Heading1 style={styles.matchTitle}>It's a Match! 🎉</Heading1>
-
-            <View style={styles.matchPhotos}>
-              <FXContainer
-                type="glow"
-                hasGlow={true}
-                style={styles.matchPhotoContainer}
-              >
-                {/* Match photo would go here */}
-              </FXContainer>
-            </View>
-
-            <Body style={styles.matchText}>
-              You and {matchedPet.name} liked each other!
-            </Body>
-
-            <View style={styles.matchButtons}>
-              <EliteButtonPresets.glass
-                title="Keep Swiping"
-                onPress={() => {
-                  setShowMatchModal(false);
-                }}
-              />
-              <EliteButtonPresets.holographic
-                title="Send Message"
-                leftIcon="chatbubble"
-                onPress={() => {
-                  setShowMatchModal(false);
-                  navigation.navigate("Chat", {
-                    matchId: matchedPet._id,
-                    petName: matchedPet.name,
-                  });
-                }}
-              />
-            </View>
-          </FXContainerPresets.holographic>
-        </View>
+        <MatchModal
+          pet={matchedPet}
+          show={showMatchModal}
+          onKeepSwiping={() => setShowMatchModal(false)}
+          onSendMessage={() => {
+            setShowMatchModal(false);
+            navigation.navigate("Chat", {
+              matchId: matchedPet._id,
+              petName: matchedPet.name,
+            });
+          }}
+        />
       )}
     </EliteContainer>
   );
