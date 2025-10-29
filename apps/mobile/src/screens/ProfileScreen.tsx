@@ -203,7 +203,7 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             onPress={onLogout}
           >
             <LinearGradient
-              colors={[theme.colors.danger, "#dc2626"]}
+              colors={[theme.colors.danger, theme.colors.danger]}
               style={styles.logoutGradient}
             >
               <Ionicons 
