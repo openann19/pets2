@@ -22,7 +22,7 @@
  * - theme.colors.secondary[N] → theme.colors.secondary (if exists) or theme.palette.brand[N]
  * - theme.colors.status.success → theme.colors.success
  * - theme.colors.status.error → theme.colors.danger
- * - theme.colors.status.warning → terhe.colors.warning
+ * - theme.colors.status.warning → theme.colors.warning
  * - theme.colors.status.info → theme.colors.info
  * - theme.colors.border.light → theme.colors.border (or palette.neutral[200])
  * - theme.colors.border.medium → theme.colors.border
@@ -148,10 +148,34 @@ const SHADOW_MIGRATIONS: Record<string, string> = {
 let totalFilesModified = 0;
 let totalReplacements = 0;
 
+// Parse command line arguments for dry-run mode
+const DRY_RUN = process.argv.includes('--dry-run') || process.argv.includes('-d');
+
 /**
  * Ensure useTheme is imported
  */
 function ensureUseThemeImport(sourceFile: any): boolean {
+  if (DRY_RUN) {
+    // In dry-run, just check if it would be added, don't actually add
+    const imports = sourceFile.getImportDeclarations();
+    for (const imp of imports) {
+      try {
+        const moduleSpec = imp.getModuleSpecifierValue();
+        if (moduleSpec === '@/theme' || moduleSpec === '@mobile/src/theme' || 
+            moduleSpec === '../../../theme' || moduleSpec === '../../theme') {
+          const namedImports = imp.getNamedImports();
+          const hasUseTheme = namedImports.some((ni: any) => ni.getName() === 'useTheme');
+          if (hasUseTheme) {
+            return false;
+          }
+          return true; // Would add useTheme
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+    return true; // Would add new import
+  }
   const imports = sourceFile.getImportDeclarations();
   let found = false;
   
@@ -217,7 +241,11 @@ function ensureThemeHook(sourceFile: any, componentBody: any): boolean {
     }
   }
   
-  // Add theme hook at the beginning of component body
+  // Add theme hook at the beginning of component body (unless dry-run)
+  if (DRY_RUN) {
+    return true; // Report that it would be added, but don't actually add
+  }
+  
   // Find first hook call or state declaration to insert after
   let insertIndex = 0;
   for (let i = 0; i < statements.length; i++) {
@@ -231,7 +259,11 @@ function ensureThemeHook(sourceFile: any, componentBody: any): boolean {
     }
   }
   
-  statements[insertIndex].insertBefore('const theme = useTheme();');
+  if (statements[insertIndex]) {
+    statements[insertIndex].insertBefore('const theme = useTheme();');
+  } else {
+    componentBody.addStatements('const theme = useTheme();');
+  }
   return true;
 }
 
@@ -307,9 +339,11 @@ function migratePropertyAccess(node: any): boolean {
     return false;
   }
   
-  // Replace the node
+  // Replace the node (unless dry-run)
   const newPath = `theme.${migration}`;
-  node.replaceWithText(newPath);
+  if (!DRY_RUN) {
+    node.replaceWithText(newPath);
+  }
   return true;
 }
 
@@ -393,13 +427,17 @@ function processFile(sourceFile: any): boolean {
   if (fileModified) {
     totalFilesModified++;
     totalReplacements += replacements;
-    console.log(`✅ ${sourceFile.getBaseName()}: ${replacements} replacements`);
+    const status = DRY_RUN ? '🔍 [DRY RUN]' : '✅';
+    console.log(`${status} ${sourceFile.getBaseName()}: ${replacements} replacements`);
   }
   
   return fileModified;
 }
 
 // Process all files
+if (DRY_RUN) {
+  console.log('🔍 DRY RUN MODE - No changes will be saved\n');
+}
 console.log('🚀 Starting semantic theme migration...\n');
 
 project.getSourceFiles().forEach((sourceFile) => {
@@ -410,13 +448,26 @@ project.getSourceFiles().forEach((sourceFile) => {
   }
 });
 
-// Save all changes
-project.saveSync();
+// Save all changes (unless dry-run)
+if (!DRY_RUN) {
+  project.saveSync();
+} else {
+  // In dry-run, we don't save, so we need to undo all changes
+  project.getSourceFiles().forEach(sourceFile => {
+    sourceFile.refreshFromFileSystem();
+  });
+}
 
-console.log(`\n✨ Migration complete!`);
-console.log(`   Files modified: ${totalFilesModified}`);
+const mode = DRY_RUN ? 'DRY RUN' : 'complete';
+console.log(`\n✨ Migration ${mode}!`);
+console.log(`   Files that ${DRY_RUN ? 'would be' : ''} modified: ${totalFilesModified}`);
 console.log(`   Total replacements: ${totalReplacements}`);
-console.log(`\n📝 Next steps:`);
-console.log(`   1. Run: pnpm mobile:tsc`);
-console.log(`   2. Run: pnpm mobile:lint --fix`);
-console.log(`   3. Review changes and test thoroughly`);
+if (DRY_RUN) {
+  console.log(`\n📝 To apply changes, run without --dry-run flag:`);
+  console.log(`   ts-node scripts/migrate_themes_to_semantic.ts`);
+} else {
+  console.log(`\n📝 Next steps:`);
+  console.log(`   1. Run: pnpm mobile:tsc`);
+  console.log(`   2. Run: pnpm mobile:lint --fix`);
+  console.log(`   3. Review changes and test thoroughly`);
+}
