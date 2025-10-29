@@ -1,6 +1,6 @@
 import type { Message } from "@pawfectmatch/core";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -8,10 +8,8 @@ import Animated, {
   measure,
   runOnJS,
 } from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useTheme } from "../../theme/Provider";
-import { Theme } from "../../theme/unified-theme";
 import { useSwipeToReply } from "../../hooks/useSwipeToReply";
 import ReplySwipeHint from "./ReplySwipeHint";
 import MorphingContextMenu, { type ContextAction } from "../menus/MorphingContextMenu";
@@ -60,8 +58,160 @@ export function MessageBubble({
   onDelete,
   onShowReadBy,
 }: MessageBubbleProps): React.JSX.Element {
-  const { isDark, colors } = useTheme();
+  const theme = useTheme();
   const { style: bubbleShakeStyle, shake } = useBubbleRetryShake();
+  
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        messageContainer: {
+          marginVertical: 4,
+          maxWidth: "80%",
+          position: "relative",
+        },
+        ownContainer: {
+          alignSelf: "flex-end",
+          alignItems: "flex-end",
+        },
+        otherContainer: {
+          alignSelf: "flex-start",
+          alignItems: "flex-start",
+        },
+        bubble: {
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+          borderRadius: 16,
+          maxWidth: "100%",
+        },
+        ownMessageLight: {
+          backgroundColor: theme.colors.danger,
+        },
+        ownMessageDark: {
+          backgroundColor: theme.colors.danger,
+        },
+        otherMessageLight: {
+          backgroundColor: theme.colors.background.primary,
+          borderWidth: 1,
+          borderColor: theme.colors.border.medium,
+        },
+        otherMessageDark: {
+          backgroundColor: theme.colors.text.primary,
+          borderWidth: 1,
+          borderColor: theme.colors.text.primary,
+        },
+        messageText: {
+          fontSize: 16,
+          lineHeight: 20,
+        },
+        messageTextLight: {
+          color: theme.colors.text.primary,
+        },
+        messageTextDark: {
+          color: theme.colors.background.primary,
+        },
+        imageBubble: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          padding: 4,
+        },
+        gifBubble: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          padding: 20,
+        },
+        voiceBubble: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          padding: 12,
+        },
+        loadingText: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+        },
+        gifPlaceholder: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+        },
+        messageMeta: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: 4,
+        },
+        timestamp: {
+          fontSize: 12,
+        },
+        timestampLight: {
+          color: theme.colors.text.tertiary,
+        },
+        timestampDark: {
+          color: theme.colors.text.secondary,
+        },
+        statusRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginLeft: 8,
+        },
+        status: {
+          fontSize: 12,
+        },
+        statusLight: {
+          color: theme.colors.text.secondary,
+        },
+        statusDark: {
+          color: theme.colors.text.tertiary,
+        },
+        avatarContainer: {
+          position: "absolute",
+          bottom: -16,
+        },
+        avatar: {
+          width: 32,
+          height: 32,
+          borderRadius: 16,
+          borderWidth: 2,
+          borderColor: theme.colors.background.primary,
+        },
+        avatarEmoji: {
+          fontSize: 16,
+          textAlign: "center",
+          lineHeight: 28,
+        },
+        avatarName: {
+          fontSize: 10,
+          fontWeight: "500",
+        },
+        avatarNameLight: {
+          color: theme.colors.text.primary,
+        },
+        avatarNameDark: {
+          color: theme.colors.background.primary,
+        },
+        reactionButton: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          paddingHorizontal: 8,
+          paddingVertical: 4,
+          marginHorizontal: 2,
+        },
+        reactionEmoji: {
+          fontSize: 14,
+        },
+        retryBadge: {
+          backgroundColor: theme.colors.danger,
+          borderRadius: 12,
+          paddingHorizontal: 8,
+          paddingVertical: 4,
+          marginLeft: 8,
+        },
+        retryText: {
+          fontSize: 12,
+          fontWeight: "500",
+          color: theme.colors.background.primary,
+        },
+      }),
+    [theme]
+  );
   
   // Default status if not provided
   const messageStatus: MessageStatus = message.status || "sent";
@@ -210,13 +360,13 @@ export function MessageBubble({
 
   const getBubbleStyle = () => {
     if (isOwnMessage) {
-      return isDark ? styles.ownMessageDark : styles.ownMessageLight;
+      return theme.isDark ? styles.ownMessageDark : styles.ownMessageLight;
     }
-    return isDark ? styles.otherMessageDark : styles.otherMessageLight;
+    return theme.isDark ? styles.otherMessageDark : styles.otherMessageLight;
   };
 
   const getTextStyle = () =>
-    isDark ? styles.messageTextDark : styles.messageTextLight;
+    theme.isDark ? styles.messageTextDark : styles.messageTextLight;
 
   if (message.messageType === "image") {
     return (
@@ -339,7 +489,7 @@ export function MessageBubble({
             <Text
               style={StyleSheet.flatten([
                 styles.avatarName,
-                isDark ? styles.avatarNameDark : styles.avatarNameLight,
+                theme.isDark ? styles.avatarNameDark : styles.avatarNameLight,
               ])}
             >
               {petInfo.name}
@@ -352,8 +502,8 @@ export function MessageBubble({
         <LinearGradient
           colors={
             isOwnMessage
-              ? ["#FF6B6B", "#FF8E8E"]
-              : ["#F0F0F0", "#E0E0E0"]
+              ? [theme.colors.danger, theme.colors.danger + "80"]
+              : [theme.colors.background.secondary, theme.colors.background.tertiary]
           }
           style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
           start={{ x: 0, y: 0 }}
@@ -364,10 +514,10 @@ export function MessageBubble({
         </Text>
 
         {/* Proactive UI - Quick reactions for common responses */}
-        {!isOwnMessage && showAvatars ? (
-          <View style={styles.quickReactions}>
+        {message.messageType === "text" && (
+          <View style={styles.reactionContainer}>
             <TouchableOpacity style={styles.reactionButton}>
-              <Text style={styles.reactionEmoji}>👍</Text>
+              <Text style={styles.reactionEmoji}>��</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.reactionButton}>
               <Text style={styles.reactionEmoji}>❤️</Text>
@@ -376,33 +526,34 @@ export function MessageBubble({
               <Text style={styles.reactionEmoji}>😂</Text>
             </TouchableOpacity>
           </View>
-        ) : null}
-      </LinearGradient>
+        )}
+        </LinearGradient>
 
-      <View style={styles.messageMeta}>
-        <Text
-          style={StyleSheet.flatten([
-            styles.timestamp,
-            isDark ? styles.timestampDark : styles.timestampLight,
-          ])}
-        >
-          {formatTime(message.sentAt)}
-        </Text>
-        {isOwnMessage && showStatus ? (
-          <View style={styles.statusRow}>
-            <MessageStatusTicks
-              status={messageStatus}
-              size={12}
-              sentColor="#9ca3af"
-              deliveredColor="#9ca3af"
-              readColor="#3b82f6"
-              failedColor="#ef4444"
-            />
-            {messageStatus === "failed" && (
-              <RetryBadge onPress={handleRetry} />
-            )}
-          </View>
-        ) : null}
+        {/* Timestamp and status */}
+        <View style={styles.messageMeta}>
+          <Text
+            style={StyleSheet.flatten([
+              styles.timestamp,
+              theme.isDark ? styles.timestampDark : styles.timestampLight,
+            ])}
+          >
+            {formatTime(message.sentAt)}
+          </Text>
+          {isOwnMessage && showStatus ? (
+            <View style={styles.statusRow}>
+              <MessageStatusTicks
+                status={messageStatus}
+                size={12}
+                sentColor={theme.colors.text.tertiary}
+                deliveredColor={theme.colors.text.tertiary}
+                readColor={theme.colors.status.info}
+                failedColor={theme.colors.status.error}
+              />
+              {messageStatus === "failed" && (
+                <RetryBadge onPress={handleRetry} />
+              )}
+            </View>
+          ) : null}
         </View>
       </Animated.View>
 
@@ -420,205 +571,16 @@ export function MessageBubble({
         anchor={anchor}
         actions={actions}
         theme={{
-          bg: isDark ? "#111" : "#fff",
-          border: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
-          text: isDark ? "#fff" : "#111",
-          sub: isDark ? "#9ca3af" : "#666",
-          item: isDark ? "#181818" : "#f8f9fa",
-          itemPressed: isDark ? "#222" : "#e0e0e0",
+          bg: theme.isDark ? theme.colors.text.primary : theme.colors.background.primary,
+          border: theme.isDark ? theme.colors.text.primary + "80" : theme.colors.text.primary + "80",
+          text: theme.isDark ? theme.colors.background.primary : theme.colors.text.primary,
+          sub: theme.isDark ? theme.colors.text.tertiary : theme.colors.text.secondary,
+          item: theme.isDark ? theme.colors.text.primary : theme.colors.background.secondary,
+          itemPressed: theme.isDark ? theme.colors.text.primary : theme.colors.background.tertiary,
         }}
       />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  messageContainer: {
-    marginVertical: 4,
-    maxWidth: "80%",
-    position: "relative",
-  },
-  ownContainer: {
-    alignSelf: "flex-end",
-    alignItems: "flex-end",
-  },
-  otherContainer: {
-    alignSelf: "flex-start",
-    alignItems: "flex-start",
-  },
-  milestoneContainer: {
-    alignItems: "center",
-    marginBottom: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    backgroundColor: "#FF6B6B",
-    borderRadius: 12,
-  },
-  milestoneText: {
-    fontSize: 12,
-    color: Theme.colors.neutral[0],
-    fontWeight: "600",
-  },
-  avatarContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "#F8F9FA",
-    borderRadius: 16,
-    maxWidth: 120,
-  },
-  ownAvatar: {
-    alignSelf: "flex-end",
-  },
-  otherAvatar: {
-    alignSelf: "flex-start",
-  },
-  avatarEmoji: {
-    fontSize: 20,
-    marginRight: 4,
-  },
-  avatarName: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  avatarNameLight: {
-    color: "#1A1A1A",
-  },
-  avatarNameDark: {
-    color: "#E0E0E0",
-  },
-  bubble: {
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginBottom: 4,
-    shadowColor: Theme.colors.neutral[900],
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  ownMessageLight: {
-    backgroundColor: "#FF6B6B",
-  },
-  ownMessageDark: {
-    backgroundColor: "#E55555",
-  },
-  otherMessageLight: {
-    backgroundColor: Theme.colors.neutral[0],
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  otherMessageDark: {
-    backgroundColor: "#2A2A2A",
-    borderWidth: 1,
-    borderColor: "#404040",
-  },
-  messageText: {
-    fontSize: 16,
-    lineHeight: 20,
-  },
-  messageTextLight: {
-    color: "#1A1A1A",
-  },
-  messageTextDark: {
-    color: "#E0E0E0",
-  },
-  quickReactions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.2)",
-  },
-  reactionButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 4,
-  },
-  reactionEmoji: {
-    fontSize: 16,
-  },
-  imageBubble: {
-    backgroundColor: "#F0F0F0",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imagePlaceholder: {
-    fontSize: 14,
-    color: "#666",
-  },
-  voiceBubble: {
-    backgroundColor: "#F0F0F0",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  voicePlaceholder: {
-    fontSize: 14,
-    color: "#666",
-  },
-  videoBubble: {
-    backgroundColor: "#F0F0F0",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  videoPlaceholder: {
-    fontSize: 14,
-    color: "#666",
-  },
-  gifBubble: {
-    backgroundColor: "#F0F0F0",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  gifPlaceholder: {
-    fontSize: 14,
-    color: "#666",
-  },
-  messageMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 2,
-  },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  timestamp: {
-    fontSize: 12,
-    marginRight: 4,
-  },
-  timestampLight: {
-    color: "#999",
-  },
-  timestampDark: {
-    color: "#666",
-  },
-  status: {
-    fontSize: 12,
-  },
-  statusLight: {
-    color: "#666",
-  },
-  statusDark: {
-    color: "#999",
-  },
-});
 
 export default MessageBubble;
