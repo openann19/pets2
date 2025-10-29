@@ -39,7 +39,7 @@ function DeactivateAccountScreen({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#ff9a9e", "#fecfef", "#ff9a9e"]}
+        colors={[theme.colors.danger, theme.colors.danger + "40", theme.colors.danger]}
         style={StyleSheet.absoluteFillObject}
       />
 
