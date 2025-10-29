@@ -46,6 +46,7 @@ module.exports = {
       ],
       rules: {
         'local/no-hardcoded-colors': 'error',
+        'local/no-legacy-theme': 'error',
       },
     },
   ],

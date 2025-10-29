@@ -18,6 +18,22 @@ export type SemanticColors = {
   info: string;
 };
 
+// Ban legacy keys at compile time. Any usage of these becomes a TS error.
+export type _LegacyColorBans = {
+  /** @deprecated Use theme.colors.bg */ background?: never;
+  /** @deprecated Use theme.colors.onSurface */ text?: never;
+  /** @deprecated Use theme.colors.onMuted */ textSecondary?: never;
+  /** @deprecated Use theme.colors.surface */ card?: never;
+  /** @deprecated Use theme.colors.surface */ surfaceElevated?: never;
+  /** @deprecated Use theme.colors.success */ status_success?: never;
+  /** @deprecated Use theme.colors.warning */ status_warning?: never;
+  /** @deprecated Use theme.colors.danger */ status_error?: never;
+  /** @deprecated Use theme.palette.neutral[...] */ neutral?: never;
+};
+
+// Compose so any legacy property use is a TS error, even if declared elsewhere
+export type ThemeColors = SemanticColors & _LegacyColorBans;
+
 export type NeutralStep = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
 export type Palette = {
@@ -92,7 +108,7 @@ export type Typography = {
 export type AppTheme = {
   scheme: ColorScheme;
   isDark: boolean;
-  colors: SemanticColors;
+  colors: ThemeColors;
   spacing: SpacingScale;
   radii: RadiiScale;
   shadows: Elevation;

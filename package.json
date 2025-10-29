@@ -73,6 +73,8 @@
     "i18n:check": "node scripts/i18n-check.mjs",
     "next15:scan": "node scripts/check-next15-async.mjs apps/web",
     "next15:scan:rg": "rg -n \"\\bcookies\\(|\\bheaders\\(|\\bdraftMode\\(\" apps/web --glob '!**/node_modules/**' || true"
+    ,
+    "guard:theme": "rg -n \"(theme\\.colors\\.status\\.|theme\\.colors\\.(primary|secondary)\\s*\\[|theme\\.colors\\.neutral\\[|\\bcolors\\.(card|surfaceElevated)\\b|theme\\.colors\\.(background|textSecondary|text)\\b|theme\\.theme\\.colors\\.)\" apps/mobile/src --glob '!apps/mobile/src/theme/**' && echo '❌ Legacy theme tokens found' && exit 1 || echo '✅ Theme guard passed'"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.5",

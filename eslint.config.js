@@ -6,6 +6,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import noThemeNamespace from './apps/mobile/eslint-local-rules/no-theme-namespace.js';
 import noHardcodedColors from './eslint-local-rules/no-hardcoded-colors.js';
+import noLegacyTheme from './eslint-local-rules/no-legacy-theme.js';
 
 export default [
   // Global ignores
@@ -103,6 +104,7 @@ export default [
         rules: {
           'no-theme-namespace': noThemeNamespace,
           'no-hardcoded-colors': noHardcodedColors,
+          'no-legacy-theme': noLegacyTheme,
         },
       },
     },
@@ -115,6 +117,7 @@ export default [
       // === Theme/Color Rules (strict) ===
       'local/no-theme-namespace': 'error',
       'local/no-hardcoded-colors': 'error',
+      'local/no-legacy-theme': 'error',
       
       // === TypeScript Strict Rules (zero tolerance) ===
       '@typescript-eslint/no-explicit-any': 'error', // Changed from 'off' - use eslint-disable with justification
