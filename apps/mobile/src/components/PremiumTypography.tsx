@@ -20,62 +20,63 @@ import Animated, {
 import MaskedView from "@react-native-masked-view/masked-view";
 
 import { Colors, Spacing, BorderRadius } from "../animation";
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
-const TEXT_GRADIENTS = {
-  primary: ["Theme.colors.primary[500]", "Theme.colors.primary[400]", "#f9a8d4"],
-  secondary: ["Theme.colors.secondary[500]", "#38bdf8", "#7dd3fc"],
-  premium: ["Theme.colors.secondary[500]", "#c084fc", "#d8b4fe"],
-  sunset: ["Theme.colors.status.warning", "#f97316", "#fb923c"],
-  ocean: ["Theme.colors.secondary[500]", "#06b6d4", "#22d3ee"],
-  holographic: ["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe"],
-  neon: ["#00f5ff", "#ff00ff", "Theme.colors.neutral[0]f00"],
-  gold: ["#ffd700", "#ffed4e", "#f39c12"],
+const TEXT_GRADIENTS = (theme: ReturnType<typeof useTheme>) => ({
+  primary: [theme.colors.primary[500], theme.colors.primary[400], theme.colors.primary[300]],
+  secondary: [theme.colors.primary[500], theme.colors.status.info, theme.colors.status.info],
+  premium: [theme.colors.primary[500], theme.colors.primary[400], theme.colors.primary[300]],
+  sunset: [theme.colors.status.warning, theme.colors.status.warning, theme.colors.status.warning],
+  ocean: [theme.colors.primary[500], theme.colors.status.info, theme.colors.status.info],
+  holographic: [theme.colors.primary[500], theme.colors.primary[600], theme.colors.primary[400], theme.colors.primary[500], theme.colors.status.info],
+  neon: [theme.colors.status.info, theme.colors.primary[500], theme.colors.primary[600]],
+  gold: [theme.colors.status.warning, theme.colors.status.warning, theme.colors.status.warning],
   rainbow: [
-    "#ff0000",
-    "#ff7f00",
-    "Theme.colors.neutral[0]f00",
-    "#00ff00",
-    "Theme.colors.neutral[950]0ff",
-    "#4b0082",
-    "#9400d3",
+    theme.colors.danger,
+    theme.colors.status.warning,
+    theme.colors.primary[600],
+    theme.colors.status.success,
+    theme.colors.primary[700],
+    theme.colors.primary[500],
+    theme.colors.primary[600],
   ],
-};
+});
 
 // === PREMIUM TEXT SHADOWS ===
-const TEXT_SHADOWS = {
+const TEXT_SHADOWS = (theme: ReturnType<typeof useTheme>) => ({
   primary: {
-    textShadowColor: "Theme.colors.primary[500]",
+    textShadowColor: theme.colors.primary[500],
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
   secondary: {
-    textShadowColor: "Theme.colors.secondary[500]",
+    textShadowColor: theme.colors.primary[500],
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
   holographic: {
-    textShadowColor: "#667eea",
+    textShadowColor: theme.colors.primary[500],
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 12,
   },
   neon: {
-    textShadowColor: "#00f5ff",
+    textShadowColor: theme.colors.status.info,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
   },
   glow: {
-    textShadowColor: "Theme.colors.neutral[0]",
+    textShadowColor: theme.colors.primary[500],
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 10,
   },
-};
+});
 
 // === GRADIENT TEXT COMPONENT ===
 interface GradientTextProps {
   children: ReactNode;
-  gradient?: keyof typeof TEXT_GRADIENTS;
+  gradient?: keyof ReturnType<typeof TEXT_GRADIENTS>;
   colors?: string[];
   style?: TextStyle;
   size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
@@ -105,6 +106,7 @@ export const GradientText: React.FC<GradientTextProps> = ({
   glow = false,
   shadow,
 }) => {
+  const theme = useTheme();
   const shimmerOffset = useSharedValue(-100);
   const glowIntensity = useSharedValue(1);
   const scale = useSharedValue(1);
@@ -178,8 +180,8 @@ export const GradientText: React.FC<GradientTextProps> = ({
     }
   };
 
-  const gradientColors = colors ?? TEXT_GRADIENTS[gradient];
-  const shadowStyle = shadow ? TEXT_SHADOWS[shadow] : {};
+  const gradientColors = colors ?? TEXT_GRADIENTS(theme)[gradient];
+  const shadowStyle = shadow ? TEXT_SHADOWS(theme)[shadow] : {};
 
   const shimmerStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: shimmerOffset.value }],
@@ -366,11 +368,12 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
 interface PremiumHeadingProps {
   children: ReactNode;
   level?: 1 | 2 | 3 | 4 | 5 | 6;
-  gradient?: keyof typeof TEXT_GRADIENTS;
+  gradient?: keyof ReturnType<typeof TEXT_GRADIENTS>;
   animated?: boolean;
   shimmer?: boolean;
   glow?: boolean;
   style?: TextStyle;
+  shadow?: keyof ReturnType<typeof TEXT_SHADOWS>;
 }
 
 export const PremiumHeading: React.FC<PremiumHeadingProps> = ({
@@ -420,7 +423,7 @@ interface PremiumBodyProps {
   children: ReactNode;
   size?: "sm" | "base" | "lg";
   weight?: "light" | "regular" | "medium" | "semibold";
-  gradient?: keyof typeof TEXT_GRADIENTS;
+  gradient?: keyof ReturnType<typeof TEXT_GRADIENTS>;
   animated?: boolean;
   style?: TextStyle;
 }
