@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, type ViewProps } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { useTheme } from ../../../theme
+import { useTheme } from '@mobile/src/theme';
 
 export type CardVariant = 'surface' | 'elevated' | 'outlined' | 'glass';
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg' | 'xl';
@@ -35,13 +35,13 @@ export function Card({
 }: CardProps): React.ReactElement {
   const theme = useTheme();
   const paddingValue = paddingMap[padding];
-  const radiusValue = theme.radius[radius];
+  const radiusValue = theme.radii[radius];
   
   const getBackgroundColor = () => {
     const { colors } = theme;
     switch (variant) {
       case 'elevated':
-        return colors.bgElevated || colors.background || colors.bg;
+        return colors.surface;
       case 'glass':
         return 'rgba(255, 255, 255, 0.1)';
       case 'outlined':
@@ -54,7 +54,7 @@ export function Card({
 
   const getShadowStyle = () => {
     if (shadow === 'none') return {};
-    return theme.shadows[shadow];
+    return {} as any;
   };
 
   const cardStyle = StyleSheet.flatten([
