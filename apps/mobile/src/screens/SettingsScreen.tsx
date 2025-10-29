@@ -95,7 +95,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       borderBottomColor: theme.colors.border,
     },
     settingItemDestructive: {
-      borderBottomColor: "#FEF2F2",
+      borderBottomColor: theme.colors.danger + "20",
     },
     settingLeft: {
       flexDirection: "row",
@@ -112,7 +112,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       marginRight: 12,
     },
     settingIconDestructive: {
-      backgroundColor: "#FEF2F2",
+      backgroundColor: theme.colors.danger + "20",
     },
     settingText: {
       flex: 1,
@@ -131,7 +131,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       color: theme.colors.textMuted,
     },
     settingSubtitleDestructive: {
-      color: "#FCA5A5",
+      color: theme.colors.danger,
     },
     settingRight: {
       marginLeft: 12,
@@ -423,7 +423,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
               category && handleToggle(category, item.id, value)
             }
             trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-            thumbColor={item.value ? "#fff" : "#f1f1f1"}
+            thumbColor={item.value ? theme.colors.background.primary : theme.colors.background.tertiary}
           />
         )}
         {item.type === "navigation" && (
