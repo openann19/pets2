@@ -1,6 +1,6 @@
 import type { Message, User } from "@pawfectmatch/core";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -87,7 +87,7 @@ export function MessageBubbleEnhanced({
   onDelete,
   onShowReadBy,
 }: MessageBubbleEnhancedProps) {
-  const { isDark, colors } = useTheme();
+  const theme = useTheme();
   const containerRef = useAnimatedRef<Animated.View>();
   const bubbleRef = useAnimatedRef<Animated.View>();
   
@@ -96,6 +96,210 @@ export function MessageBubbleEnhanced({
   const [menuVisible, setMenuVisible] = useState(false);
   const [anchor, setAnchor] = useState<{ x: number; y: number } | undefined>(undefined);
   const [menuAnchor, setMenuAnchor] = useState<{ x: number; y: number; width: number; height: number } | undefined>(undefined);
+  
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        messageContainer: {
+          marginVertical: 4,
+          maxWidth: "80%",
+          position: "relative",
+        },
+        ownContainer: {
+          alignSelf: "flex-end",
+          alignItems: "flex-end",
+        },
+        otherContainer: {
+          alignSelf: "flex-start",
+          alignItems: "flex-start",
+        },
+        bubble: {
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+          borderRadius: 16,
+          maxWidth: "100%",
+        },
+        ownMessageLight: {
+          backgroundColor: theme.colors.danger,
+        },
+        ownMessageDark: {
+          backgroundColor: theme.colors.danger,
+        },
+        otherMessageLight: {
+          backgroundColor: theme.colors.background.primary,
+          borderWidth: 1,
+          borderColor: theme.colors.border.medium,
+        },
+        otherMessageDark: {
+          backgroundColor: theme.colors.text.primary,
+          borderWidth: 1,
+          borderColor: theme.colors.text.primary,
+        },
+        messageText: {
+          fontSize: 16,
+          lineHeight: 20,
+        },
+        messageTextLight: {
+          color: theme.colors.text.primary,
+        },
+        messageTextDark: {
+          color: theme.colors.background.primary,
+        },
+        imageBubble: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          padding: 4,
+        },
+        gifBubble: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          padding: 20,
+        },
+        voiceBubble: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          padding: 12,
+        },
+        loadingText: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+        },
+        gifPlaceholder: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+        },
+        messageMeta: {
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: 4,
+        },
+        timestamp: {
+          fontSize: 12,
+        },
+        timestampLight: {
+          color: theme.colors.text.tertiary,
+        },
+        timestampDark: {
+          color: theme.colors.text.secondary,
+        },
+        statusRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginLeft: 8,
+        },
+        status: {
+          fontSize: 12,
+        },
+        statusLight: {
+          color: theme.colors.text.secondary,
+        },
+        statusDark: {
+          color: theme.colors.text.tertiary,
+        },
+        footerRow: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginLeft: 8,
+        },
+        avatarContainer: {
+          position: "absolute",
+          bottom: -16,
+        },
+        avatar: {
+          width: 32,
+          height: 32,
+          borderRadius: 16,
+          borderWidth: 2,
+          borderColor: theme.colors.background.primary,
+        },
+        avatarEmoji: {
+          fontSize: 16,
+          textAlign: "center",
+          lineHeight: 28,
+        },
+        avatarName: {
+          fontSize: 10,
+          fontWeight: "500",
+        },
+        avatarNameLight: {
+          color: theme.colors.text.primary,
+        },
+        avatarNameDark: {
+          color: theme.colors.background.primary,
+        },
+        reactionButton: {
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 12,
+          paddingHorizontal: 8,
+          paddingVertical: 4,
+          marginHorizontal: 2,
+        },
+        reactionEmoji: {
+          fontSize: 14,
+        },
+        retryBadge: {
+          backgroundColor: theme.colors.danger,
+          borderRadius: 12,
+          paddingHorizontal: 8,
+          paddingVertical: 4,
+          marginLeft: 8,
+        },
+        retryText: {
+          fontSize: 12,
+          fontWeight: "500",
+          color: theme.colors.background.primary,
+        },
+        milestoneContainer: {
+          position: "absolute",
+          top: -20,
+          left: 0,
+          right: 0,
+          alignItems: "center",
+        },
+        milestoneText: {
+          fontSize: 10,
+          fontWeight: "600",
+          color: theme.colors.primary[500],
+          backgroundColor: theme.colors.background.primary,
+          paddingHorizontal: 8,
+          paddingVertical: 2,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: theme.colors.primary[500],
+        },
+        replyQuote: {
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: 8,
+          paddingVertical: 6,
+          paddingHorizontal: 8,
+          backgroundColor: theme.colors.background.secondary,
+          borderRadius: 8,
+          borderLeftWidth: 3,
+          borderLeftColor: theme.colors.primary[500],
+        },
+        replyBar: {
+          width: 3,
+          height: 16,
+          backgroundColor: theme.colors.primary[500],
+          borderRadius: 2,
+          marginRight: 8,
+        },
+        replyAuthor: {
+          fontSize: 12,
+          fontWeight: "600",
+          color: theme.colors.text.primary,
+          flex: 1,
+        },
+        replyText: {
+          fontSize: 12,
+          color: theme.colors.text.secondary,
+          marginTop: 2,
+        },
+      }),
+    [theme]
+  );
   
   const messageStatus = getMessageStatus(message, currentUserId);
   const { style: bubbleShakeStyle, shake } = useBubbleRetryShake();
@@ -245,13 +449,13 @@ export function MessageBubbleEnhanced({
 
   const getBubbleStyle = () => {
     if (isOwnMessage) {
-      return isDark ? styles.ownMessageDark : styles.ownMessageLight;
+      return theme.isDark ? styles.ownMessageDark : styles.ownMessageLight;
     }
-    return isDark ? styles.otherMessageDark : styles.otherMessageLight;
+    return theme.isDark ? styles.otherMessageDark : styles.otherMessageLight;
   };
 
   const getTextStyle = () =>
-    isDark ? styles.messageTextDark : styles.messageTextLight;
+    theme.isDark ? styles.messageTextDark : styles.messageTextLight;
 
   if (message.messageType === "image") {
     return (
@@ -268,9 +472,9 @@ export function MessageBubbleEnhanced({
           <MessageTimestampBadge
             iso={message.sentAt}
             visible={showTime}
-            textColor={isOwnMessage ? "#fff" : "#111"}
-            bgColor={isOwnMessage ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}
-            accentColor={isOwnMessage ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"}
+            textColor={isOwnMessage ? theme.colors.background.primary : theme.colors.text.primary}
+            bgColor={isOwnMessage ? theme.colors.text.primary + "30" : theme.colors.text.primary + "23"}
+            accentColor={isOwnMessage ? theme.colors.text.primary + "B3" : theme.colors.text.primary + "80"}
           />
           {isOwnMessage && showStatus && (
             <View style={styles.footerRow}>
@@ -317,7 +521,7 @@ export function MessageBubbleEnhanced({
                 <Text
                   style={StyleSheet.flatten([
                     styles.avatarName,
-                    isDark ? styles.avatarNameDark : styles.avatarNameLight,
+                    theme.isDark ? styles.avatarNameDark : styles.avatarNameLight,
                   ])}
                 >
                   {petInfo.name}
@@ -330,8 +534,8 @@ export function MessageBubbleEnhanced({
             <LinearGradient
               colors={
                 isOwnMessage
-                  ? ["#FF6B6B", "#FF8E8E"]
-                  : [colors.bgElevated, colors.bg]
+                  ? [theme.colors.danger, theme.colors.danger + "80"]
+                  : [theme.colors.background.elevated, theme.colors.background.primary]
               }
               style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
               start={{ x: 0, y: 0 }}
@@ -362,9 +566,9 @@ export function MessageBubbleEnhanced({
             <MessageTimestampBadge
               iso={message.sentAt}
               visible={showTime}
-              textColor={isOwnMessage ? "#fff" : "#111"}
-              bgColor={isOwnMessage ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}
-              accentColor={isOwnMessage ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"}
+              textColor={isOwnMessage ? theme.colors.background.primary : theme.colors.text.primary}
+              bgColor={isOwnMessage ? theme.colors.text.primary + "30" : theme.colors.text.primary + "23"}
+              accentColor={isOwnMessage ? theme.colors.text.primary + "B3" : theme.colors.text.primary + "80"}
             />
             {isOwnMessage && showStatus && (
               <View style={styles.footerRow}>
@@ -384,10 +588,10 @@ export function MessageBubbleEnhanced({
         users={users}
         anchor={anchor}
         theme={{
-          bg: isDark ? "#111" : "#fff",
-          text: isDark ? "#fff" : "#111",
-          subtext: isDark ? "#9ca3af" : "#666",
-          border: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+          bg: theme.isDark ? theme.colors.text.primary : theme.colors.background.primary,
+          text: theme.isDark ? theme.colors.background.primary : theme.colors.text.primary,
+          subtext: theme.isDark ? theme.colors.text.tertiary : theme.colors.text.secondary,
+          border: theme.isDark ? theme.colors.text.primary + "80" : theme.colors.text.primary + "80",
         }}
       />
 
@@ -398,164 +602,17 @@ export function MessageBubbleEnhanced({
         anchor={menuAnchor}
         actions={actions}
         theme={{
-          bg: isDark ? "#111" : "#fff",
-          border: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
-          text: isDark ? "#fff" : "#111",
-          sub: isDark ? "#9ca3af" : "#666",
-          item: isDark ? "#181818" : "#f9fafb",
-          itemPressed: isDark ? "#222" : "#f3f4f6",
+          bg: theme.isDark ? theme.colors.text.primary : theme.colors.background.primary,
+          border: theme.isDark ? theme.colors.text.primary + "80" : theme.colors.text.primary + "80",
+          text: theme.isDark ? theme.colors.background.primary : theme.colors.text.primary,
+          sub: theme.isDark ? theme.colors.text.tertiary : theme.colors.text.secondary,
+          item: theme.isDark ? theme.colors.text.primary : theme.colors.background.secondary,
+          itemPressed: theme.isDark ? theme.colors.text.primary : theme.colors.background.tertiary,
         }}
       />
     </>
   );
 }
 
-const styles = StyleSheet.create({
-  messageContainer: {
-    marginVertical: 4,
-    maxWidth: "80%",
-  },
-  ownContainer: {
-    alignSelf: "flex-end",
-    alignItems: "flex-end",
-  },
-  otherContainer: {
-    alignSelf: "flex-start",
-    alignItems: "flex-start",
-  },
-  milestoneContainer: {
-    alignItems: "center",
-    marginBottom: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    backgroundColor: "#FF6B6B",
-    borderRadius: 12,
-  },
-  milestoneText: {
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "600",
-  },
-  avatarContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "#F8F9FA",
-    borderRadius: 16,
-    maxWidth: 120,
-  },
-  ownAvatar: {
-    alignSelf: "flex-end",
-  },
-  otherAvatar: {
-    alignSelf: "flex-start",
-  },
-  avatarEmoji: {
-    fontSize: 20,
-    marginRight: 4,
-  },
-  avatarName: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  avatarNameLight: {
-    color: "#1A1A1A",
-  },
-  avatarNameDark: {
-    color: "#E0E0E0",
-  },
-  bubble: {
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    marginBottom: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  ownMessageLight: {
-    backgroundColor: "#FF6B6B",
-  },
-  ownMessageDark: {
-    backgroundColor: "#E55555",
-  },
-  otherMessageLight: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  otherMessageDark: {
-    backgroundColor: "#2A2A2A",
-    borderWidth: 1,
-    borderColor: "#404040",
-  },
-  messageText: {
-    fontSize: 16,
-    lineHeight: 20,
-  },
-  messageTextLight: {
-    color: "#1A1A1A",
-  },
-  messageTextDark: {
-    color: "#E0E0E0",
-  },
-  imageBubble: {
-    backgroundColor: "#F0F0F0",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  imagePlaceholder: {
-    fontSize: 14,
-    color: "#666",
-  },
-  messageMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    marginTop: 2,
-  },
-  footerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  replyQuote: {
-    marginBottom: 6,
-    padding: 8,
-    borderRadius: 10,
-    backgroundColor: "rgba(0,0,0,0.06)",
-    position: "relative",
-    borderLeftWidth: 3,
-    borderLeftColor: "#ec4899",
-    paddingLeft: 10,
-  },
-  replyBar: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 3,
-    borderRadius: 3,
-    backgroundColor: "#ec4899",
-  },
-  replyAuthor: {
-    fontSize: 11,
-    fontWeight: "700",
-    opacity: 0.8,
-    marginBottom: 2,
-  },
-  replySnippet: {
-    marginTop: 2,
-    fontSize: 12,
-    opacity: 0.9,
-  },
-});
 
 export default MessageBubbleEnhanced;
-
