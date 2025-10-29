@@ -88,7 +88,7 @@ export const HOLOGRAPHIC_CONFIGS = (theme: ReturnType<typeof useTheme>) => ({
     opacity: 0.3,
     angle: 45,
   },
-} as const;
+});
 
 // === HOLOGRAPHIC CONTAINER COMPONENT ===
 interface HolographicContainerProps extends ViewProps {

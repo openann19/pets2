@@ -95,7 +95,7 @@ export default function ReadByPopover({
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       {/* Backdrop */}
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Animated.View style={[styles.backdropFill, { opacity: alpha.value }] />
+        <Animated.View style={[styles.backdropFill, { opacity: alpha.value }]} />
       </Pressable>
 
       {/* Popover */}
@@ -130,7 +130,7 @@ export default function ReadByPopover({
                   <View style={[styles.avatar, styles.avatarFallback]} />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.name, { color: theme?.text ?? "#fff" }] numberOfLines={1}>
+                  <Text style={[styles.name, { color: theme?.text ?? "#fff" }]} numberOfLines={1}>
                     {r.name}
                   </Text>
                   <Text style={[styles.sub, { color: theme?.subtext ?? "#9ca3af" }]>
