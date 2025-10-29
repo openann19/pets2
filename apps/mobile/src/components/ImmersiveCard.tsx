@@ -6,18 +6,13 @@ import type {
 } from "react-native";
 import { StyleSheet, TouchableOpacity as RNTouchableOpacity } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import { View, TouchableOpacity, Text, Animated } from "react-native";
+import { View, TouchableOpacity, Animated } from "react-native";
 
 import {
   useGyroscopeTilt,
   useEntranceAnimation,
 } from "../hooks/useMotionSystem";
-import type {
-  DynamicColors,
-  EnhancedShadows,
-  SemanticColors,
-  EnhancedTypography,
-} from "../theme/Provider";
+import { useTheme } from '../theme/Provider';
 
 // === PROJECT HYPERION: IMMERSIVE CARD COMPONENT ===
 
@@ -76,7 +71,6 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
       variant = "default",
       size = "md",
       tiltEnabled = true,
-      magneticHover = true,
       shimmerEffect = false,
       entranceAnimation = "none",
       gradientName,
@@ -88,9 +82,10 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
     },
     ref,
   ) => {
-    const [isHovered, setIsHovered] = useState(false);
+    const [isHovered] = useState(false);
     const [isPressed, setIsPressed] = useState(false);
     const cardRef = useRef<View>(null);
+    const theme = useTheme();
 
     // Animation hooks
     const gyroscope = useGyroscopeTilt(0.3, 10);
@@ -114,8 +109,8 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
         case "default":
           return {
             ...baseStyles,
-            backgroundColor: "#f9fafb",
-            shadowColor: "#000",
+            backgroundColor: theme.colors.bg,
+            shadowColor: theme.colors.text,
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.15,
             shadowRadius: 12,
@@ -126,7 +121,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: "rgba(255, 255, 255, 0.7)",
-            shadowColor: "#000",
+            shadowColor: theme.colors.text,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.1,
             shadowRadius: 8,
@@ -137,7 +132,7 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
           return {
             ...baseStyles,
             backgroundColor: "transparent",
-            shadowColor: "#000",
+            shadowColor: theme.colors.text,
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.15,
             shadowRadius: 12,
@@ -147,8 +142,8 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
         case "elevated":
           return {
             ...baseStyles,
-            backgroundColor: "#f9fafb",
-            shadowColor: "#000",
+            backgroundColor: theme.colors.bg,
+            shadowColor: theme.colors.text,
             shadowOffset: { width: 0, height: 16 },
             shadowOpacity: 0.2,
             shadowRadius: 20,
@@ -158,14 +153,14 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
         case "minimal":
           return {
             ...baseStyles,
-            backgroundColor: "#f9fafb",
-            shadowColor: "#000",
+            backgroundColor: theme.colors.bg,
+            shadowColor: theme.colors.text,
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.1,
             shadowRadius: 8,
             elevation: 4,
             borderWidth: 1,
-            borderColor: "#e5e7eb",
+            borderColor: theme.colors.border,
           };
 
         default:
@@ -186,14 +181,6 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
     };
 
     // Handle hover/magnetic effects (simulated for mobile)
-    const handleTouchStart = () => {
-      setIsHovered(true);
-    };
-
-    const handleTouchEnd = () => {
-      setIsHovered(false);
-    };
-
     // Handle gyroscope updates (would be connected to actual gyroscope)
     const handlePanGesture = (event: {
       nativeEvent: { translationX: number; translationY: number };
@@ -242,21 +229,21 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
       // Simple glow shadows
       const glowShadows: Record<string, ViewStyle> = {
         blue: {
-          shadowColor: "#3b82f6",
+          shadowColor: theme.colors.primary[500],
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 0.8,
           shadowRadius: 16,
           elevation: 8,
         },
         purple: {
-          shadowColor: "#a855f7",
+          shadowColor: theme.colors.primary[600],
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 0.8,
           shadowRadius: 16,
           elevation: 8,
         },
         pink: {
-          shadowColor: "#ec4899",
+          shadowColor: theme.colors.danger,
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 0.8,
           shadowRadius: 16,
@@ -292,9 +279,9 @@ const ImmersiveCard = forwardRef<RNTouchableOpacity, ImmersiveCardProps>(
       // Wrap with gradient for holographic variant
       if (variant === "holographic" && gradientName) {
         const gradients: Record<string, { colors: string[]; locations: number[] }> = {
-          primary: { colors: ["#ec4899", "#f472b6", "#fbcfe8"], locations: [0, 0.5, 1] },
-          sunset: { colors: ["#f59e0b", "#f97316", "#fb923c"], locations: [0, 0.5, 1] },
-          ocean: { colors: ["#0ea5e9", "#38bdf8", "#7dd3fc"], locations: [0, 0.5, 1] },
+          primary: { colors: [theme.colors.danger, theme.colors.danger, theme.colors.danger], locations: [0, 0.5, 1] },
+          sunset: { colors: [theme.colors.status.warning, theme.colors.status.warning, theme.colors.status.warning], locations: [0, 0.5, 1] },
+          ocean: { colors: [theme.colors.status.success, theme.colors.status.success, theme.colors.status.success], locations: [0, 0.5, 1] },
         };
         const gradient = gradients[gradientName] ?? gradients.primary;
         if (gradient) {
