@@ -41,7 +41,7 @@ export function Tag({
         return {
           backgroundColor: theme.colors.primary,
           borderColor: 'transparent',
-          textColor: theme.colors.primaryText,
+          textColor: theme.colors.onPrimary,
         };
       case 'secondary':
         return {

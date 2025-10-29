@@ -41,7 +41,7 @@ function SafetyCenterScreen(): JSX.Element {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#1e3c72", "#2a5298", theme.colors.status.info]}
+        colors={["#1e3c72", "#2a5298", theme.colors.info]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -139,7 +139,7 @@ function SafetyCenterScreen(): JSX.Element {
           <TouchableOpacity style={styles.quickActionCard} testID="SafetyCenterScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
             <BlurView intensity={20} style={styles.quickActionBlur}>
               <View style={styles.quickActionContent}>
-                <Ionicons name="help-buoy-outline" size={24} color={theme.colors.status.info} }/>
+                <Ionicons name="help-buoy-outline" size={24} color={theme.colors.info} }/>
                 <View style={styles.quickActionText}>
                   <Text style={styles.quickActionTitle}>Contact Support</Text>
                   <Text style={styles.quickActionDescription}>

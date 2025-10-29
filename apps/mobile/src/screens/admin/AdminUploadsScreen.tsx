@@ -184,7 +184,7 @@ function AdminUploadsScreen({
       <TouchableOpacity
         style={StyleSheet.flatten([
           styles.uploadCard,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
          testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           setSelectedUpload(item);
@@ -260,7 +260,7 @@ function AdminUploadsScreen({
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? colors.primary : colors.card,
+          backgroundColor: filter === filterType ? colors.primary : colors.surface,
         },
       ])}
        testID="AdminUploadsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -286,7 +286,7 @@ function AdminUploadsScreen({
         <View
           style={StyleSheet.flatten([
             styles.modalContent,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.surface },
           ])}
         >
           <View style={styles.modalHeader}>
@@ -473,7 +473,7 @@ function AdminUploadsScreen({
       <View
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <TouchableOpacity
@@ -498,7 +498,7 @@ function AdminUploadsScreen({
       <View
         style={StyleSheet.flatten([
           styles.searchContainer,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <View

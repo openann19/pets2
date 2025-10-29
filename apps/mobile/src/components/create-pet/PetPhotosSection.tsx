@@ -31,7 +31,7 @@ const makeStyles = (theme: any) =>
     sectionTitle: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.neutral[900],
+      color: theme.palette.neutral[900],
       marginBottom: 16,
     },
     errorText: {
@@ -45,14 +45,14 @@ const makeStyles = (theme: any) =>
       justifyContent: 'center',
       padding: 16,
       borderWidth: 2,
-      borderColor: theme.colors.neutral[300],
+      borderColor: theme.palette.neutral[300],
       borderRadius: 12,
-      backgroundColor: theme.colors.neutral[100],
+      backgroundColor: theme.palette.neutral[100],
       borderStyle: 'dashed',
     },
     addPhotoText: {
       fontSize: 16,
-      color: theme.colors.neutral[500],
+      color: theme.palette.neutral[500],
       marginLeft: 8,
       fontWeight: '500',
     },
@@ -83,7 +83,7 @@ const makeStyles = (theme: any) =>
     },
     primaryBadgeText: {
       fontSize: 10,
-      color: theme.colors.neutral[0],
+      color: theme.palette.neutral[0],
       fontWeight: 'bold',
     },
     photoActions: {
@@ -106,7 +106,7 @@ const makeStyles = (theme: any) =>
     },
     photoHint: {
       fontSize: 12,
-      color: theme.colors.neutral[500],
+      color: theme.palette.neutral[500],
       marginTop: 12,
       lineHeight: 18,
     },

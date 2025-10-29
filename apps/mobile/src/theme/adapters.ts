@@ -100,8 +100,8 @@ export function getExtendedColors(theme: Theme | any): ExtendedColors {
 
     // Legacy background aliases (maps to semantic)
     background: colors.bg ?? colors.background,
-    surfaceElevated: colors.surface ?? colors.surfaceElevated ?? colors.bgElevated,
-    card: colors.surface ?? colors.card ?? colors.bgElevated,
+    surfaceElevated: colors.surface ?? colors.surface ?? colors.bgElevated,
+    card: colors.surface ?? colors.surface ?? colors.bgElevated,
     bgElevated: colors.surface ?? colors.bgElevated,
 
     // Status color mappings

@@ -81,7 +81,7 @@ const AIPhotoAnalyzerScreen = ({
           colors={{
             text: colors.onSurface
             textSecondary: colors.onSurfaceecondary,
-            card: colors.card,
+            card: colors.surface,
             primary: colors.primary,
             secondary: colors.secondary,
           }}

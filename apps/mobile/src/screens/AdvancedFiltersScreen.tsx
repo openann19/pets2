@@ -125,7 +125,7 @@ function AdvancedFiltersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.status.info
+              color={theme.colors.info
            } }/>
             <Text style={styles.infoText}>
               Advanced filters help you find pets that match your specific

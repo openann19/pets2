@@ -199,7 +199,7 @@ export default function AdminServicesScreen({
         {services.map((service, index) => (
           <View
             key={index}
-            style={[styles.serviceCard, { backgroundColor: colors.card }]
+            style={[styles.serviceCard, { backgroundColor: colors.surface }]
           >
             <View style={styles.serviceHeader}>
               <View style={[styles.iconContainer, { backgroundColor: `${service.color}20` }]>

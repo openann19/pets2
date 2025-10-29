@@ -47,7 +47,7 @@ function PrivacySettingsScreen({
     <View
       style={StyleSheet.flatten([
         styles.settingItem,
-        { backgroundColor: colors.card },
+        { backgroundColor: colors.surface },
       ])}
     >
       <View style={styles.settingContent}>
@@ -125,7 +125,7 @@ function PrivacySettingsScreen({
         accessibilityRole="header"
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card, borderBottomColor: colors.border },
+          { backgroundColor: colors.surface, borderBottomColor: colors.border },
         ])}
       >
         <TouchableOpacity
@@ -201,7 +201,7 @@ function PrivacySettingsScreen({
               }
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]
+                settings.showOnlineStatus ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -213,7 +213,7 @@ function PrivacySettingsScreen({
               value={settings.showDistance}
               onValueChange={(value) => updateSetting("showDistance", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.showDistance ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.showDistance ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
 
@@ -225,7 +225,7 @@ function PrivacySettingsScreen({
               onValueChange={(value) => updateSetting("showLastActive", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showLastActive ? colors.card : theme.palette.neutral[500]
+                settings.showLastActive ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -269,7 +269,7 @@ function PrivacySettingsScreen({
               }
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showReadReceipts ? colors.card : theme.palette.neutral[500]
+                settings.showReadReceipts ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}
@@ -292,7 +292,7 @@ function PrivacySettingsScreen({
               value={settings.incognitoMode}
               onValueChange={(value) => updateSetting("incognitoMode", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.incognitoMode ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.incognitoMode ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
 
@@ -303,7 +303,7 @@ function PrivacySettingsScreen({
               value={settings.shareLocation}
               onValueChange={(value) => updateSetting("shareLocation", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.shareLocation ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.shareLocation ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
         </View>
@@ -325,7 +325,7 @@ function PrivacySettingsScreen({
               value={settings.dataSharing}
               onValueChange={(value) => updateSetting("dataSharing", value)}
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
-              thumbColor={settings.dataSharing ? colors.card : theme.palette.neutral[500]}
+              thumbColor={settings.dataSharing ? colors.surface : theme.palette.neutral[500]}
             />,
           )}
 
@@ -339,7 +339,7 @@ function PrivacySettingsScreen({
               }
               trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.analyticsTracking ? colors.card : theme.palette.neutral[500]
+                settings.analyticsTracking ? colors.surface : theme.palette.neutral[500]
               }
             />,
           )}

@@ -49,7 +49,7 @@ export function PetSelectionSection({
     <TouchableOpacity
       style={StyleSheet.flatten([
         styles.petCard,
-        { backgroundColor: colors.card },
+        { backgroundColor: colors.surface },
         isSelected && { borderColor: colors.primary, borderWidth: 2 },
       ])}
       testID="PetSelectionSection-button-2"

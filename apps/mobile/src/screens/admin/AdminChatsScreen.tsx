@@ -145,7 +145,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <View
         style={StyleSheet.flatten([
           styles.messageCard,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <View style={styles.messageHeader}>
@@ -257,7 +257,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? colors.primary : colors.card,
+          backgroundColor: filter === filterType ? colors.primary : colors.surface,
         },
       ])}
        testID="AdminChatsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -286,7 +286,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <View
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <TouchableOpacity
@@ -311,7 +311,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <View
         style={StyleSheet.flatten([
           styles.searchContainer,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <View

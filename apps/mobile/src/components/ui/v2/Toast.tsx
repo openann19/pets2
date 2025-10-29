@@ -96,7 +96,7 @@ export function Toast({
         return {
           backgroundColor: theme.colors.primary,
           icon: 'ℹ',
-          textColor: theme.colors.primaryText,
+          textColor: theme.colors.onPrimary,
         };
     }
   };

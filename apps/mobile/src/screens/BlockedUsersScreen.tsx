@@ -190,7 +190,7 @@ function BlockedUsersScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.status.info
+              color={theme.colors.info
            } }/>
             <Text style={styles.infoText}>
               Blocked users cannot contact you or view your profile. You can

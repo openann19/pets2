@@ -318,7 +318,7 @@ export default function AdminAnalyticsScreen({
                   selectedPeriod === period && styles.periodButtonActive,
                   {
                     backgroundColor:
-                      selectedPeriod === period ? colors.primary : colors.card,
+                      selectedPeriod === period ? colors.primary : colors.surface,
                   },
                 ])}
                  testID="AdminAnalyticsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -357,11 +357,11 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="people" size={20} color={theme.colors.status.info} }/>
+                    <Ionicons name="people" size={20} color={theme.colors.info} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -400,7 +400,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
@@ -443,11 +443,11 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color={theme.theme.colors.primary[500]} }/>
+                    <Ionicons name="chatbubble" size={20} color={theme.colors.primary} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
@@ -486,7 +486,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.metricCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <View style={styles.metricHeader}>
@@ -535,7 +535,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -558,7 +558,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -581,7 +581,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -604,7 +604,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.engagementCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -641,7 +641,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.revenueCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -664,7 +664,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.revenueCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -687,7 +687,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.revenueCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -724,7 +724,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Ionicons name="warning" size={20} color={theme.colors.warning} }/>
@@ -748,7 +748,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Ionicons name="shield" size={20} color={theme.colors.danger} }/>
@@ -772,10 +772,10 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
-                  <Ionicons name="flag" size={20} color={theme.theme.colors.primary[500]} }/>
+                  <Ionicons name="flag" size={20} color={theme.colors.primary} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
@@ -796,7 +796,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.securityCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Ionicons name="ban" size={20} color={theme.colors.danger} }/>
@@ -834,7 +834,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.performersCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text
@@ -879,7 +879,7 @@ export default function AdminAnalyticsScreen({
                 <View
                   style={StyleSheet.flatten([
                     styles.performersCard,
-                    { backgroundColor: colors.card },
+                    { backgroundColor: colors.surface },
                   ])}
                 >
                   <Text

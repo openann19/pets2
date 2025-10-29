@@ -255,7 +255,7 @@ export default function AdminSecurityScreen({
       <View
         style={StyleSheet.flatten([
           styles.alertCard,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
           item.resolved && styles.alertCardResolved,
         ])}
       >
@@ -483,7 +483,7 @@ export default function AdminSecurityScreen({
             <View
               style={StyleSheet.flatten([
                 styles.metricCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.metricHeader}>
@@ -510,7 +510,7 @@ export default function AdminSecurityScreen({
             <View
               style={StyleSheet.flatten([
                 styles.metricCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.metricHeader}>
@@ -537,11 +537,11 @@ export default function AdminSecurityScreen({
             <View
               style={StyleSheet.flatten([
                 styles.metricCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.metricHeader}>
-                <Ionicons name="information-circle" size={20} color={theme.colors.status.info} }/>
+                <Ionicons name="information-circle" size={20} color={theme.colors.info} }/>
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
@@ -554,7 +554,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.metricValue,
-                  { color: theme.colors.status.info },
+                  { color: theme.colors.info },
                 ])}
               >
                 {metrics.mediumAlerts}
@@ -564,7 +564,7 @@ export default function AdminSecurityScreen({
             <View
               style={StyleSheet.flatten([
                 styles.metricCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.metricHeader}>
@@ -614,7 +614,7 @@ export default function AdminSecurityScreen({
                       backgroundColor:
                         selectedSeverity === severity
                           ? colors.primary
-                          : colors.card,
+                          : colors.surface,
                     },
                   ])}
                    testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -668,7 +668,7 @@ export default function AdminSecurityScreen({
                   selectedType === type && styles.filterButtonActive,
                   {
                     backgroundColor:
-                      selectedType === type ? colors.primary : colors.card,
+                      selectedType === type ? colors.primary : colors.surface,
                   },
                 ])}
                  testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {

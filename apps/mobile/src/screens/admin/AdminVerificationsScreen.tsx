@@ -246,7 +246,7 @@ function AdminVerificationsScreen({
       case "pending":
         return theme.colors.warning;
       case "requires_info":
-        return theme.theme.colors.primary[500];
+        return theme.colors.primary;
       default:
         return theme.colors.border;
     }
@@ -285,7 +285,7 @@ function AdminVerificationsScreen({
       <TouchableOpacity
         style={StyleSheet.flatten([
           styles.verificationCard,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
          testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
           setSelectedVerification(item);
@@ -441,7 +441,7 @@ function AdminVerificationsScreen({
       style={StyleSheet.flatten([
         styles.filterButton,
         {
-          backgroundColor: filter === filterType ? colors.primary : colors.card,
+          backgroundColor: filter === filterType ? colors.primary : colors.surface,
         },
       ])}
        testID="AdminVerificationsScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -467,7 +467,7 @@ function AdminVerificationsScreen({
         <View
           style={StyleSheet.flatten([
             styles.modalContent,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.surface },
           ])}
         >
           <View style={styles.modalHeader}>
@@ -668,7 +668,7 @@ function AdminVerificationsScreen({
       <View
         style={StyleSheet.flatten([
           styles.header,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <TouchableOpacity
@@ -693,7 +693,7 @@ function AdminVerificationsScreen({
       <View
         style={StyleSheet.flatten([
           styles.searchContainer,
-          { backgroundColor: colors.card },
+          { backgroundColor: colors.surface },
         ])}
       >
         <View
@@ -928,7 +928,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.success,
   },
   infoButton: {
-    backgroundColor: theme.theme.colors.primary[500],
+    backgroundColor: theme.colors.primary,
   },
   rejectButton: {
     backgroundColor: theme.colors.danger,

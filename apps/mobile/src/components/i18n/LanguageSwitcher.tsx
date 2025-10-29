@@ -141,7 +141,7 @@ const makeStyles = (theme: any) =>
     buttonPressed: { opacity: 0.9 },
     buttonDisabled: { opacity: 0.6 },
     buttonText: { fontSize: 14, fontWeight: '600' },
-    buttonTextActive: { color: theme.colors.primaryText },
+    buttonTextActive: { color: theme.colors.onPrimary },
     buttonTextInactive: { color: theme.colors.onSurface },
     resetButton: {
       paddingVertical: 10,

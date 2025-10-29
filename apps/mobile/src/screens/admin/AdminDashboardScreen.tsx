@@ -216,7 +216,7 @@ export default function AdminDashboardScreen({
           <View
             style={StyleSheet.flatten([
               styles.card,
-              { backgroundColor: colors.card },
+              { backgroundColor: colors.surface },
             ])}
           >
             <View style={styles.cardHeader}>
@@ -287,7 +287,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("analytics");
@@ -307,7 +307,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("users");
@@ -327,7 +327,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("security");
@@ -347,7 +347,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("billing");
@@ -367,7 +367,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("chats");
@@ -388,7 +388,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("uploads");
@@ -408,7 +408,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("verifications");
@@ -428,7 +428,7 @@ export default function AdminDashboardScreen({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.quickActionCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
                testID="AdminDashboardScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
                 handleQuickAction("services");
@@ -463,7 +463,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
@@ -525,7 +525,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
@@ -571,7 +571,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>
@@ -625,7 +625,7 @@ export default function AdminDashboardScreen({
             <View
               style={StyleSheet.flatten([
                 styles.statCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
               <View style={styles.statHeader}>

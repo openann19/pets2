@@ -45,12 +45,12 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
       sectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: theme.colors.neutral[900],
+        color: theme.palette.neutral[900],
         marginBottom: 16,
       },
       sectionDesc: {
         fontSize: 14,
-        color: theme.colors.neutral[500],
+        color: theme.palette.neutral[500],
         marginBottom: 16,
       },
       tagsContainer: {
@@ -62,20 +62,20 @@ export const PetPersonalitySection: React.FC<PetPersonalitySectionProps> = ({
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderWidth: 1,
-        borderColor: theme.colors.neutral[300],
+        borderColor: theme.palette.neutral[300],
         borderRadius: 16,
-        backgroundColor: theme.colors.neutral[0],
+        backgroundColor: theme.palette.neutral[0],
       },
       tagSelected: {
-        borderColor: theme.colors.secondary[500],
-        backgroundColor: theme.colors.neutral[100],
+        borderColor: theme.colors.secondary,
+        backgroundColor: theme.palette.neutral[100],
       },
       tagText: {
         fontSize: 14,
-        color: theme.colors.neutral[700],
+        color: theme.palette.neutral[700],
       },
       tagTextSelected: {
-        color: theme.colors.secondary[500],
+        color: theme.colors.secondary,
         fontWeight: '600',
       },
     });

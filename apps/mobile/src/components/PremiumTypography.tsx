@@ -16,18 +16,18 @@ import { Colors } from '../animation';
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = (theme: ReturnType<typeof useTheme>) => ({
   primary: [theme.colors.primary, theme.colors.primary, theme.colors.primary],
-  secondary: [theme.colors.primary, theme.colors.status.info, theme.colors.status.info],
+  secondary: [theme.colors.primary, theme.colors.info, theme.colors.info],
   premium: [theme.colors.primary, theme.colors.primary, theme.colors.primary],
   sunset: [theme.colors.warning, theme.colors.warning, theme.colors.warning],
-  ocean: [theme.colors.primary, theme.colors.status.info, theme.colors.status.info],
+  ocean: [theme.colors.primary, theme.colors.info, theme.colors.info],
   holographic: [
     theme.colors.primary,
     theme.colors.primary,
     theme.colors.primary,
     theme.colors.primary,
-    theme.colors.status.info,
+    theme.colors.info,
   ],
-  neon: [theme.colors.status.info, theme.colors.primary, theme.colors.primary],
+  neon: [theme.colors.info, theme.colors.primary, theme.colors.primary],
   gold: [theme.colors.warning, theme.colors.warning, theme.colors.warning],
   rainbow: [
     theme.colors.danger,
@@ -58,7 +58,7 @@ const TEXT_SHADOWS = (theme: ReturnType<typeof useTheme>) => ({
     textShadowRadius: 12,
   },
   neon: {
-    textShadowColor: theme.colors.status.info,
+    textShadowColor: theme.colors.info,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 15,
   },

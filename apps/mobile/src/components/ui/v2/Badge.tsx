@@ -31,7 +31,7 @@ export function Badge({
   const getColors = () => {
     switch (variant) {
       case 'primary':
-        return { bg: theme.colors.primary, text: theme.colors.primaryText };
+        return { bg: theme.colors.primary, text: theme.colors.onPrimary };
       case 'secondary':
         return { bg: theme.colors.secondary, text: '#FFFFFF' };
       case 'success':

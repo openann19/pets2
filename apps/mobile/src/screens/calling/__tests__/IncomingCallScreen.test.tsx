@@ -247,7 +247,7 @@ describe('IncomingCallScreen', () => {
     const container = getByTestId('incoming-call-container');
     expect(container).toHaveStyle({
       flex: 1,
-      backgroundColor: 'theme.colors.neutral[950]',
+      backgroundColor: 'theme.palette.neutral[950]',
     });
   });
 });

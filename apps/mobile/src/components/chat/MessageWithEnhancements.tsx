@@ -245,7 +245,7 @@ export function MessageWithEnhancements({
             colors={
               isOwnMessage
                 ? [colors.primary, colors.primaryDark || colors.primary]
-                : [colors.card, colors.surfaceElevated || colors.card]
+                : [colors.surface, colors.surface || colors.surface]
             }
             style={[
               styles.messageBubble,
@@ -289,7 +289,7 @@ export function MessageWithEnhancements({
                 onCancel={handleReactionCancel}
                 influenceRadius={80}
                 baseSize={32}
-                backgroundColor={colors.card}
+                backgroundColor={colors.surface}
                 borderColor={colors.border}
               />
             </Animated.View>

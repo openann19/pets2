@@ -258,11 +258,11 @@ export default function StoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral[950],
+    backgroundColor: theme.palette.neutral[950],
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: theme.colors.neutral[950],
+    backgroundColor: theme.palette.neutral[950],
     justifyContent: "center",
     alignItems: "center",
   },

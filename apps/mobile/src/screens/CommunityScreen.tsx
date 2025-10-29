@@ -229,7 +229,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
       <View
         style={StyleSheet.flatten([
           styles.postCard,
-          { backgroundColor: colors.card, borderColor: colors.border },
+          { backgroundColor: colors.surface, borderColor: colors.border },
         ])}
       >
         {/* Header */}
@@ -342,7 +342,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                   }}
                   influenceRadius={80}
                   baseSize={28}
-                  backgroundColor={colors.card || '#ffffff'}
+                  backgroundColor={colors.surface || '#ffffff'}
                   borderColor={colors.border || 'rgba(0,0,0,0.1)'}
                 />
               </View>
@@ -681,7 +681,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   joinButtonText: {
-    color: theme.colors.neutral[0],
+    color: theme.palette.neutral[0],
     fontWeight: '600',
   },
   actions: {
