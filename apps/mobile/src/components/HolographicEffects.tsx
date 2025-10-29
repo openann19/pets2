@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React, { type ReactNode, useEffect } from "react";
+import React, { type ReactNode, useEffect, useMemo } from "react";
 import { View, type ViewStyle, type ViewProps, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
@@ -13,66 +13,65 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { MOBILE_SPACING, MOBILE_RADIUS } from '../constants/design-tokens';
+import { useTheme } from '../theme/Provider';
 import { Theme } from '../theme/unified-theme';
 
 // === HOLOGRAPHIC CONSTANTS ===
-export const HOLOGRAPHIC_CONFIGS = {
+export const HOLOGRAPHIC_CONFIGS = (theme: ReturnType<typeof useTheme>) => ({
   // Gradient sets for different holographic effects
   gradients: {
     rainbow: [
-      "#ff0000",
-      "#ff7f00",
-      "Theme.colors.neutral[0]f00",
-      "#00ff00",
-      "Theme.colors.neutral[950]0ff",
-      "#4b0082",
-      "#9400d3",
+      theme.colors.primary[600],
+      theme.colors.primary[400],
+      theme.colors.status.warning,
+      theme.colors.status.success,
+      theme.colors.status.info,
+      theme.colors.primary[500],
     ],
     cyber: [
-      "#00f5ff",
-      "#ff00ff",
-      "Theme.colors.neutral[0]f00",
-      "#00ff00",
-      "#ff0080",
-      "#8000ff",
-      "#00ffff",
+      theme.colors.status.info,
+      theme.colors.primary[500],
+      theme.colors.primary[600],
+      theme.colors.status.success,
+      theme.colors.primary[400],
+      theme.colors.primary[700],
     ],
     sunset: [
-      "#ff6b6b",
-      "#ffd93d",
-      "#6bcf7f",
-      "#4d96ff",
-      "#9b59b6",
-      "#e74c3c",
-      "#f39c12",
+      theme.colors.danger,
+      theme.colors.status.warning,
+      theme.colors.status.success,
+      theme.colors.status.info,
+      theme.colors.primary[500],
+      theme.colors.danger,
+      theme.colors.status.warning,
     ],
     ocean: [
-      "#667eea",
-      "#764ba2",
-      "#f093fb",
-      "#f5576c",
-      "#4facfe",
-      "#00f2fe",
-      "#43e97b",
+      theme.colors.primary[400],
+      theme.colors.primary[600],
+      theme.colors.primary[300],
+      theme.colors.primary[500],
+      theme.colors.status.info,
+      theme.colors.status.info,
+      theme.colors.status.success,
     ],
     neon: [
-      "#00f5ff",
-      "#ff00ff",
-      "Theme.colors.neutral[0]f00",
-      "#00ff00",
-      "#ff0080",
-      "#8000ff",
-      "#00ffff",
-      "#ff8000",
+      theme.colors.status.info,
+      theme.colors.primary[500],
+      theme.colors.primary[600],
+      theme.colors.status.success,
+      theme.colors.primary[400],
+      theme.colors.primary[700],
+      theme.colors.status.info,
+      theme.colors.status.warning,
     ],
     aurora: [
-      "#ff006e",
-      "#8338ec",
-      "#3a86ff",
-      "#06ffa5",
-      "#ffbe0b",
-      "#fb5607",
-      "#ff006e",
+      theme.colors.primary[600],
+      theme.colors.primary[500],
+      theme.colors.status.info,
+      theme.colors.status.success,
+      theme.colors.status.warning,
+      theme.colors.danger,
+      theme.colors.primary[600],
     ],
   },
 
@@ -95,8 +94,8 @@ export const HOLOGRAPHIC_CONFIGS = {
 // === HOLOGRAPHIC CONTAINER COMPONENT ===
 interface HolographicContainerProps extends ViewProps {
   children: ReactNode;
-  variant?: keyof typeof HOLOGRAPHIC_CONFIGS.gradients;
-  speed?: keyof typeof HOLOGRAPHIC_CONFIGS.speeds;
+  variant?: keyof ReturnType<typeof HOLOGRAPHIC_CONFIGS>['gradients'];
+  speed?: keyof ReturnType<typeof HOLOGRAPHIC_CONFIGS>['speeds'];
   animated?: boolean;
   shimmer?: boolean;
   glow?: boolean;
@@ -113,15 +112,18 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
   style,
   ...props
 }) => {
+  const theme = useTheme();
   const gradientRotation = useSharedValue(0);
   const shimmerOffset = useSharedValue(-100);
   const glowIntensity = useSharedValue(1);
+
+  const configs = HOLOGRAPHIC_CONFIGS(theme);
 
   // Gradient rotation animation
   useEffect(() => {
     if (animated) {
       gradientRotation.value = withRepeat(
-        withTiming(360, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] }),
+        withTiming(360, { duration: configs.speeds[speed] }),
         -1,
         false,
       );
@@ -133,7 +135,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
     if (shimmer) {
       shimmerOffset.value = withRepeat(
         withSequence(
-          withTiming(100, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] }),
+          withTiming(100, { duration: configs.speeds[speed] }),
           withDelay(500, withTiming(-100, { duration: 0 })),
         ),
         -1,
@@ -147,8 +149,8 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
     if (glow) {
       glowIntensity.value = withRepeat(
         withSequence(
-          withTiming(1.5, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
-          withTiming(1, { duration: HOLOGRAPHIC_CONFIGS.speeds[speed] / 2 }),
+          withTiming(1.5, { duration: configs.speeds[speed] / 2 }),
+          withTiming(1, { duration: configs.speeds[speed] / 2 }),
         ),
         -1,
         false,
@@ -169,7 +171,7 @@ export const HolographicContainer: React.FC<HolographicContainerProps> = ({
     shadowRadius: glowIntensity.value * 25,
   }));
 
-  const gradientColors = [...HOLOGRAPHIC_CONFIGS.gradients[variant]];
+  const gradientColors = [...configs.gradients[variant]];
 
   return (
     <Animated.View
@@ -458,8 +460,8 @@ export const HolographicText: React.FC<HolographicTextProps> = ({
 // === PARTICLE EFFECT COMPONENT ===
 interface ParticleEffectProps extends ViewProps {
   count?: number;
-  variant?: keyof typeof HOLOGRAPHIC_CONFIGS.gradients;
-  speed?: keyof typeof HOLOGRAPHIC_CONFIGS.speeds;
+  variant?: keyof ReturnType<typeof HOLOGRAPHIC_CONFIGS>['gradients'];
+  speed?: keyof ReturnType<typeof HOLOGRAPHIC_CONFIGS>['speeds'];
   style?: ViewStyle;
 }
 
