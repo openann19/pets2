@@ -63,29 +63,29 @@ export const RevenueMetricsSection: React.FC<RevenueMetricsSectionProps> = ({
 
   return (
     <View style={styles.revenueGrid}>
-      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
+      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.revenueLabel, { color: colors.onMuted }]}>
           ARPU
         </Text>
-        <Text style={[styles.revenueValue, { color: colors.onSurface }]>
+        <Text style={[styles.revenueValue, { color: colors.onSurface }]}>
           {formatCurrency(revenue.averageRevenuePerUser)}
         </Text>
       </View>
 
-      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
+      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.revenueLabel, { color: colors.onMuted }]}>
           Conversion
         </Text>
-        <Text style={[styles.revenueValue, { color: colors.onSurface }]>
+        <Text style={[styles.revenueValue, { color: colors.onSurface }]}>
           {revenue.conversionRate.toFixed(1)}%
         </Text>
       </View>
 
-      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.revenueLabel, { color: colors.onMuted }]>
+      <View style={[styles.revenueCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.revenueLabel, { color: colors.onMuted }]}>
           Churn
         </Text>
-        <Text style={[styles.revenueValue, { color: theme.colors.danger }]>
+        <Text style={[styles.revenueValue, { color: theme.colors.danger }]}>
           {revenue.churnRate.toFixed(1)}%
         </Text>
       </View>

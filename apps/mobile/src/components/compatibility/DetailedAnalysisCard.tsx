@@ -51,18 +51,18 @@ export const DetailedAnalysisCard: React.FC<DetailedAnalysisCardProps> = ({
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
       <View style={styles.resultHeader}>
         <Ionicons
           name="document-text"
           size={24}
           color={colors.onMuted || colors.onMuted}
         />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Detailed Analysis
         </Text>
       </View>
-      <Text style={[styles.detailedText, { color: colors.onSurface }]>
+      <Text style={[styles.detailedText, { color: colors.onSurface }]}>
         {detailed}
       </Text>
     </View>

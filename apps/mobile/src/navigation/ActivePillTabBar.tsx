@@ -160,7 +160,7 @@ export default function ActivePillTabBar({
       <BlurView
         intensity={Platform.OS === "ios" ? 80 : 100}
         tint={dark ? "dark" : "light"}
-        style={[styles.bar, { borderColor: dark ? "#2a2e36" : "#e5e7eb" }]
+        style={[styles.bar, { borderColor: dark ? "#2a2e36" : "#e5e7eb" }]}
       >
         {/* active pill */}
         <Animated.View

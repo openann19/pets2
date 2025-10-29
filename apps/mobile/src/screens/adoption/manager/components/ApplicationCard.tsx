@@ -113,14 +113,14 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.applicationCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.applicationCard, { backgroundColor: colors.surface }]}>
       <View style={styles.applicationHeader}>
         <View style={styles.applicantInfo}>
-          <Text style={[styles.applicantName, { color: colors.onSurface }]>{application.applicantName}</Text>
-          <Text style={[styles.petName, { color: colors.onMuted }]>Applying for: {application.petName}</Text>
+          <Text style={[styles.applicantName, { color: colors.onSurface }]}>{application.applicantName}</Text>
+          <Text style={[styles.petName, { color: colors.onMuted }]}>Applying for: {application.petName}</Text>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(application.status)}20` }]>
-          <Text style={[styles.statusText, { color: getStatusColor(application.status) }]>
+        <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(application.status)}20` }]}>
+          <Text style={[styles.statusText, { color: getStatusColor(application.status) }]}>
             {getStatusIcon(application.status)} {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
           </Text>
         </View>
@@ -129,19 +129,19 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({
       <View style={styles.applicationDetails}>
         <View style={styles.detailRow}>
           <Ionicons name="mail" size={16} color={colors.onMuted} />
-          <Text style={[styles.detailText, { color: colors.onMuted }]>{application.applicantEmail}</Text>
+          <Text style={[styles.detailText, { color: colors.onMuted }]}>{application.applicantEmail}</Text>
         </View>
         <View style={styles.detailRow}>
           <Ionicons name="home" size={16} color={colors.onMuted} />
-          <Text style={[styles.detailText, { color: colors.onMuted }]>{application.livingSpace}</Text>
+          <Text style={[styles.detailText, { color: colors.onMuted }]}>{application.livingSpace}</Text>
         </View>
         <View style={styles.detailRow}>
           <Ionicons name="star" size={16} color={colors.onMuted} />
-          <Text style={[styles.detailText, { color: colors.onMuted }]>{application.experience}</Text>
+          <Text style={[styles.detailText, { color: colors.onMuted }]}>{application.experience}</Text>
         </View>
         <View style={styles.detailRow}>
           <Ionicons name="people" size={16} color={colors.onMuted} />
-          <Text style={[styles.detailText, { color: colors.onMuted }]>{application.references} references</Text>
+          <Text style={[styles.detailText, { color: colors.onMuted }]}>{application.references} references</Text>
         </View>
       </View>
 

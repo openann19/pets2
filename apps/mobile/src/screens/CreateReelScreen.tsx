@@ -154,7 +154,7 @@ export default function CreateReelScreen() {
         </Text>
         {step < 3 && (
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${((step + 1) / 3) * 100}%` }] />
+            <View style={[styles.progressFill, { width: `${((step + 1) / 3) * 100}%` }]} />
           </View>
         )}
         {loading && (

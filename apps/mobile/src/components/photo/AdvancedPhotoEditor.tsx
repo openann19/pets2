@@ -528,18 +528,18 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
                 <View style={StyleSheet.absoluteFill} pointerEvents="none">
                   {showGrid === 'thirds' && (
                     <>
-                      <View style={[styles.gridLine, { left: '33.33%' }] />
-                      <View style={[styles.gridLine, { left: '66.66%' }] />
-                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }] />
-                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { left: '33.33%' }]} />
+                      <View style={[styles.gridLine, { left: '66.66%' }]} />
+                      <View style={[styles.gridLine, { top: '33.33%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { top: '66.66%', left: 0, width: '100%', height: 1 }]} />
                     </>
                   )}
                   {showGrid === 'golden' && (
                     <>
-                      <View style={[styles.gridLine, { left: '38.2%' }] />
-                      <View style={[styles.gridLine, { left: '61.8%' }] />
-                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }] />
-                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }] />
+                      <View style={[styles.gridLine, { left: '38.2%' }]} />
+                      <View style={[styles.gridLine, { left: '61.8%' }]} />
+                      <View style={[styles.gridLine, { top: '38.2%', left: 0, width: '100%', height: 1 }]} />
+                      <View style={[styles.gridLine, { top: '61.8%', left: 0, width: '100%', height: 1 }]} />
                     </>
                   )}
                 </View>
@@ -725,7 +725,7 @@ export const AdvancedPhotoEditor: React.FC<AdvancedPhotoEditorProps> = ({
               </BouncePressable>
               {ultraExporting && (
                 <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }] />
+                  <View style={[styles.progressFill, { width: `${ultraProgress}%` }]} />
                 </View>
               )}
             </View>

@@ -234,7 +234,7 @@ export default function GoLiveScreen({ navigation }: GoLiveScreenProps) {
   const [room, setRoom] = useState(null);
 
   return (
-    <View style={[styles.container, { paddingTop: top, paddingBottom: bottom }]>
+    <View style={[styles.container, { paddingTop: top, paddingBottom: bottom }]}>
       <View style={styles.header}>
         <TouchableOpacity  testID="GoLiveScreen-button-2" accessibilityLabel="navigation.goBack() style=styles.closeButton" accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.closeButton}>
           <Ionicons name="close" size={24} color="#fff" />

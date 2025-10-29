@@ -92,10 +92,10 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
   };
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
       <View style={styles.resultHeader}>
         <Ionicons name="bar-chart" size={24} color={theme.colors.info} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Compatibility Breakdown
         </Text>
       </View>
@@ -118,7 +118,7 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
                 ]}
               />
             </View>
-            <Text style={[styles.breakdownScore, { color: colors.onSurface }]>
+            <Text style={[styles.breakdownScore, { color: colors.onSurface }]}>
               {score}%
             </Text>
           </View>

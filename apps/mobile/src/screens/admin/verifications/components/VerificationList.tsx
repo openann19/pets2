@@ -198,20 +198,20 @@ export const VerificationList = ({
       >
         <View style={styles.cardHeader}>
           <View style={styles.headerLeft}>
-            <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]>
+            <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]}>
               <Ionicons name={statusIcon} size={16} color={statusColor} />
-              <Text style={[styles.statusText, { color: statusColor }]>
+              <Text style={[styles.statusText, { color: statusColor }]}>
                 {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
               </Text>
             </View>
             {item.priority === "high" && (
-              <View style={[styles.priorityBadge, { backgroundColor: theme.colors.danger + "20" }]>
+              <View style={[styles.priorityBadge, { backgroundColor: theme.colors.danger + "20" }]}>
                 <Ionicons name="flag" size={12} color={theme.colors.danger} />
-                <Text style={[styles.priorityText, { color: theme.colors.danger }]>High</Text>
+                <Text style={[styles.priorityText, { color: theme.colors.danger }]}>High</Text>
               </View>
             )}
           </View>
-          <Text style={[styles.timestamp, { color: colors.onMuted }]>
+          <Text style={[styles.timestamp, { color: colors.onMuted }]}>
             {new Date(item.submittedAt).toLocaleDateString()}
           </Text>
         </View>
@@ -220,8 +220,8 @@ export const VerificationList = ({
           <View style={styles.userInfo}>
             <Ionicons name="person" size={20} color={colors.primary} />
             <View style={styles.userDetails}>
-              <Text style={[styles.userName, { color: colors.onSurface }]>{item.userName}</Text>
-              <Text style={[styles.userEmail, { color: colors.onMuted }]>
+              <Text style={[styles.userName, { color: colors.onSurface }]}>{item.userName}</Text>
+              <Text style={[styles.userEmail, { color: colors.onMuted }]}>
                 {item.userEmail}
               </Text>
             </View>
@@ -229,7 +229,7 @@ export const VerificationList = ({
 
           <View style={styles.verificationType}>
             <Ionicons name="document-text" size={16} color={colors.onMuted} />
-            <Text style={[styles.typeText, { color: colors.onMuted }]>
+            <Text style={[styles.typeText, { color: colors.onMuted }]}>
               {item.type.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
             </Text>
           </View>
@@ -237,7 +237,7 @@ export const VerificationList = ({
           {item.documents && item.documents.length > 0 && (
             <View style={styles.documents}>
               <Ionicons name="images" size={16} color={colors.onMuted} />
-              <Text style={[styles.documentCount, { color: colors.onMuted }]>
+              <Text style={[styles.documentCount, { color: colors.onMuted }]}>
                 {item.documents.length} document{item.documents.length !== 1 ? "s" : ""}
               </Text>
             </View>
@@ -298,7 +298,7 @@ export const VerificationList = ({
       ListEmptyComponent={
         <View style={styles.emptyContainer}>
           <Ionicons name="document-text-outline" size={64} color={colors.onMuted} />
-          <Text style={[styles.emptyText, { color: colors.onMuted }]>
+          <Text style={[styles.emptyText, { color: colors.onMuted }]}>
             No verifications found
           </Text>
         </View>

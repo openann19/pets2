@@ -88,68 +88,68 @@ export const BillingMetricsSection = ({
 
   return (
     <View style={styles.metricsContainer}>
-      <Text style={[styles.sectionTitle, { color: colors.onSurface }]>Revenue Overview</Text>
+      <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Revenue Overview</Text>
       <View style={styles.metricsGrid}>
-        <View style={[styles.metricCard, { backgroundColor: colors.surface }]> 
+        <View style={[styles.metricCard, { backgroundColor: colors.surface }]}> 
           <View style={styles.metricHeader}>
             <Ionicons name="cash" size={20} color={colors.success} />
-            <Text style={[styles.metricTitle, { color: colors.onSurface }]>Total Revenue</Text>
+            <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Total Revenue</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.onSurface }]> 
+          <Text style={[styles.metricValue, { color: colors.onSurface }]}> 
             {formatCurrency(metrics.totalRevenue)}
           </Text>
         </View>
 
-        <View style={[styles.metricCard, { backgroundColor: colors.surface }]> 
+        <View style={[styles.metricCard, { backgroundColor: colors.surface }]}> 
           <View style={styles.metricHeader}>
             <Ionicons name="trending-up" size={20} color={colors.info} />
-            <Text style={[styles.metricTitle, { color: colors.onSurface }]>MRR</Text>
+            <Text style={[styles.metricTitle, { color: colors.onSurface }]}>MRR</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.onSurface }]> 
+          <Text style={[styles.metricValue, { color: colors.onSurface }]}> 
             {formatCurrency(metrics.monthlyRecurringRevenue)}
           </Text>
         </View>
 
-        <View style={[styles.metricCard, { backgroundColor: colors.surface }]> 
+        <View style={[styles.metricCard, { backgroundColor: colors.surface }]}> 
           <View style={styles.metricHeader}>
             <Ionicons name="people" size={20} color={colors.primary} />
-            <Text style={[styles.metricTitle, { color: colors.onSurface }]>ARPU</Text>
+            <Text style={[styles.metricTitle, { color: colors.onSurface }]}>ARPU</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.onSurface }]> 
+          <Text style={[styles.metricValue, { color: colors.onSurface }]}> 
             {formatCurrency(metrics.averageRevenuePerUser)}
           </Text>
         </View>
 
-        <View style={[styles.metricCard, { backgroundColor: colors.surface }]> 
+        <View style={[styles.metricCard, { backgroundColor: colors.surface }]}> 
           <View style={styles.metricHeader}>
             <Ionicons name="checkmark-circle" size={20} color={colors.success} />
-            <Text style={[styles.metricTitle, { color: colors.onSurface }]>Active Subs</Text>
+            <Text style={[styles.metricTitle, { color: colors.onSurface }]}>Active Subs</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.onSurface }]> 
+          <Text style={[styles.metricValue, { color: colors.onSurface }]}> 
             {metrics.activeSubscriptions}
           </Text>
         </View>
       </View>
 
       <View style={styles.secondaryMetrics}>
-        <View style={[styles.secondaryMetricCard, { backgroundColor: colors.surface }]> 
-          <Text style={[styles.secondaryMetricLabel, { color: colors.onMuted }]> 
+        <View style={[styles.secondaryMetricCard, { backgroundColor: colors.surface }]}> 
+          <Text style={[styles.secondaryMetricLabel, { color: colors.onMuted }]}> 
             Conversion Rate
           </Text>
-          <Text style={[styles.secondaryMetricValue, { color: colors.onSurface }]> 
+          <Text style={[styles.secondaryMetricValue, { color: colors.onSurface }]}> 
             {metrics.conversionRate.toFixed(1)}%
           </Text>
         </View>
-        <View style={[styles.secondaryMetricCard, { backgroundColor: colors.surface }]> 
-          <Text style={[styles.secondaryMetricLabel, { color: colors.onMuted }]> 
+        <View style={[styles.secondaryMetricCard, { backgroundColor: colors.surface }]}> 
+          <Text style={[styles.secondaryMetricLabel, { color: colors.onMuted }]}> 
             Churn Rate
           </Text>
-          <Text style={[styles.secondaryMetricValue, { color: colors.danger }]> 
+          <Text style={[styles.secondaryMetricValue, { color: colors.danger }]}> 
             {metrics.churnRate.toFixed(1)}%
           </Text>
         </View>
-        <View style={[styles.secondaryMetricCard, { backgroundColor: colors.surface }]> 
-          <Text style={[styles.secondaryMetricLabel, { color: colors.onMuted }]> 
+        <View style={[styles.secondaryMetricCard, { backgroundColor: colors.surface }]}> 
+          <Text style={[styles.secondaryMetricLabel, { color: colors.onMuted }]}> 
             Revenue Growth
           </Text>
           <Text

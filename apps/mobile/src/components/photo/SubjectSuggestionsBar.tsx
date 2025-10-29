@@ -65,7 +65,7 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
               {s.thumbUri ? (
                 <Image source={{ uri: s.thumbUri }} style={styles.thumbImg} resizeMode="cover" />
               ) : (
-                <View style={[styles.thumbImg, { justifyContent: "center", alignItems:"center"}]>
+                <View style={[styles.thumbImg, { justifyContent: "center", alignItems:"center"}]}>
                   <Ionicons name="image" size={24} color="#fff" />
                 </View>
               )}

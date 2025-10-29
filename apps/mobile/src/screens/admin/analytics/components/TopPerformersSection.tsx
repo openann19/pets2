@@ -79,19 +79,19 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
   return (
     <View style={styles.performersGrid}>
       {/* Top Users */}
-      <View style={[styles.performersCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.performersTitle, { color: colors.onSurface }]>
+      <View style={[styles.performersCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.performersTitle, { color: colors.onSurface }]}>
           Top Users
         </Text>
         {topPerformers.users.slice(0, 3).map((user, index) => (
           <View key={user.id} style={styles.performerItem}>
-            <Text style={[styles.performerRank, { color: colors.onMuted }]>
+            <Text style={[styles.performerRank, { color: colors.onMuted }]}>
               #{index + 1}
             </Text>
-            <Text style={[styles.performerName, { color: colors.onSurface }]>
+            <Text style={[styles.performerName, { color: colors.onSurface }]}>
               {user.name}
             </Text>
-            <Text style={[styles.performerStats, { color: colors.onMuted }]>
+            <Text style={[styles.performerStats, { color: colors.onMuted }]}>
               {user.matches} matches
             </Text>
           </View>
@@ -99,19 +99,19 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
       </View>
 
       {/* Top Pets */}
-      <View style={[styles.performersCard, { backgroundColor: colors.surface }]>
-        <Text style={[styles.performersTitle, { color: colors.onSurface }]>
+      <View style={[styles.performersCard, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.performersTitle, { color: colors.onSurface }]}>
           Top Pets
         </Text>
         {topPerformers.pets.slice(0, 3).map((pet, index) => (
           <View key={pet.id} style={styles.performerItem}>
-            <Text style={[styles.performerRank, { color: colors.onMuted }]>
+            <Text style={[styles.performerRank, { color: colors.onMuted }]}>
               #{index + 1}
             </Text>
-            <Text style={[styles.performerName, { color: colors.onSurface }]>
+            <Text style={[styles.performerName, { color: colors.onSurface }]}>
               {pet.name}
             </Text>
-            <Text style={[styles.performerStats, { color: colors.onMuted }]>
+            <Text style={[styles.performerStats, { color: colors.onMuted }]}>
               {pet.matches} matches
             </Text>
           </View>

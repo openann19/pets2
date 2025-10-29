@@ -332,7 +332,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       {/* Current Status Card */}
       <View style={styles.statusCard}>
         <View style={styles.statusHeader}>
-          <View style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]>
+          <View style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]}>
             <Ionicons name="shield-checkmark" size={24} color={colors.onPrimary} />
           </View>
           <View style={styles.statusInfo}>

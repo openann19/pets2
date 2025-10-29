@@ -132,7 +132,7 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
 
   return (
     <View style={styles.actionsContainer}>
-      <Text style={[styles.sectionTitle, { color: colors.onSurface }]>Quick Actions</Text>
+      <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Quick Actions</Text>
       <View style={styles.actionsGrid}>
         {actions.map((action) => (
           <TouchableOpacity
@@ -143,10 +143,10 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
             accessibilityLabel={action.title}
             accessibilityRole="button"
           >
-            <View style={[styles.actionIconContainer, { backgroundColor: action.color }]>
+            <View style={[styles.actionIconContainer, { backgroundColor: action.color }]}>
               <Ionicons name={action.icon as any} size={24} color="#FFFFFF" />
             </View>
-            <Text style={[styles.actionTitle, { color: colors.onSurface }]>{action.title}</Text>
+            <Text style={[styles.actionTitle, { color: colors.onSurface }]}>{action.title}</Text>
           </TouchableOpacity>
         ))}
       </View>
