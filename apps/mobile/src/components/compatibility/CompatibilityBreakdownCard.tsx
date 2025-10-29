@@ -6,7 +6,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Theme } from "../../theme";
 import { useTheme } from "@mobile/src/theme";
 import type { AppTheme } from "@mobile/src/theme";
 
@@ -104,7 +103,7 @@ export const CompatibilityBreakdownCard: React.FC<CompatibilityBreakdownCardProp
         {Object.entries(breakdown).map(([factor, score]) => (
           <View key={factor} style={styles.breakdownItem}>
             <Text
-              style={[styles.breakdownLabel, { color: colors.onMuted }]
+              style={[styles.breakdownLabel, { color: colors.onMuted }]}
             >
               {factor.charAt(0).toUpperCase() + factor.slice(1)}
             </Text>

@@ -162,7 +162,7 @@ export default function MemoryWeaveScreen({
               <View style={styles.memoryMetadata}>
                 {memory.metadata.location && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="location-outline" size={14} color={theme.colors.onSurface />
+                    <Ionicons name="location-outline" size={14} color={theme.colors.onSurface }//>
                     <Text style={styles.metadataText}>
                       {memory.metadata.location}
                     </Text>
@@ -170,7 +170,7 @@ export default function MemoryWeaveScreen({
                 )}
                 {memory.metadata.participants && (
                   <View style={styles.metadataItem}>
-                    <Ionicons name="people-outline" size={14} color={theme.colors.onSurface />
+                    <Ionicons name="people-outline" size={14} color={theme.colors.onSurface }//>
                     <Text style={styles.metadataText}>
                       {memory.metadata.participants.join(" & ")}
                     </Text>
@@ -269,7 +269,7 @@ export default function MemoryWeaveScreen({
             }}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface }//>
             </BlurView>
           </TouchableOpacity>
 
@@ -286,7 +286,7 @@ export default function MemoryWeaveScreen({
             }}
           >
             <BlurView intensity={20} style={styles.shareButtonBlur}>
-              <Ionicons name="share-outline" size={24} color={theme.colors.onSurface />
+              <Ionicons name="share-outline" size={24} color={theme.colors.onSurface }//>
             </BlurView>
           </TouchableOpacity>
         </Animated.View>

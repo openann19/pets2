@@ -56,7 +56,7 @@ export default function AIBioScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface }//>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
         <View style={styles.headerRight}>

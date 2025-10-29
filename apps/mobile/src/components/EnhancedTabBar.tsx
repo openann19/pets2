@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "@mobile/src/theme";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Platform } from "react-native";
 import Animated, {
@@ -34,6 +34,8 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
   showBadge = false,
   impulse = 0,
 }) => {
+  const appTheme = useTheme();
+  const tColors = appTheme.colors;
   const scale = useSharedValue(1);
   const ripple = useSharedValue(0);
   const badgeOpacity = useSharedValue(showBadge ? 1 : 0);
@@ -114,9 +116,13 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
 
       {showBadge && badgeCount > 0 ? (
         <Animated.View
-          style={StyleSheet.flatten([styles.badge, animatedBadgeStyle])}
+          style={StyleSheet.flatten([
+            styles.badge,
+            { backgroundColor: tColors.danger, borderColor: tColors.bg },
+            animatedBadgeStyle,
+          ])}
         >
-          <Text style={styles.badgeText}>
+          <Text style={StyleSheet.flatten([styles.badgeText, { color: tColors.onPrimary }])}>
             {badgeCount > 99 ? "99+" : badgeCount.toString()}
           </Text>
         </Animated.View>
@@ -146,7 +152,8 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
   descriptors,
   navigation,
 }) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const insets = useSafeAreaInsets();
   const tabBarPosition = useSharedValue(0);
   const lastTapRef = useRef<Record<string, number>>({});
@@ -253,13 +260,13 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
     >
       <BlurView
         intensity={Platform.OS === 'ios' ? 80 : 100}
-        tint={colors.background === '#ffffff' ? 'light' : 'dark'}
+        tint={theme.scheme === 'dark' ? 'dark' : 'light'}
         style={[
           styles.tabBar,
           {
             backgroundColor:
               Platform.OS === 'android'
-                ? colors.background
+                ? colors.bg
                 : 'transparent',
           },
         ]}
@@ -359,7 +366,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
             <TabBarIcon
               routeName={route.name}
               focused={isFocused}
-              color={isFocused ? colors.primary : colors.onSurface
+              color={isFocused ? colors.primary : colors.onSurface}
               size={24}
               badgeCount={badgeCount}
               showBadge={showBadge}
@@ -369,7 +376,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
               style={StyleSheet.flatten([
                 styles.tabLabel,
                 {
-                  color: isFocused ? colors.primary : colors.onSurface
+                  color: isFocused ? colors.primary : colors.onSurface,
                   fontWeight: isFocused ? "600" : "400",
                 },
               ])}
@@ -379,6 +386,15 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
           </TouchableOpacity>
         );
       })}
+        {/* Active indicator color override */}
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.activeIndicator,
+            animatedIndicatorStyle,
+            { backgroundColor: colors.primary },
+          ]}
+        />
       </BlurView>
     </Animated.View>
   );
@@ -428,17 +444,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -6,
     right: -8,
-    backgroundColor: Theme.colors.status.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: Theme.colors.neutral[0],
   },
   badgeText: {
-    color: Theme.colors.neutral[0],
     fontSize: 10,
     fontWeight: "bold",
     textAlign: "center",
@@ -462,7 +475,6 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 2,
     zIndex: 1,
-    backgroundColor: Theme.colors.primary[500],
   },
 });
 

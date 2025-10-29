@@ -147,7 +147,7 @@ export function MobileVoiceRecorder({
               {isRecording ? "Recording..." : "Voice Message"}
             </Text>
             <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={colors.onSurface }//>
             </TouchableOpacity>
           </View>
 

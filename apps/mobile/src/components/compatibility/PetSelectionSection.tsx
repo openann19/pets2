@@ -160,7 +160,7 @@ export const PetSelectionSection = ({
             {item.temperament.slice(0, 2).map((trait, index) => (
               <View
                 key={index}
-                style={[styles.petTag, { backgroundColor: colors.primary }]
+                style={[styles.petTag, { backgroundColor: colors.primary }]}
               >
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>

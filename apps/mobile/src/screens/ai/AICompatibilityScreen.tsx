@@ -881,7 +881,7 @@ const AICompatibilityScreen = ({
                       name="checkmark-circle"
                       size={16}
                       color={theme.colors.warning
-                    />
+                    }//>
                     <Text
                       style={StyleSheet.flatten([
                         styles.tipText,

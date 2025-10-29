@@ -245,7 +245,7 @@ export default function ActivePillTabBar({
                     name={getIcon(route.name, isFocused)}
                     size={22}
                     color={isFocused ? colors.primary : colors.onSurface
-                  />
+                  }//>
                 </Animated.View>
 
                 {showBadge ? (

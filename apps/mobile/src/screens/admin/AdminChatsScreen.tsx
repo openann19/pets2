@@ -295,7 +295,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([

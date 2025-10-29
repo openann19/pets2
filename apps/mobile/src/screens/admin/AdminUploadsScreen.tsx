@@ -303,7 +303,7 @@ function AdminUploadsScreen({
                 setSelectedUpload(null);
               }}
             >
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={colors.onSurface }//>
             </TouchableOpacity>
           </View>
 
@@ -482,7 +482,7 @@ function AdminUploadsScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([

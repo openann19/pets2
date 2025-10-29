@@ -25,15 +25,19 @@ const BAR_GAP = 2;
 const MIN_HEIGHT = 4;
 const MAX_HEIGHT = 40;
 
+import { useTheme } from "@mobile/src/theme";
+
 export function VoiceWaveform({
   waveform,
   isPlaying,
   progress,
   duration,
-  color = Theme.colors.primary[500],
+  color,
   height = 40,
   onSeek,
 }: VoiceWaveformProps): JSX.Element {
+  const theme = useTheme();
+  const effectiveColor = color ?? theme.colors.primary;
   const [containerWidth, setContainerWidth] = useState(0);
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
   const animatedValues = useRef(
@@ -114,7 +118,7 @@ export function VoiceWaveform({
             width: BAR_WIDTH,
             marginRight: BAR_GAP,
             maxHeight: height,
-            backgroundColor: color,
+            backgroundColor: effectiveColor,
             opacity: isPlayed ? 1 : 0.5,
           },
           animatedStyle,
@@ -137,7 +141,7 @@ export function VoiceWaveform({
   return (
     <View style={styles.container}>
       <View
-        style={[styles.waveform, { height }]
+        style={[styles.waveform, { height }]}
         onLayout={(event) => {
           setContainerWidth(event.nativeEvent.layout.width);
         }}
@@ -169,7 +173,7 @@ export function CompactVoiceWaveform({
   isPlaying,
   progress,
   duration,
-  color = Theme.colors.primary[500],
+  color,
   onSeek,
 }: VoiceWaveformProps): JSX.Element {
   return (

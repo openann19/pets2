@@ -81,7 +81,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
             name="arrow-back"
             size={24}
             color={colors.onSurface
-          />
+          }//>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
         <View style={styles.headerSpacer} />

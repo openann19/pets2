@@ -136,7 +136,7 @@ function PrivacySettingsScreen({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
         </TouchableOpacity>
         <Text
           testID="privacy-settings-title"

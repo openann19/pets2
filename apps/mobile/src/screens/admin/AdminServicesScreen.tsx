@@ -178,7 +178,7 @@ export default function AdminServicesScreen({
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
       <View style={styles.header}>
         <TouchableOpacity  testID="AdminServicesScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
-          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface }//>
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.onSurface}]>
           External Services

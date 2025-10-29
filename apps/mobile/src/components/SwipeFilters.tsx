@@ -59,7 +59,7 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
               Filter Preferences
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={colors.onSurface />
+              <Ionicons name="close" size={24} color={colors.onSurface} />
             </TouchableOpacity>
           </View>
 
