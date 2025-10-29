@@ -318,7 +318,9 @@ export const useMapScreen = (): UseMapScreenReturn => {
 
     socket.on("connect", () => {
       logger.info("MapSocket connected");
-      socket.emit("join_map", { userId: user._id });
+      if (user?._id) {
+        socket.emit("join_map", { userId: user._id });
+      }
     });
 
     // Fixed: use pin:update event (matches server)
@@ -350,7 +352,9 @@ export const useMapScreen = (): UseMapScreenReturn => {
     return () => {
       socket.off("pin:update", onPinUpdate);
       socket.off("heatmap:update", onHeatmapUpdate);
-      socket.emit("leave_map", { userId: user._id });
+      if (user?._id) {
+        socket.emit("leave_map", { userId: user._id });
+      }
       socket.disconnect();
     };
   }, [user]);

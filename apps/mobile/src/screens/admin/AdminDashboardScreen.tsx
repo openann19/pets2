@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme'";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 import { getExtendedColors, type ExtendedColors } from '../../theme/adapters';
@@ -148,9 +148,9 @@ export default function AdminDashboardScreen({
       case "warning":
         return colors.warning;
       case "error":
-        return colors.error;
+        return theme.colors.danger;
       default:
-        return colors.gray500;
+        return theme.palette.neutral[500];
     }
   };
 
@@ -167,7 +167,7 @@ export default function AdminDashboardScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading dashboard...
@@ -197,14 +197,14 @@ export default function AdminDashboardScreen({
         {/* Header */}
         <View style={styles.header}>
           <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
           >
             Admin Dashboard
           </Text>
           <Text
             style={StyleSheet.flatten([
               styles.subtitle,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             Welcome, {_user?.firstName} {_user?.lastName}
@@ -228,7 +228,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.cardTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 System Status
@@ -246,7 +246,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 Uptime: {Math.floor(systemHealth.uptime / 3600)}h{" "}
@@ -255,7 +255,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 Database: {systemHealth.database.status}
@@ -263,7 +263,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.healthDetails,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 Memory: {systemHealth.memory.used}MB /{" "}
@@ -278,7 +278,7 @@ export default function AdminDashboardScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Quick Actions
@@ -297,7 +297,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Analytics
@@ -313,11 +313,11 @@ export default function AdminDashboardScreen({
                 handleQuickAction("users");
               }}
             >
-              <Ionicons name="people-outline" size={32} color={colors.secondary} />
+              <Ionicons name="people-outline" size={32} color={theme.colors.primary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Users
@@ -333,11 +333,11 @@ export default function AdminDashboardScreen({
                 handleQuickAction("security");
               }}
             >
-              <Ionicons name="shield-outline" size={32} color={colors.error} />
+              <Ionicons name="shield-outline" size={32} color={theme.colors.danger} />
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Security
@@ -357,7 +357,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Billing
@@ -378,7 +378,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Chats
@@ -398,7 +398,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Uploads
@@ -418,7 +418,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Verifications
@@ -438,7 +438,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.quickActionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Services
@@ -453,7 +453,7 @@ export default function AdminDashboardScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.sectionTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Platform Statistics
@@ -471,7 +471,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Users
@@ -480,7 +480,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.statNumber,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {stats.users.total.toLocaleString()}
@@ -489,7 +489,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   Active: {stats.users.active}
@@ -497,7 +497,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   Verified: {stats.users.verified}
@@ -513,7 +513,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.error },
+                    { color: theme.colors.danger },
                   ])}
                 >
                   Banned: {stats.users.banned}
@@ -533,7 +533,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Pets
@@ -542,7 +542,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.statNumber,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {stats.pets.total.toLocaleString()}
@@ -551,7 +551,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   Active: {stats.pets.active}
@@ -579,7 +579,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Matches
@@ -588,7 +588,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.statNumber,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {stats.matches.total.toLocaleString()}
@@ -597,7 +597,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   Active: {stats.matches.active}
@@ -605,7 +605,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.error },
+                    { color: theme.colors.danger },
                   ])}
                 >
                   Blocked: {stats.matches.blocked}
@@ -629,11 +629,11 @@ export default function AdminDashboardScreen({
               ])}
             >
               <View style={styles.statHeader}>
-                <Ionicons name="chatbubble" size={24} color={colors.secondary} />
+                <Ionicons name="chatbubble" size={24} color={theme.colors.primary} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.statTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Messages
@@ -642,7 +642,7 @@ export default function AdminDashboardScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.statNumber,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {stats.messages.total.toLocaleString()}
@@ -651,7 +651,7 @@ export default function AdminDashboardScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.statDetail,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   Deleted: {stats.messages.deleted}

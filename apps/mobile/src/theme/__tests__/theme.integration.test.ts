@@ -13,7 +13,7 @@ describe('resolved theme', () => {
     const l = getLightTheme();
     const d = getDarkTheme();
     expect(l.colors.bg).not.toBe(d.colors.bg);
-    expect(l.colors.text).not.toBe(d.colors.text);
+    expect(l.colors.onSurface).not.toBe(d.colors.onSurface);
   });
 });
 

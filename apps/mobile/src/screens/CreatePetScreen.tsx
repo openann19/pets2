@@ -17,7 +17,7 @@ import { PetPhotosSection } from "../components/create-pet/PetPhotosSection";
 import { usePetForm } from "../hooks/usePetForm";
 import { usePhotoManager } from "../hooks/usePhotoManager";
 import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 import { ScreenShell } from '../ui/layout/ScreenShell';
 import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHeader';
 import { haptic } from '../ui/haptics';

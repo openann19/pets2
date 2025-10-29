@@ -3,7 +3,7 @@ import { View, type ViewStyle, StyleSheet, type StyleProp } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "../../../theme/Provider";
+import { useTheme } from "@/theme";
 import { GlobalStyles } from "../../../styles/GlobalStyles";
 
 /**

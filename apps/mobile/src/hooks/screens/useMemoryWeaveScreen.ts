@@ -8,7 +8,7 @@ import { StatusBar } from "react-native";
 import * as Haptics from "expo-haptics";
 import type { Animated } from "react-native";
 import type { ScrollView } from "react-native";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { useMemoryWeave } from "../domains/social/useMemoryWeave";
 import type { SemanticColors } from "../../theme/types";
 

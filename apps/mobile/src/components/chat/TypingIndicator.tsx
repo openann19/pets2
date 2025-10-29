@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Animated } from "react-native";
-import { Spacing, BorderRadius } from "../../animation";
-import { useTheme } from "../../theme/Provider";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface TypingIndicatorProps {
   typingUsers: string[];
@@ -14,7 +12,7 @@ export function TypingIndicator({
   typingUsers,
   animationValue,
 }: TypingIndicatorProps): React.JSX.Element | null {
-  const { colors } = useTheme();
+  const { colors, spacing, radius } = useTheme();
 
   if (typingUsers.length === 0) return null;
 
@@ -29,7 +27,7 @@ export function TypingIndicator({
       <View
         style={StyleSheet.flatten([
           styles.typingBubble,
-          { backgroundColor: colors.white, borderColor: colors.gray200 },
+          { backgroundColor: colors.bgElevated, borderColor: colors.border },
         ])}
       >
         <View style={styles.typingDots}>
@@ -39,7 +37,7 @@ export function TypingIndicator({
               style={StyleSheet.flatten([
                 styles.typingDot,
                 {
-                  backgroundColor: colors.gray500,
+                  backgroundColor: colors.textMuted,
                   opacity:
                     animationValue?.interpolate({
                       inputRange: [0, 0.5, 1],
@@ -63,7 +61,7 @@ export function TypingIndicator({
           <Text
             style={StyleSheet.flatten([
               styles.typingText,
-              { color: colors.gray500 },
+              { color: colors.textMuted },
             ])}
           >
             {typingUsers.length} people are typing...
@@ -74,40 +72,42 @@ export function TypingIndicator({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.sm,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-  },
-  typingBubble: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: 12, // 0.75rem
-    borderBottomLeftRadius: 2, // 0.125rem
-    marginLeft: Spacing.xs,
-    borderWidth: 0.5,
-  },
-  typingDots: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-  },
-  typingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 2,
-  },
-  typingText: {
-    fontSize: 12,
-    fontStyle: "italic",
-    marginTop: Spacing.xs,
-  },
-});
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+      paddingHorizontal: spacing.lg,
+      marginBottom: spacing.sm,
+    },
+    avatar: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+    },
+    typingBubble: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      borderRadius: radius.md, // 0.75rem
+      borderBottomLeftRadius: 2, // 0.125rem
+      marginLeft: spacing.xs,
+      borderWidth: 0.5,
+    },
+    typingDots: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+    },
+    typingDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginHorizontal: 2,
+    },
+    typingText: {
+      fontSize: 12,
+      fontStyle: "italic",
+      marginTop: spacing.xs,
+    },
+  }), [spacing, radius]);
+
+export default TypingIndicator;

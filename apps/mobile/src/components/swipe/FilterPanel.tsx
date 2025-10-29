@@ -9,7 +9,7 @@ import { View, StyleSheet } from 'react-native';
 import { EliteButton } from '../elite/buttons/EliteButton';
 import { EliteButtonPresets } from '../buttons/EliteButton';
 import { FXContainerPresets, Heading2, BodySmall } from '../';
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 export interface FilterPanelProps {
   filters: {

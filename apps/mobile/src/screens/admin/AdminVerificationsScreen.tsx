@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme'";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -59,7 +59,8 @@ interface AdminVerificationsScreenProps {
 function AdminVerificationsScreen({
   navigation,
 }: AdminVerificationsScreenProps): JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const [verifications, setVerifications] = useState<Verification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -245,9 +246,9 @@ function AdminVerificationsScreen({
       case "pending":
         return theme.colors.warning;
       case "requires_info":
-        return theme.colors.secondary[500];
+        return theme.theme.colors.primary[500];
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.border;
     }
   };
 
@@ -260,7 +261,7 @@ function AdminVerificationsScreen({
       case "low":
         return theme.colors.success;
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.border;
     }
   };
 
@@ -301,7 +302,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.verificationType,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {item.type.replace("_", " ").toUpperCase()}
@@ -310,7 +311,7 @@ function AdminVerificationsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userName,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {item.userName}
@@ -318,7 +319,7 @@ function AdminVerificationsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userEmail,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               {item.userEmail}
@@ -353,7 +354,7 @@ function AdminVerificationsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.submittedAt,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             Submitted: {new Date(item.submittedAt).toLocaleDateString()}
@@ -363,12 +364,12 @@ function AdminVerificationsScreen({
             <Ionicons
               name="document-text"
               size={16}
-              color={colors.textSecondary}
+              color={colors.onSurfaceecondary}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.documentsCount,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               {item.documents.length} document
@@ -380,7 +381,7 @@ function AdminVerificationsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.expiresAt,
-                { color: colors.error },
+                { color: theme.colors.danger },
               ])}
             >
               Expires: {new Date(item.expiresAt).toLocaleDateString()}
@@ -450,7 +451,7 @@ function AdminVerificationsScreen({
       <Text
         style={StyleSheet.flatten([
           styles.filterButtonText,
-          { color: filter === filterType ? "white" : colors.text },
+          { color: filter === filterType ? "white" : colors.onSurface},
         ])}
       >
         {label}
@@ -473,7 +474,7 @@ function AdminVerificationsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.modalTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Verification Details
@@ -483,7 +484,7 @@ function AdminVerificationsScreen({
                 setSelectedVerification(null);
               }}
             >
-              <Ionicons name="close" size={24} color={colors.text} />
+              <Ionicons name="close" size={24} color={colors.onSurface />
             </TouchableOpacity>
           </View>
 
@@ -492,7 +493,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 User:
@@ -500,7 +501,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoValue,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {selectedVerification.userName} (
@@ -510,7 +511,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 Type:
@@ -518,7 +519,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoValue,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {selectedVerification.type.replace("_", " ")}
@@ -527,7 +528,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoLabel,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 Submitted:
@@ -535,7 +536,7 @@ function AdminVerificationsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.infoValue,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {new Date(selectedVerification.submittedAt).toLocaleString()}
@@ -546,7 +547,7 @@ function AdminVerificationsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.infoLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Notes:
@@ -554,7 +555,7 @@ function AdminVerificationsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.infoValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {selectedVerification.notes}
@@ -566,7 +567,7 @@ function AdminVerificationsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.documentsHeader,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Documents:
@@ -586,7 +587,7 @@ function AdminVerificationsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.documentName,
-                        { color: colors.text },
+                        { color: colors.onSurface},
                       ])}
                     >
                       {item.name}
@@ -594,7 +595,7 @@ function AdminVerificationsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.documentType,
-                        { color: colors.textSecondary },
+                        { color: colors.onSurfaceecondary },
                       ])}
                     >
                       {item.type.replace("_", " ")}
@@ -676,12 +677,12 @@ function AdminVerificationsScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
             styles.headerTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           Verification Management
@@ -701,16 +702,16 @@ function AdminVerificationsScreen({
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search verifications..."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={colors.onSurfaceecondary}
           />
         </View>
 
@@ -728,7 +729,7 @@ function AdminVerificationsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             Loading verifications...
@@ -752,12 +753,12 @@ function AdminVerificationsScreen({
               <Ionicons
                 name="shield-checkmark-outline"
                 size={64}
-                color={colors.textSecondary}
+                color={colors.onSurfaceecondary}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 No verifications found
@@ -783,7 +784,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   backButton: {
     marginRight: 16,
@@ -795,7 +796,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -839,7 +840,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -927,7 +928,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.success,
   },
   infoButton: {
-    backgroundColor: theme.colors.secondary[500],
+    backgroundColor: theme.theme.colors.primary[500],
   },
   rejectButton: {
     backgroundColor: theme.colors.danger,
@@ -965,7 +966,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   modalTitle: {
     fontSize: 18,

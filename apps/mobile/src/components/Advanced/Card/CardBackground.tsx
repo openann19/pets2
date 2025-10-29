@@ -8,7 +8,6 @@ import { StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import type { CardVariant } from "./CardVariants";
-import { Theme } from '../../../theme/unified-theme';
 
 interface CardBackgroundProps {
   variant: CardVariant;

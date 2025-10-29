@@ -17,7 +17,7 @@ import type {
   Source,
 } from "react-native-fast-image";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 
 interface OptimizedImageProps {
   uri: string;
@@ -143,13 +143,13 @@ export function OptimizedImage(props: OptimizedImageProps): React.ReactElement {
           <Ionicons
             name={fallbackIcon}
             size={32}
-            color={colors.text}
+            color={colors.onSurface
             style={styles.errorIcon}
           />
           <Text
             style={StyleSheet.flatten([
               styles.errorText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Image unavailable

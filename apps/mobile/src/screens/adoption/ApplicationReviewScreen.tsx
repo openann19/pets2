@@ -4,7 +4,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Alert,
   Image,
@@ -13,11 +13,28 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+
+// Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
+type RuntimeTheme = AppTheme & { 
+  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
+  colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
+  palette?: {
+    gradients?: {
+      primary?: readonly [string, string];
+      success?: readonly [string, string];
+      info?: readonly [string, string];
+      danger?: readonly [string, string];
+    };
+  };
+};
+
+const { width: screenWidth } = Dimensions.get("window");
 
 type AdoptionStackParamList = {
   ApplicationReview: { applicationId: string };
@@ -55,12 +72,14 @@ const ApplicationReviewScreen = ({
   navigation,
   route,
 }: ApplicationReviewScreenProps) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { applicationId } = route.params;
   const [application, setApplication] = useState<Application | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Mock data for now - would fetch from API
-  React.useEffect(() => {
+  useEffect(() => {
     const loadApplication = async () => {
       try {
         setIsLoading(true);
@@ -129,9 +148,9 @@ const ApplicationReviewScreen = ({
       case "rejected":
         return theme.colors.danger;
       case "interview":
-        return "#8b5cf6";
+        return theme.colors.info;
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.onMuted;
     }
   };
 
@@ -164,7 +183,7 @@ const ApplicationReviewScreen = ({
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle-outline" size={80} color="#ff6b6b" />
+          <Ionicons name="alert-circle-outline" size={80} color={theme.colors.danger} />
           <Text style={styles.emptyTitle}>Application Not Found</Text>
           <Text style={styles.emptySubtitle}>
             Unable to load application details
@@ -192,12 +211,12 @@ const ApplicationReviewScreen = ({
             style={styles.backButton}
              testID="ApplicationReviewScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Application Review</Text>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.headerButton} testID="ApplicationReviewScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-              <Ionicons name="share-outline" size={20} color="#333" />
+              <Ionicons name="share-outline" size={20} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
         </View>
@@ -251,19 +270,19 @@ const ApplicationReviewScreen = ({
           <BlurView intensity={20} style={styles.sectionCard}>
             <View style={styles.contactInfo}>
               <View style={styles.contactItem}>
-                <Ionicons name="mail" size={20} color={theme.colors.status.info} }/>
+                <Ionicons name="mail" size={20} color={theme.colors.info} />
                 <Text style={styles.contactText}>
                   {application.applicantEmail}
                 </Text>
               </View>
               <View style={styles.contactItem}>
-                <Ionicons name="call" size={20} color={theme.colors.success} }/>
+                <Ionicons name="call" size={20} color={theme.colors.success} />
                 <Text style={styles.contactText}>
                   {application.applicantPhone}
                 </Text>
               </View>
               <View style={styles.contactItem}>
-                <Ionicons name="location" size={20} color={theme.colors.danger} }/>
+                <Ionicons name="location" size={20} color={theme.colors.danger} />
                 <Text style={styles.contactText}>
                   {application.applicantLocation}
                 </Text>
@@ -358,10 +377,12 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={[theme.colors.success, "#047857"]}
+                colors={theme.palette?.gradients?.success ?? [theme.colors.success, theme.colors.success]}
                 style={styles.actionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="checkmark-circle" size={24} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="checkmark-circle" size={24} color={theme.colors.onSurface} />
                 <Text style={styles.actionText}>Approve</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -373,10 +394,12 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["#8b5cf6", "#7c3aed"]}
+                colors={theme.palette?.gradients?.info ?? [theme.colors.info, theme.colors.info]}
                 style={styles.actionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="chatbubble" size={24} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="chatbubble" size={24} color={theme.colors.onSurface} />
                 <Text style={styles.actionText}>Schedule Interview</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -388,10 +411,12 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={[theme.colors.danger, "#dc2626"]}
+                colors={theme.palette?.gradients?.danger ?? [theme.colors.danger, theme.colors.danger]}
                 style={styles.actionGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="close-circle" size={24} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="close-circle" size={24} color={theme.colors.onSurface} />
                 <Text style={styles.actionText}>Reject</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -412,10 +437,12 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={[theme.colors.status.info, "#1d4ed8"]}
+                colors={theme.palette?.gradients?.info ?? [theme.colors.info, theme.colors.info]}
                 style={styles.contactButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="mail" size={20} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="mail" size={20} color={theme.colors.onSurface} />
                 <Text style={styles.contactButtonText}>Email</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -427,10 +454,12 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={[theme.colors.success, "#047857"]}
+                colors={theme.palette?.gradients?.success ?? [theme.colors.success, theme.colors.success]}
                 style={styles.contactButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="call" size={20} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="call" size={20} color={theme.colors.onSurface} />
                 <Text style={styles.contactButtonText}>Call</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -445,10 +474,12 @@ const ApplicationReviewScreen = ({
               }}
             >
               <LinearGradient
-                colors={["#8b5cf6", "#7c3aed"]}
+                colors={theme.palette?.gradients?.info ?? [theme.colors.info, theme.colors.info]}
                 style={styles.contactButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="chatbubble" size={20} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="chatbubble" size={20} color={theme.colors.onSurface} />
                 <Text style={styles.contactButtonText}>Message</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -459,235 +490,242 @@ const ApplicationReviewScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    fontSize: 18,
-    color: "#666",
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 40,
-  },
-  emptyTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 20,
-  },
-  emptySubtitle: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 10,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: theme.colors.neutral[0],
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  headerButton: {
-    padding: 8,
-  },
-  statusSection: {
-    padding: 20,
-  },
-  statusCard: {
-    borderRadius: 12,
-    overflow: "hidden",
-    padding: 16,
-  },
-  statusHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  petInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  petImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  petDetails: {
-    flex: 1,
-  },
-  petName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-  },
-  applicantName: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  applicationDate: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-  },
-  section: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 12,
-  },
-  sectionCard: {
-    borderRadius: 12,
-    overflow: "hidden",
-    padding: 16,
-  },
-  contactInfo: {
-    gap: 12,
-  },
-  contactItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  contactText: {
-    fontSize: 16,
-    color: theme.colors.neutral[700],
-    fontWeight: "500",
-  },
-  lifestyleGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  lifestyleItem: {
-    width: "48%",
-    padding: 12,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e9ecef",
-  },
-  lifestyleLabel: {
-    fontSize: 12,
-    color: theme.colors.neutral[500],
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  lifestyleValue: {
-    fontSize: 14,
-    color: theme.colors.neutral[800],
-    fontWeight: "600",
-  },
-  experienceText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: theme.colors.neutral[600],
-  },
-  questionsList: {
-    gap: 16,
-  },
-  questionItem: {
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[100],
-  },
-  questionText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-  },
-  answerText: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: theme.colors.neutral[500],
-  },
-  notesText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: theme.colors.neutral[600],
-    fontStyle: "italic",
-  },
-  actionsGrid: {
-    gap: 12,
-  },
-  actionButton: {
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  actionGradient: {
-    padding: 20,
-    alignItems: "center",
-  },
-  actionText: {
-    color: theme.colors.neutral[0],
-    fontSize: 16,
-    fontWeight: "600",
-    marginTop: 8,
-  },
-  contactActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  contactButton: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  contactButtonGradient: {
-    padding: 16,
-    alignItems: "center",
-  },
-  contactButtonText: {
-    color: theme.colors.neutral[0],
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 4,
-  },
-  backButton: {
-    padding: 8,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: theme.colors.primary[500],
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  // Type assertion for runtime theme structure (radius exists at runtime, but types mismatch)
+  const themeRuntime = theme as RuntimeTheme;
+  
+  return {
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+    },
+    loadingText: {
+      fontSize: 18,
+      color: theme.colors.onMuted,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      paddingHorizontal: theme.spacing.xl,
+    },
+    emptyTitle: {
+      fontSize: 24,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+      marginTop: theme.spacing.lg,
+    },
+    emptySubtitle: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+      marginTop: theme.spacing.sm,
+    },
+    header: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+    },
+    headerActions: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.sm,
+    },
+    headerButton: {
+      padding: theme.spacing.xs,
+    },
+    statusSection: {
+      padding: theme.spacing.lg,
+    },
+    statusCard: {
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+      padding: theme.spacing.md,
+    },
+    statusHeader: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      marginBottom: theme.spacing.xs,
+    },
+    petInfo: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+    },
+    petImage: {
+      width: 50,
+      height: 50,
+      borderRadius: themeRuntime.radius.full,
+      marginRight: theme.spacing.sm,
+    },
+    petDetails: {
+      flex: 1,
+    },
+    petName: {
+      fontSize: 18,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+    },
+    applicantName: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    statusBadge: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: themeRuntime.radius.md,
+    },
+    statusText: {
+      fontSize: 12,
+      fontWeight: "600" as const,
+    },
+    applicationDate: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+    },
+    section: {
+      padding: theme.spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    sectionCard: {
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+      padding: theme.spacing.md,
+    },
+    contactInfo: {
+      gap: theme.spacing.sm,
+    },
+    contactItem: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: theme.spacing.sm,
+    },
+    contactText: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      fontWeight: "500" as const,
+    },
+    lifestyleGrid: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: theme.spacing.sm,
+    },
+    lifestyleItem: {
+      width: (screenWidth - theme.spacing.lg * 2 - theme.spacing.sm) / 2,
+      padding: theme.spacing.sm,
+      backgroundColor: themeRuntime.colors.bgAlt ?? theme.colors.surface,
+      borderRadius: themeRuntime.radius.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    lifestyleLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      fontWeight: "500" as const,
+      marginBottom: theme.spacing.xs,
+    },
+    lifestyleValue: {
+      fontSize: 14,
+      color: theme.colors.onSurface,
+      fontWeight: "600" as const,
+    },
+    experienceText: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: theme.colors.onSurface,
+    },
+    questionsList: {
+      gap: theme.spacing.md,
+    },
+    questionItem: {
+      paddingBottom: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    questionText: {
+      fontSize: 16,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    answerText: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: theme.colors.onMuted,
+    },
+    notesText: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: theme.colors.onMuted,
+      fontStyle: "italic" as const,
+    },
+    actionsGrid: {
+      gap: theme.spacing.sm,
+    },
+    actionButton: {
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+    },
+    actionGradient: {
+      padding: theme.spacing.lg,
+      alignItems: "center" as const,
+    },
+    actionText: {
+      color: theme.colors.onSurface,
+      fontSize: 16,
+      fontWeight: "600" as const,
+      marginTop: theme.spacing.xs,
+    },
+    contactActions: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.sm,
+    },
+    contactButton: {
+      flex: 1,
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+    },
+    contactButtonGradient: {
+      padding: theme.spacing.md,
+      alignItems: "center" as const,
+    },
+    contactButtonText: {
+      color: theme.colors.onSurface,
+      fontSize: 14,
+      fontWeight: "600" as const,
+      marginTop: theme.spacing.xs,
+    },
+    backButton: {
+      padding: theme.spacing.xs,
+    },
+    backButtonText: {
+      fontSize: 16,
+      color: theme.colors.primary,
+      fontWeight: "600" as const,
+    },
+  };
+}
+
+export default ApplicationReviewScreen;

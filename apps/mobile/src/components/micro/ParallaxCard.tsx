@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { View, StyleSheet, type ViewStyle, type LayoutChangeEvent, type GestureResponderEvent } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate } from "react-native-reanimated";
-import { Theme } from "../../theme/unified-theme";
 
 type Props = {
   children: React.ReactNode;

@@ -22,7 +22,6 @@ import {
   QuickActionsSection,
 } from "./dashboard/components";
 import { useAdminDashboard } from "./dashboard/hooks";
-import { useTheme } from "../../theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import { useTheme } from "@/theme";
 import type { AppTheme } from "@/theme";

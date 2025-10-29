@@ -26,7 +26,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { matchesAPI } from "../../services/api";
 
 import { AdvancedButton } from "./AdvancedInteractionSystem";
-import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

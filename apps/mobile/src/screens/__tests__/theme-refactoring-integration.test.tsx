@@ -1,4 +1,4 @@
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 /**
  * Theme Refactoring Integration Tests
  * 
@@ -113,7 +113,7 @@ describe('Theme Refactoring - Integration Verification', () => {
             backgroundColor: theme.colors.bg,
           },
           text: {
-            color: theme.colors.text,
+            color: theme.colors.onSurface
             fontSize: 16,
           },
           button: {
@@ -132,7 +132,7 @@ describe('Theme Refactoring - Integration Verification', () => {
       const styles = createDynamicStyles();
       
       expect(styles.container.backgroundColor).toBe(theme.colors.bg);
-      expect(styles.text.color).toBe(theme.colors.text);
+      expect(styles.text.color).toBe(theme.colors.onSurface;
       expect(styles.button.backgroundColor).toBe(theme.colors.primary);
       expect(styles.button.padding).toBe(theme.spacing.md);
       expect(styles.button.radius).toBe(theme.radius.lg);
@@ -148,8 +148,8 @@ describe('Theme Refactoring - Integration Verification', () => {
         success: theme.colors.success,
         warning: theme.colors.warning,
         danger: theme.colors.danger,
-        text: theme.colors.text,
-        textMuted: theme.colors.textMuted,
+        text: theme.colors.onSurface
+        textMuted: theme.colors.onMuted,
       };
 
       Object.values(iconColors).forEach(color => {
@@ -183,24 +183,24 @@ describe('Theme Refactoring - Integration Verification', () => {
       
       // Light theme: white bg, dark text
       expect(lighttheme.colors.bg).toBe('#ffffff');
-      expect(lighttheme.colors.text).toBe('#111827');
+      expect(lighttheme.colors.onSurface.toBe('#111827');
       
       const darkTheme = createTheme('dark');
       
       // Dark theme: dark bg, light text
       expect(darktheme.colors.bg).toBe('#0a0a0a');
-      expect(darktheme.colors.text).toBe('#ffffff');
+      expect(darktheme.colors.onSurface.toBe('#ffffff');
     });
 
     it('should have readable text colors', () => {
       const theme = createTheme('light');
       
       // Primary text should be readable
-      expect(theme.colors.text).toBeTruthy();
-      expect(theme.colors.textMuted).toBeTruthy();
+      expect(theme.colors.onSurface.toBeTruthy();
+      expect(theme.colors.onMuted).toBeTruthy();
       
       // They should be different
-      expect(theme.colors.text).not.toBe(theme.colors.textMuted);
+      expect(theme.colors.onSurface.not.toBe(theme.colors.onMuted);
     });
   });
 

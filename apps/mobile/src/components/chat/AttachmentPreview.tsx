@@ -13,8 +13,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useTheme } from "../../theme/Provider";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
+import { getExtendedColors } from "../../theme/adapters";
 
 export interface AttachmentPreviewProps {
   uri: string;
@@ -33,7 +33,8 @@ export function AttachmentPreview({
   onRemove,
   uploading = false,
 }: AttachmentPreviewProps): JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const colors = getExtendedColors(theme);
 
   const formatFileSize = (bytes?: number): string => {
     if (!bytes) return "";
@@ -59,7 +60,7 @@ export function AttachmentPreview({
       <View
         style={StyleSheet.flatten([
           styles.preview,
-          { backgroundColor: colors.background },
+          { backgroundColor: colors.bg },
         ])}
       >
         {type === "image" && (
@@ -88,7 +89,7 @@ export function AttachmentPreview({
           accessibilityLabel="Remove attachment"
           accessibilityRole="button"
         >
-          <Ionicons name="close-circle" size={24} color="Theme.colors.neutral[0]" />
+          <Ionicons name="close-circle" size={24} color={theme.palette.neutral[0]} />
         </TouchableOpacity>
       </View>
 
@@ -96,7 +97,7 @@ export function AttachmentPreview({
         <Text
           style={StyleSheet.flatten([
             styles.fileName,
-            { color: colors.textMuted },
+            { color: colors.onMuted },
           ])}
         >
           {name}
@@ -107,7 +108,7 @@ export function AttachmentPreview({
         <Text
           style={StyleSheet.flatten([
             styles.fileSize,
-            { color: colors.textMuted },
+            { color: colors.onMuted },
           ])}
         >
           {formatFileSize(size)}

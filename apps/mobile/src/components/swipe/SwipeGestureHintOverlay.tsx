@@ -7,7 +7,6 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Animated, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Theme } from "../../theme/unified-theme";
 import { logger } from "../../services/logger";
 
 const STORAGE_KEY = "@PawfectMatch:swipe_hints_shown";

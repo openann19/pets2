@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme'";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -59,7 +59,8 @@ interface AdminUploadsScreenProps {
 function AdminUploadsScreen({
   navigation,
 }: AdminUploadsScreenProps): JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -200,7 +201,7 @@ function AdminUploadsScreen({
             <View
               style={StyleSheet.flatten([
                 styles.flagBadge,
-                { backgroundColor: colors.error },
+                { backgroundColor: theme.colors.danger },
               ])}
             >
               <Ionicons name="flag" size={12} color="white" />
@@ -221,7 +222,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.userName,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
             numberOfLines={1}
           >
@@ -230,7 +231,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.uploadType,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             {item.type} • {new Date(item.uploadedAt).toLocaleDateString()}
@@ -250,7 +251,7 @@ function AdminUploadsScreen({
       case "pending":
         return theme.colors.warning;
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.border;
     }
   };
 
@@ -269,7 +270,7 @@ function AdminUploadsScreen({
       <Text
         style={StyleSheet.flatten([
           styles.filterButtonText,
-          { color: filter === filterType ? "white" : colors.text },
+          { color: filter === filterType ? "white" : colors.onSurface},
         ])}
       >
         {label}
@@ -292,7 +293,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.modalTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Upload Details
@@ -302,7 +303,7 @@ function AdminUploadsScreen({
                 setSelectedUpload(null);
               }}
             >
-              <Ionicons name="close" size={24} color={colors.text} />
+              <Ionicons name="close" size={24} color={colors.onSurface />
             </TouchableOpacity>
           </View>
 
@@ -316,7 +317,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               User:
@@ -324,7 +325,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailValue,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {selectedUpload.userName}
@@ -333,7 +334,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               Type:
@@ -341,7 +342,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailValue,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {selectedUpload.type}
@@ -350,7 +351,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailLabel,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               Uploaded:
@@ -358,7 +359,7 @@ function AdminUploadsScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.detailValue,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {new Date(selectedUpload.uploadedAt).toLocaleString()}
@@ -369,7 +370,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   Pet:
@@ -377,7 +378,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailValue,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   {selectedUpload.petName}
@@ -390,7 +391,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.error },
+                    { color: theme.colors.danger },
                   ])}
                 >
                   Flag Reason:
@@ -398,7 +399,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailValue,
-                    { color: colors.error },
+                    { color: theme.colors.danger },
                   ])}
                 >
                   {selectedUpload.flagReason}
@@ -411,7 +412,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailLabel,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   File Size:
@@ -419,7 +420,7 @@ function AdminUploadsScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.detailValue,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   {(selectedUpload.metadata.fileSize / 1024 / 1024).toFixed(2)}{" "}
@@ -481,12 +482,12 @@ function AdminUploadsScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
             styles.headerTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           Upload Management
@@ -506,16 +507,16 @@ function AdminUploadsScreen({
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search uploads..."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={colors.onSurfaceecondary}
           />
         </View>
 
@@ -533,7 +534,7 @@ function AdminUploadsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             Loading uploads...
@@ -559,12 +560,12 @@ function AdminUploadsScreen({
               <Ionicons
                 name="images-outline"
                 size={64}
-                color={colors.textSecondary}
+                color={colors.onSurfaceecondary}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 No uploads found
@@ -590,7 +591,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   backButton: {
     marginRight: 16,
@@ -602,7 +603,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -650,7 +651,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -729,7 +730,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   modalTitle: {
     fontSize: 18,

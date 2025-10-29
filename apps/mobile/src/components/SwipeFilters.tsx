@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 
 interface SwipeFiltersProps {
   visible: boolean;
@@ -53,13 +53,13 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
             <Text
               style={StyleSheet.flatten([
                 styles.modalTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Filter Preferences
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={colors.text} />
+              <Ionicons name="close" size={24} color={colors.onSurface />
             </TouchableOpacity>
           </View>
 
@@ -68,7 +68,7 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
             <Text
               style={StyleSheet.flatten([
                 styles.sectionTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Species
@@ -100,7 +100,7 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
                         {
                           color: filters.species.includes(species)
                             ? "white"
-                            : colors.text,
+                            : colors.onSurface
                         },
                       ])}
                     >
@@ -117,7 +117,7 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
             <Text
               style={StyleSheet.flatten([
                 styles.sectionTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Age Range
@@ -131,7 +131,7 @@ const SwipeFilters: React.FC<SwipeFiltersProps> = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.switchLabel,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Verified Profiles Only

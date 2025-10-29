@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { logger } from "@pawfectmatch/core";
 import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 
 interface LazyScreenProps {
   fallback?: React.ComponentType;
@@ -46,7 +46,7 @@ function DefaultLoadingFallback() {
         style={styles.loadingIndicator}
       />
       <Text
-        style={StyleSheet.flatten([styles.loadingText, { color: colors.text }])}
+        style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurface}])}
       >
         Loading...
       </Text>
@@ -77,14 +77,14 @@ function DefaultErrorBoundary({
       accessibilityRole="alert"
     >
       <Text
-        style={StyleSheet.flatten([styles.errorTitle, { color: colors.text }])}
+        style={StyleSheet.flatten([styles.errorTitle, { color: colors.onSurface}])}
       >
         Oops! Something went wrong
       </Text>
       <Text
         style={StyleSheet.flatten([
           styles.errorMessage,
-          { color: colors.text },
+          { color: colors.onSurface},
         ])}
       >
         {error.message || "Failed to load this screen"}
@@ -224,7 +224,7 @@ export const LazyProfileScreen = createLazyScreen(
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading Profile...
@@ -251,7 +251,7 @@ export const LazySettingsScreen = createLazyScreen(
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading Settings...
@@ -278,7 +278,7 @@ export const LazyMatchesScreen = createLazyScreen(
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading Matches...

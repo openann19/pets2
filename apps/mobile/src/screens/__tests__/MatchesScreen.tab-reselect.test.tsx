@@ -1,4 +1,4 @@
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 /**
  * @jest-environment node
  */

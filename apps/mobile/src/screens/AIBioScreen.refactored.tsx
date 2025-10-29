@@ -13,7 +13,7 @@ import { useAIBio } from "../hooks/useAIBio";
 import { PetInfoForm } from "../components/ai/PetInfoForm";
 import { ToneSelector } from "../components/ai/ToneSelector";
 import { BioResults } from "../components/ai/BioResults";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { getExtendedColors } from "../theme/adapters";
 
 interface AIBioScreenProps {
@@ -80,7 +80,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
           <Ionicons
             name="arrow-back"
             size={24}
-            color={colors.text}
+            color={colors.onSurface
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Pet Bio</Text>
@@ -128,7 +128,7 @@ export default function AIBioScreen({ navigation }: AIBioScreenProps) {
                     <Ionicons
                       name="camera"
                       size={32}
-                      color={colors.textMuted}
+                      color={colors.onMuted}
                     />
                     <Text style={styles.photoText}>Add Photo</Text>
                   </View>
@@ -222,7 +222,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text,
+    color: colors.onSurface
   },
   headerSpacer: {
     flex: 1,
@@ -239,7 +239,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text,
+    color: colors.onSurface
     marginBottom: spacing.md,
   },
   photoPicker: {
@@ -260,7 +260,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   },
   photoText: {
     fontSize: 16,
-    color: colors.textMuted,
+    color: colors.onMuted,
     marginTop: spacing.sm,
   },
   generateButton: {
@@ -276,14 +276,14 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
     elevation: 4,
   },
   disabledButton: {
-    backgroundColor: colors.textMuted,
+    backgroundColor: colors.onMuted,
     shadowOpacity: 0,
     elevation: 0,
   },
   generateButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.white,
+    color: colors.onPrimary,
   },
   submitError: {
     fontSize: 14,
@@ -301,7 +301,7 @@ const createStyles = (colors: ReturnType<typeof getExtendedColors>, spacing: any
   },
   historyText: {
     fontSize: 14,
-    color: colors.textMuted,
+    color: colors.onMuted,
   },
   newBioButton: {
     flexDirection: "row",

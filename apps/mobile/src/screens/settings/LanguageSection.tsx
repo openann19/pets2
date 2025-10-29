@@ -6,7 +6,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { LanguageSwitcher } from "../../components/i18n/LanguageSwitcher";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 
 export function LanguageSection() {
   const theme = useTheme();
@@ -19,7 +19,7 @@ export function LanguageSection() {
     sectionTitle: {
       fontSize: 14,
       fontWeight: "bold",
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       textTransform: "uppercase",
       letterSpacing: 0.5,
       marginBottom: 12,

@@ -26,7 +26,6 @@ import {
   useRippleEffect,
   useShimmerEffect,
 } from "../../hooks/animations";
-import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
 interface EffectWrapperProps {

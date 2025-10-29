@@ -10,9 +10,8 @@ import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
-import { Theme } from '../theme/unified-theme';
 
 const PremiumSuccessScreen = (): React.JSX.Element => {
   const { colors } = useTheme();
@@ -52,7 +51,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             </View>
 
             <Text
-              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+              style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
             >
               Welcome to Premium! 🎉
             </Text>
@@ -60,7 +59,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             <Text
               style={StyleSheet.flatten([
                 styles.subtitle,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               Your subscription has been activated successfully. Enjoy all
@@ -73,29 +72,29 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Unlimited swipes
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="eye" size={20} color={theme.colors.success} }/>
+                <Ionicons name="eye" size={20} color={theme.colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
-                    { color: colors.text },
+                    { color: colors.onSurface },
                   ])}
                 >
                   See who liked you
                 </Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="flash" size={20} color={theme.colors.success} }/>
+                <Ionicons name="flash" size={20} color={theme.colors.success} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.featureText,
-                    { color: colors.text },
+                    { color: colors.onSurface },
                   ])}
                 >
                   Priority matching
@@ -120,7 +119,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             </View>
 
             <Text
-              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+              style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
             >
               Verifying Payment...
             </Text>
@@ -128,7 +127,7 @@ const PremiumSuccessScreen = (): React.JSX.Element => {
             <Text
               style={StyleSheet.flatten([
                 styles.subtitle,
-                { color: colors.textSecondary },
+                { color: colors.onMuted },
               ])}
             >
               Please wait while we confirm your subscription.

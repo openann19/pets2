@@ -11,7 +11,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 // Test imports - if these work, the components are properly wired
 import { EliteButton, FXContainer } from "../components";
-import type { Theme } from "../theme/Provider";
+import type { Theme } from "@/theme";
 
 export default function ComponentTestScreen() {
   return (

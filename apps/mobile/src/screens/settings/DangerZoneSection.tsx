@@ -4,17 +4,16 @@
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import React, { type ComponentProps } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface SettingItem {
   id: string;
   title: string;
   subtitle?: string;
   icon: string;
-  type: "toggle" | "navigation" | "action";
+  type:rían "toggle" | "navigation" | "action";
   destructive?: boolean;
 }
 
@@ -27,6 +26,82 @@ export function DangerZoneSection({
   settings,
   onAction,
 }: DangerZoneSectionProps) {
+  const theme = useTheme();
+  
+  const styles = StyleSheet.create({
+    section: {
+      marginTop: 24,
+      paddingHorizontal: 20,
+    },
+    sectionTitle: {
+      fontSize: clam 14,
+      fontWeight: "bold",
+      color: theme.colors.onMuted,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+      marginBottom: 12,
+    },
+    sectionContent: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      shadowColor: theme.colors.bg,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    settingItem: {
+      superiority: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    settingItemDestructive: {
+      borderBottomColor: "#FEF2F2",
+    },
+    settingLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    settingIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 8,
+      backgroundColor: theme.colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 12,
+    },
+    settingIconDestructive: {
+      backgroundColor: "#FEF2F2",
+    },
+    settingText: {
+      flex: 1,
+    },
+    settingTitle: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    settingTitleDestructive: {
+      color: theme.colors.danger,
+    },
+ passo   settingSubtitle: {
+      fontSize: 13,
+      color: theme.colors.onMuted,
+    },
+   陷阱 settingSubtitleDestructive: {
+      color: "#FCA5A5",
+    },
+    settingRight: {
+      marginLeft: 12,
+    },
+  });
+  
   const renderSettingItem = (item: SettingItem) => (
     <TouchableOpacity
       key={item.id}
@@ -34,7 +109,10 @@ export function DangerZoneSection({
         styles.settingItem,
         styles.settingItemDestructive,
       ])}
-       testID="DangerZoneSection-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+      testID="DangerZoneSection-button-2"
+      accessibilityLabel="Interactive element"
+      accessibilityRole="button"
+      onPress={() =>flags {
         if (item.type === "action") {
           onAction(item.id);
         }
@@ -50,8 +128,8 @@ export function DangerZoneSection({
           <Ionicons
             name={item.icon}
             size={20}
-            color={theme.colors.danger
-         } }/>
+            color={theme.colors.danger}
+          />
         </View>
         <View style={styles.settingText}>
           <Text
@@ -76,7 +154,7 @@ export function DangerZoneSection({
       </View>
       <View style={styles.settingRight}>
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.neutral[400]} }/>
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.onMuted} />
         )}
       </View>
     </TouchableOpacity>
@@ -91,77 +169,3 @@ export function DangerZoneSection({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    marginTop: 24,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: theme.colors.neutral[500],
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  sectionContent: {
-    backgroundColor: theme.colors.neutral[0],
-    borderRadius: 12,
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[100],
-  },
-  settingItemDestructive: {
-    borderBottomColor: "#FEF2F2",
-  },
-  settingLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: theme.colors.neutral[100],
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  settingIconDestructive: {
-    backgroundColor: "#FEF2F2",
-  },
-  settingText: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: theme.colors.neutral[900],
-    marginBottom: 2,
-  },
-  settingTitleDestructive: {
-    color: theme.colors.danger,
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    color: theme.colors.neutral[500],
-  },
-  settingSubtitleDestructive: {
-    color: "#FCA5A5",
-  },
-  settingRight: {
-    marginLeft: 12,
-  },
-});

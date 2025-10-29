@@ -49,7 +49,7 @@ export function AnalysisResultsSection({
     return (
       <View style={styles.resultCard}>
         <Text
-          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.onSurface}])}
         >
           🧬 Breed Analysis
         </Text>
@@ -58,7 +58,7 @@ export function AnalysisResultsSection({
             <Text
               style={StyleSheet.flatten([
                 styles.resultLabel,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Primary Breed:
@@ -80,7 +80,7 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionLabel,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Possible Mixed Breeds:
@@ -90,7 +90,7 @@ export function AnalysisResultsSection({
                   key={index}
                   style={StyleSheet.flatten([
                     styles.resultValue,
-                    { color: colors.textSecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   • {breed.breed} ({Math.round(breed.confidence * 100)}%)
@@ -110,7 +110,7 @@ export function AnalysisResultsSection({
     return (
       <View style={styles.resultCard}>
         <Text
-          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.onSurface}])}
         >
           🏥 Health Assessment
         </Text>
@@ -119,7 +119,7 @@ export function AnalysisResultsSection({
             <Text
               style={StyleSheet.flatten([
                 styles.resultLabel,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Estimated Age:
@@ -139,7 +139,7 @@ export function AnalysisResultsSection({
             <Text
               style={StyleSheet.flatten([
                 styles.resultLabel,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Health Score:
@@ -160,7 +160,7 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionLabel,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Recommendations:
@@ -170,7 +170,7 @@ export function AnalysisResultsSection({
                   key={index}
                   style={StyleSheet.flatten([
                     styles.resultValue,
-                    { color: colors.textSecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   • {rec}
@@ -190,7 +190,7 @@ export function AnalysisResultsSection({
     return (
       <View style={styles.resultCard}>
         <Text
-          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.onSurface}])}
         >
           📸 Photo Quality Scores
         </Text>
@@ -198,7 +198,7 @@ export function AnalysisResultsSection({
           <Text
             style={StyleSheet.flatten([
               styles.resultLabel,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Overall:
@@ -216,7 +216,7 @@ export function AnalysisResultsSection({
           <Text
             style={StyleSheet.flatten([
               styles.resultLabel,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Lighting:
@@ -234,7 +234,7 @@ export function AnalysisResultsSection({
           <Text
             style={StyleSheet.flatten([
               styles.resultLabel,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Composition:
@@ -252,7 +252,7 @@ export function AnalysisResultsSection({
           <Text
             style={StyleSheet.flatten([
               styles.resultLabel,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Clarity:
@@ -283,7 +283,7 @@ export function AnalysisResultsSection({
     return (
       <View style={styles.resultCard}>
         <Text
-          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.onSurface}])}
         >
           💕 Matchability Score
         </Text>
@@ -295,7 +295,7 @@ export function AnalysisResultsSection({
         <Text
           style={StyleSheet.flatten([
             styles.scoreDescription,
-            { color: colors.textSecondary },
+            { color: colors.onSurfaceecondary },
           ])}
         >
           {score >= 80
@@ -314,7 +314,7 @@ export function AnalysisResultsSection({
     return (
       <View style={styles.resultCard}>
         <Text
-          style={StyleSheet.flatten([styles.cardTitle, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.cardTitle, { color: colors.onSurface}])}
         >
           🤖 AI Insights
         </Text>
@@ -323,7 +323,7 @@ export function AnalysisResultsSection({
             key={index}
             style={StyleSheet.flatten([
               styles.insight,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             • {insight}

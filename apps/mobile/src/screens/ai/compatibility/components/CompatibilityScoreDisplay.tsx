@@ -8,7 +8,7 @@ import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useTheme } from "@/theme";
 import type { AppTheme } from "@/theme";
-import type { Theme } from "@/theme/unified-theme";
+// import type { Theme } from "@/theme"; // Removed deprecated import
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({
@@ -16,7 +16,7 @@ function __makeStyles_styles(theme: AppTheme) {
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.colors.shadow, // Replaced "#000"
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -85,27 +85,27 @@ export const CompatibilityScoreDisplay: React.FC<CompatibilityScoreDisplayProps>
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
       <View style={styles.resultHeader}>
         <Ionicons
           name="trophy"
           size={24}
           color={getScoreColor(score.overall, colors)}
         />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Overall Compatibility
         </Text>
       </View>
       <View style={styles.overallScore}>
         <Text
-          style={[styles.scoreValue, { color: getScoreColor(score.overall, colors) }]
+          style={[styles.scoreValue, { color: getScoreColor(score.overall, colors) }]} // Fixed JSX syntax
         >
           {score.overall}%
         </Text>
-        <Text style={[styles.scoreLabel, { color: colors.onMuted }]>
+        <Text style={[styles.scoreLabel, { color: colors.onMuted }]}> // Fixed JSX syntax
           {getScoreLabel(score.overall)}
         </Text>
-        <Text style={[styles.scoreDescription, { color: colors.onSurface }]>
+        <Text style={[styles.scoreDescription, { color: colors.onSurface }]}> // Fixed JSX syntax
           {summary}
         </Text>
       </View>

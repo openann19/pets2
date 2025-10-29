@@ -17,7 +17,7 @@ import { AdvancedHeader, HeaderConfigs } from '../components/Advanced/AdvancedHe
 import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 
 import type { RootStackScreenProps } from "../navigation/types";
 import { useMyPetsScreen } from "../hooks/screens/useMyPetsScreen";
@@ -95,7 +95,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                     endPinch('petPhoto', true);
                   }
                 }}
-                backgroundColor={theme.colors.background.secondary}
+                backgroundColor={theme.colors.surface}
               />
             </DoubleTapLikePlus>
           ) : (
@@ -121,7 +121,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           {/* Photo count */}
           {item.photos && item.photos.length > 1 ? (
             <View style={styles.photoCountBadge}>
-              <Ionicons name="camera" size={12} color={theme.colors.background.primary} />
+              <Ionicons name="camera" size={12} color={theme.colors.bg} />
               <Text style={styles.photoCountText}>{item.photos.length}</Text>
             </View>
           ) : null}
@@ -147,7 +147,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           {/* Stats */}
           <View style={styles.petStats}>
             <View style={styles.stat}>
-              <Ionicons name="eye" size={14} color={theme.colors.text.secondary} />
+              <Ionicons name="eye" size={14} color={theme.colors.onMuted} />
               <Text style={styles.statText}>{item.analytics.views}</Text>
             </View>
             <View style={styles.stat}>
@@ -175,7 +175,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 });
               }}
             >
-              <Ionicons name="eye" size={16} color={theme.colors.text.secondary} />
+              <Ionicons name="eye" size={16} color={theme.colors.onMuted} />
               <Text style={styles.viewButtonText}>View</Text>
             </TouchableOpacity>
 
@@ -189,7 +189,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 navigation.navigate("EditPet", { petId: item.id, pet: item });
               }}
             >
-              <Ionicons name="pencil" size={16} color={theme.colors.background.primary} />
+              <Ionicons name="pencil" size={16} color={theme.colors.bg} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -202,7 +202,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
                 handleDeletePet(item._id);
               }}
             >
-              <Ionicons name="trash" size={16} color={theme.colors.background.primary} />
+              <Ionicons name="trash" size={16} color={theme.colors.bg} />
             </TouchableOpacity>
           </View>
         </View>
@@ -226,7 +226,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           navigation.navigate("CreatePet");
         }}
       >
-        <Ionicons name="add-circle" size={20} color={theme.colors.background.primary} />
+        <Ionicons name="add-circle" size={20} color={theme.colors.bg} />
         <Text style={styles.emptyButtonText}>
           Create Your First Pet Profile
         </Text>
@@ -254,7 +254,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
       StyleSheet.create({
         container: {
           flex: 1,
-          backgroundColor: theme.colors.background.primary,
+          backgroundColor: theme.colors.bg,
         },
         header: {
           flexDirection: "row",
@@ -263,12 +263,12 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           paddingHorizontal: 20,
           paddingVertical: 16,
           borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border.medium,
+          borderBottomColor: theme.colors.border,
         },
         headerTitle: {
           fontSize: 20,
           fontWeight: "600",
-          color: theme.colors.text.primary,
+          color: theme.colors.onSurface,
         },
         headerRight: {
           width: 32,
@@ -278,10 +278,10 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           paddingBottom: 100,
         },
         petCard: {
-          backgroundColor: theme.colors.background.primary,
+          backgroundColor: theme.colors.surface,
           borderRadius: 16,
           marginBottom: 16,
-          shadowColor: theme.colors.text.primary,
+          shadowColor: theme.colors.onSurface,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
@@ -296,7 +296,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         petImagePlaceholder: {
           width: "100%",
           height: 200,
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.surface,
           justifyContent: "center",
           alignItems: "center",
         },
@@ -307,7 +307,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
           position: "absolute",
           top: 12,
           right: 12,
-          backgroundColor: theme.colors.primary[500],
+          backgroundColor: theme.colors.primary,
           borderRadius: 12,
           paddingHorizontal: 8,
           paddingVertical: 4,
@@ -315,7 +315,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         statusBadgeText: {
           fontSize: 10,
           fontWeight: "600",
-          color: theme.colors.background.primary,
+          color: theme.colors.onPrimary,
         },
         photoCountBadge: {
           position: "absolute",
@@ -332,7 +332,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         photoCountText: {
           fontSize: 10,
           fontWeight: "600",
-          color: theme.colors.background.primary,
+          color: theme.colors.onPrimary,
         },
         petInfo: {
           padding: 16,
@@ -346,18 +346,18 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         petName: {
           fontSize: 18,
           fontWeight: "600",
-          color: theme.colors.text.primary,
+          color: theme.colors.onSurface,
         },
         petSpecies: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
         },
         petDetails: {
           marginBottom: 12,
         },
         petDetail: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
         },
         petStats: {
           flexDirection: "row",
@@ -371,7 +371,7 @@ export default function MyPetsScreen({ navigation }: MyPetsScreenProps) {
         statText: {
           fontSize: 12,
           fontWeight: "500",
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
         },
         petActions: {
           flexDirection: "row",

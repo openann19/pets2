@@ -3,8 +3,16 @@ export type WebProcessingReport = {
   normalize?: { targetLufs: number; appliedGainDb: number; measuredDbfs: number };
 };
 
+/**
+ * Check if web audio processing is available
+ * Mobile-safe: returns false if window is not available
+ */
 export function canProcessOnWeb(): boolean {
-  return typeof window !== "undefined" && !!(window.AudioContext || (window as any).webkitAudioContext);
+  if (typeof window === "undefined") {
+    return false;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return !!(window.AudioContext || (window as any).webkitAudioContext);
 }
 
 type Options = {
@@ -24,7 +32,16 @@ const rmsDb = (samples: Float32Array) => {
 };
 const dbToLinear = (db: number) => Math.pow(10, db / 20);
 
+/**
+ * Process audio on web platform using Web Audio API
+ * Mobile-safe: This function should only be called if canProcessOnWeb() returns true
+ */
 export async function processAudioWeb(input: Blob, opts: Options): Promise<{ blob: Blob; report: WebProcessingReport }> {
+  if (!canProcessOnWeb()) {
+    throw new Error("Web audio processing is not available on this platform");
+  }
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const AC = (window.AudioContext || (window as any).webkitAudioContext);
   const ctx = new AC();
   const arrayBuf = await input.arrayBuffer();

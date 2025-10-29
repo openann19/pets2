@@ -23,7 +23,6 @@ import {
   type ViewStyle,
 } from "react-native";
 
-import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";

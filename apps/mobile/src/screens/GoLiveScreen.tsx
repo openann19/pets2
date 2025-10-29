@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../services/api";
 import { FLAGS } from "../config/flags";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { logger } from "@pawfectmatch/core";
 
 interface GoLiveScreenProps {

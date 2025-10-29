@@ -22,7 +22,6 @@ import {
   AccessibilityInfo,
 } from "react-native";
 
-import { Theme } from '../../theme/unified-theme';
 
 // Lazy load dimensions to avoid issues in test environment
 const getScreenDimensions = () => {

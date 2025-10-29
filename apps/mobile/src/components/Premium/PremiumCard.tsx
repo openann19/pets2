@@ -18,7 +18,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

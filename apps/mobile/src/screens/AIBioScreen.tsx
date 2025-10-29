@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAIBioScreen } from "../hooks/screens/ai";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 
 export default function AIBioScreen() {
   const theme = useTheme();
@@ -56,7 +56,7 @@ export default function AIBioScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
         <View style={styles.headerRight}>
@@ -76,7 +76,7 @@ export default function AIBioScreen() {
               />
             ) : (
               <View style={styles.photoPlaceholder}>
-                <Ionicons name="camera" size={40} color={theme.colors.textMuted} />
+                <Ionicons name="camera" size={40} color={theme.colors.onMuted} />
                 <Text style={styles.photoPlaceholderText}>
                   Add Photo for Better Analysis
                 </Text>
@@ -96,7 +96,7 @@ export default function AIBioScreen() {
               value={petName}
               onChangeText={setPetName}
               placeholder="Enter your pet's name"
-              placeholderTextColor={theme.colors.textMuted}
+              placeholderTextColor={theme.colors.onMuted}
             />
           </View>
 
@@ -107,7 +107,7 @@ export default function AIBioScreen() {
               value={petBreed}
               onChangeText={setPetBreed}
               placeholder="e.g., Golden Retriever, Persian Cat"
-              placeholderTextColor={theme.colors.textMuted}
+              placeholderTextColor={theme.colors.onMuted}
             />
           </View>
 
@@ -118,7 +118,7 @@ export default function AIBioScreen() {
               value={petAge}
               onChangeText={setPetAge}
               placeholder="e.g., 2 years, 6 months"
-              placeholderTextColor={theme.colors.textMuted}
+              placeholderTextColor={theme.colors.onMuted}
             />
           </View>
 
@@ -132,7 +132,7 @@ export default function AIBioScreen() {
               value={petPersonality}
               onChangeText={setPetPersonality}
               placeholder="Describe your pet's personality..."
-              placeholderTextColor={theme.colors.textMuted}
+              placeholderTextColor={theme.colors.onMuted}
               multiline
               numberOfLines={3}
             />
@@ -179,7 +179,7 @@ export default function AIBioScreen() {
           disabled={isGenerating}
         >
           <LinearGradient
-            colors={isGenerating ? [theme.colors.textMuted, theme.colors.textMuted] : [theme.colors.danger, theme.colors.danger]}
+            colors={isGenerating ? [theme.colors.onMuted, theme.colors.onMuted] : [theme.colors.danger, theme.colors.danger]}
             style={styles.generateButtonGradient}
           >
             {isGenerating ? (
@@ -248,7 +248,7 @@ export default function AIBioScreen() {
                   style={styles.regenerateButton}
                    testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={generateBio}
                 >
-                  <Ionicons name="refresh" size={16} color={theme.colors.textMuted} />
+                  <Ionicons name="refresh" size={16} color={theme.colors.onMuted} />
                   <Text style={styles.regenerateText}>Regenerate</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.saveButton}  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={saveBio}>
@@ -291,7 +291,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     backgroundColor: theme.colors.bg,
-    shadowColor: theme.colors.text,
+    shadowColor: theme.colors.onSurface
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -300,7 +300,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold" as const,
-    color: theme.colors.text,
+    color: theme.colors.onSurface
   },
   headerRight: {
     width: 24,
@@ -315,7 +315,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold" as const,
-    color: theme.colors.text,
+    color: theme.colors.onSurface
     marginBottom: 15,
   },
   photoUpload: {
@@ -323,7 +323,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     borderRadius: 15,
     overflow: "hidden" as const,
     backgroundColor: theme.colors.bgElevated,
-    shadowColor: theme.colors.text,
+    shadowColor: theme.colors.onSurface
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -338,12 +338,12 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.colors.background.secondary,
+    backgroundColor: theme.colors.surface,
   },
   photoPlaceholderText: {
     marginTop: 10,
     fontSize: 14,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   inputGroup: {
     marginBottom: 20,
@@ -351,7 +351,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.onSurface
     marginBottom: 8,
   },
   textInput: {
@@ -362,7 +362,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    shadowColor: theme.colors.text,
+    shadowColor: theme.colors.onSurface
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -397,7 +397,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   toneLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   generateButton: {
     marginVertical: 20,
@@ -422,7 +422,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     backgroundColor: theme.colors.bgElevated,
     borderRadius: 15,
     padding: 20,
-    shadowColor: theme.colors.text,
+    shadowColor: theme.colors.onSurface
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -431,7 +431,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   bioText: {
     fontSize: 16,
     lineHeight: 24,
-    color: theme.colors.text,
+    color: theme.colors.onSurface
     marginBottom: 20,
   },
   bioStats: {
@@ -447,7 +447,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
     marginBottom: 5,
   },
   statValue: {
@@ -460,7 +460,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   keywordsTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
     marginBottom: 10,
   },
   keywordsList: {
@@ -469,7 +469,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     gap: 8,
   },
   keywordTag: {
-    backgroundColor: theme.colors.error,
+    backgroundColor: theme.colors.danger,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
@@ -494,7 +494,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     gap: 8,
   },
   regenerateText: {
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
     fontSize: 14,
     fontWeight: "600" as const,
   },
@@ -520,7 +520,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    shadowColor: theme.colors.text,
+    shadowColor: theme.colors.onSurface
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -529,7 +529,7 @@ const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   historyText: {
     flex: 1,
     fontSize: 14,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
     marginRight: 15,
   },
   historyScore: {

@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { logger } from "@pawfectmatch/core";
-import React, { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -12,8 +12,14 @@ import {
   Switch,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+
+// Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
+type RuntimeTheme = AppTheme & { 
+  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
+  colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
+};
 
 type AdoptionStackParamList = {
   AdoptionContract: {
@@ -42,6 +48,8 @@ interface ContractTerms {
 }
 
 const AdoptionContractScreen = ({ navigation, route }: Props) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { applicationId, petName, applicantName } = route.params;
   const [contractTerms, setContractTerms] = useState<ContractTerms>({
     adoptionFee: "0",
@@ -190,11 +198,11 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
-                trackColor={{ false: theme.colors.neutral[200], true: "#fce7f3" }}
+                trackColor={{ false: theme.colors.onMuted, true: theme.colors.primary }}
                 thumbColor={
                   contractTerms[item.key as keyof ContractTerms]
-                    ? theme.colors.primary[500]
-                    : theme.colors.neutral[400]
+                    ? theme.colors.primary
+                    : theme.colors.onSurface
                 }
               />
             </View>
@@ -235,11 +243,11 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
                 onValueChange={(value) => {
                   updateContractTerms(item.key, value);
                 }}
-                trackColor={{ false: theme.colors.neutral[200], true: "#fce7f3" }}
+                trackColor={{ false: theme.colors.onMuted, true: theme.colors.primary }}
                 thumbColor={
                   contractTerms[item.key as keyof ContractTerms]
-                    ? theme.colors.primary[500]
-                    : theme.colors.neutral[400]
+                    ? theme.colors.primary
+                    : theme.colors.onSurface
                 }
               />
             </View>
@@ -343,170 +351,180 @@ const AdoptionContractScreen = ({ navigation, route }: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.neutral[0],
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[100],
-  },
-  backButton: {
-    fontSize: 16,
-    color: theme.colors.primary[500],
-    fontWeight: "600",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-  },
-  placeholder: {
-    width: 50,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  contractInfo: {
-    backgroundColor: theme.colors.bg.secondary,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    alignItems: "center",
-  },
-  contractTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  contractSubtitle: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    marginBottom: 4,
-  },
-  contractDate: {
-    fontSize: 14,
-    color: theme.colors.neutral[400],
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theme.colors.neutral[700],
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: theme.colors.bg.secondary,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: theme.colors.neutral[800],
-  },
-  textArea: {
-    backgroundColor: theme.colors.bg.secondary,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: theme.colors.neutral[800],
-    textAlignVertical: "top",
-    minHeight: 100,
-  },
-  helperText: {
-    fontSize: 12,
-    color: theme.colors.neutral[400],
-    marginTop: 4,
-    lineHeight: 16,
-  },
-  switchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: theme.colors.bg.secondary,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  switchInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  switchLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theme.colors.neutral[800],
-    marginBottom: 4,
-  },
-  switchDescription: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    lineHeight: 18,
-  },
-  legalNotice: {
-    backgroundColor: "#fef3c7",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 32,
-  },
-  legalTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#92400e",
-    marginBottom: 12,
-  },
-  legalText: {
-    fontSize: 14,
-    color: "#92400e",
-    lineHeight: 20,
-  },
-  footer: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral[100],
-  },
-  generateButton: {
-    backgroundColor: theme.colors.primary[500],
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    alignItems: "center",
-  },
-  disabledButton: {
-    backgroundColor: theme.colors.neutral[300],
-  },
-  generateButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: theme.colors.neutral[0],
-  },
-});
+function makeStyles(theme: AppTheme) {
+  const themeRuntime = theme as RuntimeTheme;
+  
+  return {
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    header: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      padding: theme.spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+    },
+    placeholder: {
+      width: 60,
+    },
+    backButton: {
+      fontSize: 16,
+      color: theme.colors.primary,
+      fontWeight: "600" as const,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+    },
+    content: {
+      flex: 1,
+    },
+    contractInfo: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      marginBottom: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    contractTitle: {
+      fontSize: 22,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    contractSubtitle: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.xs,
+    },
+    contractDate: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    section: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      marginBottom: theme.spacing.md,
+      borderRadius: themeRuntime.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.md,
+    },
+    sectionSubtitle: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.md,
+    },
+    inputGroup: {
+      marginBottom: theme.spacing.md,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    input: {
+      backgroundColor: theme.colors.bg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: themeRuntime.radius.sm,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      fontSize: 16,
+      color: theme.colors.onSurface,
+    },
+    helperText: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      marginTop: theme.spacing.xs,
+    },
+    textArea: {
+      backgroundColor: theme.colors.bg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: themeRuntime.radius.sm,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      minHeight: 100,
+      textAlignVertical: "top" as const,
+    },
+    switchContainer: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    switchInfo: {
+      flex: 1,
+      marginRight: theme.spacing.md,
+    },
+    switchLabel: {
+      fontSize: 16,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    switchDescription: {
+      fontSize: 13,
+      color: theme.colors.onMuted,
+    },
+    legalNotice: {
+      padding: theme.spacing.lg,
+      backgroundColor: themeRuntime.colors.bgAlt ?? theme.colors.surface,
+      margin: theme.spacing.lg,
+      borderRadius: themeRuntime.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    legalTitle: {
+      fontSize: 16,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    legalText: {
+      fontSize: 13,
+      color: theme.colors.onMuted,
+      lineHeight: 20,
+    },
+    footer: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    generateButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: themeRuntime.radius.md,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    disabledButton: {
+      opacity: 0.6,
+    },
+    generateButtonText: {
+      fontSize: 16,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+    },
+  };
+}
 
 export default AdoptionContractScreen;

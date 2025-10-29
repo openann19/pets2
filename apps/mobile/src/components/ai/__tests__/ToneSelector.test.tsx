@@ -6,7 +6,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import { ToneSelector } from '../ToneSelector';
-import { Theme } from '../../../theme/unified-theme';
 
 // Mock the theme
 jest.mock('../../../theme/unified-theme', () => ({

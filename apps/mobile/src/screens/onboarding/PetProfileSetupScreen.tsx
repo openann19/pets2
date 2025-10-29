@@ -63,8 +63,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '@/theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -506,7 +505,7 @@ const PetProfileSetupScreen = ({
       StyleSheet.create({
         container: {
           flex: 1,
-          backgroundColor: theme.colors.background.primary,
+          backgroundColor: theme.colors.bg,
         },
         keyboardView: {
           flex: 1,
@@ -514,7 +513,7 @@ const PetProfileSetupScreen = ({
         header: {
           padding: 20,
           borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border.medium,
+          borderBottomColor: theme.colors.border,
         },
         progressContainer: {
           alignItems: "center",
@@ -522,19 +521,19 @@ const PetProfileSetupScreen = ({
         progressBar: {
           width: "100%",
           height: 4,
-          backgroundColor: theme.colors.background.tertiary,
+          backgroundColor: theme.colors.surface,
           borderRadius: 2,
           marginBottom: 8,
         },
         progressFill: {
           height: "100%",
-          backgroundColor: theme.colors.primary[500],
+          backgroundColor: theme.colors.primary,
           borderRadius: 2,
           maxWidth: "100%",
         },
         progressText: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
           fontWeight: "500",
         },
         content: {
@@ -547,29 +546,29 @@ const PetProfileSetupScreen = ({
         stepTitle: {
           fontSize: 24,
           fontWeight: "bold",
-          color: theme.colors.text.primary,
+          color: theme.colors.onSurface,
           marginBottom: 8,
         },
         stepSubtitle: {
           fontSize: 16,
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
           marginBottom: 24,
         },
         input: {
           borderWidth: 1,
-          borderColor: theme.colors.border.medium,
+          borderColor: theme.colors.border,
           borderRadius: 8,
           padding: 16,
           fontSize: 16,
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.surface,
           marginBottom: 16,
-          color: theme.colors.text.primary,
+          color: theme.colors.onSurface,
         },
         inputError: {
           borderColor: theme.colors.danger,
         },
         inputFocused: {
-          borderColor: theme.colors.primary[500],
+          borderColor: theme.colors.primary,
         },
         errorText: {
           color: theme.colors.danger,
@@ -587,21 +586,21 @@ const PetProfileSetupScreen = ({
           paddingHorizontal: 16,
           borderRadius: 8,
           borderWidth: 1,
-          borderColor: theme.colors.border.medium,
-          backgroundColor: theme.colors.background.secondary,
+          borderColor: theme.colors.border,
+          backgroundColor: theme.colors.surface,
           minWidth: 80,
           alignItems: "center",
         },
         optionButtonSelected: {
-          borderColor: theme.colors.primary[500],
-          backgroundColor: theme.colors.primary[500] + "10",
+          borderColor: theme.colors.primary,
+          backgroundColor: theme.colors.primary + "10",
         },
         optionText: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
         },
         optionTextSelected: {
-          color: theme.colors.primary[500],
+          color: theme.colors.primary,
           fontWeight: "600",
         },
         tagsContainer: {
@@ -615,19 +614,19 @@ const PetProfileSetupScreen = ({
           paddingHorizontal: 12,
           borderRadius: 16,
           borderWidth: 1,
-          borderColor: theme.colors.border.medium,
-          backgroundColor: theme.colors.background.secondary,
+          borderColor: theme.colors.border,
+          backgroundColor: theme.colors.surface,
         },
         tagButtonSelected: {
-          borderColor: theme.colors.primary[500],
-          backgroundColor: theme.colors.primary[500] + "10",
+          borderColor: theme.colors.primary,
+          backgroundColor: theme.colors.primary + "10",
         },
         tagText: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
         },
         tagTextSelected: {
-          color: theme.colors.primary[500],
+          color: theme.colors.primary,
           fontWeight: "500",
         },
         navigation: {
@@ -635,7 +634,7 @@ const PetProfileSetupScreen = ({
           justifyContent: "space-between",
           paddingVertical: 20,
           borderTopWidth: 1,
-          borderTopColor: theme.colors.border.medium,
+          borderTopColor: theme.colors.border,
         },
         navButton: {
           paddingVertical: 12,
@@ -645,27 +644,27 @@ const PetProfileSetupScreen = ({
           alignItems: "center",
         },
         navButtonPrimary: {
-          backgroundColor: theme.colors.primary[500],
+          backgroundColor: theme.colors.primary,
         },
         navButtonSecondary: {
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.surface,
           borderWidth: 1,
-          borderColor: theme.colors.border.medium,
+          borderColor: theme.colors.border,
         },
         navButtonDisabled: {
-          backgroundColor: theme.colors.background.tertiary,
+          backgroundColor: theme.colors.surface,
           opacity: 0.6,
         },
         navButtonText: {
           fontSize: 16,
           fontWeight: "600",
-          color: theme.colors.background.primary,
+          color: theme.colors.onPrimary,
         },
         navButtonTextSecondary: {
-          color: theme.colors.text.primary,
+          color: theme.colors.onSurface,
         },
         navButtonTextDisabled: {
-          color: theme.colors.text.secondary,
+          color: theme.colors.onMuted,
         },
       }),
     [theme]

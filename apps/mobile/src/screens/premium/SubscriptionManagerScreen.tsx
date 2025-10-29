@@ -3,7 +3,7 @@ import { logger } from "@pawfectmatch/core";
 import type { NavigationProp } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,8 +17,8 @@ import {
 } from "react-native";
 import { _subscriptionAPI as subscriptionApi } from "../../services/api";
 import type { RootStackParamList } from "../../navigation/types";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 type SubscriptionManagerNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -75,7 +75,218 @@ const createCheckoutSession = async <T extends { url: string }>(payload: {
   return response.json() as Promise<T>;
 };
 
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.surface,
+    },
+    contentContainer: {
+      padding: theme.spacing.md,
+      paddingBottom: theme.spacing["2xl"],
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.surface,
+    },
+    loadingText: {
+      marginTop: theme.spacing.md,
+      fontSize: 16,
+      color: theme.colors.primary,
+    },
+    header: {
+      padding: theme.spacing.lg,
+      borderRadius: theme.radii.md,
+      marginBottom: theme.spacing.md,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: theme.colors.onPrimary,
+    },
+    errorContainer: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.danger + "15",
+      borderRadius: theme.radii.md,
+      alignItems: "center",
+    },
+    errorText: {
+      fontSize: 16,
+      color: theme.colors.danger,
+      textAlign: "center",
+      marginTop: theme.spacing.sm,
+      marginBottom: theme.spacing.md,
+    },
+    retryButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.danger,
+      borderRadius: theme.radii.sm,
+    },
+    retryButtonText: {
+      color: theme.colors.onPrimary,
+      fontWeight: "600",
+    },
+    noSubscriptionContainer: {
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      alignItems: "center",
+      elevation: 2,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    noSubscriptionTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+    },
+    noSubscriptionText: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: "center",
+      marginBottom: theme.spacing.lg,
+    },
+    upgradeButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radii.sm,
+    },
+    upgradeButtonText: {
+      color: theme.colors.onPrimary,
+      fontWeight: "600",
+      fontSize: 16,
+    },
+    card: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.md,
+      elevation: 2,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    cardHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+    },
+    cardTitle: {
+      fontSize: 18,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+    },
+    statusBadge: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.xl,
+    },
+    statusText: {
+      fontSize: 14,
+      fontWeight: "500",
+    },
+    planDetails: {
+      marginBottom: theme.spacing.md,
+    },
+    planName: {
+      fontSize: 22,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    planPrice: {
+      fontSize: 16,
+      color: theme.colors.primary,
+      fontWeight: "500",
+    },
+    divider: {
+      height: 1,
+      backgroundColor: theme.colors.border,
+      marginVertical: theme.spacing.md,
+    },
+    detailRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.sm,
+    },
+    detailLabel: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+    },
+    detailValue: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      fontWeight: "500",
+    },
+    detailValueHighlight: {
+      fontSize: 16,
+      color: theme.colors.warning,
+      fontWeight: "500",
+    },
+    usageItem: {
+      marginBottom: theme.spacing.md,
+    },
+    usageLabel: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.sm,
+    },
+    usageBar: {
+      height: 8,
+      backgroundColor: theme.colors.border,
+      borderRadius: theme.radii.xs,
+      overflow: "hidden",
+      marginBottom: theme.spacing.xs,
+    },
+    usageProgress: {
+      height: "100%",
+      borderRadius: theme.radii.xs,
+    },
+    usageText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    usageResetText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      textAlign: "center",
+      marginTop: theme.spacing.sm,
+    },
+    actionButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.sm,
+      marginBottom: theme.spacing.sm,
+    },
+    reactivateButton: {
+      backgroundColor: theme.colors.primary,
+    },
+    actionButtonText: {
+      fontSize: 16,
+      fontWeight: "500",
+      marginLeft: theme.spacing.sm,
+      color: theme.colors.onSurface,
+    },
+  });
+}
+
 export const SubscriptionManagerScreen = () => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const navigation = useNavigation<SubscriptionManagerNavigationProp>();
 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -242,28 +453,33 @@ export const SubscriptionManagerScreen = () => {
     });
   };
 
-  // Get status badge color
+  // Get status badge color using theme colors
   const getStatusColor = (
     status?: Subscription["status"],
   ): { bg: string; text: string } => {
     switch (status) {
       case "active":
-        return { bg: "#E0F7E6", text: "#1E8A3D" };
+        return { bg: theme.colors.success + "20", text: theme.colors.success };
       case "canceled":
-        return { bg: "#FFEAEA", text: "#D92D20" };
+        return { bg: theme.colors.danger + "20", text: theme.colors.danger };
       case "past_due":
-        return { bg: "#FFF6E5", text: "#D97706" };
+        return { bg: theme.colors.warning + "20", text: theme.colors.warning };
       case "trialing":
-        return { bg: "#E0F1FF", text: "#0F70E6" };
+        return { bg: theme.colors.info + "20", text: theme.colors.info };
       default:
-        return { bg: "#F2F4F7", text: "#667085" };
+        return { bg: theme.colors.border, text: theme.colors.onMuted };
     }
   };
+
+  // Get gradient colors from theme palette
+  const gradientColors = useMemo(() => {
+    return (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary];
+  }, [theme]);
 
   if (isLoading && !isRefreshing) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#7C3AED" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.loadingText}>Loading subscription details...</Text>
       </View>
     );
@@ -280,7 +496,7 @@ export const SubscriptionManagerScreen = () => {
       }
     >
       <LinearGradient
-        colors={["#6D28D9", "#7C3AED"]}
+        colors={gradientColors}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -290,11 +506,14 @@ export const SubscriptionManagerScreen = () => {
 
       {error !== null && error !== "" ? (
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={24} color="#D92D20" />
+          <Ionicons name="alert-circle-outline" size={24} color={theme.colors.danger} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
-             testID="SubscriptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => void fetchSubscriptionData()}
+            testID="SubscriptionManagerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => void fetchSubscriptionData()}
           >
             <Text style={styles.retryButtonText}>Retry</Text>
           </TouchableOpacity>
@@ -304,7 +523,7 @@ export const SubscriptionManagerScreen = () => {
           <Ionicons
             name="information-circle-outline"
             size={64}
-            color="#6D28D9"
+            color={theme.colors.primary}
           />
           <Text style={styles.noSubscriptionTitle}>No Active Subscription</Text>
           <Text style={styles.noSubscriptionText}>
@@ -313,7 +532,10 @@ export const SubscriptionManagerScreen = () => {
           </Text>
           <TouchableOpacity
             style={styles.upgradeButton}
-             testID="SubscriptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+            testID="SubscriptionManagerScreen-button-2"
+            accessibilityLabel="Interactive element"
+            accessibilityRole="button"
+            onPress={() => {
               navigation.navigate("Premium");
             }}
           >
@@ -393,7 +615,7 @@ export const SubscriptionManagerScreen = () => {
                       styles.usageProgress,
                       {
                         width: `${Math.round((usageStats.swipesRemaining / usageStats.totalSwipes) * 100)}%`,
-                        backgroundColor: "#7C3AED",
+                        backgroundColor: theme.colors.primary,
                       },
                     ])}
                   />
@@ -412,7 +634,7 @@ export const SubscriptionManagerScreen = () => {
                       styles.usageProgress,
                       {
                         width: `${Math.round((usageStats.superLikesRemaining / usageStats.totalSuperLikes) * 100)}%`,
-                        backgroundColor: theme.colors.secondary[500],
+                        backgroundColor: theme.colors.info,
                       },
                     ])}
                   />
@@ -431,7 +653,7 @@ export const SubscriptionManagerScreen = () => {
                       styles.usageProgress,
                       {
                         width: `${Math.round((usageStats.boostsRemaining / usageStats.totalBoosts) * 100)}%`,
-                        backgroundColor: "#F97316",
+                        backgroundColor: theme.colors.warning,
                       },
                     ])}
                   />
@@ -456,19 +678,22 @@ export const SubscriptionManagerScreen = () => {
               !subscription.cancelAtPeriodEnd && (
                 <TouchableOpacity
                   style={styles.actionButton}
-                   testID="SubscriptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+                  testID="SubscriptionManagerScreen-button-2"
+                  accessibilityLabel="Interactive element"
+                  accessibilityRole="button"
+                  onPress={() => {
                     handleCancelSubscription();
                   }}
                 >
                   <Ionicons
                     name="close-circle-outline"
                     size={24}
-                    color="#D92D20"
+                    color={theme.colors.danger}
                   />
                   <Text
                     style={StyleSheet.flatten([
                       styles.actionButtonText,
-                      { color: "#D92D20" },
+                      { color: theme.colors.danger },
                     ])}
                   >
                     Cancel Subscription
@@ -483,13 +708,16 @@ export const SubscriptionManagerScreen = () => {
                   styles.actionButton,
                   styles.reactivateButton,
                 ])}
-                 testID="SubscriptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => void handleReactivateSubscription()}
+                testID="SubscriptionManagerScreen-button-2"
+                accessibilityLabel="Interactive element"
+                accessibilityRole="button"
+                onPress={() => void handleReactivateSubscription()}
               >
-                <Ionicons name="refresh-outline" size={24} color={theme.colors.neutral[0]} }/>
+                <Ionicons name="refresh-outline" size={24} color={theme.colors.onPrimary} />
                 <Text
                   style={StyleSheet.flatten([
                     styles.actionButtonText,
-                    { color: theme.colors.neutral[0] },
+                    { color: theme.colors.onPrimary },
                   ])}
                 >
                   Reactivate Subscription
@@ -499,13 +727,16 @@ export const SubscriptionManagerScreen = () => {
 
             <TouchableOpacity
               style={styles.actionButton}
-               testID="SubscriptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => void handleUpdatePaymentMethod()}
+              testID="SubscriptionManagerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => void handleUpdatePaymentMethod()}
             >
-              <Ionicons name="card-outline" size={24} color="#6D28D9" />
+              <Ionicons name="card-outline" size={24} color={theme.colors.primary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.actionButtonText,
-                  { color: "#6D28D9" },
+                  { color: theme.colors.primary },
                 ])}
               >
                 Update Payment Method
@@ -514,15 +745,18 @@ export const SubscriptionManagerScreen = () => {
 
             <TouchableOpacity
               style={styles.actionButton}
-               testID="SubscriptionManagerScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
+              testID="SubscriptionManagerScreen-button-2"
+              accessibilityLabel="Interactive element"
+              accessibilityRole="button"
+              onPress={() => {
                 navigation.navigate("Premium");
               }}
             >
-              <Ionicons name="pricetag-outline" size={24} color="#6D28D9" />
+              <Ionicons name="pricetag-outline" size={24} color={theme.colors.primary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.actionButtonText,
-                  { color: "#6D28D9" },
+                  { color: theme.colors.primary },
                 ])}
               >
                 Change Plan
@@ -535,214 +769,4 @@ export const SubscriptionManagerScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.bg.secondary,
-  },
-  contentContainer: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: theme.colors.bg.secondary,
-  },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 16,
-    color: "#6D28D9",
-  },
-  header: {
-    padding: 24,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.neutral[0],
-  },
-  errorContainer: {
-    padding: 24,
-    backgroundColor: "#FFEAEA",
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  errorText: {
-    fontSize: 16,
-    color: "#D92D20",
-    textAlign: "center",
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  retryButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    backgroundColor: "#D92D20",
-    borderRadius: 8,
-  },
-  retryButtonText: {
-    color: theme.colors.neutral[0],
-    fontWeight: "600",
-  },
-  noSubscriptionContainer: {
-    padding: 24,
-    backgroundColor: theme.colors.neutral[0],
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 2,
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  noSubscriptionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: theme.colors.neutral[900],
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  noSubscriptionText: {
-    fontSize: 16,
-    color: theme.colors.neutral[600],
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  upgradeButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    backgroundColor: "#6D28D9",
-    borderRadius: 8,
-  },
-  upgradeButtonText: {
-    color: theme.colors.neutral[0],
-    fontWeight: "600",
-    fontSize: 16,
-  },
-  card: {
-    backgroundColor: theme.colors.neutral[0],
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[900],
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 16,
-  },
-  statusText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  planDetails: {
-    marginBottom: 16,
-  },
-  planName: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: theme.colors.neutral[900],
-    marginBottom: 4,
-  },
-  planPrice: {
-    fontSize: 16,
-    color: "#6D28D9",
-    fontWeight: "500",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: theme.colors.neutral[200],
-    marginVertical: 16,
-  },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  detailLabel: {
-    fontSize: 16,
-    color: theme.colors.neutral[600],
-  },
-  detailValue: {
-    fontSize: 16,
-    color: theme.colors.neutral[900],
-    fontWeight: "500",
-  },
-  detailValueHighlight: {
-    fontSize: 16,
-    color: "#D97706",
-    fontWeight: "500",
-  },
-  usageItem: {
-    marginBottom: 16,
-  },
-  usageLabel: {
-    fontSize: 16,
-    color: theme.colors.neutral[600],
-    marginBottom: 8,
-  },
-  usageBar: {
-    height: 8,
-    backgroundColor: theme.colors.neutral[200],
-    borderRadius: 4,
-    overflow: "hidden",
-    marginBottom: 4,
-  },
-  usageProgress: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  usageText: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-  },
-  usageResetText: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-    marginTop: 8,
-  },
-  actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: theme.colors.neutral[100],
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  reactivateButton: {
-    backgroundColor: "#6D28D9",
-  },
-  actionButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-    marginLeft: 12,
-  },
-});
-
 export default SubscriptionManagerScreen;
-
-/* Removed duplicate getUsageStats definition that referenced an undefined
-   `apiClient`; the screen already uses `subscriptionApi.getUsageStats` from
-   @pawfectmatch/core. */

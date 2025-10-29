@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { Alert } from "react-native";
 
 import type { ThemeMode } from "../stores/useUIStore";
-import { useThemeContext } from "../theme/UnifiedThemeProvider";
-import { useTheme } from "../theme/Provider";
-import type { ThemeColors } from "../theme/Provider";
+import { useThemeContext } from "../theme/ThemeProvider";
+import { useTheme } from "@/theme";
+import type { ThemeColors } from "@/theme";
 import { getExtendedColors } from "../theme/adapters";
 
 export interface UseThemeToggleReturn {

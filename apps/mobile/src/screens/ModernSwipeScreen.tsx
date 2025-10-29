@@ -30,7 +30,7 @@ import {
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { useModernSwipeScreen } from "../hooks/screens/useModernSwipeScreen";
 import type { RootStackScreenProps } from "../navigation/types";
 // Import state components
@@ -98,7 +98,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     },
     loadingSubtitle: {
       textAlign: "center",
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     emptyContainer: {
       flex: 1,
@@ -119,7 +119,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     errorMessage: {
       textAlign: "center",
       marginBottom: theme.spacing.xl,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     emptyCard: {
       padding: theme.spacing["4xl"],
@@ -133,7 +133,7 @@ export default function ModernSwipeScreen({ navigation }: SwipeScreenProps) {
     emptySubtitle: {
       textAlign: "center",
       marginBottom: theme.spacing.xl,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     headerActions: {
       flexDirection: "row" as const,

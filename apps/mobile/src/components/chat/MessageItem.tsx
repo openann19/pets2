@@ -1,13 +1,13 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import type { Message } from "../../hooks/useChatData";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import { ReactionPicker } from "./ReactionPicker";
 import { chatService } from "../../services/chatService";
-import { Theme } from '../../theme/unified-theme';
 import { logger } from "../../services/logger";
 
 interface MessageItemProps {
@@ -33,6 +33,7 @@ export function MessageItem({
   const colors = getExtendedColors(theme);
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [reactions, setReactions] = useState<Record<string, number>>({});
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   const isMyMessage =
     message.senderId === "me" || message.senderId === "current-user";
@@ -127,7 +128,7 @@ export function MessageItem({
       {showDateHeader && (
         <View style={styles.dateHeader}>
           <BlurView intensity={20} style={styles.dateHeaderBlur}>
-            <Text style={[styles.dateHeaderText, { color: colors.textMuted }]>
+            <Text style={[styles.dateHeaderText, { color: colors.onMuted }]}>
               {getDateHeader(message.timestamp)}
             </Text>
           </BlurView>
@@ -154,7 +155,7 @@ export function MessageItem({
               <View
                 style={[
                   styles.onlineIndicator,
-                  { backgroundColor: Theme.colors.status.success },
+                  { backgroundColor: theme.colors.success },
                 ]}
               />
             )}
@@ -174,16 +175,16 @@ export function MessageItem({
               : [
                   styles.otherMessage,
                   {
-                    backgroundColor: Theme.colors.neutral[0],
-                    borderColor: Theme.colors.neutral[200],
+                    backgroundColor: theme.palette.neutral[0],
+                    borderColor: theme.palette.neutral[200],
                   },
                 ],
             hasError
               ? [
                   styles.errorMessage,
                   {
-                    backgroundColor: `${Theme.colors.status.error}20`,
-                    borderColor: Theme.colors.status.error,
+                    backgroundColor: `${theme.colors.danger}20`,
+                    borderColor: theme.colors.danger,
                   },
                 ]
               : null,
@@ -198,8 +199,8 @@ export function MessageItem({
             <Text
               style={[
                 styles.messageText,
-                { color: isMyMessage ? Theme.colors.neutral[0] : Theme.colors.neutral[800] },
-                hasError ? { color: Theme.colors.status.error } : null,
+                { color: isMyMessage ? theme.palette.neutral[0] : theme.palette.neutral[800] },
+                hasError ? { color: theme.colors.danger } : null,
               ]}
             >
               {message.content}
@@ -210,7 +211,7 @@ export function MessageItem({
           {isMyMessage && (
             <View style={styles.messageStatus}>
               {message.status === "sending" && (
-                <Text style={[styles.sendingText, { color: `${Theme.colors.neutral[0]}B3` }]> 
+                <Text style={[styles.sendingText, { color: `${theme.palette.neutral[0]}B3` }]}>
                   Sending...
                 </Text>
               )}
@@ -219,8 +220,8 @@ export function MessageItem({
                   style={styles.retryButton}
                   onPress={handleRetry}
                 >
-                  <Ionicons name="refresh" size={12} color={Theme.colors.status.error} />
-                  <Text style={[styles.retryText, { color: Theme.colors.status.error }]> 
+                  <Ionicons name="refresh" size={12} color={theme.colors.danger} />
+                  <Text style={[styles.retryText, { color: theme.colors.danger }]}>
                     Retry
                   </Text>
                 </TouchableOpacity>
@@ -230,7 +231,7 @@ export function MessageItem({
                   <Ionicons
                     name="alert-circle"
                     size={12}
-                    color={Theme.colors.status.error}
+                    color={theme.colors.danger}
                   />
                 </View>
               )}
@@ -246,12 +247,12 @@ export function MessageItem({
               isMyMessage
                 ? {
                     justifyContent: "flex-end",
-                    marginRight: Theme.spacing.sm,
+                    marginRight: theme.spacing.sm,
                   }
                 : null,
             ]}
           >
-            <Text style={[styles.messageTime, { color: Theme.colors.neutral[500] }]>
+            <Text style={[styles.messageTime, { color: theme.palette.neutral[500] }]}>
               {formatMessageTime(message.timestamp)}
             </Text>
             {isMyMessage && !hasError && (
@@ -259,7 +260,7 @@ export function MessageItem({
                 <Ionicons
                   name={message.read ? "checkmark-done" : "checkmark"}
                   size={14}
-                  color={message.read ? Theme.colors.status.success : Theme.colors.neutral[500]}
+                  color={message.read ? theme.colors.success : theme.palette.neutral[500]}
                   style={styles.readIndicator}
                 />
               </View>
@@ -302,16 +303,17 @@ const shouldShowDateHeader = (
   return currentDate !== previousDate;
 };
 
-const styles = StyleSheet.create({
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
   dateHeader: {
     alignItems: "center",
-    marginVertical: Theme.spacing.md,
+    marginVertical: theme.spacing.md,
   },
   dateHeaderBlur: {
-    borderRadius: Theme.borderRadius.lg,
+    borderRadius: theme.radius.lg,
     overflow: "hidden",
-    paddingHorizontal: Theme.spacing.sm,
-    paddingVertical: Theme.spacing.xs,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
   },
   dateHeaderText: {
     fontSize: 12,
@@ -320,23 +322,23 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flexDirection: "row",
-    marginBottom: Theme.spacing.xs,
+    marginBottom: theme.spacing.xs,
     alignItems: "flex-end",
-    paddingHorizontal: Theme.spacing.xs,
+    paddingHorizontal: theme.spacing.xs,
   },
   myMessageContainer: {
     justifyContent: "flex-end",
   },
   avatarContainer: {
     position: "relative",
-    marginRight: Theme.spacing.xs,
+    marginRight: theme.spacing.xs,
   },
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: Theme.colors.neutral[0],
+    borderColor: theme.palette.neutral[0],
   },
   avatarOnline: {
     borderColor: "#4CAF50",
@@ -352,22 +354,22 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: Theme.colors.neutral[0],
+    borderColor: theme.palette.neutral[0],
   },
   messageBubble: {
     maxWidth: "75%",
-    paddingHorizontal: Theme.spacing.md,
-    paddingVertical: Theme.spacing.sm,
-    borderRadius: Theme.borderRadius["2xl"],
-    marginBottom: Theme.spacing.xs,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.xl,
+    marginBottom: theme.spacing.xs,
     position: "relative",
   },
   myMessage: {
     marginLeft: 40,
-    borderBottomRightRadius: Theme.borderRadius.md,
+    borderBottomRightRadius: theme.radius.md,
   },
   otherMessage: {
-    borderBottomLeftRadius: Theme.borderRadius.md,
+    borderBottomLeftRadius: theme.radius.md,
     borderWidth: 0.5,
   },
   errorMessage: {
@@ -380,63 +382,63 @@ const styles = StyleSheet.create({
   messageImage: {
     width: 200,
     height: 150,
-    borderRadius: Theme.borderRadius.lg,
+    borderRadius: theme.radius.lg,
     resizeMode: "cover",
   },
   messageStatus: {
     position: "absolute",
-    bottom: Theme.spacing.xs,
-    right: Theme.spacing.xs,
+    bottom: theme.spacing.xs,
+    right: theme.spacing.xs,
   },
   sendingText: {
     fontSize: 10,
     fontStyle: "italic",
   },
   retryButton: {
-    backgroundColor: "#ff6b6b",
-    paddingHorizontal: Theme.spacing.sm,
-    paddingVertical: Theme.spacing.xs,
-    borderRadius: Theme.borderRadius.lg,
-    marginTop: Theme.spacing.xs,
+    backgroundColor: theme.colors.danger,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radius.lg,
+    marginTop: theme.spacing.xs,
     flexDirection: "row",
     alignItems: "center",
-    gap: Theme.spacing.xs,
+    gap: theme.spacing.xs,
   },
   retryText: {
     fontSize: 12,
     fontWeight: "500",
   },
   errorIndicator: {
-    marginLeft: Theme.spacing.xs,
+    marginLeft: theme.spacing.xs,
   },
   timeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Theme.spacing.xs,
+    marginTop: theme.spacing.xs,
     marginLeft: 40,
-    marginBottom: Theme.spacing.xs,
+    marginBottom: theme.spacing.xs,
   },
   messageTime: {
     fontSize: 12,
     fontWeight: "500",
   },
   readReceiptContainer: {
-    marginLeft: Theme.spacing.xs,
+    marginLeft: theme.spacing.xs,
   },
   readIndicator: {
-    marginLeft: Theme.spacing.xs,
+    marginLeft: theme.spacing.xs,
   },
   reactionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 4,
     marginTop: 4,
-    paddingHorizontal: Theme.spacing.sm,
+    paddingHorizontal: theme.spacing.sm,
   },
   reactionBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Theme.colors.neutral[100],
+    backgroundColor: theme.palette.neutral[100],
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -448,6 +450,7 @@ const styles = StyleSheet.create({
   reactionCount: {
     fontSize: 12,
     fontWeight: "600",
-    color: Theme.colors.neutral[500],
+    color: theme.palette.neutral[500],
   },
-});
+  });
+}

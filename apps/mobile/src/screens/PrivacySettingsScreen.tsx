@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 import { request } from "../services/api";
 import {
@@ -25,7 +25,6 @@ import {
   type PrivacySettings,
 } from "../hooks/screens/usePrivacySettingsScreen";
 
-import { Theme } from '../theme/unified-theme';
 
 type PrivacySettingsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -55,7 +54,7 @@ function PrivacySettingsScreen({
         <Text
           style={StyleSheet.flatten([
             styles.settingTitle,
-            { color: danger ? colors.error : colors.text },
+            { color: danger ? colors.danger : colors.onSurface },
           ])}
         >
           {title}
@@ -63,7 +62,7 @@ function PrivacySettingsScreen({
         <Text
           style={StyleSheet.flatten([
             styles.settingSubtitle,
-            { color: colors.textSecondary },
+            { color: colors.onMuted },
           ])}
         >
           {subtitle}
@@ -101,7 +100,7 @@ function PrivacySettingsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.pickerOptionText,
-              { color: value === option.value ? "white" : colors.text },
+              { color: value === option.value ? "white" : colors.onSurface},
             ])}
           >
             {option.label}
@@ -137,14 +136,14 @@ function PrivacySettingsScreen({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
         </TouchableOpacity>
         <Text
           testID="privacy-settings-title"
           accessibilityRole="header"
           style={StyleSheet.flatten([
             styles.headerTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           Privacy Settings
@@ -165,7 +164,7 @@ function PrivacySettingsScreen({
             accessibilityRole="text"
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Profile Visibility
@@ -200,9 +199,9 @@ function PrivacySettingsScreen({
               onValueChange={(value) =>
                 updateSetting("showOnlineStatus", value)
               }
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showOnlineStatus ? colors.card : colors.gray500
+                settings.showOnlineStatus ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -213,8 +212,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.showDistance}
               onValueChange={(value) => updateSetting("showDistance", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.showDistance ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.showDistance ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
@@ -224,9 +223,9 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.showLastActive}
               onValueChange={(value) => updateSetting("showLastActive", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showLastActive ? colors.card : colors.gray500
+                settings.showLastActive ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -237,7 +236,7 @@ function PrivacySettingsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Communication
@@ -268,9 +267,9 @@ function PrivacySettingsScreen({
               onValueChange={(value) =>
                 updateSetting("showReadReceipts", value)
               }
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.showReadReceipts ? colors.card : colors.gray500
+                settings.showReadReceipts ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -281,7 +280,7 @@ function PrivacySettingsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Privacy Features
@@ -292,8 +291,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.incognitoMode}
               onValueChange={(value) => updateSetting("incognitoMode", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.incognitoMode ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.incognitoMode ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
@@ -303,8 +302,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.shareLocation}
               onValueChange={(value) => updateSetting("shareLocation", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.shareLocation ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.shareLocation ? colors.card : theme.palette.neutral[500]}
             />,
           )}
         </View>
@@ -314,7 +313,7 @@ function PrivacySettingsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Data & Analytics
@@ -325,8 +324,8 @@ function PrivacySettingsScreen({
             <Switch
               value={settings.dataSharing}
               onValueChange={(value) => updateSetting("dataSharing", value)}
-              trackColor={{ false: colors.gray300, true: colors.primary }}
-              thumbColor={settings.dataSharing ? colors.card : colors.gray500}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
+              thumbColor={settings.dataSharing ? colors.card : theme.palette.neutral[500]}
             />,
           )}
 
@@ -338,9 +337,9 @@ function PrivacySettingsScreen({
               onValueChange={(value) =>
                 updateSetting("analyticsTracking", value)
               }
-              trackColor={{ false: colors.gray300, true: colors.primary }}
+              trackColor={{ false: theme.palette.neutral[300], true: colors.primary }}
               thumbColor={
-                settings.analyticsTracking ? colors.card : colors.gray500
+                settings.analyticsTracking ? colors.card : theme.palette.neutral[500]
               }
             />,
           )}
@@ -351,7 +350,7 @@ function PrivacySettingsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.error },
+              { color: colors.danger },
             ])}
           >
             Danger Zone
@@ -366,7 +365,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="chevron-forward"
                 size={20}
-                color={colors.textSecondary}
+                color={colors.onSurfaceecondary}
               />
             </TouchableOpacity>,
             true,
@@ -413,7 +412,7 @@ function PrivacySettingsScreen({
               <Ionicons
                 name="download-outline"
                 size={20}
-                color={colors.textSecondary}
+                color={colors.onSurfaceecondary}
               />
             </TouchableOpacity>,
             true,

@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { PetFormData } from "../../hooks/usePetForm";
 import type { FormFieldValue } from "../../types/forms";
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface PetIntentHealthSectionProps {
   formData: PetFormData;

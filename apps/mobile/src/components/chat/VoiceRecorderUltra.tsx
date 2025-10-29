@@ -13,7 +13,6 @@ import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 
-import { Theme } from "../../theme/unified-theme";
 import { VoiceWaveform, generateWaveformFromAudio } from "./VoiceWaveform";
 import { toUploadPart } from "../../utils/audio/upload-helpers";
 import {

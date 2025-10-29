@@ -11,7 +11,6 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Spacing } from "../animation";
-import { Theme } from '../theme/unified-theme';
 import { MOBILE_RADIUS } from '../constants/design-tokens';
 
 // === GLOW AND SHADOW CONSTANTS ===

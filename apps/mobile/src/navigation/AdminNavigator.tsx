@@ -18,7 +18,7 @@ import AdminServicesScreen from "../screens/admin/AdminServicesScreen";
 import AdminUploadsScreen from "../screens/admin/AdminUploadsScreen";
 import AdminUsersScreen from "../screens/admin/AdminUsersScreen";
 import AdminVerificationsScreen from "../screens/admin/AdminVerificationsScreen";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from '@/theme';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,7 +57,7 @@ export default function AdminNavigator(): React.JSX.Element {
         headerStyle: {
           backgroundColor: theme.colors.bg,
         },
-        headerTintColor: theme.colors.text,
+        headerTintColor: theme.colors.onSurface
         headerTitleStyle: {
           fontWeight: "bold",
         },
@@ -161,7 +161,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   errorContainer: {
     flex: 1,
@@ -179,7 +179,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   errorMessage: {
     fontSize: 16,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
     textAlign: "center",
     lineHeight: 24,
   },

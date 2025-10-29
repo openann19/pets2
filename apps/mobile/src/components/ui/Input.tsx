@@ -33,7 +33,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
       backgroundColor: editable ? colors.surface : colors.surfaceMuted,
       borderColor,
       borderRadius: radii.md,
-      color: colors.text,
+      color: colors.onSurface
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
     },
@@ -56,7 +56,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(function Input(
         ref={ref}
         style={inputStyle}
         editable={editable}
-        placeholderTextColor={colors.textMuted}
+        placeholderTextColor={colors.onMuted}
         {...rest}
       />
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 import { changeLanguage, resetLanguageToDevice } from '../../i18n/detectors';
 import { useTranslation } from 'react-i18next';
 
@@ -138,7 +138,7 @@ const makeStyles = (theme: any) =>
     buttonDisabled: { opacity: 0.6 },
     buttonText: { fontSize: 14, fontWeight: '600' },
     buttonTextActive: { color: theme.colors.primaryText },
-    buttonTextInactive: { color: theme.colors.text },
+    buttonTextInactive: { color: theme.colors.onSurface},
     resetButton: {
       paddingVertical: 10,
       paddingHorizontal: 16,
@@ -151,6 +151,6 @@ const makeStyles = (theme: any) =>
     resetButtonText: {
       fontSize: 13,
       fontWeight: '500',
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
   });

@@ -8,7 +8,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 export interface ScreenShellProps {
   header?: React.ReactNode;

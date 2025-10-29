@@ -29,7 +29,6 @@ import {
   type CardSize,
 } from "./Card/CardVariants";
 import { CardBackground } from "./Card/CardBackground";
-import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

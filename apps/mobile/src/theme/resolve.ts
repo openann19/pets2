@@ -1,5 +1,6 @@
 // apps/mobile/src/theme/resolve.ts
-import { Theme as BaseLight, DarkTheme as BaseDark } from './unified-theme';
+import type { AppTheme } from './contracts';
+import { Theme as BaseLight, DarkTheme as BaseDark } from './base-theme';
 
 /** Contrast helper for readable text on colored backgrounds */
 function getContrastText(hex: string): string {
@@ -29,91 +30,107 @@ function getContrastText(hex: string): string {
   }
 }
 
-export type AppTheme = {
-  scheme: 'light' | 'dark';
-  colors: {
-    /** single values used by components */
-    primary: string;
-    primaryText: string; // contrast text for primary
-    secondary: string;
-
-    text: string;
-    textMuted: string;
-    textInverse: string;
-
-    bg: string;
-    bgAlt: string;
-    bgElevated?: string; // for backward compat
-    border: string;
-
-    success: string;
-    warning: string;
-    danger: string;
-    info: string;
-
-    /** keep access to scales */
-    primaryScale: typeof BaseLight.colors.primary;
-    neutral: typeof BaseLight.colors.neutral;
-    
-    // Additional properties for extended colors compatibility
-    [key: string]: any; // allows any additional color properties
-  };
-  /** alias expected by refactored screens */
-  radius: typeof BaseLight.borderRadius;
-  /** passthrough systems */
-  typography: typeof BaseLight.typography;
-  spacing: typeof BaseLight.spacing;
-  shadows: typeof BaseLight.shadows.depth;
-  motion: NonNullable<typeof BaseLight.motion>;
-  /** RN-safe numeric z-index */
-  zIndex: {
-    hide: number; base: number; docked: number; dropdown: number; sticky: number;
-    banner: number; overlay: number; modal: number; popover: number;
-    skipLink: number; toast: number; tooltip: number;
-  };
-  
-  // Backward compatibility flags
-  isDark?: boolean;
-};
+// AppTheme type is imported from contracts.ts above
 
 export function resolveTheme(base: typeof BaseLight | typeof BaseDark): AppTheme {
   const primary = base.colors.primary[500];
   
+  // Map old structure to new semantic tokens + backward compat
+  const textPrimary = base.colors.text.primary;
+  const textSecondary = base.colors.text.secondary;
+  const textInverse = base.colors.text.inverse;
+  const bgPrimary = base.colors.background.primary;
+  const bgSecondary = base.colors.background.secondary;
+  const bgElevated = base.colors.background.tertiary;
+  
+  const isDark = base === BaseDark;
+  
   return {
-    scheme: base === BaseDark ? 'dark' : 'light',
+    scheme: isDark ? 'dark' : 'light',
+    isDark,
     colors: {
-      primary: primary,
-      primaryText: getContrastText(primary),
-      secondary: base.colors?.secondary?.[500] ?? base.colors.primary[600],
-
-      text: base.colors.text.primary,
-      textMuted: base.colors.text.secondary,
-      textInverse: base.colors.text.inverse,
-
-      bg: base.colors.background.primary,
-      bgAlt: base.colors.background.secondary,
-      bgElevated: base.colors.background.tertiary, // for backward compat
+      bg: bgPrimary,
+      surface: bgElevated ?? bgSecondary,
+      overlay: `${bgPrimary}80`, // semi-transparent overlay
       border: base.colors.border.medium,
-
+      onBg: textInverse,
+      onSurface: textPrimary,
+      onMuted: textSecondary,
+      primary: primary,
+      onPrimary: getContrastText(primary),
       success: base.colors.status.success,
-      warning: base.colors.status.warning,
       danger: base.colors.status.error,
+      warning: base.colors.status.warning,
       info: base.colors.status.info,
-
-      primaryScale: base.colors.primary,
+    },
+    radii: {
+      none: base.borderRadius.none,
+      xs: base.borderRadius.xs,
+      sm: base.borderRadius.sm,
+      md: base.borderRadius.md,
+      lg: base.borderRadius.lg,
+      xl: base.borderRadius.xl,
+      '2xl': base.borderRadius['2xl'],
+      pill: base.borderRadius.pill,
+      full: base.borderRadius.full,
+    },
+    spacing: {
+      xs: base.spacing.xs,
+      sm: base.spacing.sm,
+      md: base.spacing.md,
+      lg: base.spacing.lg,
+      xl: base.spacing.xl,
+      '2xl': base.spacing['2xl'] ?? base.spacing.xl * 1.5,
+      '3xl': base.spacing['3xl'] ?? base.spacing.xl * 2,
+      '4xl': base.spacing['4xl'] ?? base.spacing.xl * 3,
+    },
+    shadows: {
+      elevation1: base.shadows.depth.sm,
+      elevation2: base.shadows.depth.md,
+      glass: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 2,
+      },
+    },
+    blur: {
+      sm: 8,
+      md: 16,
+      lg: 24,
+    },
+    easing: {
+      standard: base.motion.easing.standard.toString(),
+      decel: 'cubic-bezier(0, 0, 0.2, 1)',
+      accel: 'cubic-bezier(0.4, 0, 1, 1)',
+    },
+    typography: {
+      body: {
+        size: base.typography.body.fontSize,
+        lineHeight: base.typography.body.lineHeight,
+        weight: base.typography.body.fontWeight as '400',
+      },
+      h1: {
+        size: base.typography.heading.fontSize,
+        lineHeight: base.typography.heading.lineHeight,
+        weight: '700' as const,
+      },
+      h2: {
+        size: base.typography.heading.fontSize * 0.875,
+        lineHeight: base.typography.heading.lineHeight * 0.875,
+        weight: '600' as const,
+      },
+    },
+    palette: {
       neutral: base.colors.neutral,
+      brand: base.colors.primary,
+      gradients: {
+        primary: [base.colors.primary[500], base.colors.primary[600]],
+        success: [base.colors.status.success, base.colors.status.success],
+        danger: [base.colors.status.error, base.colors.status.error],
+      },
     },
-    radius: base.borderRadius,
-    typography: base.typography,
-    spacing: base.spacing,
-    shadows: base.shadows.depth,
-    motion: base.motion!,
-    zIndex: {
-      hide: -1, base: 0, docked: 10, dropdown: 1000, sticky: 1100,
-      banner: 1200, overlay: 1300, modal: 1400, popover: 1500,
-      skipLink: 1600, toast: 1700, tooltip: 1800,
-    },
-    isDark: base === BaseDark,
   };
 }
 

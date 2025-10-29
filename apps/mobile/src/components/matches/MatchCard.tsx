@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -13,7 +13,7 @@ import Animated, {
 import type { Match } from "../../hooks/useMatchesData";
 import * as Haptics from "expo-haptics";
 import OptimizedImage from "../OptimizedImage";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface MatchCardProps {
   match: Match;
@@ -30,6 +30,7 @@ function MatchCardBase({
   onArchive,
   onReport,
 }: MatchCardProps): JSX.Element {
+  const { colors } = useTheme();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -141,7 +142,7 @@ function MatchCardBase({
                   onPress={handleReport}
                   accessibilityLabel="Report match"
                 >
-                  <Ionicons name="flag-outline" size={20} color="Theme.colors.status.warning" />
+                  <Ionicons name="flag-outline" size={20} color={colors.warning} />
                 </TouchableOpacity>
               )}
               {onArchive && (
@@ -150,7 +151,7 @@ function MatchCardBase({
                   onPress={handleArchive}
                   accessibilityLabel="Archive match"
                 >
-                  <Ionicons name="archive-outline" size={20} color="#6b21a8" />
+                  <Ionicons name="archive-outline" size={20} color={colors.primary} />
                 </TouchableOpacity>
               )}
               {onUnmatch && (
@@ -165,7 +166,7 @@ function MatchCardBase({
                   <Ionicons
                     name="close-circle-outline"
                     size={20}
-                    color="#dc2626"
+                    color={colors.danger}
                   />
                 </TouchableOpacity>
               )}
@@ -177,79 +178,79 @@ function MatchCardBase({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 24,
-    margin: 12,
-    shadowColor: "Theme.colors.primary[500]",
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  gradient: {
-    borderRadius: 24,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-  },
-  photo: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
-    backgroundColor: "#f3e8ff",
-    marginRight: 16,
-  },
-  info: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#a21caf",
-  },
-  meta: {
-    fontSize: 15,
-    color: "#6b21a8",
-    marginVertical: 2,
-  },
-  owner: {
-    fontSize: 14,
-    color: "#7c3aed",
-    marginBottom: 2,
-  },
-  lastMessage: {
-    fontSize: 13,
-    color: "Theme.colors.neutral[500]",
-    marginBottom: 2,
-  },
-  matchedAt: {
-    fontSize: 12,
-    color: "#a21caf",
-    marginTop: 4,
-  },
-  actions: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 8,
-  },
-  actionButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 4,
-  },
-  unmatchButton: {
-    backgroundColor: "rgba(220, 38, 38, 0.1)",
-  },
-  reportButton: {
-    backgroundColor: "rgba(245, 158, 11, 0.1)",
-  },
-});
+  const styles = useMemo(() => StyleSheet.create({
+    card: {
+      borderRadius: 24,
+      margin: 12,
+      shadowColor: colors.primary,
+      shadowOpacity: 0.15,
+      shadowRadius: 16,
+      elevation: 8,
+    },
+    gradient: {
+      borderRadius: 24,
+      overflow: "hidden",
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 16,
+    },
+    photo: {
+      width: 80,
+      height: 80,
+      borderRadius: 16,
+      backgroundColor: colors.bgElevated,
+      marginRight: 16,
+    },
+    info: {
+      flex: 1,
+    },
+    name: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: colors.primary,
+    },
+    meta: {
+      fontSize: 15,
+      color: colors.primary,
+      marginVertical: 2,
+    },
+    owner: {
+      fontSize: 14,
+      color: colors.primary,
+      marginBottom: 2,
+    },
+    lastMessage: {
+      fontSize: 13,
+      color: colors.textMuted,
+      marginBottom: 2,
+    },
+    matchedAt: {
+      fontSize: 12,
+      color: colors.primary,
+      marginTop: 4,
+    },
+    actions: {
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      marginLeft: 8,
+    },
+    actionButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 4,
+    },
+    unmatchButton: {
+      backgroundColor: colors.danger + "1A", // Add alpha for background
+    },
+    reportButton: {
+      backgroundColor: colors.warning + "1A", // Add alpha for background
+    },
+  }), [colors]);
 
 export const MatchCard = memo(MatchCardBase);
 MatchCard.displayName = "MatchCard";

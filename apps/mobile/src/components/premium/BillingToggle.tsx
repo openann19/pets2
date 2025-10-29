@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface BillingToggleProps {
   billingPeriod: "monthly" | "yearly";
@@ -15,7 +15,7 @@ export const BillingToggle: React.FC<BillingToggleProps> = ({
   const { colors } = theme;
   
   return (
-    <View style={[styles.billingToggle, { backgroundColor: colors.gray800 }]>
+    <View style={[styles.billingToggle, { backgroundColor: theme.palette.neutral[800] }]>
       <TouchableOpacity
         style={[
           styles.billingButton,
@@ -33,7 +33,7 @@ export const BillingToggle: React.FC<BillingToggleProps> = ({
           style={[
             styles.billingButtonText,
             {
-              color: billingPeriod === "monthly" ? colors.white : colors.gray400,
+              color: billingPeriod === "monthly" ? colors.onPrimary : theme.palette.neutral[400],
             },
           ]}
         >
@@ -58,7 +58,7 @@ export const BillingToggle: React.FC<BillingToggleProps> = ({
           style={[
             styles.billingButtonText,
             {
-              color: billingPeriod === "yearly" ? colors.white : colors.gray400,
+              color: billingPeriod === "yearly" ? colors.onPrimary : theme.palette.neutral[400],
             },
           ]}
         >

@@ -6,16 +6,22 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@/theme";
 
 export default function RetryBadge({
   onPress,
   disabled,
-  bg = "#111",
+  bg,
 }: {
   onPress: () => void | Promise<void>;
   disabled?: boolean;
   bg?: string;
 }) {
+  const { colors } = useTheme();
+  
+  const backgroundColor = bg || colors.danger;
+  const iconColor = colors.text;
+  const rippleColor = colors.text + "1F"; // Add alpha
   const s = useSharedValue(1);
   const sty = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
 
@@ -37,13 +43,13 @@ export default function RetryBadge({
     <Animated.View style={[styles.wrap, sty]}>
       <Pressable
         onPress={handlePress}
-        android_ripple={{ color: "rgba(255,255,255,0.12)", borderless: true }}
+        android_ripple={{ color: rippleColor, borderless: true }}
         disabled={disabled}
-        style={[styles.btn, { backgroundColor: bg }]
+        style={[styles.btn, { backgroundColor: backgroundColor }]}
         accessibilityRole="button"
         accessibilityLabel="Retry sending message"
       >
-        <Ionicons name="refresh" size={14} color="#fff" />
+        <Ionicons name="refresh" size={14} color={iconColor} />
       </Pressable>
     </Animated.View>
   );

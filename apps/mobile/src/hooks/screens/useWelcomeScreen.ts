@@ -3,7 +3,7 @@
  * Manages Welcome screen with navigation and theme integration
  */
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { getIsDark } from "../../theme/adapters";
 import { useWelcome } from "../domains/onboarding/useWelcome";
 import type { WelcomeAnimationValues } from "../../types/animations";

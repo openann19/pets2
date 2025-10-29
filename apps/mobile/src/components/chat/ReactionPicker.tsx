@@ -13,7 +13,7 @@ import {
   FlatList,
   type ListRenderItem,
 } from "react-native";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 
 export interface Reaction {
   emoji: string;

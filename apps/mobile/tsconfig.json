@@ -7,6 +7,7 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "baseUrl": "./",
     "paths": {
+      "@/*": ["./src/*"],
       "@mobile/*": ["./src/*"],
       "@pawfectmatch/core": ["../../packages/core/src/index.ts"],
       "@pawfectmatch/core/*": ["../../packages/core/src/*"],
@@ -41,6 +42,10 @@
     "coverage",
     "**/__mocks__/**",
     "**/__tests__/**/*.test.ts",
-    "**/__tests__/**/*.test.tsx"
+    "**/__tests__/**/*.test.tsx",
+    "**/image-ultra/**",
+    "**/web-only/**",
+    "**/*.stories.tsx",
+    "**/stories/**"
   ]
 }

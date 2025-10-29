@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme'";
 import { _adminAPI } from "../../services/api";
 import { errorHandler } from "../../services/errorHandler";
 
@@ -46,7 +46,8 @@ interface AdminChatsScreenProps {
 }
 
 function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -152,7 +153,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             <Text
               style={StyleSheet.flatten([
                 styles.senderName,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {item.senderName} → {item.receiverName}
@@ -160,7 +161,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             <Text
               style={StyleSheet.flatten([
                 styles.timestamp,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               {new Date(item.timestamp).toLocaleString()}
@@ -170,7 +171,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             <View
               style={StyleSheet.flatten([
                 styles.flagBadge,
-                { backgroundColor: colors.error },
+                { backgroundColor: theme.colors.danger },
               ])}
             >
               <Ionicons name="flag" size={12} color="white" />
@@ -182,7 +183,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
         <Text
           style={StyleSheet.flatten([
             styles.messageText,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           {item.message}
@@ -192,7 +193,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           <Text
             style={StyleSheet.flatten([
               styles.flagReason,
-              { color: colors.error },
+              { color: theme.colors.danger },
             ])}
           >
             Reason: {item.flagReason}
@@ -266,7 +267,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
       <Text
         style={StyleSheet.flatten([
           styles.filterButtonText,
-          { color: filter === filterType ? "white" : colors.text },
+          { color: filter === filterType ? "white" : colors.onSurface},
         ])}
       >
         {label}
@@ -294,12 +295,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
         </TouchableOpacity>
         <Text
           style={StyleSheet.flatten([
             styles.headerTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           Chat Moderation
@@ -319,16 +320,16 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
             { backgroundColor: colors.background },
           ])}
         >
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <Ionicons name="search" size={20} color={colors.onSurfaceecondary} />
           <TextInput
             style={StyleSheet.flatten([
               styles.searchInput,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search messages..."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={colors.onSurfaceecondary}
           />
         </View>
 
@@ -346,7 +347,7 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.textSecondary },
+              { color: colors.onSurfaceecondary },
             ])}
           >
             Loading messages...
@@ -370,12 +371,12 @@ function AdminChatsScreen({ navigation }: AdminChatsScreenProps): JSX.Element {
               <Ionicons
                 name="chatbubbles-outline"
                 size={64}
-                color={colors.textSecondary}
+                color={colors.onSurfaceecondary}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.emptyText,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 No messages found
@@ -398,7 +399,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   backButton: {
     marginRight: 16,
@@ -410,7 +411,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -454,7 +455,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

@@ -156,28 +156,44 @@ class ApiClient {
       },
     );
 
-    // Response interceptor - handle errors
+    // Response interceptor - handle errors with proper type safety
     this.instance.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         if (error.response !== undefined) {
           const { status, data } = error.response;
 
+          // Handle authentication errors
           if (status === 401) {
             await this.clearToken();
             logger.warn("api-client.unauthorized", { status });
           } else if (status === 403) {
-            logger.error("api-client.forbidden", { status, data });
-          } else if (status === 500) {
-            logger.error("api-client.server-error", { status, data });
-          } else {
-            logger.error("api-client.http-error", { status, data });
+            logger.error("api-client.forbidden", { 
+              status, 
+              data: data ?? undefined 
+            });
+          } else if (status >= 500) {
+            // Server errors
+            logger.error("api-client.server-error", { 
+              status, 
+              data: data ?? undefined 
+            });
+          } else if (status >= 400) {
+            // Client errors
+            logger.error("api-client.http-error", { 
+              status, 
+              data: data ?? undefined 
+            });
           }
         } else if (error.request !== undefined) {
-          logger.error("api-client.network-error", { message: error.message });
+          // Network or timeout errors
+          logger.error("api-client.network-error", { 
+            message: error.message ?? "Network request failed" 
+          });
         } else {
+          // Request setup errors
           logger.error("api-client.request-setup-error", {
-            message: error.message,
+            message: error.message ?? "Request setup failed",
           });
         }
 

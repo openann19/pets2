@@ -171,7 +171,7 @@ export function DoubleTapLikePlus({
             opacity: pOpacity[i]?.value ?? 0,
           }));
           return (
-            <Animated.Text key={i} style={[styles.particle, s, { fontSize: heartSize * 0.45, color: heartColor }]>
+            <Animated.Text key={i} style={[styles.particle, s, { fontSize: heartSize * 0.45, color: heartColor }]}>
               ❤️
             </Animated.Text>
           );

@@ -20,8 +20,7 @@ import Animated, {
 import MaskedView from "@react-native-masked-view/masked-view";
 
 import { Colors, Spacing, BorderRadius } from "../animation";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 // === PREMIUM GRADIENT COLORS FOR TEXT ===
 const TEXT_GRADIENTS = (theme: ReturnType<typeof useTheme>) => ({

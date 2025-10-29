@@ -69,7 +69,9 @@ export async function startPetActivity(data: StartActivityPayload): Promise<Acti
   const record: ActivityRecord = result.data;
 
   // Realtime broadcast
-  socketClient.emit("activity:start", { ...body, _id: record._id });
+  if (socketClient) {
+    socketClient.emit("activity:start", { ...body, _id: record._id });
+  }
 
   logger.info("Activity started", { record });
   return record;
@@ -88,7 +90,9 @@ export async function endPetActivity(activityId: string): Promise<ActivityRecord
   const result = await res.json();
   const record: ActivityRecord = result.data;
 
-  socketClient.emit("activity:end", { _id: record._id });
+  if (socketClient) {
+    socketClient.emit("activity:end", { _id: record._id });
+  }
   logger.info("Activity ended", { record });
 
   return record;

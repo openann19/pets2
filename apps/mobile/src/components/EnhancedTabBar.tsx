@@ -14,7 +14,6 @@ import { BlurView } from "expo-blur";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 
-import { Theme } from '../theme/unified-theme';
 
 interface TabBarIconProps {
   routeName: string;
@@ -360,7 +359,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
             <TabBarIcon
               routeName={route.name}
               focused={isFocused}
-              color={isFocused ? colors.primary : colors.text}
+              color={isFocused ? colors.primary : colors.onSurface
               size={24}
               badgeCount={badgeCount}
               showBadge={showBadge}
@@ -370,7 +369,7 @@ export const EnhancedTabBar: React.FC<EnhancedTabBarProps> = ({
               style={StyleSheet.flatten([
                 styles.tabLabel,
                 {
-                  color: isFocused ? colors.primary : colors.text,
+                  color: isFocused ? colors.primary : colors.onSurface
                   fontWeight: isFocused ? "600" : "400",
                 },
               ])}

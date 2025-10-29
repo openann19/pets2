@@ -15,7 +15,7 @@ function __makeStyles_styles(theme: AppTheme) {
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: theme.colors.shadow, // Replaced hardcoded "#000"
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -79,27 +79,28 @@ export const CompatibilityInteractions: React.FC<CompatibilityInteractionsProps>
   const { colors, palette } = theme;
 
   return (
-    <View style={[styles.resultCard, { backgroundColor: colors.surface }]>
+    <View style={[styles.resultCard, { backgroundColor: colors.surface }]}>
       <View style={styles.resultHeader}>
         <Ionicons name="people" size={24} color={colors.primary} />
-        <Text style={[styles.resultTitle, { color: colors.onSurface }]>
+        <Text style={[styles.resultTitle, { color: colors.onSurface }]}>
           Interaction Compatibility
         </Text>
       </View>
       <View style={styles.interactionGrid}>
-        {Object.entries(interactions).map(([type, score]) => (
-          <View key={type} style={styles.interactionItem}>
-            <Text style={[styles.interactionLabel, { color: colors.onMuted }]>
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </Text>
-            <Text
-              style={[styles.interactionScore, { color: getScoreColor(score, colors) }]
-            >
-              {score}%
-            </Text>
-          </View>
-        ))}
-      </View>
+        {Object.entries(interactions).map(([type, score]) => {
+            return (
+            <View key={type} style={[styles.interactionItem, { backgroundColor: colors.primary + "1A" }]}> 
+                <Text style={[styles.interactionLabel, { color: colors.onMuted }]}> 
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+                </Text>
+                <Text
+                style={[styles.interactionScore, { color: getScoreColor(score, colors) }]}>
+                {score}%
+                </Text>
+            </View>
+            );
+        })}
+        </View>
     </View>
   );
 };

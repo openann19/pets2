@@ -42,7 +42,7 @@ export function Badge({
         return { bg: theme.colors.danger, text: '#FFFFFF' };
       case 'muted':
       default:
-        return { bg: theme.colors.textMuted, text: '#FFFFFF' };
+        return { bg: theme.colors.onMuted, text: '#FFFFFF' };
     }
   };
 
@@ -64,7 +64,7 @@ export function Badge({
         style={{
           fontSize: sizeStyles.fontSize,
           fontWeight: '600',
-          color: colors.text,
+          color: colors.onSurface
         }}
       >
         {label}

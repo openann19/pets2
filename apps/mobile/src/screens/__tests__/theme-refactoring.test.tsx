@@ -8,7 +8,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { View, Text } from 'react-native';
-import { ThemeProvider } from '../../theme/Provider';
+import { ThemeProvider } from "@/theme";
 import { createTheme } from '../../theme/rnTokens';
 
 describe('Theme Refactoring - Integration Tests', () => {
@@ -92,7 +92,7 @@ describe('Theme Refactoring - Integration Tests', () => {
       
       // Light theme should have light backgrounds
       expect(theme.colors.bg).toBe('#ffffff');
-      expect(theme.colors.text).toBe('#111827');
+      expect(theme.colors.onSurface.toBe('#111827');
       
       // Primary color should be defined
       expect(theme.colors.primary).toBeTruthy();
@@ -106,7 +106,7 @@ describe('Theme Refactoring - Integration Tests', () => {
       
       // Dark theme should have dark backgrounds
       expect(theme.colors.bg).toBe('#0a0a0a');
-      expect(theme.colors.text).toBe('#ffffff');
+      expect(theme.colors.onSurface.toBe('#ffffff');
       
       // Primary color should be defined
       expect(theme.colors.primary).toBeTruthy();
@@ -192,13 +192,13 @@ describe('Theme Refactoring - Integration Tests', () => {
       
       // Light theme: light background, dark text
       expect(lighttheme.colors.bg).toBe('#ffffff');
-      expect(lighttheme.colors.text).toBe('#111827');
+      expect(lighttheme.colors.onSurface.toBe('#111827');
       
       const darkTheme = createTheme('dark');
       
       // Dark theme: dark background, light text
       expect(darktheme.colors.bg).toBe('#0a0a0a');
-      expect(darktheme.colors.text).toBe('#ffffff');
+      expect(darktheme.colors.onSurface.toBe('#ffffff');
     });
   });
 
@@ -259,11 +259,11 @@ describe('Theme Refactoring - Screen Compliance', () => {
       // Mock StyleSheet.create behavior
       const styles = {
         container: { flex: 1 },
-        text: { color: mocktheme.colors.text },
+        text: { color: mocktheme.colors.onSurface},
         button: { backgroundColor: mocktheme.colors.primary },
       };
       
-      expect(styles.text.color).toBe(mocktheme.colors.text);
+      expect(styles.text.color).toBe(mocktheme.colors.onSurface;
       expect(styles.button.backgroundColor).toBe(mocktheme.colors.primary);
     });
   });
@@ -275,8 +275,8 @@ describe('Theme Refactoring - Screen Compliance', () => {
       // Correct patterns
       expect(theme.colors.bg).toBeTruthy();
       expect(theme.colors.bgElevated).toBeTruthy();
-      expect(theme.colors.text).toBeTruthy();
-      expect(theme.colors.textMuted).toBeTruthy();
+      expect(theme.colors.onSurface.toBeTruthy();
+      expect(theme.colors.onMuted).toBeTruthy();
       expect(theme.colors.primary).toBeTruthy();
       expect(theme.colors.success).toBeTruthy();
       expect(theme.colors.warning).toBeTruthy();

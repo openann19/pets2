@@ -25,7 +25,6 @@ import {
 } from "react-native";
 
 import { useStaggeredAnimation } from "../hooks/usePremiumAnimations";
-import { Theme } from "../theme/unified-theme";
 
 import EliteButton from "./buttons/EliteButton";
 import FXContainer from "./containers/FXContainer";

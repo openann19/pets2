@@ -4,7 +4,7 @@ import type { NavigationProp } from "@react-navigation/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Easing,
@@ -16,12 +16,12 @@ import {
 } from "react-native";
 
 import type { RootStackParamList } from "../../navigation/types";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 type SubscriptionSuccessNavigationProp = NavigationProp<RootStackParamList>;
 
-const AnimatedCheckmark = () => {
+const AnimatedCheckmark = ({ styles, theme }: { styles: ReturnType<typeof makeStyles>; theme: AppTheme }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -63,6 +63,8 @@ const AnimatedCheckmark = () => {
     outputRange: [0, 0.9, 1],
   });
 
+  const gradientColors = (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary];
+
   return (
     <View style={styles.checkmarkContainer}>
       {/* React Native Animated API type compatibility issue - runtime works correctly */}
@@ -76,12 +78,12 @@ const AnimatedCheckmark = () => {
         ])}
       >
         <LinearGradient
-          colors={["#6D28D9", "#7C3AED", theme.colors.primary[600]}
+          colors={gradientColors}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Ionicons name="checkmark" size={64} color={theme.colors.neutral[0}]} />
+          <Ionicons name="checkmark" size={64} color={theme.colors.onPrimary} />
         </LinearGradient>
       </Animated.View>
     </View>
@@ -89,6 +91,8 @@ const AnimatedCheckmark = () => {
 };
 
 export function SubscriptionSuccessScreen(): JSX.Element {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const navigation = useNavigation<SubscriptionSuccessNavigationProp>();
   const route = useRoute();
   const { sessionId } = (route.params as { sessionId?: string }) || {};
@@ -117,7 +121,7 @@ export function SubscriptionSuccessScreen(): JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <AnimatedCheckmark />
+        <AnimatedCheckmark styles={styles} theme={theme} />
 
         <Text style={styles.title}>Subscription Successful!</Text>
 
@@ -128,22 +132,22 @@ export function SubscriptionSuccessScreen(): JSX.Element {
 
         <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
-            <Ionicons name="infinite-outline" size={24} color="#6D28D9" />
+            <Ionicons name="infinite-outline" size={24} color={theme.colors.primary} />
             <Text style={styles.featureText}>Unlimited Swipes</Text>
           </View>
 
           <View style={styles.featureItem}>
-            <Ionicons name="eye-outline" size={24} color="#6D28D9" />
+            <Ionicons name="eye-outline" size={24} color={theme.colors.primary} />
             <Text style={styles.featureText}>See Who Liked You</Text>
           </View>
 
           <View style={styles.featureItem}>
-            <Ionicons name="videocam-outline" size={24} color="#6D28D9" />
+            <Ionicons name="videocam-outline" size={24} color={theme.colors.primary} />
             <Text style={styles.featureText}>Video Calls</Text>
           </View>
 
           <View style={styles.featureItem}>
-            <Ionicons name="options-outline" size={24} color="#6D28D9" />
+            <Ionicons name="options-outline" size={24} color={theme.colors.primary} />
             <Text style={styles.featureText}>Advanced Filters</Text>
           </View>
         </View>
@@ -172,90 +176,92 @@ export function SubscriptionSuccessScreen(): JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.neutral[0],
-    padding: 24,
-    justifyContent: "space-between",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkmarkContainer: {
-    marginBottom: 32,
-  },
-  checkmarkCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  gradient: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: theme.colors.neutral[900],
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  message: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-    marginBottom: 32,
-    lineHeight: 24,
-  },
-  featuresContainer: {
-    width: "100%",
-    padding: 16,
-    backgroundColor: theme.colors.bg.secondary,
-    borderRadius: 12,
-    marginVertical: 24,
-  },
-  featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  featureText: {
-    fontSize: 16,
-    color: theme.colors.neutral[900],
-    marginLeft: 12,
-  },
-  buttonContainer: {
-    width: "100%",
-  },
-  button: {
-    backgroundColor: "#6D28D9",
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  buttonText: {
-    color: theme.colors.neutral[0],
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    backgroundColor: theme.colors.neutral[100],
-  },
-  secondaryButtonText: {
-    color: "#6D28D9",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+      padding: theme.spacing.lg,
+      justifyContent: "space-between",
+    },
+    contentContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    checkmarkContainer: {
+      marginBottom: theme.spacing["2xl"],
+    },
+    checkmarkCircle: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "hidden",
+    },
+    gradient: {
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+      textAlign: "center",
+      marginBottom: theme.spacing.md,
+    },
+    message: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: "center",
+      marginBottom: theme.spacing["2xl"],
+      lineHeight: 24,
+    },
+    featuresContainer: {
+      width: "100%",
+      padding: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      marginVertical: theme.spacing.lg,
+    },
+    featureItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+    },
+    featureText: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      marginLeft: theme.spacing.sm,
+    },
+    buttonContainer: {
+      width: "100%",
+    },
+    button: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.sm,
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
+    },
+    buttonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    secondaryButton: {
+      backgroundColor: theme.colors.surface,
+    },
+    secondaryButtonText: {
+      color: theme.colors.primary,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+  });
+}
 
 export default SubscriptionSuccessScreen;

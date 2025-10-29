@@ -20,7 +20,6 @@ import Animated, {
 } from "react-native-reanimated";
 // import { animationConfig } from '@pawfectmatch/core';
 import { logger } from "../services/logger";
-import { Theme } from '../theme/unified-theme';
 
 interface AnimatedButtonProps {
   onPress: () => void;

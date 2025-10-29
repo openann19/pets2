@@ -15,7 +15,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-import { Theme } from '../theme/unified-theme';
 
 const { width } = Dimensions.get("window");
 const PHOTO_SIZE = (width - 60) / 3;

@@ -1,4 +1,4 @@
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 /**
  * ModernSwipeScreen Theme Integration Tests
  * 
@@ -33,13 +33,13 @@ describe('ModernSwipeScreen - Theme Integration', () => {
         },
         loadingSubtitle: {
           textAlign: 'center' as const,
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
       });
 
       expect(styles.loadingContainer.padding).toBe(theme.spacing.xl);
       expect(styles.loadingCard.padding).toBe(theme.spacing['4xl']);
-      expect(styles.loadingSubtitle.color).toBe(theme.colors.textMuted);
+      expect(styles.loadingSubtitle.color).toBe(theme.colors.onMuted);
     });
   });
 
@@ -81,18 +81,18 @@ describe('ModernSwipeScreen - Theme Integration', () => {
           color: theme.colors.danger,
         },
         errorMessage: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         emptySubtitle: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
         matchText: {
-          color: theme.colors.textMuted,
+          color: theme.colors.onMuted,
         },
       });
 
       expect(styles.errorTitle.color).toBe(theme.colors.danger);
-      expect(styles.errorMessage.color).toBe(theme.colors.textMuted);
+      expect(styles.errorMessage.color).toBe(theme.colors.onMuted);
     });
 
     it('should not use deprecated status property', () => {

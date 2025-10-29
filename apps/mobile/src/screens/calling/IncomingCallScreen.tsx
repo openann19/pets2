@@ -16,8 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { CallData } from "../../services/WebRTCService";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface IncomingCallScreenProps {
   callData: CallData;

@@ -6,8 +6,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface SettingItem {
   id: string;
@@ -87,7 +86,7 @@ export function NotificationSettingsSection({
           />
         )}
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.neutral[400]} }/>
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.neutral[400]} />
         )}
       </View>
     </TouchableOpacity>

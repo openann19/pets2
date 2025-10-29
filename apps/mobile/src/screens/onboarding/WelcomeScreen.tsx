@@ -21,18 +21,15 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import { EliteButton } from "../../components";
 import { useWelcomeScreen } from "../../hooks/screens/onboarding";
-import { useTheme, getExtendedColors } from "../../theme/Provider";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { logger } from "@pawfectmatch/core";
 import { BlurView } from "expo-blur";
 import type { ViewStyle, TextStyle } from "react-native";
 import React from "react";
-import { lightTheme } from "../../theme/tokens";
 import { useTranslation } from 'react-i18next';
-
-// Create spacing object for backward compatibility
-const Spacing = lighttheme.spacing;
 
 // Animation configurations
 const SPRING_BOUNCY = {
@@ -186,9 +183,9 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
 
   const containerStyle = React.useMemo(
     () => ({
-      backgroundColor: colors.gray100,
+      backgroundColor: theme.palette.neutral[100],
     }),
-    [colors.gray100],
+    [theme.palette.neutral[100]],
   );
 
   return (
@@ -258,7 +255,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
               style={StyleSheet.flatten([
                 styles.subtitle as TextStyle,
                 localStyles.subtitle,
-                { color: colors.gray600 },
+                { color: theme.palette.neutral[600] },
               ])}
             >
               {t('welcome.subtitle')}
@@ -275,16 +272,16 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
             <BlurView intensity={20} style={localStyles.eliteFeaturesBlur}>
               <View style={localStyles.eliteFeature}>
                 <LinearGradient
-                  colors={[colors.secondary, colors.secondaryLight]}
+                  colors={[theme.colors.primary, theme.colors.primaryLight]}
                   style={localStyles.eliteFeatureIconContainer}
                 >
-                  <Ionicons name="heart" size={24} color={colors.white} />
+                  <Ionicons name="heart" size={24} color={colors.onPrimary} />
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
-                      { color: colors.gray800 },
+                      { color: theme.palette.neutral[800] },
                     ])}
                   >
                     {t('welcome.smart_matching')}
@@ -292,7 +289,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
-                      { color: colors.gray600 },
+                      { color: theme.palette.neutral[600] },
                     ])}
                   >
                     {t('welcome.smart_matching_desc')}
@@ -305,13 +302,13 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   colors={[colors.primary, colors.primaryLight]}
                   style={localStyles.eliteFeatureIconContainer}
                 >
-                  <Ionicons name="chatbubbles" size={24} color={colors.white} />
+                  <Ionicons name="chatbubbles" size={24} color={colors.onPrimary} />
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
-                      { color: colors.gray800 },
+                      { color: theme.palette.neutral[800] },
                     ])}
                   >
                     {t('welcome.safe_messaging')}
@@ -319,7 +316,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
-                      { color: colors.gray600 },
+                      { color: theme.palette.neutral[600] },
                     ])}
                   >
                     {t('welcome.safe_messaging_desc')}
@@ -332,13 +329,13 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   colors={[colors.accent, colors.accentLight]}
                   style={localStyles.eliteFeatureIconContainer}
                 >
-                  <Ionicons name="location" size={24} color={colors.white} />
+                  <Ionicons name="location" size={24} color={colors.onPrimary} />
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
-                      { color: colors.gray800 },
+                      { color: theme.palette.neutral[800] },
                     ])}
                   >
                     {t('welcome.local_connections')}
@@ -346,7 +343,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
-                      { color: colors.gray600 },
+                      { color: theme.palette.neutral[600] },
                     ])}
                   >
                     {t('welcome.local_connections_desc')}
@@ -362,14 +359,14 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Ionicons
                     name="shield-checkmark"
                     size={24}
-                    color={colors.white}
+                    color={colors.onPrimary}
                   />
                 </LinearGradient>
                 <View style={localStyles.eliteFeatureText}>
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureTitle,
-                      { color: colors.gray800 },
+                      { color: theme.palette.neutral[800] },
                     ])}
                   >
                     {t('welcome.verified_profiles')}
@@ -377,7 +374,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteFeatureDescription,
-                      { color: colors.gray600 },
+                      { color: theme.palette.neutral[600] },
                     ])}
                   >
                     {t('welcome.verified_profiles_desc')}
@@ -395,7 +392,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                 <Text
                   style={StyleSheet.flatten([
                     localStyles.eliteTipsTitle,
-                    { color: colors.gray800 },
+                    { color: theme.palette.neutral[800] },
                   ])}
                 >
                   {t('welcome.pro_tips')}
@@ -407,18 +404,18 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteTipText,
-                      { color: colors.gray700 },
+                      { color: theme.palette.neutral[700] },
                     ])}
                   >
                     {t('welcome.tip_photos')}
                   </Text>
                 </View>
                 <View style={localStyles.eliteTip}>
-                  <Ionicons name="heart" size={16} color={colors.secondary} />
+                  <Ionicons name="heart" size={16} color={theme.colors.primary} />
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteTipText,
-                      { color: colors.gray700 },
+                      { color: theme.palette.neutral[700] },
                     ])}
                   >
                     {t('welcome.tip_honest')}
@@ -429,7 +426,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
                   <Text
                     style={StyleSheet.flatten([
                       localStyles.eliteTipText,
-                      { color: colors.gray700 },
+                      { color: theme.palette.neutral[700] },
                     ])}
                   >
                     {t('welcome.tip_respond')}
@@ -460,7 +457,7 @@ const WelcomeScreen = ({ navigation }: WelcomeScreenProps) => {
           <Text
             style={StyleSheet.flatten([
               localStyles.eliteFooterText,
-              { color: colors.gray500 },
+              { color: theme.palette.neutral[500] },
             ])}
           >
             {t('welcome.update_preferences')}
@@ -554,12 +551,12 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
       fontWeight: "bold" as const,
       textAlign: "center" as const,
       marginBottom: Spacing.md,
-      color: colors.text,
+      color: colors.onSurface
     } as const,
     eliteSubtitle: {
       fontSize: 16,
       textAlign: "center" as const,
-      color: colors.gray500,
+      color: theme.palette.neutral[500],
       marginBottom: Spacing["4xl"],
     } as const,
     eliteFeaturesContainer: {
@@ -604,7 +601,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
     eliteFooterText: {
       fontSize: 12,
       textAlign: "center" as const,
-      color: colors.gray500,
+      color: theme.palette.neutral[500],
       marginTop: Spacing["4xl"],
     } as const,
 
@@ -642,12 +639,12 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
     eliteFeatureTitle: {
       fontSize: 18,
       fontWeight: "700" as const,
-      color: colors.gray800,
+      color: theme.palette.neutral[800],
       marginBottom: Spacing.xs,
     },
     eliteFeatureDescription: {
       fontSize: 14,
-      color: colors.gray600,
+      color: theme.palette.neutral[600],
       lineHeight: 20,
     },
 
@@ -671,7 +668,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
     eliteTipsTitle: {
       fontSize: 16,
       fontWeight: "700" as const,
-      color: colors.gray800,
+      color: theme.palette.neutral[800],
       marginLeft: Spacing.sm,
     },
     eliteTipsList: {
@@ -684,7 +681,7 @@ const createLocalStyles = (colors: any): WelcomeStyles =>
     },
     eliteTipText: {
       fontSize: 14,
-      color: colors.gray600,
+      color: theme.palette.neutral[600],
       marginLeft: Spacing.md,
       flex: 1,
     },

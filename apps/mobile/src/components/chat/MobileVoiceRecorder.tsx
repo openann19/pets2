@@ -2,8 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { logger } from "@pawfectmatch/core";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "../../theme/Provider";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 // Mock Audio for missing expo-av dependency
 type RecordingInstance = {
@@ -143,12 +142,12 @@ export function MobileVoiceRecorder({
           {/* Header */}
           <View style={styles.header}>
             <Text
-              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+              style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
             >
               {isRecording ? "Recording..." : "Voice Message"}
             </Text>
             <TouchableOpacity onPress={onCancel} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={colors.text} />
+              <Ionicons name="close" size={24} color={colors.onSurface />
             </TouchableOpacity>
           </View>
 
@@ -169,7 +168,7 @@ export function MobileVoiceRecorder({
                   />
                 ))
               ) : (
-                <Ionicons name="mic" size={48} color={colors.gray500} />
+                <Ionicons name="mic" size={48} color={theme.palette.neutral[500]} />
               )}
             </View>
 
@@ -177,7 +176,7 @@ export function MobileVoiceRecorder({
             <Text
               style={StyleSheet.flatten([
                 styles.duration,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {formatDuration(duration)}
@@ -186,7 +185,7 @@ export function MobileVoiceRecorder({
             <Text
               style={StyleSheet.flatten([
                 styles.hint,
-                { color: colors.gray500 },
+                { color: theme.palette.neutral[500] },
               ])}
             >
               {isRecording
@@ -212,14 +211,14 @@ export function MobileVoiceRecorder({
                 <TouchableOpacity
                   style={StyleSheet.flatten([
                     styles.cancelButton,
-                    { borderColor: colors.gray400 },
+                    { borderColor: theme.palette.neutral[400] },
                   ])}
                   onPress={onCancel}
                 >
                   <Text
                     style={StyleSheet.flatten([
                       styles.cancelText,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     Cancel

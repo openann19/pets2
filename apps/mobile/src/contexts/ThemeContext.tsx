@@ -3,7 +3,7 @@
  * This file is kept for backward compatibility during migration
  */
 
-export { ThemeProvider, useTheme } from "../theme/Provider";
+export { ThemeProvider, useTheme } from "@/theme";
 
 let warned = false;
 if (!warned) {

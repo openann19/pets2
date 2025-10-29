@@ -29,7 +29,7 @@ import Animated, {
 
 import { useEntranceAnimation } from "../hooks/useUnifiedAnimations";
 import { useSwipeGesturesRNGH } from "../hooks/useSwipeGesturesRNGH";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { DoubleTapLikePlus } from "./Gestures/DoubleTapLikePlus";
 import LikeArbitrator from "./Gestures/LikeArbitrator";
 import UndoPill from "./feedback/UndoPill";
@@ -296,7 +296,7 @@ function ModernSwipeCardComponent({
                       {
                         backgroundColor:
                           index === currentPhotoIndex
-                            ? colors.textInverse
+                            ? colors.onSurfacenverse
                             : "rgba(255,255,255,0.4)",
                       },
                     ])}

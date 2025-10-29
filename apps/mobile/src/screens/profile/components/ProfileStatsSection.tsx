@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { logger } from "@pawfectmatch/core";
 import { AdvancedCard, CardConfigs } from "../../../components/Advanced/AdvancedCard";
 import { matchesAPI } from "../../../services/api";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface ProfileStatsSectionProps {
   matchCount?: number;

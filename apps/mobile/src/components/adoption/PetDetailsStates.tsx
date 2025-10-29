@@ -51,17 +51,17 @@ export const PetDetailsSkeleton: React.FC = () => {
   return (
     <View style={styles.container}>
       <ShimmerPlaceholder
-        style={[styles.skeletonImage, { borderRadius: imageRadius }]
+        style={[styles.skeletonImage, { borderRadius: imageRadius }]}
         borderRadius={imageRadius}
         height={320}
       />
       <ShimmerPlaceholder style={styles.textBlock} height={28} />
-      <ShimmerPlaceholder style={[styles.textBlock, { width: "60%" }] />
+      <ShimmerPlaceholder style={[styles.textBlock, { width: "60%" }]} />
       <View style={styles.skeletonRow}>
         <ShimmerPlaceholder style={styles.skeletonBlock} />
         <ShimmerPlaceholder style={styles.skeletonBlock} />
       </View>
-      <ShimmerPlaceholder style={[styles.textBlock, { height: 120 }] />
+      <ShimmerPlaceholder style={[styles.textBlock, { height: 120 }]} />
     </View>
   );
 };

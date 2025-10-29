@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { AdvancedCard, CardConfigs } from "../Advanced/AdvancedCard";
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface MatchesTabsProps {
   selectedTab: "matches" | "likedYou";

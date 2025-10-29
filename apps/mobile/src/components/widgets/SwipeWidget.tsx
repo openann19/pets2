@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
 interface SwipeWidgetProps {
   pet: {
@@ -15,13 +16,16 @@ interface SwipeWidgetProps {
   onViewProfile: () => void;
 }
 
-export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
+export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps): React.JSX.Element {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Quick Swipe</Text>
-        <TouchableOpacity onPress={onViewProfile}>
-          <Ionicons name="open-outline" size={20} color="Theme.colors.secondary[500]" />
+        <TouchableOpacity onPress={onViewProfile} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Ionicons name="open-outline" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -46,7 +50,7 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
             onSwipe("left");
           }}
         >
-          <Ionicons name="close" size={24} color="Theme.colors.status.error" />
+          <Ionicons name="close" size={24} color={theme.colors.danger} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -55,81 +59,83 @@ export function SwipeWidget({ pet, onSwipe, onViewProfile }: SwipeWidgetProps) {
             onSwipe("right");
           }}
         >
-          <Ionicons name="heart" size={24} color="Theme.colors.status.success" />
+          <Ionicons name="heart" size={24} color={theme.colors.success} />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    padding: 16,
-    margin: 8,
-    shadowColor: "Theme.colors.neutral[950]",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "Theme.colors.neutral[800]",
-  },
-  petCard: {
-    backgroundColor: "Theme.colors.background.secondary",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-  },
-  petImage: {
-    width: "100%",
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  petInfo: {
-    alignItems: "center",
-  },
-  petName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "Theme.colors.neutral[800]",
-    marginBottom: 2,
-  },
-  petDetails: {
-    fontSize: 12,
-    color: "Theme.colors.neutral[500]",
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  actionButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "Theme.colors.neutral[950]",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  passButton: {
-    backgroundColor: "#FEF2F2",
-  },
-  likeButton: {
-    backgroundColor: "#F0FDF4",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.md,
+      margin: theme.spacing.sm,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.sm,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+    },
+    petCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.sm,
+      marginBottom: theme.spacing.md,
+    },
+    petImage: {
+      width: "100%",
+      height: 120,
+      borderRadius: theme.radii.sm,
+      marginBottom: theme.spacing.xs,
+    },
+    petInfo: {
+      alignItems: "center",
+    },
+    petName: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+      marginBottom: 2,
+    },
+    petDetails: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+    },
+    actions: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+    actionButton: {
+      width: 48,
+      height: 48,
+      borderRadius: theme.radii.full,
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    passButton: {
+      backgroundColor: theme.colors.danger + "15",
+    },
+    likeButton: {
+      backgroundColor: theme.colors.success + "15",
+    },
+  });
+}

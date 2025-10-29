@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme'";
 import { api } from "../../services/api";
 
 import { logger } from '../../services/logger';
@@ -41,7 +41,8 @@ interface AdminServicesScreenProps {
 export default function AdminServicesScreen({
   navigation,
 }: AdminServicesScreenProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [services, setServices] = useState<ServiceStatus[]>([]);
@@ -143,7 +144,7 @@ export default function AdminServicesScreen({
       case 'down':
         return theme.colors.danger;
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.border;
     }
   };
 
@@ -165,7 +166,7 @@ export default function AdminServicesScreen({
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.text }]>
+          <Text style={[styles.loadingText, { color: colors.onSurface}]>
             Loading services...
           </Text>
         </View>
@@ -177,9 +178,9 @@ export default function AdminServicesScreen({
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]>
       <View style={styles.header}>
         <TouchableOpacity  testID="AdminServicesScreen-button-2" accessibilityLabel="navigation.goBack();" accessibilityRole="button" onPress={() => { navigation.goBack(); }}>
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text }]>
+        <Text style={[styles.title, { color: colors.onSurface}]>
           External Services
         </Text>
         <View style={{ width: 24 }} />
@@ -205,10 +206,10 @@ export default function AdminServicesScreen({
                 <Ionicons name={service.icon as any} size={24} color={service.color} />
               </View>
               <View style={styles.serviceInfo}>
-                <Text style={[styles.serviceName, { color: colors.text }]>
+                <Text style={[styles.serviceName, { color: colors.onSurface}]>
                   {service.name}
                 </Text>
-                <Text style={[styles.serviceDescription, { color: colors.textSecondary }]>
+                <Text style={[styles.serviceDescription, { color: colors.onSurfaceecondary }]>
                   {service.description}
                 </Text>
               </View>
@@ -225,18 +226,18 @@ export default function AdminServicesScreen({
                   {service.status.toUpperCase()}
                 </Text>
               </View>
-              <Text style={[styles.responseTime, { color: colors.textSecondary }]>
+              <Text style={[styles.responseTime, { color: colors.onSurfaceecondary }]>
                 {service.responseTime}ms
               </Text>
             </View>
 
             {service.endpoint && (
-              <Text style={[styles.endpoint, { color: colors.textSecondary }] numberOfLines={1}>
+              <Text style={[styles.endpoint, { color: colors.onSurfaceecondary }] numberOfLines={1}>
                 {service.endpoint}
               </Text>
             )}
 
-            <Text style={[styles.lastChecked, { color: colors.textSecondary }]>
+            <Text style={[styles.lastChecked, { color: colors.onSurfaceecondary }]>
               Last checked: {new Date(service.lastChecked).toLocaleTimeString()}
             </Text>
           </View>
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.neutral[200],
+    borderBottomColor: theme.colors.border,
   },
   title: {
     fontSize: 20,

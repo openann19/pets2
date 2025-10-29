@@ -19,8 +19,7 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useTheme } from "../../theme/Provider";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface EnhancedMessageBubbleProps {
   message: MessageWithReactions;

@@ -15,7 +15,7 @@ import { ThemeProvider, defaultTheme } from "@/theme";
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={defaultTheme}>
+      <ThemeProvider scheme="light">
         <I18nextProvider i18n={i18n}>
           {children}
         </I18nextProvider>

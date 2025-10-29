@@ -126,7 +126,7 @@ describe("useWelcomeScreen", () => {
 
     expect(result.current.colors.primary).toBe("#007AFF");
     expect(result.current.colors.background).toBe("#FFFFFF");
-    expect(result.current.colors.text).toBe("#000000");
+    expect(result.current.colors.onSurface.toBe("#000000");
   });
 
   it("should return stable function references", () => {

@@ -27,7 +27,7 @@ import {
   DangerZoneSection,
 } from "./settings";
 import { SettingSection } from "../components/settings/SettingSection";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 type SettingsScreenProps = RootStackScreenProps<"Settings">;
@@ -72,7 +72,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     sectionTitle: {
       fontSize: 14,
       fontWeight: "bold",
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       textTransform: "uppercase",
       letterSpacing: 0.5,
       marginBottom: 12,
@@ -120,7 +120,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     settingTitle: {
       fontSize: 16,
       fontWeight: "500",
-      color: theme.colors.text,
+      color: theme.colors.onSurface
       marginBottom: 2,
     },
     settingTitleDestructive: {
@@ -128,7 +128,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     },
     settingSubtitle: {
       fontSize: 13,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     settingSubtitleDestructive: {
       color: theme.colors.danger,
@@ -143,12 +143,12 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
     },
     versionText: {
       fontSize: 14,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       fontWeight: "500",
     },
     versionSubtitle: {
       fontSize: 12,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       marginTop: 4,
     },
   }), [theme]);
@@ -390,7 +390,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           <Ionicons
             name={item.icon}
             size={20}
-            color={item.destructive ? theme.colors.danger : theme.colors.textMuted}
+            color={item.destructive ? theme.colors.danger : theme.colors.onMuted}
           />
         </View>
         <View style={styles.settingText}>
@@ -427,7 +427,7 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
           />
         )}
         {item.type === "navigation" && (
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textMuted} />
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.onMuted} />
         )}
       </View>
     </TouchableOpacity>

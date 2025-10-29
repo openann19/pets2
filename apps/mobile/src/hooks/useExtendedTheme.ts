@@ -8,12 +8,12 @@
  * 
  * function MyComponent() {
  *   const { colors } = useExtendedTheme();
- *   // colors.gray500, colors.white, etc. now work
+ *   // theme.palette.neutral[500], colors.onPrimary, etc. now work
  * }
  * ```
  */
 
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { getExtendedColors, getIsDark } from "../theme/adapters";
 import type { Theme } from "../theme/types";
 import type { ExtendedColors } from "../theme/adapters";

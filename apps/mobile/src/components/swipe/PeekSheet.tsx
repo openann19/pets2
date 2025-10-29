@@ -5,7 +5,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, Dimensions } from 'react-native';
-import { Theme } from '../../theme/unified-theme';
 import type { Pet } from '@pawfectmatch/core';
 import ModernSwipeCard from '../ModernSwipeCard';
 

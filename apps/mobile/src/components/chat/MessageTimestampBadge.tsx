@@ -1,4 +1,4 @@
-  import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   useSharedValue,
@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   withSpring,
 } from "react-native-reanimated";
+import { useTheme } from "@/theme";
 
 export interface MessageTimestampBadgeProps {
   iso: string;           // ISO time
@@ -28,10 +29,15 @@ function formatClock(iso: string): string {
 export default function MessageTimestampBadge({
   iso,
   visible = true,
-  textColor = "#fff",
-  bgColor = "rgba(0,0,0,0.35)",
-  accentColor = "rgba(255,255,255,0.65)",
+  textColor,
+  bgColor,
+  accentColor,
 }: MessageTimestampBadgeProps) {
+  const { colors } = useTheme();
+  
+  const finalTextColor = textColor || colors.text;
+  const finalBgColor = bgColor || colors.bgElevated;
+  const finalAccentColor = accentColor || colors.primary;
   const shown = useSharedValue(visible ? 1 : 0);
 
   useEffect(() => {
@@ -44,9 +50,9 @@ export default function MessageTimestampBadge({
   }));
 
   return (
-    <Animated.View style={[styles.wrap, { backgroundColor: bgColor }, sty]}>
-      <View style={[styles.dot, { backgroundColor: accentColor }] />
-      <Text style={[styles.txt, { color: textColor }]>{formatClock(iso)}</Text>
+    <Animated.View style={[styles.wrap, { backgroundColor: finalBgColor }, sty]}>
+      <View style={[styles.dot, { backgroundColor: finalAccentColor }]} />
+      <Text style={[styles.txt, { color: finalTextColor }]}>{formatClock(iso)}</Text>
     </Animated.View>
   );
 }

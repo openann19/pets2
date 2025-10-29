@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Alert, PanResponder, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
-import { Theme } from "../../theme/unified-theme";
 import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
 import { canProcessOnWeb, processAudioWeb } from "../../utils/audio/web-processing";
 import type { WebProcessingReport } from "../../utils/audio/web-processing";
@@ -73,10 +72,10 @@ export default function VoiceRecorderUltraWeb({
   const chunksRef = useRef<Blob[]>([]);
   const durTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // SpeechRecognition
+  // SpeechRecognition - Web-only API, properly fenced for mobile
   const SpeechRecognition =
     typeof window !== "undefined"
-      ? window.SpeechRecognition || window.webkitSpeechRecognition
+      ? (window.SpeechRecognition || window.webkitSpeechRecognition)
       : undefined;
   const recogRef = useRef<any>(null);
   const recogEnabled = (transcription?.enabled ?? true) && !!SpeechRecognition;

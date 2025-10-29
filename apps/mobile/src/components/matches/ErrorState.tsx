@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface ErrorStateProps {
   onRetry: () => void;
 }
 
 export function ErrorState({ onRetry }: ErrorStateProps): React.JSX.Element {
+  const { colors } = useTheme();
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 32,
+    },
+    image: {
+      width: 120,
+      height: 120,
+      marginBottom: 16,
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: "bold",
+      color: colors.danger,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: colors.textMuted,
+      textAlign: "center",
+      marginBottom: 16,
+    },
+    button: {
+      backgroundColor: colors.primary,
+      borderRadius: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 24,
+    },
+    buttonText: {
+      color: colors.text,
+      fontWeight: "bold",
+      fontSize: 16,
+    },
+  }), [colors]);
+
   return (
     <View style={styles.container} accessibilityLabel="Error loading matches">
       <Image
@@ -27,39 +64,3 @@ export function ErrorState({ onRetry }: ErrorStateProps): React.JSX.Element {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 32,
-  },
-  image: {
-    width: 120,
-    height: 120,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#dc2626",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "Theme.colors.neutral[500]",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  button: {
-    backgroundColor: "#a21caf",
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-  },
-  buttonText: {
-    color: "Theme.colors.neutral[0]",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});

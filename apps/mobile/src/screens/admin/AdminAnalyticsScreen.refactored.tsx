@@ -20,7 +20,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme, getExtendedColors } from "../../theme";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 import {
@@ -30,7 +29,7 @@ import {
   SecurityMetricsSection,
   TopPerformersSection,
 } from "./analytics/components";
-import { useTheme } from "@/theme";
+import { useTheme, getExtendedColors } from "@/theme";
 import type { AppTheme } from "@/theme";
 
 function __makeStyles_styles(theme: AppTheme) {

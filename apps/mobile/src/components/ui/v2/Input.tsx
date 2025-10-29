@@ -52,7 +52,7 @@ export const Input = forwardRef<TextInput, InputProps>(({
       height: sizeStyle.height,
       paddingHorizontal: sizeStyle.paddingHorizontal,
       fontSize: sizeStyle.fontSize,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
       backgroundColor: theme.colors.bg,
       borderWidth: 1,
       borderColor: hasError ? theme.colors.danger : theme.colors.border,
@@ -110,7 +110,7 @@ export const Input = forwardRef<TextInput, InputProps>(({
         <TextInput
           ref={ref}
           style={getInputStyle()}
-          placeholderTextColor={theme.colors.textMuted}
+          placeholderTextColor={theme.colors.onMuted}
           {...rest}
         />
         {rightIcon && (

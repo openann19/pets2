@@ -212,7 +212,7 @@ export function useChatData(matchId: string): UseChatDataReturn {
           socket.emit("send_message", sentMessage);
           socket.emit("typing", {
             matchId,
-            userId: user?._id,
+            userId: user?._id ?? "",
             isTyping: false,
           });
         }

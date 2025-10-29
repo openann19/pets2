@@ -44,7 +44,7 @@ jest.mock("../../../services/WebRTCService", () => ({
 }));
 
 import IncomingCallScreen from "../IncomingCallScreen";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 
 // Debug: Log what we imported
 console.log("IncomingCallScreen imported:", typeof IncomingCallScreen);

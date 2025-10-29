@@ -9,7 +9,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { useSwipeToReply } from "../../hooks/useSwipeToReply";
 import ReplySwipeHint from "./ReplySwipeHint";
 import MorphingContextMenu, { type ContextAction } from "../menus/MorphingContextMenu";
@@ -84,18 +84,18 @@ export function MessageBubble({
           maxWidth: "100%",
         },
         ownMessageLight: {
-          backgroundColor: theme.colors.danger,
+          backgroundColor: theme.colors.primary,
         },
         ownMessageDark: {
-          backgroundColor: theme.colors.danger,
+          backgroundColor: theme.colors.primary,
         },
         otherMessageLight: {
-          backgroundColor: theme.colors.background.primary,
+          backgroundColor: theme.colors.bgElevated,
           borderWidth: 1,
-          borderColor: theme.colors.border.medium,
+          borderColor: theme.colors.border,
         },
         otherMessageDark: {
-          backgroundColor: theme.colors.text.primary,
+          backgroundColor: theme.colors.bgElevated,
           borderWidth: 1,
           borderColor: theme.colors.text.primary,
         },
@@ -104,33 +104,33 @@ export function MessageBubble({
           lineHeight: 20,
         },
         messageTextLight: {
-          color: theme.colors.text.primary,
+          color: theme.colors.text,
         },
         messageTextDark: {
-          color: theme.colors.background.primary,
+          color: theme.colors.bg,
         },
         imageBubble: {
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.bgElevated,
           borderRadius: 12,
           padding: 4,
         },
         gifBubble: {
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.bgElevated,
           borderRadius: 12,
           padding: 20,
         },
         voiceBubble: {
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.bgElevated,
           borderRadius: 12,
           padding: 12,
         },
         loadingText: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.textMuted,
         },
         gifPlaceholder: {
           fontSize: 14,
-          color: theme.colors.text.secondary,
+          color: theme.colors.textMuted,
         },
         messageMeta: {
           flexDirection: "row",
@@ -142,10 +142,10 @@ export function MessageBubble({
           fontSize: 12,
         },
         timestampLight: {
-          color: theme.colors.text.tertiary,
+          color: theme.colors.textMuted,
         },
         timestampDark: {
-          color: theme.colors.text.secondary,
+          color: theme.colors.textMuted,
         },
         statusRow: {
           flexDirection: "row",
@@ -156,10 +156,10 @@ export function MessageBubble({
           fontSize: 12,
         },
         statusLight: {
-          color: theme.colors.text.secondary,
+          color: theme.colors.textMuted,
         },
         statusDark: {
-          color: theme.colors.text.tertiary,
+          color: theme.colors.textMuted,
         },
         avatarContainer: {
           position: "absolute",
@@ -170,7 +170,7 @@ export function MessageBubble({
           height: 32,
           borderRadius: 16,
           borderWidth: 2,
-          borderColor: theme.colors.background.primary,
+          borderColor: theme.colors.bg,
         },
         avatarEmoji: {
           fontSize: 16,
@@ -182,13 +182,13 @@ export function MessageBubble({
           fontWeight: "500",
         },
         avatarNameLight: {
-          color: theme.colors.text.primary,
+          color: theme.colors.text,
         },
         avatarNameDark: {
-          color: theme.colors.background.primary,
+          color: theme.colors.bg,
         },
         reactionButton: {
-          backgroundColor: theme.colors.background.secondary,
+          backgroundColor: theme.colors.bgElevated,
           borderRadius: 12,
           paddingHorizontal: 8,
           paddingVertical: 4,
@@ -198,7 +198,7 @@ export function MessageBubble({
           fontSize: 14,
         },
         retryBadge: {
-          backgroundColor: theme.colors.danger,
+          backgroundColor: theme.colors.primary,
           borderRadius: 12,
           paddingHorizontal: 8,
           paddingVertical: 4,
@@ -207,7 +207,7 @@ export function MessageBubble({
         retryText: {
           fontSize: 12,
           fontWeight: "500",
-          color: theme.colors.background.primary,
+          color: theme.colors.bg,
         },
       }),
     [theme]
@@ -502,8 +502,8 @@ export function MessageBubble({
         <LinearGradient
           colors={
             isOwnMessage
-              ? [theme.colors.danger, theme.colors.danger + "80"]
-              : [theme.colors.background.secondary, theme.colors.background.tertiary]
+              ? [theme.colors.primary, theme.colors.primary + "80"]
+              : [theme.colors.bgElevated, theme.colors.bg]
           }
           style={StyleSheet.flatten([styles.bubble, getBubbleStyle()])}
           start={{ x: 0, y: 0 }}
@@ -544,10 +544,10 @@ export function MessageBubble({
               <MessageStatusTicks
                 status={messageStatus}
                 size={12}
-                sentColor={theme.colors.text.tertiary}
-                deliveredColor={theme.colors.text.tertiary}
-                readColor={theme.colors.status.info}
-                failedColor={theme.colors.status.error}
+                sentColor={theme.colors.textMuted}
+                deliveredColor={theme.colors.textMuted}
+                readColor={theme.colors.success}
+                failedColor={theme.colors.danger}
               />
               {messageStatus === "failed" && (
                 <RetryBadge onPress={handleRetry} />
@@ -571,12 +571,12 @@ export function MessageBubble({
         anchor={anchor}
         actions={actions}
         theme={{
-          bg: theme.isDark ? theme.colors.text.primary : theme.colors.background.primary,
-          border: theme.isDark ? theme.colors.text.primary + "80" : theme.colors.text.primary + "80",
-          text: theme.isDark ? theme.colors.background.primary : theme.colors.text.primary,
-          sub: theme.isDark ? theme.colors.text.tertiary : theme.colors.text.secondary,
-          item: theme.isDark ? theme.colors.text.primary : theme.colors.background.secondary,
-          itemPressed: theme.isDark ? theme.colors.text.primary : theme.colors.background.tertiary,
+          bg: theme.colors.bgElevated,
+          border: theme.colors.border,
+          text: theme.colors.text,
+          sub: theme.colors.textMuted,
+          item: theme.colors.bg,
+          itemPressed: theme.colors.bgElevated,
         }}
       />
     </>

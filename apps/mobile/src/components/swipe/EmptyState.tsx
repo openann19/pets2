@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { EliteButton } from "../EliteComponents";
 import { GlowContainer } from "../GlowShadowSystem";
 import PremiumTypography from "../PremiumTypography";
-import { Theme } from '../../theme/unified-theme';
 
 const { PremiumHeading, PremiumBody } = PremiumTypography;
 

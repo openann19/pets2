@@ -16,7 +16,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import performanceMonitorInstance, {
   type PerformanceMetrics,
 } from "../utils/PerformanceMonitor";
@@ -401,7 +401,7 @@ function getGradeColor(grade: string, theme: any): string {
     case "F":
       return theme.colors.danger;
     default:
-      return theme.colors.text;
+      return theme.colors.onSurface
   }
 }
 
@@ -415,7 +415,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   subtitle: {
     marginBottom: theme.spacing.lg,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   metricsContainer: {
     flexDirection: "row",
@@ -429,7 +429,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
     alignItems: "center",
   },
   metricLabel: {
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
     marginBottom: theme.spacing.xs,
   },
   metricValue: {
@@ -456,7 +456,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   progressText: {
     textAlign: "center",
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   testVisualization: {
     height: 100,
@@ -490,7 +490,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   resultLabel: {
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   resultValue: {
     fontWeight: "bold",
@@ -507,6 +507,6 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   recommendation: {
     marginBottom: theme.spacing.xs,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
 });

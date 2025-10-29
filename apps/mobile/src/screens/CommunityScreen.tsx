@@ -31,7 +31,7 @@ import { DoubleTapLikePlus } from "../components/Gestures/DoubleTapLikePlus";
 import { PinchZoomPro } from "../components/Gestures/PinchZoomPro";
 import { ReactionBarMagnetic } from "../components/chat";
 import { useCommunityFeed } from "../hooks/useCommunityFeed";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { useDoubleTapMetrics, usePinchMetrics, useReactionMetrics } from "../hooks/useInteractionMetrics";
 import { useScrollOffsetTracker } from "../hooks/navigation/useScrollOffsetTracker";
 import { useTabReselectRefresh } from "../hooks/navigation/useTabReselectRefresh";
@@ -249,10 +249,10 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               style={styles.avatar}
             />
             <View>
-              <Text style={StyleSheet.flatten([styles.authorName, { color: colors.text }])}>
+              <Text style={StyleSheet.flatten([styles.authorName, { color: colors.onSurface}])}>
                 {post.author.name}
               </Text>
-              <Text style={StyleSheet.flatten([styles.timeAgo, { color: colors.textSecondary }])}>
+              <Text style={StyleSheet.flatten([styles.timeAgo, { color: colors.onSurfaceecondary }])}>
                 {formatTimeAgo(post.createdAt)}
               </Text>
             </View>
@@ -275,12 +275,12 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
               );
             }}
           >
-            <Ionicons name="ellipsis-horizontal" size={20} color={colors.textSecondary} />
+            <Ionicons name="ellipsis-horizontal" size={20} color={colors.onSurfaceecondary} />
           </TouchableOpacity>
         </View>
 
         {/* Content */}
-        <Text style={StyleSheet.flatten([styles.postContent, { color: colors.text }])}>
+        <Text style={StyleSheet.flatten([styles.postContent, { color: colors.onSurface}])}>
           {post.content}
         </Text>
 
@@ -346,7 +346,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
                 {new Date(post.activityDetails.date).toLocaleDateString()} at{" "}
                 {post.activityDetails.location}
               </Text>
-              <Text style={StyleSheet.flatten([styles.activityTextSmall, { color: colors.textSecondary }])}>
+              <Text style={StyleSheet.flatten([styles.activityTextSmall, { color: colors.onSurfaceecondary }])}>
                 {post.activityDetails.currentAttendees} of {post.activityDetails.maxAttendees} attending
               </Text>
             </View>
@@ -371,12 +371,12 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             <Ionicons
               name={post.liked ? "heart" : "heart-outline"}
               size={24}
-              color={post.liked ? theme.colors.primary : colors.textSecondary}
+              color={post.liked ? theme.colors.primary : colors.onSurfaceecondary}
             />
             <Text
               style={StyleSheet.flatten([
                 styles.actionText,
-                { color: post.liked ? theme.colors.primary : colors.textSecondary },
+                { color: post.liked ? theme.colors.primary : colors.onSurfaceecondary },
               ])}
             >
               {post.likes}
@@ -387,14 +387,14 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
             style={styles.actionButton}
              testID="CommunityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { setSelectedPost(post); }}
           >
-            <Ionicons name="chatbubble-outline" size={24} color={colors.textSecondary} />
-            <Text style={StyleSheet.flatten([styles.actionText, { color: colors.textSecondary }])}>
+            <Ionicons name="chatbubble-outline" size={24} color={colors.onSurfaceecondary} />
+            <Text style={StyleSheet.flatten([styles.actionText, { color: colors.onSurfaceecondary }])}>
               {post.comments.length}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton} testID="CommunityScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-            <Ionicons name="share-outline" size={24} color={colors.textSecondary} />
+            <Ionicons name="share-outline" size={24} color={colors.onSurfaceecondary} />
           </TouchableOpacity>
         </View>
 
@@ -403,10 +403,10 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
           <View style={styles.commentsSection}>
             {post.comments.slice(0, 3).map((comment) => (
               <View key={comment._id} style={styles.comment}>
-                <Text style={StyleSheet.flatten([styles.commentAuthor, { color: colors.text }])}>
+                <Text style={StyleSheet.flatten([styles.commentAuthor, { color: colors.onSurface}])}>
                   {comment.author.name}
                 </Text>
-                <Text style={StyleSheet.flatten([styles.commentText, { color: colors.textSecondary }])}>
+                <Text style={StyleSheet.flatten([styles.commentText, { color: colors.onSurfaceecondary }])}>
                   {comment.content}
                 </Text>
               </View>
@@ -440,11 +440,11 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
   // Render empty state
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Ionicons name="people-outline" size={64} color={colors.textSecondary} />
-      <Text style={StyleSheet.flatten([styles.emptyTitle, { color: colors.text }])}>
+      <Ionicons name="people-outline" size={64} color={colors.onSurfaceecondary} />
+      <Text style={StyleSheet.flatten([styles.emptyTitle, { color: colors.onSurface}])}>
         No posts yet
       </Text>
-      <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.textSecondary }])}>
+      <Text style={StyleSheet.flatten([styles.emptyText, { color: colors.onSurfaceecondary }])}>
         Be the first to share something!
       </Text>
     </View>
@@ -457,7 +457,7 @@ export default function CommunityScreen({ navigation }: CommunityScreenProps) {
         <AdvancedHeader {...HeaderConfigs.glass({ title: "Community" })} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.textSecondary }])}>
+          <Text style={StyleSheet.flatten([styles.loadingText, { color: colors.onSurfaceecondary }])}>
             Loading community...
           </Text>
         </View>

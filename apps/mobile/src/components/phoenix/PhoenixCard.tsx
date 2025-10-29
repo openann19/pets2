@@ -32,7 +32,7 @@ import {
 } from "../../animation";
 import { Colors, Spacing, BorderRadius } from "../../styles/GlobalStyles";
 import { PREMIUM_SHADOWS } from "../elite/constants";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 
 // TypeScript strict interface - no any, no implicit any
 interface PhoenixCardProps extends TouchableOpacityProps {

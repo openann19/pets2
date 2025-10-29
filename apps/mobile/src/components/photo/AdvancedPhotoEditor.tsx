@@ -16,7 +16,6 @@ import Animated, {
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
 
-import { Theme } from '../../theme/unified-theme';
 import { useTheme } from '@mobile/theme';
 import { usePhotoEditor } from '../../hooks/usePhotoEditor';
 import { PhotoAdjustmentSlider } from './PhotoAdjustmentSlider';

@@ -16,7 +16,6 @@ import {
 import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Theme } from "../../theme/unified-theme";
 import type { GeneratedBio } from "../../hooks/useAIBio";
 
 interface BioResultsProps {

@@ -5,7 +5,6 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { Theme } from '../../theme/unified-theme';
 import { SmartImage } from '../common/SmartImage';
 
 const { width: SCREEN_W } = Dimensions.get('window');

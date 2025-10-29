@@ -15,8 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RTCView } from "react-native-webrtc";
 
 import type { CallState } from "../../services/WebRTCService";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface ActiveCallScreenProps {
   callState: CallState;

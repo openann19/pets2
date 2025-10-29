@@ -68,14 +68,14 @@ export function PetSelectionSection({
       <Image source={{ uri: pet.photos[0] }} style={styles.petImage} />
       <View style={styles.petInfo}>
         <Text
-          style={StyleSheet.flatten([styles.petName, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.petName, { color: colors.onSurface}])}
         >
           {pet.name}
         </Text>
         <Text
           style={StyleSheet.flatten([
             styles.petBreed,
-            { color: colors.textSecondary },
+            { color: colors.onMuted },
           ])}
         >
           {pet.breed}
@@ -83,7 +83,7 @@ export function PetSelectionSection({
         <Text
           style={StyleSheet.flatten([
             styles.petAge,
-            { color: colors.textSecondary },
+            { color: colors.onMuted },
           ])}
         >
           {pet.age} years old
@@ -91,7 +91,7 @@ export function PetSelectionSection({
         <Text
           style={StyleSheet.flatten([
             styles.petOwner,
-            { color: colors.textSecondary },
+            { color: colors.onMuted },
           ])}
         >
           Owner: {pet.owner.name}
@@ -110,7 +110,7 @@ export function PetSelectionSection({
       <Text
         style={StyleSheet.flatten([
           styles.sectionTitle,
-          { color: colors.text },
+          { color: colors.onSurface},
         ])}
       >
         🐕 Select Two Pets
@@ -118,7 +118,7 @@ export function PetSelectionSection({
       <Text
         style={StyleSheet.flatten([
           styles.sectionDescription,
-          { color: colors.textSecondary },
+          { color: colors.onSurfaceecondary },
         ])}
       >
         Choose two pets to analyze their compatibility using AI technology.
@@ -129,7 +129,7 @@ export function PetSelectionSection({
           <Text
             style={StyleSheet.flatten([
               styles.columnTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Pet 1
@@ -142,14 +142,14 @@ export function PetSelectionSection({
             <View
               style={StyleSheet.flatten([
                 styles.placeholderCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
-              <Ionicons name="paw" size={40} color={colors.textSecondary} />
+              <Ionicons name="paw" size={40} color={colors.onMuted} />
               <Text
                 style={StyleSheet.flatten([
                   styles.placeholderText,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Select Pet 1
@@ -173,7 +173,7 @@ export function PetSelectionSection({
           <Text
             style={StyleSheet.flatten([
               styles.columnTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Pet 2
@@ -186,14 +186,14 @@ export function PetSelectionSection({
             <View
               style={StyleSheet.flatten([
                 styles.placeholderCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
               ])}
             >
-              <Ionicons name="paw" size={40} color={colors.textSecondary} />
+              <Ionicons name="paw" size={40} color={colors.onMuted} />
               <Text
                 style={StyleSheet.flatten([
                   styles.placeholderText,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 Select Pet 2
@@ -206,7 +206,7 @@ export function PetSelectionSection({
       <Text
         style={StyleSheet.flatten([
           styles.availablePetsTitle,
-          { color: colors.text },
+          { color: colors.onSurface},
         ])}
       >
         Available Pets
@@ -232,7 +232,7 @@ export function PetSelectionSection({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.availablePetCard,
-                { backgroundColor: colors.card },
+                { backgroundColor: colors.surface },
                 isDisabled && { opacity: 0.5 },
               ])}
                testID="PetSelectionSection-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => {
@@ -252,7 +252,7 @@ export function PetSelectionSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.availablePetName,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 {item.name}
@@ -260,7 +260,7 @@ export function PetSelectionSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.availablePetBreed,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {item.breed}

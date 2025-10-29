@@ -14,10 +14,11 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 export default function MigrationExampleScreen() {
+  const theme = useTheme();
   const [useNewArchitecture, setUseNewArchitecture] = useState(true);
   const [selectedExample, setSelectedExample] = useState<
     "buttons" | "containers" | "typography"
@@ -136,123 +137,123 @@ export default function MigrationExampleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  contentContainer: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-  },
-  toggleContainer: {
-    flexDirection: "row",
-    backgroundColor: "#e0e0e0",
-    borderRadius: 8,
-    padding: 4,
-    marginBottom: 24,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderRadius: 6,
-  },
-  activeToggle: {
-    backgroundColor: "#007AFF",
-  },
-  toggleText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-  },
-  tabContainer: {
-    flexDirection: "row",
-    marginBottom: 24,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
-  },
-  activeTab: {
-    borderBottomColor: "#007AFF",
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
-  },
-  exampleSection: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
-  },
-  exampleTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 16,
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    marginBottom: 12,
-    alignItems: "center",
-  },
-  secondaryButton: {
-    backgroundColor: "#6c757d",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  elevatedContainer: {
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  heading1: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  heading2: {
-    fontSize: 24,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
-  },
-  body: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 8,
-    lineHeight: 24,
-  },
-  caption: {
-    fontSize: 14,
-    color: "#666",
-    fontStyle: "italic",
-  },
-});
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    contentContainer: {
+      padding: theme.spacing.md,
+    },
+    header: {
+      marginBottom: theme.spacing.xl,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "bold",
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+    },
+    toggleContainer: {
+      flexDirection: "row",
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xs,
+      marginBottom: theme.spacing.xl,
+    },
+    toggleButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.md,
+      alignItems: "center",
+      borderRadius: theme.radius.sm,
+    },
+    activeToggle: {
+      backgroundColor: theme.colors.primary,
+    },
+    toggleText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+    },
+    tabContainer: {
+      flexDirection: "row",
+      marginBottom: theme.spacing.xl,
+    },
+    tab: {
+      flex: 1,
+      paddingVertical: theme.spacing.md,
+      alignItems: "center",
+      borderBottomWidth: 2,
+      borderBottomColor: "transparent",
+    },
+    activeTab: {
+      borderBottomColor: theme.colors.primary,
+    },
+    tabText: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: theme.colors.onSurface,
+    },
+    exampleSection: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.md,
+    },
+    exampleTitle: {
+      fontSize: 20,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.md,
+    },
+    button: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.xl,
+      borderRadius: theme.radius.sm,
+      marginBottom: theme.spacing.md,
+      alignItems: "center",
+    },
+    secondaryButton: {
+      backgroundColor: theme.colors.onMuted,
+    },
+    buttonText: {
+      color: theme.colors.onSurface,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    elevatedContainer: {
+      shadowColor: theme.colors.onSurface,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    heading1: {
+      fontSize: 32,
+      fontWeight: "bold",
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    heading2: {
+      fontSize: 24,
+      fontWeight: "600",
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    body: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+      lineHeight: 24,
+    },
+    caption: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      fontStyle: "italic",
+    },
+  });

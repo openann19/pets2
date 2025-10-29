@@ -32,7 +32,7 @@ import {
   Label,
   useStaggeredAnimation,
 } from "../components";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 
 // Import legacy components for gradual migration
 import { EliteContainer, EliteHeader } from "../components";
@@ -87,7 +87,7 @@ export default function ModernCreatePetScreen({
     },
     sectionSubtitle: {
       marginBottom: theme.spacing.lg,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     formGroup: {
       marginBottom: theme.spacing.lg,
@@ -98,7 +98,7 @@ export default function ModernCreatePetScreen({
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
       fontSize: 16,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
@@ -206,7 +206,7 @@ export default function ModernCreatePetScreen({
                   value={formData.name}
                   onChangeText={(value) => { updateFormData("name", value); }}
                   placeholder="Enter your pet's name"
-                  placeholderTextColor={theme.colors.textMuted}
+                  placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
@@ -234,7 +234,7 @@ export default function ModernCreatePetScreen({
                   value={formData.breed}
                   onChangeText={(value) => { updateFormData("breed", value); }}
                   placeholder="Enter breed"
-                  placeholderTextColor={theme.colors.textMuted}
+                  placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
@@ -245,7 +245,7 @@ export default function ModernCreatePetScreen({
                   value={formData.age}
                   onChangeText={(value) => { updateFormData("age", value); }}
                   placeholder="e.g., 2 years, 6 months"
-                  placeholderTextColor={theme.colors.textMuted}
+                  placeholderTextColor={theme.colors.onMuted}
                 />
               </View>
 
@@ -294,7 +294,7 @@ export default function ModernCreatePetScreen({
                   value={formData.description}
                   onChangeText={(value) => { updateFormData("description", value); }}
                   placeholder="Describe your pet's personality, habits, and what makes them special..."
-                  placeholderTextColor={theme.colors.textMuted}
+                  placeholderTextColor={theme.colors.onMuted}
                   multiline
                   numberOfLines={4}
                 />
@@ -368,7 +368,7 @@ export default function ModernCreatePetScreen({
                     { updateNestedFormData("contactInfo", "email", value); }
                   }
                   placeholder="your@email.com"
-                  placeholderTextColor={theme.colors.textMuted}
+                  placeholderTextColor={theme.colors.onMuted}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -383,7 +383,7 @@ export default function ModernCreatePetScreen({
                     { updateNestedFormData("contactInfo", "phone", value); }
                   }
                   placeholder="(555) 123-4567"
-                  placeholderTextColor={theme.colors.textMuted}
+                  placeholderTextColor={theme.colors.onMuted}
                   keyboardType="phone-pad"
                 />
               </View>

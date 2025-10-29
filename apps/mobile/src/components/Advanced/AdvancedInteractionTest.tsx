@@ -23,7 +23,6 @@ import { matchesAPI } from "../../services/api";
 import { AdvancedCard, CardConfigs } from "./AdvancedCard";
 import { AdvancedHeader, HeaderConfigs } from "./AdvancedHeader";
 import { AdvancedButton } from "./AdvancedInteractionSystem";
-import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

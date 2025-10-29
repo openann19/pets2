@@ -8,37 +8,10 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import type { RenderOptions } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { ThemeProvider } from '../theme/Provider';
+import { ThemeProvider, defaultTheme } from "@/theme";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// Test theme for consistent rendering
-export const testTheme = {
-  colors: {
-    primary: '#FF6B6B',
-    background: '#FFFFFF',
-    text: '#333333',
-    border: '#E5E5E5',
-    success: '#4CAF50',
-    warning: '#FF9800',
-    danger: '#F44336',
-  },
-  spacing: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-  },
-  typography: {
-    sizes: {
-      xs: 12,
-      sm: 14,
-      md: 16,
-      lg: 18,
-      xl: 20,
-    },
-  },
-};
+// Test theme is now provided by the canonical theme system
 
 // Query client for React Query testing
 const createTestQueryClient = () => new QueryClient({
@@ -72,7 +45,7 @@ export function customRender(
   const AllTheProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const content = (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider scheme="light">
           {children}
         </ThemeProvider>
       </QueryClientProvider>

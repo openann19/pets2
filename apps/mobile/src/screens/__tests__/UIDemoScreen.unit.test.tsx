@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
-import { ThemeProvider } from '../../theme/Provider';
+import { ThemeProvider } from "@/theme";
 import { I18nextProvider } from 'react-i18next';
 import UIDemoScreen from '../UIDemoScreen';
 

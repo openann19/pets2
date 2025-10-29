@@ -2,7 +2,7 @@ import { INTENT_OPTIONS, SPECIES_OPTIONS } from "../../constants/options";
 import { logger } from "@pawfectmatch/core";
 import Slider from "@react-native-community/slider";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Alert,
   ScrollView,
@@ -19,8 +19,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -60,6 +60,8 @@ const PreferencesSetupScreen = ({
   navigation,
   route,
 }: PreferencesSetupScreenProps) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const { userIntent } = route.params;
   const [preferences, setPreferences] = useState<PreferencesData>({
     maxDistance: 25,
@@ -189,8 +191,8 @@ const PreferencesSetupScreen = ({
                 onValueChange={(value) => {
                   updatePreferences("maxDistance", Math.round(value));
                 }}
-                minimumTrackTintColor=theme.colors.primary[500]
-                maximumTrackTintColor=theme.colors.neutral[200]
+                minimumTrackTintColor={theme.colors.primary}
+                maximumTrackTintColor={theme.colors.border}
               />
               <View style={styles.sliderLabels}>
                 <Text style={styles.sliderLabel}>5 mi</Text>
@@ -220,8 +222,8 @@ const PreferencesSetupScreen = ({
                       min: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor=theme.colors.primary[500]
-                  maximumTrackTintColor=theme.colors.neutral[200]
+                  minimumTrackTintColor={theme.colors.primary}
+                  maximumTrackTintColor={theme.colors.border}
                 />
               </View>
               <View style={styles.ageSlider}>
@@ -237,8 +239,8 @@ const PreferencesSetupScreen = ({
                       max: Math.round(value),
                     });
                   }}
-                  minimumTrackTintColor=theme.colors.primary[500]
-                  maximumTrackTintColor=theme.colors.neutral[200]
+                  minimumTrackTintColor={theme.colors.primary}
+                  maximumTrackTintColor={theme.colors.border}
                 />
               </View>
             </View>
@@ -355,13 +357,13 @@ const PreferencesSetupScreen = ({
                     onValueChange={(value) => {
                       updateNotifications(option.key, value);
                     }}
-                    trackColor={{ false: theme.colors.neutral[200], true: "#fce7f3" }}
+                    trackColor={{ false: theme.colors.border, true: theme.colors.primary + "33" }}
                     thumbColor={
                       preferences.notifications[
                         option.key as keyof typeof preferences.notifications
                       ]
-                        ? theme.colors.primary[500]
-                        : theme.colors.neutral[400]
+                        ? theme.colors.primary
+                        : theme.colors.border
                     }
                   />
                 </View>
@@ -399,180 +401,183 @@ const PreferencesSetupScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.neutral[0],
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  animatedContainer: {
-    flex: 1,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  sliderContainer: {
-    paddingHorizontal: 16,
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  sliderThumb: {
-    backgroundColor: theme.colors.primary[500],
-    width: 20,
-    height: 20,
-  },
-  sliderLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  sliderLabel: {
-    fontSize: 12,
-    color: theme.colors.neutral[400],
-  },
-  ageRangeContainer: {
-    gap: 16,
-  },
-  ageSlider: {
-    paddingHorizontal: 16,
-  },
-  ageLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.neutral[700],
-    marginBottom: 8,
-  },
-  optionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  optionButton: {
-    backgroundColor: theme.colors.bg.secondary,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minWidth: 100,
-    alignItems: "center",
-  },
-  selectedOption: {
-    backgroundColor: "#fdf2f8",
-    borderColor: theme.colors.primary[500],
-  },
-  optionText: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  selectedOptionText: {
-    color: theme.colors.primary[500],
-    fontWeight: "600",
-  },
-  notificationOptions: {
-    gap: 16,
-  },
-  notificationOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: theme.colors.bg.secondary,
-    borderRadius: 12,
-    padding: 16,
-  },
-  notificationInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  notificationLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theme.colors.neutral[800],
-    marginBottom: 4,
-  },
-  notificationDescription: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-  },
-  privacyNote: {
-    backgroundColor: "#f0f9ff",
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    marginBottom: 32,
-  },
-  privacyText: {
-    fontSize: 14,
-    color: "#0369a1",
-    lineHeight: 20,
-    textAlign: "center",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral[100],
-  },
-  backButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    fontWeight: "600",
-  },
-  completeButton: {
-    backgroundColor: theme.colors.primary[500],
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    minWidth: 140,
-    alignItems: "center",
-  },
-  completeButtonText: {
-    fontSize: 16,
-    color: theme.colors.neutral[0],
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return {
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    content: {
+      flex: 1,
+      padding: theme.spacing.lg,
+    },
+    animatedContainer: {
+      flex: 1,
+    },
+    header: {
+      alignItems: "center" as const,
+      marginBottom: theme.spacing["2xl"],
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "700" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+    },
+    section: {
+      marginBottom: theme.spacing["2xl"],
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: "700" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    sectionSubtitle: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.md,
+      lineHeight: 20,
+    },
+    sliderContainer: {
+      paddingHorizontal: theme.spacing.md,
+    },
+    slider: {
+      width: "100%" as const,
+      height: 40,
+    },
+    sliderThumb: {
+      backgroundColor: theme.colors.primary,
+      width: 20,
+      height: 20,
+    },
+    sliderLabels: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      marginTop: theme.spacing.xs,
+    },
+    sliderLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+    },
+    ageRangeContainer: {
+      gap: theme.spacing.md,
+    },
+    ageSlider: {
+      paddingHorizontal: theme.spacing.md,
+    },
+    ageLabel: {
+      fontSize: 14,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    optionsGrid: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: theme.spacing.sm,
+    },
+    optionButton: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radii.md,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      minWidth: 100,
+      alignItems: "center" as const,
+    },
+    selectedOption: {
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.primary,
+      borderWidth: 2,
+    },
+    optionText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      fontWeight: "500" as const,
+      textAlign: "center" as const,
+    },
+    selectedOptionText: {
+      color: theme.colors.primary,
+      fontWeight: "600" as const,
+    },
+    notificationOptions: {
+      gap: theme.spacing.md,
+    },
+    notificationOption: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+    },
+    notificationInfo: {
+      flex: 1,
+      marginRight: theme.spacing.md,
+    },
+    notificationLabel: {
+      fontSize: 16,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    notificationDescription: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    privacyNote: {
+      backgroundColor: theme.colors.info + "1A",
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing["2xl"],
+    },
+    privacyText: {
+      fontSize: 14,
+      color: theme.colors.info,
+      lineHeight: 20,
+      textAlign: "center" as const,
+    },
+    footer: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      padding: theme.spacing.lg,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    backButton: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    backButtonText: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      fontWeight: "600" as const,
+    },
+    completeButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radii.sm,
+      minWidth: 140,
+      alignItems: "center" as const,
+    },
+    completeButtonText: {
+      fontSize: 16,
+      color: theme.colors.onPrimary,
+      fontWeight: "600" as const,
+    },
+  };
+}
 
 export default PreferencesSetupScreen;

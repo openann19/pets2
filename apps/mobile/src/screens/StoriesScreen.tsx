@@ -32,8 +32,7 @@ import { useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRef, useEffect } from "react";
 import { useStoriesScreen } from "../hooks/screens/social";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 import { getAccessibilityProps } from '../utils/accessibilityUtils';
 
 // Navigation types

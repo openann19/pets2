@@ -17,7 +17,7 @@ import {
 
 // Project Hyperion Design System
 import { usePremiumDemoScreen } from "../hooks/screens/usePremiumDemoScreen";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 
 // Import extracted demo components
 import {

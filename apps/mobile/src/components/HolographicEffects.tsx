@@ -13,8 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { MOBILE_SPACING, MOBILE_RADIUS } from '../constants/design-tokens';
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 // === HOLOGRAPHIC CONSTANTS ===
 export const HOLOGRAPHIC_CONFIGS = (theme: ReturnType<typeof useTheme>) => ({

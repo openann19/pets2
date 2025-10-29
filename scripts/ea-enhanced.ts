@@ -1,440 +1,229 @@
-#!/usr/bin/env tsx
-/**
- * EA Enhanced — Advanced Error Annihilator
- * Comprehensive TypeScript codemod targeting React Native
- * 
- * Fixes:
- * - Style array flattening (TS2559)
- * - override modifiers (TS4114)
- * - Type-only imports (TS1484)
- * - Missing exports/imports
- * - Argument count mismatches
- * - Property access fixes
- * - SafeAreaView edges removal
- * - Theme semantic→tokens
- * - Ionicons glyphMap
- * - fontWeight normalization
- */
-import { Project, SyntaxKind, Node, SourceFile, ts } from "ts-morph";
-import fg from "fast-glob";
-import * as fs from "node:fs";
-import * as path from "node:path";
-import prettier from "prettier";
-import { EAConfig } from "./ea.config";
+// scripts/ea-enhanced.ts
+import { globby } from 'globby';
+import { execa } from 'execa';
+import { Project, SyntaxKind, Node, SourceFile } from 'ts-morph';
+import { mkdir, writeFile } from 'fs/promises';
+import path from 'node:path';
+import process from 'node:process';
+import {
+  COLOR_MAP,
+  SPACING_MAP,
+  RADII_MAP,
+  IMPORT_ALIAS_MAP,
+  DEFAULT_SCOPES,
+  IGNORE,
+} from './ea-config';
 
-type FixStats = Record<string, number>;
-const stats: FixStats = {
-  filesTouched: 0,
-  safeArea_edges_removed: 0,
-  theme_semantic_rewrites: 0,
-  ionicons_glyphMap_fixed: 0,
-  fontWeight_normalized: 0,
-  animated_import_added: 0,
-  style_arrays_flattened: 0,
-  override_modifiers_added: 0,
-  type_imports_fixed: 0,
-  module_imports_fixed: 0,
-  safearea_edges_removed: 0,
-  tooltip_fixes: 0,
-  duplicate_attrs_removed: 0,
-};
+type Edit = { kind: string; from: string; to: string; pos?: number };
+type FileReport = { file: string; edits: Edit[] };
 
-const args = process.argv.slice(2);
-const WRITE = args.includes("--write");
-const DRY_RUN = !WRITE;
+const WRITE = process.argv.includes('--write');
+const reportArgIdx = process.argv.indexOf('--report');
+const scopeArgIdx = process.argv.indexOf('--scope');
+const reportDir =
+  reportArgIdx > -1 && process.argv[reportArgIdx + 1]
+    ? process.argv[reportArgIdx + 1]
+    : `_reports/ea_${new Date().toISOString().replace(/[:.]/g, '-')}`;
 
-/** Utilities */
-const isFromModule = (importDecl: any, mod: string) =>
-  importDecl.getModuleSpecifierValue?.() === mod;
+const scopes =
+  scopeArgIdx > -1 && process.argv[scopeArgIdx + 1]
+    ? process.argv[scopeArgIdx + 1].split(',').map((s) => s.trim())
+    : DEFAULT_SCOPES;
 
-const loadPrettier = async () =>
-  await prettier.resolveConfig(process.cwd()).catch(() => null);
+const MONOREPO_TSCONFIG = 'apps/mobile/tsconfig.json';
 
-async function formatFile(filePath: string, code: string) {
-  const cfg = (await loadPrettier()) ?? {};
-  return prettier.format(code, { ...cfg, filepath: filePath });
+const log = (msg: string) => console.log(`[EA] ${msg}`);
+
+function isWithinQuotes(text: string, start: number): boolean {
+  // Best-effort: check a small window before the match for quotes
+  const slice = text.slice(Math.max(0, start - 3), start + 1);
+  return /['"`]\s*$/.test(slice);
 }
 
-/** Transformations */
-function transformFile(file: SourceFile): boolean {
-  let touched = false;
+function recordEdit(report: FileReport, e: Edit) {
+  report.edits.push(e);
+}
 
-  // Track imports
-  const imports = file.getImportDeclarations();
+function propertyPath(node: Node): string | null {
+  // Returns dotted path for PropertyAccessExpression chains (e.g., theme.colors.text)
+  if (node.getKind() !== SyntaxKind.PropertyAccessExpression) return null;
+  let cur: Node | undefined = node;
+  const parts: string[] = [];
+  while (cur && cur.getKind() === SyntaxKind.PropertyAccessExpression) {
+    const pae = cur.asKindOrThrow(SyntaxKind.PropertyAccessExpression);
+    parts.unshift(pae.getName());
+    cur = pae.getExpression();
+  }
+  if (cur && Node.isIdentifier(cur)) parts.unshift(cur.getText());
+  return parts.join('.');
+}
 
-  const hasImport = (name: string, mod: string) =>
-    imports.some(
-      d =>
-        isFromModule(d, mod) &&
-        d.getNamedImports().some((ni: any) => ni.getName() === name)
-    );
-
-  const addNamedImport = (name: string, mod: string) => {
-    const existing = imports.find(d => isFromModule(d, mod));
-    if (existing) {
-      if (!existing.getNamedImports().some(ni => ni.getName() === name)) {
-        existing.addNamedImport(name);
-        touched = true;
-      }
-    } else {
-      file.addImportDeclaration({ moduleSpecifier: mod, namedImports: [name] });
-      touched = true;
-    }
-  };
-
-  // 1) SafeAreaView edges prop removal (only when imported from 'react-native')
-  const safeAreaFromRN = imports.some(
-    d =>
-      isFromModule(d, "react-native") &&
-      d.getNamedImports().some(ni => ni.getName() === "SafeAreaView")
-  );
-  if (safeAreaFromRN) {
-    const jsxOpening = file.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
-    const jsxSelfClosing = file.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
-    const jsx = [...jsxOpening, ...jsxSelfClosing];
-    for (const el of jsx) {
-      const tagName = el.getTagNameNode().getText();
-      if (tagName === "SafeAreaView") {
-        const attrs = el.getAttributes();
-        for (const attr of attrs) {
-          if (Node.isJsxAttribute(attr)) {
-            const attrName = attr.getChildAtIndex(0)?.getText();
-            if (attrName === "edges") {
-              attr.remove();
-              stats.safeArea_edges_removed++;
-              touched = true;
-            }
-          }
-        }
+function replaceModuleSpecifierIfAliased(sf: SourceFile, report: FileReport) {
+  for (const decl of sf.getImportDeclarations()) {
+    const mod = decl.getModuleSpecifierValue();
+    for (const [from, to] of Object.entries(IMPORT_ALIAS_MAP)) {
+      if (mod === from || mod.startsWith(from + '/')) {
+        const rest = mod.slice(from.length);
+        const next = to + rest;
+        decl.setModuleSpecifier(next);
+        recordEdit(report, { kind: 'import-alias', from: mod, to: next });
+        break;
       }
     }
   }
+}
 
-  // 2) Theme.semantic.X → Theme.colors.<map>[500]
-  const themeMap = EAConfig.themeMap || {};
-  file.forEachDescendant(n => {
-    try {
-      if (Node.isPropertyAccessExpression(n)) {
-        const left = n.getExpression();
-        const name = n.getNameNode().getText();
-        if (
-          Node.isPropertyAccessExpression(left) &&
-          left.getExpression().getText() === "Theme" &&
-          left.getNameNode().getText() === "semantic"
-        ) {
-          const mapped = (themeMap as any)[name];
-          if (mapped) {
-            const replacement = typeof mapped === 'string' ? mapped : `colors.${name}[500]`;
-            n.replaceWithText(`Theme.${replacement}`);
-            stats.theme_semantic_rewrites++;
-            touched = true;
-          }
+function applyColorMap(sf: SourceFile, report: FileReport) {
+  // 1) Map property chains (theme.colors.xxx)
+  sf.forEachDescendant((node) => {
+    if (
+      node.getKind() === SyntaxKind.PropertyAccessExpression ||
+      node.getKind() === SyntaxKind.ElementAccessExpression
+    ) {
+      const text = node.getText();
+      for (const [from, to] of Object.entries(COLOR_MAP)) {
+        // Handle exact element access keys (e.g., theme.colors.neutral[500])
+        if (from.includes('[') && text === from) {
+          node.replaceWithText(to);
+          recordEdit(report, { kind: 'color-map', from, to, pos: node.getStart() });
+          return;
         }
-      } else if (Node.isElementAccessExpression(n)) {
-        const left = n.getExpression();
-        const arg = n.getArgumentExpression();
-        if (
-          Node.isPropertyAccessExpression(left) &&
-          left.getExpression().getText() === "Theme" &&
-          left.getNameNode().getText() === "semantic" &&
-          arg &&
-          Node.isStringLiteral(arg)
-        ) {
-          const key = arg.getLiteralText();
-          const mapped = (themeMap as any)[key];
-          if (mapped) {
-            const replacement = typeof mapped === 'string' ? mapped : `colors.${key}[500]`;
-            n.replaceWithText(`Theme.${replacement}`);
-            stats.theme_semantic_rewrites++;
-            touched = true;
+        // Handle property access chains (no bracket)
+        if (!from.includes('[')) {
+          const path = node.getKind() === SyntaxKind.PropertyAccessExpression ? propertyPath(node) : null;
+          if (path === from) {
+            node.replaceWithText(to);
+            recordEdit(report, { kind: 'color-map', from, to, pos: node.getStart() });
+            return;
           }
         }
       }
-    } catch (e) {
-      // Skip nodes that can't be safely replaced
+      // Collapse `theme.colors.something[NNN]` to mapped base if base is mapped,
+      // or keep same base but drop shade if no explicit map for that shade.
+      if (node.getKind() === SyntaxKind.ElementAccessExpression) {
+        const e = node.asKindOrThrow(SyntaxKind.ElementAccessExpression);
+        const expr = e.getExpression().getText(); // e.g., theme.colors.secondary
+        const literal = e.getArgumentExpression()?.getText() ?? '';
+        if (/^theme\.colors\.[A-Za-z0-9_]+$/.test(expr) && /^\d{2,3}$/.test(literal)) {
+          const explicit = COLOR_MAP[`${expr}[${literal.replaceAll("'", '').replaceAll('"', '')}]`];
+          if (explicit) {
+            e.replaceWithText(explicit);
+            recordEdit(report, { kind: 'color-shade-explicit', from: `${expr}[${literal}]`, to: explicit, pos: e.getStart() });
+          } else {
+            const mappedBase = COLOR_MAP[expr] ?? expr.replace(/^theme\.colors\./, 'theme.colors.');
+            e.replaceWithText(mappedBase);
+            recordEdit(report, { kind: 'color-shade-collapse', from: `${expr}[${literal}]`, to: mappedBase, pos: e.getStart() });
+          }
+        }
+      }
     }
   });
-
-  // 3) Ionicons glyphMap usages → string name
-  const jsxOpening2 = file.getDescendantsOfKind(SyntaxKind.JsxOpeningElement);
-  const jsxSelfClosing2 = file.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement);
-  const jsxElems = [...jsxOpening2, ...jsxSelfClosing2];
-
-  for (const el of jsxElems) {
-    const attrs = el.getAttributes();
-    for (const attr of attrs) {
-      if (!Node.isJsxAttribute(attr)) continue;
-      const attrName = attr.getChildAtIndex(0)?.getText();
-      if (attrName !== "name") continue;
-      const init = attr.getInitializer();
-      if (!init || !Node.isJsxExpression(init)) continue;
-      const expr = init.getExpression();
-      if (!expr) continue;
-
-      // Ionicons.glyphMap[expr] or Ionicons.glyphMap.foo
-      if (Node.isElementAccessExpression(expr)) {
-        const expLeft = expr.getExpression();
-        if (
-          Node.isPropertyAccessExpression(expLeft) &&
-          expLeft.getExpression().getText() === "Ionicons" &&
-          expLeft.getName() === "glyphMap"
-        ) {
-          const inner = expr.getArgumentExpression()?.getText() ?? "''";
-          init.replaceWithText(`{${inner} as string}`);
-          stats.ionicons_glyphMap_fixed++;
-          touched = true;
-        }
-      } else if (Node.isPropertyAccessExpression(expr)) {
-        const left = expr.getExpression();
-        if (
-          Node.isPropertyAccessExpression(left) &&
-          left.getExpression().getText() === "Ionicons" &&
-          left.getName() === "glyphMap"
-        ) {
-          const icon = expr.getName();
-          init.replaceWithText(`{'${icon}' as string}`);
-          stats.ionicons_glyphMap_fixed++;
-          touched = true;
-        }
-      }
-    }
-  }
-
-  // 4) fontWeight: 600 → '600'
-  const objs = file.getDescendantsOfKind(SyntaxKind.ObjectLiteralExpression);
-  for (const obj of objs) {
-    const prop = obj.getProperty("fontWeight");
-    if (!prop) continue;
-    if (Node.isPropertyAssignment(prop)) {
-      const init = prop.getInitializer();
-      if (init && Node.isNumericLiteral(init)) {
-        const val = init.getText();
-        prop.setInitializer(`'${val}'`);
-        stats.fontWeight_normalized++;
-        touched = true;
-      }
-    }
-  }
-
-  // 5) NEW: Fix style array issues (TS2559)
-  // Convert style={[...]} to style={StyleSheet.flatten([...])}
-  for (const el of jsxElems) {
-    const attrs = el.getAttributes();
-    for (const attr of attrs) {
-      if (!Node.isJsxAttribute(attr)) continue;
-      const attrName = attr.getChildAtIndex(0)?.getText();
-      if (attrName !== "style") continue;
-      const init = attr.getInitializer();
-      if (!init || !Node.isJsxExpression(init)) continue;
-      const expr = init.getExpression();
-      if (!expr) continue;
-
-      if (Node.isArrayLiteralExpression(expr)) {
-        // Check if it's already wrapped
-        const exprText = expr.getText();
-        if (!exprText.includes("StyleSheet.flatten") && exprText.includes("[")) {
-          const flattened = `StyleSheet.flatten(${exprText})`;
-          init.replaceWithText(`{${flattened}}`);
-          stats.style_arrays_flattened++;
-          touched = true;
-          
-          // Add StyleSheet import if needed
-          if (!hasImport("StyleSheet", "react-native")) {
-            addNamedImport("StyleSheet", "react-native");
-          }
-        }
-      }
-    }
-  }
-
-  // 6) NEW: Add override modifiers to class methods (TS4114)
-  const classes = file.getClasses();
-  for (const classDecl of classes) {
-    const methods = classDecl.getMethods();
-    for (const method of methods) {
-      const name = method.getName();
-      const modifiers = method.getModifiers();
-      const hasOverride = modifiers.some(m => m.getKind() === SyntaxKind.OverrideKeyword);
-      
-      // Check if this is a React lifecycle method that needs override
-      const needsOverride = [
-        "componentDidMount",
-        "componentDidUpdate",
-        "componentWillUnmount",
-        "componentDidCatch",
-        "shouldComponentUpdate",
-        "getSnapshotBeforeUpdate",
-        "render",
-      ].includes(name);
-      
-      if (needsOverride && !hasOverride) {
-        method.addModifier("override");
-        stats.override_modifiers_added++;
-        touched = true;
-      }
-    }
-  }
-
-  // 7) NEW: Fix type-only imports (TS1484)
-  const typeImportPatterns = [
-    { name: "PetFormData", from: "../types" },
-    { name: "PhotoData", from: "../types" },
-    { name: "CallData", from: "../types" },
-    { name: "MessageWithReactions", from: "../services/chatService" },
-    { name: "User", from: "../types" },
-    { name: "ReactNode", from: "react" },
-  ];
-
-  for (const pattern of typeImportPatterns) {
-    const importDecl = imports.find(d => {
-      const namedImports = d.getNamedImports();
-      return namedImports.some(ni => ni.getName() === pattern.name);
-    });
-
-    if (importDecl) {
-      const firstImport = importDecl.getFirstChildByKind(SyntaxKind.ImportKeyword);
-      const namedImports = importDecl.getNamedImports();
-      
-      // Check if we should make this a type-only import
-      const shouldBeTypeOnly = namedImports.some(ni => {
-        const name = ni.getName();
-        // Check usage in file - if only used as types
-        const usages = file.getDescendantsOfKind(SyntaxKind.Identifier);
-        let hasNonTypeUsage = false;
-        
-        for (const usage of usages) {
-          if (usage.getText() === name) {
-            const parent = usage.getParent();
-            // If used in type position, it's fine
-            if (!Node.isTypeNode(parent) && !Node.isTypeReference(parent)) {
-              hasNonTypeUsage = true;
-              break;
-            }
-          }
-        }
-        
-        return !hasNonTypeUsage;
-      });
-
-      if (shouldBeTypeOnly && firstImport) {
-        const typeKeyword = importDecl.getFirstChildByKind(SyntaxKind.TypeKeyword);
-        if (!typeKeyword) {
-          importDecl.getNamedImports()[0].insertText(0, "type ");
-          stats.type_imports_fixed++;
-          touched = true;
-        }
-      }
-    }
-  }
-
-  // 8) NEW: Fix missing React import when ReactNode is used
-  if (file.getDescendantsOfKind(SyntaxKind.Identifier).some(n => n.getText() === "ReactNode")) {
-    const hasReactImport = imports.some(d => isFromModule(d, "react"));
-    if (!hasReactImport) {
-      addNamedImport("ReactNode", "react");
-      stats.module_imports_fixed++;
-    }
-  }
-
-  // 9) NEW: Add StyleSheet import when needed (for array flattening)
-  const needsStyleSheet = file.getDescendantsOfKind(SyntaxKind.Identifier)
-    .some(n => n.getText() === "StyleSheet" && !n.getDefinitionNodes().length);
-  
-  if (needsStyleSheet && !hasImport("StyleSheet", "react-native")) {
-    addNamedImport("StyleSheet", "react-native");
-    stats.module_imports_fixed++;
-  }
-
-  // 10) NEW: Remove duplicate attributes (TS17001)
-  for (const el of jsxElems) {
-    const attrs = el.getAttributes();
-    const seenAttrs = new Set<string>();
-    
-    for (const attr of attrs) {
-      if (Node.isJsxAttribute(attr)) {
-        const name = attr.getChildAtIndex(0)?.getText();
-        if (name && seenAttrs.has(name)) {
-          attr.remove();
-          stats.duplicate_attrs_removed++;
-          touched = true;
-        } else if (name) {
-          seenAttrs.add(name);
-        }
-      }
-    }
-  }
-
-  if (touched) stats.filesTouched++;
-  return touched;
 }
 
-/** Main */
-(async function run() {
+function applySpacingAndRadii(sf: SourceFile, report: FileReport) {
+  // Binary expressions for spacing hacks like spacing.lg * 2
+  sf.forEachDescendant((node) => {
+    if (node.getKind() === SyntaxKind.BinaryExpression) {
+      const t = node.getText();
+      for (const [from, to] of Object.entries(SPACING_MAP)) {
+        if (t === from) {
+          node.replaceWithText(to);
+          recordEdit(report, { kind: 'spacing-hack', from, to, pos: node.getStart() });
+        }
+      }
+    }
+    if (
+      node.getKind() === SyntaxKind.PropertyAccessExpression ||
+      node.getKind() === SyntaxKind.ElementAccessExpression
+    ) {
+      const t = node.getText();
+      for (const [from, to] of Object.entries(SPACING_MAP)) {
+        if (!from.includes('*') && t === from) {
+          node.replaceWithText(to);
+          recordEdit(report, { kind: 'spacing-token', from, to, pos: node.getStart() });
+        }
+      }
+      for (const [from, to] of Object.entries(RADII_MAP)) {
+        if (t === from) {
+          node.replaceWithText(to);
+          recordEdit(report, { kind: 'radii-token', from, to, pos: node.getStart() });
+        }
+      }
+    }
+  });
+}
+
+async function run(cmd: string, args: string[]) {
+  await execa(cmd, args, { stdio: 'inherit' });
+}
+
+(async () => {
+  log(`Enhanced Error Annihilator — dry-run: ${!WRITE}`);
+  log(`Scopes: ${scopes.join(', ')}`);
+  log(`Report dir: ${reportDir}`);
+
+  // Fast wins before AST work
+  try {
+    await run('pnpm', ['-s', 'lint:fix']);
+  } catch {
+    // continue; we still want to proceed
+  }
+
+  const files = await globby(scopes, { gitignore: true, ignore: IGNORE });
   const project = new Project({
-    tsConfigFilePath: fs.existsSync("apps/mobile/tsconfig.json")
-      ? "apps/mobile/tsconfig.json"
-      : undefined,
-    skipAddingFilesFromTsConfig: true,
+    tsConfigFilePath: MONOREPO_TSCONFIG,
+    skipAddingFilesFromTsConfig: false,
+    manipulationSettings: { quoteKind: '"', useTrailingCommas: true },
   });
 
-  const files = await fg([...EAConfig.globs], { absolute: true });
-  if (!files.length) {
-    console.log("No files matched globs:", EAConfig.globs);
-    process.exit(0);
-  }
+  files.forEach((f) => project.addSourceFileAtPathIfExists(f));
 
-  console.log(`🔧 EA Enhanced running in ${DRY_RUN ? 'DRY-RUN' : 'WRITE'} mode...\n`);
-  console.log(`📁 Processing ${files.length} files...\n`);
+  const reports: FileReport[] = [];
+  let changed = 0;
 
-  const sf = project.addSourceFilesAtPaths(files);
-  for (const file of sf) {
+  for (const sf of project.getSourceFiles()) {
+    const report: FileReport = { file: sf.getFilePath(), edits: [] };
+
+    // Import alias normalization
+    replaceModuleSpecifierIfAliased(sf, report);
+
+    // Theme/color conversions
+    applyColorMap(sf, report);
+
+    // Spacing/radii conversions
+    applySpacingAndRadii(sf, report);
+
+    // Imports cleanup
     try {
-      transformFile(file);
-    } catch (error) {
-      console.error(`Error processing ${file.getFilePath()}:`, error);
+      sf.fixMissingImports();
+      sf.organizeImports();
+    } catch {}
+
+    if (report.edits.length > 0) {
+      changed++;
+      reports.push(report);
+      if (WRITE) await sf.save();
     }
   }
 
+  await mkdir(reportDir, { recursive: true });
+  await writeFile(
+    path.join(reportDir, 'ea_report.json'),
+    JSON.stringify({ changedFiles: changed, reports }, null, 2),
+    'utf8',
+  );
+
+  log(
+    WRITE
+      ? `✅ Wrote changes to ${changed} file(s). Report at ${reportDir}/ea_report.json`
+      : `ℹ️ Would change ~${changed} file(s). See report at ${reportDir}/ea_report.json`,
+  );
+
+  // Final format + typecheck (non-fatal)
   if (WRITE) {
-    await project.save();
-    // Prettify changed files
-    for (const file of sf) {
-      if (!file.isSaved()) continue;
-      try {
-        const p = file.getFilePath();
-        const code = fs.readFileSync(p, "utf8");
-        const fmt = await formatFile(p, code).catch(() => code);
-        if (fmt && fmt !== code) fs.writeFileSync(p, fmt, "utf8");
-      } catch (error) {
-        // Skip prettier errors
-      }
-    }
+    try { await run('pnpm', ['-s', 'format']); } catch {}
   }
+  try { await run('pnpm', ['-s', 'mobile:tsc']); } catch {}
 
-  // Report
-  const pad = (k: string) => k.padEnd(35, " ");
-  console.log("🎯 EA Enhanced Summary\n");
-  console.log(pad("Files touched") + stats.filesTouched);
-  console.log(pad("SafeArea edges removed") + stats.safeArea_edges_removed);
-  console.log(pad("Theme semantic→tokens") + stats.theme_semantic_rewrites);
-  console.log(pad("Ionicons glyphMap fixed") + stats.ionicons_glyphMap_fixed);
-  console.log(pad("fontWeight normalized") + stats.fontWeight_normalized);
-  console.log(pad("Animated import added") + stats.animated_import_added);
-  console.log(pad("Style arrays flattened") + stats.style_arrays_flattened);
-  console.log(pad("Override modifiers added") + stats.override_modifiers_added);
-  console.log(pad("Type imports fixed") + stats.type_imports_fixed);
-  console.log(pad("Module imports fixed") + stats.module_imports_fixed);
-  console.log(pad("Duplicate attributes removed") + stats.duplicate_attrs_removed);
-  
-  const total = Object.values(stats).reduce((a, b) => a + b, 0);
-  console.log("\n📊 Total transformations: " + total);
-  
-  if (DRY_RUN) {
-    console.log("\n💡 Run with --write to apply changes:");
-    console.log("   pnpm ea:mobile:write");
-  } else {
-    console.log("\n✅ Changes applied successfully!");
-    console.log("   Run: pnpm --dir apps/mobile tsc --noEmit");
-  }
+  log('Done.');
 })();
-

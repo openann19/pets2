@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 import { useReduceMotion } from '../../hooks/useReducedMotion';
 import { haptic } from '../../ui/haptics';
@@ -89,7 +89,7 @@ export default function ReplyPreviewBar({
       >
         <View style={styles.leading} />
         <View style={styles.iconWrap}>
-          <Ionicons name="arrow-undo" size={16} color={theme.colors.text} />
+          <Ionicons name="arrow-undo" size={16} color={theme.colors.onSurface />
         </View>
 
         <Pressable style={styles.content} onPress={onPress} testID="reply-preview-content">
@@ -116,7 +116,7 @@ export default function ReplyPreviewBar({
           accessibilityLabel={t('dismiss')}
           accessibilityRole="button"
         >
-          <Ionicons name="close" size={16} color={theme.colors.textMuted} />
+          <Ionicons name="close" size={16} color={theme.colors.onMuted} />
         </Pressable>
       </Animated.View>
     </GestureDetector>
@@ -145,12 +145,12 @@ const makeStyles = (theme: any) =>
     iconWrap: { width: 20, alignItems: 'center' },
     content: { flex: 1, gap: 2 },
     author: {
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       fontSize: 12,
       fontWeight: '600',
     },
     snippet: {
-      color: theme.colors.text,
+      color: theme.colors.onSurface
       fontSize: 14,
       fontWeight: '500',
     },

@@ -8,7 +8,7 @@ import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useTheme } from "@/theme";
 import type { AppTheme } from "@/theme";
-import type { Theme } from "@/theme/unified-theme";
+import type { Theme } from "@/theme";
 
 function __makeStyles_styles(theme: AppTheme) {
   return StyleSheet.create({

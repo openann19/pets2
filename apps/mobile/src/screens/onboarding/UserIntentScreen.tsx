@@ -2,14 +2,13 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
   StatusBar,
   InteractionManager,
 } from "react-native";
@@ -24,10 +23,8 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
-
-const { width } = Dimensions.get("window");
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 
 type OnboardingStackParamList = {
   UserIntent: undefined;
@@ -53,6 +50,8 @@ const ELITE_TIMING_CONFIG = {
 };
 
 const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [selectedIntent, setSelectedIntent] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -157,7 +156,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
     <View style={styles.container}>
       {/* Elite Background Gradient */}
       <LinearGradient
-        colors={["#fef7ff", "#f3e8ff", "#e9d5ff"]}
+        colors={theme.palette?.gradients?.primary ?? [theme.colors.bg, theme.colors.bg]}
         style={styles.backgroundGradient}
       />
 
@@ -206,10 +205,12 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                   <LinearGradient
                     colors={
                       selectedIntent === "adopt"
-                        ? ["#fdf2f8", "#fce7f3", "#fbcfe8"]
-                        : ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)"]
+                        ? theme.palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]
+                        : [theme.colors.surface + "E6", theme.colors.surface + "B3"]
                     }
                     style={styles.cardGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                   >
                     <BlurView
                       intensity={selectedIntent === "adopt" ? 30 : 15}
@@ -217,7 +218,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={[theme.colors.primary[500], theme.colors.primary[700]}
+                          colors={theme.palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>🏠</Text>
@@ -276,10 +277,12 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                   <LinearGradient
                     colors={
                       selectedIntent === "list"
-                        ? ["#f0f9ff", "#e0f2fe", "#bae6fd"]
-                        : ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)"]
+                        ? theme.palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]
+                        : [theme.colors.surface + "E6", theme.colors.surface + "B3"]
                     }
                     style={styles.cardGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                   >
                     <BlurView
                       intensity={selectedIntent === "list" ? 30 : 15}
@@ -287,7 +290,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={[theme.colors.secondary[500], theme.colors.secondary[600]}
+                          colors={theme.palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>📝</Text>
@@ -348,196 +351,197 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  // === CONTAINER & LAYOUT ===
-  container: {
-    flex: 1,
-    position: "relative",
-  },
-  backgroundGradient: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    minHeight: "100%",
-  },
+function makeStyles(theme: AppTheme) {
+  return {
+    // === CONTAINER & LAYOUT ===
+    container: {
+      flex: 1,
+      position: "relative" as const,
+    },
+    backgroundGradient: {
+      position: "absolute" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+    safeArea: {
+      flex: 1,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+    },
+    content: {
+      flex: 1,
+      justifyContent: "center" as const,
+    },
 
-  // === ELITE HEADER ===
-  header: {
-    alignItems: "center",
-    marginBottom: 48,
-  },
-  logoContainer: {
-    borderRadius: 24,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginBottom: 24,
-    overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.3)",
-  },
-  logo: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#7c3aed",
-    textAlign: "center",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: theme.colors.neutral[800],
-    textAlign: "center",
-    marginBottom: 16,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-    lineHeight: 26,
-    paddingHorizontal: 24,
-    fontWeight: "500",
-  },
+    // === ELITE HEADER ===
+    header: {
+      alignItems: "center" as const,
+      marginBottom: theme.spacing["2xl"],
+    },
+    logoContainer: {
+      borderRadius: theme.radii.lg,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      marginBottom: theme.spacing.lg,
+      overflow: "hidden" as const,
+      backgroundColor: theme.colors.surface + "4D",
+    },
+    logo: {
+      fontSize: 28,
+      fontWeight: "800" as const,
+      color: theme.colors.primary,
+      textAlign: "center" as const,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: "800" as const,
+      color: theme.colors.onSurface,
+      textAlign: "center" as const,
+      marginBottom: theme.spacing.md,
+      letterSpacing: -0.5,
+    },
+    subtitle: {
+      fontSize: 18,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+      lineHeight: 26,
+      paddingHorizontal: theme.spacing.lg,
+      fontWeight: "500" as const,
+    },
 
-  // === ELITE INTENT CARDS ===
-  intentCards: {
-    gap: 24,
-    marginBottom: 40,
-  },
-  intentCard: {
-    width: "100%",
-  },
-  cardButton: {
-    borderRadius: 24,
-    overflow: "hidden",
-    shadowColor: "#7c3aed",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 12,
-  },
-  selectedCard: {
-    shadowOpacity: 0.25,
-    shadowRadius: 32,
-    elevation: 16,
-  },
-  cardGradient: {
-    borderRadius: 24,
-  },
-  cardBlur: {
-    padding: 28,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-  },
+    // === ELITE INTENT CARDS ===
+    intentCards: {
+      gap: theme.spacing.lg,
+      marginBottom: theme.spacing.xl,
+    },
+    intentCard: {
+      width: "100%" as const,
+    },
+    cardButton: {
+      borderRadius: theme.radii.lg,
+      overflow: "hidden" as const,
+      shadowColor: theme.colors.primary,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.15,
+      shadowRadius: 24,
+      elevation: 12,
+    },
+    selectedCard: {
+      shadowOpacity: 0.25,
+      shadowRadius: 32,
+      elevation: 16,
+    },
+    cardGradient: {
+      borderRadius: theme.radii.lg,
+    },
+    cardBlur: {
+      padding: theme.spacing["2xl"],
+      borderRadius: theme.radii.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border + "33",
+    },
 
-  // === CARD CONTENT ===
-  cardIcon: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  iconGradient: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  cardEmoji: {
-    fontSize: 32,
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: theme.colors.neutral[800],
-    textAlign: "center",
-    marginBottom: 16,
-    letterSpacing: -0.3,
-  },
-  cardDescription: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-    lineHeight: 24,
-    marginBottom: 24,
-    fontWeight: "500",
-    paddingHorizontal: 8,
-  },
+    // === CARD CONTENT ===
+    cardIcon: {
+      alignItems: "center" as const,
+      marginBottom: theme.spacing.lg,
+    },
+    iconGradient: {
+      width: 72,
+      height: 72,
+      borderRadius: theme.radii.full,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 6,
+    },
+    cardEmoji: {
+      fontSize: 32,
+    },
+    cardTitle: {
+      fontSize: 24,
+      fontWeight: "700" as const,
+      color: theme.colors.onSurface,
+      textAlign: "center" as const,
+      marginBottom: theme.spacing.md,
+      letterSpacing: -0.3,
+    },
+    cardDescription: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+      lineHeight: 24,
+      marginBottom: theme.spacing.lg,
+      fontWeight: "500" as const,
+      paddingHorizontal: theme.spacing.xs,
+    },
 
-  // === FEATURE LIST ===
-  cardFeatures: {
-    alignItems: "stretch",
-    gap: 12,
-  },
-  featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.4)",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-  },
-  featureBullet: {
-    fontSize: 16,
-    marginRight: 12,
-    width: 20,
-    textAlign: "center",
-  },
-  featureText: {
-    fontSize: 15,
-    color: theme.colors.neutral[700],
-    fontWeight: "600",
-    flex: 1,
-    lineHeight: 20,
-  },
+    // === FEATURE LIST ===
+    cardFeatures: {
+      alignItems: "stretch" as const,
+      gap: theme.spacing.sm,
+    },
+    featureItem: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      backgroundColor: theme.colors.surface + "66",
+      borderRadius: theme.radii.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border + "4D",
+    },
+    featureBullet: {
+      fontSize: 16,
+      marginRight: theme.spacing.sm,
+      width: 20,
+      textAlign: "center" as const,
+    },
+    featureText: {
+      fontSize: 15,
+      color: theme.colors.onSurface,
+      fontWeight: "600" as const,
+      flex: 1,
+      lineHeight: 20,
+    },
 
-  // === ELITE FOOTER ===
-  additionalOptions: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  footerBlur: {
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-    overflow: "hidden",
-  },
-  optionsTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#7c3aed",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  optionsSubtext: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    textAlign: "center",
-    lineHeight: 22,
-    fontWeight: "500",
-  },
-});
+    // === ELITE FOOTER ===
+    additionalOptions: {
+      alignItems: "center" as const,
+      marginTop: theme.spacing.lg,
+    },
+    footerBlur: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      borderRadius: theme.radii.lg,
+      backgroundColor: theme.colors.surface + "33",
+      borderWidth: 1,
+      borderColor: theme.colors.border + "4D",
+      overflow: "hidden" as const,
+    },
+    optionsTitle: {
+      fontSize: 18,
+      fontWeight: "700" as const,
+      color: theme.colors.primary,
+      marginBottom: theme.spacing.sm,
+      textAlign: "center" as const,
+    },
+    optionsSubtext: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+      lineHeight: 22,
+      fontWeight: "500" as const,
+    },
+  };
+}
 
 export default UserIntentScreen;

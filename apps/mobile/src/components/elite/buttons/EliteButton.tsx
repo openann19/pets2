@@ -29,7 +29,7 @@ import {
 import { Colors, Spacing, BorderRadius, GlobalStyles } from "../../../styles/GlobalStyles";
 import { getPremiumGradients } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
-import { useTheme } from '../../../theme/Provider';
+import { useTheme } from "@/theme";
 
 /**
  * EliteButton Component

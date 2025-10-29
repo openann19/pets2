@@ -2,7 +2,6 @@ import React from "react";
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import Animated from "react-native-reanimated";
 
-import { Theme } from "../../../theme/unified-theme";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 

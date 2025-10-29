@@ -3,7 +3,7 @@ import { logger } from "@pawfectmatch/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -13,10 +13,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 import { premiumAPI } from "../services/api";
-import { Theme } from '../theme/unified-theme';
+import type { AppTheme } from "@/theme";
 
 type ManageSubscriptionScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -45,7 +45,8 @@ interface SubscriptionData {
 const ManageSubscriptionScreen = ({
   navigation,
 }: ManageSubscriptionScreenProps): React.JSX.Element => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
   const [subscription, setSubscription] = useState<SubscriptionData | null>(
     null,
   );
@@ -143,14 +144,14 @@ const ManageSubscriptionScreen = ({
       <SafeAreaView
         style={StyleSheet.flatten([
           styles.container,
-          { backgroundColor: colors.background },
+          { backgroundColor: theme.colors.bg }, // Replaced theme.colors.background
         ])}
       >
         <View style={styles.loadingContainer}>
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: theme.colors.onSurface }, // Replaced theme.colors.text
             ])}
           >
             Loading subscription...
@@ -164,7 +165,7 @@ const ManageSubscriptionScreen = ({
     <SafeAreaView
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.background },
+        { backgroundColor: theme.colors.bg }, // Replaced theme.colors.background
       ])}
     >
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -172,7 +173,7 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.header,
-            { backgroundColor: colors.card },
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
           ])}
         >
           <TouchableOpacity
@@ -182,12 +183,12 @@ const ManageSubscriptionScreen = ({
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
           </TouchableOpacity>
           <Text
             style={StyleSheet.flatten([
               styles.headerTitle,
-              { color: colors.text },
+              { color: theme.colors.onSurface }, // Replaced theme.colors.text
             ])}
           >
             Manage Subscription
@@ -199,25 +200,25 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.section,
-            { backgroundColor: colors.card },
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
           ])}
         >
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: theme.colors.onSurface }, // Replaced theme.colors.text
             ])}
           >
             Current Plan
           </Text>
 
           <View style={styles.planInfo}>
-            <Ionicons name="star" size={30} color={colors.primary} />
+            <Ionicons name="star" size={30} color={theme.colors.primary} />
             <View style={styles.planDetails}>
               <Text
                 style={StyleSheet.flatten([
                   styles.planName,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 {typeof subscription?.plan === "object"
@@ -230,8 +231,8 @@ const ManageSubscriptionScreen = ({
                   {
                     color:
                       subscription?.status === "active"
-                        ? colors.success
-                        : colors.error,
+                        ? theme.colors.success
+                        : theme.colors.danger, // Replaced theme.colors.error
                   },
                 ])}
               >
@@ -246,7 +247,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingLabel,
-                    { color: colors.textSecondary },
+                    { color: theme.colors.onMuted }, // Replaced theme.colors.onSurfaceecondary
                   ])}
                 >
                   Billing Period:
@@ -254,7 +255,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingValue,
-                    { color: colors.text },
+                    { color: theme.colors.onSurface }, // Replaced theme.colors.text
                   ])}
                 >
                   {typeof subscription?.plan === "object"
@@ -267,7 +268,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingLabel,
-                    { color: colors.textSecondary },
+                    { color: theme.colors.onMuted }, // Replaced theme.colors.onSurfaceecondary
                   ])}
                 >
                   Next Billing Date:
@@ -275,7 +276,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingValue,
-                    { color: colors.text },
+                    { color: theme.colors.onSurface }, // Replaced theme.colors.text
                   ])}
                 >
                   {subscription?.nextBillingDate || "N/A"}
@@ -286,7 +287,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingLabel,
-                    { color: colors.textSecondary },
+                    { color: theme.colors.onMuted }, // Replaced theme.colors.onSurfaceecondary
                   ])}
                 >
                   Amount:
@@ -294,7 +295,7 @@ const ManageSubscriptionScreen = ({
                 <Text
                   style={StyleSheet.flatten([
                     styles.billingValue,
-                    { color: colors.text },
+                    { color: theme.colors.onSurface }, // Replaced theme.colors.text
                   ])}
                 >
                   $
@@ -311,13 +312,13 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.section,
-            { backgroundColor: colors.card },
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
           ])}
         >
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: theme.colors.onSurface }, // Replaced theme.colors.text
             ])}
           >
             Actions
@@ -334,7 +335,7 @@ const ManageSubscriptionScreen = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.actionButtonText,
-                  { color: colors.error },
+                  { color: theme.colors.danger }, // Replaced theme.colors.error
                 ])}
               >
                 Cancel Subscription
@@ -344,7 +345,7 @@ const ManageSubscriptionScreen = ({
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.actionButton,
-                { backgroundColor: colors.primary },
+                { backgroundColor: theme.colors.primary },
               ])}
                testID="ManageSubscriptionScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.navigate("Premium")}
             >
@@ -362,7 +363,7 @@ const ManageSubscriptionScreen = ({
             <Text
               style={StyleSheet.flatten([
                 styles.actionButtonText,
-                { color: colors.text },
+                { color: theme.colors.onSurface }, // Replaced theme.colors.text
               ])}
             >
               Restore Purchases
@@ -374,13 +375,13 @@ const ManageSubscriptionScreen = ({
         <View
           style={StyleSheet.flatten([
             styles.section,
-            { backgroundColor: colors.card },
+            { backgroundColor: theme.colors.surface }, // Replaced theme.colors.card
           ])}
         >
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: theme.colors.onSurface }, // Replaced theme.colors.text
             ])}
           >
             Premium Features
@@ -391,12 +392,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 Unlimited swipes
@@ -407,12 +408,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 See who liked you
@@ -423,12 +424,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 Priority matching
@@ -439,12 +440,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 Advanced filters
@@ -455,12 +456,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 AI bio generation
@@ -471,12 +472,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 Photo analysis
@@ -487,12 +488,12 @@ const ManageSubscriptionScreen = ({
               <Ionicons
                 name="checkmark-circle"
                 size={20}
-                color={colors.success}
+                color={theme.colors.success}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.featureText,
-                  { color: colors.text },
+                  { color: theme.colors.onSurface }, // Replaced theme.colors.text
                 ])}
               >
                 Compatibility insights
@@ -505,110 +506,112 @@ const ManageSubscriptionScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    fontSize: 16,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.1)",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  section: {
-    margin: 20,
-    borderRadius: 15,
-    padding: 20,
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 20,
-  },
-  planInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  planDetails: {
-    marginLeft: 15,
-  },
-  planName: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 5,
-  },
-  planStatus: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  billingInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.1)",
-  },
-  billingLabel: {
-    fontSize: 16,
-  },
-  billingValue: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  actionButton: {
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.1)",
-  },
-  cancelButton: {
-    backgroundColor: "rgba(255,0,0,0.1)",
-    borderColor: "rgba(255,0,0,0.3)",
-  },
-  restoreButton: {
-    backgroundColor: "rgba(0,0,0,0.05)",
-  },
-  actionButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  featuresList: {
-    gap: 15,
-  },
-  featureItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  featureText: {
-    fontSize: 16,
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    content: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      fontSize: 16,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: theme.spacing.lg ?? 20,
+      paddingVertical: theme.spacing.md ?? 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+    },
+    section: {
+      margin: theme.spacing.lg ?? 20,
+      borderRadius: theme.radii?.lg ?? theme.radius?.md ?? 15,
+      padding: theme.spacing.lg ?? 20,
+      shadowColor: theme.palette?.overlay ?? theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "700",
+      marginBottom: theme.spacing.lg ?? 20,
+    },
+    planInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.lg ?? 20,
+    },
+    planDetails: {
+      marginLeft: theme.spacing.md ?? 15,
+    },
+    planName: {
+      fontSize: 20,
+      fontWeight: "700",
+      marginBottom: theme.spacing.xs ?? 5,
+    },
+    planStatus: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    billingInfo: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingVertical: theme.spacing.md ?? 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    billingLabel: {
+      fontSize: 16,
+    },
+    billingValue: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    actionButton: {
+      padding: theme.spacing.md ?? 15,
+      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 10,
+      alignItems: "center",
+      marginBottom: theme.spacing.md ?? 15,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    cancelButton: {
+      backgroundColor: theme.colors.danger + "1A",
+      borderColor: theme.colors.danger + "4D",
+    },
+    restoreButton: {
+      backgroundColor: theme.colors.bg + "0D",
+    },
+    actionButtonText: {
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    featuresList: {
+      gap: theme.spacing.md ?? 15,
+    },
+    featureItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm ?? 10,
+    },
+    featureText: {
+      fontSize: 16,
+    },
+  });
+}
 
 export default ManageSubscriptionScreen;

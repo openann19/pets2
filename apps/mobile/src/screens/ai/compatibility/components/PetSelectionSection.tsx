@@ -164,18 +164,18 @@ export const PetSelectionSection: React.FC<PetSelectionSectionProps> = ({
     >
       <View style={styles.petInfo}>
         <View style={styles.petAvatar}>
-          <Text style={[styles.petAvatarText, { color: colors.onSurface }]>
+          <Text style={[styles.petAvatarText, { color: colors.onSurface }]}>
             {item.name.charAt(0)}
           </Text>
         </View>
         <View style={styles.petDetails}>
-          <Text style={[styles.petName, { color: colors.onSurface }]>{item.name}</Text>
-          <Text style={[styles.petBreed, { color: colors.onMuted }]>
+          <Text style={[styles.petName, { color: colors.onSurface }]}>{item.name}</Text>
+          <Text style={[styles.petBreed, { color: colors.onMuted }]}>
             {item.breed} • {item.age} years old
           </Text>
           <View style={styles.petTags}>
             {item.temperament.slice(0, 2).map((trait, index) => (
-              <View key={index} style={[styles.petTag, { backgroundColor: colors.primary }]>
+              <View key={index} style={[styles.petTag, { backgroundColor: colors.primary }]}>
                 <Text style={styles.petTagText}>{trait}</Text>
               </View>
             ))}
@@ -196,7 +196,7 @@ export const PetSelectionSection: React.FC<PetSelectionSectionProps> = ({
 
   return (
     <View style={styles.selectionSection}>
-      <Text style={[styles.sectionTitle, { color: colors.onSurface }]>
+      <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
         Select Pets to Compare
       </Text>
 

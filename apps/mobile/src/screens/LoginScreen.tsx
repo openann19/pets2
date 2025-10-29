@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLoginScreen } from "../hooks/screens/useLoginScreen";
 import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 type LoginScreenProps = RootStackScreenProps<"Login">;
@@ -60,7 +60,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     },
     tagline: {
       fontSize: 16,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     form: {
       backgroundColor: theme.colors.bgElevated,
@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       fontWeight: "bold",
       marginBottom: 24,
       textAlign: "center",
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
     inputGroup: {
       marginBottom: 16,
@@ -86,7 +86,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       fontSize: 14,
       fontWeight: "600",
       marginBottom: 6,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
     input: {
       backgroundColor: theme.colors.bgElevated,
@@ -95,7 +95,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
     errorText: {
       color: theme.colors.danger,
@@ -128,7 +128,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       marginTop: 16,
     },
     registerText: {
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     registerLink: {
       color: theme.colors.primary as string,

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
-import { useTheme } from "../../../theme/Provider";
+import { useTheme } from "@/theme";
 import HapticSwitch from "../../../components/micro/HapticSwitch";
 
 interface SettingsSectionProps {
@@ -25,7 +25,7 @@ const SettingsSection = React.memo<SettingsSectionProps>(({
     sectionTitle: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginBottom: 12,
       paddingLeft: 4,
     },
@@ -48,12 +48,12 @@ const SettingsSection = React.memo<SettingsSectionProps>(({
     settingTitle: {
       fontSize: 16,
       fontWeight: "600",
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginBottom: 4,
     },
     settingDescription: {
       fontSize: 14,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
   }), [theme]);
 
@@ -116,7 +116,7 @@ export const ProfileSettingsSection: React.FC<ProfileSettingsSectionProps> = Rea
     sectionTitle: {
       fontSize: 18,
       fontWeight: "bold",
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginBottom: 12,
       paddingLeft: 4,
     },
@@ -139,12 +139,12 @@ export const ProfileSettingsSection: React.FC<ProfileSettingsSectionProps> = Rea
     settingTitle: {
       fontSize: 16,
       fontWeight: "600",
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
       marginBottom: 4,
     },
     settingDescription: {
       fontSize: 14,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
   }), [theme]);
 

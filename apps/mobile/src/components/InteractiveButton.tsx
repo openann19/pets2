@@ -21,13 +21,12 @@ import {
   useGlowEffect,
 } from "../hooks/useMotionSystem";
 
-import { Theme } from '../theme/unified-theme';
 // import {
 //   DynamicColors,
 //   EnhancedShadows,
 //   SemanticColors,
 //   MotionSystem,
-// } from '../theme/Provider'; // === PROJECT HYPERION: INTERACTIVE BUTTON COMPONENT ===
+// } from "@/theme"; // === PROJECT HYPERION: INTERACTIVE BUTTON COMPONENT ===
 
 export type InteractiveButtonVariant =
   | "primary"

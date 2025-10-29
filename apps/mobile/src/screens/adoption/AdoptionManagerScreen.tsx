@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   Text,
@@ -28,7 +28,8 @@ import {
   Shadows,
 } from "../../animation";
 import type { RootStackScreenProps } from "../../navigation/types";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
 import { useAdoptionManagerScreen } from "../../hooks/screens/useAdoptionManagerScreen";
 import type { PetListing as PetListingFromHook } from "../../hooks/screens/useAdoptionManagerScreen";
 
@@ -146,6 +147,10 @@ const normalizeApplication = (application: unknown): AdoptionApplication => {
 };
 
 const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
+  const theme = useTheme();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { colors } = theme;
+  
   // Use the extracted hook for all business logic
   const {
     activeTab,
@@ -364,19 +369,19 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
 
           <View style={styles.eliteApplicationDetails}>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="mail" size={16} color={Colors.neutral[500]} />
+              <Ionicons name="mail" size={16} color={colors.onMuted} />
               <Text style={styles.eliteDetailText}>{app.applicantEmail}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="home" size={16} color={Colors.neutral[500]} />
+              <Ionicons name="home" size={16} color={colors.onMuted} />
               <Text style={styles.eliteDetailText}>{app.livingSpace}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="star" size={16} color={Colors.neutral[500]} />
+              <Ionicons name="star" size={16} color={colors.onMuted} />
               <Text style={styles.eliteDetailText}>{app.experience}</Text>
             </View>
             <View style={styles.eliteDetailRow}>
-              <Ionicons name="people" size={16} color={Colors.neutral[500]} />
+              <Ionicons name="people" size={16} color={colors.onMuted} />
               <Text style={styles.eliteDetailText}>
                 {app.references} references
               </Text>
@@ -459,7 +464,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
             <Ionicons
               name="list"
               size={20}
-              color={activeTab === "listings" ? Colors.neutral[0] : Colors.neutral[500]}
+              color={activeTab === "listings" ? colors.onSurface : colors.onMuted}
             />
             <Text
               style={StyleSheet.flatten([
@@ -486,7 +491,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
               name="document-text"
               size={20}
               color={
-                activeTab === "applications" ? Colors.neutral[0] : Colors.neutral[500]
+                activeTab === "applications" ? colors.onSurface : colors.onMuted
               }
             />
             <Text
@@ -507,8 +512,8 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.primary[300]}
-            colors={[Colors.primary[300]}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
           />
         }
       >
@@ -575,218 +580,228 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
   );
 };
 
-const styles = {
-  // === BASIC STYLES ===
-  tabContent: {
-    flex: 1,
-    padding: sp("md"),
-  },
-  listingCard: {
-    backgroundColor: Colors.neutral[0],
-    borderRadius: 12,
-    padding: sp("md"),
-    marginBottom: sp("sm"),
-    borderWidth: 1,
-    borderColor: Colors.neutral[700],
-    ...Shadows.sm,
-  },
-  listingHeader: {
-    flexDirection: "row" as const,
-    justifyContent: "space-between" as const,
-    alignItems: "flex-start" as const,
-    marginBottom: sp("sm"),
-  },
-  petInfo: {
-    flex: 1,
-  },
-  petName: {
-    fontSize: 18,
-    fontWeight: "600" as const,
-    color: Colors.neutral[900],
-    marginBottom: 4,
-  },
-  petBreed: {
-    fontSize: 14,
-    color: Colors.neutral[600],
-  },
-  statusBadge: {
-    paddingHorizontal: sp("sm"),
-    paddingVertical: sp("3"),
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.neutral[700],
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600" as const,
-  },
-  listingStats: {
-    flexDirection: "row" as const,
-    justifyContent: "space-around" as const,
-    paddingVertical: sp("sm"),
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: Colors.neutral[700],
-    marginVertical: sp("sm"),
-  },
-  stat: {
-    alignItems: "center" as const,
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: "700" as const,
-    color: Colors.primary[300],
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: Colors.neutral[600],
-    textAlign: "center" as const,
-  },
-  listingActions: {
-    flexDirection: "row" as const,
-    gap: sp("sm"),
-  },
-  actionButton: {
-    flex: 1,
-    paddingVertical: sp("sm"),
-    paddingHorizontal: sp("lg"),
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.neutral[700],
-    backgroundColor: Colors.neutral[0],
-    alignItems: "center" as const,
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: "600" as const,
-    color: Colors.neutral[700],
-  },
-  primaryButton: {
-    backgroundColor: Colors.primary[600],
-    borderColor: Colors.primary[600],
-  },
-  primaryButtonText: {
-    color: Colors.neutral[0],
-  },
+function makeStyles(theme: AppTheme) {
+  return {
+    // === BASIC STYLES ===
+    tabContent: {
+      flex: 1,
+      padding: theme.spacing.md ?? 16,
+    },
+    listingCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
+      padding: theme.spacing.md ?? 16,
+      marginBottom: theme.spacing.sm ?? 12,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    listingHeader: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "flex-start" as const,
+      marginBottom: theme.spacing.sm ?? 12,
+    },
+    petInfo: {
+      flex: 1,
+    },
+    petName: {
+      fontSize: 18,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: 4,
+    },
+    petBreed: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+    },
+    statusBadge: {
+      paddingHorizontal: theme.spacing.sm ?? 12,
+      paddingVertical: theme.spacing.xs ?? 6,
+      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    statusText: {
+      fontSize: 12,
+      fontWeight: "600" as const,
+    },
+    listingStats: {
+      flexDirection: "row" as const,
+      justifyContent: "space-around" as const,
+      paddingVertical: theme.spacing.sm ?? 12,
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: theme.colors.border,
+      marginVertical: theme.spacing.sm ?? 12,
+    },
+    stat: {
+      alignItems: "center" as const,
+    },
+    statNumber: {
+      fontSize: 20,
+      fontWeight: "700" as const,
+      color: theme.colors.primary,
+      marginBottom: 4,
+    },
+    statLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      textAlign: "center" as const,
+    },
+    listingActions: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.sm ?? 12,
+    },
+    actionButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.sm ?? 12,
+      paddingHorizontal: theme.spacing.lg ?? 24,
+      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+      alignItems: "center" as const,
+    },
+    actionButtonText: {
+      fontSize: 14,
+      fontWeight: "600" as const,
+      color: theme.colors.onMuted,
+    },
+    primaryButton: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    primaryButtonText: {
+      color: theme.colors.onSurface,
+    },
 
-  // === ELITE TAB SYSTEM ===
-  tabContainer: {
-    flexDirection: "row" as const,
-    paddingHorizontal: sp("xl"),
-    paddingVertical: sp("lg"),
-    gap: sp("sm"),
-  },
-  eliteTab: {
-    flex: 1,
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    paddingVertical: sp("lg"),
-    paddingHorizontal: sp("md"),
-    borderRadius: 16,
-    backgroundColor: Colors.neutral[50],
-    borderWidth: 1,
-    borderColor: Colors.neutral[700],
-    gap: sp("xs"),
-  },
-  eliteActiveTab: {
-    backgroundColor: Colors.primary[600],
-    borderColor: Colors.primary[600],
-    ...Shadows.md,
-  },
-  eliteTabText: {
-    fontSize: 14,
-    fontWeight: "600" as const,
-    color: Colors.neutral[500],
-  },
-  eliteActiveTabText: {
-    color: Colors.neutral[0],
-  },
+    // === ELITE TAB SYSTEM ===
+    tabContainer: {
+      flexDirection: "row" as const,
+      paddingHorizontal: theme.spacing.xl ?? 24,
+      paddingVertical: theme.spacing.lg ?? 20,
+      gap: theme.spacing.sm ?? 12,
+    },
+    eliteTab: {
+      flex: 1,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingVertical: theme.spacing.lg ?? 20,
+      paddingHorizontal: theme.spacing.md ?? 16,
+      borderRadius: theme.radii?.lg ?? theme.radius?.lg ?? 16,
+      backgroundColor: theme.colors.surfaceAlt ?? theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      gap: theme.spacing.xs ?? 8,
+    },
+    eliteActiveTab: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 6,
+      elevation: 8,
+    },
+    eliteTabText: {
+      fontSize: 14,
+      fontWeight: "600" as const,
+      color: theme.colors.onMuted,
+    },
+    eliteActiveTabText: {
+      color: theme.colors.onSurface,
+    },
 
-  // === ELITE LISTING STYLES ===
-  eliteListingHeader: {
-    flexDirection: "row" as const,
-    alignItems: "flex-start" as const,
-    marginBottom: sp("lg"),
-  },
-  eliteStatusBadge: {
-    paddingHorizontal: sp("sm"),
-    paddingVertical: sp("3"),
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.neutral[700],
-  },
-  eliteStatusText: {
-    fontSize: 12,
-    fontWeight: "600" as const,
-  },
-  eliteStatsContainer: {
-    flexDirection: "row" as const,
-    justifyContent: "space-around" as const,
-    paddingVertical: sp("lg"),
-    marginVertical: sp("lg"),
-    backgroundColor: Colors.neutral[50],
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.neutral[700],
-  },
-  eliteStat: {
-    alignItems: "center" as const,
-  },
-  eliteStatNumber: {
-    fontSize: 20,
-    fontWeight: "700" as const,
-    color: Colors.primary[300],
-    marginBottom: sp("2"),
-  },
-  eliteStatLabel: {
-    fontSize: 12,
-    color: Colors.neutral[500],
-    fontWeight: "500" as const,
-  },
-  eliteActionsContainer: {
-    flexDirection: "row" as const,
-    marginTop: sp("lg"),
-    gap: sp("sm"),
-  },
+    // === ELITE LISTING STYLES ===
+    eliteListingHeader: {
+      flexDirection: "row" as const,
+      alignItems: "flex-start" as const,
+      marginBottom: theme.spacing.lg ?? 20,
+    },
+    eliteStatusBadge: {
+      paddingHorizontal: theme.spacing.sm ?? 12,
+      paddingVertical: theme.spacing.xs ?? 6,
+      borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    eliteStatusText: {
+      fontSize: 12,
+      fontWeight: "600" as const,
+    },
+    eliteStatsContainer: {
+      flexDirection: "row" as const,
+      justifyContent: "space-around" as const,
+      paddingVertical: theme.spacing.lg ?? 20,
+      marginVertical: theme.spacing.lg ?? 20,
+      backgroundColor: theme.colors.surfaceAlt ?? theme.colors.surface,
+      borderRadius: theme.radii?.md ?? theme.radius?.md ?? 12,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    eliteStat: {
+      alignItems: "center" as const,
+    },
+    eliteStatNumber: {
+      fontSize: 20,
+      fontWeight: "700" as const,
+      color: theme.colors.primary,
+      marginBottom: theme.spacing.xs ?? 8,
+    },
+    eliteStatLabel: {
+      fontSize: 12,
+      color: theme.colors.onMuted,
+      fontWeight: "500" as const,
+    },
+    eliteActionsContainer: {
+      flexDirection: "row" as const,
+      marginTop: theme.spacing.lg ?? 20,
+      gap: theme.spacing.sm ?? 12,
+    },
 
-  // === ELITE APPLICATION STYLES ===
-  eliteApplicationHeader: {
-    flexDirection: "row" as const,
-    alignItems: "flex-start" as const,
-    marginBottom: sp("lg"),
-  },
-  eliteApplicationDetails: {
-    gap: sp("sm"),
-    marginBottom: sp("lg"),
-  },
-  eliteDetailRow: {
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    gap: sp("sm"),
-    paddingVertical: sp("3"),
-    paddingHorizontal: sp("sm"),
-    backgroundColor: Colors.neutral[100],
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.neutral[200],
-  },
-  eliteDetailText: {
-    fontSize: 14,
-    color: Colors.neutral[600],
-    fontWeight: "500" as const,
-    flex: 1,
-  },
+    // === ELITE APPLICATION STYLES ===
+    eliteApplicationHeader: {
+      flexDirection: "row" as const,
+      alignItems: "flex-start" as const,
+      marginBottom: theme.spacing.lg ?? 20,
+    },
+    eliteApplicationDetails: {
+      gap: theme.spacing.sm ?? 12,
+      marginBottom: theme.spacing.lg ?? 20,
+    },
+    eliteDetailRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: theme.spacing.sm ?? 12,
+      paddingVertical: theme.spacing.xs ?? 6,
+      paddingHorizontal: theme.spacing.sm ?? 12,
+      backgroundColor: theme.colors.surfaceAlt ?? theme.colors.surface,
+      borderRadius: theme.radii?.sm ?? theme.radius?.sm ?? 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    eliteDetailText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      fontWeight: "500" as const,
+      flex: 1,
+    },
 
-  // === MODAL STYLES ===
-  statusOptions: {
-    gap: sp("sm"),
-    marginVertical: sp("lg"),
-  },
-  statusOptionButton: {
-    marginBottom: sp("3"),
-  },
-};
+    // === MODAL STYLES ===
+    statusOptions: {
+      gap: theme.spacing.sm ?? 12,
+      marginVertical: theme.spacing.lg ?? 20,
+    },
+    statusOptionButton: {
+      marginBottom: theme.spacing.xs ?? 6,
+    },
+  };
+}
 
 export default AdoptionManagerScreen;

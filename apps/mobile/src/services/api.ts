@@ -70,16 +70,20 @@ const isFormData = (value: unknown): value is FormData => {
   return typeof FormData !== "undefined" && value instanceof FormData;
 };
 
+/**
+ * Ensure graceful API response handling with proper error messages
+ * Mobile-safe: Provides typed error handling with null-safe checks
+ */
 const ensureSuccess = <T>(
   response: ApiClientResponse<T>,
   endpoint: string,
 ): T => {
   if (!response.success) {
-    throw new Error(
-      response.error ?? response.message ?? `Request to ${endpoint} failed`,
-    );
+    const errorMessage = response.error ?? response.message ?? `Request to ${endpoint} failed`;
+    throw new Error(errorMessage);
   }
 
+  // Type-safe null check for response data
   if (response.data === undefined || response.data === null) {
     throw new Error(`Request to ${endpoint} failed: No data returned`);
   }

@@ -33,7 +33,6 @@ export function QuickReplies({
         onPress={() => {
           onReplySelect(item);
         }}
-        style={[styles.quickReply]}
       />
     </FadeInUp>
   );
@@ -63,19 +62,5 @@ const styles = StyleSheet.create({
   },
   repliesList: {
     paddingHorizontal: 4,
-  },
-  quickReply: {
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    shadowColor: "#0a0a0a",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
   },
 });

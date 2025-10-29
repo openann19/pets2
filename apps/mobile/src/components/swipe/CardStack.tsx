@@ -8,7 +8,6 @@ import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import type { Pet } from '@pawfectmatch/core';
 import ModernSwipeCard from '../ModernSwipeCard';
-import { Theme } from '../../theme/unified-theme';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

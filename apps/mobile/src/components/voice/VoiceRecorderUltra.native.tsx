@@ -3,7 +3,6 @@ import { Alert, PanResponder, Platform, StyleSheet, Text, TouchableOpacity, View
 import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
-import { Theme } from "../../theme/unified-theme";
 import { VoiceWaveform, generateWaveformFromAudio } from "../chat/VoiceWaveform";
 
 type SendFn = (matchId: string, form: FormData) => Promise<void>;

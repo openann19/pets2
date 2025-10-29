@@ -1,7 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { SettingItemComponent } from "./SettingItemComponent";
-import { Theme } from '../../theme/unified-theme';
 
 interface SettingItem {
   id: string;

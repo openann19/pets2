@@ -21,7 +21,7 @@ import { haptic } from '../ui/haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useEditProfileScreen } from "../hooks/screens/useEditProfileScreen";
 import type { ProfileData } from "../hooks/screens/useEditProfileScreen";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 import { AdvancedPhotoEditor } from "../components/photo/AdvancedPhotoEditor";
 import { useTranslation } from 'react-i18next';
 

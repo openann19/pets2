@@ -186,20 +186,23 @@ export function useSocketWithStatus(): UseSocketReturn {
   return { socket, isConnected, error };
 }
 
-// Emit helper
+// Emit helper with type-safe null handling
 export function useSocketEmit(): (
   event: string,
-  data?: Record<string, unknown>,
+  data?: Record<string, unknown> | null,
 ) => boolean {
   const socket = useSocket();
 
-  function emit(event: string, data?: Record<string, unknown>): boolean {
-    if (socket && socket.connected) {
-      socket.emit(event, data);
-      return true;
+  function emit(event: string, data?: Record<string, unknown> | null): boolean {
+    if (!socket || !socket.connected) {
+      logger.warn("Socket not connected, cannot emit:", { event });
+      return false;
     }
-    logger.warn("Socket not connected, cannot emit:", { event });
-    return false;
+    
+    // Ensure data is never null - use empty object as fallback
+    const safeData = data ?? {};
+    socket.emit(event, safeData);
+    return true;
   }
 
   return emit;

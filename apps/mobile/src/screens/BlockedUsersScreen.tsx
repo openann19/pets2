@@ -14,9 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { useBlockedUsersScreen } from "../hooks/screens/useBlockedUsersScreen";
-import { Theme } from '../theme/unified-theme';
 
 interface BlockedUser {
   id: string;
@@ -110,7 +109,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userName,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {item.name}
@@ -118,7 +117,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.userEmail,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               {item.email}
@@ -126,7 +125,7 @@ function BlockedUsersScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.blockedDate,
-                { color: colors.textSecondary },
+                { color: colors.onSurfaceecondary },
               ])}
             >
               Blocked {new Date(item.blockedAt).toLocaleDateString()}
@@ -135,7 +134,7 @@ function BlockedUsersScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.blockReason,
-                  { color: colors.error },
+                  { color: colors.danger },
                 ])}
               >
                 Reason: {item.reason}

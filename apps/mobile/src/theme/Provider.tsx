@@ -9,7 +9,8 @@ import { useColorScheme } from "react-native";
 import type { ColorScheme } from "./types";
 import { getLightTheme, getDarkTheme, type AppTheme } from "./resolve";
 
-const ThemeCtx = createContext<AppTheme>(getLightTheme());
+export const ThemeContext = createContext<AppTheme>(getLightTheme());
+const ThemeCtx = ThemeContext;
 
 export const ThemeProvider: React.FC<{
   scheme?: ColorScheme;

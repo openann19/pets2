@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react-native";
 import React from "react";
 
-import { ThemeProvider } from "../../theme/Provider";
+import { ThemeProvider } from "@/theme";
 import ChatScreen from "../ChatScreen";
 
 // Mock the route params

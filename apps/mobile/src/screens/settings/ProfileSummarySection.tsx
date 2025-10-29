@@ -12,8 +12,7 @@ import {
   CardConfigs,
 } from "../../components/Advanced/AdvancedCard";
 
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface ProfileSummarySectionProps {
   onEditProfile: () => void;
@@ -41,7 +40,7 @@ export function ProfileSummarySection({
       >
         <View style={styles.profileCardContent}>
           <View style={styles.profileAvatar}>
-            <Ionicons name="person" size={32} color={theme.colors.neutral[400]} }/>
+            <Ionicons name="person" size={32} color={theme.colors.neutral[400]} />
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>John Doe</Text>

@@ -122,7 +122,7 @@ export function DoubleTapLike({
       <Animated.View style={[styles.container, style, containerStyle]}>
         {children}
         <Animated.View style={[styles.heartOverlay, heartStyle]}>
-          <Text style={[styles.heart, { fontSize: heartConfig.size, color: heartConfig.color }]>
+          <Text style={[styles.heart, { fontSize: heartConfig.size, color: heartConfig.color }]}>
             ❤️
           </Text>
         </Animated.View>

@@ -18,8 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useTheme } from "../../theme/Provider";
-import { Theme } from '../../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -87,7 +86,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Ionicons name="close" size={24} color={colors.textMuted} />
+                <Ionicons name="close" size={24} color={colors.onMuted} />
               </TouchableOpacity>
             </View>
             {/* Content */}
@@ -118,7 +117,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.title,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Unlock {feature}
@@ -127,7 +126,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
               <Text
                 style={StyleSheet.flatten([
                   styles.description,
-                  { color: colors.textMuted },
+                  { color: colors.onMuted },
                 ])}
               >
                 {description}
@@ -144,7 +143,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textMuted },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Unlimited access to all features
@@ -159,7 +158,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textMuted },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Priority customer support
@@ -174,7 +173,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.featureText,
-                      { color: colors.textMuted },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Advanced AI matching
@@ -211,7 +210,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({
                   <Text
                     style={StyleSheet.flatten([
                       styles.laterButtonText,
-                      { color: colors.textMuted },
+                      { color: colors.onMuted },
                     ])}
                   >
                     Maybe Later

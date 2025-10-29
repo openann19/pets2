@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
-import { Theme } from '../../theme/unified-theme';
 
 export interface VoiceWaveformProps {
   waveform: number[];

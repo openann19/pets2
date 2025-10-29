@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { ComponentProps } from "react";
 import { logger } from "@pawfectmatch/core";
 import { AdvancedCard, CardConfigs } from "../../../components/Advanced/AdvancedCard";
-import { useTheme } from '../../../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface MenuItem {
   title: string;
@@ -75,7 +75,7 @@ export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
       borderRadius: 12,
       padding: 16,
       marginBottom: 12,
-      shadowColor: theme.colors.text,
+      shadowColor: theme.colors.onSurface,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -98,7 +98,7 @@ export const ProfileMenuSection: React.FC<ProfileMenuSectionProps> = React.memo(
       flex: 1,
       fontSize: 16,
       fontWeight: "600" as const,
-      color: theme.colors.text,
+      color: theme.colors.onSurface,
     },
   });
 

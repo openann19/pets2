@@ -12,7 +12,6 @@ import {
   within,
 } from '@testing-library/react-native';
 import { PetInfoForm } from '../PetInfoForm';
-import { Theme } from '../../../theme/unified-theme';
 
 // Mock the theme
 jest.mock('../../../theme/unified-theme', () => ({

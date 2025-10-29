@@ -10,7 +10,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { useBubbleRetryShake } from "../../hooks/useBubbleRetryShake";
 import { useSwipeToReply } from "../../hooks/useSwipeToReply";
 import { useHighlightPulse } from "../../hooks/useHighlightPulse";

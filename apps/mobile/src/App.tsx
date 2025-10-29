@@ -8,7 +8,7 @@ import { I18nextProvider } from "react-i18next";
 
 import i18n from "./i18n";
 import { queryClient } from "./config/queryClient";
-import { ThemeProvider } from "./theme/Provider";
+import { ThemeProvider } from "@/theme";
 import type { RootStackParamList } from "./navigation/types";
 import AdminNavigator from "./navigation/AdminNavigator";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";

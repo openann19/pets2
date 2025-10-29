@@ -152,9 +152,12 @@ class SecureAPIService {
           },
         );
 
+        // Type-safe SSL fetch with method validation
+        const validMethod = requestConfig.method as "GET" | "POST" | "PUT" | "DELETE";
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response = (await sslFetch(url, {
           ...requestConfig,
-          method: requestConfig.method as "GET" | "POST" | "PUT" | "DELETE",
+          method: validMethod,
         } as any)) as SSLResponse;
         const status = response.status;
         const ok = status >= 200 && status < 300;

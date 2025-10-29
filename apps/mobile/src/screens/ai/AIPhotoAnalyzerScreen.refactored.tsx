@@ -7,7 +7,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import type { AIScreenProps } from "../../navigation/types";
 import { useAIPhotoAnalyzerScreen } from "../../hooks/screens/useAIPhotoAnalyzerScreen";
@@ -61,11 +61,11 @@ const AIPhotoAnalyzerScreen = ({
             onPress={handleGoBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
           </TouchableOpacity>
           
           <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
           >
             AI Photo Analyzer
           </Text>
@@ -79,8 +79,8 @@ const AIPhotoAnalyzerScreen = ({
           onPickImage={pickImage}
           onTakePhoto={takePhoto}
           colors={{
-            text: colors.text,
-            textSecondary: colors.textSecondary,
+            text: colors.onSurface
+            textSecondary: colors.onSurfaceecondary,
             card: colors.card,
             primary: colors.primary,
             secondary: colors.secondary,

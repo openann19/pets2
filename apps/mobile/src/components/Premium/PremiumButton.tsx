@@ -22,7 +22,6 @@ import {
   type TextStyle,
 } from "react-native";
 
-import { Theme } from '../../theme/unified-theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

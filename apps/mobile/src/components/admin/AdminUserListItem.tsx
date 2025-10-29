@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { ThemeColors } from "../../theme/Provider";
+import type { ThemeColors } from "@/theme";
 import type { AdminUserStatus } from "../../services/adminUsersService";
 
 type IoniconName =
@@ -102,7 +102,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
             <Text
               style={StyleSheet.flatten([
                 styles.avatarText,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {data.initials}
@@ -112,7 +112,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
             <Text
               style={StyleSheet.flatten([
                 styles.fullName,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {data.fullName}
@@ -120,7 +120,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
             <Text
               style={StyleSheet.flatten([
                 styles.email,
-                { color: colors.textMuted },
+                { color: colors.onMuted },
               ])}
             >
               {data.email}
@@ -208,7 +208,7 @@ export const AdminUserListItem = memo<AdminUserListItemProps>(
           />
           <MetricBadge
             icon="calendar"
-            color={colors.gray500}
+            color={theme.palette.neutral[500]}
             label={data.createdDateLabel}
           />
         </View>

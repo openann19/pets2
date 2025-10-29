@@ -5,7 +5,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { useAnimatedStyle, interpolate, Extrapolation } from "react-native-reanimated";
 
-import { useTheme } from "../../../theme/Provider";
+import { useTheme } from "@/theme";
 
 const { width: screenWidth } = Dimensions.get("window");
 

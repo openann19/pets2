@@ -20,8 +20,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import type { AIScreenProps } from "../../navigation/types";
 import { logger } from "../../services/logger";
@@ -305,10 +304,10 @@ export default function AIPhotoAnalyzerScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
           </TouchableOpacity>
           <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
           >
             AI Photo Analyzer
           </Text>
@@ -338,7 +337,7 @@ export default function AIPhotoAnalyzerScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Select Pet Photo
@@ -368,11 +367,11 @@ export default function AIPhotoAnalyzerScreen({
                 { backgroundColor: colors.card },
               ])}
             >
-              <Ionicons name="camera" size={48} color={colors.textSecondary} />
+              <Ionicons name="camera" size={48} color={colors.onSurfaceecondary} />
               <Text
                 style={StyleSheet.flatten([
                   styles.placeholderText,
-                  { color: colors.textSecondary },
+                  { color: colors.onSurfaceecondary },
                 ])}
               >
                 No photo selected
@@ -436,7 +435,7 @@ export default function AIPhotoAnalyzerScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.sectionTitle,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Analysis Results
@@ -454,7 +453,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Breed Detection
@@ -464,7 +463,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.breedPrimary,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   {analysisResult.breed.primary}
@@ -473,7 +472,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.breedSecondary,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Mixed with {analysisResult.breed.secondary}
@@ -494,7 +493,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.confidenceText,
-                    { color: colors.textSecondary },
+                    { color: colors.onSurfaceecondary },
                   ])}
                 >
                   {Math.round(analysisResult.breed.confidence * 100)}%
@@ -519,7 +518,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Health Assessment
@@ -538,7 +537,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.healthScoreLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Overall Health
@@ -551,7 +550,7 @@ export default function AIPhotoAnalyzerScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.healthIndicatorLabel,
-                            { color: colors.textSecondary },
+                            { color: colors.onSurfaceecondary },
                           ])}
                         >
                           {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -559,7 +558,7 @@ export default function AIPhotoAnalyzerScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.healthIndicatorValue,
-                            { color: colors.text },
+                            { color: colors.onSurface},
                           ])}
                         >
                           {value}
@@ -587,7 +586,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Photo Quality
@@ -609,7 +608,7 @@ export default function AIPhotoAnalyzerScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.qualityFactorLabel,
-                            { color: colors.textSecondary },
+                            { color: colors.onSurfaceecondary },
                           ])}
                         >
                           {factor.charAt(0).toUpperCase() + factor.slice(1)}
@@ -628,7 +627,7 @@ export default function AIPhotoAnalyzerScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.qualityFactorScore,
-                            { color: colors.text },
+                            { color: colors.onSurface},
                           ])}
                         >
                           {score}
@@ -652,7 +651,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Characteristics
@@ -663,7 +662,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Age
@@ -671,7 +670,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analysisResult.characteristics.age}
@@ -681,7 +680,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Size
@@ -689,7 +688,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analysisResult.characteristics.size}
@@ -699,7 +698,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Temperament
@@ -724,7 +723,7 @@ export default function AIPhotoAnalyzerScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.characteristicLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Features
@@ -760,7 +759,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Suggestions
@@ -777,7 +776,7 @@ export default function AIPhotoAnalyzerScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.suggestionText,
-                        { color: colors.text },
+                        { color: colors.onSurface},
                       ])}
                     >
                       {suggestion}
@@ -799,7 +798,7 @@ export default function AIPhotoAnalyzerScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.resultTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Photo Tags

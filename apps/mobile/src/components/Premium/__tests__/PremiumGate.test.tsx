@@ -3,8 +3,7 @@ import {} from "@testing-library/react-native";
 import "@testing-library/jest-native/extend-expect";
 import PremiumGate from "../../Premium/PremiumGate";
 import {} from "@pawfectmatch/core";
-import {} from "../../../theme/Provider";
-import { Theme } from '../../../theme/unified-theme';
+import {} from "@/theme";
 
 // Mock dependencies
 jest.mock("@pawfectmatch/core");

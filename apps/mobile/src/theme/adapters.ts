@@ -77,21 +77,61 @@ export interface ExtendedColors extends SemanticColors {
  * but this function maintains type compatibility and ensures all
  * properties are available even if the core theme changes.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getExtendedColors(theme: Theme | any): ExtendedColors {
   const { colors } = theme;
   
-  // Since extended colors are now in the core theme, we just return them
-  // with type assertion to satisfy ExtendedColors interface
+  // Map semantic tokens to legacy property names for backward compatibility
+  // New semantic API: bg, surface, onSurface, onMuted, onBg, primary, danger, etc.
+  // Legacy API: text, textSecondary, error, background, etc.
   return {
     ...colors,
-    // Ensure all aliases are available
-    background: colors.background ?? colors.bg,
+    // Core semantic mappings
+    bg: colors.bg ?? colors.background,
     surface: colors.surface ?? colors.bg,
-    surfaceElevated: colors.surfaceElevated ?? colors.bgElevated,
-    card: colors.card ?? colors.bgElevated,
-    textSecondary: colors.textSecondary ?? colors.textMuted,
-    interactive: colors.interactive ?? colors.primary,
-    feedback: colors.feedback ?? colors.success,
+    onSurface: colors.onSurface ?? colors.text,
+    onMuted: colors.onMuted ?? colors.textMuted,
+    onBg: colors.onBg ?? colors.textInverse,
+    
+    // Legacy text aliases (maps to semantic)
+    text: colors.onSurface ?? colors.text,
+    textSecondary: colors.onMuted ?? colors.textMuted ?? colors.textSecondary,
+    textMuted: colors.onMuted ?? colors.onMuted,
+    
+    // Legacy background aliases (maps to semantic)
+    background: colors.bg ?? colors.background,
+    surfaceElevated: colors.surface ?? colors.surfaceElevated ?? colors.bgElevated,
+    card: colors.surface ?? colors.card ?? colors.bgElevated,
+    bgElevated: colors.surface ?? colors.bgElevated,
+    
+    // Status color mappings
+    error: colors.danger ?? colors.error,
+    danger: colors.danger ?? colors.error,
+    info: colors.info,
+    success: colors.success,
+    warning: colors.warning,
+    
+    // Primary mappings
+    primary: colors.primary,
+    onPrimary: colors.onPrimary ?? colors.primaryText,
+    primaryText: colors.onPrimary ?? colors.primaryText,
+    
+    // Fallback legacy fields (if still in theme)
+    white: colors.onPrimary ?? '#FFFFFF',
+    black: colors.black ?? '#000000',
+    secondary: colors.secondary ?? colors.primary,
+    interactive: colors.primary ?? colors.interactive,
+    feedback: colors.success ?? colors.feedback,
+    
+    // Neutral scale access (from palette if available)
+    neutral: colors.neutral ?? theme.palette?.neutral,
+    
+    // Glass effects (if still needed)
+    glass: colors.glass,
+    glassLight: colors.glassLight,
+    glassWhite: colors.glassWhite,
+    glassDark: colors.glassDark,
+    glassDarkMedium: colors.glassDarkMedium,
   } as ExtendedColors;
 }
 

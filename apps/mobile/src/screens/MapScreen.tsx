@@ -11,7 +11,7 @@ import { ScreenShell } from "../ui/layout/ScreenShell";
 import { AdvancedHeader, HeaderConfigs } from "../components/Advanced/AdvancedHeader";
 import { haptic } from "../ui/haptics";
 import type { RootStackParamList } from "../navigation/types";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 type MapScreenProps = NativeStackScreenProps<RootStackParamList, "Map">;

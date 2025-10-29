@@ -1,12 +1,12 @@
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 /**
  * 📸 PHOTO UPLOAD SECTION
  * Extracted from AIPhotoAnalyzerScreen
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useMemo } from "react";
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { PinchZoomPro } from '../../../components/Gestures/PinchZoomPro';
 import { usePinchMetrics } from '../../../hooks/useInteractionMetrics';
@@ -32,14 +32,16 @@ export function PhotoUploadSection({
   onTakePhoto,
   colors,
 }: PhotoUploadSectionProps) {
+  const theme = useTheme();
   const { startInteraction, endInteraction } = usePinchMetrics();
+  const styles = useMemo(() => makeStyles(theme), [theme]);
 
   return (
     <View style={styles.imageSection}>
       <Text
         style={StyleSheet.flatten([
           styles.sectionTitle,
-          { color: colors.text },
+          { color: colors.onSurface},
         ])}
       >
         Select Pet Photo
@@ -82,14 +84,14 @@ export function PhotoUploadSection({
         <View
           style={StyleSheet.flatten([
             styles.imagePlaceholder,
-            { backgroundColor: colors.card },
+            { backgroundColor: colors.surface },
           ])}
         >
-          <Ionicons name="camera" size={48} color={colors.textSecondary} />
+          <Ionicons name="camera" size={48} color={colors.onMuted} />
           <Text
             style={StyleSheet.flatten([
               styles.placeholderText,
-              { color: colors.textSecondary },
+              { color: colors.onMuted },
             ])}
           >
             No photo selected
@@ -128,64 +130,66 @@ export function PhotoUploadSection({
   );
 }
 
-const styles = StyleSheet.create({
-  imageSection: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
-  },
-  imageContainer: {
-    alignItems: "center",
-  },
-  selectedImage: {
-    width: SCREEN_WIDTH - 32,
-    height: SCREEN_WIDTH - 32,
-    borderRadius: 16,
-    marginBottom: 16,
-  },
-  changeImageButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 8,
-  },
-  changeImageText: {
-    color: theme.colors.neutral[0],
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  imagePlaceholder: {
-    height: SCREEN_WIDTH - 32,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  placeholderText: {
-    fontSize: 16,
-    marginTop: 12,
-    marginBottom: 20,
-  },
-  imageButtons: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  imageButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    gap: 8,
-  },
-  imageButtonText: {
-    color: theme.colors.neutral[0],
-    fontSize: 14,
-    fontWeight: "600",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    imageSection: {
+      marginBottom: 24,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      marginBottom: 16,
+    },
+    imageContainer: {
+      alignItems: "center",
+    },
+    selectedImage: {
+      width: SCREEN_WIDTH - 32,
+      height: SCREEN_WIDTH - 32,
+      borderRadius: 16,
+      marginBottom: 16,
+    },
+    changeImageButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      gap: 8,
+    },
+    changeImageText: {
+      color: theme.colors.onPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    imagePlaceholder: {
+      height: SCREEN_WIDTH - 32,
+      borderRadius: 16,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    placeholderText: {
+      fontSize: 16,
+      marginTop: 12,
+      marginBottom: 20,
+    },
+    imageButtons: {
+      flexDirection: "row",
+      gap: 16,
+    },
+    imageButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 12,
+      gap: 8,
+    },
+    imageButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+  });
+}

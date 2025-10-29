@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { View, Switch, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import { Theme } from "../../theme/unified-theme";
 
 type Props = {
   value: boolean;

@@ -28,7 +28,9 @@ export async function toUploadPart(
 
 /**
  * Convert a file URI to a Blob
- * Only needed for special cases where Blob is required on native
+ * Mobile-safe: Creates a Blob polyfill for React Native using Uint8Array
+ * Only needed for special cases where Blob is required on native platforms
+ * Note: Uses web-only.d.ts type declarations for Blob compatibility
  */
 export async function blobFromUri(
   uri: string,
@@ -52,9 +54,11 @@ export async function blobFromUri(
       byteArrays.push(new Uint8Array(byteNumbers));
     }
     
+    // Blob constructor is available via polyfill in React Native Metro bundler
+    // Type is declared in web-only.d.ts for mobile compatibility
     return new Blob(byteArrays, { type: mime });
   } catch (error) {
-    throw new Error(`Failed to convert URI to Blob: ${error}`);
+    throw new Error(`Failed to convert URI to Blob: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

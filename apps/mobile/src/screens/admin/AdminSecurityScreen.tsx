@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme';
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 
@@ -66,7 +66,8 @@ interface SecurityMetrics {
 export default function AdminSecurityScreen({
   navigation,
 }: AdminScreenProps<"AdminSecurity">): React.JSX.Element {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const { colors } = theme;
   const { user: _user } = useAuthStore();
   const [alerts, setAlerts] = useState<SecurityAlert[]>([]);
   const [filteredAlerts, setFilteredAlerts] = useState<SecurityAlert[]>([]);
@@ -212,11 +213,11 @@ export default function AdminSecurityScreen({
       case "high":
         return theme.colors.warning;
       case "medium":
-        return theme.colors.status.info;
+        return theme.colors.info;
       case "low":
         return theme.colors.success;
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.border;
     }
   };
 
@@ -276,7 +277,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.alertTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   {item.title}
@@ -295,7 +296,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.alertDescription,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {item.description}
@@ -303,7 +304,7 @@ export default function AdminSecurityScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.alertTimestamp,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {formatDate(item.timestamp)}
@@ -322,9 +323,9 @@ export default function AdminSecurityScreen({
                 disabled={isActionLoading}
               >
                 {isActionLoading ? (
-                  <ActivityIndicator size="small" color={theme.colors.neutral[0]} }/>
+                  <ActivityIndicator size="small" color={theme.colors.onSurface} }/>
                 ) : (
-                  <Ionicons name="checkmark" size={16} color={theme.colors.neutral[0]} }/>
+                  <Ionicons name="checkmark" size={16} color={theme.colors.onSurface} }/>
                 )}
               </TouchableOpacity>
 
@@ -337,7 +338,7 @@ export default function AdminSecurityScreen({
                    testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => handleBlockIP(item.id, item.ipAddress!)}
                   disabled={isActionLoading}
                 >
-                  <Ionicons name="ban" size={16} color={theme.colors.neutral[0]} }/>
+                  <Ionicons name="ban" size={16} color={theme.colors.onSurface} }/>
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -350,7 +351,7 @@ export default function AdminSecurityScreen({
             <Text
               style={StyleSheet.flatten([
                 styles.resolvedText,
-                { color: colors.textSecondary },
+                { color: colors.onMuted },
               ])}
             >
               Resolved by {item.resolvedBy} on {formatDate(item.resolvedAt!)}
@@ -362,11 +363,11 @@ export default function AdminSecurityScreen({
         <View style={styles.alertMeta}>
           {item.userEmail ? (
             <View style={styles.metaItem}>
-              <Ionicons name="person" size={14} color={colors.textSecondary} />
+              <Ionicons name="person" size={14} color={colors.onMuted} />
               <Text
                 style={StyleSheet.flatten([
                   styles.metaText,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {item.userEmail}
@@ -375,11 +376,11 @@ export default function AdminSecurityScreen({
           ) : null}
           {item.ipAddress ? (
             <View style={styles.metaItem}>
-              <Ionicons name="globe" size={14} color={colors.textSecondary} />
+              <Ionicons name="globe" size={14} color={colors.onMuted} />
               <Text
                 style={StyleSheet.flatten([
                   styles.metaText,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {item.ipAddress}
@@ -391,12 +392,12 @@ export default function AdminSecurityScreen({
               <Ionicons
                 name="location"
                 size={14}
-                color={colors.textSecondary}
+                color={colors.onMuted}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.metaText,
-                  { color: colors.textSecondary },
+                  { color: colors.onMuted },
                 ])}
               >
                 {item.location}
@@ -421,7 +422,7 @@ export default function AdminSecurityScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading security data...
@@ -446,10 +447,10 @@ export default function AdminSecurityScreen({
           }}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
+          <Ionicons name="arrow-back" size={24} color={colors.onSurface />
         </TouchableOpacity>
         <Text
-          style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+          style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
         >
           Security Dashboard
         </Text>
@@ -462,7 +463,7 @@ export default function AdminSecurityScreen({
              testID="AdminSecurityScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={onRefresh}
             disabled={refreshing}
           >
-            <Ionicons name="refresh" size={20} color={theme.colors.neutral[0]} }/>
+            <Ionicons name="refresh" size={20} color={theme.colors.onSurface} }/>
           </TouchableOpacity>
         </View>
       </View>
@@ -473,7 +474,7 @@ export default function AdminSecurityScreen({
           <Text
             style={StyleSheet.flatten([
               styles.sectionTitle,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Security Overview
@@ -490,7 +491,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Critical
@@ -517,7 +518,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   High
@@ -544,7 +545,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Medium
@@ -571,7 +572,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.metricTitle,
-                    { color: colors.text },
+                    { color: colors.onSurface},
                   ])}
                 >
                   Resolved
@@ -596,7 +597,7 @@ export default function AdminSecurityScreen({
           <Text
             style={StyleSheet.flatten([
               styles.filterLabel,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Severity:
@@ -626,8 +627,8 @@ export default function AdminSecurityScreen({
                       {
                         color:
                           selectedSeverity === severity
-                            ? theme.colors.neutral[0]
-                            : colors.text,
+                            ? theme.colors.onSurface
+                            : colors.onSurface
                       },
                     ])}
                   >
@@ -643,7 +644,7 @@ export default function AdminSecurityScreen({
           <Text
             style={StyleSheet.flatten([
               styles.filterLabel,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Type:
@@ -677,7 +678,7 @@ export default function AdminSecurityScreen({
                 <Text
                   style={StyleSheet.flatten([
                     styles.filterText,
-                    { color: selectedType === type ? theme.colors.neutral[0] : colors.text },
+                    { color: selectedType === type ? theme.colors.onSurface : colors.onSurface},
                   ])}
                 >
                   {type
@@ -769,7 +770,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -829,7 +830,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.onSurface,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -874,7 +875,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   severityText: {
-    color: theme.colors.neutral[0],
+    color: theme.colors.onSurface,
     fontSize: 10,
     fontWeight: "600",
   },

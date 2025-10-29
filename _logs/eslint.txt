@@ -1,0 +1,26 @@
+
+Oops! Something went wrong! :(
+
+ESLint: 8.57.1
+
+Error: Error while loading rule '@typescript-eslint/no-unsafe-assignment': You have used a rule which requires type information, but don't have parserOptions set to generate type information for this file. See https://typescript-eslint.io/getting-started/typed-linting for enabling linting with type information.
+Parser: typescript-eslint/parser
+Occurred while linting /home/ben/Downloads/pets-fresh/apps/mobile/src/index.ts
+    at throwError (/home/ben/Downloads/pets-fresh/node_modules/@typescript-eslint/utils/dist/eslint-utils/getParserServices.js:38:11)
+    at getParserServices (/home/ben/Downloads/pets-fresh/node_modules/@typescript-eslint/utils/dist/eslint-utils/getParserServices.js:27:9)
+    at create (/home/ben/Downloads/pets-fresh/node_modules/@typescript-eslint/eslint-plugin/dist/rules/no-unsafe-assignment.js:73:55)
+    at Object.create (/home/ben/Downloads/pets-fresh/node_modules/@typescript-eslint/utils/dist/eslint-utils/RuleCreator.js:31:20)
+    at createRuleListeners (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:895:21)
+    at /home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:1066:110
+    at Array.forEach (<anonymous>)
+    at runRules (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:1003:34)
+    at Linter._verifyWithFlatConfigArrayAndWithoutProcessors (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:1730:31)
+    at Linter._verifyWithFlatConfigArray (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:1861:21)
+    at Linter.verify (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:1433:65)
+    at Linter.verifyAndFix (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/linter/linter.js:2068:29)
+    at verifyText (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/eslint/flat-eslint.js:478:48)
+    at /home/ben/Downloads/pets-fresh/node_modules/eslint/lib/eslint/flat-eslint.js:853:40
+    at async Promise.all (index 399)
+    at async FlatESLint.lintFiles (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/eslint/flat-eslint.js:808:25)
+    at async Object.execute (/home/ben/Downloads/pets-fresh/node_modules/eslint/lib/cli.js:421:23)
+    at async main (/home/ben/Downloads/pets-fresh/node_modules/eslint/bin/eslint.js:152:22)

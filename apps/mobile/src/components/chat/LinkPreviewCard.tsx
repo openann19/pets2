@@ -6,7 +6,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Theme } from '../../theme/unified-theme';
 import type { LinkPreviewData } from '../../services/linkPreviewService';
 
 export interface LinkPreviewCardProps {

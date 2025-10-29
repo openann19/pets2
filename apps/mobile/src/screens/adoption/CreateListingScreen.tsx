@@ -4,7 +4,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Alert,
   ScrollView,
@@ -16,8 +16,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { request } from "../../services/api";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from '@/theme';
+import type { AppTheme } from '@/theme';
+
+// Runtime theme has radius (not radii) and bgAlt/surfaceAlt in colors
+type RuntimeTheme = AppTheme & { 
+  radius: { xs: number; sm: number; md: number; lg: number; xl: number; '2xl': number; full: number; pill: number; none: number };
+  colors: AppTheme['colors'] & { bgAlt?: string; surfaceAlt?: string };
+};
 
 type AdoptionStackParamList = {
   CreateListing: undefined;
@@ -46,6 +52,10 @@ interface PetFormData {
 }
 
 const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
+  const theme = useTheme();
+  const themeRuntime = theme as RuntimeTheme;
+  const styles = useMemo(() => makeStyles(theme), [theme]);
+  
   const [formData, setFormData] = useState<PetFormData>({
     name: "",
     species: "dog",
@@ -166,12 +176,12 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
             style={styles.backButton}
              testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Create Pet Listing</Text>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.headerButton} testID="CreateListingScreen-button-1" accessibilityLabel="Button" accessibilityRole="button">
-              <Ionicons name="help-circle-outline" size={20} color="#333" />
+              <Ionicons name="help-circle-outline" size={20} color={theme.colors.onSurface} />
             </TouchableOpacity>
           </View>
         </View>
@@ -182,10 +192,10 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
           <BlurView intensity={20} style={styles.sectionCard}>
             <TouchableOpacity style={styles.photoUpload}  testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={addPhoto}>
               <LinearGradient
-                colors={[theme.colors.neutral[100], theme.colors.neutral[200]}
+                colors={[themeRuntime.colors.bgAlt ?? theme.colors.surface, theme.colors.surface]}
                 style={styles.photoUploadGradient}
               >
-                <Ionicons name="camera" size={32} color={theme.colors.neutral[500]} }/>
+                <Ionicons name="camera" size={32} color={theme.colors.onMuted} />
                 <Text style={styles.photoUploadText}>Add Photos</Text>
                 <Text style={styles.photoUploadHint}>
                   Tap to upload pet photos
@@ -216,7 +226,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   handleInputChange("name", value);
                 }}
                 placeholder="Enter pet's name"
-                placeholderTextColor=theme.colors.neutral[400]
+                placeholderTextColor={theme.colors.onMuted}
               />
             </View>
 
@@ -287,7 +297,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                   handleInputChange("breed", value);
                 }}
                 placeholder="Enter breed"
-                placeholderTextColor=theme.colors.neutral[400]
+                placeholderTextColor={theme.colors.onMuted}
               />
             </View>
 
@@ -301,7 +311,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     handleInputChange("age", value);
                   }}
                   placeholder="e.g., 2 years"
-                  placeholderTextColor=theme.colors.neutral[400]
+                  placeholderTextColor={theme.colors.onMuted}
                   keyboardType="numeric"
                 />
               </View>
@@ -347,7 +357,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                 handleInputChange("description", value);
               }}
               placeholder="Tell potential adopters about your pet's personality, habits, and what makes them special..."
-              placeholderTextColor=theme.colors.neutral[400]
+              placeholderTextColor={theme.colors.onMuted}
               multiline
               numberOfLines={6}
               textAlignVertical="top"
@@ -409,7 +419,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
                     ])}
                   >
                     {value && (
-                      <Ionicons name="checkmark" size={16} color={theme.colors.neutral[0]} }/>
+                      <Ionicons name="checkmark" size={16} color={theme.colors.onSurface} />
                     )}
                   </View>
                   <Text style={styles.healthText}>
@@ -433,18 +443,20 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
           >
             <LinearGradient
               colors={
-                isSubmitting ? [theme.colors.neutral[400], theme.colors.neutral[500]] : [theme.colors.primary[500], theme.colors.primary[600]]
+                isSubmitting 
+                  ? [theme.colors.onMuted, theme.colors.onMuted] 
+                  : (theme as any).palette?.gradients?.primary ?? [theme.colors.primary, theme.colors.primary]
               }
               style={styles.submitGradient}
             >
               {isSubmitting ? (
                 <>
-                  <Ionicons name="hourglass" size={20} color={theme.colors.neutral[0]} }/>
+                  <Ionicons name="hourglass" size={20} color={theme.colors.onSurface} />
                   <Text style={styles.submitText}>Creating Listing...</Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="paw" size={20} color={theme.colors.neutral[0]} }/>
+                  <Ionicons name="paw" size={20} color={theme.colors.onSurface} />
                   <Text style={styles.submitText}>Create Listing</Text>
                 </>
               )}
@@ -456,216 +468,223 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: theme.colors.neutral[0],
-    borderBottomWidth: 1,
-    borderBottomColor: "#e9ecef",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  headerButton: {
-    padding: 8,
-  },
-  backButton: {
-    padding: 8,
-  },
-  section: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 12,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    marginBottom: 16,
-  },
-  sectionCard: {
-    borderRadius: 12,
-    overflow: "hidden",
-    padding: 16,
-  },
-  formGroup: {
-    marginBottom: 16,
-  },
-  formRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.neutral[700],
-    marginBottom: 8,
-  },
-  textInput: {
-    backgroundColor: theme.colors.neutral[0],
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[300],
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: theme.colors.neutral[800],
-  },
-  textArea: {
-    minHeight: 120,
-    textAlignVertical: "top",
-  },
-  radioGroup: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  radioButton: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[300],
-    alignItems: "center",
-  },
-  radioButtonActive: {
-    backgroundColor: theme.colors.primary[500],
-    borderColor: theme.colors.primary[500],
-  },
-  radioText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: theme.colors.neutral[500],
-  },
-  radioTextActive: {
-    color: theme.colors.neutral[0],
-  },
-  photoUpload: {
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  photoUploadGradient: {
-    padding: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoUploadText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: theme.colors.neutral[700],
-    marginTop: 12,
-  },
-  photoUploadHint: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    marginTop: 4,
-  },
-  photoPreview: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: "#f0f9ff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#bae6fd",
-  },
-  photoCount: {
-    fontSize: 14,
-    color: "#0369a1",
-    fontWeight: "500",
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "#f8f9fa",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-  },
-  tagActive: {
-    backgroundColor: "#fdf2f8",
-    borderColor: theme.colors.primary[500],
-  },
-  tagText: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    fontWeight: "500",
-  },
-  tagTextActive: {
-    color: theme.colors.primary[500],
-  },
-  healthGrid: {
-    gap: 12,
-  },
-  healthItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  healthCheckbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: theme.colors.neutral[300],
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  healthCheckboxActive: {
-    backgroundColor: theme.colors.success,
-    borderColor: theme.colors.success,
-  },
-  healthText: {
-    fontSize: 16,
-    color: theme.colors.neutral[700],
-    fontWeight: "500",
-  },
-  submitButton: {
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: theme.colors.neutral[950],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  submitButtonDisabled: {
-    opacity: 0.7,
-  },
-  submitGradient: {
-    padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  submitText: {
-    color: theme.colors.neutral[0],
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
+function makeStyles(theme: AppTheme) {
+  // Type assertion for runtime theme structure (radius exists at runtime, but types mismatch)
+  const themeRuntime = theme as RuntimeTheme;
+  
+  return {
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.bg,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      padding: theme.spacing.lg,
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+    },
+    headerActions: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.sm,
+    },
+    headerButton: {
+      padding: theme.spacing.xs,
+    },
+    backButton: {
+      padding: theme.spacing.xs,
+    },
+    section: {
+      padding: theme.spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "bold" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.sm,
+    },
+    sectionSubtitle: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginBottom: theme.spacing.md,
+    },
+    sectionCard: {
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+      padding: theme.spacing.md,
+    },
+    formGroup: {
+      marginBottom: theme.spacing.md,
+    },
+    formRow: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.sm,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    textInput: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: themeRuntime.radius.sm,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+      fontSize: 16,
+      color: theme.colors.onSurface,
+    },
+    textArea: {
+      minHeight: 120,
+      textAlignVertical: "top" as const,
+    },
+    radioGroup: {
+      flexDirection: "row" as const,
+      gap: theme.spacing.xs,
+    },
+    radioButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: themeRuntime.colors.bgAlt ?? theme.colors.surface,
+      borderRadius: themeRuntime.radius.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      alignItems: "center" as const,
+    },
+    radioButtonActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    radioText: {
+      fontSize: 14,
+      fontWeight: "500" as const,
+      color: theme.colors.onMuted,
+    },
+    radioTextActive: {
+      color: theme.colors.onSurface,
+    },
+    photoUpload: {
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+    },
+    photoUploadGradient: {
+      padding: theme.spacing["2xl"],
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    photoUploadText: {
+      fontSize: 18,
+      fontWeight: "600" as const,
+      color: theme.colors.onSurface,
+      marginTop: theme.spacing.sm,
+    },
+    photoUploadHint: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      marginTop: theme.spacing.xs,
+    },
+    photoPreview: {
+      marginTop: theme.spacing.md,
+      padding: theme.spacing.sm,
+      backgroundColor: theme.colors.surface,
+      borderRadius: themeRuntime.radius.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    photoCount: {
+      fontSize: 14,
+      color: theme.colors.onSurface,
+      fontWeight: "500" as const,
+    },
+    tagsContainer: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: theme.spacing.xs,
+    },
+    tag: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      backgroundColor: themeRuntime.colors.bgAlt ?? theme.colors.surface,
+      borderRadius: themeRuntime.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    tagActive: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    tagText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      fontWeight: "500" as const,
+    },
+    tagTextActive: {
+      color: theme.colors.onSurface,
+    },
+    healthGrid: {
+      gap: theme.spacing.sm,
+    },
+    healthItem: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: theme.spacing.sm,
+    },
+    healthCheckbox: {
+      width: 24,
+      height: 24,
+      borderRadius: themeRuntime.radius.xs,
+      borderWidth: 2,
+      borderColor: theme.colors.border,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+    },
+    healthCheckboxActive: {
+      backgroundColor: theme.colors.success,
+      borderColor: theme.colors.success,
+    },
+    healthText: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+      fontWeight: "500" as const,
+    },
+    submitButton: {
+      borderRadius: themeRuntime.radius.md,
+      overflow: "hidden" as const,
+      shadowColor: theme.colors.border,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    submitButtonDisabled: {
+      opacity: 0.7,
+    },
+    submitGradient: {
+      padding: theme.spacing.lg,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: theme.spacing.xs,
+    },
+    submitText: {
+      color: theme.colors.onSurface,
+      fontSize: 18,
+      fontWeight: "bold" as const,
+    },
+  };
+}
+
+export default CreateListingScreen;

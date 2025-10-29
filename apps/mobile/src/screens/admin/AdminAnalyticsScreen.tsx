@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from '@/theme'";
 import type { AdminScreenProps } from "../../navigation/types";
 import { _adminAPI as adminAPI } from "../../services/api";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -237,7 +237,7 @@ export default function AdminAnalyticsScreen({
       case "down":
         return theme.colors.danger;
       default:
-        return theme.colors.neutral[500];
+        return theme.colors.border;
     }
   };
 
@@ -266,7 +266,7 @@ export default function AdminAnalyticsScreen({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading analytics...
@@ -301,10 +301,10 @@ export default function AdminAnalyticsScreen({
             }}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
           </TouchableOpacity>
           <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
           >
             Analytics Dashboard
           </Text>
@@ -329,7 +329,7 @@ export default function AdminAnalyticsScreen({
                     styles.periodText,
                     {
                       color:
-                        selectedPeriod === period ? theme.colors.neutral[0] : colors.text,
+                        selectedPeriod === period ? theme.colors.border : colors.onSurface
                     },
                   ])}
                 >
@@ -347,7 +347,7 @@ export default function AdminAnalyticsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Key Metrics
@@ -364,7 +364,7 @@ export default function AdminAnalyticsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
-                        { color: colors.text },
+                        { color: colors.onSurface},
                       ])}
                     >
                       Users
@@ -373,7 +373,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.metricValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatNumber(analytics.users.total)}
@@ -407,7 +407,7 @@ export default function AdminAnalyticsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
-                        { color: colors.text },
+                        { color: colors.onSurface},
                       ])}
                     >
                       Matches
@@ -416,7 +416,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.metricValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatNumber(analytics.matches.total)}
@@ -446,11 +446,11 @@ export default function AdminAnalyticsScreen({
                   ])}
                 >
                   <View style={styles.metricHeader}>
-                    <Ionicons name="chatbubble" size={20} color={theme.colors.secondary[500]} }/>
+                    <Ionicons name="chatbubble" size={20} color={theme.theme.colors.primary[500]} }/>
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
-                        { color: colors.text },
+                        { color: colors.onSurface},
                       ])}
                     >
                       Messages
@@ -459,7 +459,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.metricValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatNumber(analytics.messages.total)}
@@ -493,7 +493,7 @@ export default function AdminAnalyticsScreen({
                     <Text
                       style={StyleSheet.flatten([
                         styles.metricTitle,
-                        { color: colors.text },
+                        { color: colors.onSurface},
                       ])}
                     >
                       Revenue
@@ -502,7 +502,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.metricValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatCurrency(analytics.revenue.totalRevenue)}
@@ -510,7 +510,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.metricSubtext,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     MRR:{" "}
@@ -525,7 +525,7 @@ export default function AdminAnalyticsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Engagement
@@ -540,7 +540,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     DAU
@@ -548,7 +548,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatNumber(analytics.engagement.dailyActiveUsers)}
@@ -563,7 +563,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     WAU
@@ -571,7 +571,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatNumber(analytics.engagement.weeklyActiveUsers)}
@@ -586,7 +586,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     MAU
@@ -594,7 +594,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatNumber(analytics.engagement.monthlyActiveUsers)}
@@ -609,7 +609,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Session
@@ -617,7 +617,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.engagementValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {Math.round(analytics.engagement.averageSessionDuration)}m
@@ -631,7 +631,7 @@ export default function AdminAnalyticsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Revenue Analytics
@@ -646,7 +646,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     ARPU
@@ -654,7 +654,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {formatCurrency(analytics.revenue.averageRevenuePerUser)}
@@ -669,7 +669,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Conversion
@@ -677,7 +677,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analytics.revenue.conversionRate.toFixed(1)}%
@@ -692,7 +692,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.revenueLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Churn
@@ -714,7 +714,7 @@ export default function AdminAnalyticsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Security Overview
@@ -730,7 +730,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Suspicious Logins
@@ -738,7 +738,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analytics.security.suspiciousLogins}
@@ -754,7 +754,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Blocked IPs
@@ -762,7 +762,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analytics.security.blockedIPs}
@@ -774,11 +774,11 @@ export default function AdminAnalyticsScreen({
                     { backgroundColor: colors.card },
                   ])}
                 >
-                  <Ionicons name="flag" size={20} color={theme.colors.secondary[500]} }/>
+                  <Ionicons name="flag" size={20} color={theme.theme.colors.primary[500]} }/>
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Reported Content
@@ -786,7 +786,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analytics.security.reportedContent}
@@ -802,7 +802,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityLabel,
-                      { color: colors.textSecondary },
+                      { color: colors.onSurfaceecondary },
                     ])}
                   >
                     Banned Users
@@ -810,7 +810,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.securityValue,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {analytics.security.bannedUsers}
@@ -824,7 +824,7 @@ export default function AdminAnalyticsScreen({
               <Text
                 style={StyleSheet.flatten([
                   styles.sectionTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 Top Performers
@@ -839,7 +839,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.performersTitle,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     Top Users
@@ -851,7 +851,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerRank,
-                            { color: colors.textSecondary },
+                            { color: colors.onSurfaceecondary },
                           ])}
                         >
                           #{index + 1}
@@ -859,7 +859,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerName,
-                            { color: colors.text },
+                            { color: colors.onSurface},
                           ])}
                         >
                           {user.name}
@@ -867,7 +867,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerStats,
-                            { color: colors.textSecondary },
+                            { color: colors.onSurfaceecondary },
                           ])}
                         >
                           {user.matches} matches
@@ -884,7 +884,7 @@ export default function AdminAnalyticsScreen({
                   <Text
                     style={StyleSheet.flatten([
                       styles.performersTitle,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     Top Pets
@@ -896,7 +896,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerRank,
-                            { color: colors.textSecondary },
+                            { color: colors.onSurfaceecondary },
                           ])}
                         >
                           #{index + 1}
@@ -904,7 +904,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerName,
-                            { color: colors.text },
+                            { color: colors.onSurface},
                           ])}
                         >
                           {pet.name}
@@ -912,7 +912,7 @@ export default function AdminAnalyticsScreen({
                         <Text
                           style={StyleSheet.flatten([
                             styles.performerStats,
-                            { color: colors.textSecondary },
+                            { color: colors.onSurfaceecondary },
                           ])}
                         >
                           {pet.matches} matches
@@ -996,7 +996,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 44) / 2,
     borderRadius: 12,
     padding: 16,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1040,7 +1040,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1064,7 +1064,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1089,7 +1089,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -1114,7 +1114,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     padding: 16,
-    shadowColor: theme.colors.neutral[950],
+    shadowColor: theme.colors.border,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,

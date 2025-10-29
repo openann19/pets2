@@ -12,7 +12,6 @@ import {
   waitFor,
 } from "@testing-library/react-native";
 import { jest } from "@jest/globals";
-import { Theme } from '../../theme/unified-theme';
 
 // Mock dependencies
 jest.mock("@pawfectmatch/core", () => ({

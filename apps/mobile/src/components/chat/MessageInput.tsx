@@ -7,11 +7,10 @@ import { EliteButton } from "../EliteComponents";
 import { GlassContainer } from "../GlassMorphism";
 import { PremiumBody } from "../PremiumTypography";
 import { tokens } from "@pawfectmatch/design-tokens";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import { chatService } from "../../services/chatService";
 import { VoiceRecorder } from "./VoiceRecorder";
-import { Theme } from '../../theme/unified-theme';
 
 interface MessageInputProps {
   value: string;
@@ -282,7 +281,7 @@ export function MessageInput({
               {
                 backgroundColor: "rgba(255,255,255,0.1)",
                 borderColor: "rgba(255,255,255,0.2)",
-                color: "Theme.colors.neutral[0]",
+                color: colors.text,
               },
               isTyping && [
                 styles.textInputFocused,
@@ -323,7 +322,7 @@ export function MessageInput({
               <PremiumBody
                 size="sm"
                 weight="regular"
-                style={{ color: isOverLimit ? colors.danger : colors.gray500 }}
+                style={{ color: isOverLimit ? colors.danger : colors.textMuted }}
               >
                 {characterCount}/{maxLength}
               </PremiumBody>

@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRegisterScreen } from "../hooks/screens/useRegisterScreen";
 import type { RootStackScreenProps } from "../navigation/types";
-import { useTheme } from '../theme/Provider';
+import { useTheme } from "@/theme";
 import { useTranslation } from 'react-i18next';
 
 type RegisterScreenProps = RootStackScreenProps<"Register">;
@@ -49,11 +49,11 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       fontSize: 28,
       fontWeight: "bold",
       marginBottom: 8,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
     subtitle: {
       fontSize: 16,
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
     },
     form: {
       backgroundColor: theme.colors.bg,
@@ -65,7 +65,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       fontSize: 14,
       fontWeight: "600",
       marginBottom: 6,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
     input: {
       backgroundColor: theme.colors.bgElevated,
@@ -74,7 +74,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      color: theme.colors.text,
+      color: theme.colors.onSurface
     },
     errorText: {
       color: theme.colors.danger,
@@ -98,7 +98,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       marginBottom: 32,
     },
     termsText: {
-      color: theme.colors.textMuted,
+      color: theme.colors.onMuted,
       fontSize: 12,
       textAlign: "center",
     },

@@ -26,7 +26,7 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 import type { Message } from "@pawfectmatch/core";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { getExtendedColors } from "../../theme/adapters";
 import { chatService } from "../../services/chatService";
 import ReactionBarMagnetic from "./ReactionBarMagnetic";
@@ -189,11 +189,11 @@ export function MessageWithEnhancements({
           color={colors.primary}
         />
         <View style={styles.fileInfo}>
-          <Text style={[styles.fileName, { color: colors.text }] numberOfLines={1}>
+          <Text style={[styles.fileName, { color: colors.onSurface }]} numberOfLines={1}>
             {name || "File"}
           </Text>
           {size && (
-            <Text style={[styles.fileSize, { color: colors.textSecondary }]>
+            <Text style={[styles.fileSize, { color: colors.onMuted }]}>
               {(size / 1024 / 1024).toFixed(1)} MB
             </Text>
           )}
@@ -228,12 +228,12 @@ export function MessageWithEnhancements({
             key={emoji}
             style={[
               styles.reactionBubble,
-              { backgroundColor: colors.background, borderColor: colors.border }
+              { backgroundColor: colors.bg, borderColor: colors.border }
             ]}
             onPress={() => handleReactionSelect(emoji)}
           >
             <Text style={styles.reactionEmoji}>{emoji}</Text>
-            <Text style={[styles.reactionCount, { color: colors.textSecondary }]>
+            <Text style={[styles.reactionCount, { color: colors.onMuted }]}>
               {count}
             </Text>
           </TouchableOpacity>
@@ -242,8 +242,8 @@ export function MessageWithEnhancements({
     );
   };
 
-  const bubbleBackgroundColor = isOwnMessage ? colors.primary : colors.card;
-  const textColor = isOwnMessage ? colors.white : colors.text;
+  const bubbleBackgroundColor = isOwnMessage ? colors.primary : colors.surface;
+  const textColor = isOwnMessage ? colors.onPrimary : colors.onSurface;
 
   return (
     <View style={[styles.container, isOwnMessage && styles.ownMessageContainer]}>
@@ -262,7 +262,7 @@ export function MessageWithEnhancements({
           >
             {/* Message Content */}
             {message.content && (
-              <Text style={[styles.messageText, { color: textColor }]>
+              <Text style={[styles.messageText, { color: textColor }]}>
                 {message.content}
               </Text>
             )}
@@ -274,7 +274,7 @@ export function MessageWithEnhancements({
             {renderVoiceNote()}
 
             {/* Message Timestamp */}
-            <Text style={[styles.timestamp, { color: isOwnMessage ? colors.white : colors.textSecondary }]>
+            <Text style={[styles.timestamp, { color: isOwnMessage ? colors.onPrimary : colors.onMuted }]}>
               {new Date(message.sentAt).toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",

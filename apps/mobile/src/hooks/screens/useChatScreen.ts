@@ -20,7 +20,7 @@ import { LayoutAnimation } from "react-native";
 import type { RootStackScreenProps } from "../../navigation/types";
 import { useChatData } from "../useChatData";
 import { useReactionMetrics } from "../useInteractionMetrics";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
 import { api } from "../../services/api";
 import { haptic } from "../../ui/haptics";
 import { logger } from "../../services/logger";

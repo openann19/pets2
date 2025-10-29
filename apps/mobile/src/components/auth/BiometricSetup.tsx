@@ -18,7 +18,6 @@ import {
   View,
 } from "react-native";
 import { useBiometric } from "../../hooks/useBiometric";
-import { Theme } from '../../theme/unified-theme';
 
 interface BiometricSetupProps {
   onComplete?: () => void;

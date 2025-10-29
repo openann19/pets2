@@ -25,7 +25,7 @@ import {
 import { GlobalStyles, BorderRadius, Shadows } from "../../../styles/GlobalStyles";
 import { getPremiumGradients } from "../constants/gradients";
 import { PREMIUM_SHADOWS } from "../constants/shadows";
-import { useTheme } from '../../../theme/Provider';
+import { useTheme } from "@/theme";
 
 /**
  * EliteCard Component
@@ -100,7 +100,7 @@ export const EliteCard: React.FC<EliteCardProps> = ({
           backgroundColor: "rgba(255,255,255,0.1)",
           borderWidth: 1,
           borderColor: "rgba(255,255,255,0.2)",
-          shadowColor: theme.colors.text,
+          shadowColor: theme.colors.onSurface
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.37,
           shadowRadius: 32,

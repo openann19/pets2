@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { AutoCropEngine, type SuggestionType } from "../../utils/AutoCropEngine";
-import { Theme } from "../../theme/unified-theme";
 import { BouncePressable } from "../micro";
 
 type Rect = { x: number; y: number; width: number; height: number };

@@ -167,7 +167,7 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
           {state.routes.map((route, i) => {
             const d = descriptors[route.key]; const opts = d?.options ?? {};
             const label = (opts.tabBarLabel as string) ?? (opts.title as string) ?? route.name;
-            const focused = state.index === i; const color = focused ? colors.primary : colors.text;
+            const focused = state.index === i; const color = focused ? colors.primary : colors.onSurface
             const count = badgeCount(route.name);
 
             // per-tab animations

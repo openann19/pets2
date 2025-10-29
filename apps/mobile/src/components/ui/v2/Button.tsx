@@ -89,7 +89,7 @@ export function Button({
         return {
           backgroundColor: 'transparent',
           borderColor: 'transparent',
-          textColor: colors.text,
+          textColor: colors.onSurface
         };
     }
   };

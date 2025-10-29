@@ -3,7 +3,6 @@ import { BlurView } from "expo-blur";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ActivityTypeSelector } from "./ActivityTypeSelector";
 import type { ActivityType } from "./ActivityTypeSelector";
-import { Theme } from '../../theme/unified-theme';
 
 export interface MapFilters {
   showMyPets: boolean;

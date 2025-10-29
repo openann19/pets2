@@ -13,8 +13,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { useAdvancedFiltersScreen } from "../hooks/screens/useAdvancedFiltersScreen";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
 
 interface AdvancedFiltersScreenProps {
   navigation: {

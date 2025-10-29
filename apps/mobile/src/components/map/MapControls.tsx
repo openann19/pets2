@@ -1,7 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Theme } from '../../theme/unified-theme';
 
 interface MapControlsProps {
   onLocatePress: () => void;

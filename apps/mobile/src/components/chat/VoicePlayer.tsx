@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { Ionicons } from "@expo/vector-icons";
 import { VoiceWaveform } from "./VoiceWaveform";
-import { Theme } from "../../theme/unified-theme";
 
 type Props = {
   uri: string;

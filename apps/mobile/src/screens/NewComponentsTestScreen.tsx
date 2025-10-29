@@ -1,4 +1,4 @@
-import { useTheme } from '../theme/Provider';
+import { useTheme } from '@/theme';
 /**
  * NEW COMPONENTS TEST SCREEN
  *
@@ -356,7 +356,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   heroSubtitle: {
     textAlign: "center",
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   section: {
     padding: theme.spacing.xl,
@@ -367,7 +367,7 @@ const makeStyles = (theme: any) => StyleSheet.create({
   },
   sectionSubtitle: {
     marginBottom: theme.spacing.lg,
-    color: theme.colors.textMuted,
+    color: theme.colors.onMuted,
   },
   buttonGrid: {
     flexDirection: "row",

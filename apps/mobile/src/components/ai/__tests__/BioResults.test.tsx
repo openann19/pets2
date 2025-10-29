@@ -11,7 +11,6 @@ import {
   waitFor,
 } from '@testing-library/react-native';
 import { BioResults } from '../BioResults';
-import { Theme } from '../../../theme/unified-theme';
 import type { GeneratedBio } from '../../../hooks/useAIBio';
 
 // Mock clipboard

@@ -53,14 +53,14 @@ export function Tag({
         return {
           backgroundColor: 'transparent',
           borderColor: theme.colors.border,
-          textColor: theme.colors.text,
+          textColor: theme.colors.onSurface
         };
       case 'ghost':
       default:
         return {
           backgroundColor: theme.colors.bgAlt,
           borderColor: 'transparent',
-          textColor: theme.colors.text,
+          textColor: theme.colors.onSurface
         };
     }
   };

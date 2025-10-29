@@ -13,8 +13,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../theme/Provider";
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
+import type { AppTheme } from '@/theme';
 
 interface NotificationPreferencesScreenProps {
   navigation: {
@@ -33,7 +33,7 @@ interface NotificationSetting {
 function NotificationPreferencesScreen({
   navigation,
 }: NotificationPreferencesScreenProps): JSX.Element {
-  const { colors: _colors } = useTheme();
+  const theme = useTheme();
   const [settings, setSettings] = useState<NotificationSetting[]>([
     {
       id: "new_matches",
@@ -159,8 +159,8 @@ function NotificationPreferencesScreen({
               onValueChange={() => {
                 toggleCategory(category);
               }}
-              trackColor={{ false: "#767577", true: theme.colors.status.info }}
-              thumbColor={categoryEnabled ? theme.colors.neutral[0] : "#f4f3f4"}
+              trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
+              thumbColor={categoryEnabled ? theme.colors.surface : theme.colors.surfaceAlt}
             />
           </TouchableOpacity>
 
@@ -182,8 +182,8 @@ function NotificationPreferencesScreen({
                   onValueChange={() => {
                     toggleSetting(setting.id);
                   }}
-                  trackColor={{ false: "#767577", true: theme.colors.status.info }}
-                  thumbColor={setting.enabled ? theme.colors.neutral[0] : "#f4f3f4"}
+                  trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
+                  thumbColor={setting.enabled ? theme.colors.surface : theme.colors.surfaceAlt}
                 />
               </View>
             </BlurView>
@@ -197,7 +197,7 @@ function NotificationPreferencesScreen({
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#667eea", "#764ba2", "#667eea"]}
+        colors={theme.palette.gradients.primarySoft}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -214,7 +214,7 @@ function NotificationPreferencesScreen({
             }}
           >
             <BlurView intensity={20} style={styles.backButtonBlur}>
-              <Ionicons name="arrow-back" size={24} color="white" />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.onPrimary} />
             </BlurView>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Notifications</Text>
@@ -229,8 +229,8 @@ function NotificationPreferencesScreen({
             <Ionicons
               name="information-circle-outline"
               size={24}
-              color={theme.colors.status.info
-           } }/>
+              color={theme.colors.info}
+            />
             <Text style={styles.infoText}>
               Choose which notifications you'd like to receive. You can always
               change these settings later.
@@ -261,8 +261,8 @@ function NotificationPreferencesScreen({
                     "Push notification settings would be managed by device settings.",
                   );
                 }}
-                trackColor={{ false: "#767577", true: theme.colors.success }}
-                thumbColor={theme.colors.neutral[0]}
+                trackColor={{ false: theme.colors.inactive, true: theme.colors.success }}
+                thumbColor={theme.colors.surface}
               />
             </View>
 
@@ -281,8 +281,8 @@ function NotificationPreferencesScreen({
                     "Quiet hours feature coming soon!",
                   );
                 }}
-                trackColor={{ false: "#767577", true: theme.colors.secondary[500] }}
-                thumbColor={"#f4f3f4"}
+                trackColor={{ false: theme.colors.inactive, true: theme.colors.primary }}
+                thumbColor={theme.colors.surfaceAlt}
               />
             </View>
           </BlurView>
@@ -299,7 +299,7 @@ function NotificationPreferencesScreen({
             }}
           >
             <BlurView intensity={20} style={styles.testButtonBlur}>
-              <Ionicons name="notifications-outline" size={20} color="white" />
+              <Ionicons name="notifications-outline" size={20} color={theme.colors.onPrimary} />
               <Text style={styles.testButtonText}>Send Test Notification</Text>
             </BlurView>
           </TouchableOpacity>
@@ -337,18 +337,18 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "white",
+    color: theme.colors.onPrimary,
   },
   saveButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "rgba(59, 130, 246, 0.2)",
+    backgroundColor: theme.colors.primary + "33",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(59, 130, 246, 0.5)",
+    borderColor: theme.colors.primary + "80",
   },
   saveButtonText: {
-    color: "white",
+    color: theme.colors.onPrimary,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -359,18 +359,18 @@ const styles = StyleSheet.create({
   infoCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: theme.colors.surface + "1A",
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: theme.colors.border + "33",
   },
   infoText: {
     flex: 1,
     marginLeft: 12,
     fontSize: 14,
-    color: "white",
+    color: theme.colors.onPrimary,
     lineHeight: 20,
   },
   categorySection: {
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "white",
+    color: theme.colors.onPrimary,
   },
   settingCard: {
     borderRadius: 12,
@@ -403,18 +403,18 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "white",
+    color: theme.colors.onPrimary,
     marginBottom: 4,
   },
   settingDescription: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
+    color: theme.colors.onMuted,
     lineHeight: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "white",
+    color: theme.colors.onPrimary,
     marginBottom: 16,
     marginTop: 8,
   },
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.1)",
+    borderBottomColor: theme.colors.border + "1A",
   },
   pushSettingText: {
     flex: 1,
@@ -436,12 +436,12 @@ const styles = StyleSheet.create({
   pushSettingTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "white",
+    color: theme.colors.onPrimary,
     marginBottom: 4,
   },
   pushSettingDescription: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
+    color: theme.colors.onMuted,
     lineHeight: 20,
   },
   testButton: {
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   testButtonText: {
-    color: "white",
+    color: theme.colors.onPrimary,
     fontSize: 16,
     fontWeight: "600",
   },

@@ -62,7 +62,7 @@ export function AnalysisResultsSection({
         <Text
           style={StyleSheet.flatten([
             styles.sectionTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           💕 Compatibility Score
@@ -88,7 +88,7 @@ export function AnalysisResultsSection({
           <Text
             style={StyleSheet.flatten([
               styles.scoreDescription,
-              { color: colors.textSecondary },
+              { color: colors.onMuted },
             ])}
           >
             {compatibilityResult.ai_analysis}
@@ -113,7 +113,7 @@ export function AnalysisResultsSection({
         <Text
           style={StyleSheet.flatten([
             styles.sectionTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           📊 Detailed Breakdown
@@ -135,7 +135,7 @@ export function AnalysisResultsSection({
                   <Text
                     style={StyleSheet.flatten([
                       styles.breakdownLabel,
-                      { color: colors.text },
+                      { color: colors.onSurface},
                     ])}
                   >
                     {category.label}
@@ -176,7 +176,7 @@ export function AnalysisResultsSection({
         <Text
           style={StyleSheet.flatten([
             styles.sectionTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           💡 Recommendations
@@ -188,7 +188,7 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.recommendationTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 🎯 Meeting Suggestions
@@ -198,7 +198,7 @@ export function AnalysisResultsSection({
                   key={index}
                   style={StyleSheet.flatten([
                     styles.recommendation,
-                    { color: colors.textSecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   • {suggestion}
@@ -212,7 +212,7 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.recommendationTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 🎾 Activity Recommendations
@@ -223,7 +223,7 @@ export function AnalysisResultsSection({
                     key={index}
                     style={StyleSheet.flatten([
                       styles.recommendation,
-                      { color: colors.textSecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     • {activity}
@@ -238,7 +238,7 @@ export function AnalysisResultsSection({
               <Text
                 style={StyleSheet.flatten([
                   styles.recommendationTitle,
-                  { color: colors.text },
+                  { color: colors.onSurface},
                 ])}
               >
                 ⚠️ Supervision Requirements
@@ -249,7 +249,7 @@ export function AnalysisResultsSection({
                     key={index}
                     style={StyleSheet.flatten([
                       styles.recommendation,
-                      { color: colors.textSecondary },
+                      { color: colors.onMuted },
                     ])}
                   >
                     • {requirement}
@@ -263,7 +263,7 @@ export function AnalysisResultsSection({
             <Text
               style={StyleSheet.flatten([
                 styles.successLabel,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Success Probability:
@@ -288,7 +288,7 @@ export function AnalysisResultsSection({
         <Text
           style={StyleSheet.flatten([
             styles.resultsTitle,
-            { color: colors.text },
+            { color: colors.onSurface},
           ])}
         >
           🎯 Compatibility Results

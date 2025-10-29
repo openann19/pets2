@@ -7,7 +7,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { EliteButtonPresets, FXContainerPresets, Heading1, Body } from '../';
-import { Theme } from '../../theme/unified-theme';
 import type { Pet } from '@pawfectmatch/core';
 import { ConfettiBurst } from './ConfettiBurst';
 

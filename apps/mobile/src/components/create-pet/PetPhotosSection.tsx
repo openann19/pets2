@@ -197,7 +197,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
         onPress={onPickImage}
         disabled={photos.length >= 10}
       >
-        <Ionicons name="camera" size={24} color={colors.textSecondary} />
+        <Ionicons name="camera" size={24} color={colors.onSurfaceecondary} />
         <Text style={styles.addPhotoText}>
           {photos.length === 0
             ? "Add Photos"
@@ -276,7 +276,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                       onSetPrimaryPhoto(index);
                     }}
                   >
-                    <Ionicons name="star" size={16} color={colors.white} />
+                    <Ionicons name="star" size={16} color={colors.onPrimary} />
                   </TouchableOpacity>
                 )}
 
@@ -290,7 +290,7 @@ export const PetPhotosSection: React.FC<PetPhotosSectionProps> = ({
                       onRemovePhoto(index);
                     }}
                   >
-                    <Ionicons name="trash" size={16} color={colors.white} />
+                    <Ionicons name="trash" size={16} color={colors.onPrimary} />
                   </TouchableOpacity>
                 )}
               </View>

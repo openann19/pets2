@@ -6,8 +6,8 @@
  */
 
 // === THEME SYSTEM ===
-export { default as Theme } from "../theme/unified-theme";
-export type { ThemeType } from "../theme/unified-theme";
+export { ThemeProvider, useTheme, defaultTheme, getLightTheme, getDarkTheme, createTheme } from "@/theme";
+export type { AppTheme, Theme, ColorScheme, SemanticColors, ThemeColors, ExtendedColors } from "@/theme";
 
 // === ANIMATION HOOKS ===
 // Hooks available from useUnifiedAnimations

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -10,10 +11,187 @@ import {
 } from "react-native";
 import Footer from "../../components/Footer";
 import { usePremiumScreen } from "../../hooks/screens/premium";
-import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 
-export function PremiumScreen(): JSX.Element {
+function __makeStyles_styles(theme: AppTheme) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    header: {
+      padding: theme.spacing.lg,
+      paddingTop: theme.spacing["4xl"],
+      alignItems: "center",
+    },
+    backButton: {
+      position: "absolute",
+      top: theme.spacing["4xl"],
+      left: theme.spacing.lg,
+      zIndex: 10,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: "700",
+      color: theme.colors.onPrimary,
+      marginBottom: theme.spacing.xs,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: `${theme.colors.onPrimary}E6`,
+      textAlign: "center",
+    },
+    billingToggle: {
+      flexDirection: "row",
+      backgroundColor: `${theme.colors.onPrimary}33`,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.xs,
+      marginHorizontal: theme.spacing.lg,
+      marginBottom: theme.spacing.lg,
+    },
+    billingOption: {
+      flex: 1,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      alignItems: "center",
+      position: "relative",
+    },
+    billingOptionActive: {
+      backgroundColor: theme.colors.onPrimary,
+    },
+    billingText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: `${theme.colors.onPrimary}CC`,
+    },
+    billingTextActive: {
+      color: theme.palette.brand[600],
+    },
+    saveBadge: {
+      position: "absolute",
+      top: -8,
+      right: 8,
+      backgroundColor: theme.colors.success,
+      paddingHorizontal: theme.spacing.xs,
+      paddingVertical: 2,
+      borderRadius: theme.radii.md,
+    },
+    saveText: {
+      fontSize: 10,
+      fontWeight: "700",
+      color: theme.colors.onPrimary,
+    },
+    tiersContainer: {
+      padding: theme.spacing.lg,
+      gap: theme.spacing.md,
+    },
+    tierCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.xl,
+      padding: theme.spacing.lg,
+      borderWidth: 2,
+      borderColor: "transparent",
+      position: "relative",
+    },
+    tierCardSelected: {
+      borderColor: theme.colors.primary,
+      ...theme.shadows.elevation2,
+    },
+    tierCardPopular: {
+      borderColor: theme.colors.success,
+    },
+    popularBadge: {
+      position: "absolute",
+      top: -12,
+      right: theme.spacing.lg,
+      backgroundColor: theme.colors.success,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.lg,
+    },
+    popularText: {
+      fontSize: 12,
+      fontWeight: "700",
+      color: theme.colors.onPrimary,
+    },
+    tierName: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+      marginBottom: theme.spacing.xs,
+    },
+    priceContainer: {
+      flexDirection: "row",
+      alignItems: "baseline",
+      marginBottom: theme.spacing.xs,
+    },
+    priceSymbol: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+    },
+    priceAmount: {
+      fontSize: 48,
+      fontWeight: "700",
+      color: theme.colors.onSurface,
+    },
+    pricePeriod: {
+      fontSize: 16,
+      color: theme.colors.onMuted,
+      marginLeft: theme.spacing.xs,
+    },
+    discount: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: theme.colors.success,
+      marginBottom: theme.spacing.md,
+    },
+    featuresContainer: {
+      marginVertical: theme.spacing.md,
+      gap: theme.spacing.sm,
+    },
+    featureRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
+    featureText: {
+      fontSize: 14,
+      color: theme.colors.onMuted,
+      flex: 1,
+    },
+    subscribeButton: {
+      backgroundColor: theme.colors.border,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radii.lg,
+      alignItems: "center",
+    },
+    subscribeButtonSelected: {
+      backgroundColor: theme.colors.primary,
+    },
+    subscribeButtonText: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: theme.colors.onPrimary,
+    },
+    footer: {
+      padding: theme.spacing.lg,
+      alignItems: "center",
+    },
+    footerText: {
+      fontSize: 12,
+      color: `${theme.colors.onPrimary}CC`,
+      textAlign: "center",
+    },
+  });
+}
+
+export function PremiumScreen(): React.JSX.Element {
+  const theme = useTheme();
+  const styles = useMemo(() => __makeStyles_styles(theme), [theme]);
   const {
     billingPeriod,
     selectedTier,
@@ -74,7 +252,7 @@ export function PremiumScreen(): JSX.Element {
         <View style={styles.featuresContainer}>
           {tier.features.map((feature, index) => (
             <View key={index} style={styles.featureRow}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.colors.status.succes}s}} />
+              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
               <Text style={styles.featureText}>{feature}</Text>
             </View>
           ))}
@@ -92,7 +270,7 @@ export function PremiumScreen(): JSX.Element {
           disabled={isLoading}
         >
           {isLoading && selectedTier === tier.id ? (
-            <ActivityIndicator color={theme.colors.neutral[0}] testID="loading-indicator" />
+            <ActivityIndicator color={theme.colors.onSurface} testID="loading-indicator" />
           ) : (
             <Text style={styles.subscribeButtonText}>
               {isSelected ? "Subscribe Now" : "Select Plan"}
@@ -103,9 +281,13 @@ export function PremiumScreen(): JSX.Element {
     );
   };
 
+  // Access palette safely - resolve.ts AppTheme doesn't have palette yet
+  const gradientColors = (theme as any).palette?.gradients?.primary ?? 
+    [theme.colors.primary, (theme as any).palette?.brand?.[600] ?? theme.colors.primary];
+
   return (
     <LinearGradient
-      colors={[theme.colors.primary[500], "#8b5cf6", theme.colors.status.info]}
+      colors={gradientColors}
       style={styles.container}
     >
       <ScrollView
@@ -120,7 +302,7 @@ export function PremiumScreen(): JSX.Element {
             onPress={handleGoBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.neutral[0}]} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.onSurface} />
           </TouchableOpacity>
 
           <Text style={styles.title}>Upgrade to Premium</Text>
@@ -194,180 +376,3 @@ export function PremiumScreen(): JSX.Element {
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    alignItems: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: 60,
-    left: 20,
-    zIndex: 10,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: theme.colors.neutral[0],
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-    textAlign: "center",
-  },
-  billingToggle: {
-    flexDirection: "row",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: 12,
-    padding: 4,
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  billingOption: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    position: "relative",
-  },
-  billingOptionActive: {
-    backgroundColor: theme.colors.neutral[0],
-  },
-  billingText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "rgba(255, 255, 255, 0.8)",
-  },
-  billingTextActive: {
-    color: "#8b5cf6",
-  },
-  saveBadge: {
-    position: "absolute",
-    top: -8,
-    right: 8,
-    backgroundColor: theme.colors.success,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  saveText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: theme.colors.neutral[0],
-  },
-  tiersContainer: {
-    padding: 20,
-    gap: 16,
-  },
-  tierCard: {
-    backgroundColor: theme.colors.neutral[0],
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: "transparent",
-    position: "relative",
-  },
-  tierCardSelected: {
-    borderColor: "#8b5cf6",
-    shadowColor: "#8b5cf6",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  tierCardPopular: {
-    borderColor: theme.colors.success,
-  },
-  popularBadge: {
-    position: "absolute",
-    top: -12,
-    right: 20,
-    backgroundColor: theme.colors.success,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  popularText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: theme.colors.neutral[0],
-  },
-  tierName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-  },
-  priceContainer: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    marginBottom: 4,
-  },
-  priceSymbol: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-  },
-  priceAmount: {
-    fontSize: 48,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-  },
-  pricePeriod: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    marginLeft: 4,
-  },
-  discount: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.success,
-    marginBottom: 16,
-  },
-  featuresContainer: {
-    marginVertical: 16,
-    gap: 12,
-  },
-  featureRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  featureText: {
-    fontSize: 14,
-    color: theme.colors.neutral[600],
-    flex: 1,
-  },
-  subscribeButton: {
-    backgroundColor: theme.colors.neutral[200],
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  subscribeButtonSelected: {
-    backgroundColor: "#8b5cf6",
-  },
-  subscribeButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: theme.colors.neutral[0],
-  },
-  footer: {
-    padding: 20,
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.8)",
-    textAlign: "center",
-  },
-});

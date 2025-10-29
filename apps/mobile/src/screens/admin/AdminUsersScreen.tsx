@@ -15,7 +15,8 @@ import {
   AdminUserListItem,
   type AdminUserListItemViewModel,
 } from "../../components/admin/AdminUserListItem";
-import { useTheme } from "../../theme/Provider";
+import { useTheme } from "@/theme";
+import type { AppTheme } from "@/theme";
 import { useAdminUsersScreen } from "../../hooks/useAdminUsersScreen";
 import type { AdminScreenProps } from "../../navigation/types";
 
@@ -67,14 +68,14 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
         <View style={styles.header}>
           <View>
             <Text
-              style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+              style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
             >
               {state.title}
             </Text>
             <Text
               style={StyleSheet.flatten([
                 styles.description,
-                { color: colors.textSecondary },
+                { color: colors.onMuted },
               ])}
             >
               {state.description}
@@ -92,7 +93,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
             <Text
               style={StyleSheet.flatten([
                 styles.backButtonText,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Back
@@ -111,10 +112,10 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
               value={state.searchQuery}
               onChangeText={state.onSearchChange}
               placeholder="Search users by name or email"
-              placeholderTextColor={colors.textSecondary}
+              placeholderTextColor={colors.onSurfaceecondary}
               style={StyleSheet.flatten([
                 styles.searchInput,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
               autoCorrect={false}
               accessibilityRole="search"
@@ -146,7 +147,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                   <Text
                     style={StyleSheet.flatten([
                       styles.filterText,
-                      { color: isActive ? colors.white : colors.text },
+                      { color: isActive ? colors.onPrimary : colors.onSurface},
                     ])}
                   >
                     {filter.label}
@@ -163,7 +164,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
             <Text
               style={StyleSheet.flatten([
                 styles.bulkStatusText,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               Performing bulk action...
@@ -181,7 +182,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
             <Text
               style={StyleSheet.flatten([
                 styles.bulkSummary,
-                { color: colors.text },
+                { color: colors.onSurface},
               ])}
             >
               {state.selectedCount} selected
@@ -228,7 +229,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
               <TouchableOpacity
                 style={StyleSheet.flatten([
                   styles.bulkButton,
-                  { borderColor: colors.error },
+                  { borderColor: theme.colors.danger },
                 ])}
                 testID="bulk-ban-button"
                 accessibilityLabel="Ban selected users"
@@ -238,7 +239,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                 <Text
                   style={StyleSheet.flatten([
                     styles.bulkButtonText,
-                    { color: colors.error },
+                    { color: theme.colors.danger },
                   ])}
                 >
                   Ban
@@ -267,7 +268,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                 <Text
                   style={StyleSheet.flatten([
                     styles.emptyText,
-                    { color: colors.textSecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   Loading users...
@@ -278,7 +279,7 @@ const AdminUsersScreen = ({ navigation }: AdminScreenProps<"AdminUsers">) => {
                 <Text
                   style={StyleSheet.flatten([
                     styles.emptyText,
-                    { color: colors.textSecondary },
+                    { color: colors.onMuted },
                   ])}
                 >
                   No users match the current filters.

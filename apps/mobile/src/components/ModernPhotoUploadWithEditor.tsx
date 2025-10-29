@@ -4,7 +4,6 @@ import { Alert, Dimensions, Image, Modal, StyleSheet, Text, TouchableOpacity, Vi
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 import { AdvancedPhotoEditor } from "./photo/AdvancedPhotoEditor";
-import { Theme } from '../theme/unified-theme';
 
 const { width } = Dimensions.get("window");
 const PHOTO_SIZE = (width - 60) / 3;

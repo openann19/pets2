@@ -7,7 +7,6 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { PeekSheet } from '../PeekSheet';
 import type { Pet } from '@pawfectmatch/core';
-import { Theme } from '../../../theme/unified-theme';
 
 const mockPet: Pet = {
   _id: 'pet1',

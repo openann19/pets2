@@ -59,7 +59,7 @@ export const Text = React.forwardRef<RNText, TextProps>(
       case 'secondary':
         return colors.secondary || colors.primary;
       case 'muted':
-        return colors.textMuted;
+        return colors.onMuted;
       case 'success':
         return colors.success;
       case 'warning':
@@ -67,12 +67,12 @@ export const Text = React.forwardRef<RNText, TextProps>(
       case 'danger':
         return colors.danger;
       case 'textMuted':
-        return colors.textMuted;
+        return colors.onMuted;
       case 'textInverse':
         return theme.scheme === 'dark' ? '#FFFFFF' : '#000000';
       case 'text':
       default:
-        return colors.text;
+        return colors.onSurface
     }
   };
 

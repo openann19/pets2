@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface ToastProps {
   message: string;

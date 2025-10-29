@@ -7,7 +7,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { Theme } from "../../theme/unified-theme";
 import { TONE_OPTIONS } from "../../hooks/useAIBio";
 
 interface ToneSelectorProps {

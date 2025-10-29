@@ -16,7 +16,7 @@ import { MessageInput } from "../components/chat/MessageInput";
 import { QuickReplies } from "../components/chat/QuickReplies";
 import ReactionBarMagnetic from "../components/chat/ReactionBarMagnetic";
 import { useChatScreen } from "../hooks/screens/useChatScreen";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import type { RootStackScreenProps } from "../navigation/types";
 import { useTranslation } from 'react-i18next';
 

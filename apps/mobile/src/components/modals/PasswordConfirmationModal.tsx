@@ -17,7 +17,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { logger } from "@pawfectmatch/core";
-import { Theme } from '../../theme/unified-theme';
 
 interface PasswordConfirmationModalProps {
   visible: boolean;

@@ -92,7 +92,6 @@ jest.mock("../../animation", () => ({
 }));
 
 import { PhoenixCard } from "../phoenix/PhoenixCard";
-import { Theme } from '../../theme/unified-theme';
 
 describe("PhoenixCard Component", () => {
   beforeEach(() => {

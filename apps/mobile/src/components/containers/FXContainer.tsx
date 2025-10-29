@@ -28,7 +28,6 @@ import {
   useEntranceAnimation,
 } from "../../hooks/useUnifiedAnimations";
 import { useShimmerEffect } from "../../hooks/usePremiumAnimations";
-import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
 export type FXContainerType =

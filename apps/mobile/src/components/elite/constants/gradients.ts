@@ -3,7 +3,7 @@
  * Centralized gradient color definitions for elite components
  */
 
-import { useTheme } from '../../../theme/Provider';
+import { useTheme } from "@/theme";
 
 export const getPremiumGradients = (theme: ReturnType<typeof useTheme>) => ({
   primary: [theme.colors.danger, theme.colors.danger, theme.colors.danger],

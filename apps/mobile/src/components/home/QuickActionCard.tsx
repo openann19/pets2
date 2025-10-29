@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, type ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from '../../theme/Provider';
+import { useTheme } from "@/theme";
 
 interface QuickActionCardProps {
   icon: string;
@@ -38,14 +38,14 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
             { backgroundColor },
           ])}
         >
-          <Ionicons name={icon as any} size={24} color={colors.white} />
+          <Ionicons name={icon as any} size={24} color={colors.onPrimary} />
         </View>
         <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: colors.text }]>{title}</Text>
+          <Text style={[styles.title, { color: colors.onSurface}]>{title}</Text>
         </View>
         {badge !== undefined && badge > 0 && (
           <View style={[styles.badge, { backgroundColor: colors.primary }]>
-            <Text style={[styles.badgeText, { color: colors.white }]>{badge}</Text>
+            <Text style={[styles.badgeText, { color: colors.onPrimary }]>{badge}</Text>
           </View>
         )}
       </View>

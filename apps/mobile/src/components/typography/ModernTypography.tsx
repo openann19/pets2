@@ -19,7 +19,6 @@ import { Text, StyleSheet, type TextStyle, type TextProps } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import { useEntranceAnimation } from "../../hooks/useUnifiedAnimations";
-import { Theme } from "../../theme/unified-theme";
 
 // === TYPES ===
 export type TextVariant =
@@ -38,7 +37,7 @@ export type TextVariant =
   | "label";
 
 export type TextWeight = keyof typeof Theme.typography.fontWeight;
-export type TextColor = keyof typeof Theme.colors.text;
+export type TextColor = keyof typeof Theme.colors.onSurface
 
 export interface ModernTextProps extends TextProps {
   variant?: TextVariant;
@@ -164,7 +163,7 @@ function ModernText({
 
   // Get text color
   const textColorKey = color || 'primary';
-  const textColor = Theme.colors.text[textColorKey];
+  const textColor = Theme.colors.onSurfacetextColorKey];
 
   // Build text style
   const textStyle: TextStyle = {

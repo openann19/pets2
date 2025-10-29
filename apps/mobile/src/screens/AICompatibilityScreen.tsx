@@ -18,7 +18,7 @@ import {
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import type { RootStackParamList } from "../navigation/types";
 import { useAICompatibilityScreen } from "../hooks/screens/useAICompatibilityScreen";
 import { PetSelectionSection } from "./ai/compatibility/PetSelectionSection";
@@ -93,7 +93,7 @@ const AICompatibilityScreen = ({
           <Text
             style={StyleSheet.flatten([
               styles.loadingText,
-              { color: colors.text },
+              { color: colors.onSurface},
             ])}
           >
             Loading pets...
@@ -124,10 +124,10 @@ const AICompatibilityScreen = ({
             onPress={handleGoBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.text} />
+            <Ionicons name="arrow-back" size={24} color={colors.onSurface />
           </TouchableOpacity>
           <Text
-            style={StyleSheet.flatten([styles.title, { color: colors.text }])}
+            style={StyleSheet.flatten([styles.title, { color: colors.onSurface}])}
             accessibilityRole="header"
           >
             AI Compatibility Analyzer

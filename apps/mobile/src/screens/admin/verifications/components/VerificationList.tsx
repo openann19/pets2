@@ -162,7 +162,7 @@ export const VerificationList = ({
       case "requires_info":
         return theme.colors.warning;
       default:
-        return theme.colors.textMuted;
+        return theme.colors.onMuted;
     }
   };
 

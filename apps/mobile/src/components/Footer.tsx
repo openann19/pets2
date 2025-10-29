@@ -13,7 +13,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { getExtendedColors } from "../theme/adapters";
 import AnimatedButton from "./AnimatedButton";
 
@@ -93,7 +93,7 @@ export default function Footer({
       // Animated style cast to any to satisfy RN/Reanimated type unions
       style={StyleSheet.flatten([
         styles.container,
-        { backgroundColor: colors.white },
+        { backgroundColor: colors.onPrimary },
         style,
         animatedStyle as any,
       ])}
@@ -116,7 +116,7 @@ export default function Footer({
             <Text
               style={StyleSheet.flatten([
                 styles.brandName,
-                { color: colors.gray800 },
+                { color: theme.palette.neutral[800] },
               ])}
             >
               PawfectMatch
@@ -127,7 +127,7 @@ export default function Footer({
             <Text
               style={StyleSheet.flatten([
                 styles.versionText,
-                { color: colors.gray500 },
+                { color: theme.palette.neutral[500] },
               ])}
             >
               Version 1.0.0
@@ -141,7 +141,7 @@ export default function Footer({
             <AnimatedButton
               onPress={handleTermsPress}
               style={styles.legalLink}
-              textStyle={[styles.legalLinkText, { color: colors.primary }]
+              textStyle={[styles.legalLinkText, { color: colors.primary }]}
               accessibilityLabel="Terms of Service"
               accessibilityHint="Opens Terms of Service in browser"
               accessibilityRole="link"
@@ -152,7 +152,7 @@ export default function Footer({
             <Text
               style={StyleSheet.flatten([
                 styles.separator,
-                { color: colors.gray400 },
+                { color: theme.palette.neutral[400] },
               ])}
             >
               •
@@ -161,7 +161,7 @@ export default function Footer({
             <AnimatedButton
               onPress={handlePrivacyPress}
               style={styles.legalLink}
-              textStyle={[styles.legalLinkText, { color: colors.primary }]
+              textStyle={[styles.legalLinkText, { color: colors.primary }]}
               accessibilityLabel="Privacy Policy"
               accessibilityHint="Opens Privacy Policy in browser"
               accessibilityRole="link"
@@ -184,12 +184,12 @@ export default function Footer({
               <Ionicons
                 name="help-circle-outline"
                 size={16}
-                color={colors.gray500}
+                color={theme.palette.neutral[500]}
               />
               <Text
                 style={StyleSheet.flatten([
                   styles.supportText,
-                  { color: colors.gray500 },
+                  { color: theme.palette.neutral[500] },
                 ])}
               >
                 Need Help? Contact Support
@@ -204,7 +204,7 @@ export default function Footer({
             <Text
               style={StyleSheet.flatten([
                 styles.copyrightText,
-                { color: colors.gray500 },
+                { color: theme.palette.neutral[500] },
               ])}
             >
               © {new Date().getFullYear()} PawfectMatch Inc. All rights
@@ -220,7 +220,7 @@ export default function Footer({
     <Animated.View
       style={StyleSheet.flatten([
         styles.minimalContainer,
-        { backgroundColor: colors.white },
+        { backgroundColor: colors.onPrimary },
         style,
         animatedStyle as any,
       ])}
@@ -229,7 +229,7 @@ export default function Footer({
         <Text
           style={StyleSheet.flatten([
             styles.minimalBrand,
-            { color: colors.gray600 },
+            { color: theme.palette.neutral[600] },
           ])}
         >
           🐾 PawfectMatch
@@ -238,7 +238,7 @@ export default function Footer({
           <Text
             style={StyleSheet.flatten([
               styles.minimalCopyright,
-              { color: colors.gray500 },
+              { color: theme.palette.neutral[500] },
             ])}
           >
             © {new Date().getFullYear()}
@@ -268,7 +268,7 @@ export default function Footer({
               <Text
                 style={StyleSheet.flatten([
                   styles.premiumBrandName,
-                  { color: colors.gray800 },
+                  { color: theme.palette.neutral[800] },
                 ])}
               >
                 PawfectMatch Premium
@@ -279,7 +279,7 @@ export default function Footer({
               <AnimatedButton
                 onPress={handleTermsPress}
                 style={styles.premiumLink}
-                textStyle={[styles.premiumLinkText, { color: colors.primary }]
+                textStyle={[styles.premiumLinkText, { color: colors.primary }]}
               >
                 Terms
               </AnimatedButton>
@@ -287,7 +287,7 @@ export default function Footer({
               <Text
                 style={StyleSheet.flatten([
                   styles.separator,
-                  { color: colors.gray400 },
+                  { color: theme.palette.neutral[400] },
                 ])}
               >
                 •
@@ -296,7 +296,7 @@ export default function Footer({
               <AnimatedButton
                 onPress={handlePrivacyPress}
                 style={styles.premiumLink}
-                textStyle={[styles.premiumLinkText, { color: colors.primary }]
+                textStyle={[styles.premiumLinkText, { color: colors.primary }]}
               >
                 Privacy
               </AnimatedButton>
@@ -304,7 +304,7 @@ export default function Footer({
               <Text
                 style={StyleSheet.flatten([
                   styles.separator,
-                  { color: colors.gray400 },
+                  { color: theme.palette.neutral[400] },
                 ])}
               >
                 •
@@ -313,7 +313,7 @@ export default function Footer({
               <AnimatedButton
                 onPress={handleSupportPress}
                 style={styles.premiumLink}
-                textStyle={[styles.premiumLinkText, { color: colors.primary }]
+                textStyle={[styles.premiumLinkText, { color: colors.primary }]}
               >
                 Support
               </AnimatedButton>
@@ -323,7 +323,7 @@ export default function Footer({
               <Text
                 style={StyleSheet.flatten([
                   styles.premiumCopyright,
-                  { color: colors.gray500 },
+                  { color: theme.palette.neutral[500] },
                 ])}
               >
                 © {new Date().getFullYear()} PawfectMatch Inc.

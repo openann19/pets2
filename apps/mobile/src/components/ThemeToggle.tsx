@@ -62,7 +62,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
   const backgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.gray100, colors.gray800],
+    outputRange: [theme.palette.neutral[100], theme.palette.neutral[800]],
   });
 
   if (variant === "icon") {
@@ -91,7 +91,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           <Text
             style={StyleSheet.flatten([
               themeStyles.label,
-              { color: colors.gray600 },
+              { color: theme.palette.neutral[600] },
             ])}
           >
             {isDark ? "Dark" : "Light"}
@@ -149,7 +149,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           buttonSizes[size],
           {
             backgroundColor: colors.glassWhiteLight,
-            borderColor: colors.gray300,
+            borderColor: theme.palette.neutral[300],
           },
           style,
         ])}
@@ -171,13 +171,13 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
             <Text
               style={StyleSheet.flatten([
                 themeStyles.selectorText,
-                { color: colors.gray700 },
+                { color: theme.palette.neutral[700] },
               ])}
             >
               Theme: {themeLabels[themeMode]}
             </Text>
           </View>
-          <Ionicons name="chevron-down" size={16} color={colors.gray500} />
+          <Ionicons name="chevron-down" size={16} color={theme.palette.neutral[500]} />
         </View>
       </TouchableOpacity>
     );

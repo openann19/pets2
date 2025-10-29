@@ -5,7 +5,6 @@
  */
 
 import { createTheme } from '../rnTokens';
-import { createContext, useContext } from 'react';
 
 describe('useTheme Hook - Theme System', () => {
   describe('Theme Creation', () => {
@@ -59,7 +58,7 @@ describe('useTheme Hook - Theme System', () => {
       
       // Colors should be hex strings
       expect(theme.colors.bg).toMatch(/^#[0-9a-f]{6}$/i);
-      expect(theme.colors.text).toMatch(/^#[0-9a-f]{6}$/i);
+      expect(theme.colors.onSurface).toMatch(/^#[0-9a-f]{6}$/i);
       expect(theme.colors.primary).toMatch(/^#[0-9a-f]{6}$/i);
     });
 
@@ -69,7 +68,7 @@ describe('useTheme Hook - Theme System', () => {
       
       // Background and text should be inverted
       expect(lightTheme.colors.bg).not.toBe(darkTheme.colors.bg);
-      expect(lightTheme.colors.text).not.toBe(darkTheme.colors.text);
+      expect(lightTheme.colors.onSurface).not.toBe(darkTheme.colors.onSurface);
       
       // Semantic colors should be the same
       expect(lightTheme.colors.primary).toBe(darkTheme.colors.primary);
@@ -81,7 +80,7 @@ describe('useTheme Hook - Theme System', () => {
       
       // Light theme: white background, dark text
       expect(theme.colors.bg).toBe('#ffffff');
-      expect(theme.colors.text).toBe('#111827');
+      expect(theme.colors.onSurface).toBe('#111827');
     });
 
     it('should have proper contrast in dark theme', () => {
@@ -89,7 +88,7 @@ describe('useTheme Hook - Theme System', () => {
       
       // Dark theme: dark background, light text
       expect(theme.colors.bg).toBe('#0a0a0a');
-      expect(theme.colors.text).toBe('#ffffff');
+      expect(theme.colors.onSurface).toBe('#ffffff');
     });
   });
 

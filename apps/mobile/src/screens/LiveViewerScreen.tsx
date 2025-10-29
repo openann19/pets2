@@ -4,7 +4,7 @@ import { useRoute } from "@react-navigation/native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
 import { FLAGS } from "../config/flags";
-import { useTheme } from "../theme/Provider";
+import { useTheme } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import io from "socket.io-client";
 import { logger } from '../services/logger';

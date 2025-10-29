@@ -5,7 +5,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Theme } from "../../theme/unified-theme";
 
 export const TranscriptionBadge = ({ icon, label }: { icon: string; label: string }) => (
   <View style={styles.badge}>

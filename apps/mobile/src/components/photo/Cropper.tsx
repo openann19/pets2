@@ -6,7 +6,6 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as Haptics from "expo-haptics";
-import { Theme } from "../../theme/unified-theme";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
