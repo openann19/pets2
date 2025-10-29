@@ -13,7 +13,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAIBioScreen } from "../hooks/screens/ai";
 import { useTheme } from '../theme/Provider';
-import { Theme } from '../theme/unified-theme';
 
 export default function AIBioScreen() {
   const theme = useTheme();
@@ -30,7 +29,6 @@ export default function AIBioScreen() {
     selectedTone,
     setSelectedTone,
     selectedPhoto,
-    setSelectedPhoto,
 
     // UI state
     isGenerating,
@@ -46,9 +44,9 @@ export default function AIBioScreen() {
   } = useAIBioScreen();
 
   const getSentimentColor = (score: number) => {
-    if (score >= 0.7) return "#69db7c";
-    if (score >= 0.4) return "#ffd43b";
-    return "#ff6b6b";
+    if (score >= 0.7) return theme.colors.success;
+    if (score >= 0.4) return theme.colors.status.warning;
+    return theme.colors.danger;
   };
 
   const styles = getStyles(theme);
@@ -58,11 +56,11 @@ export default function AIBioScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>AI Bio Generator</Text>
         <View style={styles.headerRight}>
-          <Ionicons name="star" size={24} color="#ff6b6b" />
+          <Ionicons name="star" size={24} color={theme.colors.danger} />
         </View>
       </View>
 
@@ -78,7 +76,7 @@ export default function AIBioScreen() {
               />
             ) : (
               <View style={styles.photoPlaceholder}>
-                <Ionicons name="camera" size={40} color="#999" />
+                <Ionicons name="camera" size={40} color={theme.colors.textMuted} />
                 <Text style={styles.photoPlaceholderText}>
                   Add Photo for Better Analysis
                 </Text>
@@ -98,7 +96,7 @@ export default function AIBioScreen() {
               value={petName}
               onChangeText={setPetName}
               placeholder="Enter your pet's name"
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.colors.textMuted}
             />
           </View>
 
@@ -109,7 +107,7 @@ export default function AIBioScreen() {
               value={petBreed}
               onChangeText={setPetBreed}
               placeholder="e.g., Golden Retriever, Persian Cat"
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.colors.textMuted}
             />
           </View>
 
@@ -120,7 +118,7 @@ export default function AIBioScreen() {
               value={petAge}
               onChangeText={setPetAge}
               placeholder="e.g., 2 years, 6 months"
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.colors.textMuted}
             />
           </View>
 
@@ -134,7 +132,7 @@ export default function AIBioScreen() {
               value={petPersonality}
               onChangeText={setPetPersonality}
               placeholder="Describe your pet's personality..."
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.colors.textMuted}
               multiline
               numberOfLines={3}
             />
@@ -181,13 +179,13 @@ export default function AIBioScreen() {
           disabled={isGenerating}
         >
           <LinearGradient
-            colors={isGenerating ? ["#ccc", "#ccc"] : ["#ff6b6b", "#ff8e8e"]}
+            colors={isGenerating ? [theme.colors.textMuted, theme.colors.textMuted] : [theme.colors.danger, theme.colors.danger]}
             style={styles.generateButtonGradient}
           >
             {isGenerating ? (
-              <ActivityIndicator color={theme.colors.neutral[0]} size="small" />
+              <ActivityIndicator color={theme.colors.bg} size="small" />
             ) : (
-              <Ionicons name="star" size={20} color={theme.colors.neutral[0]} />
+              <Ionicons name="star" size={20} color={theme.colors.bg} />
             )}
             <Text style={styles.generateButtonText}>
               {isGenerating ? "Generating..." : "Generate Bio"}
@@ -209,7 +207,7 @@ export default function AIBioScreen() {
                   <Text
                     style={StyleSheet.flatten([
                       styles.statValue,
-                      { color: "#69db7c" },
+                      { color: theme.colors.success },
                     ])}
                   >
                     {generatedBio.matchScore}%
@@ -250,11 +248,11 @@ export default function AIBioScreen() {
                   style={styles.regenerateButton}
                    testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={generateBio}
                 >
-                  <Ionicons name="refresh" size={16} color="#666" />
+                  <Ionicons name="refresh" size={16} color={theme.colors.textMuted} />
                   <Text style={styles.regenerateText}>Regenerate</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.saveButton}  testID="AIBioScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={saveBio}>
-                  <Ionicons name="checkmark" size={16} color={theme.colors.neutral[0]} />
+                  <Ionicons name="checkmark" size={16} color={theme.colors.bg} />
                   <Text style={styles.saveText}>Save Bio</Text>
                 </TouchableOpacity>
               </View>
@@ -281,7 +279,7 @@ export default function AIBioScreen() {
   );
 }
 
-const createStyles = (theme: any) => StyleSheet.create({
+const createStyles = (theme: ReturnType<typeof useTheme>) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.bg,
@@ -340,12 +338,12 @@ const createStyles = (theme: any) => StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: theme.colors.background.secondary,
   },
   photoPlaceholderText: {
     marginTop: 10,
     fontSize: 14,
-    color: "#999",
+    color: theme.colors.textMuted,
   },
   inputGroup: {
     marginBottom: 20,
@@ -353,18 +351,18 @@ const createStyles = (theme: any) => StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
+    color: theme.colors.text,
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.bg,
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
-    shadowColor: theme.colors.neutral[950],
+    borderColor: theme.colors.border,
+    shadowColor: theme.colors.text,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -382,12 +380,12 @@ const createStyles = (theme: any) => StyleSheet.create({
   toneOption: {
     flex: 1,
     minWidth: "30%",
-    backgroundColor: theme.colors.neutral[0],
+    backgroundColor: theme.colors.bg,
     borderRadius: 10,
     padding: 15,
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#e0e0e0",
+    borderColor: theme.colors.border,
   },
   selectedTone: {
     borderWidth: 2,
