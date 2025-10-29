@@ -5,6 +5,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import noThemeNamespace from './apps/mobile/eslint-local-rules/no-theme-namespace.js';
+import noHardcodedColors from './eslint-local-rules/no-hardcoded-colors.js';
 
 export default [
   // Global ignores
@@ -77,6 +78,7 @@ export default [
       'local': {
         rules: {
           'no-theme-namespace': noThemeNamespace,
+          'no-hardcoded-colors': noHardcodedColors,
         },
       },
     },
@@ -87,6 +89,7 @@ export default [
     },
     rules: {
       'local/no-theme-namespace': 'error',
+      'local/no-hardcoded-colors': 'error',
       // React Native has many legitimate uses of any due to third-party libraries
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
