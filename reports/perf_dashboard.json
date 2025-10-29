@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2025-10-29T00:17:20.296Z",
+  "screens": {
+    "total": 148,
+    "heavy": [
+      {
+        "file": "screens/ai/AIPhotoAnalyzerScreen.original.tsx",
+        "lines": 1099
+      },
+      {
+        "file": "screens/__tests__/AICompatibilityScreen.test.tsx",
+        "lines": 815
+      },
+      {
+        "file": "screens/adoption/AdoptionManagerScreen.tsx",
+        "lines": 798
+      },
+      {
+        "file": "screens/premium/SubscriptionManagerScreen.tsx",
+        "lines": 750
+      },
+      {
+        "file": "screens/__tests__/AIPhotoAnalyzerScreen.test.tsx",
+        "lines": 739
+      },
+      {
+        "file": "screens/adoption/AdoptionApplicationScreen.tsx",
+        "lines": 710
+      },
+      {
+        "file": "screens/onboarding/WelcomeScreen.tsx",
+        "lines": 695
+      },
+      {
+        "file": "screens/adoption/ApplicationReviewScreen.tsx",
+        "lines": 694
+      }
+    ]
+  },
+  "bundle": {
+    "jsKb": 6184.95,
+    "assetKb": 0.17
+  },
+  "virtualization": {
+    "flatListCount": 36,
+    "flashListCount": 0
+  },
+  "perfBudget": {
+    "cold_start_ms": {
+      "low": 3500,
+      "mid": 2800,
+      "high": 2000
+    },
+    "tti_ms": {
+      "low": 3800,
+      "mid": 3000,
+      "high": 2200
+    },
+    "js_heap_mb": 120,
+    "fps_drop_pct": 1,
+    "bundle_js_kb": 1500,
+    "bundle_assets_kb": 2500,
+    "network_requests_count": 25
+  }
+}

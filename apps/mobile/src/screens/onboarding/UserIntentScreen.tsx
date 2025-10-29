@@ -217,7 +217,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={[theme.colors.primary[500], theme.colors.primary[700]]}
+                          colors={[theme.colors.primary[500], theme.colors.primary[700]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>🏠</Text>
@@ -287,7 +287,7 @@ const UserIntentScreen = ({ navigation }: UserIntentScreenProps) => {
                     >
                       <View style={styles.cardIcon}>
                         <LinearGradient
-                          colors={[theme.colors.secondary[500], theme.colors.secondary[600]]}
+                          colors={[theme.colors.secondary[500], theme.colors.secondary[600]}
                           style={styles.iconGradient}
                         >
                           <Text style={styles.cardEmoji}>📝</Text>

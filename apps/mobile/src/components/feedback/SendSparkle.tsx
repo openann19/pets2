@@ -99,7 +99,7 @@ export const SendSparkle = forwardRef<SendSparkleHandle, SendSparkleProps>(
           return (
             <Animated.Text
               key={p.i}
-              style={[styles.glyph, sty, { fontSize: size, color: p.color }]}
+              style={[styles.glyph, sty, { fontSize: size, color: p.color }]
             >
               {p.glyph}
             </Animated.Text>

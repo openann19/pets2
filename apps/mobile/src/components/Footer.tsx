@@ -141,7 +141,7 @@ export default function Footer({
             <AnimatedButton
               onPress={handleTermsPress}
               style={styles.legalLink}
-              textStyle={[styles.legalLinkText, { color: colors.primary }]}
+              textStyle={[styles.legalLinkText, { color: colors.primary }]
               accessibilityLabel="Terms of Service"
               accessibilityHint="Opens Terms of Service in browser"
               accessibilityRole="link"
@@ -161,7 +161,7 @@ export default function Footer({
             <AnimatedButton
               onPress={handlePrivacyPress}
               style={styles.legalLink}
-              textStyle={[styles.legalLinkText, { color: colors.primary }]}
+              textStyle={[styles.legalLinkText, { color: colors.primary }]
               accessibilityLabel="Privacy Policy"
               accessibilityHint="Opens Privacy Policy in browser"
               accessibilityRole="link"
@@ -279,7 +279,7 @@ export default function Footer({
               <AnimatedButton
                 onPress={handleTermsPress}
                 style={styles.premiumLink}
-                textStyle={[styles.premiumLinkText, { color: colors.primary }]}
+                textStyle={[styles.premiumLinkText, { color: colors.primary }]
               >
                 Terms
               </AnimatedButton>
@@ -296,7 +296,7 @@ export default function Footer({
               <AnimatedButton
                 onPress={handlePrivacyPress}
                 style={styles.premiumLink}
-                textStyle={[styles.premiumLinkText, { color: colors.primary }]}
+                textStyle={[styles.premiumLinkText, { color: colors.primary }]
               >
                 Privacy
               </AnimatedButton>
@@ -313,7 +313,7 @@ export default function Footer({
               <AnimatedButton
                 onPress={handleSupportPress}
                 style={styles.premiumLink}
-                textStyle={[styles.premiumLinkText, { color: colors.primary }]}
+                textStyle={[styles.premiumLinkText, { color: colors.primary }]
               >
                 Support
               </AnimatedButton>

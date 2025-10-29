@@ -42,7 +42,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.gray900 }]}
+      style={[styles.container, { backgroundColor: colors.gray900 }]
     >
       {/* Header */}
       <View
@@ -66,7 +66,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
         >
           <Ionicons name="close" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.white }]}>
+        <Text style={[styles.headerTitle, { color: colors.white }]>
           {t('go_premium')}
         </Text>
         <View style={{ width: 60 }} />
@@ -105,7 +105,7 @@ function PremiumScreen({ navigation }: PremiumScreenProps): React.JSX.Element {
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator color={theme.colors.neutral[0}]} } size="small" />
+            <ActivityIndicator color={theme.colors.neutral[0}] } size="small" />
           ) : (
             <>
               <Text style={styles.subscribeButtonText}>{t('premium_subscribe')}</Text>

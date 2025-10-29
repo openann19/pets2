@@ -90,7 +90,7 @@ export const SettingItemComponent: React.FC<SettingItemProps> = ({
         />
       )}
       {item.type === "navigation" && (
-        <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400}]}} />
+        <Ionicons name="chevron-forward" size={20} color={Theme.colors.neutral[400}]} />
       )}
     </View>
   </TouchableOpacity>

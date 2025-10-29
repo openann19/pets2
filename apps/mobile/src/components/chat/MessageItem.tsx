@@ -127,7 +127,7 @@ export function MessageItem({
       {showDateHeader && (
         <View style={styles.dateHeader}>
           <BlurView intensity={20} style={styles.dateHeaderBlur}>
-            <Text style={[styles.dateHeaderText, { color: colors.textMuted }]}>
+            <Text style={[styles.dateHeaderText, { color: colors.textMuted }]>
               {getDateHeader(message.timestamp)}
             </Text>
           </BlurView>
@@ -210,7 +210,7 @@ export function MessageItem({
           {isMyMessage && (
             <View style={styles.messageStatus}>
               {message.status === "sending" && (
-                <Text style={[styles.sendingText, { color: `${Theme.colors.neutral[0]}B3` }]}> 
+                <Text style={[styles.sendingText, { color: `${Theme.colors.neutral[0]}B3` }]> 
                   Sending...
                 </Text>
               )}
@@ -220,7 +220,7 @@ export function MessageItem({
                   onPress={handleRetry}
                 >
                   <Ionicons name="refresh" size={12} color={Theme.colors.status.error} />
-                  <Text style={[styles.retryText, { color: Theme.colors.status.error }]}> 
+                  <Text style={[styles.retryText, { color: Theme.colors.status.error }]> 
                     Retry
                   </Text>
                 </TouchableOpacity>
@@ -251,7 +251,7 @@ export function MessageItem({
                 : null,
             ]}
           >
-            <Text style={[styles.messageTime, { color: Theme.colors.neutral[500] }]}>
+            <Text style={[styles.messageTime, { color: Theme.colors.neutral[500] }]>
               {formatMessageTime(message.timestamp)}
             </Text>
             {isMyMessage && !hasError && (

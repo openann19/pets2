@@ -147,47 +147,47 @@ export default function VerificationCenterScreen(): React.JSX.Element {
   const { tierName, statusText } = getStatusDisplay();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Verification Center</Text>
-        <Text style={[styles.subtitle, { color: colors.textMuted }]}>
+        <Text style={[styles.title, { color: colors.text }]>Verification Center</Text>
+        <Text style={[styles.subtitle, { color: colors.textMuted }]>
           Build trust with verified badges
         </Text>
       </View>
 
       {/* Current Status Card */}
-      <View style={[styles.statusCard, { backgroundColor: colors.surface }]}>
+      <View style={[styles.statusCard, { backgroundColor: colors.surface }]>
         <View style={styles.statusHeader}>
-          <View style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]}>
+          <View style={[styles.statusIcon, { backgroundColor: getTierColor(verificationStatus.tier) }]>
             <Ionicons name="shield-checkmark" size={24} color={colors.white} />
           </View>
           <View style={styles.statusInfo}>
-            <Text style={[styles.statusTier, { color: colors.text }]}>{tierName}</Text>
-            <Text style={[styles.statusText, { color: colors.textMuted }]}>{statusText}</Text>
+            <Text style={[styles.statusTier, { color: colors.text }]>{tierName}</Text>
+            <Text style={[styles.statusText, { color: colors.textMuted }]>{statusText}</Text>
           </View>
         </View>
 
         {verificationStatus.rejectionReason && (
           <View style={styles.rejectionContainer}>
             <Ionicons name="alert-circle" size={16} color={colors.error} />
-            <Text style={[styles.rejectionText, { color: colors.error }]}>
+            <Text style={[styles.rejectionText, { color: colors.error }]>
               {verificationStatus.rejectionReason}
             </Text>
           </View>
         )}
 
         {verificationStatus.status === 'rejected' && (
-          <TouchableOpacity style={[styles.retryButton, { backgroundColor: colors.primary }]}  testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleRetry}>
+          <TouchableOpacity style={[styles.retryButton, { backgroundColor: colors.primary }]  testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={handleRetry}>
             <Ionicons name="refresh" size={16} color={colors.white} />
-            <Text style={[styles.retryButtonText, { color: colors.white }]}>Retry Verification</Text>
+            <Text style={[styles.retryButtonText, { color: colors.white }]>Retry Verification</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {/* Progress Indicator */}
       <View style={styles.progressContainer}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Verification Tiers</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]>Verification Tiers</Text>
         {['tier0', 'tier1', 'tier2', 'tier3', 'tier4'].map((tier, index) => {
           const isCompleted = ['tier0', 'tier1', 'tier2', 'tier3', 'tier4'].indexOf(verificationStatus.tier) >= index;
           return (
@@ -198,7 +198,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
               ]}>
                 {isCompleted && <Ionicons name="checkmark" size={12} color={colors.white} />}
               </View>
-              <Text style={[styles.tierText, { color: isCompleted ? colors.text : colors.textMuted }]}>
+              <Text style={[styles.tierText, { color: isCompleted ? colors.text : colors.textMuted }]>
                 Tier {index}: {getStatusDisplay().tierName}
               </Text>
             </View>
@@ -208,7 +208,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
       {/* Available Badges */}
       <View style={styles.badgesContainer}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Available Badges</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]>Available Badges</Text>
         {badges.map((badge) => (
           <View
             key={badge.id}
@@ -234,7 +234,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
               ]}>
                 {badge.name}
               </Text>
-              <Text style={[styles.badgeDesc, { color: colors.textMuted }]}>
+              <Text style={[styles.badgeDesc, { color: colors.textMuted }]>
                 {badge.description}
               </Text>
             </View>
@@ -249,11 +249,11 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       <View style={styles.actionContainer}>
         {verificationStatus.status === 'not_started' && (
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.primary }]}
+            style={[styles.actionButton, { backgroundColor: colors.primary }]
              testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleStartVerification('tier1'); }}
           >
             <Ionicons name="shield-checkmark" size={20} color={colors.white} />
-            <Text style={[styles.actionButtonText, { color: colors.white }]}>
+            <Text style={[styles.actionButtonText, { color: colors.white }]>
               Start Identity Verification
             </Text>
           </TouchableOpacity>
@@ -261,11 +261,11 @@ export default function VerificationCenterScreen(): React.JSX.Element {
 
         {verificationStatus.status === 'approved' && verificationStatus.tier === 'tier1' && (
           <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.secondary }]}
+            style={[styles.actionButton, { backgroundColor: colors.secondary }]
              testID="VerificationCenterScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={() => { handleStartVerification('tier2'); }}
           >
             <Ionicons name="paw" size={20} color={colors.white} />
-            <Text style={[styles.actionButtonText, { color: colors.white }]}>
+            <Text style={[styles.actionButtonText, { color: colors.white }]>
               Verify Pet Ownership
             </Text>
           </TouchableOpacity>
@@ -275,7 +275,7 @@ export default function VerificationCenterScreen(): React.JSX.Element {
       {/* Info Section */}
       <View style={styles.infoContainer}>
         <Ionicons name="information-circle" size={20} color={colors.primary} />
-        <Text style={[styles.infoText, { color: colors.textMuted }]}>
+        <Text style={[styles.infoText, { color: colors.textMuted }]>
           Verification helps build trust in the PawfectMatch community. All information is encrypted and processed securely in compliance with GDPR regulations.
         </Text>
       </View>

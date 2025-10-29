@@ -328,7 +328,7 @@ const InteractiveButton = forwardRef<TouchableOpacity, InteractiveButtonProps>(
         >
         <TouchableOpacity
           ref={ref}
-          style={[{ flex: 1 }]}
+          style={[{ flex: 1 }]
           // Glow effect is applied separately via Animated wrapper if needed
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}

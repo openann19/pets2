@@ -189,11 +189,11 @@ export function MessageWithEnhancements({
           color={colors.primary}
         />
         <View style={styles.fileInfo}>
-          <Text style={[styles.fileName, { color: colors.text }]} numberOfLines={1}>
+          <Text style={[styles.fileName, { color: colors.text }] numberOfLines={1}>
             {name || "File"}
           </Text>
           {size && (
-            <Text style={[styles.fileSize, { color: colors.textSecondary }]}>
+            <Text style={[styles.fileSize, { color: colors.textSecondary }]>
               {(size / 1024 / 1024).toFixed(1)} MB
             </Text>
           )}
@@ -233,7 +233,7 @@ export function MessageWithEnhancements({
             onPress={() => handleReactionSelect(emoji)}
           >
             <Text style={styles.reactionEmoji}>{emoji}</Text>
-            <Text style={[styles.reactionCount, { color: colors.textSecondary }]}>
+            <Text style={[styles.reactionCount, { color: colors.textSecondary }]>
               {count}
             </Text>
           </TouchableOpacity>
@@ -262,7 +262,7 @@ export function MessageWithEnhancements({
           >
             {/* Message Content */}
             {message.content && (
-              <Text style={[styles.messageText, { color: textColor }]}>
+              <Text style={[styles.messageText, { color: textColor }]>
                 {message.content}
               </Text>
             )}
@@ -274,7 +274,7 @@ export function MessageWithEnhancements({
             {renderVoiceNote()}
 
             {/* Message Timestamp */}
-            <Text style={[styles.timestamp, { color: isOwnMessage ? colors.white : colors.textSecondary }]}>
+            <Text style={[styles.timestamp, { color: isOwnMessage ? colors.white : colors.textSecondary }]>
               {new Date(message.sentAt).toLocaleTimeString("en-US", {
                 hour: "2-digit",
                 minute: "2-digit",

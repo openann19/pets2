@@ -39,7 +39,7 @@ export default function RetryBadge({
         onPress={handlePress}
         android_ripple={{ color: "rgba(255,255,255,0.12)", borderless: true }}
         disabled={disabled}
-        style={[styles.btn, { backgroundColor: bg }]}
+        style={[styles.btn, { backgroundColor: bg }]
         accessibilityRole="button"
         accessibilityLabel="Retry sending message"
       >

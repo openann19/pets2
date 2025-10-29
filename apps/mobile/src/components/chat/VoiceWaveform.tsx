@@ -138,7 +138,7 @@ export function VoiceWaveform({
   return (
     <View style={styles.container}>
       <View
-        style={[styles.waveform, { height }]}
+        style={[styles.waveform, { height }]
         onLayout={(event) => {
           setContainerWidth(event.nativeEvent.layout.width);
         }}

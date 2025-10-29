@@ -1,0 +1,166 @@
+ 1927 error TS2786: 'View' cannot be used as a JSX component.
+ 1751 error TS2786: 'Text' cannot be used as a JSX component.
+  419 error TS2786: 'TouchableOpacity' cannot be used as a JSX component.
+  305 error TS2300: Duplicate identifier 'useTheme'.
+  171 error TS2304: Cannot find name 'AppTheme'.
+  152 error TS2300: Duplicate identifier 'Theme'.
+   81 error TS2769: No overload matches this call.
+   74 error TS2786: 'TextInput' cannot be used as a JSX component.
+   69 error TS2551: Property 'fontSize' does not exist on type '{ readonly fontSizes: { readonly xs: "0.75rem"; readonly sm: "0.875rem"; readonly base: "1rem"; readonly lg: "1.125rem"; readonly xl: "1.25rem"; readonly '2xl': "1.5rem"; readonly '3xl': "1.875rem"; readonly '4xl': "2.25rem"; ... 4 more ...; readonly '9xl': "8rem"; }; readonly fontWeights: { ...; }; readonly lineHei...'. Did you mean 'fontSizes'?
+   66 error TS2786: 'ScrollView' cannot be used as a JSX component.
+   60 error TS2786: 'ActivityIndicator' cannot be used as a JSX component.
+   59 error TS2304: Cannot find name 'styles'.
+   58 error TS2448: Block-scoped variable 'theme' used before its declaration.
+   58 error TS2454: Variable 'theme' is used before being assigned.
+   58 error TS2786: 'Animated.View' cannot be used as a JSX component.
+   46 error TS2339: Property 'xs' does not exist on type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+   44 error TS2551: Property 'textSecondary' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'. Did you mean 'secondary'?
+   41 error TS2786: 'Image' cannot be used as a JSX component.
+   41 error TS2339: Property 'sm' does not exist on type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+   39 error TS2339: Property 'lg' does not exist on type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+   35 error TS2551: Property 'fontWeight' does not exist on type '{ readonly fontSizes: { readonly xs: "0.75rem"; readonly sm: "0.875rem"; readonly base: "1rem"; readonly lg: "1.125rem"; readonly xl: "1.25rem"; readonly '2xl': "1.5rem"; readonly '3xl': "1.875rem"; readonly '4xl': "2.25rem"; ... 4 more ...; readonly '9xl': "8rem"; }; readonly fontWeights: { ...; }; readonly lineHei...'. Did you mean 'fontWeights'?
+   34 error TS2786: 'Pressable' cannot be used as a JSX component.
+   25 error TS2339: Property 'md' does not exist on type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+   25 error TS2786: 'FlatList' cannot be used as a JSX component.
+   23 error TS2339: Property 'xl' does not exist on type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+   23 error TS2786: 'RefreshControl' cannot be used as a JSX component.
+   21 error TS2339: Property 'textMuted' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+   21 error TS2786: 'Switch' cannot be used as a JSX component.
+   20 error TS2786: 'Modal' cannot be used as a JSX component.
+   20 error TS1361: 'useMemo' cannot be used as a value because it was imported using 'import type'.
+   19 error TS2339: Property 'card' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+   16 error TS2551: Property 'lineHeight' does not exist on type '{ readonly fontSizes: { readonly xs: "0.75rem"; readonly sm: "0.875rem"; readonly base: "1rem"; readonly lg: "1.125rem"; readonly xl: "1.25rem"; readonly '2xl': "1.5rem"; readonly '3xl': "1.875rem"; readonly '4xl': "2.25rem"; ... 4 more ...; readonly '9xl': "8rem"; }; readonly fontWeights: { ...; }; readonly lineHei...'. Did you mean 'lineHeights'?
+   16 error TS2304: Cannot find name 'window'.
+   16 error TS2786: 'Picker.Item' cannot be used as a JSX component.
+   15 error TS2812: Property 'width' does not exist on type 'HTMLCanvasElement'. Try changing the 'lib' compiler option to include 'dom'.
+   15 error TS2812: Property 'height' does not exist on type 'HTMLCanvasElement'. Try changing the 'lib' compiler option to include 'dom'.
+   14 error TS2584: Cannot find name 'document'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+   13 error TS7053: Element implicitly has an 'any' type because expression of type '"4xl"' can't be used to index type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+   12 error TS2786: 'StatusBar' cannot be used as a JSX component.
+   12 error TS2339: Property 'success' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+   12 error TS2812: Property 'getContext' does not exist on type 'HTMLCanvasElement'. Try changing the 'lib' compiler option to include 'dom'.
+   11 error TS2698: Spread types may only be created from object types.
+   11 error TS2339: Property 'danger' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+   11 error TS2786: 'KeyboardAvoidingView' cannot be used as a JSX component.
+   10 error TS2339: Property 'width' does not exist on type 'HTMLCanvasElement'.
+   10 error TS2339: Property 'height' does not exist on type 'HTMLCanvasElement'.
+    9 error TS2339: Property 'full' does not exist on type '{ readonly xs: number; readonly sm: number; readonly md: number; readonly lg: number; readonly xl: number; readonly '2xl': number; }'.
+    9 error TS2339: Property 'primaryText' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    9 error TS2339: Property 'radius' does not exist on type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }'.
+    8 error TS2339: Property 'bgElevated' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    8 error TS2305: Module '"../../theme"' has no exported member 'Theme'.
+    8 error TS2339: Property 'bgAlt' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    8 error TS2339: Property 'warning' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    8 error TS2322: Type '{ medium: "#262626" | "#e5e5e5"; }' is not assignable to type 'ColorValue | undefined'.
+    7 error TS2339: Property 'bg' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    7 error TS2786: 'SafeAreaView' cannot be used as a JSX component.
+    7 error TS2322: Type '{ primary: "#ffffff" | "#0a0a0a"; secondary: "#a3a3a3" | "#525252"; inverse: "#ffffff" | "#171717"; }' is not assignable to type 'ColorValue | undefined'.
+    6 error TS2322: Type '{ readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }' is not assignable to type 'string'.
+    6 error TS2339: Property 'gradients' does not exist on type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }'.
+    6 error TS2786: 'Slider' cannot be used as a JSX component.
+    6 error TS2304: Cannot find name 'AudioBuffer'.
+    6 error TS7006: Parameter 'b' implicitly has an 'any' type.
+    5 error TS2304: Cannot find name 'theme'.
+    5 error TS7006: Parameter 't' implicitly has an 'any' type.
+    5 error TS2322: Type '{ readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }' is not assignable to type 'ColorValue | undefined'.
+    5 error TS2812: Property 'toBlob' does not exist on type 'HTMLCanvasElement'. Try changing the 'lib' compiler option to include 'dom'.
+    4 error TS2451: Cannot redeclare block-scoped variable 'theme'.
+    4 error TS2307: Cannot find module '@storybook/react-native' or its corresponding type declarations.
+    4 error TS2339: Property 'light' does not exist on type '{ medium: "#262626" | "#e5e5e5"; }'.
+    4 error TS2322: Type '{ primary: "#ffffff" | "#0a0a0a"; secondary: "#a3a3a3" | "#525252"; inverse: "#ffffff" | "#171717"; }' is not assignable to type 'string'.
+    4 error TS2300: Duplicate identifier 'theme'.
+    4 error TS2304: Cannot find name 'MediaRecorder'.
+    4 error TS2322: Type '{ backgroundColor: { primary: "#ffffff" | "#0a0a0a"; secondary: "#171717" | "#fafafa"; tertiary: "#262626" | "#f5f5f5"; }; }' is not assignable to type 'ViewStyle | Falsy | RegisteredStyle<ViewStyle> | RecursiveArray<ViewStyle | Falsy | RegisteredStyle<ViewStyle>> | readonly (ViewStyle | ... 1 more ... | RegisteredStyle<...>)[]'.
+    3 error TS2786: 'NavigationContainer' cannot be used as a JSX component.
+    3 error TS2304: Cannot find name 'alert'.
+    3 error TS2786: 'Picker' cannot be used as a JSX component.
+    3 error TS2322: Type '{ children: Element; onPress: () => void; onPressIn: () => void; onPressOut: () => void; disabled: boolean; testID: string; accessibilityRole: string; accessibilityLabel: string; style: { width: number; height: number; alignItems: "center"; justifyContent: "center"; }; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<AnimateProps<object>, any, any>> & Readonly<...>'.
+    3 error TS2345: Argument of type 'AppTheme' is not assignable to parameter of type 'Theme'.
+    2 error TS2786: 'Stack.Navigator' cannot be used as a JSX component.
+    2 error TS2786: 'I18nextProvider' cannot be used as a JSX component.
+    2 error TS7053: Element implicitly has an 'any' type because expression of type '"3xl"' can't be used to index type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+    2 error TS2339: Property 'isDark' does not exist on type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }'.
+    2 error TS2305: Module '"../theme/unified-theme"' has no exported member 'ThemeType'.
+    2 error TS2786: 'MaskedView' cannot be used as a JSX component.
+    2 error TS2786: 'Animated.Text' cannot be used as a JSX component.
+    2 error TS2339: Property 'tertiary' does not exist on type '{ primary: "#ffffff" | "#0a0a0a"; secondary: "#a3a3a3" | "#525252"; inverse: "#ffffff" | "#171717"; }'.
+    2 error TS2339: Property 'gray500' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    2 error TS2304: Cannot find name 'navigator'.
+    2 error TS7006: Parameter 'evt' implicitly has an 'any' type.
+    2 error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'BlobOptions'.
+    2 error TS2352: Conversion of type 'string' to type '0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+    2 error TS2786: 'RNText' cannot be used as a JSX component.
+    2 error TS2786: 'RNSwitch' cannot be used as a JSX component.
+    2 error TS2694: Namespace '"/home/ben/Downloads/pets-fresh/node_modules/@sentry/react-native/dist/js/index"' has no exported member 'SeverityLevel'.
+    2 error TS2322: Type '{ readonly 50: "#faf5ff"; readonly 100: "#f3e8ff"; readonly 200: "#e9d5ff"; readonly 300: "#d8b4fe"; readonly 400: "#c084fc"; readonly 500: "#a855f7"; readonly 600: "#9333ea"; readonly 700: "#7e22ce"; readonly 800: "#6b21a8"; readonly 900: "#581c87"; readonly 950: "#3b0764"; }' is not assignable to type 'string'.
+    2 error TS2786: 'RTCView' cannot be used as a JSX component.
+    2 error TS18047: 'socketClient' is possibly 'null'.
+    2 error TS2353: Object literal may only specify known properties, and 'badge' does not exist in type 'TabItem'.
+    2 error TS7006: Parameter 'blob' implicitly has an 'any' type.
+    1 error TS2339: Property 'primaryDark' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    1 error TS2786: 'LottieView' cannot be used as a JSX component.
+    1 error TS2786: 'PanGestureHandler' cannot be used as a JSX component.
+    1 error TS2305: Module '"../theme/unified-theme"' has no exported member 'default'.
+    1 error TS2786: 'FastImage' cannot be used as a JSX component.
+    1 error TS7006: Parameter 'args' implicitly has an 'any' type.
+    1 error TS7053: Element implicitly has an 'any' type because expression of type '"2xl"' can't be used to index type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+    1 error TS2322: Type '{ children: (false | Element)[]; onPress: () => void; onLongPress: () => void; onPressIn: () => void; onPressOut: () => void; style: ({ maxWidth: "75%"; paddingHorizontal: any; paddingVertical: any; borderRadius: number; marginBottom: any; position: "relative"; } | ... 4 more ... | null)[]; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<AnimateProps<object>, any, any>> & Readonly<...>'.
+    1 error TS2339: Property 'gray400' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    1 error TS2339: Property 'elevation' does not exist on type '"0 1px 2px 0 rgba(0, 0, 0, 0.05)"'.
+    1 error TS2339: Property 'shadow' does not exist on type '{ primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }; ... 5 more ...; status: { ....'.
+    1 error TS2339: Property 'glass' does not exist on type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }'.
+    1 error TS2339: Property 'glow' does not exist on type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }'.
+    1 error TS2786: 'Heatmap' cannot be used as a JSX component.
+    1 error TS2786: 'MapView' cannot be used as a JSX component.
+    1 error TS2786: 'Circle' cannot be used as a JSX component.
+    1 error TS2786: 'Marker' cannot be used as a JSX component.
+    1 error TS2322: Type '{ fontWeight: any; color: "#ffffff" | "#0a0a0a" | "#a3a3a3" | "#525252" | "#171717"; fontSize: any; lineHeight: number; letterSpacing: "-0.025em"; } | { fontWeight: any; color: "#ffffff" | "#0a0a0a" | "#a3a3a3" | "#525252" | "#171717"; fontSize: any; lineHeight: number; letterSpacing: "-0.025em"; } | ... 10 more ......' is not assignable to type 'TextStyle'.
+    1 error TS2339: Property 'shadowColor' does not exist on type 'never'.
+    1 error TS2339: Property 'shadowOffset' does not exist on type 'never'.
+    1 error TS2339: Property 'shadowOpacity' does not exist on type 'never'.
+    1 error TS2339: Property 'shadowRadius' does not exist on type 'never'.
+    1 error TS2339: Property 'elevation' does not exist on type 'never'.
+    1 error TS2322: Type '{ children: Element; disabled: boolean; onPress: () => void; onPressIn: () => void; onPressOut: () => void; style: ({ transform: { scale: number; }[]; } | { height: number; paddingHorizontal: number; ... 7 more ...; width: string | undefined; })[]; accessibilityRole: string; accessibilityState: { ...; }; testID: str...' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<AnimateProps<object>, any, any>> & Readonly<...>'.
+    1 error TS2322: Type '{ fontSize: number; fontWeight: "600"; color: string | { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; ... 5 more ...; readonly 950: "#500724"; } | { ...; }; }' is not assignable to type 'StyleProp<TextStyle>'.
+    1 error TS7053: Element implicitly has an 'any' type because expression of type '"sm" | "md" | "lg"' can't be used to index type '{ depth: { readonly xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"; readonly sm: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"; readonly md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"; ... 14 more ...; readonly neonSecondary: "0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 15px #a855f...'.
+    1 error TS1484: 'ViewStyle' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+    1 error TS2322: Type '"#ef4444" | { medium: "#262626" | "#e5e5e5"; }' is not assignable to type 'ColorValue | undefined'.
+    1 error TS2786: 'Container' cannot be used as a JSX component.
+    1 error TS7053: Element implicitly has an 'any' type because expression of type '"xs" | "sm" | "md"' can't be used to index type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+    1 error TS7053: Element implicitly has an 'any' type because expression of type '"2xl" | "3xl" | "xs" | "sm" | "md" | "lg" | "xl" | "4xl"' can't be used to index type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+    1 error TS7053: Element implicitly has an 'any' type because expression of type '"2xl" | "xs" | "sm" | "md" | "lg" | "xl"' can't be used to index type 'Record<0 | 1 | 2 | 5 | 60 | 10 | 3 | 4 | 6 | 7 | 8 | 9 | 11 | 12 | 14 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 52 | 56 | 64 | 72 | 80 | 96, number>'.
+    1 error TS2554: Expected 2 arguments, but got 3.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminDashboard"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminAnalytics"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminUsers"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminSecurity"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminBilling"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminChats"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminUploads"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminVerifications"> | undefined'.
+    1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminServices"> | undefined'.
+    1 error TS2786: 'Tab.Navigator' cannot be used as a JSX component.
+    1 error TS7006: Parameter 'Story' implicitly has an 'any' type.
+    1 error TS2786: 'Camera' cannot be used as a JSX component.
+    1 error TS2345: Argument of type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }' is not assignable to parameter of type 'Theme'.
+    1 error TS2322: Type 'unknown' is not assignable to type 'object'.
+    1 error TS2786: 'Video' cannot be used as a JSX component.
+    1 error TS2305: Module '"../../theme"' has no exported member 'getExtendedColors'.
+    1 error TS2339: Property 'BIOMETRIC' does not exist on type 'typeof SecurityLevel'.
+    1 error TS2339: Property 'statusText' does not exist on type 'Response'.
+    1 error TS2322: Type '"HEAD"' is not assignable to type '"PUT" | "DELETE" | "POST" | "GET" | undefined'.
+    1 error TS2322: Type 'Uint8Array<ArrayBuffer>' is not assignable to type 'string | Blob'.
+    1 error TS2304: Cannot find name 'BodyInit'.
+    1 error TS2322: Type '{ children: Element[]; spacing: string; }' is not assignable to type 'IntrinsicAttributes & StackProps'.
+    1 error TS2345: Argument of type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }' is not assignable to parameter of type 'AppTheme'.
+    1 error TS2739: Type '{ scheme: Scheme; colors: { primary: { readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; ... 4 more ...; readonly 950: "#500724"; }; ... 5 more ...; status: { ...; }; }; ... 6 more ...; motion: { ...; }; }' is missing the following properties from type 'AppTheme': radius, zIndex
+    1 error TS2440: Import declaration conflicts with local declaration of 'AppTheme'.
+    1 error TS2322: Type 'string' is not assignable to type '{ readonly 50: "#fdf2f8"; readonly 100: "#fce7f3"; readonly 200: "#fbcfe8"; readonly 300: "#f9a8d4"; readonly 400: "#f472b6"; readonly 500: "#ec4899"; readonly 600: "#db2777"; readonly 700: "#be185d"; readonly 800: "#9d174d"; readonly 900: "#831843"; readonly 950: "#500724"; }'.
+    1 error TS2322: Type 'string' is not assignable to type '{ readonly 50: "#faf5ff"; readonly 100: "#f3e8ff"; readonly 200: "#e9d5ff"; readonly 300: "#d8b4fe"; readonly 400: "#c084fc"; readonly 500: "#a855f7"; readonly 600: "#9333ea"; readonly 700: "#7e22ce"; readonly 800: "#6b21a8"; readonly 900: "#581c87"; readonly 950: "#3b0764"; }'.
+    1 error TS2322: Type 'string' is not assignable to type '{ primary: "#ffffff" | "#0a0a0a"; secondary: "#a3a3a3" | "#525252"; inverse: "#ffffff" | "#171717"; }'.
+    1 error TS2322: Type 'string' is not assignable to type '{ medium: "#262626" | "#e5e5e5"; }'.
+    1 error TS2741: Property 'depth' is missing in type '{ readonly xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"; readonly sm: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"; readonly md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"; ... 14 more ...; readonly neonSecondary: "0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 15px #a855f7"; }' but required in type '{ depth: { readonly xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"; readonly sm: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"; readonly md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"; ... 14 more ...; readonly neonSecondary: "0 0 5px #a855f7, 0 0 10px #a855f7, 0 0 15px #a855f...'.
+    1 error TS2304: Cannot find name 'RTCSdpType'.
+    1 error TS2345: Argument of type 'Uint8Array<ArrayBuffer>[]' is not assignable to parameter of type '(string | Blob)[]'.
+    1 error TS2322: Type 'ArrayBuffer' is not assignable to type 'string | Blob'.
+    1 error TS2304: Cannot find name 'createImageBitmap'.

@@ -42,7 +42,7 @@ const PERSONALITY_TAGS: string[] = [
   "house-trained",
 ];
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -106,6 +106,7 @@ const PetProfileSetupScreen = ({
   route,
 }: PetProfileSetupScreenProps) => {
   const { userIntent } = route.params;
+  const theme = useTheme();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<PetFormData>({
     name: "",
@@ -500,6 +501,176 @@ const PetProfileSetupScreen = ({
     </View>
   );
 
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: theme.colors.background.primary,
+        },
+        keyboardView: {
+          flex: 1,
+        },
+        header: {
+          padding: 20,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.border.medium,
+        },
+        progressContainer: {
+          alignItems: "center",
+        },
+        progressBar: {
+          width: "100%",
+          height: 4,
+          backgroundColor: theme.colors.background.tertiary,
+          borderRadius: 2,
+          marginBottom: 8,
+        },
+        progressFill: {
+          height: "100%",
+          backgroundColor: theme.colors.primary[500],
+          borderRadius: 2,
+          maxWidth: "100%",
+        },
+        progressText: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+          fontWeight: "500",
+        },
+        content: {
+          flex: 1,
+          padding: 20,
+        },
+        stepContainer: {
+          flex: 1,
+        },
+        stepTitle: {
+          fontSize: 24,
+          fontWeight: "bold",
+          color: theme.colors.text.primary,
+          marginBottom: 8,
+        },
+        stepSubtitle: {
+          fontSize: 16,
+          color: theme.colors.text.secondary,
+          marginBottom: 24,
+        },
+        input: {
+          borderWidth: 1,
+          borderColor: theme.colors.border.medium,
+          borderRadius: 8,
+          padding: 16,
+          fontSize: 16,
+          backgroundColor: theme.colors.background.secondary,
+          marginBottom: 16,
+          color: theme.colors.text.primary,
+        },
+        inputError: {
+          borderColor: theme.colors.danger,
+        },
+        inputFocused: {
+          borderColor: theme.colors.primary[500],
+        },
+        errorText: {
+          color: theme.colors.danger,
+          fontSize: 14,
+          marginTop: 4,
+        },
+        optionsGrid: {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: 12,
+          marginBottom: 24,
+        },
+        optionButton: {
+          paddingVertical: 12,
+          paddingHorizontal: 16,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: theme.colors.border.medium,
+          backgroundColor: theme.colors.background.secondary,
+          minWidth: 80,
+          alignItems: "center",
+        },
+        optionButtonSelected: {
+          borderColor: theme.colors.primary[500],
+          backgroundColor: theme.colors.primary[500] + "10",
+        },
+        optionText: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+        },
+        optionTextSelected: {
+          color: theme.colors.primary[500],
+          fontWeight: "600",
+        },
+        tagsContainer: {
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: 8,
+          marginBottom: 24,
+        },
+        tagButton: {
+          paddingVertical: 8,
+          paddingHorizontal: 12,
+          borderRadius: 16,
+          borderWidth: 1,
+          borderColor: theme.colors.border.medium,
+          backgroundColor: theme.colors.background.secondary,
+        },
+        tagButtonSelected: {
+          borderColor: theme.colors.primary[500],
+          backgroundColor: theme.colors.primary[500] + "10",
+        },
+        tagText: {
+          fontSize: 14,
+          color: theme.colors.text.secondary,
+        },
+        tagTextSelected: {
+          color: theme.colors.primary[500],
+          fontWeight: "500",
+        },
+        navigation: {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingVertical: 20,
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border.medium,
+        },
+        navButton: {
+          paddingVertical: 12,
+          paddingHorizontal: 24,
+          borderRadius: 8,
+          minWidth: 100,
+          alignItems: "center",
+        },
+        navButtonPrimary: {
+          backgroundColor: theme.colors.primary[500],
+        },
+        navButtonSecondary: {
+          backgroundColor: theme.colors.background.secondary,
+          borderWidth: 1,
+          borderColor: theme.colors.border.medium,
+        },
+        navButtonDisabled: {
+          backgroundColor: theme.colors.background.tertiary,
+          opacity: 0.6,
+        },
+        navButtonText: {
+          fontSize: 16,
+          fontWeight: "600",
+          color: theme.colors.background.primary,
+        },
+        navButtonTextSecondary: {
+          color: theme.colors.text.primary,
+        },
+        navButtonTextDisabled: {
+          color: theme.colors.text.secondary,
+        },
+      }),
+    [theme]
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -547,205 +718,5 @@ const PetProfileSetupScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  header: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
-  },
-  progressContainer: {
-    alignItems: "center",
-  },
-  progressBar: {
-    width: "100%",
-    height: 4,
-    backgroundColor: "#e5e7eb",
-    borderRadius: 2,
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#ec4899",
-    borderRadius: 2,
-    maxWidth: "100%",
-  },
-  progressText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  stepContainer: {
-    flex: 1,
-  },
-  stepTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.neutral[800],
-    marginBottom: 8,
-  },
-  stepSubtitle: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    marginBottom: 32,
-  },
-  inputGroup: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theme.colors.neutral[700],
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: theme.colors.bg.secondary,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: theme.colors.neutral[800],
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  optionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  optionsRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  optionButton: {
-    backgroundColor: theme.colors.bg.secondary,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[200],
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minWidth: 80,
-    alignItems: "center",
-  },
-  selectedOption: {
-    backgroundColor: "#fdf2f8",
-    borderColor: theme.colors.primary[500],
-  },
-  optionText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-  selectedOptionText: {
-    color: "#ec4899",
-    fontWeight: "600",
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  tagButton: {
-    backgroundColor: "#f3f4f6",
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  selectedTag: {
-    backgroundColor: "#ec4899",
-  },
-  tagText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-  selectedTagText: {
-    color: "#ffffff",
-  },
-  healthOptions: {
-    gap: 16,
-    marginBottom: 24,
-  },
-  healthOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f9fafb",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 12,
-    padding: 16,
-  },
-  selectedHealthOption: {
-    backgroundColor: "#f0fdf4",
-    borderColor: "#10b981",
-  },
-  healthIcon: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  healthLabel: {
-    fontSize: 16,
-    color: theme.colors.neutral[500],
-    fontWeight: "500",
-  },
-  selectedHealthLabel: {
-    color: "#10b981",
-    fontWeight: "600",
-  },
-  healthNote: {
-    fontSize: 14,
-    color: theme.colors.neutral[500],
-    lineHeight: 20,
-    fontStyle: "italic",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
-  },
-  backButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: "#6b7280",
-    fontWeight: "600",
-  },
-  nextButton: {
-    backgroundColor: "#ec4899",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    minWidth: 100,
-    alignItems: "center",
-  },
-  disabledButton: {
-    backgroundColor: "#d1d5db",
-  },
-  nextButtonText: {
-    fontSize: 16,
-    color: "#ffffff",
-    fontWeight: "600",
-  },
-});
 
 export default PetProfileSetupScreen;

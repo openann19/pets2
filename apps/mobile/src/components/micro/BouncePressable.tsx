@@ -35,7 +35,7 @@ const BouncePressable = memo(function BouncePressable({
         onPressOut?.(e);
       }}
       onPress={onPress}
-      style={({ pressed }) => [{ opacity: pressed ? 0.95 : 1 }]}
+      style={({ pressed }) => [{ opacity: pressed ? 0.95 : 1 }]
     >
       {typeof children === 'function' ? (
         <Animated.View style={style}>{children({ pressed: false })}</Animated.View>

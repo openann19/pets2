@@ -1,0 +1,154 @@
+   1927 error TS2786: 'View' cannot be used as a JSX component.
+   1751 error TS2786: 'Text' cannot be used as a JSX component.
+    660 error TS2693: 'Theme' only refers to a type, but is being used as a value here.
+    419 error TS2786: 'TouchableOpacity' cannot be used as a JSX component.
+    293 error TS1484: 'Theme' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+    232 error TS2300: Duplicate identifier 'useTheme'.
+    152 error TS2300: Duplicate identifier 'Theme'.
+    125 error TS2345: Argument of type 'AppTheme' is not assignable to parameter of type 'Theme'.
+     74 error TS2786: 'TextInput' cannot be used as a JSX component.
+     66 error TS2786: 'ScrollView' cannot be used as a JSX component.
+     60 error TS2786: 'ActivityIndicator' cannot be used as a JSX component.
+     59 error TS2304: Cannot find name 'styles'.
+     58 error TS2786: 'Animated.View' cannot be used as a JSX component.
+     58 error TS2454: Variable 'theme' is used before being assigned.
+     58 error TS2448: Block-scoped variable 'theme' used before its declaration.
+     41 error TS2786: 'Image' cannot be used as a JSX component.
+     34 error TS2786: 'Pressable' cannot be used as a JSX component.
+     25 error TS2786: 'FlatList' cannot be used as a JSX component.
+     23 error TS2786: 'RefreshControl' cannot be used as a JSX component.
+     21 error TS2786: 'Switch' cannot be used as a JSX component.
+     20 error TS2786: 'Modal' cannot be used as a JSX component.
+     20 error TS1361: 'useMemo' cannot be used as a value because it was imported using 'import type'.
+     16 error TS2786: 'Picker.Item' cannot be used as a JSX component.
+     12 error TS2786: 'StatusBar' cannot be used as a JSX component.
+     11 error TS2786: 'KeyboardAvoidingView' cannot be used as a JSX component.
+      8 error TS2749: 'jest.Mock' refers to a value, but is being used as a type here. Did you mean 'typeof jest.Mock'?
+      7 error TS2786: 'SafeAreaView' cannot be used as a JSX component.
+      7 error TS2769: No overload matches this call.
+      6 error TS2786: 'Slider' cannot be used as a JSX component.
+      5 error TS2304: Cannot find name 'theme'.
+      4 error TS2451: Cannot redeclare block-scoped variable 'theme'.
+      4 error TS2300: Duplicate identifier 'theme'.
+      3 error TS2786: 'Picker' cannot be used as a JSX component.
+      3 error TS2786: 'NavigationContainer' cannot be used as a JSX component.
+      3 error TS2322: Type '{ children: Element; onPress: () => void; onPressIn: () => void; onPressOut: () => void; disabled: boolean; testID: string; accessibilityRole: string; accessibilityLabel: string; style: { width: number; height: number; alignItems: "center"; justifyContent: "center"; }; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<AnimateProps<object>, any, any>> & Readonly<...>'.
+      2 error TS2786: 'Stack.Navigator' cannot be used as a JSX component.
+      2 error TS2786: 'RTCView' cannot be used as a JSX component.
+      2 error TS2786: 'RNText' cannot be used as a JSX component.
+      2 error TS2786: 'RNSwitch' cannot be used as a JSX component.
+      2 error TS2786: 'MaskedView' cannot be used as a JSX component.
+      2 error TS2786: 'I18nextProvider' cannot be used as a JSX component.
+      2 error TS2786: 'Animated.Text' cannot be used as a JSX component.
+      2 error TS2694: Namespace '"/home/ben/Downloads/pets-fresh/node_modules/@sentry/react-native/dist/js/index"' has no exported member 'SeverityLevel'.
+      2 error TS2353: Object literal may only specify known properties, and 'badge' does not exist in type 'TabItem'.
+      2 error TS2345: Argument of type 'import("/home/ben/Downloads/pets-fresh/node_modules/@react-navigation/native/lib/typescript/src/types").Theme' is not assignable to parameter of type 'import("/home/ben/Downloads/pets-fresh/apps/mobile/src/theme/unified-theme").Theme'.
+      2 error TS2323: Cannot redeclare exported variable 'NotificationService'.
+      2 error TS2323: Cannot redeclare exported variable 'AnalyticsService'.
+      2 error TS2305: Module '"../theme/unified-theme"' has no exported member 'ThemeType'.
+      2 error TS2305: Module '"../theme/unified-theme"' has no exported member 'DarkTheme'.
+      2 error TS18047: 'socketClient' is possibly 'null'.
+      2 error TS1205: Re-exporting a type when 'verbatimModuleSyntax' is enabled requires using 'export type'.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/design-tokens/src/tokens.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/design-tokens/src/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/design-tokens/src/constants.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/utils/storage.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/utils/logger.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/utils/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/utils/env.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/utils/environment.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/utils/contentFilter.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/story.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/socket.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/moderation.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/models.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/haptics.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/api-responses.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/animations.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/advanced.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/types/account.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/useWeatherStore.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/useUIStore.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/usePreferencesStore.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/useMatchStore.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/useAuthStore.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/useAnalyticsStore.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/stores/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/services/ErrorHandler.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/services/animationConfig.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/services/AccountService.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/schemas/story.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/schemas/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/mappers/user.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/mappers/pet.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/mappers/message.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/mappers/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useUserAnalytics.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useRealtimeSocket.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useMatchAnalytics.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useKeyboardShortcut.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useGesture.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useFocusTrap.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/useEventTracking.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/hooks/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/featureFlags.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/constants/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/UnifiedAPIClient.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/RequestRetryStrategy.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/RecoveryStrategies.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/RateLimiter.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/OfflineQueueManager.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/index.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/hooks.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/client.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/CircuitBreaker.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS6307: File '/home/ben/Downloads/pets-fresh/packages/core/src/api/APIErrorClassifier.ts' is not listed within the file list of project '/home/ben/Downloads/pets-fresh/apps/mobile/tsconfig.json'. Projects must list all files or use an 'include' pattern.
+      1 error TS2786: 'Video' cannot be used as a JSX component.
+      1 error TS2786: 'Tab.Navigator' cannot be used as a JSX component.
+      1 error TS2786: 'PanGestureHandler' cannot be used as a JSX component.
+      1 error TS2786: 'Marker' cannot be used as a JSX component.
+      1 error TS2786: 'MapView' cannot be used as a JSX component.
+      1 error TS2786: 'LottieView' cannot be used as a JSX component.
+      1 error TS2786: 'Heatmap' cannot be used as a JSX component.
+      1 error TS2786: 'FastImage' cannot be used as a JSX component.
+      1 error TS2786: 'Container' cannot be used as a JSX component.
+      1 error TS2786: 'Circle' cannot be used as a JSX component.
+      1 error TS2786: 'Camera' cannot be used as a JSX component.
+      1 error TS2741: Property 'securityLevel' is missing in type '{ hasHardware: false; isEnrolled: false; supportedTypes: never[]; }' but required in type 'BiometricCapabilities'.
+      1 error TS2694: Namespace '"/home/ben/Downloads/pets-fresh/node_modules/@sentry/react-native/dist/js/index"' has no exported member 'ErrorEvent'.
+      1 error TS2688: Cannot find type definition file for 'minimatch'.
+      1 error TS2554: Expected 2 arguments, but got 3.
+      1 error TS2484: Export declaration conflicts with exported declaration of 'NotificationService'.
+      1 error TS2484: Export declaration conflicts with exported declaration of 'AnalyticsService'.
+      1 error TS2352: Conversion of type '(url: string, options: Options) => Promise<Response>' to type 'SSLFetch' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+      1 error TS2345: Argument of type 'import("/home/ben/Downloads/pets-fresh/apps/mobile/src/theme/unified-theme").Theme' is not assignable to parameter of type 'import("/home/ben/Downloads/pets-fresh/apps/mobile/src/theme/types").Theme'.
+      1 error TS2345: Argument of type '{ bg?: string | undefined; text?: string | undefined; subtext?: string | undefined; border?: string | undefined; } | undefined' is not assignable to parameter of type 'Theme'.
+      1 error TS2345: Argument of type '{ bg: string; border: string; text: string; sub: string; item: string; itemPressed: string; danger?: string | undefined; }' is not assignable to parameter of type 'Theme'.
+      1 error TS2339: Property 'status' does not exist on type 'Colors'.
+      1 error TS2339: Property 'neutral' does not exist on type 'Colors'.
+      1 error TS2322: Type 'unknown' is not assignable to type 'object'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminVerifications"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminUsers"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminUploads"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminServices"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminSecurity"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminDashboard"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminChats"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminBilling"> | undefined'.
+      1 error TS2322: Type 'ComponentType<any>' is not assignable to type 'ScreenComponentType<ParamListBase, "AdminAnalytics"> | undefined'.
+      1 error TS2322: Type '{ children: (false | Element)[]; onPress: () => void; onLongPress: () => void; onPressIn: () => void; onPressOut: () => void; style: ({ maxWidth: "75%"; paddingHorizontal: any; paddingVertical: any; borderRadius: any; marginBottom: any; position: "relative"; } | ... 4 more ... | null)[]; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<AnimateProps<object>, any, any>> & Readonly<...>'.
+      1 error TS2322: Type '{ children: Element[]; spacing: string; }' is not assignable to type 'IntrinsicAttributes & StackProps'.
+      1 error TS2322: Type '{ children: Element; disabled: boolean; onPress: () => void; onPressIn: () => void; onPressOut: () => void; style: ({ transform: { scale: number; }[]; } | { height: number; paddingHorizontal: number; ... 7 more ...; width: string | undefined; })[]; accessibilityRole: string; accessibilityState: { ...; }; testID: str...' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<Component<AnimateProps<object>, any, any>> & Readonly<...>'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'ThemeType'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'SpacingSize'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'FontWeight'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'FontSize'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'DarkTheme'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'createTokenTheme'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'ColorPalette'.
+      1 error TS2305: Module '"./unified-theme"' has no exported member 'BorderRadiusSize'.
+      1 error TS2305: Module '"../theme/unified-theme"' has no exported member 'default'.
+      1 error TS2304: Cannot find name 'EncryptedStorage'.
+      1 error TS1484: 'ViewStyle' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.

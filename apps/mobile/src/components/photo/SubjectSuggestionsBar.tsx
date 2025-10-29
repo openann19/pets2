@@ -39,7 +39,7 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
   if (loading) {
     return (
       <View style={styles.wrap}>
-        <ActivityIndicator size="small" color={Theme.colors.primary[500}]}} />
+        <ActivityIndicator size="small" color={Theme.colors.primary[500}]} />
         <Text style={styles.meta}>Finding the best frames…</Text>
       </View>
     );
@@ -66,7 +66,7 @@ export const SubjectSuggestionsBar: React.FC<Props> = ({ uri, ratios = ["1:1","4
               {s.thumbUri ? (
                 <Image source={{ uri: s.thumbUri }} style={styles.thumbImg} resizeMode="cover" />
               ) : (
-                <View style={[styles.thumbImg, { justifyContent: "center", alignItems:"center"}]}>
+                <View style={[styles.thumbImg, { justifyContent: "center", alignItems:"center"}]>
                   <Ionicons name="image" size={24} color="#fff" />
                 </View>
               )}

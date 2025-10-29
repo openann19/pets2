@@ -1,0 +1,26 @@
+{
+  "createdAt": "2025-10-28T03:36:46.074Z",
+  "cwd": "/home/ben/Downloads/pets-fresh",
+  "renames": [
+    {
+      "from": "/home/ben/Downloads/pets-fresh/apps/mobile/src/services/__tests__/api.test.ts",
+      "to": "/home/ben/Downloads/pets-fresh/apps/mobile/src/services/__tests__/api.test.tsx"
+    },
+    {
+      "from": "/home/ben/Downloads/pets-fresh/apps/mobile/src/services/__tests__/homeAPI.test.ts",
+      "to": "/home/ben/Downloads/pets-fresh/apps/mobile/src/services/__tests__/homeAPI.test.tsx"
+    },
+    {
+      "from": "/home/ben/Downloads/pets-fresh/apps/web/lib/__tests__/api-client.test.ts",
+      "to": "/home/ben/Downloads/pets-fresh/apps/web/lib/__tests__/api-client.test.tsx"
+    },
+    {
+      "from": "/home/ben/Downloads/pets-fresh/apps/web/src/__tests__/design-system.test.ts",
+      "to": "/home/ben/Downloads/pets-fresh/apps/web/src/__tests__/design-system.test.tsx"
+    },
+    {
+      "from": "/home/ben/Downloads/pets-fresh/server/tests/security/auth.test.ts",
+      "to": "/home/ben/Downloads/pets-fresh/server/tests/security/auth.test.tsx"
+    }
+  ]
+}

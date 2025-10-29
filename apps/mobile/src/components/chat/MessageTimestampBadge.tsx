@@ -45,8 +45,8 @@ export default function MessageTimestampBadge({
 
   return (
     <Animated.View style={[styles.wrap, { backgroundColor: bgColor }, sty]}>
-      <View style={[styles.dot, { backgroundColor: accentColor }]} />
-      <Text style={[styles.txt, { color: textColor }]}>{formatClock(iso)}</Text>
+      <View style={[styles.dot, { backgroundColor: accentColor }] />
+      <Text style={[styles.txt, { color: textColor }]>{formatClock(iso)}</Text>
     </Animated.View>
   );
 }

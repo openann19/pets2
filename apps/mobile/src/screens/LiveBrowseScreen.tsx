@@ -45,7 +45,7 @@ export default function LiveBrowseScreen({ navigation }: LiveBrowseScreenProps) 
   }
 
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
+    <View style={[styles.container, { paddingTop: top }]>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Live Streams</Text>
         <TouchableOpacity  testID="LiveBrowseScreen-button-2" accessibilityLabel="refetch()" accessibilityRole="button" onPress={() => refetch()}>

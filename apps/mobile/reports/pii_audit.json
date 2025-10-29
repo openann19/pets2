@@ -1,0 +1,376 @@
+{
+  "timestamp": "2025-10-28T20:31:23.264Z",
+  "issues": [
+    {
+      "file": "test-utils/index.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "test-utils/msw/handlers.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/observability.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/notifications.ts",
+      "type": "asyncstorage_sensitive",
+      "key": "expo_push_token",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "services/apiClient.ts",
+      "type": "asyncstorage_sensitive",
+      "key": "authToken",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "services/__tests__/usageTracking.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/observability.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/observability.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/gdprService.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/gdprService.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/adminUsersService.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/adminAPI.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/AuthService.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "services/__tests__/AuthService.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "screens/__tests__/scrollToTop.integration.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "screens/__tests__/MyPetsScreen.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "screens/__tests__/AIPhotoAnalyzerScreen.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "screens/__tests__/AICompatibilityScreen.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "screens/__tests__/AIBioScreen.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/useHelpSupportData.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/utils/useFormState.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/utils/__tests__/useFormState.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/useResetPasswordScreen.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/useRegisterScreen.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/useLoginScreen.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/useDeactivateAccountScreen.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/useAdminVerificationsScreen.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/useAdminBillingScreen.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/__tests__/useSettingsScreen.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/__tests__/useProfileScreen.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/__tests__/useDeactivateAccountScreen.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/screens/__tests__/useBlockedUsersScreen.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/domains/safety/useBlockedUsers.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/domains/profile/__tests__/useProfileData.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/domains/profile/__tests__/useProfileData.simple.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/domains/profile/__tests__/useProfileData.fixed.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/domains/gdpr/__tests__/useDataExport.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/domains/gdpr/__tests__/useAccountDeletion.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/__tests__/useSocket.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/__tests__/integration/auth-profile.integration.test.ts",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/__tests__/integration/auth-profile.integration.test.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "hooks/__tests__/integration/auth-profile.integration.test.ts",
+      "type": "asyncstorage_sensitive",
+      "key": "key1",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "hooks/__tests__/integration/auth-profile.integration.test.ts",
+      "type": "asyncstorage_sensitive",
+      "key": "key2",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "hooks/__tests__/integration/auth-profile.integration.test.ts",
+      "type": "asyncstorage_sensitive",
+      "key": "key3",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "__tests__/regression.test.tsx",
+      "type": "asyncstorage_sensitive",
+      "key": "key1",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "__tests__/regression.test.tsx",
+      "type": "asyncstorage_sensitive",
+      "key": "key2",
+      "severity": "high",
+      "recommendation": "Use SecureStore for sensitive data"
+    },
+    {
+      "file": "__tests__/integration.test.tsx",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "__tests__/integration.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "__tests__/critical-journeys.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "__tests__/integration/api.integration.test.tsx",
+      "type": "hardcoded_password",
+      "line": "unknown",
+      "severity": "critical",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "__tests__/integration/api.integration.test.tsx",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    },
+    {
+      "file": "__fixtures__/users.ts",
+      "type": "email_in_code",
+      "line": "unknown",
+      "severity": "high",
+      "recommendation": "Move to environment variables or secure storage"
+    }
+  ],
+  "summary": {
+    "total": 52,
+    "critical": 15,
+    "high": 37,
+    "medium": 0
+  },
+  "status": "failed"
+}

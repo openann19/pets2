@@ -15,7 +15,7 @@ export const BillingToggle: React.FC<BillingToggleProps> = ({
   const { colors } = theme;
   
   return (
-    <View style={[styles.billingToggle, { backgroundColor: colors.gray800 }]}>
+    <View style={[styles.billingToggle, { backgroundColor: colors.gray800 }]>
       <TouchableOpacity
         style={[
           styles.billingButton,

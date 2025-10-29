@@ -19,7 +19,7 @@ export const NoMorePetsState: React.FC<NoMorePetsStateProps> = ({ loadPets }) =>
           <Ionicons
             name="heart-outline"
             size={80}
-            color={Theme.colors.primary[500}]}}
+            color={Theme.colors.primary[500}]}
           />
           <Heading2 style={styles.emptyTitle}>No more pets!</Heading2>
           <Body style={styles.emptySubtitle}>

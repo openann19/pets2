@@ -126,7 +126,7 @@ export function PinchZoom({
     <GestureDetector gesture={composed}>
       <Animated.View style={[styles.container, { width, height }, style]}>
         <Animated.View style={[styles.imageContainer, animatedStyle]}>
-          <Image source={source} style={[styles.image, { width, height }]} resizeMode={resizeMode} />
+          <Image source={source} style={[styles.image, { width, height }] resizeMode={resizeMode} />
         </Animated.View>
       </Animated.View>
     </GestureDetector>

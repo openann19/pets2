@@ -71,23 +71,23 @@ export function CropOverlayUltra({
   const guideLines = showGuides ? (
     <>
       {/* Rule of thirds */}
-      <View style={[styles.line, { left: "33.33%" }]} />
-      <View style={[styles.line, { left: "66.66%" }]} />
-      <View style={[styles.hline, { top: "33.33%" }]} />
-      <View style={[styles.hline, { top: "66.66%" }]} />
+      <View style={[styles.line, { left: "33.33%" }] />
+      <View style={[styles.line, { left: "66.66%" }] />
+      <View style={[styles.hline, { top: "33.33%" }] />
+      <View style={[styles.hline, { top: "66.66%" }] />
 
       {/* Golden ratio (approx 38.2/61.8) */}
-      <View style={[styles.line, { left: "38.2%", opacity: 0.35 }]} />
-      <View style={[styles.line, { left: "61.8%", opacity: 0.35 }]} />
-      <View style={[styles.hline, { top: "38.2%", opacity: 0.35 }]} />
-      <View style={[styles.hline, { top: "61.8%", opacity: 0.35 }]} />
+      <View style={[styles.line, { left: "38.2%", opacity: 0.35 }] />
+      <View style={[styles.line, { left: "61.8%", opacity: 0.35 }] />
+      <View style={[styles.hline, { top: "38.2%", opacity: 0.35 }] />
+      <View style={[styles.hline, { top: "61.8%", opacity: 0.35 }] />
 
       {/* Diagonals */}
       <View style={styles.diagA} />
       <View style={styles.diagB} />
 
       {/* Eye-line (top third) */}
-      <View style={[styles.hline, { top: "28%", opacity: 0.25 }]} />
+      <View style={[styles.hline, { top: "28%", opacity: 0.25 }] />
     </>
   ) : null;
 
@@ -132,7 +132,7 @@ export function CropBadges({
     <View style={styles.badgeWrap} pointerEvents="none">
       {typeof angleDeg === "number" && Math.abs(angleDeg) > 0.3 && (
         <View
-          style={[styles.badge, { backgroundColor: "rgba(14,165,233,0.85)" }]}
+          style={[styles.badge, { backgroundColor: "rgba(14,165,233,0.85)" }]
         >
           <Text style={styles.badgeTxt}>
             {angleDeg > 0 ? "↶" : "↷"} {Math.abs(angleDeg).toFixed(1)}°
@@ -141,7 +141,7 @@ export function CropBadges({
       )}
       {hdrWarning && (
         <View
-          style={[styles.badge, { backgroundColor: "rgba(239,68,68,0.9)" }]}
+          style={[styles.badge, { backgroundColor: "rgba(239,68,68,0.9)" }]
         >
           <Text style={styles.badgeTxt}>HDR CLIP</Text>
         </View>

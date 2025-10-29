@@ -74,6 +74,12 @@ export default [
   // Mobile-specific configuration - Relax strict rules for React Native
   {
     files: ['apps/mobile/src/**/*.{ts,tsx}'],
+    ignores: [
+      'apps/mobile/src/theme/**/*',
+      'apps/mobile/src/constants/**/*',
+      'apps/mobile/src/styles/**/*',
+      'apps/mobile/src/types/**/*',
+    ],
     plugins: {
       'local': {
         rules: {

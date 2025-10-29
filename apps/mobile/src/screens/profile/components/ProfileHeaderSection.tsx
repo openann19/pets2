@@ -95,13 +95,13 @@ export const ProfileHeaderSection: React.FC<ProfileHeaderSectionProps> = React.m
           />
         </DoubleTapLikePlus>
         <View style={styles.profileInfo}>
-          <Text style={[styles.userName, { color: theme.colors.text }]}>
+          <Text style={[styles.userName, { color: theme.colors.text }]>
             {user?.firstName ?? "User"} {user?.lastName ?? ""}
           </Text>
-          <Text style={[styles.userEmail, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.userEmail, { color: theme.colors.textMuted }]>
             {user?.email ?? "user@example.com"}
           </Text>
-          <Text style={[styles.memberSince, { color: theme.colors.textMuted }]}>
+          <Text style={[styles.memberSince, { color: theme.colors.textMuted }]>
             Member since {new Date().getFullYear()}
           </Text>
         </View>

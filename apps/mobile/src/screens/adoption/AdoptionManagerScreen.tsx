@@ -508,7 +508,7 @@ const AdoptionManagerScreen = ({ navigation }: AdoptionManagerScreenProps) => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor={Colors.primary[300]}
-            colors={[Colors.primary[300]]}
+            colors={[Colors.primary[300]}
           />
         }
       >

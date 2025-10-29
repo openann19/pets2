@@ -1,0 +1,26 @@
+
+> pawfectmatch-premium@1.0.1-rc.0 mobile:tsc /home/ben/Downloads/pets-fresh
+> cd apps/mobile && pnpm exec tsc --noEmit
+
+src/screens/CreateReelScreen.tsx(43,121): error TS2353: Object literal may only specify known properties, and 'clips' does not exist in type '{ uri: string; startMs: number; endMs: number; thumb?: string | undefined; }[]'.
+src/screens/CreateReelScreen.tsx(56,29): error TS2345: Argument of type 'AppTheme' is not assignable to parameter of type '{ colors: { background: string; }; }'.
+  Types of property 'colors' are incompatible.
+    Property 'background' is missing in type '{ [key: string]: any; primary: string; primaryText: string; secondary: string; text: string; textMuted: string; textInverse: string; bg: string; bgAlt: string; bgElevated?: string | undefined; border: string; ... 5 more ...; neutral: { ...; }; }' but required in type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(116,9): error TS2345: Argument of type '{ order: number; srcUrl: string; startMs: number; endMs: number; }[]' is not assignable to parameter of type 'Clip[]'.
+  Property 'uri' is missing in type '{ order: number; srcUrl: string; startMs: number; endMs: number; }' but required in type 'Clip'.
+src/screens/CreateReelScreen.tsx(374,98): error TS2339: Property 'border' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(375,73): error TS2339: Property 'text' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(376,61): error TS2339: Property 'border' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(377,67): error TS2339: Property 'primary' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(379,47): error TS2339: Property 'text' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(387,58): error TS2339: Property 'primary' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(390,68): error TS2339: Property 'border' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(391,41): error TS2339: Property 'text' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(392,68): error TS2339: Property 'border' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(393,45): error TS2339: Property 'primary' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(394,71): error TS2339: Property 'text' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(395,50): error TS2339: Property 'textSecondary' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(399,95): error TS2339: Property 'border' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(400,51): error TS2339: Property 'text' does not exist on type '{ background: string; }'.
+src/screens/CreateReelScreen.tsx(401,107): error TS2339: Property 'border' does not exist on type '{ background: string; }'.
+ ELIFECYCLE  Command failed with exit code 2.

@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "apps/mobile" },
+    { "path": "packages/core" },
+    { "path": "packages/ui" },
+    { "path": "packages/design-tokens" }
+  ],
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "composite": false
+  }
+}

@@ -67,17 +67,17 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         <SmartImage source={{ uri: originalUri }} style={StyleSheet.absoluteFill} rounded={0} />
 
         {/* EDITED (clipped to divider) */}
-        <Animated.View style={[StyleSheet.absoluteFill, editedStyle, { overflow: 'hidden' }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, editedStyle, { overflow: 'hidden' }]>
           <SmartImage source={{ uri: editedUri }} style={StyleSheet.absoluteFill} rounded={0} />
         </Animated.View>
 
         {/* Labels */}
-        <View style={[styles.badge, { left: 12 }]}>
+        <View style={[styles.badge, { left: 12 }]>
           <BlurView intensity={30} style={styles.badgeInner}>
             <Text style={styles.badgeText}>Before</Text>
           </BlurView>
         </View>
-        <View style={[styles.badge, { right: 12 }]}>
+        <View style={[styles.badge, { right: 12 }]>
           <BlurView intensity={30} style={styles.badgeInner}>
             <Text style={styles.badgeText}>After</Text>
           </BlurView>

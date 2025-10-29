@@ -92,7 +92,7 @@ export function PremiumScreen(): JSX.Element {
           disabled={isLoading}
         >
           {isLoading && selectedTier === tier.id ? (
-            <ActivityIndicator color={theme.colors.neutral[0}]} testID="loading-indicator" />
+            <ActivityIndicator color={theme.colors.neutral[0}] testID="loading-indicator" />
           ) : (
             <Text style={styles.subscribeButtonText}>
               {isSelected ? "Subscribe Now" : "Select Plan"}
@@ -120,7 +120,7 @@ export function PremiumScreen(): JSX.Element {
             onPress={handleGoBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.neutral[0}]}} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.neutral[0}]} />
           </TouchableOpacity>
 
           <Text style={styles.title}>Upgrade to Premium</Text>

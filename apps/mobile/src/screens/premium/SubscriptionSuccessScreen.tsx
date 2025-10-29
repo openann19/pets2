@@ -76,12 +76,12 @@ const AnimatedCheckmark = () => {
         ])}
       >
         <LinearGradient
-          colors={["#6D28D9", "#7C3AED", theme.colors.primary[600]]}
+          colors={["#6D28D9", "#7C3AED", theme.colors.primary[600]}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Ionicons name="checkmark" size={64} color={theme.colors.neutral[0}]}} />
+          <Ionicons name="checkmark" size={64} color={theme.colors.neutral[0}]} />
         </LinearGradient>
       </Animated.View>
     </View>

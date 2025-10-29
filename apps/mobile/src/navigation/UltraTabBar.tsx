@@ -205,7 +205,7 @@ const UltraTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigati
                     </Animated.View>
                   )}
                 </View>
-                <Text style={[styles.label, { color, fontWeight: focused ? "600" : "400" }]} numberOfLines={1}>{label}</Text>
+                <Text style={[styles.label, { color, fontWeight: focused ? "600" : "400" }] numberOfLines={1}>{label}</Text>
               </TouchableOpacity>
             );
           })}

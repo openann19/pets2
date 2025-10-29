@@ -182,7 +182,7 @@ const CreateListingScreen = ({ navigation }: CreateListingScreenProps) => {
           <BlurView intensity={20} style={styles.sectionCard}>
             <TouchableOpacity style={styles.photoUpload}  testID="CreateListingScreen-button-2" accessibilityLabel="Interactive element" accessibilityRole="button" onPress={addPhoto}>
               <LinearGradient
-                colors={[theme.colors.neutral[100], theme.colors.neutral[200]]}
+                colors={[theme.colors.neutral[100], theme.colors.neutral[200]}
                 style={styles.photoUploadGradient}
               >
                 <Ionicons name="camera" size={32} color={theme.colors.neutral[500]} }/>

@@ -35,7 +35,7 @@ function DeactivateAccountScreen({
     handleDeactivate,
     handleGoBack,
   } = useDeactivateAccountScreen();
-
+  const theme = useTheme();
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -62,7 +62,7 @@ function DeactivateAccountScreen({
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Warning */}
           <BlurView intensity={15} style={styles.warningCard}>
-            <Ionicons name="warning-outline" size={24} color={theme.colors.warning} }/>
+            <Ionicons name="warning-outline" size={24} color={theme.colors.warning} />
             <Text style={styles.warningText}>
               Deactivating your account will temporarily hide your profile and
               pause all activity. You can reactivate anytime by logging back in.
@@ -96,7 +96,7 @@ function DeactivateAccountScreen({
                   {item}
                 </Text>
                 {reason === item && (
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} }/>
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
                 )}
               </BlurView>
             </TouchableOpacity>
