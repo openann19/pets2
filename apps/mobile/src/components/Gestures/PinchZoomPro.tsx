@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { rubberClamp, rubberScale, hardClamp } from "../../utils/elastic";
+import { useTheme } from "@mobile/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -39,9 +40,9 @@ export function PinchZoomPro({
   onScaleChange,
   disabled = false,
   resizeMode = "cover",
-  backgroundColor = "#0a0a0a",
-  haptics = true,
-}: PinchZoomProProps) {
+  }: PinchZoomProProps) {
+  const theme = useTheme();
+  const finalBackgroundColor = backgroundColor || theme.colors.text.primary;
   const scale = useSharedValue(initialScale);
   const lastScale = useSharedValue(initialScale);
 
@@ -149,11 +150,11 @@ export function PinchZoomPro({
 
   return (
     <GestureDetector gesture={composed}>
-      <Animated.View style={[styles.container, { width, height, backgroundColor }]}>
+      <Animated.View style={[styles.container, { width, height, backgroundColor: finalBackgroundColor }]}>
         <Animated.View style={[styles.center, imageStyle]}>
           <Image
             source={source}
-            style={{ width, height, backgroundColor: "#111" }}
+            style={{ width, height, backgroundColor: theme.colors.text.primary }}
             resizeMode={resizeMode}
           />
         </Animated.View>
